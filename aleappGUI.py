@@ -67,7 +67,8 @@ while True:
 	start = process_time()
 	
 	
-	tosearch = {'wellbeing': '*/com.google.android.apps.wellbeing/databases/*'}
+	tosearch = {'wellbeing': '*/com.google.android.apps.wellbeing/databases/*',
+				'wellbeingaccount':'*/com.google.android.apps.wellbeing/files/AccountData.pb'}
 	'''
 	tosearch = {'lastbuild': '*LastBuildInfo.plist',
 				'interactionc':'*interactionC.db'}

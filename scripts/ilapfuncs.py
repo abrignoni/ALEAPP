@@ -2,7 +2,7 @@ import sqlite3
 import sys, os, re
 import glob
 import datetime
-#from parse3 import ParseProto
+from scripts.parse3 import ParseProto
 import codecs
 import json
 import sqlite3
@@ -36,7 +36,7 @@ def logfunc(message=""):
 
 
 def wellbeing(filefound):
-	logfunc(f'Wellbeing funcion executing')
+	logfunc(f'Wellbeing events function executing')
 	try:
 		if os.path.isdir(reportfolderbase+'Wellbeing/'):
 			pass
@@ -74,7 +74,7 @@ def wellbeing(filefound):
 		all_rows = cursor.fetchall()
 		usageentries = len(all_rows)
 		if usageentries > 0:
-			logfunc(f'Wellbeing events function executing')
+			#logfunc(f'Wellbeing events function executing')
 			with open(reportfolderbase+'Wellbeing/Events.html', 'w', encoding='utf8') as f:
 				f.write('<html><body>')
 				f.write('<h2> Wellbeing events report</h2>')
@@ -92,9 +92,39 @@ def wellbeing(filefound):
 				logfunc('No Wellbeing event data available')
 	except:
 		logfunc('Error in Wellbeing event section')
-	logfunc('Wellbeing function completed')
-				
+	logfunc('Wellbeing event function completed')
 
+def wellbeingaccount(filefound):	
+	logfunc(f'Wellbeing Account function executing')
+	try:
+		if os.path.isdir(reportfolderbase+'Wellbeing/'):
+			pass
+		else:
+			os.makedirs(reportfolderbase+'Wellbeing/')
+	except:
+		logfunc('Error creating wellbeing() report directory')
+
+	try:
+		content = ParseProto(filefound[0])
+		
+		content_json_dump = json.dumps(content, indent=4, sort_keys=True, ensure_ascii=False)
+		parsedContent = str(content_json_dump).encode(encoding='UTF-8',errors='ignore')
+		
+		with open(reportfolderbase+'Wellbeing/Account Data.html', 'w', encoding='utf8') as f:
+			f.write('<html><body>')
+			f.write('<h2> Wellbeing Account report</h2>')
+			f.write(f'Wellbeing Account located at: {filefound[0]}<br>')
+			f.write('<style> table, td {border: 1px solid black; border-collapse: collapse;}tr:nth-child(even) {background-color: #f2f2f2;} .table th { background: #888888; color: #ffffff}.table.sticky th{ position:sticky; top: 0; }</style>')
+			f.write('<br/>')
+			f.write('')
+			f.write(f'<table class="table sticky">')
+			f.write(f'<tr><th>Protobuf Parsed Data</th><th>Protobuf Data</th></tr>')
+			f.write('<tr><td><pre id=\"json\">'+str(parsedContent).replace("\\n", "<br>")+'</pre></td><td>'+str(content)+'</td></tr>')
+			f.write(f'</table></body></html>')
+	except:
+		logfunc('Error in Wellbeing Account section')
+	logfunc('Wellbeing Account function completed')
+	
 def deviceinfoin(ordes, kas, vas, sources):
 	sources = str(sources)
 	db = sqlite3.connect(reportfolderbase+'Device Info/di.db')
