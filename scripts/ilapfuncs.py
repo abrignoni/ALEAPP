@@ -59,7 +59,7 @@ def wellbeing(filefound):
 					when events.type = 1 THEN 'ACTIVITY_RESUMED'
 					when events.type = 2 THEN 'ACTIVITY_PAUSED'
 					when events.type = 12 THEN 'NOTIFICATION'
-					when events.type = 18 THEN 'KEYGUARD_HIDDEN & || Device Unlock'
+					when events.type = 18 THEN 'KEYGUARD_HIDDEN || Device Unlock'
 					when events.type = 19 THEN 'FOREGROUND_SERVICE_START'
 					when events.type = 20 THEN 'FOREGROUND_SERVICE_STOP' 
 					when events.type = 23 THEN 'ACTIVITY_STOPPED'
