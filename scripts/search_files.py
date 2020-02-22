@@ -25,7 +25,7 @@ def searchtar(t, val, reportfolderbase):
 	return pathlist
 
 def searchzip(z, name_list, val, reportfolderbase):
-	temp = reportfolderbase+'temp'
+	temp = reportfolderbase+'temp/'
 	pathlist = []
 	for member in name_list:
 		if fnmatch.fnmatch(member, val):
