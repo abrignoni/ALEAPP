@@ -28,7 +28,8 @@ extracttype = args.o
 start = process_time()
 
 tosearch = {'wellbeing': '*/com.google.android.apps.wellbeing/databases/*',
-	    'wellbeingaccount':'*/com.google.android.apps.wellbeing/files/AccountData.pb'}
+			'wellbeingaccount':'*/com.google.android.apps.wellbeing/files/AccountData.pb',
+			'usagestats':'*/system/usagestats/*'}
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
 			'redditchats':'*Data/Application/*/Documents/*/accountData/*/chat/*/chat.sqlite'}
