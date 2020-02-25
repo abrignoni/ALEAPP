@@ -451,7 +451,7 @@ def ParseData(data, start, end, messages, depth = 0):
             #start = start + 9
             start = start + 8
             try:
-                floatNum = struct.unpack('d',struct.pack('q',hex(num),16))
+                floatNum = struct.unpack('d',struct.pack('q',num))
                 floatNum = floatNum[0]
             except:
                 floatNum = None
@@ -535,7 +535,7 @@ def ParseData(data, start, end, messages, depth = 0):
             #start = start + 5
             start = start + 4
             try:
-                floatNum = struct.unpack('f',struct.pack('i',hex(num)))
+                floatNum = struct.unpack('f',struct.pack('i',num))
                 floatNum = floatNum[0]
             except:
                 floatNum = None
@@ -813,7 +813,7 @@ if __name__ == "__main__":
         messages = json.load(f, encoding='utf-8')
         f.close()
         os.remove('tmp.json')
-		
+        
         # the modification is saved in file named "modified"
         #SaveModification(messages, "modified")
 
