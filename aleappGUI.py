@@ -69,7 +69,8 @@ while True:
 	
 	tosearch = {'wellbeing': '*/com.google.android.apps.wellbeing/databases/*',
 				'wellbeingaccount':'*/com.google.android.apps.wellbeing/files/AccountData.pb',
-				'usagestats':'*/usagestats/*'}
+				'usagestats':'*/usagestats/*',
+				'recentactivity':'*/system_ce/*'}
 	'''
 	tosearch = {'lastbuild': '*LastBuildInfo.plist',
 				'interactionc':'*interactionC.db'}
