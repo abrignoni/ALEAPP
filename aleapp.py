@@ -25,7 +25,7 @@ extracttype = args.o
 start = process_time()
 
 os.makedirs(reportfolderbase)
-os.makedirs(reportfolderbase+'Script Logs')
+os.makedirs(os.path.join(reportfolderbase, 'Script Logs'))
 
 logfunc('\n--------------------------------------------------------------------------------------')
 logfunc('ALEAPP: Android Logs, Events, and Protobuf Parser')

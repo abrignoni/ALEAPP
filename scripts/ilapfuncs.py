@@ -9,21 +9,22 @@ from bs4 import BeautifulSoup
 nl = '\n' 
 now = datetime.datetime.now()
 currenttime = str(now.strftime('%Y-%m-%d_%A_%H%M%S'))
-reportfolderbase = './ALEAPP_Reports_' + currenttime + '/'
-base = '/ALEAPP_Reports_' + currenttime + '/'
-temp = reportfolderbase + 'temp/'
+reportfolderbase = os.path.join('.', 'ALEAPP_Reports_' + currenttime)
+base = '/ALEAPP_Reports_' + currenttime + '/' # For use in web browser url
+temp = os.path.join(reportfolderbase, 'temp')
+screen_output_file_path = os.path.join(reportfolderbase, 'Script Logs', 'Screen Output.html')
 
 def is_platform_windows():
     '''Returns True if running on Windows'''
     return os.name == 'nt'
 
 def logfunc(message=""):
-    if pathlib.Path(reportfolderbase+'Script Logs/Screen Output.html').is_file():
-        with open(reportfolderbase+'Script Logs/Screen Output.html', 'a', encoding='utf8') as a:
+    if pathlib.Path(screen_output_file_path).is_file():
+        with open(screen_output_file_path, 'a', encoding='utf8') as a:
             print(message)
             a.write(message+'<br>')
     else:
-        with open(reportfolderbase+'Script Logs/Screen Output.html', 'a', encoding='utf8') as a:
+        with open(screen_output_file_path, 'a', encoding='utf8') as a:
             print(message)
             a.write(message+'<br>')
     
@@ -42,10 +43,10 @@ def html2csv(reportfolderbase):
                     'StrucMetadata.html',
                     'StrucMetadataCombined.html']
                     
-    if os.path.isdir(reportfolderbase+'_CSV Exports/'):
+    if os.path.isdir(os.path.join(reportfolderbase, '_CSV Exports')):
         pass
     else:
-        os.makedirs(reportfolderbase+'_CSV Exports/')
+        os.makedirs(os.path.join(reportfolderbase, '_CSV Exports'))
     for root, dirs, files in sorted(os.walk(reportfolderbase)):
         for file in files:
             if file.endswith(".html"):
@@ -71,6 +72,6 @@ def html2csv(reportfolderbase):
                             output_rows.append(output_row)
         
                         file = (os.path.splitext(file)[0])
-                        with codecs.open(reportfolderbase+'_CSV Exports/'+file+'.csv', 'a', 'utf-8-sig') as csvfile:
+                        with codecs.open(os.path.join(reportfolderbase, '_CSV Exports',  file +'.csv'), 'a', 'utf-8-sig') as csvfile:
                             writer = csv.writer(csvfile, quotechar='"', quoting=csv.QUOTE_ALL)
                             writer.writerows(output_rows)
