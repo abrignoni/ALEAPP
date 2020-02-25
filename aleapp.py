@@ -39,7 +39,7 @@ if extracttype == 'fs':
     logfunc('\n--------------------------------------------------------------------------------------')
     logfunc( )
 
-    log = open(reportfolderbase+'Script Logs/ProcessedFilesLog.html', 'w+', encoding='utf8')
+    log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
     nl = '\n' #literal in order to have new lines in fstrings that create text files
     log.write(f'Extraction/Path selected: {pathto}<br><br>')
     
@@ -64,7 +64,7 @@ elif extracttype == 'tar':
     logfunc(f'File/Directory selected: {pathto}')
     logfunc('\n--------------------------------------------------------------------------------------')
     
-    log = open(reportfolderbase+'Script Logs/ProcessedFilesLog.html', 'w+', encoding='utf8')
+    log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
     nl = '\n' #literal in order to have new lines in fstrings that create text files
     log.write(f'Extraction/Path selected: {pathto}<br><br>')    # tar searches and function calls
 
@@ -92,7 +92,7 @@ elif extracttype == 'zip':
         logfunc(f'File/Directory selected: {pathto}')
         logfunc('\n--------------------------------------------------------------------------------------')
         logfunc('')
-        log = open(reportfolderbase+'Script Logs/ProcessedFilesLog.html', 'w+', encoding='utf8')
+        log = open(os.path.join(reportfolderbase,'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
         log.write(f'Extraction/Path selected: {pathto}<br><br>')    # tar searches and function calls
 
         z = ZipFile(pathto)
@@ -128,7 +128,7 @@ end = process_time()
 time = start - end
 logfunc("Processing time: " + str(abs(time)) )
 
-log = open(reportfolderbase+'Script Logs/ProcessedFilesLog.html', 'a', encoding='utf8')
+log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'a', encoding='utf8')
 log.write(f'Processing time in secs: {str(abs(time))}')
 log.close()
 

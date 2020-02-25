@@ -2,7 +2,7 @@ import sys, os, re, glob, pathlib, shutil, os.path, sqlite3
 from time import process_time
 
 def report(reportfolderbase, time, extracttype, pathto):
-    os.mkdir(reportfolderbase+'/_elements')
+    os.mkdir(os.path.join(reportfolderbase, '_elements'))
 
     abr = os.path.dirname(os.path.abspath(__file__))
     sidebartop = ''' <!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
@@ -24,7 +24,7 @@ def report(reportfolderbase, time, extracttype, pathto):
     <body class='menuBackground'>
     <div class='menuBackgroundOverlay'>'''
 
-    filedatahtml = open(reportfolderbase+'/_elements/sidebar.html', mode='a+')
+    filedatahtml = open(os.path.join(reportfolderbase, '_elements', 'sidebar.html'), mode='a+')
     filedatahtml.write(sidebartop)
 
     x = sorted(next(os.walk(reportfolderbase))[1])
@@ -118,7 +118,7 @@ def report(reportfolderbase, time, extracttype, pathto):
     </noframes>
     </html>'''
 
-    filedatahtml = open(reportfolderbase+'/index.html', mode='a+')
+    filedatahtml = open(os.path.join(reportfolderbase, 'index.html'), mode='a+')
     filedatahtml.write(fullpage)
     filedatahtml.close()
 
@@ -137,7 +137,7 @@ def report(reportfolderbase, time, extracttype, pathto):
     </html>
     '''
 
-    filedatahtml = open(reportfolderbase+'/_elements/top.html', mode='a+')
+    filedatahtml = open(os.path.join(reportfolderbase, '_elements', 'top.html'), mode='a+')
     filedatahtml.write(fulltop)
     filedatahtml.close()
 
@@ -156,7 +156,7 @@ def report(reportfolderbase, time, extracttype, pathto):
     
     '''
     time = str(abs(time))
-    filedatahtml = open(reportfolderbase+'/_elements/data.html', mode='a+')
+    filedatahtml = open(os.path.join(reportfolderbase, '_elements', 'data.html'), mode='a+')
     filedatahtml.write(fulldata)
     filedatahtml.write(f'<tr><td>Extraction location: </td><td>{pathto}</td></tr>')
     filedatahtml.write(f'<tr><td>Extraction type: </td><td>{extracttype}</td></tr>')
@@ -199,7 +199,7 @@ def report(reportfolderbase, time, extracttype, pathto):
     filedatahtml.write('</table><br></body></html>')
     filedatahtml.close()
 
-    shutil.copy2('./scripts/logo.jpg', reportfolderbase+'/_elements/')
-    shutil.copy2('./scripts/report.css', reportfolderbase+'/_elements/')
+    shutil.copy2('./scripts/logo.jpg', os.path.join(reportfolderbase,'_elements'))
+    shutil.copy2('./scripts/report.css', os.path.join(reportfolderbase,'_elements'))
 
 

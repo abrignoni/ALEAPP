@@ -20,11 +20,11 @@ def get_recentactivity(files_found, report_folder):
     db.commit()
     err = 0
     
-    stringfilefound = str(files_found[0])
+    stringfilefound = str(files_found[0]) # Path should be xxx/xxx/system_ce/0
     
-    script_lev, tail = stringfilefound.split('/system_ce/')
-    script_dir = script_lev+'/system_ce/0'
-    for filename in glob.iglob(script_dir+r'/recent_tasks/**', recursive=True):
+    #script_lev, tail = stringfilefound.split('/system_ce/')
+    script_dir = stringfilefound #script_lev+'/system_ce/0'
+    for filename in glob.iglob(os.path.join(script_dir, 'recent_tasks', '**'), recursive=True):
         if os.path.isfile(filename): # filter dirs
             file_name = os.path.basename(filename)
             #logfunc(filename)
@@ -70,7 +70,7 @@ def get_recentactivity(files_found, report_folder):
                     #print(snapshot)
                     
                     #check for image in directories
-                    check1 = script_dir + '/snapshots/' + snapshot
+                    check1 = os.path.join(script_dir, 'snapshots', snapshot)
                     isit1 = os.path.isfile(check1)
                     if isit1:
                         #copy snaphot image to report folder
@@ -82,7 +82,7 @@ def get_recentactivity(files_found, report_folder):
                     #Recent_images section
                     if icon_image_path is not None:
                         recent_image = os.path.basename(icon_image_path)
-                        check2 = script_dir + '/recent_images/' + recent_image
+                        check2 = os.path.join(script_dir, 'recent_images', recent_image)
                         isit2 = os.path.isfile(check2)
                         if isit2:
                             shutil.copy2(check2, report_folder)
@@ -92,7 +92,7 @@ def get_recentactivity(files_found, report_folder):
                             recimg = 'NO IMAGE'
                     else:
                         #check for other files not in the XML - all types
-                        check3 = glob.glob(script_dir + r'/recent_images/' + task_id + '*.*')
+                        check3 = glob.glob(os.path.join(script_dir, 'recent_images', task_id, '*.*'))
                         if check3:
                             check3 = check3[0]
                             isit3 = os.path.isfile(check3)

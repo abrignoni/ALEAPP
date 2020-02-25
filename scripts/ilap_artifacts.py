@@ -1,8 +1,7 @@
 # To add a new artifact module, import it here as shown below:
-#
-# from scripts.artifacts.fruitninja import get_fruitninja
-#  Also add the grep search for that module using the same name
-#  to the 'tosearch' data structure.
+#     from scripts.artifacts.fruitninja import get_fruitninja
+# Also add the grep search for that module using the same name
+# to the 'tosearch' data structure.
 
 import json
 import sqlite3
@@ -20,16 +19,19 @@ from scripts.ilapfuncs import *
 # Format is Key='modulename', Value=Tuple('Module Pretty Name', 'regex term')
 # Here modulename must match the get_xxxxxx function name for that module. 
 # For example: If modulename='profit', function name must be get_profit(..)
+
 tosearch = {
-    'wellbeing': ('Wellbeing', '*/com.google.android.apps.wellbeing/databases/*'),
-    'wellbeingaccount': ('Wellbeing account', '*/com.google.android.apps.wellbeing/files/AccountData.pb'),
-    'usagestats':('Usage Stats', '*/usagestats/*'),
-    'recentactivity':('Recent Activity', '*/system_ce/*')
+    'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/*'),
+    'wellbeingaccount': ('Wellbeing account', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
+    'usagestats':('Usage Stats', '**/system/usagestats/*'),
+    'recentactivity':('Recent Activity', '**/system_ce/*')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
             'redditchats':'*Data/Application/*/Documents/*/accountData/*/chat/*/chat.sqlite'}
 '''
+
+slash = '\\' if is_platform_windows() else '/'
 
 def process_artifact(files_found, artifact_func, artifact_name):
     ''' Perform the common setup for each artifact, ie, 
@@ -39,7 +41,7 @@ def process_artifact(files_found, artifact_func, artifact_name):
     '''
     artifact_name_no_spaces = artifact_name.replace(" ", "")
     logfunc('{} function executing'.format(artifact_name))
-    report_folder = reportfolderbase + artifact_name_no_spaces + '/'
+    report_folder = os.path.join(reportfolderbase, artifact_name_no_spaces) + slash
     try:
         if os.path.isdir(report_folder):
             pass

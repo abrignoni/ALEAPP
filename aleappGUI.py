@@ -68,7 +68,7 @@ while True:
     start = process_time()
             
     os.makedirs(reportfolderbase)
-    os.makedirs(reportfolderbase+'Script Logs')
+    os.makedirs(os.path.join(reportfolderbase, 'Script Logs'))
     logfunc('Procesing started. Please wait. This may take a few minutes...')
 
 
@@ -86,7 +86,7 @@ while True:
         logfunc('\n--------------------------------------------------------------------------------------')
         logfunc('')
         window.refresh()
-        log = open(reportfolderbase+'Script Logs/ProcessedFilesLog.html', 'w+', encoding='utf8')
+        log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
         nl = '\n' #literal in order to have new lines in fstrings that create text files
         log.write(f'Extraction/Path selected: {pathto}<br><br>')
         
@@ -115,7 +115,7 @@ while True:
         logfunc('\n--------------------------------------------------------------------------------------')
         logfunc('')
         window.refresh()
-        log = open(reportfolderbase+'Script Logs/ProcessedFilesLog.html', 'w+', encoding='utf8')
+        log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
         nl = '\n' #literal in order to have new lines in fstrings that create text files
         log.write(f'Extraction/Path selected: {pathto}<br><br>')    # tar searches and function calls
         
@@ -146,7 +146,7 @@ while True:
             logfunc('\n--------------------------------------------------------------------------------------')
             logfunc('')
             window.refresh()
-            log = open(reportfolderbase+'Script Logs/ProcessedFilesLog.html', 'w+', encoding='utf8')
+            log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
             nl = '\n' #literal in order to have new lines in fstrings that create text files
             log.write(f'Extraction/Path selected: {pathto}<br><br>')    # tar searches and function calls
             
@@ -184,7 +184,7 @@ while True:
     time = start - end
     logfunc("Processing time in secs: " + str(abs(time)) )
     
-    log = open(reportfolderbase+'Script Logs/ProcessedFilesLog.html', 'a', encoding='utf8')
+    log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'a', encoding='utf8')
     log.write(f'Processing time in secs: {str(abs(time))}')
     log.close()
     
