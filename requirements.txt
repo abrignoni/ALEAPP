@@ -1,0 +1,5 @@
+beautifulsoup4==4.8.2
+protobuf==3.11.3
+PySimpleGUI==4.16.0
+six==1.14.0
+soupsieve==2.0
