@@ -5,11 +5,30 @@ import shutil
 import sqlite3
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import logfunc
+from scripts.ilapfuncs import logfunc, is_platform_windows
 
 def get_recentactivity(files_found, report_folder):
 
-    db = sqlite3.connect(os.path.join(report_folder, 'RecentAct.db'))
+    slash = '\\' if is_platform_windows() else '/' 
+
+    # Filter for path xxx/yyy/system_ce/0
+    for file_found in files_found:
+        file_found = str(file_found)
+        parts = file_found.split(slash)
+        if len(parts) > 2 and parts[-2] == 'system_ce':
+            uid = parts[-1]
+            try:
+                uid_int = int(uid)
+                # Skip sbin/.magisk/mirror/data/system_ce/0 , it should be duplicate data??
+                if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
+                    continue
+                process_recentactivity(file_found, uid, report_folder)
+            except ValueError:
+                pass # uid was not a number
+
+def process_recentactivity(folder, uid, report_folder):
+
+    db = sqlite3.connect(os.path.join(report_folder, 'RecentAct_{}.db'.format(uid)))
     cursor = db.cursor()
     #Create table recent.
     cursor.execute('''
@@ -20,11 +39,7 @@ def get_recentactivity(files_found, report_folder):
     db.commit()
     err = 0
     
-    stringfilefound = str(files_found[0]) # Path should be xxx/xxx/system_ce/0
-    
-    #script_lev, tail = stringfilefound.split('/system_ce/')
-    script_dir = stringfilefound #script_lev+'/system_ce/0'
-    for filename in glob.iglob(os.path.join(script_dir, 'recent_tasks', '**'), recursive=True):
+    for filename in glob.iglob(os.path.join(folder, 'recent_tasks', '**'), recursive=True):
         if os.path.isfile(filename): # filter dirs
             file_name = os.path.basename(filename)
             #logfunc(filename)
@@ -70,7 +85,7 @@ def get_recentactivity(files_found, report_folder):
                     #print(snapshot)
                     
                     #check for image in directories
-                    check1 = os.path.join(script_dir, 'snapshots', snapshot)
+                    check1 = os.path.join(folder, 'snapshots', snapshot)
                     isit1 = os.path.isfile(check1)
                     if isit1:
                         #copy snaphot image to report folder
@@ -82,7 +97,7 @@ def get_recentactivity(files_found, report_folder):
                     #Recent_images section
                     if icon_image_path is not None:
                         recent_image = os.path.basename(icon_image_path)
-                        check2 = os.path.join(script_dir, 'recent_images', recent_image)
+                        check2 = os.path.join(folder, 'recent_images', recent_image)
                         isit2 = os.path.isfile(check2)
                         if isit2:
                             shutil.copy2(check2, report_folder)
@@ -92,7 +107,7 @@ def get_recentactivity(files_found, report_folder):
                             recimg = 'NO IMAGE'
                     else:
                         #check for other files not in the XML - all types
-                        check3 = glob.glob(os.path.join(script_dir, 'recent_images', task_id, '*.*'))
+                        check3 = glob.glob(os.path.join(folder, 'recent_images', task_id, '*.*'))
                         if check3:
                             check3 = check3[0]
                             isit3 = os.path.isfile(check3)
@@ -113,18 +128,18 @@ def get_recentactivity(files_found, report_folder):
                     db.commit()
                     
     #Create html file for report
-    f1= open(os.path.join(report_folder, 'Recent Activity.html'), 'w+')
+    f1= open(os.path.join(report_folder, 'Recent Activity_{}.html'.format(uid)), 'w+')
 
     #HTML header
     f1.write('<html><body>')
     f1.write('<h2> Android Recent Tasks Report </h2>')
-    f1.write(f'Recent Tasks, Snapshots, and Recent Images located at {script_dir}')
+    f1.write(f'Recent Tasks, Snapshots, and Recent Images located at {folder}')
     f1.write('<br>')
     f1.write ('<style> table, th, td {border: 1px solid black; border-collapse: collapse;} img {width: 180px; height: 370px; object-fit: cover;}</style>')
 
 
     #Query to create report
-    db = sqlite3.connect(os.path.join(report_folder, 'RecentAct.db'))
+    db = sqlite3.connect(os.path.join(report_folder, 'RecentAct_{}.db'.format(uid)))
     cursor = db.cursor()
 
     #Query to create report
