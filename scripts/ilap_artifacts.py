@@ -21,9 +21,9 @@ from scripts.ilapfuncs import *
 # For example: If modulename='profit', function name must be get_profit(..)
 
 tosearch = {
-    'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/*'),
+    'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing account', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
-    'usagestats':('Usage Stats', '**/system/usagestats/*'),
+    'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'recentactivity':('Recent Activity', '**/system_ce/*')
     }
 '''

@@ -19,7 +19,7 @@ def searchtar(t, val, reportfolderbase):
         if fnmatch.fnmatch(member.name, val):
             try:
                 t.extract(member.name, path=temp)
-                pathlist.append(os.path.join(temp, member.name))
+                pathlist.append(os.path.join(temp, Path(member.name)))
             except:
                 logfunc('Could not write file to filesystem')
     return pathlist
@@ -31,7 +31,7 @@ def searchzip(z, name_list, val, reportfolderbase):
         if fnmatch.fnmatch(member, val):
             try:
                 z.extract(member, path=temp)
-                pathlist.append(os.path.join(temp, member))
+                pathlist.append(os.path.join(temp, Path(member)))
             except:
                 logfunc('Could not write file to filesystem')    
     return pathlist

@@ -113,22 +113,43 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
     db.commit()
 
 def get_usagestats(files_found, report_folder):
+
+    logfunc ('Android Usagestats XML & Potobuf Parser')
+    logfunc ('By: @AlexisBrignoni & @SwiftForensics')
+    logfunc ('Web: abrignoni.com & swiftforensics.com')
+    
+    slash = '\\' if is_platform_windows() else '/' 
+
+    for file_found in files_found:
+        file_found = str(file_found)
+        parts = file_found.split(slash)
+        if len(parts) > 2 and parts[-2] == 'usagestats':
+            uid = parts[-1]
+            try:
+                uid_int = int(uid)
+                # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
+                if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
+                    continue
+                process_usagestats(file_found, uid, report_folder)
+            except ValueError:
+                pass # uid was not a number
+
+def process_usagestats(folder, uid, report_folder):
+
     processed = 0
-    is_windows = is_platform_windows()
+    
     #Create sqlite databases
-    db = sqlite3.connect(os.path.join(report_folder, 'usagestats.db'))
+    db = sqlite3.connect(os.path.join(report_folder, 'usagestats_{}.db'.format(uid)))
     cursor = db.cursor()
 
     #Create table usagedata.
 
     cursor.execute('''
-
         CREATE TABLE data(usage_type TEXT, lastime INTEGER, timeactive INTEGER,
                           last_time_service_used INTEGER, last_time_visible INTEGER, total_time_visible INTEGER,
                           app_launch_count INTEGER,
                           package TEXT, types TEXT, classs TEXT,
                           source TEXT, fullatt TEXT)
-
     ''')
 
     db.commit()
@@ -136,17 +157,7 @@ def get_usagestats(files_found, report_folder):
     err=0
     stats = None
 
-    logfunc ('Android Usagestats XML & Potobuf Parser')
-    logfunc ('By: @AlexisBrignoni & @SwiftForensics')
-    logfunc ('Web: abrignoni.com & swiftforensics.com')
-
-    #script_dir = os.path.dirname(__file__)
-    if is_windows: # Need to test with zip/tar !!!! #TODO
-        splitfilefound = str(files_found[0]).split('\\usagestats\\')[0]
-    else:
-        splitfilefound = str(files_found[0]).split('/usagestats/')[0]
-
-    for filename in glob.iglob(os.path.join(splitfilefound, 'usagestats', '**'), recursive=True):
+    for filename in glob.iglob(os.path.join(folder, '**'), recursive=True):
         if os.path.isfile(filename): # filter dirs
             file_name = os.path.basename(filename)
             #Test if xml is well formed
@@ -325,10 +336,10 @@ def get_usagestats(files_found, report_folder):
     all_rows = cursor.fetchall()
 
     #HTML report section
-    h = open(os.path.join(report_folder, 'UsageStats.html'), 'w')    
+    h = open(os.path.join(report_folder, 'UsageStats_{}.html'.format(uid)), 'w')
     h.write('<html><body>')
     h.write('<h2>Android Usagestats report (Dates are localtime!)</h2>')
-    h.write('UsageStats located at ' + os.path.join(splitfilefound, '/usagestats/'))
+    h.write('UsageStats located at ' + folder)
     h.write('<br>')
     h.write('<style> table, td {border: 1px solid black; border-collapse: collapse;}tr:nth-child(even) {background-color: #f2f2f2;} .table th { background: #888888; color: #ffffff}.table.sticky th{ position:sticky; top: 0; }</style>')
     h.write('<br>')
@@ -388,3 +399,4 @@ def get_usagestats(files_found, report_folder):
     h.write('<table>')
     h.write('<br />')
     logfunc('Records processed: '+str(processed))
+    db.close()
