@@ -14,7 +14,7 @@ from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsVending import get_installedappsVending
-
+from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.ilapfuncs import *
 
 # GREP searches for each module
@@ -29,7 +29,8 @@ tosearch = {
     'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'recentactivity':('Recent Activity', '**/system_ce/*'),
     'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
-    'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db')
+    'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
+    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
