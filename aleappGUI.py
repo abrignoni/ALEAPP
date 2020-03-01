@@ -76,6 +76,7 @@ while True:
     logfunc('\n--------------------------------------------------------------------------------------')
     logfunc('ALEAPP: Android Logs, Events, and Protobuf Parser')
     logfunc('Objective: Triage Android Full System Extractions.')
+    logfunc('By: Yogesh Khatri | @swiftforensics | swiftforensics.com')
     logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
     window.refresh()
     
