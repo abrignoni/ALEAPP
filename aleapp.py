@@ -52,7 +52,6 @@ if extracttype == 'fs':
             log.write(f'No files found for {key} -> {val[1]}.<br>')
         else:
             logfunc()
-            #globals()[key](filefound)
             process_artifact(filefound, key, val[0])
             for pathh in filefound:
                 log.write(f'Files for {val[1]} located at {pathh}.<br>')
@@ -80,7 +79,6 @@ elif extracttype == 'tar':
         else:
             
             logfunc()
-            #globals()[key](filefound)
             process_artifact(filefound, key, val[0])
             for pathh in filefound:
                 log.write(f'Files for {val[1]} located at {pathh}.<br>')
@@ -106,7 +104,6 @@ elif extracttype == 'zip':
             else:
                 
                 logfunc('')
-                #globals()[key](filefound)
                 process_artifact(filefound, key, val[0])
                 for pathh in filefound:
                     log.write(f'Files for {val[1]} located at {pathh}.<br>')

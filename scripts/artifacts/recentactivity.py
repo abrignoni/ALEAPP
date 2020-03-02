@@ -5,6 +5,7 @@ import shutil
 import sqlite3
 import xml.etree.ElementTree as ET
 
+from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, is_platform_windows
 
 def get_recentactivity(files_found, report_folder):
@@ -126,17 +127,12 @@ def process_recentactivity(folder, uid, report_folder):
                     datainsert = (task_id, effective_uid, affinity, real_activity, first_active_time, last_active_time, last_time_moved, calling_package, user_id, action, component, snap, recimg, fullat1, fullat2,)
                     cursor.execute('INSERT INTO recent (task_id, effective_uid, affinity, real_activity, first_active_time, last_active_time, last_time_moved, calling_package, user_id, action, component, snap, recimg, fullat1, fullat2)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
                     db.commit()
-                    
-    #Create html file for report
-    f1= open(os.path.join(report_folder, 'Recent Activity_{}.html'.format(uid)), 'w+')
-
-    #HTML header
-    f1.write('<html><body>')
-    f1.write('<h2> Android Recent Tasks Report </h2>')
-    f1.write(f'Recent Tasks, Snapshots, and Recent Images located at {folder}')
-    f1.write('<br>')
-    f1.write ('<style> table, th, td {border: 1px solid black; border-collapse: collapse;} img {width: 180px; height: 370px; object-fit: cover;}</style>')
-
+    
+    report = ArtifactHtmlReport('Recent Tasks, Snapshots & Images')
+    report.start_artifact_report(report_folder, f'Recent Activity_{uid}')
+    report.add_style('<style> table, th, td {border: 1px solid black; border-collapse: collapse;} img {width: 180px; height: 370px; object-fit: cover;}</style>')
+    data_headers = ('Key', 'Value')
+    image_data_headers = ('Snapshot_Image', 'Recent_Image')
 
     #Query to create report
     db = sqlite3.connect(os.path.join(report_folder, 'RecentAct_{}.db'.format(uid)))
@@ -149,9 +145,9 @@ def process_recentactivity(folder, uid, report_folder):
         effective_uid as Effective_UID, 
         affinity as Affinity, 
         real_activity as Real_Activity, 
-        datetime(first_active_time/1000, 'UNIXEPOCH', 'LOCALTIME') as First_Active_Time, 
-        datetime(last_active_time/1000, 'UNIXEPOCH', 'LOCALTIME') as Last_Active_Time,
-        datetime(last_time_moved/1000, 'UNIXEPOCH', 'LOCALTIME') as Last_Time_Moved,
+        datetime(first_active_time/1000, 'UNIXEPOCH') as First_Active_Time, 
+        datetime(last_active_time/1000, 'UNIXEPOCH') as Last_Active_Time,
+        datetime(last_time_moved/1000, 'UNIXEPOCH') as Last_Time_Moved,
         calling_package as Calling_Package, 
         user_id as User_ID, 
         action as Action, 
@@ -165,67 +161,35 @@ def process_recentactivity(folder, uid, report_folder):
 
     for row in all_rows:
         if row[2] is None:
-            row2 = 'NO DATA'
+            row2 = '' #'NO DATA'
         else:
             row2 = row[2]
-        appName = '<h3> Application: ' + row2 + '<h3>'
-        f1.write(appName)
-        f1.write('<table> <tr><th>Key</th><th>Values</th></tr>')
-        
+
+        report.write_minor_header(f'Application: {row2}')
+
         #do loop for headers
+        data_list = []
         
-        for x in range(0, 13):
-            
+        for x in range(0, 13):            
             if row[x] is None:
-                dbCol = 'NO DATA'
-                f1.write('<tr>')
-                f1.write('<td align="left">')
-                f1.write(colnames[x][0])
-                f1.write('</td>')
-            
-                f1.write('<td align="left">')
-                f1.write(dbCol)
-                f1.write('</td>')
-                f1.write('</tr>')
-                #f1.write('</br>')
-                
-                
+                pass
             else:
-                f1.write('<tr>')
-                f1.write('<td align="left">')
-                f1.write(colnames[x][0])
-                f1.write('</td>')
-                
-                f1.write('<td align="left">')
-                f1.write(str(row[x]))
-                f1.write('</td>')
-                f1.write('</tr>')
-                
-                #f1.write('</br>')
-        f1.write('</table></p>')    
-        f1.write('<table> <tr><th>Snapshot_Images</th><th>Recent_Image</th></tr>')
-        f1.write('<tr>')
-        for x in range(11, 13):
-                if row[x] == 'NO IMAGE':
-                        
-                    
-                    f1.write('<td align="left">')
-                    f1.write('No Image')
-                    f1.write('</td>')
-                    
-                else:
-                    
-                #f1.write('</tr>')
-                    #f1.write('<tr>')
-                    f1.write('<td align="left">')
-                    f1.write('<a href="')
-                    f1.write(str(row[x]))
-                    f1.write('"><img src="')
-                    f1.write(str(row[x]))
-                    f1.write('" alt="Smiley face">')
-                    f1.write('</a>')
-                    f1.write('</td>')
-                    #f1.write('</tr>')
-        f1.write('</tr>')
-        f1.write('</table></p>')
-    f1.close()
+                data_list.append((colnames[x][0], str(row[x])))
+
+        report.write_artifact_data_table(data_headers, data_list, folder, table_class='', write_total=False, write_location=False)
+
+        image_data_row = []
+        image_data_list = [image_data_row]
+
+        if row[11] == 'NO IMAGE':
+            image_data_row.append('No Image')
+        else:
+            image_data_row.append('<a href="{0}"><img src="{0}" alt="Smiley face"></a>'.format(str(row[11])))
+        if row[12] == 'NO IMAGE':
+            image_data_row.append('No Image')
+        else:
+            image_data_row.append('<a href="{0}"><img src="{0}" alt="Smiley face"></a>'.format(str(row[12])))
+        report.write_artifact_data_table(image_data_headers, image_data_list, folder, table_class='', write_total=False, write_location=False, html_escape=False)
+        report.write_raw_html('<br />')
+
+    report.end_artifact_report()

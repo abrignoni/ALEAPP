@@ -5,6 +5,7 @@ import sqlite3
 import xml.etree.ElementTree as ET  
 
 from enum import IntEnum
+from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, is_platform_windows
 
 class EventType(IntEnum):
@@ -307,14 +308,16 @@ def process_usagestats(folder, uid, report_folder):
     cursor.execute('''
     select 
     usage_type,
-    datetime(lastime/1000, 'UNIXEPOCH', 'localtime') as lasttimeactive,
+    case lastime WHEN '' THEN ''
+     ELSE datetime(lastime/1000, 'UNIXEPOCH')
+    end as lasttimeactive,
     timeactive as time_Active_in_msecs,
     timeactive/1000 as timeactive_in_secs,
     case last_time_service_used  WHEN '' THEN ''
-     ELSE datetime(last_time_service_used/1000, 'UNIXEPOCH', 'localtime')
+     ELSE datetime(last_time_service_used/1000, 'UNIXEPOCH')
     end last_time_service_used,
     case last_time_visible  WHEN '' THEN ''
-     ELSE datetime(last_time_visible/1000, 'UNIXEPOCH', 'localtime') 
+     ELSE datetime(last_time_visible/1000, 'UNIXEPOCH') 
     end last_time_visible,
     total_time_visible,
     app_launch_count,
@@ -335,68 +338,36 @@ def process_usagestats(folder, uid, report_folder):
     ''')
     all_rows = cursor.fetchall()
 
-    #HTML report section
-    h = open(os.path.join(report_folder, 'UsageStats_{}.html'.format(uid)), 'w')
-    h.write('<html><body>')
-    h.write('<h2>Android Usagestats report (Dates are localtime!)</h2>')
-    h.write('UsageStats located at ' + folder)
-    h.write('<br>')
-    h.write('<style> table, td {border: 1px solid black; border-collapse: collapse;}tr:nth-child(even) {background-color: #f2f2f2;} .table th { background: #888888; color: #ffffff}.table.sticky th{ position:sticky; top: 0; }</style>')
-    h.write('<br>')
-    h.write('')
-    
-    
-
-    #HTML headers
-    h.write(f'<table class="table sticky">')
-    h.write('<tr>')
-    h.write('<th>Usage Type</th>')
-    h.write('<th>Last Time Active</th>')
-    h.write('<th>Time Active in Msecs</th>')
-    h.write('<th>Time Active in Secs</th>')
-    h.write('<th>Last Time Service Used</th>')
-    h.write('<th>Last Time Visible</th>')
-    h.write('<th>Total Time Visible</th>')
-    h.write('<th>App Launch Count</th>')
-    h.write('<th>Package</th>')
-    h.write('<th>Types</th>')
-    h.write('<th>Class</th>')
-    h.write('<th>Source</th>')
-    h.write('</tr>')
+    report = ArtifactHtmlReport('Usagestats')
+    report.start_artifact_report(report_folder, f'UsageStats_{uid}')
+    report.add_style()
+    data_headers = ('Usage Type', 'Last Time Active', 'Time Active in Msecs', 'Time Active in Secs', 
+                    'Last Time Service Used', 'Last Time Visible', 'Total Time Visible', 'App Launch Count', 
+                    'Package', 'Types', 'Class', 'Source')
+    data_list = []
 
     for row in all_rows:
-        usage_type = row[0]
-        lasttimeactive = row[1]
-        time_Active_in_msecs = row[2]
-        timeactive_in_secs = row[3]
-        last_time_service_used = row[4]
-        last_time_visible = row[5]
-        total_time_visible = row[6]
-        app_launch_count = row[7]
-        package = row[8]
-        types = row[9]
-        classs = row[10]
-        source = row[11]
-        
-        processed = processed+1
-        #report data
-        h.write('<tr>')
-        h.write('<td>'+str(usage_type)+'</td>')
-        h.write('<td>'+str(lasttimeactive)+'</td>')
-        h.write('<td>'+str(time_Active_in_msecs)+'</td>')
-        h.write('<td>'+str(timeactive_in_secs)+'</td>')
-        h.write('<td>'+str(last_time_service_used)+'</td>')
-        h.write('<td>'+str(last_time_visible)+'</td>')
-        h.write('<td>'+str(total_time_visible)+'</td>')
-        h.write('<td>'+str(app_launch_count)+'</td>')
-        h.write('<td>'+str(package)+'</td>')
-        h.write('<td>'+str(types)+'</td>')
-        h.write('<td>'+str(classs)+'</td>')
-        h.write('<td>'+str(source)+'</td>')
-        h.write('</tr>')
+        usage_type = str(row[0])
+        lasttimeactive = str(row[1])
+        time_Active_in_msecs = str(row[2])
+        timeactive_in_secs = str(row[3])
+        last_time_service_used = str(row[4])
+        last_time_visible = str(row[5])
+        total_time_visible = str(row[6])
+        app_launch_count = str(row[7])
+        package = str(row[8])
+        types = str(row[9])
+        classs = str(row[10])
+        source = str(row[11])
 
-    #HTML footer    
-    h.write('<table>')
-    h.write('<br />')
-    logfunc('Records processed: '+str(processed))
+        data_list.append((usage_type, lasttimeactive, time_Active_in_msecs,
+                timeactive_in_secs, last_time_service_used, 
+                last_time_visible, total_time_visible,
+                app_launch_count, package, types, classs, source))
+        processed = processed + 1
+
+    report.write_artifact_data_table(data_headers, data_list, folder)
+    report.end_artifact_report()
+
+    logfunc(f'Records processed for user {uid}: {processed}')
     db.close()
