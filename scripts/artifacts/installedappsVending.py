@@ -27,7 +27,7 @@ def get_installedappsVending(files_found, report_folder):
         data_headers = ('Package Name', 'Title', 'First Download', 'Install Reason', 'Auto Update?')
         data_list = []
         for row in all_rows:
-            data_list.append((str(row[0]), str(row[1]), str(row[2]), str(row[3]), str(row[4])))
+            data_list.append((row[0], row[1], row[2], row[3], row[4]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
