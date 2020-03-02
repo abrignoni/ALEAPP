@@ -5,6 +5,7 @@
 
 import json
 import sqlite3
+import traceback
 from time import process_time
 from bs4 import BeautifulSoup
 
@@ -46,8 +47,7 @@ def process_artifact(files_found, artifact_func, artifact_name):
         3. Wrap processing function in a try..except block
     '''
     artifact_name_no_spaces = artifact_name.replace(" ", "")
-    #logfunc(str(files_found[0]))
-    logfunc('{} function executing'.format(artifact_name))
+    logfunc('{} artifact executing'.format(artifact_name))
     report_folder = os.path.join(reportfolderbase, artifact_name_no_spaces) + slash
     try:
         if os.path.isdir(report_folder):
@@ -56,15 +56,16 @@ def process_artifact(files_found, artifact_func, artifact_name):
             os.makedirs(report_folder)
     except Exception as ex:
         logfunc('Error creating {} report directory at path {}'.format(artifact_name, report_folder))
-        logfunc('{} function failed!'.format(artifact_name))
+        logfunc('Reading {} artifact failed!'.format(artifact_name))
         logfunc('Error was {}'.format(str(ex)))
         return
     try:
         method = globals()['get_' + artifact_func]
         method(files_found, report_folder)
     except Exception as ex:
-        logfunc('{} function had errors!'.format(artifact_name))
+        logfunc('Reading {} artifact had errors!'.format(artifact_name))
         logfunc('Error was {}'.format(str(ex)))
+        logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
         return
-        
-    logfunc('{} function completed'.format(artifact_name))
+
+    logfunc('{} artifact completed'.format(artifact_name))

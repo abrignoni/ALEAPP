@@ -1,22 +1,20 @@
-import sys, os, re, glob
+import argparse
+import os
+import shutil
+
+from argparse import RawTextHelpFormatter
 from scripts.search_files import *
 from scripts.ilapfuncs import *
 from scripts.ilap_artifacts import *
-import argparse
-from argparse import RawTextHelpFormatter
-from six.moves.configparser import RawConfigParser
-from time import process_time
-import  tarfile
-import shutil
 from scripts.report import *
-from zipfile import ZipFile
+from six.moves.configparser import RawConfigParser
 from tarfile import TarFile
+from time import process_time, gmtime, strftime
+from zipfile import ZipFile
 
 parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
 parser.add_argument('-o', choices=['fs','tar','zip'], required=True, action="store",help="Input type (fs = extracted to file system folder)")
 parser.add_argument('pathtodir',help='Path to directory')
-
-start = process_time()
     
 args = parser.parse_args()
 
@@ -53,7 +51,6 @@ if extracttype == 'fs':
             log.write(f'No files found for {key} -> {val[1]}.<br>')
         else:
             logfunc()
-            #globals()[key](filefound)
             process_artifact(filefound, key, val[0])
             for pathh in filefound:
                 log.write(f'Files for {val[1]} located at {pathh}.<br>')
@@ -81,7 +78,6 @@ elif extracttype == 'tar':
         else:
             
             logfunc()
-            #globals()[key](filefound)
             process_artifact(filefound, key, val[0])
             for pathh in filefound:
                 log.write(f'Files for {val[1]} located at {pathh}.<br>')
@@ -107,7 +103,6 @@ elif extracttype == 'zip':
             else:
                 
                 logfunc('')
-                #globals()[key](filefound)
                 process_artifact(filefound, key, val[0])
                 for pathh in filefound:
                     log.write(f'Files for {val[1]} located at {pathh}.<br>')
@@ -126,16 +121,16 @@ if os.path.exists(reportfolderbase+'temp/'):
 logfunc('')
 logfunc('Processes completed.')
 end = process_time()
-time = start - end
-logfunc("Processing time: " + str(abs(time)) )
+run_time =  end - start
+logfunc(("Processing time = {}".format(strftime('%H:%M:%S', gmtime(run_time)))))
 
 log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'a', encoding='utf8')
-log.write(f'Processing time in secs: {str(abs(time))}')
+log.write(("Processing time = {} ({} seconds)".format(strftime('%H:%M:%S', gmtime(run_time)), run_time)))
 log.close()
 
 logfunc('')
 logfunc('Report generation started.')
-report(reportfolderbase, time, extracttype, pathto)
+report(reportfolderbase, run_time, extracttype, pathto)
 logfunc('Report generation Completed.')
 logfunc('')
 logfunc(f'Report name: {reportfolderbase}')

@@ -1,7 +1,7 @@
 import os
 import sqlite3
-
-from scripts.ilapfuncs import logfunc, is_platform_windows 
+from scripts.artifact_report import ArtifactHtmlReport
+from scripts.ilapfuncs import logfunc, is_platform_windows
 
 def get_wellbeing(files_found, report_folder):
 
@@ -37,19 +37,16 @@ def get_wellbeing(files_found, report_folder):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            with open(os.path.join(report_folder, 'Events.html'), 'w', encoding='utf8') as f:
-                f.write('<html><body>')
-                f.write('<h2> Wellbeing events report</h2>')
-                f.write(f'Wellbeing event entries: {usageentries}<br>')
-                f.write(f'Wellbeing events located at: {file_found}<br>')
-                f.write('<style> table, td {border: 1px solid black; border-collapse: collapse;}tr:nth-child(even) {background-color: #f2f2f2;} .table th { background: #888888; color: #ffffff}.table.sticky th{ position:sticky; top: 0; }</style>')
-                f.write('<br/>')
-                f.write('')
-                f.write(f'<table class="table sticky">')
-                f.write(f'<tr><th>Timestamp</th><th>Package ID</th><th>Event Type</th></tr>')
-                for row in all_rows:
-                    f.write(f'<tr><td>{row[1]}</td><td>{row[2]}</td><td>{row[4]}</td></tr>')
-                f.write(f'</table></body></html>')
+            report = ArtifactHtmlReport('Wellbeing events')
+            report.start_artifact_report(report_folder, 'Events')
+            report.add_style()
+            data_headers = ('Timestamp', 'Package ID', 'Event Type')
+            data_list = []
+            for row in all_rows:
+                data_list.append((row[1], row[2], row[4]))
+
+            report.write_artifact_data_table(data_headers, data_list, file_found)
+            report.end_artifact_report()
         else:
                 logfunc('No Wellbeing event data available')
         
