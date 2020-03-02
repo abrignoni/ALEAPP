@@ -121,7 +121,7 @@ if os.path.exists(reportfolderbase+'temp/'):
 logfunc('')
 logfunc('Processes completed.')
 end = process_time()
-run_time = start - end
+run_time =  end - start
 logfunc(("Processing time = {}".format(strftime('%H:%M:%S', gmtime(run_time)))))
 
 log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'a', encoding='utf8')

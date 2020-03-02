@@ -30,15 +30,21 @@ class ArtifactHtmlReport:
             self.report_file.write(style)
 
     def write_artifact_data_table(self, data_headers, data_list, source_path, table_class='table sticky', write_total=True, write_location=True, html_escape=True):
-        '''Writes info about data, then writes the table to html file
-            Input params
-            ------------
-            data_headers   : List of table column names
-            data_list      : List of lists/tuples which contain rows of data
+        ''' Writes info about data, then writes the table to html file
+            Parameters
+            ----------
+            data_headers   : List/Tuple of table column names
+
+            data_list      : List/Tuple of lists/tuples which contain rows of data
+
             source_path    : Source path of data
+
             write_total    : Toggles whether to write out a line of total rows written
+
             write_location : Toggles whether to write the location of data source
+
             html_escape    : If True (default), then html special characters are encoded
+
             table_class    : class type for the table, default is 'table sticky'
         '''
         if (not self.report_file):
