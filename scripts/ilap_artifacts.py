@@ -16,6 +16,7 @@ from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsVending import get_installedappsVending
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
+from scripts.artifacts.calllog import get_calllog
 from scripts.ilapfuncs import *
 
 # GREP searches for each module
@@ -31,7 +32,8 @@ tosearch = {
     'recentactivity':('Recent Activity', '**/system_ce/*'),
     'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
     'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
-    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db')
+    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
+    'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
