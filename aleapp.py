@@ -123,8 +123,8 @@ if os.path.exists(reportfolderbase+'temp/'):
 logfunc('')
 logfunc('Processes completed.')
 end = process_time()
-time = start - end
-logfunc("Processing time: " + str(abs(time)) )
+run_time = start - end
+logfunc(("Processing time = {}".format(time.strftime('%H:%M:%S', time.gmtime(run_time)))))
 
 log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'a', encoding='utf8')
 log.write(f'Processing time in secs: {str(abs(time))}')
