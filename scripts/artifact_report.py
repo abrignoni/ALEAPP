@@ -65,10 +65,10 @@ class ArtifactHtmlReport:
         self.report_file.write('<tr>' + ''.join( (f'<th>{x}</th>' for x in data_headers) ) + '</tr>')
         if html_escape:
             for row in data_list:
-                self.report_file.write('<tr>' + ''.join( ('<td>{}</td>'.format(html.escape(x)) for x in row) ) + '</tr>')
+                self.report_file.write('<tr>' + ''.join( ('<td>{}</td>'.format(html.escape(str(x))) for x in row) ) + '</tr>')
         else:
             for row in data_list:
-                self.report_file.write('<tr>' + ''.join( (f'<td>{x}</td>' for x in row) ) + '</tr>')
+                self.report_file.write('<tr>' + ''.join( ('<td>{}</td>'.format(str(x)) for x in row) ) + '</tr>')
         self.report_file.write('</table>')
 
     def write_minor_header(self, heading, heading_tag=''):
