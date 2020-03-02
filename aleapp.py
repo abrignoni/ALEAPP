@@ -30,6 +30,7 @@ os.makedirs(os.path.join(reportfolderbase, 'Script Logs'))
 logfunc('\n--------------------------------------------------------------------------------------')
 logfunc('ALEAPP: Android Logs, Events, and Protobuf Parser')
 logfunc('Objective: Triage Android Full System Extractions.')
+logfunc('By: Yogesh Khatri | @AlexisBrignoni | abrignoni.com')
 logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
 
 if extracttype == 'fs':

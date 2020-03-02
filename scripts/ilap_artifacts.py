@@ -13,19 +13,25 @@ from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
-
+from scripts.artifacts.installedappsGass import get_installedappsGass
+from scripts.artifacts.installedappsVending import get_installedappsVending
+from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.ilapfuncs import *
 
 # GREP searches for each module
 # Format is Key='modulename', Value=Tuple('Module Pretty Name', 'regex term')
 # Here modulename must match the get_xxxxxx function name for that module. 
 # For example: If modulename='profit', function name must be get_profit(..)
+# Don't forget to import the module above!!!!
 
 tosearch = {
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing account', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
     'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
-    'recentactivity':('Recent Activity', '**/system_ce/*')
+    'recentactivity':('Recent Activity', '**/system_ce/*'),
+    'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
+    'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
+    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
