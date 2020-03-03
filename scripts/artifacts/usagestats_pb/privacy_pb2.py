@@ -13,8 +13,10 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import scripts.artifacts.usagestats_pb.protobuf_descriptor_pb2 as protobuf__descriptor__pb2
-
+if sys.version_info.minor >= 8:
+  import google.protobuf.descriptor_pb2 as protobuf__descriptor__pb2
+else:
+  import scripts.artifacts.usagestats_pb.protobuf_descriptor_pb2 as protobuf__descriptor__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='privacy.proto',
