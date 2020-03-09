@@ -34,8 +34,8 @@ tosearch = {
     'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
     'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
-    'accounts_de': ('Accounts_de', '**accounts_de.db'),
-    'accounts_ce': ('Accounts_ce', '**accounts_ce.db')
+    'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
+    'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
