@@ -27,7 +27,7 @@ def get_cmh(files_found, report_folder):
     if usageentries > 0:
         report = ArtifactHtmlReport('Samsung CMH')
         report.start_artifact_report(report_folder, f'Geodata')
-        report.add_style()
+        report.add_script()
         data_headers = ('Data Taken', 'Latitude', 'Longitude','Address', 'URI', 'Data Location')
         data_list = []
         for row in all_rows:
