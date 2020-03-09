@@ -6,8 +6,6 @@
 import json
 import sqlite3
 import traceback
-from time import process_time
-from bs4 import BeautifulSoup
 
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.usagestats import get_usagestats
@@ -46,9 +44,9 @@ def process_artifact(files_found, artifact_func, artifact_name):
         2. Fetch the method (function) and call it
         3. Wrap processing function in a try..except block
     '''
-    artifact_name_no_spaces = artifact_name.replace(" ", "")
+    #artifact_name_no_spaces = artifact_name.replace(" ", "")
     logfunc('{} artifact executing'.format(artifact_name))
-    report_folder = os.path.join(reportfolderbase, artifact_name_no_spaces) + slash
+    report_folder = os.path.join(reportfolderbase, artifact_name) + slash
     try:
         if os.path.isdir(report_folder):
             pass

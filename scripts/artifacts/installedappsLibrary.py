@@ -25,7 +25,7 @@ def get_installedappsLibrary(files_found, report_folder):
     if usageentries > 0:
         report = ArtifactHtmlReport('Installed Apps (Library)')
         report.start_artifact_report(report_folder, 'Installed Apps (Library)')
-        report.add_style()
+        report.add_script()
         data_headers = ('Account', 'Doc ID', 'Purchase Time')
         data_list = []
         for row in all_rows:

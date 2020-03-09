@@ -1,18 +1,19 @@
-import sys, os, re, glob
+import argparse
+import os
+import PySimpleGUI as sg
+import scripts.report as report
+import shutil
+import sys
+import webbrowser
+
 from scripts.search_files import *
 from scripts.ilapfuncs import *
 from scripts.ilap_artifacts import *
-import argparse
-from argparse import RawTextHelpFormatter
-from six.moves.configparser import RawConfigParser
+from scripts.version_info import aleapp_version
 from time import process_time
-import tarfile
-import shutil
-import webbrowser
-from scripts.report import *
-from zipfile import ZipFile
 from tarfile import TarFile
-import PySimpleGUI as sg
+from time import process_time, gmtime, strftime
+from zipfile import ZipFile
 
 sg.theme('LightGreen5')   # Add a touch of color
 # All the stuff inside your window.
@@ -29,7 +30,7 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser.', font=("Helvet
             
 
 # Create the Window
-window = sg.Window('ALEAPP', layout)
+window = sg.Window(f'ALEAPP version {aleapp_version}', layout)
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     event, values = window.read()
@@ -66,7 +67,7 @@ while True:
                 sys.exit()
     
     start = process_time()
-            
+   
     os.makedirs(reportfolderbase)
     os.makedirs(os.path.join(reportfolderbase, 'Script Logs'))
     logfunc('Procesing started. Please wait. This may take a few minutes...')
@@ -74,10 +75,10 @@ while True:
 
     window.refresh()
     logfunc('\n--------------------------------------------------------------------------------------')
-    logfunc('ALEAPP: Android Logs, Events, and Protobuf Parser')
+    logfunc(f'ALEAPP v{aleapp_version}: Android Logs, Events, and Protobuf Parser')
     logfunc('Objective: Triage Android Full System Extractions.')
-    logfunc('By: Yogesh Khatri | @swiftforensics | swiftforensics.com')
     logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
+    logfunc('By: Yogesh Khatri | @SwiftForensics | swiftforensics.com')
     window.refresh()
     
     if extracttype == 'fs':
@@ -174,37 +175,37 @@ while True:
 
     else:
         logfunc('Error on argument -o')
-    
-        
-    #if os.path.exists(reportfolderbase+'temp/'):
-    #    shutil.rmtree(reportfolderbase+'temp/')        
-
+ 
     logfunc('')
     logfunc('Processes completed.')
     end = process_time()
-    time = start - end
-    logfunc("Processing time in secs: " + str(abs(time)) )
+    run_time_secs =  end - start
+    run_time_HMS = strftime('%H:%M:%S', gmtime(run_time_secs))
+    logfunc("Processing time = {}".format(run_time_HMS))
     
-    log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'a', encoding='utf8')
-    log.write(f'Processing time in secs: {str(abs(time))}')
-    log.close()
+    # log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'a', encoding='utf8')
+    # log.write(f'Processing time in secs: {str(abs(time))}')
+    # log.close()
     
-    report(reportfolderbase, time, extracttype, pathto)
-    
-    
+    logfunc('')
+    logfunc('Report generation started.')
+    report.generate_report(reportfolderbase, run_time_secs, run_time_HMS, extracttype, pathto)
+    logfunc('Report generation Completed.')
+
     if values[5] == True:
         start = process_time()
         window.refresh()
         logfunc('')
         logfunc(f'CSV export starting. This might take a while...')
         window.refresh()
-        html2csv(reportfolderbase)
-        
-    if values[5] == True:
+        html2csv(reportfolderbase) 
         end = process_time()
-        time = start - end
-        logfunc("CSV processing time in secs: " + str(abs(time)) )
+        csv_time_secs =  end - start
+        csv_time_HMS = strftime('%H:%M:%S', gmtime(csv_time_secs))
+        logfunc("CSV processing time = {}".format(csv_time_secs))
     
+    logfunc('')
+    logfunc(f'Report location: {reportfolderbase}')
     locationmessage = ('Report name: '+reportfolderbase+'index.html')
     sg.Popup('Processing completed', locationmessage)
     

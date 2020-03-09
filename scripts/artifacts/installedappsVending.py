@@ -23,14 +23,14 @@ def get_installedappsVending(files_found, report_folder):
     if usageentries > 0:
         report = ArtifactHtmlReport('Installed Apps (Vending)')
         report.start_artifact_report(report_folder, 'Installed Apps (Vending)')
-        report.add_style()
+        report.add_script()
         data_headers = ('Package Name', 'Title', 'First Download', 'Install Reason', 'Auto Update?')
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1], row[2], row[3], row[4]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
+        report.end_artifact_report()        
     else:
             logfunc('No Installed Apps data available')
     

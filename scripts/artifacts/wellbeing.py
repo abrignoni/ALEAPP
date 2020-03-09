@@ -39,7 +39,7 @@ def get_wellbeing(files_found, report_folder):
         if usageentries > 0:
             report = ArtifactHtmlReport('Wellbeing events')
             report.start_artifact_report(report_folder, 'Events')
-            report.add_style()
+            report.add_script()
             data_headers = ('Timestamp', 'Package ID', 'Event Type')
             data_list = []
             for row in all_rows:
@@ -48,7 +48,7 @@ def get_wellbeing(files_found, report_folder):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
         else:
-                logfunc('No Wellbeing event data available')
+            logfunc('No Wellbeing event data available')
         
         db.close()
         return

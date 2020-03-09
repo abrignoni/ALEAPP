@@ -39,7 +39,11 @@ def process_recentactivity(folder, uid, report_folder):
     ''')
     db.commit()
     err = 0
-    
+    if report_folder[-1] == '\\':
+        folder_name = os.path.basename(report_folder[:-1])
+    else:
+        folder_name = os.path.basename(report_folder)
+
     for filename in glob.iglob(os.path.join(folder, 'recent_tasks', '**'), recursive=True):
         if os.path.isfile(filename): # filter dirs
             file_name = os.path.basename(filename)
@@ -130,7 +134,7 @@ def process_recentactivity(folder, uid, report_folder):
     
     report = ArtifactHtmlReport('Recent Tasks, Snapshots & Images')
     report.start_artifact_report(report_folder, f'Recent Activity_{uid}')
-    report.add_style('<style> table, th, td {border: 1px solid black; border-collapse: collapse;} img {width: 180px; height: 370px; object-fit: cover;}</style>')
+    report.add_script()
     data_headers = ('Key', 'Value')
     image_data_headers = ('Snapshot_Image', 'Recent_Image')
 
@@ -176,7 +180,7 @@ def process_recentactivity(folder, uid, report_folder):
             else:
                 data_list.append((colnames[x][0], str(row[x])))
 
-        report.write_artifact_data_table(data_headers, data_list, folder, table_class='', write_total=False, write_location=False)
+        report.write_artifact_data_table(data_headers, data_list, folder, table_id='', write_total=False, write_location=False, cols_repeated_at_bottom=False)
 
         image_data_row = []
         image_data_list = [image_data_row]
@@ -184,12 +188,13 @@ def process_recentactivity(folder, uid, report_folder):
         if row[11] == 'NO IMAGE':
             image_data_row.append('No Image')
         else:
-            image_data_row.append('<a href="{0}"><img src="{0}" alt="Smiley face"></a>'.format(str(row[11])))
+            image_data_row.append('<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" alt="{0}"></a>'.format(str(row[11]), folder_name))
         if row[12] == 'NO IMAGE':
             image_data_row.append('No Image')
         else:
-            image_data_row.append('<a href="{0}"><img src="{0}" alt="Smiley face"></a>'.format(str(row[12])))
-        report.write_artifact_data_table(image_data_headers, image_data_list, folder, table_class='', write_total=False, write_location=False, html_escape=False)
+            image_data_row.append('<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" alt="{0}"></a>'.format(str(row[12]), folder_name))
+        report.write_artifact_data_table(image_data_headers, image_data_list, folder, table_id='', table_style="width: auto", 
+            write_total=False, write_location=False, html_escape=False, cols_repeated_at_bottom=False)
         report.write_raw_html('<br />')
-
+    
     report.end_artifact_report()

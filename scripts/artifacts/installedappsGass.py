@@ -20,7 +20,7 @@ def get_installedappsGass(files_found, report_folder):
     if usageentries > 0:
         report = ArtifactHtmlReport('Installed Apps')
         report.start_artifact_report(report_folder, 'Installed Apps (GMS)')
-        report.add_style()
+        report.add_script()
         data_headers = ('Bundle ID',) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:

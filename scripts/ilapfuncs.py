@@ -19,14 +19,9 @@ def is_platform_windows():
     return os.name == 'nt'
 
 def logfunc(message=""):
-    if pathlib.Path(screen_output_file_path).is_file():
-        with open(screen_output_file_path, 'a', encoding='utf8') as a:
-            print(message)
-            a.write(message+'<br>')
-    else:
-        with open(screen_output_file_path, 'a', encoding='utf8') as a:
-            print(message)
-            a.write(message+'<br>')
+    with open(screen_output_file_path, 'a', encoding='utf8') as a:
+        print(message)
+        a.write(message + '<br>' + nl)
     
 """ def deviceinfoin(ordes, kas, vas, sources): # unused function
     sources = str(sources)

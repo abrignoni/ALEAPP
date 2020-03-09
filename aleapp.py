@@ -1,13 +1,12 @@
 import argparse
 import os
+import scripts.report as report
 import shutil
 
-from argparse import RawTextHelpFormatter
 from scripts.search_files import *
 from scripts.ilapfuncs import *
 from scripts.ilap_artifacts import *
-from scripts.report import *
-from six.moves.configparser import RawConfigParser
+from scripts.version_info import aleapp_version
 from tarfile import TarFile
 from time import process_time, gmtime, strftime
 from zipfile import ZipFile
@@ -26,10 +25,10 @@ os.makedirs(reportfolderbase)
 os.makedirs(os.path.join(reportfolderbase, 'Script Logs'))
 
 logfunc('\n--------------------------------------------------------------------------------------')
-logfunc('ALEAPP: Android Logs, Events, and Protobuf Parser')
+logfunc(f'ALEAPP v{aleapp_version}: Android Logs, Events, and Protobuf Parser')
 logfunc('Objective: Triage Android Full System Extractions.')
-logfunc('By: Yogesh Khatri | @AlexisBrignoni | abrignoni.com')
 logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
+logfunc('By: Yogesh Khatri | @SwiftForensics | swiftforensics.com')
 
 if extracttype == 'fs':
     
@@ -112,26 +111,22 @@ elif extracttype == 'zip':
 
 else:
     logfunc('Error on argument -o')
-'''    
-if os.path.exists(reportfolderbase+'temp/'):
-    shutil.rmtree(reportfolderbase+'temp/')
-    #call reporting script        
-'''
 
 logfunc('')
 logfunc('Processes completed.')
 end = process_time()
-run_time =  end - start
-logfunc(("Processing time = {}".format(strftime('%H:%M:%S', gmtime(run_time)))))
+run_time_secs =  end - start
+run_time_HMS = strftime('%H:%M:%S', gmtime(run_time_secs))
+logfunc("Processing time = {}".format(run_time_HMS))
 
-log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'a', encoding='utf8')
-log.write(("Processing time = {} ({} seconds)".format(strftime('%H:%M:%S', gmtime(run_time)), run_time)))
-log.close()
+# log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'a', encoding='utf8')
+# log.write("Processing time = {} ({} seconds)".format(run_time_HMS, run_time_secs))
+# log.close()
 
 logfunc('')
 logfunc('Report generation started.')
-report(reportfolderbase, run_time, extracttype, pathto)
+report.generate_report(reportfolderbase, run_time_secs, run_time_HMS, extracttype, pathto)
 logfunc('Report generation Completed.')
 logfunc('')
-logfunc(f'Report name: {reportfolderbase}')
+logfunc(f'Report location: {reportfolderbase}')
     
