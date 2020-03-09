@@ -17,6 +17,9 @@ from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.artifacts.calllog import get_calllog
 from scripts.artifacts.accounts_de import get_accounts_de
 from scripts.artifacts.accounts_ce import get_accounts_ce
+from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
+from scripts.artifacts.cmh import get_cmh
+
 from scripts.ilapfuncs import *
 
 # GREP searches for each module
@@ -36,6 +39,8 @@ tosearch = {
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
     'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
     'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db')
+    'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
+    'cmh':('Samsung_CMH', '**/cmh.db')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
