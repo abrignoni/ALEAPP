@@ -100,6 +100,11 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
             
             # Now delete .temphtml
             os.remove(path)
+            # If dir is empty, delete it
+            try:
+                os.rmdir(os.path.dirname(path))
+            except OSError:
+                pass # Perhaps it was not empty!
 
     # Create index.html's page content
     create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path, nav_list_data)
