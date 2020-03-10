@@ -29,6 +29,8 @@ def get_recentactivity(files_found, report_folder, seeker):
 
 def process_recentactivity(folder, uid, report_folder):
 
+    slash = '\\' if is_platform_windows() else '/' 
+
     db = sqlite3.connect(os.path.join(report_folder, 'RecentAct_{}.db'.format(uid)))
     cursor = db.cursor()
     #Create table recent.
@@ -39,7 +41,7 @@ def process_recentactivity(folder, uid, report_folder):
     ''')
     db.commit()
     err = 0
-    if report_folder[-1] == '\\':
+    if report_folder[-1] == slash: 
         folder_name = os.path.basename(report_folder[:-1])
     else:
         folder_name = os.path.basename(report_folder)
