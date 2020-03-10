@@ -49,11 +49,20 @@ tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
 
 slash = '\\' if is_platform_windows() else '/'
 
-def process_artifact(files_found, artifact_func, artifact_name):
+def process_artifact(files_found, artifact_func, artifact_name, seeker):
     ''' Perform the common setup for each artifact, ie, 
         1. Create the report folder for it
         2. Fetch the method (function) and call it
         3. Wrap processing function in a try..except block
+
+        Args:
+            files_found: list of files that matched regex
+
+            artifact_func: method to call
+
+            artifact_name: Pretty name of artifact
+
+            seeker: FileSeeker object to pass to method
     '''
     #artifact_name_no_spaces = artifact_name.replace(" ", "")
     logfunc('{} artifact executing'.format(artifact_name))
@@ -70,7 +79,7 @@ def process_artifact(files_found, artifact_func, artifact_name):
         return
     try:
         method = globals()['get_' + artifact_func]
-        method(files_found, report_folder)
+        method(files_found, report_folder, seeker)
     except Exception as ex:
         logfunc('Reading {} artifact had errors!'.format(artifact_name))
         logfunc('Error was {}'.format(str(ex)))

@@ -7,7 +7,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, is_platform_windows
 
-def get_accounts_de(files_found, report_folder):
+def get_accounts_de(files_found, report_folder, seeker):
 
     slash = '\\' if is_platform_windows() else '/' 
 

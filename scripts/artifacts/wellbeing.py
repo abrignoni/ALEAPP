@@ -3,7 +3,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, is_platform_windows
 
-def get_wellbeing(files_found, report_folder):
+def get_wellbeing(files_found, report_folder, seeker):
 
     for file_found in files_found:
         file_found = str(file_found)

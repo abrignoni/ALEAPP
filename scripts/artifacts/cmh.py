@@ -7,7 +7,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, is_platform_windows
 
-def get_cmh(files_found, report_folder):
+def get_cmh(files_found, report_folder, seeker):
 
     file_found = str(files_found[0])
     db = sqlite3.connect(file_found)

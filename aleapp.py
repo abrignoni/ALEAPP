@@ -7,9 +7,7 @@ from scripts.search_files import *
 from scripts.ilapfuncs import *
 from scripts.ilap_artifacts import *
 from scripts.version_info import aleapp_version
-from tarfile import TarFile
 from time import process_time, gmtime, strftime
-from zipfile import ZipFile
 
 def main():
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
@@ -36,84 +34,44 @@ def crunch_artifacts(extracttype, pathto):
     logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
     logfunc('By: Yogesh Khatri | @SwiftForensics | swiftforensics.com')
 
+    seeker = None
     if extracttype == 'fs':
-        
-        logfunc(f'Artifact categories to parse: {str(len(tosearch))}')
-        logfunc(f'File/Directory selected: {pathto}')
-        logfunc('\n--------------------------------------------------------------------------------------')
-        logfunc( )
-
-        log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
-        nl = '\n' #literal in order to have new lines in fstrings that create text files
-        log.write(f'Extraction/Path selected: {pathto}<br><br>')
-        
-        # Search for the files per the arguments
-        for key, val in tosearch.items():
-            filefound = search(pathto, val[1])
-            if not filefound:
-                logfunc()
-                logfunc(f'No files found for {key} -> {val[1]}')
-                log.write(f'No files found for {key} -> {val[1]}<br>')
-            else:
-                logfunc()
-                process_artifact(filefound, key, val[0])
-                for pathh in filefound:
-                    log.write(f'Files for {val[1]} located at {pathh}<br><br>')
-        log.close()
+        seeker = FileSeekerDir(pathto)
 
     elif extracttype == 'tar':
-        
-        logfunc(f'Artifact categories to parse: {str(len(tosearch))}')
-        logfunc(f'File/Directory selected: {pathto}')
-        logfunc('\n--------------------------------------------------------------------------------------')
-        
-        log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
-        nl = '\n' #literal in order to have new lines in fstrings that create text files
-        log.write(f'Extraction/Path selected: {pathto}<br><br>')    # tar searches and function calls
-
-        t = TarFile(pathto)
-
-        for key, val in tosearch.items():
-            filefound = searchtar(t, val[1], reportfolderbase)
-            if not filefound:
-                logfunc()
-                logfunc(f'No files found for {key} -> {val[1]}')
-                log.write(f'No files found for {key} -> {val[1]}<br><br>')
-            else:
-                logfunc()
-                process_artifact(filefound, key, val[0])
-                for pathh in filefound:
-                    log.write(f'Files for {val[1]} located at {pathh}<br><br>')
-        log.close()
-        t.close()
+        seeker = FileSeekerTar(pathto, reportfolderbase)
 
     elif extracttype == 'zip':
-            
-            logfunc(f'Artifact categories to parse: {str(len(tosearch))}')
-            logfunc(f'File/Directory selected: {pathto}')
-            logfunc('\n--------------------------------------------------------------------------------------')
-            logfunc('')
-            log = open(os.path.join(reportfolderbase,'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
-            log.write(f'Extraction/Path selected: {pathto}<br><br>')    # tar searches and function calls
-
-            z = ZipFile(pathto)
-            name_list = z.namelist()
-            for key, val in tosearch.items():
-                filefound = searchzip(z, name_list, val[1], reportfolderbase)
-                if not filefound:
-                    logfunc('')
-                    logfunc(f'No files found for {key} -> {val[1]}')
-                    log.write(f'No files found for {key} -> {val[1]}<br><br>')
-                else:
-                    logfunc('')
-                    process_artifact(filefound, key, val[0])
-                    for pathh in filefound:
-                        log.write(f'Files for {val[1]} located at {pathh}<br><br>')
-            log.close()
-            z.close()
+        seeker = FileSeekerZip(pathto, reportfolderbase)
 
     else:
         logfunc('Error on argument -o (input type)')
+        return
+
+    # Now ready to run
+    logfunc(f'Artifact categories to parse: {str(len(tosearch))}')
+    logfunc(f'File/Directory selected: {pathto}')
+    logfunc('\n--------------------------------------------------------------------------------------')
+
+    log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
+    nl = '\n' #literal in order to have new lines in fstrings that create text files
+    log.write(f'Extraction/Path selected: {pathto}<br><br>')
+    
+    # Search for the files per the arguments
+    for key, val in tosearch.items():
+        artifact_pretty_name = val[0]
+        artifact_search_regex = val[1]
+        filefound = seeker.search(artifact_search_regex)
+        if not filefound:
+            logfunc()
+            logfunc(f'No files found for {key} -> {artifact_search_regex}')
+            log.write(f'No files found for {key} -> {artifact_search_regex}<br><br>')
+        else:
+            logfunc()
+            process_artifact(filefound, key, artifact_pretty_name, seeker)
+            for pathh in filefound:
+                log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
+    log.close()
 
     logfunc('')
     logfunc('Processes completed.')
