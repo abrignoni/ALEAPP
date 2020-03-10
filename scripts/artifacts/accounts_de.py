@@ -45,7 +45,7 @@ def process_accounts_de(folder, uid, report_folder):
     if usageentries > 0:
         report = ArtifactHtmlReport('Accounts_de')
         report.start_artifact_report(report_folder, f'accounts_de_{uid}')
-        report.add_style()
+        report.add_script()
         data_headers = ('Name', 'Type', 'Last password entry')
         data_list = []
         for row in all_rows:

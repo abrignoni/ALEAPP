@@ -14,7 +14,7 @@ def get_wellbeingaccount(files_found, report_folder):
     
     report = ArtifactHtmlReport('Wellbeing Account')
     report.start_artifact_report(report_folder, 'Account Data')
-    report.add_style()
+    report.add_script()
     data_headers = ('Protobuf Parsed Data', 'Protobuf Data')
     data_list = []
     data_list.append(('<pre id=\"json\">'+str(parsedContent).replace("\\n", "<br>")+'</pre>', str(content)))

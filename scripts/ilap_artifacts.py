@@ -6,8 +6,6 @@
 import json
 import sqlite3
 import traceback
-from time import process_time
-from bs4 import BeautifulSoup
 
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.usagestats import get_usagestats
@@ -32,15 +30,15 @@ from scripts.ilapfuncs import *
 
 tosearch = {
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
-    'wellbeingaccount': ('Wellbeing_account', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
-    'usagestats':('Usage_Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
-    'recentactivity':('Recent_Activity', '**/system_ce/*'),
-    'installedappsGass':('Installed_Apps', '**/com.google.android.gms/databases/gass.db'),
-    'installedappsVending': ('Installed_Apps', '**/com.android.vending/databases/localappstate.db'),
-    'installedappsLibrary': ('Installed_Apps', '**/com.android.vending/databases/library.db'),
-    'calllog': ('Call_Logs', '**/com.android.providers.contacts/databases/calllog.db'),
-    'accounts_de': ('Accounts_de', '**/accounts_de.db'),
-    'accounts_ce': ('Accounts_ce', '**/accounts_ce.db'),
+    'wellbeingaccount': ('Wellbeing account', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
+    'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
+    'recentactivity':('Recent Activity', '**/system_ce/*'),
+    'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
+    'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
+    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
+    'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
+    'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
+    'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db'),
     'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
     'cmh':('Samsung_CMH', '**/cmh.db')
     }
@@ -57,9 +55,9 @@ def process_artifact(files_found, artifact_func, artifact_name):
         2. Fetch the method (function) and call it
         3. Wrap processing function in a try..except block
     '''
-    artifact_name_no_spaces = artifact_name.replace(" ", "")
+    #artifact_name_no_spaces = artifact_name.replace(" ", "")
     logfunc('{} artifact executing'.format(artifact_name))
-    report_folder = os.path.join(reportfolderbase, artifact_name_no_spaces) + slash
+    report_folder = os.path.join(reportfolderbase, artifact_name) + slash
     try:
         if os.path.isdir(report_folder):
             pass

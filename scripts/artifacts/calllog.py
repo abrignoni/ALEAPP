@@ -54,7 +54,7 @@ def get_calllog(files_found, report_folder):
     if usageentries > 0:
         report = ArtifactHtmlReport('Call logs')
         report.start_artifact_report(report_folder, 'Call logs')
-        report.add_style()
+        report.add_script()
         data_headers = ('Phone Account Address', 'Partner', 'Call Date','Type','Duration in Secs','Partner Location','Country ISO','Data','Mime Type','Transcription','Deleted')
         data_list = []
         for row in all_rows:

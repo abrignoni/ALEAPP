@@ -115,7 +115,7 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
 
 def get_usagestats(files_found, report_folder):
 
-    logfunc ('Android Usagestats XML & Potobuf Parser')
+    logfunc ('Android Usagestats XML & Protobuf Parser')
     logfunc ('By: @AlexisBrignoni & @SwiftForensics')
     logfunc ('Web: abrignoni.com & swiftforensics.com')
     
@@ -340,7 +340,7 @@ def process_usagestats(folder, uid, report_folder):
 
     report = ArtifactHtmlReport('Usagestats')
     report.start_artifact_report(report_folder, f'UsageStats_{uid}')
-    report.add_style()
+    report.add_script()
     data_headers = ('Usage Type', 'Last Time Active', 'Time Active in Msecs', 'Time Active in Secs', 
                     'Last Time Service Used', 'Last Time Visible', 'Total Time Visible', 'App Launch Count', 
                     'Package', 'Types', 'Class', 'Source')
