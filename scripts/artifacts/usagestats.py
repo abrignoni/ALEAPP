@@ -113,7 +113,7 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
 
     db.commit()
 
-def get_usagestats(files_found, report_folder):
+def get_usagestats(files_found, report_folder, seeker):
 
     logfunc ('Android Usagestats XML & Protobuf Parser')
     logfunc ('By: @AlexisBrignoni & @SwiftForensics')

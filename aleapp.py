@@ -68,7 +68,7 @@ def crunch_artifacts(extracttype, pathto):
             log.write(f'No files found for {key} -> {artifact_search_regex}<br><br>')
         else:
             logfunc()
-            process_artifact(filefound, key, val[0])
+            process_artifact(filefound, key, artifact_pretty_name, seeker)
             for pathh in filefound:
                 log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
     log.close()
