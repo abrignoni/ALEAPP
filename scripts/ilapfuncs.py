@@ -13,15 +13,23 @@ reportfolderbase = os.path.join('.', 'ALEAPP_Reports_' + currenttime)
 base = '/ALEAPP_Reports_' + currenttime + '/' # For use in web browser url
 temp = os.path.join(reportfolderbase, 'temp')
 screen_output_file_path = os.path.join(reportfolderbase, 'Script Logs', 'Screen Output.html')
+gui_window = None
 
 def is_platform_windows():
     '''Returns True if running on Windows'''
     return os.name == 'nt'
 
+class GuiWindow:
+    '''This only exists to hold window handle if script is run from GUI'''
+    window_handle = None # static variable 
+
 def logfunc(message=""):
     with open(screen_output_file_path, 'a', encoding='utf8') as a:
         print(message)
         a.write(message + '<br>' + nl)
+
+    if GuiWindow.window_handle:
+        GuiWindow.window_handle.refresh()
     
 """ def deviceinfoin(ordes, kas, vas, sources): # unused function
     sources = str(sources)
