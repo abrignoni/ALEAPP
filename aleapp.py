@@ -46,13 +46,13 @@ if extracttype == 'fs':
         filefound = search(pathto, val[1])
         if not filefound:
             logfunc()
-            logfunc(f'No files found for {key} -> {val[1]}.')
-            log.write(f'No files found for {key} -> {val[1]}.<br>')
+            logfunc(f'No files found for {key} -> {val[1]}')
+            log.write(f'No files found for {key} -> {val[1]}<br>')
         else:
             logfunc()
             process_artifact(filefound, key, val[0])
             for pathh in filefound:
-                log.write(f'Files for {val[1]} located at {pathh}.<br>')
+                log.write(f'Files for {val[1]} located at {pathh}<br><br>')
     log.close()
 
 elif extracttype == 'tar':
@@ -72,14 +72,14 @@ elif extracttype == 'tar':
         if not filefound:
             
             logfunc()
-            logfunc(f'No files found for {key} -> {val[1]}.')
-            log.write(f'No files found for {key} -> {val[1]}.<br>')
+            logfunc(f'No files found for {key} -> {val[1]}')
+            log.write(f'No files found for {key} -> {val[1]}<br><br>')
         else:
             
             logfunc()
             process_artifact(filefound, key, val[0])
             for pathh in filefound:
-                log.write(f'Files for {val[1]} located at {pathh}.<br>')
+                log.write(f'Files for {val[1]} located at {pathh}<br><br>')
     log.close()
 
 elif extracttype == 'zip':
@@ -98,13 +98,13 @@ elif extracttype == 'zip':
             if not filefound:
                 logfunc('')
                 logfunc(f'No files found for {key} -> {val[1]}.')
-                log.write(f'No files found for {key} -> {val[1]}.<br>')
+                log.write(f'No files found for {key} -> {val[1]}<br><br>')
             else:
                 
                 logfunc('')
                 process_artifact(filefound, key, val[0])
                 for pathh in filefound:
-                    log.write(f'Files for {val[1]} located at {pathh}.<br>')
+                    log.write(f'Files for {val[1]} located at {pathh}<br><br>')
         log.close()
 
         z.close()

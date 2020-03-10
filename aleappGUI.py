@@ -99,15 +99,15 @@ while True:
             if not filefound:
                 window.refresh()
                 logfunc('')
-                logfunc(f'No files found for {key} -> {val[1]}.')
-                log.write(f'No files found for {key} -> {val[1]}.<br><br>')
+                logfunc(f'No files found for {key} -> {val[1]}')
+                log.write(f'No files found for {key} -> {val[1]}<br><br>')
             else:
                 logfunc('')
                 window.refresh()
                 #globals()[key](filefound)
                 process_artifact(filefound, key, val[0])
                 for pathh in filefound:
-                    log.write(f'Files for {val[1]} located at {pathh}.<br><br>')
+                    log.write(f'Files for {val[1]} located at {pathh}<br><br>')
         log.close()
 
     elif extracttype == 'tar':
@@ -129,8 +129,8 @@ while True:
             if not filefound:
                 window.refresh()
                 logfunc('')
-                logfunc(f'No files found for {key} -> {val[1]}.')
-                log.write(f'No files found for {key} -> {val[1]}.<br><br>')
+                logfunc(f'No files found for {key} -> {val[1]}')
+                log.write(f'No files found for {key} -> {val[1]}<br><br>')
             else:
                 
                 logfunc('')
@@ -138,7 +138,7 @@ while True:
                 #globals()[key](filefound)
                 process_artifact(filefound, key, val[0])
                 for pathh in filefound:
-                    log.write(f'Files for {val[1]} located at {pathh}.<br><br>')
+                    log.write(f'Files for {val[1]} located at {pathh}<br><br>')
         log.close()
 
     elif extracttype == 'zip':
@@ -160,8 +160,8 @@ while True:
                 if not filefound:
                     window.refresh()
                     logfunc('')
-                    logfunc(f'No files found for {key} -> {val[1]}.')
-                    log.write(f'No files found for {key} -> {val[1]}.<br><br>')
+                    logfunc(f'No files found for {key} -> {val[1]}')
+                    log.write(f'No files found for {key} -> {val[1]}<br><br>')
                 else:
                     
                     logfunc('')
@@ -169,7 +169,7 @@ while True:
                     #globals()[key](filefound)
                     process_artifact(filefound, key, val[0])
                     for pathh in filefound:
-                        log.write(f'Files for {val[1]} located at {pathh}.<br><br>')
+                        log.write(f'Files for {val[1]} located at {pathh}<br><br>')
             log.close()
             z.close()
 
@@ -206,9 +206,8 @@ while True:
     
     logfunc('')
     logfunc(f'Report location: {reportfolderbase}')
-    locationmessage = ('Report name: '+reportfolderbase+'index.html')
+    locationmessage = ('Report name: ' + os.path.join(reportfolderbase, 'index.html'))
     sg.Popup('Processing completed', locationmessage)
     
     basep = os.getcwd()
     webbrowser.open_new_tab('file://'+basep+base+'index.html')
-    sys.exit()
