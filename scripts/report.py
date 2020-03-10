@@ -11,17 +11,27 @@ from scripts.ilapfuncs import logfunc
 from scripts.version_info import aleapp_version, aleapp_contributors
 
 def get_icon_name(category, artifact):
+    ''' Returns the icon name from the feathericons collection. To add an icon type for 
+        an artifact, select one of the types from ones listed @ feathericons.com
+        If no icon is available, the alert triangle is returned as default icon.
+    '''
     category = category.upper()
     artifact = artifact.upper()
-    icon = 'alert-triangle'
-    if   category == 'RECENT ACTIVITY': icon = 'activity'
+    icon = 'alert-triangle' # default (if not defined!)
+
+    if category.find('ACCOUNT') >= 0:
+        if artifact.find('AUTH') >= 0:  icon = 'key'
+        else:                           icon = 'user'
+    elif category == 'CALL LOGS':       icon = 'phone'
+    elif category == 'INSTALLED APPS':  icon = 'package'
+    elif category == 'RECENT ACTIVITY': icon = 'activity'
+    elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
-    elif category == 'INSTALLED APPS':  icon = 'package'
-
+    
     return icon
     
 def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):

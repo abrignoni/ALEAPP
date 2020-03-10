@@ -106,6 +106,10 @@ body {
     box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
 
+.nav-link {
+    padding-bottom: .3rem;
+}
+
 
 /* Added table-xsm for extra small table padding */
 

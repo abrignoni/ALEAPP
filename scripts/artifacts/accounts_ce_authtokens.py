@@ -48,7 +48,7 @@ def process_accounts_ce_authtokens(folder, uid, report_folder):
     if usageentries > 0:
         report = ArtifactHtmlReport('Authokens')
         report.start_artifact_report(report_folder, f'Authtokens_{uid}')
-        report.add_style()
+        report.add_script()
         data_headers = ('ID', 'Name', 'Account Type','Authtoken Type', 'Authtoken')
         data_list = []
         for row in all_rows:
