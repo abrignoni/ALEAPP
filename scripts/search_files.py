@@ -7,6 +7,7 @@ from tarfile import TarFile
 from zipfile import ZipFile
 
 class FileSeekerBase:
+    # This is an abstract base class
     def search(self, filepattern_to_search):
         '''Returns a list of paths for files/folders that matched'''
         pass
@@ -66,28 +67,3 @@ class FileSeekerZip(FileSeekerBase):
 
     def cleanup(self):
         self.zip_file.close()
-
-
-# def searchtar(t, val, reportfolderbase):
-#     temp = os.path.join(reportfolderbase, 'temp')
-#     pathlist = []
-#     for member in t.getmembers():
-#         if fnmatch.fnmatch(member.name, val):
-#             try:
-#                 t.extract(member.name, path=temp)
-#                 pathlist.append(os.path.join(temp, Path(member.name)))
-#             except:
-#                 logfunc('Could not write file to filesystem')
-#     return pathlist
-
-# def searchzip(z, name_list, val, reportfolderbase):
-#     temp = os.path.join(reportfolderbase, 'temp')
-#     pathlist = []
-#     for member in name_list:
-#         if fnmatch.fnmatch(member, val):
-#             try:
-#                 z.extract(member, path=temp)
-#                 pathlist.append(os.path.join(temp, Path(member)))
-#             except:
-#                 logfunc('Could not write file to filesystem')    
-#     return pathlist
