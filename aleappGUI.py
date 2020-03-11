@@ -74,3 +74,4 @@ while True:
     
     basep = os.getcwd()
     webbrowser.open_new_tab('file://' + basep + base + 'index.html')
+    sys.exit()
