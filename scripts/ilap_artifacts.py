@@ -3,22 +3,21 @@
 # Also add the grep search for that module using the same name
 # to the 'tosearch' data structure.
 
-import json
-import sqlite3
 import traceback
 
-from scripts.artifacts.recentactivity import get_recentactivity
-from scripts.artifacts.usagestats import get_usagestats
-from scripts.artifacts.wellbeing import get_wellbeing
-from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
+from scripts.artifacts.accounts_ce import get_accounts_ce
+from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
+from scripts.artifacts.accounts_de import get_accounts_de
+from scripts.artifacts.calllog import get_calllog
+from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsVending import get_installedappsVending
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
-from scripts.artifacts.calllog import get_calllog
-from scripts.artifacts.accounts_de import get_accounts_de
-from scripts.artifacts.accounts_ce import get_accounts_ce
-from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
-from scripts.artifacts.cmh import get_cmh
+from scripts.artifacts.recentactivity import get_recentactivity
+from scripts.artifacts.smsmms import get_sms_mms
+from scripts.artifacts.usagestats import get_usagestats
+from scripts.artifacts.wellbeing import get_wellbeing
+from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 
 from scripts.ilapfuncs import *
 
@@ -29,18 +28,19 @@ from scripts.ilapfuncs import *
 # Don't forget to import the module above!!!!
 
 tosearch = {
-    'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
-    'wellbeingaccount': ('Wellbeing account', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
-    'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
-    'recentactivity':('Recent Activity', '**/system_ce/*'),
-    'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
-    'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
-    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
-    'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
-    'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
-    'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db'),
-    'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
-    'cmh':('Samsung_CMH', '**/cmh.db')
+    # 'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
+    # 'wellbeingaccount': ('Wellbeing account', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
+    # 'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
+    # 'recentactivity':('Recent Activity', '**/system_ce/*'),
+    # 'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
+    # 'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
+    # 'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
+    # 'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
+    # 'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
+    # 'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db'),
+    # 'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
+    # 'cmh':('Samsung_CMH', '**/cmh.db'),
+    'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*') # Get mmssms.db, mms-wal.db
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
