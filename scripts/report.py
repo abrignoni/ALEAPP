@@ -27,6 +27,7 @@ def get_icon_name(category, artifact):
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
+    elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
@@ -36,8 +37,6 @@ def get_icon_name(category, artifact):
     
 def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
 
-    # x = sorted(next(os.walk(reportfolderbase))[1])
-    # control = (x[0])
     control = None
     side_heading = \
     """<h6 class="sidebar-heading justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -88,12 +87,10 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
             filename = old_filename.replace(".temphtml", ".html")
             # search for it in nav_list_data, then mark that one as 'active' tab
             active_nav_list_data = mark_item_active(nav_list_data, filename) + icon_display_trigger
-            f = open(path, 'r')
-            artifact_data = f.read()
-            f.close()
+            artifact_data = get_file_content(path)
 
             # Now write out entire html page for artifact
-            f = open(os.path.join(reportfolderbase, filename), 'w')
+            f = open(os.path.join(reportfolderbase, filename), 'w', encoding='utf8')
             artifact_data = insert_sidebar_code(artifact_data, active_nav_list_data, path)
             f.write(artifact_data)
             f.close()
@@ -117,7 +114,7 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     shutil.copytree('./scripts/MDB-Free_4.13.0', os.path.join(elements_folder, 'MDB-Free_4.13.0'))
 
 def get_file_content(path):
-    f = open(path, 'r')
+    f = open(path, 'r', encoding='utf8')
     data = f.read()
     f.close()
     return data
@@ -160,18 +157,6 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
                         author[3])
     credits_code = credits_block.format(authors_data)
 
-    # General, non-case info
-    # info_list =  [  ['Blog', '<a href="https://abrignoni.com" target="_blank">abrignoni.com</a>'],
-    #                 ['Github', '<a href="https://github.com/abrignoni" target="_blank">github.com/abrignoni</a>'],
-    #                 ['Twitter', '<a href="https://twitter.com/AlexisBrignoni" target="_blank">@AlexisBrignoni</a>']  ]
-                    
-    # content += generate_key_val_table_without_headings('Informational', info_list, html_escape=False) + '<br />'
-
-    # about_list = [  ['Artifact references', '<a href="https://abrignoni.com" target="_blank">Pending</a>'],
-    #                 ['Awesome Friends', '<a href="https://abrignoni.blogspot.com/2020/01/awesome-friends.html" target="_blank">Contributors I can\'t thank enough.</a>']  ]
-                    
-    # content += generate_key_val_table_without_headings('About', about_list, html_escape=False) + '<br />'
-
     # WRITE INDEX.HTML LAST
     filename = 'index.html'
     page_title = 'ALEAPP Report'
@@ -179,7 +164,7 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     body_description = 'ALEAPP is an open source project that aims to parse every known Android artifact for the purpose of forensic analysis.'
     active_nav_list_data = mark_item_active(nav_list_data, filename)
 
-    f = open(os.path.join(reportfolderbase, filename), 'w')
+    f = open(os.path.join(reportfolderbase, filename), 'w', encoding='utf8')
     f.write(page_header.format(page_title))
     f.write(body_start.format(f"ALEAPP {aleapp_version}"))
     f.write(body_sidebar_setup + active_nav_list_data + body_sidebar_trailer)
