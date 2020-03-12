@@ -58,9 +58,21 @@ def get_calllog(files_found, report_folder, seeker):
         data_headers = ('Phone Account Address', 'Partner', 'Call Date','Type','Duration in Secs','Partner Location','Country ISO','Data','Mime Type','Transcription','Deleted')
         data_list = []
         for row in all_rows:
-            data_list.append((row[0], row[1], row[2], row[3], str(row[4]), row[5], row[6], row[7], row[8], row[9], str(row[10])))
+            # Setup icons for call type
+            call_type = row[3]
+            if   call_type == 'Incoming':  call_type_html = call_type + ' <i data-feather="phone-incoming" stroke="green"></i>'
+            elif call_type == 'Outgoing':  call_type_html = call_type + ' <i data-feather="phone-outgoing" stroke="green"></i>'
+            elif call_type == 'Missed':    call_type_html = call_type + ' <i data-feather="phone-missed" stroke="red"></i>'
+            elif call_type == 'Voicemail': call_type_html = call_type + ' <i data-feather="voicemail" stroke="brown"></i>'
+            elif call_type == 'Rejected':  call_type_html = call_type + ' <i data-feather="x" stroke="red"></i>'
+            elif call_type == 'Blocked':   call_type_html = call_type + ' <i data-feather="phone-off" stroke="red"></i>'
+            elif call_type == 'Answered Externally': call_type_html = call_type + ' <i data-feather="phone-forwarded"></i>'
+            else:
+                call_type_html = call_type
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
+            data_list.append((row[0], row[1], row[2], call_type_html, str(row[4]), row[5], row[6], row[7], row[8], row[9], str(row[10])))
+
+        report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
         report.end_artifact_report()
     else:
         logfunc('No Call Log data available')
