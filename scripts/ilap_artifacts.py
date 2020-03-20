@@ -18,6 +18,7 @@ from scripts.artifacts.smsmms import get_sms_mms
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
+from scripts.artifacts.chrome import get_chrome
 
 from scripts.ilapfuncs import *
 
@@ -40,7 +41,8 @@ tosearch = {
     'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db'),
     'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
     'cmh':('Samsung_CMH', '**/cmh.db'),
-    'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*') # Get mmssms.db, mms-wal.db
+    'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
+    'chrome':('Chrome', '**/app_chrome/Default/History*')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
