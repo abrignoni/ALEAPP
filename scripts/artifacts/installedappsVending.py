@@ -12,7 +12,15 @@ def get_installedappsVending(files_found, report_folder, seeker):
     SELECT
         package_name,
         title,
-        datetime(first_download_ms / 1000, "unixepoch") as fdl,
+        CASE
+            first_download_ms
+            WHEN
+                "0" 
+            THEN
+                "0" 
+            ELSE
+                datetime(first_download_ms / 1000, "unixepoch")
+        END AS "fdl", 
         install_reason,
         auto_update
     FROM appstate  
