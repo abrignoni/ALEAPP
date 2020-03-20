@@ -23,7 +23,10 @@ def get_icon_name(category, artifact):
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
     elif category == 'CALL LOGS':       icon = 'phone'
-    elif category == 'CHROME':          icon = 'chrome'
+    elif category == 'CHROME':          
+        if artifact == 'SEARCH TERMS': icon = 'search'
+        elif artifact == 'DOWNLOADS':   icon = 'download'
+        else:                           icon = 'chrome'
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'

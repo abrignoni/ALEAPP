@@ -35,6 +35,6 @@ def get_cmh(files_found, report_folder, seeker):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
     else:
-        logfunc(f'No Samsung_CMH_GeoData_{uid} available')    
+        logfunc(f'No Samsung_CMH_GeoData available')    
     db.close()
     return
