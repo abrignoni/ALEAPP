@@ -26,6 +26,7 @@ def get_icon_name(category, artifact):
     elif category == 'CHROME':          
         if artifact == 'SEARCH TERMS': icon = 'search'
         elif artifact == 'DOWNLOADS':   icon = 'download'
+        elif artifact == 'BOOKMARKS':   icon = 'bookmark'
         else:                           icon = 'chrome'
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
