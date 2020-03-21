@@ -21,6 +21,8 @@ from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.chrome import get_chrome 
 from scripts.artifacts.chromeSearchTerms import get_chromeSearchTerms
 from scripts.artifacts.chromeDownloads import get_chromeDownloads
+from scripts.artifacts.chromeLoginData import get_chromeLoginData
+from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
 
 from scripts.ilapfuncs import *
 
@@ -46,7 +48,9 @@ tosearch = {
     'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
     'chrome':('Chrome', '**/app_chrome/Default/History*'),
     'chromeSearchTerms':('Chrome', '**/app_chrome/Default/History*'),
-    'chromeDownloads':('Chrome', '**/app_chrome/Default/History*')
+    'chromeDownloads':('Chrome', '**/app_chrome/Default/History*'),
+    'chromeLoginData':('Chrome', '**/app_chrome/Default/Login Data*'),
+    'chromeBookmarks':('Chrome', '**/app_chrome/Default/Bookmarks*')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
