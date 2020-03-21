@@ -24,6 +24,7 @@ from scripts.artifacts.chromeDownloads import get_chromeDownloads
 from scripts.artifacts.chromeLoginData import get_chromeLoginData
 from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
 from scripts.artifacts.chromeCookies import get_chromeCookies
+from scripts.artifacts.chromeTopSites import get_chromeTopSites
 
 from scripts.ilapfuncs import *
 
@@ -52,7 +53,8 @@ tosearch = {
     'chromeDownloads':('Chrome', '**/app_chrome/Default/History*'),
     'chromeLoginData':('Chrome', '**/app_chrome/Default/Login Data*'),
     'chromeBookmarks':('Chrome', '**/app_chrome/Default/Bookmarks*'),
-    'chromeCookies':('Chrome', '**/app_chrome/Default/Cookies*')
+    'chromeCookies':('Chrome', '**/app_chrome/Default/Cookies*'),
+    'chromeTopSites':('Chrome', '**/app_chrome/Default/Top Sites*')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
