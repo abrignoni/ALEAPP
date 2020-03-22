@@ -26,7 +26,7 @@ from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
 from scripts.artifacts.chromeCookies import get_chromeCookies
 from scripts.artifacts.chromeTopSites import get_chromeTopSites
 from scripts.artifacts.googlequicksearchbox import get_quicksearch
-from scripts.artifacts.googleMusic import get_googleMusic
+from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 
 from scripts.ilapfuncs import *
 
@@ -58,7 +58,7 @@ tosearch = {
     'chromeCookies':('Chrome', '**/app_chrome/Default/Cookies*'),
     'chromeTopSites':('Chrome', '**/app_chrome/Default/Top Sites*'),
     'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
-    'googleMusic':('Music', '**/com.google.intelligence.sense/db/history_db*')
+    'googleNowPlaying':('Music', '**/com.google.intelligence.sense/db/history_db*')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
