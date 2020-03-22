@@ -25,6 +25,7 @@ from scripts.artifacts.chromeLoginData import get_chromeLoginData
 from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
 from scripts.artifacts.chromeCookies import get_chromeCookies
 from scripts.artifacts.chromeTopSites import get_chromeTopSites
+from scripts.artifacts.googlequicksearchbox import get_quicksearch
 
 from scripts.ilapfuncs import *
 
@@ -54,7 +55,8 @@ tosearch = {
     'chromeLoginData':('Chrome', '**/app_chrome/Default/Login Data*'),
     'chromeBookmarks':('Chrome', '**/app_chrome/Default/Bookmarks*'),
     'chromeCookies':('Chrome', '**/app_chrome/Default/Cookies*'),
-    'chromeTopSites':('Chrome', '**/app_chrome/Default/Top Sites*')
+    'chromeTopSites':('Chrome', '**/app_chrome/Default/Top Sites*'),
+    'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
