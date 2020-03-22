@@ -66,7 +66,7 @@ def get_googleNowPlaying(files_found, report_folder, seeker):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
     else:
-        print('No Music history')
+        print('No Now Playing history')
 
     db.close()
     return
