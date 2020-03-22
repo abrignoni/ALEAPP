@@ -28,8 +28,8 @@ def get_googleMusic(files_found, report_folder, seeker):
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
-        report = ArtifactHtmlReport('Music')
-        report.start_artifact_report(report_folder, 'Google Music')
+        report = ArtifactHtmlReport('Now Playing')
+        report.start_artifact_report(report_folder, 'Now Playing')
         report.add_script()
         data_headers = ('Timestamp','Timezone','Song Title','Artist','Duration','Full Data' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
