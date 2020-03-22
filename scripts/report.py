@@ -32,6 +32,7 @@ def get_icon_name(category, artifact):
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
+    elif category == 'MUSIC':           icon = 'music'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
     elif category == 'SMS & MMS':       icon = 'message-square'
