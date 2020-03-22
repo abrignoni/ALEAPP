@@ -6,7 +6,7 @@ from scripts.parse3 import ParseProto
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, is_platform_windows
 
-def get_googleMusic(files_found, report_folder, seeker):
+def get_googleNowPlaying(files_found, report_folder, seeker):
     file_found = str(files_found[0])
     db = sqlite3.connect(file_found)
     cursor = db.cursor()
