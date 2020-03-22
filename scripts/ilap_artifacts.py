@@ -58,7 +58,7 @@ tosearch = {
     'chromeCookies':('Chrome', '**/app_chrome/Default/Cookies*'),
     'chromeTopSites':('Chrome', '**/app_chrome/Default/Top Sites*'),
     'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
-    'googleNowPlaying':('Music', '**/com.google.intelligence.sense/db/history_db*')
+    'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
