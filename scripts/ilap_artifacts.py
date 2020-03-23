@@ -9,7 +9,16 @@ from scripts.artifacts.accounts_ce import get_accounts_ce
 from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
 from scripts.artifacts.accounts_de import get_accounts_de
 from scripts.artifacts.calllog import get_calllog
+from scripts.artifacts.chrome import get_chrome 
+from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
+from scripts.artifacts.chromeCookies import get_chromeCookies
+from scripts.artifacts.chromeDownloads import get_chromeDownloads
+from scripts.artifacts.chromeLoginData import get_chromeLoginData
+from scripts.artifacts.chromeSearchTerms import get_chromeSearchTerms
+from scripts.artifacts.chromeTopSites import get_chromeTopSites
 from scripts.artifacts.cmh import get_cmh
+from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
+from scripts.artifacts.googlequicksearchbox import get_quicksearch
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsVending import get_installedappsVending
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
@@ -18,15 +27,6 @@ from scripts.artifacts.smsmms import get_sms_mms
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
-from scripts.artifacts.chrome import get_chrome 
-from scripts.artifacts.chromeSearchTerms import get_chromeSearchTerms
-from scripts.artifacts.chromeDownloads import get_chromeDownloads
-from scripts.artifacts.chromeLoginData import get_chromeLoginData
-from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
-from scripts.artifacts.chromeCookies import get_chromeCookies
-from scripts.artifacts.chromeTopSites import get_chromeTopSites
-from scripts.artifacts.googlequicksearchbox import get_quicksearch
-from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
 
 from scripts.ilapfuncs import *
