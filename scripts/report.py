@@ -30,6 +30,7 @@ def get_icon_name(category, artifact):
         elif artifact == 'TOP SITES':   icon = 'list'
         else:                           icon = 'chrome'
     elif category == 'INSTALLED APPS':  icon = 'package'
+    elif category == 'WI-FI PROFILES':  icon = 'wifi'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'NOW PLAYING':           icon = 'music'
