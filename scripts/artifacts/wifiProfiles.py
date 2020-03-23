@@ -1,0 +1,113 @@
+import os
+import xml.etree.ElementTree as ET
+import textwrap
+import datetime
+
+from scripts.artifact_report import ArtifactHtmlReport
+from scripts.ilapfuncs import logfunc, is_platform_windows
+
+def get_wifiProfiles(files_found, report_folder, seeker):
+
+    #slash = '\\' if is_platform_windows() else '/' 
+    hit = 0
+    Identity = ''
+    Password = ''
+    data_list = []
+    for file_found in files_found:
+        file_found = str(file_found)
+        tree = ET.parse(file_found)
+
+        for node in tree.iter('Network'):
+            for elem in node.iter():
+                if not elem.tag==node.tag:
+                    #print(elem.attrib)
+                    data = elem.attrib
+                    for key, value in data.items():
+                        if value == 'ConfigKey':
+                            cut = elem.text.split('"')
+                            SecurityMode = (cut[2]) 
+                            hit = 1
+
+                        if value == 'SSID':
+                            SSID = elem.text
+                            SSID = SSID.strip('"')
+                            hit = 1
+
+                        if value == 'PreSharedKey':
+                            PreSharedKey = elem.text
+                            hit = 1
+
+                        if value == 'WEPKeys':
+                            WEPKeys = elem.text
+                            hit = 1
+
+                        if value == 'DefaultGwMacAddress':
+                            DefaultGwMacAddress = elem.text
+                            hit = 1
+                        
+
+                        if value == 'semCreationTime':
+                            semCreationTime = elem.attrib['value']
+                            if int(semCreationTime) > 0:
+                                semCreationTime = datetime.datetime.fromtimestamp(int(semCreationTime) / 1000)
+                            hit = 1
+                        
+
+                        if value == 'semUpdateTime':
+                            semUpdateTime = elem.attrib['value']
+                            if int(semUpdateTime) > 0:
+                                semUpdateTime = datetime.datetime.fromtimestamp(int(semUpdateTime) / 1000)
+                            hit = 1
+                        
+
+                        if value == 'LastConnectedTime':
+                            LastConnectedTime = elem.attrib['value']
+                            if int(LastConnectedTime) > 0:
+                                LastConnectedTime = datetime.datetime.fromtimestamp(int(LastConnectedTime) / 1000)
+                            hit = 1
+                        
+
+                        if value == 'CaptivePortal':
+                            CaptivePortal = elem.attrib['value']
+                            hit = 1
+                        
+
+                        if value == 'LoginUrl':
+                            LoginUrl = elem.text
+                            hit = 1
+                        
+
+                        if value == 'IpAssignment':
+                            IpAssignment = elem.text 
+                            hit = 1
+                        
+                        if value == 'Identity':
+                            Identity = elem.text  
+                            hit = 1
+
+                        if value == 'Password':
+                            Password = elem.text  
+                            hit = 1
+                        #data_list.append((SecurityMode, SSID, PreSharedKey, WEPKeys, DefaultGwMacAddress, semCreationTime, semUpdateTime, LastConnectedTime, CaptivePortal, LoginUrl, IpAssignment))
+            if hit == 1:           
+                if PreSharedKey == None:
+                    PreSharedKey = ''
+                if WEPKeys == None:
+                    WEPKeys = ''
+                if Password == None:
+                    Password = ''
+                if LoginUrl == None:
+                    LoginUrl = ''
+                data_list.append((SecurityMode, SSID, (textwrap.fill(PreSharedKey, width=10)), (textwrap.fill(WEPKeys, width=10)), (textwrap.fill(Password, width=10)), Identity, DefaultGwMacAddress, semCreationTime, semUpdateTime, LastConnectedTime, CaptivePortal, (textwrap.fill(LoginUrl, width=10)), IpAssignment, file_found))
+                Identity = ''
+                Password = ''
+    if hit == 1:
+        report = ArtifactHtmlReport('Wi-Fi Profiles')
+        report.start_artifact_report(report_folder, 'Wi-Fi Profiles')
+        report.add_script()
+        data_headers = ('SecurityMode', 'SSID', 'PreSharedKey', 'WEPKeys', 'Password', 'Identity', 'DefaultGwMacAddress', 'semCreationTime', 'semUpdateTime', 'LastConnectedTime', 'CaptivePortal', 'LoginUrl', 'IpAssignment', 'Path')
+        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.end_artifact_report()
+    else:
+        logfunc('No Wi-Fi Profiles data available')
+  
