@@ -1,73 +1,141 @@
-import sqlite3
-import textwrap
 import json
-from scripts.parse3 import ParseProto
+import scripts.blackboxprotobuf as blackboxprotobuf
+import sqlite3
+import time
 
+from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, is_platform_windows
 
-def get_googleNowPlaying(files_found, report_folder, seeker):
-    file_found = str(files_found[0])
-    db = sqlite3.connect(file_found)
-    cursor = db.cursor()
-    cursor.execute('''
-    Select
-    CASE
-        timestamp 
-        WHEN
-            "0" 
-        THEN
-            "0" 
-        ELSE
-            datetime(timestamp / 1000, "unixepoch")
-    END AS "timestamp",
-    history_entry
-    FROM
-    recognition_history
-    ''')
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Now Playing')
-        report.start_artifact_report(report_folder, 'Now Playing')
-        report.add_script()
-        data_headers = ('Timestamp','Timezone','Song Title','Artist','Duration','Full Data' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
+is_windows = is_platform_windows()
+slash = '\\' if is_windows else '/' 
 
-        for row in all_rows: 
-            binfile = open(report_folder + "binfile.bin", "wb")
-            binfile.write(row[1])
-            binfile.close()
+def recursive_convert_bytes_to_str(obj):
+    '''Recursively convert bytes to strings if possible'''
+    ret = obj
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            obj[k] = recursive_convert_bytes_to_str(v)
+    elif isinstance(obj, list):
+        for index, v in enumerate(obj):
+            obj[index] = recursive_convert_bytes_to_str(v)
+    elif isinstance(obj, bytes):
+        # test for string
+        try:
+            ret = obj.decode('utf8', 'backslashreplace')
+        except UnicodeDecodeError:
+            ret = str(obj)
+    return ret
+
+def FilterInvalidValue(obj):
+    '''Return obj if it is valid, else empty string'''
+    # Remove any dictionary or list types
+    if isinstance(obj, dict) or isinstance(obj, list):
+        return ''
+    return obj
+
+def AreContentsSame(last_data_set, timezones, songtitle, artist, duration, album, year):
+    return last_data_set[1] == timezones and \
+            last_data_set[2] == songtitle and \
+            last_data_set[3] == artist and \
+            last_data_set[4] == duration and \
+            last_data_set[5] == album and \
+            last_data_set[6] == year
         
-            data = ParseProto(report_folder + "binfile.bin")
-            #print(data)
-            try:
-                timezones = (data["07:00:string"])
-            except:
-                timezones = ''
 
-            try:
-                songtitle = (data["09:01:embedded message"]["03:02:string"])
-            except:
-                songtitle = ''
+def get_googleNowPlaying(files_found, report_folder, seeker):
+    for file_found in files_found:
+        file_found = str(file_found)
 
-            try:
-                artist = (data["09:01:embedded message"]["04:03:string"]) 
-            except:
-                artist = ''
-            try:
-                durationinsecs = (data["09:01:embedded message"]["06:04:64-bit"]) 
-            except:
-                durationinsecs = ''
+        if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
+            # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
+            continue
+        elif not file_found.endswith('history_db'):
+            continue # Skip all other files (-wal)
+
+        db = sqlite3.connect(file_found)
+        cursor = db.cursor()
+        cursor.execute('''
+        Select
+        CASE
+            timestamp 
+            WHEN
+                "0" 
+            THEN
+                "" 
+            ELSE
+                datetime(timestamp / 1000, "unixepoch")
+        END AS "timestamp",
+        history_entry
+        FROM
+        recognition_history
+        ''')
+        all_rows = cursor.fetchall()
+        usageentries = len(all_rows)
+        if usageentries > 0:
+            description = 'This is data stored by the Now Playing feature in Pixel phones, which '\
+                        'shows song data on the lock screen for any music playing nearby. It\'s ' \
+                        'part of <a href="https://play.google.com/store/apps/details?id=com.google.intelligence.sense"'\
+                        ' target="_blank">Pixel Ambient Services</a>.'
+            report = ArtifactHtmlReport('Now Playing History')
+            report.start_artifact_report(report_folder, 'Now Playing', description)
+            report.add_script()
             
+            data_headers = ('Timestamp', 'Timezone', 'Song Title', 'Artist', 'Duration',
+                            'Album', 'Album Year')
+            data_list = []
+
+            pb_types = {'9': {'type': 'message', 'message_typedef': 
+                        {
+                        '6': {'type': 'double', 'name': ''} # This definition converts field to a double from generic fixed64
+                        } }
+                        }
+            last_data_set = [] # Since there are a lot of similar entries differing only in timestamp, we can combine them.
             
-            data_list.append((row[0],timezones,songtitle,artist,durationinsecs,str(data)))
+            for row in all_rows:
+                timestamp = row[0]
+                pb = row[1]
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-    else:
-        print('No Now Playing history')
+                data, actual_types = blackboxprotobuf.decode_message(pb, pb_types)
+                data = recursive_convert_bytes_to_str(data)
+                
+                try:             timezones = FilterInvalidValue(data["7"])
+                except KeyError: timezones = ''
 
-    db.close()
-    return
+                try:             songtitle = FilterInvalidValue(data["9"]["3"])
+                except KeyError: songtitle = ''
 
+                try:             artist = FilterInvalidValue(data["9"]["4"]) 
+                except KeyError: artist = ''
+
+                try:             durationinsecs = data["9"]["6"]
+                except KeyError: durationinsecs = ''
+
+                try:             album = FilterInvalidValue(data["9"]["13"])
+                except KeyError: album = ''
+
+                try:             year = FilterInvalidValue(data["9"]["14"])
+                except KeyError: year = ''
+                
+                if durationinsecs:
+                    duration = time.strftime('%H:%M:%S', time.gmtime(durationinsecs))
+                if not last_data_set:
+                    last_data_set = [timestamp, escape(timezones), escape(songtitle), escape(artist), duration, escape(album), year]
+                elif AreContentsSame(last_data_set, timezones, songtitle, artist, duration, album, year):
+                    if last_data_set[0] == timestamp: # exact duplicate, do not add
+                        pass
+                    else:
+                        last_data_set[0] += ',<br />' + timestamp
+                else:
+                    data_list.append(last_data_set)
+                    last_data_set = []
+            if last_data_set:
+                data_list.append(last_data_set)
+            logfunc("{} entries grouped into {}".format(usageentries, len(data_list)))
+            report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+            report.end_artifact_report()
+        else:
+            logfunc('No Now playing history')
+
+        db.close()
+        return
