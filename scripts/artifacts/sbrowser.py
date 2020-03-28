@@ -4,7 +4,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, is_platform_windows
 
-def get_chrome(files_found, report_folder, seeker):
+def get_sbrowser(files_found, report_folder, seeker):
     
     file_found = str(files_found[0])
     db = sqlite3.connect(file_found)
@@ -23,7 +23,7 @@ def get_chrome(files_found, report_folder, seeker):
     usageentries = len(all_rows)
     if usageentries > 0:
         report = ArtifactHtmlReport('Browser History')
-        report.start_artifact_report(report_folder, 'Chrome History')
+        report.start_artifact_report(report_folder, 'Browser History')
         report.add_script()
         data_headers = ('URL','Title','Visit Count','Last Visit Time','Hidden' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []

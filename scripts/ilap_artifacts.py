@@ -28,6 +28,13 @@ from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
+from scripts.artifacts.sbrowser import get_sbrowser 
+from scripts.artifacts.sbrowserBookmarks import get_sbrowserBookmarks
+from scripts.artifacts.sbrowserCookies import get_sbrowserCookies
+from scripts.artifacts.sbrowserDownloads import get_sbrowserDownloads
+from scripts.artifacts.sbrowserLoginData import get_sbrowserLoginData
+from scripts.artifacts.sbrowserSearchTerms import get_sbrowserSearchTerms
+from scripts.artifacts.sbrowserTopSites import get_sbrowserTopSites
 
 from scripts.ilapfuncs import *
 
@@ -60,7 +67,13 @@ tosearch = {
     'chromeTopSites':('Chrome', '**/app_chrome/Default/Top Sites*'),
     'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
-    'wifiProfiles':('Wi-Fi Profiles', '**/wifi/WifiConfigStore.xml')
+    'sbrowser':('Web Browser', '**/app_sbrowser/Default/History*'),
+    'sbrowserSearchTerms':('Web Browser', '**/app_sbrowser/Default/History*'),
+    'sbrowserDownloads':('Web Browser', '**/app_sbrowser/Default/History*'),
+    'sbrowserLoginData':('Web Browser', '**/app_sbrowser/Default/Login Data*'),
+    'sbrowserBookmarks':('Web Browser', '**/app_sbrowser/Default/Bookmarks*'),
+    'sbrowserCookies':('Web Browser', '**/app_sbrowser/Default/Cookies*'),
+    'sbrowserTopSites':('Web Browser', '**/app_sbrowser/Default/Top Sites*'),
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
