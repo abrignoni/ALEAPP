@@ -25,11 +25,6 @@ from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsVending import get_installedappsVending
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.artifacts.recentactivity import get_recentactivity
-from scripts.artifacts.smsmms import get_sms_mms
-from scripts.artifacts.usagestats import get_usagestats
-from scripts.artifacts.wellbeing import get_wellbeing
-from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
-from scripts.artifacts.wifiProfiles import get_wifiProfiles
 from scripts.artifacts.sbrowser import get_sbrowser 
 from scripts.artifacts.sbrowserBookmarks import get_sbrowserBookmarks
 from scripts.artifacts.sbrowserCookies import get_sbrowserCookies
@@ -38,6 +33,11 @@ from scripts.artifacts.sbrowserLoginData import get_sbrowserLoginData
 from scripts.artifacts.sbrowserSearchTerms import get_sbrowserSearchTerms
 from scripts.artifacts.sbrowserTopSites import get_sbrowserTopSites 
 from scripts.artifacts.sbrowserWebsearch import get_sbrowserWebsearch
+from scripts.artifacts.smsmms import get_sms_mms
+from scripts.artifacts.usagestats import get_usagestats
+from scripts.artifacts.wellbeing import get_wellbeing
+from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
+from scripts.artifacts.wifiProfiles import get_wifiProfiles
 
 from scripts.ilapfuncs import *
 
