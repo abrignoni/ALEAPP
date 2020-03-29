@@ -16,6 +16,7 @@ from scripts.artifacts.chromeDownloads import get_chromeDownloads
 from scripts.artifacts.chromeLoginData import get_chromeLoginData
 from scripts.artifacts.chromeSearchTerms import get_chromeSearchTerms
 from scripts.artifacts.chromeTopSites import get_chromeTopSites
+from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
 from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.googleQuickSearchbox import get_quicksearch
@@ -29,6 +30,14 @@ from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
+from scripts.artifacts.sbrowser import get_sbrowser 
+from scripts.artifacts.sbrowserBookmarks import get_sbrowserBookmarks
+from scripts.artifacts.sbrowserCookies import get_sbrowserCookies
+from scripts.artifacts.sbrowserDownloads import get_sbrowserDownloads
+from scripts.artifacts.sbrowserLoginData import get_sbrowserLoginData
+from scripts.artifacts.sbrowserSearchTerms import get_sbrowserSearchTerms
+from scripts.artifacts.sbrowserTopSites import get_sbrowserTopSites 
+from scripts.artifacts.sbrowserWebsearch import get_sbrowserWebsearch
 
 from scripts.ilapfuncs import *
 
@@ -59,10 +68,18 @@ tosearch = {
     'chromeBookmarks':('Chrome', '**/app_chrome/Default/Bookmarks*'),
     'chromeCookies':('Chrome', '**/app_chrome/Default/Cookies*'),
     'chromeTopSites':('Chrome', '**/app_chrome/Default/Top Sites*'),
+    'chromeWebsearch':('Chrome', '**/app_chrome/Default/History*'),
     'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
     'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
-    'wifiProfiles':('Wi-Fi Profiles', '**/wifi/WifiConfigStore.xml')
+    'sbrowser':('Web Browser', '**/app_sbrowser/Default/History*'),
+    'sbrowserSearchTerms':('Web Browser', '**/app_sbrowser/Default/History*'),
+    'sbrowserDownloads':('Web Browser', '**/app_sbrowser/Default/History*'),
+    'sbrowserLoginData':('Web Browser', '**/app_sbrowser/Default/Login Data*'),
+    'sbrowserBookmarks':('Web Browser', '**/app_sbrowser/Default/Bookmarks*'),
+    'sbrowserCookies':('Web Browser', '**/app_sbrowser/Default/Cookies*'),
+    'sbrowserTopSites':('Web Browser', '**/app_sbrowser/Default/Top Sites*'),
+    'sbrowserWebsearch':('Web Browser', '**/app_sbrowser/Default/History*')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',

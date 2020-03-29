@@ -25,10 +25,18 @@ def get_icon_name(category, artifact):
     elif category == 'CALL LOGS':       icon = 'phone'
     elif category == 'CHROME':          
         if artifact == 'SEARCH TERMS': icon = 'search'
+        elif artifact == 'CHROME SEARCH TERMS': icon = 'search'
         elif artifact == 'DOWNLOADS':   icon = 'download'
         elif artifact == 'BOOKMARKS':   icon = 'bookmark'
         elif artifact == 'TOP SITES':   icon = 'list'
         else:                           icon = 'chrome'
+    elif category == 'WEB BROWSER':          
+        if artifact == 'BROWSER WEB SEARCH TERMS': icon = 'search'
+        elif artifact == 'WEB SEARCH TERMS': icon = 'search'
+        elif artifact == 'BROWSER DOWNLOADS':   icon = 'download'
+        elif artifact == 'BROWSER BOOKMARKS':   icon = 'bookmark'
+        elif artifact == 'BROWSER TOP SITES':   icon = 'list'
+        else:                           icon = 'compass'
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'WI-FI PROFILES':  icon = 'wifi'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
