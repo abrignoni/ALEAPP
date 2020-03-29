@@ -19,7 +19,8 @@ from scripts.artifacts.chromeTopSites import get_chromeTopSites
 from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
 from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
-from scripts.artifacts.googlequicksearchbox import get_quicksearch
+from scripts.artifacts.googleQuickSearchbox import get_quicksearch
+from scripts.artifacts.googleQuickSearchboxRecent import get_quicksearch_recent
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsVending import get_installedappsVending
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
@@ -68,7 +69,8 @@ tosearch = {
     'chromeCookies':('Chrome', '**/app_chrome/Default/Cookies*'),
     'chromeTopSites':('Chrome', '**/app_chrome/Default/Top Sites*'),
     'chromeWebsearch':('Chrome', '**/app_chrome/Default/History*'),
-    'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
+    'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
+    'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'sbrowser':('Web Browser', '**/app_sbrowser/Default/History*'),
     'sbrowserSearchTerms':('Web Browser', '**/app_sbrowser/Default/History*'),
