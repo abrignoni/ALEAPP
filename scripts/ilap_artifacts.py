@@ -8,6 +8,7 @@ import traceback
 from scripts.artifacts.accounts_ce import get_accounts_ce
 from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
 from scripts.artifacts.accounts_de import get_accounts_de
+from scripts.artifacts.build import get_build
 from scripts.artifacts.calllog import get_calllog
 from scripts.artifacts.chrome import get_chrome 
 from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
@@ -33,6 +34,7 @@ from scripts.artifacts.sbrowserLoginData import get_sbrowserLoginData
 from scripts.artifacts.sbrowserSearchTerms import get_sbrowserSearchTerms
 from scripts.artifacts.sbrowserTopSites import get_sbrowserTopSites 
 from scripts.artifacts.sbrowserWebsearch import get_sbrowserWebsearch
+from scripts.artifacts.siminfo import get_siminfo
 from scripts.artifacts.smsmms import get_sms_mms
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.wellbeing import get_wellbeing
@@ -79,7 +81,9 @@ tosearch = {
     'sbrowserBookmarks':('Web Browser', '**/app_sbrowser/Default/Bookmarks*'),
     'sbrowserCookies':('Web Browser', '**/app_sbrowser/Default/Cookies*'),
     'sbrowserTopSites':('Web Browser', '**/app_sbrowser/Default/Top Sites*'),
-    'sbrowserWebsearch':('Web Browser', '**/app_sbrowser/Default/History*')
+    'sbrowserWebsearch':('Web Browser', '**/app_sbrowser/Default/History*'),
+    'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),
+    'build':('Device Info', '**/vendor/build.prop')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
