@@ -30,6 +30,10 @@ def get_icon_name(category, artifact):
         elif artifact == 'BOOKMARKS':   icon = 'bookmark'
         elif artifact == 'TOP SITES':   icon = 'list'
         else:                           icon = 'chrome'
+    elif category == 'DEVICE INFO':     
+        if artifact == 'BUILD INFO':    icon = 'terminal'
+        else:                           icon = 'info'
+
     elif category == 'WEB BROWSER':          
         if artifact == 'BROWSER WEB SEARCH TERMS': icon = 'search'
         elif artifact == 'WEB SEARCH TERMS': icon = 'search'
