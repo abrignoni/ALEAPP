@@ -23,17 +23,23 @@ def get_icon_name(category, artifact):
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
     elif category == 'CALL LOGS':       icon = 'phone'
+    elif category == 'USER DICTIONARY': icon = 'book'
     elif category == 'CHROME':          
         if artifact == 'SEARCH TERMS': icon = 'search'
         elif artifact == 'CHROME SEARCH TERMS': icon = 'search'
         elif artifact == 'DOWNLOADS':   icon = 'download'
         elif artifact == 'BOOKMARKS':   icon = 'bookmark'
         elif artifact == 'TOP SITES':   icon = 'list'
+        elif artifact == 'OFFLINE PAGES':   icon = 'download'
         else:                           icon = 'chrome'
     elif category == 'DEVICE INFO':     
         if artifact == 'BUILD INFO':    icon = 'terminal'
+        elif artifact == 'PARTNER SETTINGS':    icon = 'settings'
+        elif artifact.find('SETTINGS_SECURE_') >= 0:    icon = 'settings'
         else:                           icon = 'info'
-
+    elif category == 'GOOGLE PLAY':     
+        if artifact == 'GOOGLE PLAY SEARCHES':    icon = 'search'
+        else:                           icon = 'play'
     elif category == 'WEB BROWSER':          
         if artifact == 'BROWSER WEB SEARCH TERMS': icon = 'search'
         elif artifact == 'WEB SEARCH TERMS': icon = 'search'
