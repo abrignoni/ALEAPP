@@ -95,7 +95,8 @@ tosearch = {
     'build':('Device Info', '**/vendor/build.prop'),
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
-    'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml')
+    'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
+	'wifiProfiles':('WiFI Profiles', '**/misc/wifi/WifiConfigStore*')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
