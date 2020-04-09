@@ -2,11 +2,25 @@ import os
 import xml.etree.ElementTree as ET
 import textwrap
 import datetime
+import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, is_platform_windows
 
 def get_wifiProfiles(files_found, report_folder, seeker):
+
+    #Create sqlite databases
+    db = sqlite3.connect(os.path.join(report_folder, 'WiFiConfig.db'))
+    cursor = db.cursor()
+
+    #Create table WiFiConfig.
+
+    cursor.execute('''
+        CREATE TABLE wifi(ConfigKey TEXT, SSID TEXT, PreSharedKey TEXT, WEPKeys TEXT, DefaultGwMacAddress TEXT, semCreationTime INTEGER,
+        semUpdateTime INTEGER, LastConnectedTime INTEGER, CaptivePortal TEXT, LoginUrl TEXT, IpAssignment TEXT, Identity TEXT, Password TEXT)
+    ''')
+
+    db.commit()
 
     #slash = '\\' if is_platform_windows() else '/' 
     hit = 0
@@ -48,6 +62,8 @@ def get_wifiProfiles(files_found, report_folder, seeker):
 
                         if value == 'semCreationTime':
                             semCreationTime = elem.attrib['value']
+                            semCreationTimeUTC = elem.attrib['value']
+
                             if int(semCreationTime) > 0:
                                 semCreationTime = datetime.datetime.fromtimestamp(int(semCreationTime) / 1000)
                             hit = 1
@@ -55,6 +71,7 @@ def get_wifiProfiles(files_found, report_folder, seeker):
 
                         if value == 'semUpdateTime':
                             semUpdateTime = elem.attrib['value']
+                            semUpdateTimeUTC = elem.attrib['value']
                             if int(semUpdateTime) > 0:
                                 semUpdateTime = datetime.datetime.fromtimestamp(int(semUpdateTime) / 1000)
                             hit = 1
@@ -62,6 +79,7 @@ def get_wifiProfiles(files_found, report_folder, seeker):
 
                         if value == 'LastConnectedTime':
                             LastConnectedTime = elem.attrib['value']
+                            LastConnectedTimeUTC = elem.attrib['value']
                             if int(LastConnectedTime) > 0:
                                 LastConnectedTime = datetime.datetime.fromtimestamp(int(LastConnectedTime) / 1000)
                             hit = 1
@@ -98,9 +116,21 @@ def get_wifiProfiles(files_found, report_folder, seeker):
                     Password = ''
                 if LoginUrl == None:
                     LoginUrl = ''
+                
+                cursor = db.cursor()
+                datainsert = (SecurityMode, SSID, PreSharedKey, WEPKeys, Password, Identity, DefaultGwMacAddress, semCreationTimeUTC, semUpdateTimeUTC, LastConnectedTimeUTC, CaptivePortal, LoginUrl, IpAssignment)
+                cursor.execute('INSERT INTO wifi (ConfigKey, SSID, PreSharedKey, WEPKeys, Password, Identity, DefaultGwMacAddress, semCreationTime, '
+                'semUpdateTime , LastConnectedTime , CaptivePortal , LoginUrl , IpAssignment ) '
+                'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+                db.commit()
+
                 data_list.append((SecurityMode, SSID, (textwrap.fill(PreSharedKey, width=10)), (textwrap.fill(WEPKeys, width=10)), (textwrap.fill(Password, width=10)), Identity, DefaultGwMacAddress, semCreationTime, semUpdateTime, LastConnectedTime, CaptivePortal, (textwrap.fill(LoginUrl, width=10)), IpAssignment, file_found))
+                
+                #data_list.append(datainsert)
                 Identity = ''
                 Password = ''
+    db.close()
+
     if hit == 1:
         report = ArtifactHtmlReport('Wi-Fi Profiles')
         report.start_artifact_report(report_folder, 'Wi-Fi Profiles')
