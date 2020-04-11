@@ -40,11 +40,13 @@ from scripts.artifacts.sbrowserWebsearch import get_sbrowserWebsearch
 from scripts.artifacts.settingsSecure import get_settingsSecure
 from scripts.artifacts.siminfo import get_siminfo
 from scripts.artifacts.smsmms import get_sms_mms
+from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.userDict import get_userDict
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
+
 
 
 
@@ -58,7 +60,8 @@ from scripts.ilapfuncs import *
 
 tosearch = {
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
-    'wellbeingaccount': ('Wellbeing account', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
+    'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
+    'usageapps': ('Usage Apps', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'recentactivity':('Recent Activity', '**/system_ce/*'),
     'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
@@ -95,8 +98,7 @@ tosearch = {
     'build':('Device Info', '**/vendor/build.prop'),
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
-    'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
-	'wifiProfiles':('WiFI Profiles', '**/misc/wifi/WifiConfigStore*')
+    'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml')
     }
 '''
 tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
