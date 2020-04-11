@@ -31,18 +31,33 @@ def process_siminfo(folder, uid, report_folder):
     cursor = db.cursor()
 
     #Query to create report
-    cursor.execute('''
-    SELECT
-        number,
-        imsi,
-        display_name,
-        carrier_name,
-        iso_country_code,
-        carrier_id,
-        icc_id
-    FROM
-        siminfo
-    ''')
+    try:
+        cursor.execute('''
+        SELECT
+            number,
+            imsi,
+            display_name,
+            carrier_name,
+            iso_country_code,
+            carrier_id,
+            icc_id
+        FROM
+            siminfo
+        ''')
+    except:
+        cursor.execute('''
+        SELECT
+            number,
+            card_id,
+            display_name,
+            carrier_name,
+            carrier_name,
+            carrier_name,
+            icc_id
+        FROM
+            siminfo
+        ''')
+
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
@@ -50,9 +65,18 @@ def process_siminfo(folder, uid, report_folder):
         report.start_artifact_report(report_folder, f'SIM_info_{uid}')
         report.add_script()
         data_headers = ('Number', 'IMSI', 'Display Name','Carrier Name', 'ISO Code', 'Carrier ID', 'ICC ID')
+        
         data_list = []
         for row in all_rows:
-            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
+            if row[3] == row[4]:
+                row1 = ''
+                row4 = ''
+                row5 = ''
+            else:
+                row1 = row[1]
+                row4 = row[4]
+                row5 = row[5]
+            data_list.append((row[0], row1, row[2], row[3], row4, row5, row[6]))
         report.write_artifact_data_table(data_headers, data_list, folder)
         report.end_artifact_report()
     else:
