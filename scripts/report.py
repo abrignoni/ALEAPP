@@ -49,6 +49,7 @@ def get_icon_name(category, artifact):
         else:                           icon = 'compass'
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'WIFI PROFILES':  icon = 'wifi'
+    elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'NOW PLAYING':           icon = 'music'
