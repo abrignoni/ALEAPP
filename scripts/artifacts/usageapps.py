@@ -60,8 +60,8 @@ def get_usageapps(files_found, report_folder, seeker):
     if usageentries > 0:
         description = 'This is data stored by the reflection_gel_events.db, which '\
                     'shows data usage from apps to included deleted apps. '
-        report = ArtifactHtmlReport('Usage Apps')
-        report.start_artifact_report(report_folder, 'Usage Apps', description)
+        report = ArtifactHtmlReport('Device Personalization Services')
+        report.start_artifact_report(report_folder, 'Personalization Services', description)
         report.add_script()
         
         data_headers = ('Timestamp', 'Deleted?', 'BundleID', 'From', 'From in Proto', 'Proto Full')
