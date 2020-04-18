@@ -46,6 +46,8 @@ from scripts.artifacts.userDict import get_userDict
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
+from scripts.artifacts.journalStrings import get_journalStrings 
+from scripts.artifacts.walStrings import get_walStrings
 
 
 
@@ -57,7 +59,7 @@ from scripts.ilapfuncs import *
 # Here modulename must match the get_xxxxxx function name for that module. 
 # For example: If modulename='profit', function name must be get_profit(..)
 # Don't forget to import the module above!!!!
-
+'''
 tosearch = {
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
@@ -99,12 +101,17 @@ tosearch = {
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
     'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
-    'wifiProfiles':('WiFi Profiles', '**/misc/wifi/WifiConfigStore*')
+    'wifiProfiles':('WiFi Profiles', '**/misc/wifi/WifiConfigStore*'),
+    'journalStrings':('SQLite Journaling', '**/*-journal'),
+    'walStrings':('SQLite Journaling', '**/*-wal')
     }
 '''
-tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
-            'redditchats':'*Data/Application/*/Documents/*/accountData/*/chat/*/chat.sqlite'}
-'''
+tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
+            'walStrings':('SQLite Journaling', '**/*-wal')
+            }
+
+#'walStrings':('SQLite Journaling - Strings', '**/*-wal')
+
 
 slash = '\\' if is_platform_windows() else '/'
 
