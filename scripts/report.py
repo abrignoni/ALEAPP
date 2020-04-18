@@ -48,6 +48,7 @@ def get_icon_name(category, artifact):
         elif artifact == 'BROWSER TOP SITES':   icon = 'list'
         else:                           icon = 'compass'
     elif category == 'INSTALLED APPS':  icon = 'package'
+    elif category == 'MEDIA METADATA':  icon = 'file-plus'
     elif category == 'WIFI PROFILES':  icon = 'wifi'
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
@@ -56,7 +57,7 @@ def get_icon_name(category, artifact):
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
     elif category == 'SMS & MMS':       icon = 'message-square'
-    elif category == 'USAGE APPS':     icon = 'bar-chart-2'
+    elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
