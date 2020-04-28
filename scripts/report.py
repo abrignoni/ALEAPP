@@ -56,8 +56,15 @@ def get_icon_name(category, artifact):
     elif category == 'NOW PLAYING':           icon = 'music'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
-    elif category == 'SMS & MMS':       icon = 'message-square'
-    elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
+    elif category == 'MOBILE INSTALLATION LOGS':     icon = 'clipboard'
+    elif category == 'CONNECTED TO':     icon = 'zap'
+    elif category == 'NETWORK DATA':     icon = 'pie-chart'
+    elif category == 'SMS & IMESSAGE':       icon = 'message-square'
+    elif category == 'IOS BUILD':       icon = 'git-commit'
+    elif category == 'IOS SCREENS':       icon = 'maximize'
+    elif category == 'IOS SCREENS':       icon = 'maximize'
+    elif category == 'NOTIFICATIONS':     icon = 'bell'
+    elif category == 'CELLULAR WIRELESS':     icon = 'wifi'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
@@ -135,13 +142,19 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
 
     # Create index.html's page content
     create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path, nav_list_data)
-    
     elements_folder = os.path.join(reportfolderbase, '_elements')
     os.mkdir(elements_folder)
-    shutil.copy2('./scripts/logo.jpg', elements_folder)
-    shutil.copy2('./scripts/dashboard.css', elements_folder)
-    shutil.copy2('./scripts/feather.min.js', elements_folder)
-    shutil.copytree('./scripts/MDB-Free_4.13.0', os.path.join(elements_folder, 'MDB-Free_4.13.0'))
+    
+    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    
+    
+    #print(str(os.path.join(__location__,"logo.jpg")))
+    #logfunc(str(os.path.join(__location__,"logo.jpg")))
+    
+    shutil.copy2(os.path.join(__location__,"logo.jpg"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"dashboard.css"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"feather.min.js"), elements_folder)
+    shutil.copytree(os.path.join(__location__,"MDB-Free_4.13.0"), os.path.join(elements_folder, 'MDB-Free_4.13.0'))
 
 def get_file_content(path):
     f = open(path, 'r', encoding='utf8')
@@ -169,14 +182,18 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     """
 
     # Get script run log (this will be tab2)
+    devinfo_files_path = os.path.join(reportfolderbase, 'Script Logs', 'DeviceInfo.html')
+    tab2_content = get_file_content(devinfo_files_path)
+    
+    # Get script run log (this will be tab3)
     script_log_path = os.path.join(reportfolderbase, 'Script Logs', 'Screen Output.html')
-    tab2_content = get_file_content(script_log_path)
+    tab3_content = get_file_content(script_log_path)
 
     # Get processed files list (this will be tab3)
     processed_files_path = os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html')
-    tab3_content = get_file_content(processed_files_path)
+    tab4_content = get_file_content(processed_files_path)
 
-    content += tabs_code.format(tab1_content, tab2_content, tab3_content)
+    content += tabs_code.format(tab1_content, tab2_content, tab3_content, tab4_content)
 
     content += '</div>' # CARD end
 
@@ -189,14 +206,14 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
 
     # WRITE INDEX.HTML LAST
     filename = 'index.html'
-    page_title = 'ALEAPP Report'
-    body_heading = 'Android Logs Events And Protobuf Parser'
-    body_description = 'ALEAPP is an open source project that aims to parse every known Android artifact for the purpose of forensic analysis.'
+    page_title = 'iLEAPP Report'
+    body_heading = 'iOS Logs Events And Protobuf Parser'
+    body_description = 'iLEAPP is an open source project that aims to parse every known iOS artifact for the purpose of forensic analysis.'
     active_nav_list_data = mark_item_active(nav_list_data, filename)
 
     f = open(os.path.join(reportfolderbase, filename), 'w', encoding='utf8')
     f.write(page_header.format(page_title))
-    f.write(body_start.format(f"ALEAPP {aleapp_version}"))
+    f.write(body_start.format(f"iLEAPP {aleapp_version}"))
     f.write(body_sidebar_setup + active_nav_list_data + body_sidebar_trailer)
     f.write(body_main_header + body_main_data_title.format(body_heading, body_description))
     f.write(content)
