@@ -138,10 +138,16 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     
     elements_folder = os.path.join(reportfolderbase, '_elements')
     os.mkdir(elements_folder)
-    shutil.copy2('./scripts/logo.jpg', elements_folder)
-    shutil.copy2('./scripts/dashboard.css', elements_folder)
-    shutil.copy2('./scripts/feather.min.js', elements_folder)
-    shutil.copytree('./scripts/MDB-Free_4.13.0', os.path.join(elements_folder, 'MDB-Free_4.13.0'))
+    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    
+    
+    #print(str(os.path.join(__location__,"logo.jpg")))
+    #logfunc(str(os.path.join(__location__,"logo.jpg")))
+    
+    shutil.copy2(os.path.join(__location__,"logo.jpg"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"dashboard.css"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"feather.min.js"), elements_folder)
+    shutil.copytree(os.path.join(__location__,"MDB-Free_4.13.0"), os.path.join(elements_folder, 'MDB-Free_4.13.0'))
 
 def get_file_content(path):
     f = open(path, 'r', encoding='utf8')
