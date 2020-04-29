@@ -6,14 +6,21 @@ import sys
 
 from bs4 import BeautifulSoup
 
-nl = '\n' 
-now = datetime.datetime.now()
-currenttime = str(now.strftime('%Y-%m-%d_%A_%H%M%S'))
-reportfolderbase = os.path.join('.', 'ALEAPP_Reports_' + currenttime)
-base = '/ALEAPP_Reports_' + currenttime + '/' # For use in web browser url
-temp = os.path.join(reportfolderbase, 'temp')
-screen_output_file_path = os.path.join(reportfolderbase, 'Script Logs', 'Screen Output.html')
-gui_window = None
+class OutputParameters:
+    '''Defines the parameters that are common for '''
+    # static parameters
+    nl = '\n'
+    screen_output_file_path = ''
+    
+    def __init__(self, output_folder):
+        now = datetime.datetime.now()
+        currenttime = str(now.strftime('%Y-%m-%d_%A_%H%M%S'))
+        self.report_folder_base = os.path.join(output_folder, 'ALEAPP_Reports_' + currenttime) # aleapp , aleappGUI, ileap_artifacts, report.py
+        self.temp_folder = os.path.join(self.report_folder_base, 'temp')
+        OutputParameters.screen_output_file_path = os.path.join(self.report_folder_base, 'Script Logs', 'Screen Output.html')
+
+        os.makedirs(os.path.join(self.report_folder_base, 'Script Logs'))
+        os.makedirs(self.temp_folder)
 
 def is_platform_windows():
     '''Returns True if running on Windows'''
@@ -24,9 +31,9 @@ class GuiWindow:
     window_handle = None # static variable 
 
 def logfunc(message=""):
-    with open(screen_output_file_path, 'a', encoding='utf8') as a:
+    with open(OutputParameters.screen_output_file_path, 'a', encoding='utf8') as a:
         print(message)
-        a.write(message + '<br>' + nl)
+        a.write(message + '<br>' + OutputParameters.nl)
 
     if GuiWindow.window_handle:
         GuiWindow.window_handle.refresh()
