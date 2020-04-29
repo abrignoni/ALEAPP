@@ -127,7 +127,7 @@ tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
 
 slash = '\\' if is_platform_windows() else '/'
 
-def process_artifact(files_found, artifact_func, artifact_name, seeker):
+def process_artifact(files_found, artifact_func, artifact_name, seeker, report_folder_base):
     ''' Perform the common setup for each artifact, ie, 
         1. Create the report folder for it
         2. Fetch the method (function) and call it
@@ -142,9 +142,8 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker):
 
             seeker: FileSeeker object to pass to method
     '''
-    #artifact_name_no_spaces = artifact_name.replace(" ", "")
     logfunc('{} artifact executing'.format(artifact_name))
-    report_folder = os.path.join(reportfolderbase, artifact_name) + slash
+    report_folder = os.path.join(report_folder_base, artifact_name) + slash
     try:
         if os.path.isdir(report_folder):
             pass

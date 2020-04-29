@@ -11,21 +11,35 @@ from time import process_time, gmtime, strftime
 
 def main():
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
-    parser.add_argument('-o', choices=['fs','tar','zip'], required=True, action="store",help="Input type (fs = extracted to file system folder)")
-    parser.add_argument('pathtodir',help='Path to directory')
+    parser.add_argument('-t', choices=['fs','tar','zip'], required=True, action="store", help="Input type (fs = extracted to file system folder)")
+    parser.add_argument('-o', '--output_path', required=True, action="store", help='Output folder path')
+    parser.add_argument('-i', '--input_path', required=True, action="store", help='Path to input file/folder')
         
     args = parser.parse_args()
 
-    pathto = args.pathtodir
-    extracttype = args.o
+    input_path = args.input_path
+    output_path = os.path.abspath(args.output_path)
+    extracttype = args.t
 
-    crunch_artifacts(extracttype, pathto)
+    if len(output_path) == 0:
+        print('No OUTPUT folder selected. Run the program again.')
+        return
+        
+    if len(input_path) == 0:
+        print('No INPUT file or folder selected. Run the program again.')
+        return
 
-def crunch_artifacts(extracttype, pathto):
+    if not os.path.exists(input_path):
+        print('INPUT file/folder does not exist! Run the program again.')
+        return  
+
+    out_params = OutputParameters(output_path)
+
+    crunch_artifacts(extracttype, input_path, out_params)
+
+def crunch_artifacts(extracttype, input_path, out_params):
     start = process_time()
 
-    os.makedirs(reportfolderbase)
-    os.makedirs(os.path.join(reportfolderbase, 'Script Logs'))
     logfunc('Procesing started. Please wait. This may take a few minutes...')
 
     logfunc('\n--------------------------------------------------------------------------------------')
@@ -36,13 +50,13 @@ def crunch_artifacts(extracttype, pathto):
 
     seeker = None
     if extracttype == 'fs':
-        seeker = FileSeekerDir(pathto)
+        seeker = FileSeekerDir(input_path)
 
     elif extracttype == 'tar':
-        seeker = FileSeekerTar(pathto, reportfolderbase)
+        seeker = FileSeekerTar(input_path, out_params.temp_folder)
 
     elif extracttype == 'zip':
-        seeker = FileSeekerZip(pathto, reportfolderbase)
+        seeker = FileSeekerZip(input_path, out_params.temp_folder)
 
     else:
         logfunc('Error on argument -o (input type)')
@@ -50,12 +64,12 @@ def crunch_artifacts(extracttype, pathto):
 
     # Now ready to run
     logfunc(f'Artifact categories to parse: {str(len(tosearch))}')
-    logfunc(f'File/Directory selected: {pathto}')
+    logfunc(f'File/Directory selected: {input_path}')
     logfunc('\n--------------------------------------------------------------------------------------')
 
-    log = open(os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
+    log = open(os.path.join(out_params.report_folder_base, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
     nl = '\n' #literal in order to have new lines in fstrings that create text files
-    log.write(f'Extraction/Path selected: {pathto}<br><br>')
+    log.write(f'Extraction/Path selected: {input_path}<br><br>')
     
     # Search for the files per the arguments
     for key, val in tosearch.items():
@@ -68,7 +82,7 @@ def crunch_artifacts(extracttype, pathto):
             log.write(f'No files found for {key} -> {artifact_search_regex}<br><br>')
         else:
             logfunc()
-            process_artifact(filefound, key, artifact_pretty_name, seeker)
+            process_artifact(filefound, key, artifact_pretty_name, seeker, out_params.report_folder_base)
             for pathh in filefound:
                 log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
     log.close()
@@ -82,10 +96,10 @@ def crunch_artifacts(extracttype, pathto):
 
     logfunc('')
     logfunc('Report generation started.')
-    report.generate_report(reportfolderbase, run_time_secs, run_time_HMS, extracttype, pathto)
+    report.generate_report(out_params.report_folder_base, run_time_secs, run_time_HMS, extracttype, input_path)
     logfunc('Report generation Completed.')
     logfunc('')
-    logfunc(f'Report location: {reportfolderbase}')
+    logfunc(f'Report location: {out_params.report_folder_base}')
 
 if __name__ == '__main__':
     main()

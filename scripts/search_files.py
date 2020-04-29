@@ -28,10 +28,10 @@ class FileSeekerDir(FileSeekerBase):
         return list
 
 class FileSeekerTar(FileSeekerBase):
-    def __init__(self, tar_file_path, working_folder):
+    def __init__(self, tar_file_path, temp_folder):
         FileSeekerBase.__init__(self)
         self.tar_file = TarFile(tar_file_path)
-        self.temp_folder = os.path.join(working_folder, 'temp')
+        self.temp_folder = temp_folder
 
     def search(self, filepattern):
         pathlist = []
@@ -48,11 +48,11 @@ class FileSeekerTar(FileSeekerBase):
         self.tar_file.close()
 
 class FileSeekerZip(FileSeekerBase):
-    def __init__(self, zip_file_path, working_folder):
+    def __init__(self, zip_file_path, temp_folder):
         FileSeekerBase.__init__(self)
         self.zip_file = ZipFile(zip_file_path)
         self.name_list = self.zip_file.namelist()
-        self.temp_folder = os.path.join(working_folder, 'temp')
+        self.temp_folder = temp_folder
 
     def search(self, filepattern):
         pathlist = []
