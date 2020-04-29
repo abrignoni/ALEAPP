@@ -46,8 +46,15 @@ from scripts.artifacts.userDict import get_userDict
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
-
-
+from scripts.artifacts.journalStrings import get_journalStrings 
+from scripts.artifacts.walStrings import get_walStrings
+from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
+from scripts.artifacts.smyfilesStored import get_smyfilesStored
+from scripts.artifacts.smembersEvents import get_smembersEvents
+from scripts.artifacts.smembersAppInv import get_smembersAppInv
+from scripts.artifacts.smanagerLow import get_smanagerLow
+from scripts.artifacts.smanagerCrash import get_smanagerCrash
+from scripts.artifacts.scontextLog import get_scontextLog
 
 
 from scripts.ilapfuncs import *
@@ -61,7 +68,7 @@ from scripts.ilapfuncs import *
 tosearch = {
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
-    'usageapps': ('Usage Apps', '**/com.google.android.as/databases/reflection_gel_events.db*'),
+    'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'recentactivity':('Recent Activity', '**/system_ce/*'),
     'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
@@ -99,12 +106,24 @@ tosearch = {
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
     'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
-    'wifiProfiles':('WiFi Profiles', '**/misc/wifi/WifiConfigStore*')
+    'wifiProfiles':('WiFi Profiles', '**/misc/wifi/WifiConfigStore*'),
+    'journalStrings':('SQLite Journaling', '**/*-journal'),
+    'walStrings':('SQLite Journaling', '**/*-wal'),
+    'smyfilesRecents':('Media Metadata', '**/com.sec.android.app.myfiles/databases/myfiles.db'),
+    'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
+    'smembersAppInv':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
+    'smembersEvents':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
+    'smanagerLow':('App Interaction', '**/com.samsung.android.sm/databases/lowpowercontext-system-db'),
+    'smanagerCrash':('App Interaction', '**/com.samsung.android.sm/databases/sm.db'),
+    'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db')
     }
 '''
-tosearch = {'redditusers':'*Data/Application/*/Documents/*/accounts/*',
-            'redditchats':'*Data/Application/*/Documents/*/accountData/*/chat/*/chat.sqlite'}
+tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
+            'walStrings':('SQLite Journaling', '**/*-wal')
+            }
 '''
+#'walStrings':('SQLite Journaling - Strings', '**/*-wal')
+
 
 slash = '\\' if is_platform_windows() else '/'
 

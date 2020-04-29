@@ -60,6 +60,7 @@ class FileSeekerZip(FileSeekerBase):
             if fnmatch.fnmatch(member, filepattern):
                 try:
                     self.zip_file.extract(member, path=self.temp_folder)
+                    member = member.lstrip("/")
                     pathlist.append(os.path.join(self.temp_folder, Path(member)))
                 except:
                     logfunc('Could not write file to filesystem')    

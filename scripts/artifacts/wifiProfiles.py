@@ -26,6 +26,26 @@ def get_wifiProfiles(files_found, report_folder, seeker):
     hit = 0
     Identity = ''
     Password = ''
+    PreSharedKey = ''
+    WEPKeys = ''
+    Password = ''
+    LoginUrl = ''
+    SecurityMode = '' 
+    SSID = ''
+    PreSharedKey = ''
+    WEPKeys = ''
+    DefaultGwMacAddress = '' 
+    semCreationTimeUTC = '' 
+    semUpdateTimeUTC = '' 
+    LastConnectedTimeUTC = '' 
+    CaptivePortal = '' 
+    LoginUrl = ''
+    IpAssignment = ''
+    SecurityMode = '' 
+    semCreationTime = '' 
+    semUpdateTime = '' 
+    LastConnectedTime = ''
+    
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)

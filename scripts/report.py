@@ -48,14 +48,16 @@ def get_icon_name(category, artifact):
         elif artifact == 'BROWSER TOP SITES':   icon = 'list'
         else:                           icon = 'compass'
     elif category == 'INSTALLED APPS':  icon = 'package'
+    elif category == 'MEDIA METADATA':  icon = 'file-plus'
     elif category == 'WIFI PROFILES':  icon = 'wifi'
+    elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'NOW PLAYING':           icon = 'music'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
     elif category == 'SMS & MMS':       icon = 'message-square'
-    elif category == 'USAGE APPS':     icon = 'bar-chart-2'
+    elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
@@ -136,10 +138,16 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     
     elements_folder = os.path.join(reportfolderbase, '_elements')
     os.mkdir(elements_folder)
-    shutil.copy2('./scripts/logo.jpg', elements_folder)
-    shutil.copy2('./scripts/dashboard.css', elements_folder)
-    shutil.copy2('./scripts/feather.min.js', elements_folder)
-    shutil.copytree('./scripts/MDB-Free_4.13.0', os.path.join(elements_folder, 'MDB-Free_4.13.0'))
+    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    
+    
+    #print(str(os.path.join(__location__,"logo.jpg")))
+    #logfunc(str(os.path.join(__location__,"logo.jpg")))
+    
+    shutil.copy2(os.path.join(__location__,"logo.jpg"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"dashboard.css"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"feather.min.js"), elements_folder)
+    shutil.copytree(os.path.join(__location__,"MDB-Free_4.13.0"), os.path.join(elements_folder, 'MDB-Free_4.13.0'))
 
 def get_file_content(path):
     f = open(path, 'r', encoding='utf8')
