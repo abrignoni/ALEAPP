@@ -3,6 +3,7 @@ import datetime
 import os
 import pathlib
 import sys
+import codecs
 
 from bs4 import BeautifulSoup
 
