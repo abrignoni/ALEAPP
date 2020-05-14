@@ -89,10 +89,11 @@ def crunch_artifacts(extracttype, input_path, out_params):
                 log.write(f'No files found for {key} -> {artifact_search_regex}<br><br>')
             else:
                 files_found.extend(found)
-        logfunc()
-        process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base)
-        for pathh in files_found:
-            log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
+        if files_found:
+            logfunc()
+            process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base)
+            for pathh in files_found:
+                log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
         categories_searched += 1
         GuiWindow.SetProgressBar(categories_searched)
     log.close()
