@@ -4,7 +4,7 @@ import sqlite3
 
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
 # Reference for flag values for mms:
 # ---------------------------------- 
@@ -98,6 +98,9 @@ def read_sms_messages(db, report_folder, file_found):
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
+        
+        tsvname = f'SMS Messages'
+        tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No SMS messages found!')
 
