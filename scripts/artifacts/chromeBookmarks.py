@@ -1,46 +1,51 @@
-import sqlite3
-import textwrap
-import json
 import datetime
+import json
+import os
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
+from scripts.ilapfuncs import logfunc, is_platform_windows, get_next_unused_name
 
 def get_chromeBookmarks(files_found, report_folder, seeker):
     
-    file_found = str(files_found[0])
-    with open(file_found, "r") as f:
-        dataa = json.load(f)
-    report = ArtifactHtmlReport('Chrome Bookmarks')
-    report.start_artifact_report(report_folder, 'Bookmarks')
-    report.add_script()
-    data_headers = ('URL','Added Date','Name', 'Parent', 'Type') 
-    data_list = []
-    for x, y in dataa.items():
-        flag = 0
-        if isinstance(y,dict):
-            for key, value in y.items():
-                #print(key, '->', value)
-                if isinstance(value,dict):
-                    for keyb, valueb in value.items():
-                        if keyb == 'children':
-                            if len(valueb) > 0:
-                                url = valueb[0]['url']
-                                dateadd = valueb[0]['date_added']
-                                dateaddconv = datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=int(dateadd))
-                                name = valueb[0]['name']
-                                typed = valueb[0]['type']
-                                flag = 1
-                        if keyb == 'name' and flag == 1:
-                            flag = 0
-                            parent = valueb
-                            data_list.append((url, dateaddconv, name, parent, typed))
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not os.path.basename(file_found) == 'Bookmarks': # skip -journal and other files
+            continue
+        elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
+            continue # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data??
+        browser_name = 'Chrome'
+        if file_found.find('app_sbrowser') >= 0:
+            browser_name = 'Browser'
 
-    report.write_artifact_data_table(data_headers, data_list, file_found)
-    report.end_artifact_report()
-    #else:
-    #    logfunc('No Chrome Login Data available')
-    
-   
-    return
-
+        with open(file_found, "r") as f:
+            dataa = json.load(f)
+        data_list = []
+        for x, y in dataa.items():
+            flag = 0
+            if isinstance(y,dict):
+                for key, value in y.items():
+                    if isinstance(value,dict):
+                        for keyb, valueb in value.items():
+                            if keyb == 'children':
+                                if len(valueb) > 0:
+                                    url = valueb[0]['url']
+                                    dateadd = valueb[0]['date_added']
+                                    dateaddconv = datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=int(dateadd))
+                                    name = valueb[0]['name']
+                                    typed = valueb[0]['type']
+                                    flag = 1
+                            if keyb == 'name' and flag == 1:
+                                flag = 0
+                                parent = valueb
+                                data_list.append((url, dateaddconv, name, parent, typed))
+        num_entries = len(data_list)
+        if num_entries > 0:
+            report = ArtifactHtmlReport(f'{browser_name} Bookmarks')
+            #check for existing and get next name for report file, so report from another file does not get overwritten
+            report_path = os.path.join(report_folder, f'{browser_name} Bookmarks.temphtml')
+            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
+            report.start_artifact_report(report_folder, os.path.basename(report_path))
+            report.add_script()
+            data_headers = ('URL','Added Date','Name', 'Parent', 'Type') 
+            report.write_artifact_data_table(data_headers, data_list, file_found)
+            report.end_artifact_report()

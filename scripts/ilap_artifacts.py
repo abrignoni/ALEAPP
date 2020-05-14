@@ -27,40 +27,33 @@ from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsVending import get_installedappsVending
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
+from scripts.artifacts.journalStrings import get_journalStrings 
 from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.recentactivity import get_recentactivity
-from scripts.artifacts.sbrowser import get_sbrowser 
-from scripts.artifacts.sbrowserBookmarks import get_sbrowserBookmarks
-from scripts.artifacts.sbrowserCookies import get_sbrowserCookies
-from scripts.artifacts.sbrowserDownloads import get_sbrowserDownloads
-from scripts.artifacts.sbrowserLoginData import get_sbrowserLoginData
-from scripts.artifacts.sbrowserSearchTerms import get_sbrowserSearchTerms
-from scripts.artifacts.sbrowserTopSites import get_sbrowserTopSites 
-from scripts.artifacts.sbrowserWebsearch import get_sbrowserWebsearch
+from scripts.artifacts.scontextLog import get_scontextLog
 from scripts.artifacts.settingsSecure import get_settingsSecure
 from scripts.artifacts.siminfo import get_siminfo
+from scripts.artifacts.smanagerCrash import get_smanagerCrash
+from scripts.artifacts.smanagerLow import get_smanagerLow
+from scripts.artifacts.smembersEvents import get_smembersEvents
+from scripts.artifacts.smembersAppInv import get_smembersAppInv
 from scripts.artifacts.smsmms import get_sms_mms
+from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
+from scripts.artifacts.smyfilesStored import get_smyfilesStored
 from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.userDict import get_userDict
+from scripts.artifacts.walStrings import get_walStrings
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
-from scripts.artifacts.journalStrings import get_journalStrings 
-from scripts.artifacts.walStrings import get_walStrings
-from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
-from scripts.artifacts.smyfilesStored import get_smyfilesStored
-from scripts.artifacts.smembersEvents import get_smembersEvents
-from scripts.artifacts.smembersAppInv import get_smembersAppInv
-from scripts.artifacts.smanagerLow import get_smanagerLow
-from scripts.artifacts.smanagerCrash import get_smanagerCrash
-from scripts.artifacts.scontextLog import get_scontextLog
 
 
 from scripts.ilapfuncs import *
 
 # GREP searches for each module
-# Format is Key='modulename', Value=Tuple('Module Pretty Name', 'regex term')
+# Format is Key='modulename', Value=Tuple('Module Pretty Name', 'regex_term')
+#   regex_term can be a string or a list/tuple of strings
 # Here modulename must match the get_xxxxxx function name for that module. 
 # For example: If modulename='profit', function name must be get_profit(..)
 # Don't forget to import the module above!!!!
@@ -80,27 +73,19 @@ tosearch = {
     'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
     'cmh':('Samsung_CMH', '**/cmh.db'),
     'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
-    'chrome':('Chrome', '**/app_chrome/Default/History*'),
-    'chromeSearchTerms':('Chrome', '**/app_chrome/Default/History*'),
-    'chromeDownloads':('Chrome', '**/app_chrome/Default/History*'),
-    'chromeLoginData':('Chrome', '**/app_chrome/Default/Login Data*'),
-    'chromeBookmarks':('Chrome', '**/app_chrome/Default/Bookmarks*'),
-    'chromeCookies':('Chrome', '**/app_chrome/Default/Cookies*'),
-    'chromeTopSites':('Chrome', '**/app_chrome/Default/Top Sites*'),
-    'chromeWebsearch':('Chrome', '**/app_chrome/Default/History*'),
-    'chromeOfflinePages':('Chrome', '**/com.android.chrome/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*'),
+    'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
+    'chromeSearchTerms':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
+    'chromeDownloads':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
+    'chromeLoginData':('Chrome', ('**/app_chrome/Default/Login Data*', '**/app_sbrowser/Default/Login Data*')),
+    'chromeBookmarks':('Chrome', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*')),
+    'chromeCookies':('Chrome', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*')),
+    'chromeTopSites':('Chrome', ('**/app_chrome/Default/Top Sites*', '**/app_sbrowser/Default/Top Sites*')),
+    'chromeWebsearch':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
+    'chromeOfflinePages':('Chrome', ('**/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '**/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*')),
     'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
     'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
-    'sbrowser':('Web Browser', '**/app_sbrowser/Default/History*'),
-    'sbrowserSearchTerms':('Web Browser', '**/app_sbrowser/Default/History*'),
-    'sbrowserDownloads':('Web Browser', '**/app_sbrowser/Default/History*'),
-    'sbrowserLoginData':('Web Browser', '**/app_sbrowser/Default/Login Data*'),
-    'sbrowserBookmarks':('Web Browser', '**/app_sbrowser/Default/Bookmarks*'),
-    'sbrowserCookies':('Web Browser', '**/app_sbrowser/Default/Cookies*'),
-    'sbrowserTopSites':('Web Browser', '**/app_sbrowser/Default/Top Sites*'),
-    'sbrowserWebsearch':('Web Browser', '**/app_sbrowser/Default/History*'),
     'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),
     'build':('Device Info', '**/vendor/build.prop'),
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
@@ -123,7 +108,6 @@ tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
             }
 '''
 #'walStrings':('SQLite Journaling - Strings', '**/*-wal')
-
 
 slash = '\\' if is_platform_windows() else '/'
 
