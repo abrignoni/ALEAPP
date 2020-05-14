@@ -74,18 +74,25 @@ def crunch_artifacts(extracttype, input_path, out_params):
     categories_searched = 0
     # Search for the files per the arguments
     for key, val in tosearch.items():
+        search_regexes = []
         artifact_pretty_name = val[0]
-        artifact_search_regex = val[1]
-        filefound = seeker.search(artifact_search_regex)
-        if not filefound:
-            logfunc()
-            logfunc(f'No files found for {key} -> {artifact_search_regex}')
-            log.write(f'No files found for {key} -> {artifact_search_regex}<br><br>')
+        if isinstance(val[1], list) or isinstance(val[1], tuple):
+            search_regexes = val[1]
         else:
-            logfunc()
-            process_artifact(filefound, key, artifact_pretty_name, seeker, out_params.report_folder_base)
-            for pathh in filefound:
-                log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
+            search_regexes.append(val[1])
+        files_found = []
+        for artifact_search_regex in search_regexes:
+            found = seeker.search(artifact_search_regex)
+            if not found:
+                logfunc()
+                logfunc(f'No files found for {key} -> {artifact_search_regex}')
+                log.write(f'No files found for {key} -> {artifact_search_regex}<br><br>')
+            else:
+                files_found.extend(found)
+        logfunc()
+        process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base)
+        for pathh in files_found:
+            log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
         categories_searched += 1
         GuiWindow.SetProgressBar(categories_searched)
     log.close()

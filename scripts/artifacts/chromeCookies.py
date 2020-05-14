@@ -1,67 +1,78 @@
+import os
 import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
+from scripts.ilapfuncs import logfunc, is_platform_windows, get_next_unused_name
 
 def get_chromeCookies(files_found, report_folder, seeker):
     
-    file_found = str(files_found[0])
-    db = sqlite3.connect(file_found)
-    cursor = db.cursor()
-    cursor.execute('''
-    SELECT
-    host_key,
-    name,
-    value,
-    CASE
-        last_access_utc 
-        WHEN
-            "0" 
-        THEN
-            "0" 
-        ELSE
-            datetime(last_access_utc / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
-    END AS "last_access_utc", 
-    CASE
-        creation_utc 
-        WHEN
-            "0" 
-        THEN
-            "0" 
-        ELSE
-            datetime(creation_utc / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
-    END AS "creation_utc", 
-    CASE
-        expires_utc 
-        WHEN
-            "0" 
-        THEN
-            "0" 
-        ELSE
-            datetime(expires_utc / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
-    END AS "expires_utc", 
-    path
-    FROM
-    cookies
-    ''')
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not os.path.basename(file_found) == 'Cookies': # skip -journal and other files
+            continue
+        browser_name = 'Chrome'
+        if file_found.find('app_sbrowser') >= 0:
+            browser_name = 'Browser'
+        elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
+            continue # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data??
 
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Chrome Cookies')
-        report.start_artifact_report(report_folder, 'Cookies')
-        report.add_script()
-        data_headers = ('Host','Name','Value','Last Access Date','Created Date','Expiration Date','Path' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],(textwrap.fill(row[2], width=50)),row[3],row[4],row[5],row[6]))
+        db = sqlite3.connect(file_found)
+        cursor = db.cursor()
+        cursor.execute('''
+        SELECT
+        host_key,
+        name,
+        value,
+        CASE
+            last_access_utc 
+            WHEN
+                "0" 
+            THEN
+                "" 
+            ELSE
+                datetime(last_access_utc / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
+        END AS "last_access_utc", 
+        CASE
+            creation_utc 
+            WHEN
+                "0" 
+            THEN
+                "" 
+            ELSE
+                datetime(creation_utc / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
+        END AS "creation_utc", 
+        CASE
+            expires_utc 
+            WHEN
+                "0" 
+            THEN
+                "" 
+            ELSE
+                datetime(expires_utc / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
+        END AS "expires_utc", 
+        path
+        FROM
+        cookies
+        ''')
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-    else:
-        logfunc('No Chrome cookies data available')
-    
-    db.close()
-    return
+        all_rows = cursor.fetchall()
+        usageentries = len(all_rows)
+        if usageentries > 0:
+            report = ArtifactHtmlReport(f'{browser_name} Cookies')
+            #check for existing and get next name for report file, so report from another file does not get overwritten
+            report_path = os.path.join(report_folder, f'{browser_name} Cookies.temphtml')
+            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
+            report.start_artifact_report(report_folder, os.path.basename(report_path))
+            report.add_script()
+            data_headers = ('Host','Name','Value','Last Access Date','Created Date','Expiration Date','Path')
+            data_list = []
+            for row in all_rows:
+                data_list.append((row[0],row[1],(textwrap.fill(row[2], width=50)),row[3],row[4],row[5],row[6]))
 
+            report.write_artifact_data_table(data_headers, data_list, file_found)
+            report.end_artifact_report()
+        else:
+            logfunc(f'No {browser_name} cookies data available')
+        
+        db.close()

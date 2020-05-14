@@ -22,10 +22,10 @@ class FileSeekerDir(FileSeekerBase):
         self.directory = directory
 
     def search(self, filepattern):
-        list = []
+        pathlist = []
         for file in Path(self.directory).rglob(filepattern):
-            list.append(file)
-        return list
+            pathlist.append(file)
+        return pathlist
 
 class FileSeekerTar(FileSeekerBase):
     def __init__(self, tar_file_path, temp_folder):
