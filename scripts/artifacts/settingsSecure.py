@@ -4,7 +4,7 @@ import os
 import xml.etree.ElementTree as ET
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
 def get_settingsSecure(files_found, report_folder, seeker):
 
@@ -47,6 +47,9 @@ def process_ssecure(folder, uid, report_folder):
         data_headers = ('Name', 'Value')
         report.write_artifact_data_table(data_headers, data_list, folder)
         report.end_artifact_report()
+        
+        tsvname = f'settings secure'
+        tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No Settings Secure data available')
         

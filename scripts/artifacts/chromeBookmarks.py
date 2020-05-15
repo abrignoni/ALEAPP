@@ -3,7 +3,7 @@ import json
 import os
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows, get_next_unused_name
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name
 
 def get_chromeBookmarks(files_found, report_folder, seeker):
     
@@ -49,3 +49,6 @@ def get_chromeBookmarks(files_found, report_folder, seeker):
             data_headers = ('URL','Added Date','Name', 'Parent', 'Type') 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
+            
+            tsvname = f'{browser_name} Bookmarks'
+            tsv(report_folder, data_headers, data_list, tsvname)

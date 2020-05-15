@@ -5,7 +5,7 @@ import shutil
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
 def get_accounts_ce(files_found, report_folder, seeker):
 
@@ -52,6 +52,9 @@ def process_accounts_ce(folder, uid, report_folder):
             data_list.append((row[0], row[1], row[2]))
         report.write_artifact_data_table(data_headers, data_list, folder)
         report.end_artifact_report()
+        
+        tsvname = f'accounts ce {uid}'
+        tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc(f'No accounts_ce_{uid} data available')    
     db.close()

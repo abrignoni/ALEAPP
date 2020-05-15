@@ -2,7 +2,7 @@ import json
 import os
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows 
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows 
 from scripts.parse3 import ParseProto
 
 def get_wellbeingaccount(files_found, report_folder, seeker):
@@ -20,3 +20,6 @@ def get_wellbeingaccount(files_found, report_folder, seeker):
     data_list.append(('<pre id=\"json\">'+str(parsedContent).replace("\\n", "<br>")+'</pre>', str(content)))
     report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
     report.end_artifact_report()
+    
+    tsvname = f'wellbeing account'
+    tsv(report_folder, data_headers, data_list, tsvname)

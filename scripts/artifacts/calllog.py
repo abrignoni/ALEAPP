@@ -1,7 +1,7 @@
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc 
+from scripts.ilapfuncs import logfunc, tsv 
 
 def get_calllog(files_found, report_folder, seeker):
     
@@ -74,6 +74,9 @@ def get_calllog(files_found, report_folder, seeker):
 
         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
         report.end_artifact_report()
+        
+        tsvname = f'call logs'
+        tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No Call Log data available')
     

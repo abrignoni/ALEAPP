@@ -3,7 +3,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows, get_next_unused_name
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name
 
 def get_chrome(files_found, report_folder, seeker):
     
@@ -45,6 +45,9 @@ def get_chrome(files_found, report_folder, seeker):
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
+            
+            tsvname = f'{browser_name} History'
+            tsv(report_folder, data_headers, data_list, tsvname)
         else:
             logfunc(f'No {browser_name} history data available')
         

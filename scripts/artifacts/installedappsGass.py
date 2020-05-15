@@ -1,7 +1,7 @@
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc
+from scripts.ilapfuncs import logfunc, tsv
 
 def get_installedappsGass(files_found, report_folder, seeker):
     
@@ -28,6 +28,9 @@ def get_installedappsGass(files_found, report_folder, seeker):
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
+        
+        tsvname = f'installed apps - GMS'
+        tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No Installed Apps data available')
     

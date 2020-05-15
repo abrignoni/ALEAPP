@@ -26,7 +26,7 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
                 sg.FolderBrowse(font=normal_font, button_text='Browse Folder', key='INPUTFOLDERBROWSE', disabled=True), 
                 sg.FileBrowse(font=normal_font, target=(4, 1), key='INPUTFILEBROWSE') ],
             [sg.Text('Output Folder', size=(12, 1), font=normal_font), sg.Input(), sg.FolderBrowse(font=normal_font, button_text='Browse Folder')],
-            [sg.Checkbox('Generate CSV output (Additional processing time)', size=(50, 1), default=False, font=normal_font)],
+            #[sg.Checkbox('Generate CSV output (Additional processing time)', size=(50, 1), default=False, font=normal_font)],
             [sg.ProgressBar(max_value=GuiWindow.progress_bar_total, orientation='h', size=(68, 7), key='PROGRESSBAR', bar_color=('DarkGreen', 'White'))],
             [sg.Output(size=(104,20))],
             [sg.Submit('Process',font=normal_font), sg.Button('Close', font=normal_font)] ]
@@ -85,7 +85,8 @@ while True:
         GuiWindow.window_handle = window
         out_params = OutputParameters(output_folder)
         aleapp.crunch_artifacts(extracttype, input_path, out_params)
-
+        
+        '''
         if values[5] == True:
             start = process_time()
             logfunc('')
@@ -95,7 +96,7 @@ while True:
             csv_time_secs =  end - start
             csv_time_HMS = strftime('%H:%M:%S', gmtime(csv_time_secs))
             logfunc("CSV processing time = {}".format(csv_time_HMS))
-
+        '''
         report_path = os.path.join(out_params.report_folder_base, 'index.html')
         locationmessage = 'Report name: ' + report_path
         sg.Popup('Processing completed', locationmessage)
