@@ -5,7 +5,7 @@ import shutil
 import sqlite3
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -98,5 +98,8 @@ def get_quicksearch_recent(files_found, report_folder, seeker):
 
         report.write_artifact_data_table(data_headers, data_list, dir_path, html_escape=False)
         report.end_artifact_report()
+        
+        tsvname = f'google quick search box recent'
+        tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No recent quick search or now data available')

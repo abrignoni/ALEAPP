@@ -2,7 +2,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
 def get_smembersAppInv(files_found, report_folder, seeker):
     
@@ -34,6 +34,9 @@ def get_smembersAppInv(files_found, report_folder, seeker):
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
+        
+        tsvname = f'samsung members - apps'
+        tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No Samsung Members - Apps data available')
     

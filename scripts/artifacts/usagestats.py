@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 
 from enum import IntEnum
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
 class EventType(IntEnum):
     NONE = 0
@@ -369,6 +369,9 @@ def process_usagestats(folder, uid, report_folder):
 
     report.write_artifact_data_table(data_headers, data_list, folder)
     report.end_artifact_report()
+    
+    tsvname = f'usagestats'
+    tsv(report_folder, data_headers, data_list, tsvname)
 
     logfunc(f'Records processed for user {uid}: {processed}')
     db.close()

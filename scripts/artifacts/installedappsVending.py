@@ -1,7 +1,7 @@
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc
+from scripts.ilapfuncs import logfunc, tsv
 
 def get_installedappsVending(files_found, report_folder, seeker):
 
@@ -38,7 +38,10 @@ def get_installedappsVending(files_found, report_folder, seeker):
             data_list.append((row[0], row[1], row[2], row[3], row[4]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()        
+        report.end_artifact_report()
+        
+        tsvname = f'installed apps vending'
+        tsv(report_folder, data_headers, data_list, tsvname)        
     else:
             logfunc('No Installed Apps data available')
     
