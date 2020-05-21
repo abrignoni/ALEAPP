@@ -45,6 +45,7 @@ from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.userDict import get_userDict
 from scripts.artifacts.walStrings import get_walStrings
 from scripts.artifacts.wellbeing import get_wellbeing
+from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
 
@@ -61,6 +62,7 @@ from scripts.ilapfuncs import *
 tosearch = {
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
+    'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'recentactivity':('Recent Activity', '**/system_ce/*'),
