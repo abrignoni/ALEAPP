@@ -5,7 +5,7 @@ import time
 
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -134,6 +134,9 @@ def get_googleNowPlaying(files_found, report_folder, seeker):
             logfunc("{} entries grouped into {}".format(usageentries, len(data_list)))
             report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
             report.end_artifact_report()
+            
+            tsvname = f'google now playing'
+            tsv(report_folder, data_headers, data_list, tsvname)
         else:
             logfunc('No Now playing history')
 
