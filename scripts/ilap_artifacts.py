@@ -92,7 +92,7 @@ tosearch = {
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
     'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
-    'wifiProfiles':('WiFi Profiles', '**/misc/wifi/WifiConfigStore*'),
+    'wifiProfiles':('WiFi Profiles', '**/misc/wifi/WifiConfigStore.xml'),
     'journalStrings':('SQLite Journaling', '**/*-journal'),
     'walStrings':('SQLite Journaling', '**/*-wal'),
     'smyfilesRecents':('Media Metadata', '**/com.sec.android.app.myfiles/databases/myfiles.db'),

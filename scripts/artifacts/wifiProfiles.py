@@ -144,7 +144,7 @@ def get_wifiProfiles(files_found, report_folder, seeker):
                 'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
                 db.commit()
 
-                data_list.append((SecurityMode, SSID, (textwrap.fill(PreSharedKey, width=10)), (textwrap.fill(WEPKeys, width=10)), (textwrap.fill(Password, width=10)), Identity, DefaultGwMacAddress, semCreationTime, semUpdateTime, LastConnectedTime, CaptivePortal, (textwrap.fill(LoginUrl, width=10)), IpAssignment, file_found))
+                data_list.append((SecurityMode, SSID, PreSharedKey, WEPKeys, Password, Identity, DefaultGwMacAddress, semCreationTime, semUpdateTime, LastConnectedTime, CaptivePortal, (textwrap.fill(LoginUrl, width=10)), IpAssignment, file_found))
                 
                 #data_list.append(datainsert)
                 Identity = ''
