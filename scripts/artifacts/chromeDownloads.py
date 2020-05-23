@@ -3,7 +3,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name, does_column_exist_in_db
 
 def get_chromeDownloads(files_found, report_folder, seeker):
     
@@ -19,43 +19,33 @@ def get_chromeDownloads(files_found, report_folder, seeker):
 
         db = sqlite3.connect(file_found)
         cursor = db.cursor()
-        cursor.execute('''
-        SELECT
-        tab_url,
-        CASE
-            start_time  
-            WHEN
-                "0" 
-            THEN
-                "" 
-            ELSE
-                datetime(start_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
+
+        # check for last_access_time column, an older version of chrome db (32) does not have it
+        if does_column_exist_in_db(db, 'downloads', 'last_access_time') == True:
+            last_access_time_query = '''
+            CASE last_access_time 
+                WHEN "0" 
+                THEN "" 
+                ELSE datetime(last_access_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
+            END AS "Last Access Time"'''
+        else:
+            last_access_time_query = "'' as last_access_query"
+
+        cursor.execute(f'''
+        SELECT tab_url,
+        CASE start_time  
+            WHEN "0" 
+            THEN "" 
+            ELSE datetime(start_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
         END AS "Start Time", 
-        CASE
-            end_time 
-            WHEN
-                "0" 
-            THEN
-                "" 
-            ELSE
-                datetime(end_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
+        CASE end_time 
+            WHEN "0" 
+            THEN "" 
+            ELSE datetime(end_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
         END AS "End Time", 
-        CASE
-            last_access_time 
-            WHEN
-                "0" 
-            THEN
-                "" 
-            ELSE
-                datetime(last_access_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
-        END AS "Last Access Time", 
-        target_path,
-        state,
-        opened,
-        received_bytes,
-        total_bytes
-        FROM
-        downloads
+        {last_access_time_query}, 
+        target_path, state, opened, received_bytes, total_bytes
+        FROM downloads
         ''')
 
         all_rows = cursor.fetchall()

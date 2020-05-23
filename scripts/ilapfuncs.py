@@ -1,9 +1,10 @@
+import codecs
 import csv
 import datetime
 import os
 import pathlib
+import sqlite3
 import sys
-import codecs
 
 from bs4 import BeautifulSoup
 
@@ -46,6 +47,23 @@ def get_next_unused_name(path):
             new_name += f"{ext}"
         num += 1
     return os.path.join(folder, new_name)
+
+def does_column_exist_in_db(db, table_name, col_name):
+    '''Checks if a specific col exists'''
+    col_name = col_name.lower()
+    try:
+        db.row_factory = sqlite3.Row # For fetching columns by name
+        query = f"pragma table_info('{table_name}');"
+        cursor = db.cursor()
+        cursor.execute(query)
+        all_rows = cursor.fetchall()
+        for row in all_rows:
+            if row['name'].lower() == col_name:
+                return True
+    except sqlite3.Error as ex:
+        print(f"Query error, query={query} Error={str(ex)}")
+        pass
+    return False
 
 class GuiWindow:
     '''This only exists to hold window handle if script is run from GUI'''
