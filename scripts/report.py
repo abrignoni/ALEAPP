@@ -52,6 +52,7 @@ def get_icon_name(category, artifact):
     elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
+    elif category == 'CHATS':     icon = 'message-circle'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
