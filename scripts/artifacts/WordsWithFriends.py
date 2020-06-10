@@ -15,8 +15,7 @@ def get_WordsWithFriends(files_found, report_folder, seeker):
 	users.name,
 	users.email_address,
 	messages.text,
-	messages.created_at
-	datetime(messages.created_at / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
+	messages(created_at / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
 	FROM
 	messages
 	INNER JOIN
