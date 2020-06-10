@@ -4,7 +4,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
-def get_ChessWithFriendsChats(files_found, report_folder, seeker):
+def get_ChessWithFriends(files_found, report_folder, seeker):
     
     file_found = str(files_found[0])
     db = sqlite3.connect(file_found)
@@ -30,7 +30,7 @@ def get_ChessWithFriendsChats(files_found, report_folder, seeker):
     usageentries = len(all_rows)
     if usageentries > 0:
         report = ArtifactHtmlReport('Chats')
-        report.start_artifact_report(report_folder, 'Chess With Friends Chats')
+        report.start_artifact_report(report_folder, 'Chess With Friends')
         report.add_script()
         data_headers = ('Message_ID','User_Name','User_Email','Chat_Message','Chat_Message_Creation' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
@@ -43,7 +43,7 @@ def get_ChessWithFriendsChats(files_found, report_folder, seeker):
         tsvname = f'Chess With Friends Chats'
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
-        logfunc('No Chess With Friends Chats data available')
+        logfunc('No Chess With Friends data available')
     
     db.close()
     return
