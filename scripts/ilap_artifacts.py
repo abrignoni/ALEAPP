@@ -48,7 +48,8 @@ from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
-from scripts.artifacts.zyngachessChats import get_zyngachessChats
+from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
+from scripts.artifacts.WordsWithFriends import get_WordsWithFriends
 
 from scripts.ilapfuncs import *
 
@@ -103,7 +104,9 @@ tosearch = {
     'smanagerLow':('App Interaction', '**/com.samsung.android.sm/databases/lowpowercontext-system-db'),
     'smanagerCrash':('App Interaction', '**/com.samsung.android.sm/databases/sm.db'),
     'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
-    'zyngachessChats':('Chats', '**/com.zynga.chess.googleplay/databases/wf_database.sqlite')
+    'ChessWithFriends':('Chats', '**/com.zynga.chess.googleplay/databases/wf_database.sqlite'),
+    'ChessWithFriends':('Chats', '**/com.zynga.chess.googleplay/db/wf_database.sqlite'),
+    'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite')
     }
 '''
 tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
