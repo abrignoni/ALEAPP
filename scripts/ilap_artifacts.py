@@ -103,7 +103,8 @@ tosearch = {
     'smanagerLow':('App Interaction', '**/com.samsung.android.sm/databases/lowpowercontext-system-db'),
     'smanagerCrash':('App Interaction', '**/com.samsung.android.sm/databases/sm.db'),
     'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
-    'ChessWithFriends':('Chats', '**/com.zynga.chess.googleplay/databases/wf_database.sqlite')
+    'ChessWithFriends':('Chats', '**/com.zynga.chess.googleplay/databases/wf_database.sqlite'),
+    'ChessWithFriends':('Chats', '**/com.zynga.chess.googleplay/db/wf_database.sqlite')
     }
 '''
 tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
