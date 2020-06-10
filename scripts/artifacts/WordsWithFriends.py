@@ -11,19 +11,19 @@ def get_WordsWithFriends(files_found, report_folder, seeker):
     cursor = db.cursor()
     cursor.execute('''
     SELECT
-	chat_messages.chat_message_id,
+	messages.conv_id,
 	users.name,
 	users.email_address,
-	chat_messages.message,
-	chat_messages.created_at
+	messages.text,
+	messages.created_at
 	FROM
-	chat_messages
+	messages
 	INNER JOIN
 	users
 	ON
-	chat_messages.user_id=users.user_id
+	messages.user_zynga_id=users.zynga_account_id
 	ORDER BY
-	chat_messages.created_at DESC
+	messages.created_at DESC
     ''')
 
     all_rows = cursor.fetchall()
