@@ -16,7 +16,7 @@ def get_WordsWithFriends(files_found, report_folder, seeker):
 	users.email_address,
 	messages.text,
 	messages.created_at
-	datetime(created_at/1000, 'unixepoch', 'localtime') as dates from messages
+	datetime(created_at/1000, 'unixepoch') as dates from messages
 	FROM
 	messages
 	INNER JOIN
@@ -24,7 +24,7 @@ def get_WordsWithFriends(files_found, report_folder, seeker):
 	ON
 	messages.user_zynga_id=users.zynga_account_id
 	ORDER BY
-	datetime DESC
+	dates DESC
     ''')
 
     all_rows = cursor.fetchall()
