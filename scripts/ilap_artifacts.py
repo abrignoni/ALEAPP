@@ -48,7 +48,7 @@ from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
-from scripts.artifacts.ChessWithFriendsChats import get_ChessWithFriendsChats
+from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
 
 from scripts.ilapfuncs import *
 
