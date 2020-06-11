@@ -19,9 +19,9 @@ def main():
     pathto = args.pathtodir
     extracttype = args.o
 
-    crunch_artifacts(extracttype, pathto)
+    crunch_artifacts(tosearch, extracttype, pathto)
 
-def crunch_artifacts(extracttype, pathto):
+def crunch_artifacts(search_list, extracttype, pathto):
     start = process_time()
 
     os.makedirs(reportfolderbase)
@@ -49,7 +49,7 @@ def crunch_artifacts(extracttype, pathto):
         return
 
     # Now ready to run
-    logfunc(f'Artifact categories to parse: {str(len(tosearch))}')
+    logfunc(f'Artifact categories to parse: {str(len(search_list))}')
     logfunc(f'File/Directory selected: {pathto}')
     logfunc('\n--------------------------------------------------------------------------------------')
 
@@ -58,7 +58,7 @@ def crunch_artifacts(extracttype, pathto):
     log.write(f'Extraction/Path selected: {pathto}<br><br>')
     
     # Search for the files per the arguments
-    for key, val in tosearch.items():
+    for key, val in search_list.items():
         artifact_pretty_name = val[0]
         artifact_search_regex = val[1]
         filefound = seeker.search(artifact_search_regex)
