@@ -8,6 +8,7 @@ import traceback
 from scripts.artifacts.accounts_ce import get_accounts_ce
 from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
 from scripts.artifacts.accounts_de import get_accounts_de
+from scripts.artifacts.Agent_Accounts import get_Agent_Accounts
 from scripts.artifacts.build import get_build
 from scripts.artifacts.calllog import get_calllog
 from scripts.artifacts.chrome import get_chrome 
@@ -50,6 +51,7 @@ from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
 from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
 from scripts.artifacts.WordsWithFriends import get_WordsWithFriends
+from scripts.artifacts.acquiring_contacts2 import get_acquiring_contacts2
 
 from scripts.ilapfuncs import *
 
@@ -74,6 +76,7 @@ tosearch = {
     'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
     'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db'),
     'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
+    'Agent_Accounts':('Account', '**/agent_accounts.db'), #Parse agent_accounts.db from Magnet Acquire Extraction
     'cmh':('Samsung_CMH', '**/cmh.db'),
     'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
     'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
@@ -106,7 +109,8 @@ tosearch = {
     'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
     'ChessWithFriends':('Chats', '**/com.zynga.chess.googleplay/databases/wf_database.sqlite'),
     'ChessWithFriends':('Chats', '**/com.zynga.chess.googleplay/db/wf_database.sqlite'),
-    'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite')
+    'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite'),
+    'acquiring_contacts2':('Call Logs', '**/contacts2.db')
     }
 '''
 tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
