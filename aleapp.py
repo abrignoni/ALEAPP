@@ -35,9 +35,9 @@ def main():
 
     out_params = OutputParameters(output_path)
 
-    crunch_artifacts(extracttype, input_path, out_params)
+    crunch_artifacts(tosearch, extracttype, input_path, out_params, 1)
 
-def crunch_artifacts(extracttype, input_path, out_params):
+def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio):
     start = process_time()
 
     logfunc('Procesing started. Please wait. This may take a few minutes...')
@@ -63,7 +63,7 @@ def crunch_artifacts(extracttype, input_path, out_params):
         return
 
     # Now ready to run
-    logfunc(f'Artifact categories to parse: {str(len(tosearch))}')
+    logfunc(f'Artifact categories to parse: {str(len(search_list))}')
     logfunc(f'File/Directory selected: {input_path}')
     logfunc('\n--------------------------------------------------------------------------------------')
 
@@ -73,7 +73,7 @@ def crunch_artifacts(extracttype, input_path, out_params):
     
     categories_searched = 0
     # Search for the files per the arguments
-    for key, val in tosearch.items():
+    for key, val in search_list.items():
         search_regexes = []
         artifact_pretty_name = val[0]
         if isinstance(val[1], list) or isinstance(val[1], tuple):
@@ -95,7 +95,7 @@ def crunch_artifacts(extracttype, input_path, out_params):
             for pathh in files_found:
                 log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
         categories_searched += 1
-        GuiWindow.SetProgressBar(categories_searched)
+        GuiWindow.SetProgressBar(categories_searched*ratio)
     log.close()
 
     logfunc('')
