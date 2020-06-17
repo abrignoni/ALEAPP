@@ -24,6 +24,7 @@ def get_icon_name(category, artifact):
         else:                           icon = 'user'
     elif category == 'CALL LOGS':       icon = 'phone'
     elif category == 'USER DICTIONARY': icon = 'book'
+    elif category == 'CALENDARS':       icon = 'calendar'
     elif category == 'CHROME':          
         if artifact.find('SEARCH TERMS') >= 0:      icon = 'search'
         elif artifact.find('DOWNLOADS') >= 0:       icon = 'download'
@@ -32,6 +33,7 @@ def get_icon_name(category, artifact):
         elif artifact.find('TOP SITES') >= 0:       icon = 'list'
         elif artifact.find('OFFLINE PAGES') >= 0:   icon = 'cloud-off'
         else:                                       icon = 'chrome'
+    elif category == 'CONTACTS':       icon = 'book-open'
     elif category == 'DEVICE INFO':     
         if artifact == 'BUILD INFO':                icon = 'terminal'
         elif artifact == 'PARTNER SETTINGS':        icon = 'settings'
@@ -132,7 +134,8 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     
     elements_folder = os.path.join(reportfolderbase, '_elements')
     os.mkdir(elements_folder)
-    __location__ = os.path.dirname(os.path.abspath(__file__))
+    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    
     
     #print(str(os.path.join(__location__,"logo.jpg")))
     #logfunc(str(os.path.join(__location__,"logo.jpg")))
