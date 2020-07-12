@@ -1,7 +1,7 @@
 import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 def get_swellbeing(files_found, report_folder, seeker):
 
@@ -13,8 +13,9 @@ def get_swellbeing(files_found, report_folder, seeker):
         db = sqlite3.connect(file_found)
         cursor = db.cursor()
         cursor.execute('''
-        SELECT usageEvents.eventId,
+        SELECT
         datetime(usageEvents.timeStamp/1000, "UNIXEPOCH") as timestamps,
+        usageEvents.eventId,
         foundPackages.name, 
         usageEvents.eventType,
         CASE
@@ -47,7 +48,7 @@ def get_swellbeing(files_found, report_folder, seeker):
             report = ArtifactHtmlReport('Samsung Wellbeing events')
             report.start_artifact_report(report_folder, 'Events')
             report.add_script()
-            data_headers = ('Event ID','Timestamp','Package Name','Event Type','Event Type Description')
+            data_headers = ('Timestamp','Event ID','Package Name','Event Type','Event Type Description')
             data_list = []
             for row in all_rows:
                 data_list.append((row[0], row[1], row[2], row[3], row[4]))
@@ -57,6 +58,9 @@ def get_swellbeing(files_found, report_folder, seeker):
             
             tsvname = f'samsung wellbeing - events'
             tsv(report_folder, data_headers, data_list, tsvname)
+            
+            tlactivity = f'Samsung Wellbeing - Events'
+            timeline(report_folder, tlactivity, data_list)
         else:
             logfunc('No Samsung Wellbeing event data available')
         

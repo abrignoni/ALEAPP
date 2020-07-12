@@ -3,7 +3,7 @@ import json
 import os
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name
 
 def get_chromeBookmarks(files_found, report_folder, seeker):
     
@@ -37,7 +37,7 @@ def get_chromeBookmarks(files_found, report_folder, seeker):
                             if keyb == 'name' and flag == 1:
                                 flag = 0
                                 parent = valueb
-                                data_list.append((url, dateaddconv, name, parent, typed))
+                                data_list.append((dateaddconv, url, name, parent, typed))
         num_entries = len(data_list)
         if num_entries > 0:
             report = ArtifactHtmlReport(f'{browser_name} Bookmarks')
@@ -46,9 +46,14 @@ def get_chromeBookmarks(files_found, report_folder, seeker):
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
-            data_headers = ('URL','Added Date','Name', 'Parent', 'Type') 
+            data_headers = ('Added Date', 'URL', 'Name', 'Parent', 'Type') 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
             tsvname = f'{browser_name} Bookmarks'
             tsv(report_folder, data_headers, data_list, tsvname)
+            
+            tlactivity = f'{browser_name} Bookmarks'
+            timeline(report_folder, tlactivity, data_list)
+        else:
+            logfunc('No Browser Bookmarks data available')

@@ -5,7 +5,7 @@ import shutil
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 def get_cmh(files_found, report_folder, seeker):
 
@@ -37,6 +37,9 @@ def get_cmh(files_found, report_folder, seeker):
         
         tsvname = f'Samsung CMH Geodata'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Samsung CMH Geodata'
+        timeline(report_folder, tlactivity, data_list)
     else:
         logfunc(f'No Samsung_CMH_GeoData available')    
     db.close()

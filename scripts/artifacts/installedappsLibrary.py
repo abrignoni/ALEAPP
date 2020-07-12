@@ -1,7 +1,7 @@
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv 
+from scripts.ilapfuncs import logfunc, tsv, timeline 
 
 def get_installedappsLibrary(files_found, report_folder, seeker):
     
@@ -10,12 +10,12 @@ def get_installedappsLibrary(files_found, report_folder, seeker):
     cursor = db.cursor()
     cursor.execute('''
     SELECT
-        account,
-        doc_id,
         case
         when purchase_time = 0 THEN ''
         when purchase_time > 0 THEN datetime(purchase_time / 1000, "unixepoch")
-        END as pt
+        END as pt,
+        account,
+        doc_id
     FROM
     ownership  
     ''')
@@ -26,7 +26,7 @@ def get_installedappsLibrary(files_found, report_folder, seeker):
         report = ArtifactHtmlReport('Installed Apps (Library)')
         report.start_artifact_report(report_folder, 'Installed Apps (Library)')
         report.add_script()
-        data_headers = ('Account', 'Doc ID', 'Purchase Time')
+        data_headers = ('Purchase Time', 'Account', 'Doc ID')
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1], row[2]))
@@ -36,6 +36,9 @@ def get_installedappsLibrary(files_found, report_folder, seeker):
         
         tsvname = f'installed apps library'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Installed Apps Library'
+        timeline(report_folder, tlactivity, data_list)
     else:
         logfunc('No Installed Apps (Library) data available')
     

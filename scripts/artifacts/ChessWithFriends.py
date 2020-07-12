@@ -32,7 +32,7 @@ def get_ChessWithFriends(files_found, report_folder, seeker):
         report = ArtifactHtmlReport('Chats')
         report.start_artifact_report(report_folder, 'Chess With Friends')
         report.add_script()
-        data_headers = ('Message_ID','User_Name','User_Email','Chat_Message','Chat_Message_Creation' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Message_ID','User_Name','User_Email','Chat_Message','Chat_Message_Creation' )
         data_list = []
         for row in all_rows:
             data_list.append((row[0],row[1],row[2],row[3],row[4]))

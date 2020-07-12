@@ -3,7 +3,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name
 
 def get_chromeCookies(files_found, report_folder, seeker):
     
@@ -21,9 +21,6 @@ def get_chromeCookies(files_found, report_folder, seeker):
         cursor = db.cursor()
         cursor.execute('''
         SELECT
-        host_key,
-        name,
-        value,
         CASE
             last_access_utc 
             WHEN
@@ -33,6 +30,9 @@ def get_chromeCookies(files_found, report_folder, seeker):
             ELSE
                 datetime(last_access_utc / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
         END AS "last_access_utc", 
+        host_key,
+        name,
+        value,
         CASE
             creation_utc 
             WHEN
@@ -65,7 +65,7 @@ def get_chromeCookies(files_found, report_folder, seeker):
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
-            data_headers = ('Host','Name','Value','Last Access Date','Created Date','Expiration Date','Path')
+            data_headers = ('Last Access Date','Host','Name','Value','Created Date','Expiration Date','Path')
             data_list = []
             for row in all_rows:
                 data_list.append((row[0],row[1],(textwrap.fill(row[2], width=50)),row[3],row[4],row[5],row[6]))
@@ -75,6 +75,9 @@ def get_chromeCookies(files_found, report_folder, seeker):
             
             tsvname = f'{browser_name} cookies'
             tsv(report_folder, data_headers, data_list, tsvname)
+            
+            tlactivity = f'{browser_name} Cookies'
+            timeline(report_folder, tlactivity, data_list)
         else:
             logfunc(f'No {browser_name} cookies data available')
         
