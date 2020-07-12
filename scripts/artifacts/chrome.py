@@ -3,7 +3,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name
 
 def get_chrome(files_found, report_folder, seeker):
     
@@ -21,10 +21,10 @@ def get_chrome(files_found, report_folder, seeker):
         cursor = db.cursor()
         cursor.execute('''
         select
+            datetime(last_visit_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch"),
             url,
             title,
             visit_count,
-            datetime(last_visit_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch"),
             hidden
         from urls  
         ''')
@@ -38,7 +38,7 @@ def get_chrome(files_found, report_folder, seeker):
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
-            data_headers = ('URL','Title','Visit Count','Last Visit Time','Hidden')
+            data_headers = ('Last Visit Time','URL','Title','Visit Count','Hidden')
             data_list = []
             for row in all_rows:
                 data_list.append((textwrap.fill(row[0], width=100),row[1],row[2],row[3],row[4]))
@@ -48,6 +48,9 @@ def get_chrome(files_found, report_folder, seeker):
             
             tsvname = f'{browser_name} History'
             tsv(report_folder, data_headers, data_list, tsvname)
+            
+            tlactivity = f'{browser_name} History'
+            timeline(report_folder, tlactivity, data_list)
         else:
             logfunc(f'No {browser_name} history data available')
         

@@ -1,7 +1,7 @@
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv 
+from scripts.ilapfuncs import logfunc, tsv, timeline 
 
 def get_calllog(files_found, report_folder, seeker):
     
@@ -10,12 +10,12 @@ def get_calllog(files_found, report_folder, seeker):
     cursor = db.cursor()
     cursor.execute('''
     SELECT
+    datetime(date /1000, 'unixepoch') as date,
     CASE
         WHEN phone_account_address is NULL THEN ' '
         ELSE phone_account_address
         end as phone_account_address,
     number,
-    datetime(date /1000, 'unixepoch') as date,
     CASE
         WHEN type = 1 THEN  'Incoming'
         WHEN type = 2 THEN  'Outgoing'
@@ -55,7 +55,7 @@ def get_calllog(files_found, report_folder, seeker):
         report = ArtifactHtmlReport('Call logs')
         report.start_artifact_report(report_folder, 'Call logs')
         report.add_script()
-        data_headers = ('Phone Account Address', 'Partner', 'Call Date','Type','Duration in Secs','Partner Location','Country ISO','Data','Mime Type','Transcription','Deleted')
+        data_headers = ('Call Date', 'Phone Account Address', 'Partner', 'Type','Duration in Secs','Partner Location','Country ISO','Data','Mime Type','Transcription','Deleted')
         data_list = []
         for row in all_rows:
             # Setup icons for call type
@@ -75,8 +75,11 @@ def get_calllog(files_found, report_folder, seeker):
         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
         report.end_artifact_report()
         
-        tsvname = f'call logs'
+        tsvname = f'Call Logs'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = 'Call Logs'
+        timeline(report_folder, tlactivity, data_list)
     else:
         logfunc('No Call Log data available')
     
