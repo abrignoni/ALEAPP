@@ -12,3 +12,6 @@ Dependencies for your python environment are listed in `requirements.txt`. Insta
 To run on **Linux**, you will also need to install `tkinter` separately like so:
 
 `sudo apt-get install python3-tk`
+
+To install dependencies offline Troy Schnack has a neat process here:
+https://twitter.com/TroySchnack/status/1266085323651444736?s=19
