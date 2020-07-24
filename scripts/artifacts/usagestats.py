@@ -157,6 +157,7 @@ def process_usagestats(folder, uid, report_folder):
     db.commit()
 
     err=0
+    ferr = 0
     stats = None
 
     for filename in glob.iglob(os.path.join(folder, '**'), recursive=True):
@@ -182,6 +183,7 @@ def process_usagestats(folder, uid, report_folder):
                     logfunc(filename)
                     logfunc('')
                     err = 1
+                    ferr = 1
                 
                 try:
                     ET.parse(filename)
@@ -197,10 +199,14 @@ def process_usagestats(folder, uid, report_folder):
                         err = 1
                         #print(filename)
                     if stats:
-                        #print('Processing - '+filename)
-                        #print('')
-                        AddEntriesToDb(sourced, file_name_int, stats, db)
-                        continue
+                        if ferr == 1:
+                          ferr = 0
+                          continue
+                        else:
+                          #print('Processing - '+filename)
+                          #print('')
+                          AddEntriesToDb(sourced, file_name_int, stats, db)
+                          continue
                 
                 if err == 1:
                     err = 0
