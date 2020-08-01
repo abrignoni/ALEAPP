@@ -1,7 +1,7 @@
-import os
-import scripts.blackboxprotobuf as blackboxprotobuf
-import struct
+import blackboxprotobuf
 import datetime
+import os
+import struct
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows

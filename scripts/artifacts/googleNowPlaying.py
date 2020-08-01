@@ -1,5 +1,5 @@
+import blackboxprotobuf
 import json
-import scripts.blackboxprotobuf as blackboxprotobuf
 import sqlite3
 import time
 
