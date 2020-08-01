@@ -45,6 +45,7 @@ from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.userDict import get_userDict
 from scripts.artifacts.walStrings import get_walStrings
 from scripts.artifacts.wellbeing import get_wellbeing
+from scripts.artifacts.wellbeingURLs import get_wellbeingURLs
 from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
@@ -61,7 +62,8 @@ from scripts.ilapfuncs import *
 # Don't forget to import the module above!!!!
 
 tosearch = {
-    'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
+    'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
+    'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
@@ -104,8 +106,7 @@ tosearch = {
     'smanagerLow':('App Interaction', '**/com.samsung.android.sm/databases/lowpowercontext-system-db'),
     'smanagerCrash':('App Interaction', '**/com.samsung.android.sm/databases/sm.db'),
     'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
-    'ChessWithFriends':('Chats', '**/com.zynga.chess.googleplay/databases/wf_database.sqlite'),
-    'ChessWithFriends':('Chats', '**/com.zynga.chess.googleplay/db/wf_database.sqlite'),
+    'ChessWithFriends':('Chats', ('**/com.zynga.chess.googleplay/databases/wf_database.sqlite', '**/com.zynga.chess.googleplay/db/wf_database.sqlite')),
     'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite')
     }
 '''

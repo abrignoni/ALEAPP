@@ -3,7 +3,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name
 
 def get_chromeSearchTerms(files_found, report_folder, seeker):
     
@@ -39,16 +39,19 @@ def get_chromeSearchTerms(files_found, report_folder, seeker):
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
-            data_headers = ('Term','URL','Last Visit Time')
+            data_headers = ('Last Visit Time','Term','URL')
             data_list = []
             for row in all_rows:
-                data_list.append((row[1],(textwrap.fill(row[3], width=100)),row[4]))
+                data_list.append((row[4], row[1],(textwrap.fill(row[3], width=100))))
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
             tsvname = f'{browser_name} keyword search terms'
             tsv(report_folder, data_headers, data_list, tsvname)
+            
+            tlactivity = f'{browser_name} Keyword Search Terms'
+            timeline(report_folder, tlactivity, data_list)
         else:
             logfunc(f'No {browser_name} keyword search terms data available')
         

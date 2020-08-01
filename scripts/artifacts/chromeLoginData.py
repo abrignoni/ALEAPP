@@ -6,7 +6,7 @@ import sqlite3
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name
 
 def decrypt(ciphertxt, key=b"peanuts"):
     if re.match(rb"^v1[01]",ciphertxt): 
@@ -61,7 +61,7 @@ def get_chromeLoginData(files_found, report_folder, seeker):
             END AS "date_created_win_epoch", 
         CASE date_created WHEN "0" THEN "" 
             ELSE datetime(date_created / 1000000 + (strftime('%s', '1970-01-01')), "unixepoch")
-            END AS "date_created_unix_epoch", 
+            END AS "date_created_unix_epoch",
         origin_url,
         blacklisted_by_user
         FROM logins
@@ -76,7 +76,7 @@ def get_chromeLoginData(files_found, report_folder, seeker):
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
-            data_headers = ('Username','Password','Created Time','Origin URL','Blacklisted by User') 
+            data_headers = ('Created Time','Username','Password','Origin URL','Blacklisted by User') 
             data_list = []
             for row in all_rows:
                 password = ''
@@ -84,13 +84,16 @@ def get_chromeLoginData(files_found, report_folder, seeker):
                 if password_enc:
                     password = decrypt(password_enc).decode("utf-8", 'replace')
                 valid_date = get_valid_date(row[2], row[3])
-                data_list.append( (row[0], password, valid_date, row[4], row[5]) )
+                data_list.append( (valid_date, row[0], password, row[4], row[5]) )
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
             tsvname = f'{browser_name} login data'
             tsv(report_folder, data_headers, data_list, tsvname)
+            
+            tlactivity = f'{browser_name} Login Data'
+            timeline(report_folder, tlactivity, data_list)
         else:
             logfunc(f'No {browser_name} Login Data available')
         

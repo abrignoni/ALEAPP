@@ -2,7 +2,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 def get_googlePlaySearches(files_found, report_folder, seeker):
     
@@ -33,6 +33,9 @@ def get_googlePlaySearches(files_found, report_folder, seeker):
         
         tsvname = f'google play searches'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Google Play Searches'
+        timeline(report_folder, tlactivity, data_list)
     else:
         logfunc('No Google Play Searches data available')
     

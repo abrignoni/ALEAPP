@@ -4,7 +4,7 @@ import sqlite3
 
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 # Reference for flag values for mms:
 # ---------------------------------- 
@@ -88,12 +88,12 @@ def read_sms_messages(db, report_folder, file_found):
         report = ArtifactHtmlReport('SMS messages')
         report.start_artifact_report(report_folder, 'SMS messages')
         report.add_script()
-        data_headers = ('MSG ID', 'Thread ID', 'Address', 'Contact ID', 'Date', 
+        data_headers = ('Date','MSG ID', 'Thread ID', 'Address', 'Contact ID',  
             'Date sent', 'Read', 'Type', 'Body', 'Service Center', 'Error code')
         data_list = []
         for row in all_rows:
-            data_list.append((row['msg_id'], row['thread_id'], row['address'],
-                row['person'], row['date'], row['date_sent'], row['read'],
+            data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
+                row['person'],row['date_sent'], row['read'],
                 row['type'], row['body'], row['service_center'], row['error_code']))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
@@ -101,6 +101,9 @@ def read_sms_messages(db, report_folder, file_found):
         
         tsvname = f'sms messages'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'SMS Messages'
+        timeline(report_folder, tlactivity, data_list)
     else:
         logfunc('No SMS messages found!')
 
@@ -166,7 +169,7 @@ def read_mms_messages(db, report_folder, file_found, seeker):
         report = ArtifactHtmlReport('MMS messages')
         report.start_artifact_report(report_folder, 'MMS messages')
         report.add_script()
-        data_headers = ('MSG ID', 'Thread ID', 'Date', 'Date sent', 'Read',
+        data_headers = ('Date', 'MSG ID', 'Thread ID', 'Date sent', 'Read',
             'From', 'To', 'Cc', 'Bcc', 'Body')
         data_list = []
 
@@ -180,8 +183,8 @@ def read_mms_messages(db, report_folder, file_found, seeker):
                 last_id = id
                 temp_mms_list = []
 
-            msg = MmsMessage(row['mms_id'], row['thread_id'], 
-                row['date'], row['date_sent'], row['read'],
+            msg = MmsMessage(row['date'], row['mms_id'], row['thread_id'], 
+                 row['date_sent'], row['read'],
                 row['FROM'], row['TO'], row['CC'], row['BCC'], row['msg_box'], 
                 row['part_id'], row['seq'], row['ct'], row['cl'], 
                 row['_data'], row['text'])
@@ -225,5 +228,8 @@ def read_mms_messages(db, report_folder, file_found, seeker):
         
         tsvname = f'mms messages'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'MMS Messages'
+        timeline(report_folder, tlactivity, data_list)
     else:
         logfunc('No MMS messages found!')

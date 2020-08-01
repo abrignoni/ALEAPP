@@ -5,7 +5,7 @@ import shutil
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 def get_accounts_de(files_found, report_folder, seeker):
 
@@ -34,9 +34,9 @@ def process_accounts_de(folder, uid, report_folder):
     #Query to create report
     cursor.execute('''
     SELECT
+        datetime(last_password_entry_time_millis_epoch / 1000, 'unixepoch') as 'last pass entry',
         name,
-        type,
-        datetime(last_password_entry_time_millis_epoch / 1000, 'unixepoch') as 'last pass entry'
+        type
         FROM
     accounts
     ''')
@@ -46,7 +46,7 @@ def process_accounts_de(folder, uid, report_folder):
         report = ArtifactHtmlReport('Accounts_de')
         report.start_artifact_report(report_folder, f'accounts_de_{uid}')
         report.add_script()
-        data_headers = ('Name', 'Type', 'Last password entry')
+        data_headers = ('Last password entry','Name','Type')
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1], row[2]))
@@ -55,6 +55,9 @@ def process_accounts_de(folder, uid, report_folder):
         
         tsvname = f'accounts de {uid}'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Accounts DE {uid}'
+        timeline(report_folder, tlactivity, data_list)
     else:
         logfunc(f'No accounts_de_{uid} data available')    
     db.close()

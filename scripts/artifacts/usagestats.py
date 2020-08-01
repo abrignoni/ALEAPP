@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 
 from enum import IntEnum
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 class EventType(IntEnum):
     NONE = 0
@@ -157,6 +157,7 @@ def process_usagestats(folder, uid, report_folder):
     db.commit()
 
     err=0
+    ferr = 0
     stats = None
 
     for filename in glob.iglob(os.path.join(folder, '**'), recursive=True):
@@ -182,6 +183,7 @@ def process_usagestats(folder, uid, report_folder):
                     logfunc(filename)
                     logfunc('')
                     err = 1
+                    ferr = 1
                 
                 try:
                     ET.parse(filename)
@@ -197,10 +199,14 @@ def process_usagestats(folder, uid, report_folder):
                         err = 1
                         #print(filename)
                     if stats:
-                        #print('Processing - '+filename)
-                        #print('')
-                        AddEntriesToDb(sourced, file_name_int, stats, db)
-                        continue
+                        if ferr == 1:
+                          ferr = 0
+                          continue
+                        else:
+                          #print('Processing - '+filename)
+                          #print('')
+                          AddEntriesToDb(sourced, file_name_int, stats, db)
+                          continue
                 
                 if err == 1:
                     err = 0
@@ -308,10 +314,10 @@ def process_usagestats(folder, uid, report_folder):
     #query for reporting
     cursor.execute('''
     select 
-    usage_type,
     case lastime WHEN '' THEN ''
      ELSE datetime(lastime/1000, 'UNIXEPOCH')
     end as lasttimeactive,
+    usage_type,
     timeactive as time_Active_in_msecs,
     timeactive/1000 as timeactive_in_secs,
     case last_time_service_used  WHEN '' THEN ''
@@ -342,14 +348,14 @@ def process_usagestats(folder, uid, report_folder):
     report = ArtifactHtmlReport('Usagestats')
     report.start_artifact_report(report_folder, f'UsageStats_{uid}')
     report.add_script()
-    data_headers = ('Usage Type', 'Last Time Active', 'Time Active in Msecs', 'Time Active in Secs', 
+    data_headers = ('Last Time Active','Usage Type','Time Active in Msecs', 'Time Active in Secs', 
                     'Last Time Service Used', 'Last Time Visible', 'Total Time Visible', 'App Launch Count', 
                     'Package', 'Types', 'Class', 'Source')
     data_list = []
 
     for row in all_rows:
-        usage_type = str(row[0])
-        lasttimeactive = str(row[1])
+        usage_type = str(row[1])
+        lasttimeactive = str(row[0])
         time_Active_in_msecs = str(row[2])
         timeactive_in_secs = str(row[3])
         last_time_service_used = str(row[4])
@@ -361,7 +367,7 @@ def process_usagestats(folder, uid, report_folder):
         classs = str(row[10])
         source = str(row[11])
 
-        data_list.append((usage_type, lasttimeactive, time_Active_in_msecs,
+        data_list.append((lasttimeactive, usage_type, time_Active_in_msecs,
                 timeactive_in_secs, last_time_service_used, 
                 last_time_visible, total_time_visible,
                 app_launch_count, package, types, classs, source))
@@ -372,6 +378,9 @@ def process_usagestats(folder, uid, report_folder):
     
     tsvname = f'usagestats'
     tsv(report_folder, data_headers, data_list, tsvname)
+    
+    tlactivity = f'Usagestats'
+    timeline(report_folder, tlactivity, data_list)
 
     logfunc(f'Records processed for user {uid}: {processed}')
     db.close()

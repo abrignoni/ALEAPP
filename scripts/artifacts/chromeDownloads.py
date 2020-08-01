@@ -3,7 +3,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name, does_column_exist_in_db
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, does_column_exist_in_db
 
 def get_chromeDownloads(files_found, report_folder, seeker):
     
@@ -32,7 +32,7 @@ def get_chromeDownloads(files_found, report_folder, seeker):
             last_access_time_query = "'' as last_access_query"
 
         cursor.execute(f'''
-        SELECT tab_url,
+        SELECT 
         CASE start_time  
             WHEN "0" 
             THEN "" 
@@ -43,7 +43,8 @@ def get_chromeDownloads(files_found, report_folder, seeker):
             THEN "" 
             ELSE datetime(end_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
         END AS "End Time", 
-        {last_access_time_query}, 
+        {last_access_time_query},
+        tab_url, 
         target_path, state, opened, received_bytes, total_bytes
         FROM downloads
         ''')
@@ -57,7 +58,7 @@ def get_chromeDownloads(files_found, report_folder, seeker):
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
-            data_headers = ('URL','Start Time','End Time','Last Access Time','Target Path','State','Opened?','Received Bytes','Total Bytes')
+            data_headers = ('Start Time','End Time','Last Access Time','URL','Target Path','State','Opened?','Received Bytes','Total Bytes')
             data_list = []
             for row in all_rows:
                 data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
@@ -65,8 +66,11 @@ def get_chromeDownloads(files_found, report_folder, seeker):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'{browser_name} downloads'
+            tsvname = f'{browser_name} Downloads'
             tsv(report_folder, data_headers, data_list, tsvname)
+            
+            tlactivity = f'{browser_name} Downloads'
+            timeline(report_folder, tlactivity, data_list)
         else:
             logfunc(f'No {browser_name} download data available')
         

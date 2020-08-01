@@ -3,7 +3,7 @@ import scripts.blackboxprotobuf as blackboxprotobuf
 import sqlite3
 import time
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -110,6 +110,9 @@ def get_usageapps(files_found, report_folder, seeker):
             
             tsvname = f'personalization services'
             tsv(report_folder, data_headers, data_list, tsvname)
+            
+            tlactivity = f'Personalization Services'
+            timeline(report_folder, tlactivity, data_list)
         else:
             logfunc('No Usage Apps data available')
         

@@ -4,7 +4,7 @@ import struct
 import datetime
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -145,6 +145,9 @@ def get_quicksearch(files_found, report_folder, seeker):
         
         tsvname = f'google quick search box'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Google Quick Search Box'
+        timeline(report_folder, tlactivity, data_list)
     else:
         logfunc('No recent quick search or now data available')            
             

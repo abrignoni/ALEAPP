@@ -2,7 +2,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 def get_smanagerLow(files_found, report_folder, seeker):
     
@@ -11,10 +11,10 @@ def get_smanagerLow(files_found, report_folder, seeker):
     cursor = db.cursor()
     cursor.execute('''
     SELECT 
-    id,
-    package_name,
     datetime(start_time /1000, "unixepoch"),
     datetime(end_time /1000, "unixepoch"),
+    id,
+    package_name,
     uploaded,
     datetime(created_at /1000, "unixepoch"),
     datetime(modified_at /1000, "unixepoch")
@@ -27,7 +27,7 @@ def get_smanagerLow(files_found, report_folder, seeker):
         report = ArtifactHtmlReport('Samsung Smart Manager - Usage')
         report.start_artifact_report(report_folder, 'Samsung Smart Manager - Usage')
         report.add_script()
-        data_headers = ('ID','Package Name','Start Time','End Time', 'Uploaded?', 'Created', 'Modified' )
+        data_headers = ('Start Time','End Time','ID','Package Name', 'Uploaded?', 'Created', 'Modified' )
         data_list = []
         for row in all_rows:
             data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
@@ -37,6 +37,9 @@ def get_smanagerLow(files_found, report_folder, seeker):
         
         tsvname = f'samsung smart manager - usage'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Samsung Smart Manager - Usage'
+        timeline(report_folder, tlactivity, data_list) 
     else:
         logfunc('No Samsung Smart Manager - Usage data available')
     

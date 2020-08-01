@@ -134,6 +134,7 @@ def html2csv(reportfolderbase):
 
 def tsv(report_folder, data_headers, data_list, tsvname):
     report_folder = report_folder.rstrip('/')
+    report_folder = report_folder.rstrip('\\')
     report_folder_base, tail = os.path.split(report_folder)
     tsv_report_folder = os.path.join(report_folder_base, '_TSV Exports')
     
@@ -142,9 +143,39 @@ def tsv(report_folder, data_headers, data_list, tsvname):
     else:
         os.makedirs(tsv_report_folder)
     
-    
     with codecs.open(os.path.join(tsv_report_folder + '/' + tsvname +'.tsv'), 'a', 'utf-8-sig') as tsvfile:
         tsv_writer = csv.writer(tsvfile, delimiter='\t')
         tsv_writer.writerow(data_headers)
         for i in data_list:
             tsv_writer.writerow(i)
+
+def timeline(report_folder, tlactivity, data_list):
+    report_folder = report_folder.rstrip('/')
+    report_folder = report_folder.rstrip('\\')
+    report_folder_base, tail = os.path.split(report_folder)
+    tl_report_folder = os.path.join(report_folder_base, '_Timeline')
+
+    if os.path.isdir(tl_report_folder):
+        tldb = os.path.join(tl_report_folder, 'tl.db')
+        db = sqlite3.connect(tldb)
+        cursor = db.cursor()
+        cursor.execute('''PRAGMA synchronous = EXTRA''')
+        cursor.execute('''PRAGMA journal_mode = WAL''')
+    else:
+        os.makedirs(tl_report_folder)
+        #create database
+        tldb = os.path.join(tl_report_folder, 'tl.db')
+        db = sqlite3.connect(tldb, isolation_level = 'exclusive')
+        cursor = db.cursor()
+        cursor.execute(
+        """
+        CREATE TABLE data(key TEXT, activity TEXT, datalist TEXT)
+        """
+            )
+        db.commit()
+    
+    for i in data_list:
+        #datainsert = (str(i[0]), tlactivity, str(i),)
+        cursor.executemany("INSERT INTO data VALUES(?,?,?)", [(str(i[0]), tlactivity, str(i))])
+    db.commit()
+    db.close()

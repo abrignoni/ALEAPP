@@ -3,7 +3,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name
 
 def get_chromeOfflinePages(files_found, report_folder, seeker):
     
@@ -49,6 +49,9 @@ def get_chromeOfflinePages(files_found, report_folder, seeker):
             
             tsvname = f'{browser_name} offline pages'
             tsv(report_folder, data_headers, data_list, tsvname)
+            
+            tlactivity = f'{browser_name} Offline Pages'
+            timeline(report_folder, tlactivity, data_list)
         else:
             logfunc(f'No {browser_name} Offline Pages data available')
         

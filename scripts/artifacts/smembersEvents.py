@@ -2,7 +2,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 def get_smembersEvents(files_found, report_folder, seeker):
     
@@ -11,9 +11,9 @@ def get_smembersEvents(files_found, report_folder, seeker):
     cursor = db.cursor()
     cursor.execute('''
     select 
-    type, 
-    value, 
     datetime(created_at /1000, "unixepoch"), 
+    type, 
+    value,
     in_snapshot
     FROM device_events
     ''')
@@ -24,7 +24,7 @@ def get_smembersEvents(files_found, report_folder, seeker):
         report = ArtifactHtmlReport('Samsung Members - Events')
         report.start_artifact_report(report_folder, 'Samsung Members - Events')
         report.add_script()
-        data_headers = ('Type','Value','Created At','Snapshot?' )
+        data_headers = ('Created At','Type','Value','Snapshot?' )
         data_list = []
         for row in all_rows:
             data_list.append((row[0],row[1],row[2],row[3]))
@@ -34,6 +34,9 @@ def get_smembersEvents(files_found, report_folder, seeker):
         
         tsvname = f'samsung members - events'
         tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Samsung Members - Events'
+        timeline(report_folder, tlactivity, data_list)
     else:
         logfunc('No Samsung Members - Events data available')
     
