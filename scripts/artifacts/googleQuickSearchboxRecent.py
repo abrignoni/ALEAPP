@@ -1,6 +1,6 @@
+import blackboxprotobuf
 import json
 import os
-import scripts.blackboxprotobuf as blackboxprotobuf
 import shutil
 import sqlite3
 from html import escape

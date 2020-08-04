@@ -3,6 +3,7 @@ import csv
 import datetime
 import os
 import pathlib
+import re
 import sqlite3
 import sys
 
@@ -27,6 +28,18 @@ class OutputParameters:
 def is_platform_windows():
     '''Returns True if running on Windows'''
     return os.name == 'nt'
+
+def sanitize_file_path(filename, replacement_char='_'):
+    '''
+    Removes illegal characters (for windows) from the string passed. Does not replace \ or /
+    '''
+    return re.sub(r'[*?:"<>|\'\r\n]', replacement_char, filename)
+
+def sanitize_file_name(filename, replacement_char='_'):
+    '''
+    Removes illegal characters (for windows) from the string passed.
+    '''
+    return re.sub(r'[\\/*?:"<>|\'\r\n]', replacement_char, filename)
 
 def get_next_unused_name(path):
     '''Checks if path exists, if it does, finds an unused name by appending -xx
@@ -142,8 +155,8 @@ def tsv(report_folder, data_headers, data_list, tsvname):
         pass
     else:
         os.makedirs(tsv_report_folder)
-    
-    with codecs.open(os.path.join(tsv_report_folder + '/' + tsvname +'.tsv'), 'a', 'utf-8-sig') as tsvfile:
+
+    with codecs.open(os.path.join(tsv_report_folder, tsvname +'.tsv'), 'a', 'utf-8-sig') as tsvfile:
         tsv_writer = csv.writer(tsvfile, delimiter='\t')
         tsv_writer.writerow(data_headers)
         for i in data_list:
