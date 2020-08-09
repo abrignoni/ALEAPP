@@ -53,7 +53,6 @@ def ValidateInput(values, window):
 def CheckList(mtxt, lkey, mdstring):
     return [sg.CBox(mtxt, default=True, key=lkey, metadata=mdstring)]
 
-# verify module (.py) file exists; only then add it to the "list"
 def pickModules():
     global indx
     global mlist
@@ -65,7 +64,7 @@ def pickModules():
 
     indx = 1000     # arbitrary number to not interfere with other controls
     for key, val in sorted_tosearch.items():
-        mlist.append( CheckList(val[0] + f' [{key}.py]', indx, key) )
+        mlist.append( CheckList(val[0] + f' [{key}]', indx, key) )
         indx = indx + 1
         
 sg.theme('LightGreen5')   # Add a touch of color
