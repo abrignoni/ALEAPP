@@ -380,7 +380,7 @@ def process_usagestats(folder, uid, report_folder):
     tsv(report_folder, data_headers, data_list, tsvname)
     
     tlactivity = f'Usagestats'
-    timeline(report_folder, tlactivity, data_list)
+    timeline(report_folder, tlactivity, data_list, data_headers)
 
     logfunc(f'Records processed for user {uid}: {processed}')
     db.close()

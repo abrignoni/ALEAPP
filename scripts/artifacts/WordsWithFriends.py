@@ -44,7 +44,7 @@ def get_WordsWithFriends(files_found, report_folder, seeker):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'Words with Friends Chats'
-        timeline(report_folder, tlactivity, data_list)
+        timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Words With Friends data available')
     

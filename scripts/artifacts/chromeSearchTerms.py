@@ -51,7 +51,7 @@ def get_chromeSearchTerms(files_found, report_folder, seeker):
             tsv(report_folder, data_headers, data_list, tsvname)
             
             tlactivity = f'{browser_name} Keyword Search Terms'
-            timeline(report_folder, tlactivity, data_list)
+            timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc(f'No {browser_name} keyword search terms data available')
         
