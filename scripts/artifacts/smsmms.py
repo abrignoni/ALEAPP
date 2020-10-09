@@ -103,7 +103,7 @@ def read_sms_messages(db, report_folder, file_found):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'SMS Messages'
-        timeline(report_folder, tlactivity, data_list)
+        timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No SMS messages found!')
 
@@ -230,6 +230,6 @@ def read_mms_messages(db, report_folder, file_found, seeker):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'MMS Messages'
-        timeline(report_folder, tlactivity, data_list)
+        timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No MMS messages found!')

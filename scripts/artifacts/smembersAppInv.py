@@ -39,7 +39,7 @@ def get_smembersAppInv(files_found, report_folder, seeker):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'Samsung Members - Apps'
-        timeline(report_folder, tlactivity, data_list)
+        timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Samsung Members - Apps data available')
     

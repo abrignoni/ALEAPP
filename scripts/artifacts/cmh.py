@@ -39,7 +39,7 @@ def get_cmh(files_found, report_folder, seeker):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'Samsung CMH Geodata'
-        timeline(report_folder, tlactivity, data_list)
+        timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc(f'No Samsung_CMH_GeoData available')    
     db.close()

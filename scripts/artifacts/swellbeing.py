@@ -60,7 +60,7 @@ def get_swellbeing(files_found, report_folder, seeker):
             tsv(report_folder, data_headers, data_list, tsvname)
             
             tlactivity = f'Samsung Wellbeing - Events'
-            timeline(report_folder, tlactivity, data_list)
+            timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Samsung Wellbeing event data available')
         

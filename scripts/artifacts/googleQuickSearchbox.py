@@ -1,7 +1,7 @@
-import os
-import scripts.blackboxprotobuf as blackboxprotobuf
-import struct
+import blackboxprotobuf
 import datetime
+import os
+import struct
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
@@ -147,7 +147,7 @@ def get_quicksearch(files_found, report_folder, seeker):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'Google Quick Search Box'
-        timeline(report_folder, tlactivity, data_list)
+        timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No recent quick search or now data available')            
             

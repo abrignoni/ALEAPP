@@ -43,7 +43,7 @@ def get_scontextLog(files_found, report_folder, seeker):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'Samsung Context Log'
-        timeline(report_folder, tlactivity, data_list) 
+        timeline(report_folder, tlactivity, data_list, data_headers) 
     else:
         logfunc('No Samsung Context Log data available')
     
