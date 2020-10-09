@@ -50,6 +50,7 @@ def get_icon_name(category, artifact):
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
     elif category == 'SMS & MMS':       icon = 'message-square'
+    elif category == 'ADB HOSTS':       icon = 'terminal'
     elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'CHATS':     icon = 'message-circle'
@@ -129,17 +130,15 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
 
     # Create index.html's page content
     create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path, nav_list_data)
-    
     elements_folder = os.path.join(reportfolderbase, '_elements')
     os.mkdir(elements_folder)
     __location__ = os.path.dirname(os.path.abspath(__file__))
     
-    #print(str(os.path.join(__location__,"logo.jpg")))
-    #logfunc(str(os.path.join(__location__,"logo.jpg")))
-    
     shutil.copy2(os.path.join(__location__,"logo.jpg"), elements_folder)
     shutil.copy2(os.path.join(__location__,"dashboard.css"), elements_folder)
     shutil.copy2(os.path.join(__location__,"feather.min.js"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"dark-mode.css"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"dark-mode-switch.js"), elements_folder)
     shutil.copytree(os.path.join(__location__,"MDB-Free_4.13.0"), os.path.join(elements_folder, 'MDB-Free_4.13.0'))
 
 def get_file_content(path):
@@ -152,7 +151,7 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     '''Write out the index.html page to the report folder'''
     content = '<br />'
     content += """
-    <div class="card " style="padding: 20px;">
+    <div class="card bg-white" style="padding: 20px;">
         <h2 class="card-title">Case Information</h2>
     """ # CARD start
     
@@ -179,11 +178,7 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
 
     content += '</div>' # CARD end
 
-    authors_data = ''
-    for author in aleapp_contributors:
-        authors_data += individual_contributor.format(author[0], author[1], 
-                        ('https://twitter.com/' + author[2]) if author[2] else '',
-                        author[3])
+    authors_data = generate_authors_table_code(aleapp_contributors)
     credits_code = credits_block.format(authors_data)
 
     # WRITE INDEX.HTML LAST
@@ -203,6 +198,26 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     f.write(credits_code)
     f.write(body_main_trailer + body_end + page_footer)
     f.close()
+
+def generate_authors_table_code(aleapp_contributors):
+    authors_data = ''
+    for author_name, blog, tweet_handle, git in aleapp_contributors:
+        author_data = ''
+        if blog:
+            author_data += f'<a href="{blog}" target="_blank">{blog_icon}</a> &nbsp;\n'
+        else:
+            author_data += f'{blank_icon} &nbsp;\n'
+        if tweet_handle:
+            author_data += f'<a href="https://twitter.com/{tweet_handle}" target="_blank">{twitter_icon}</a> &nbsp;\n'
+        else:
+            author_data += f'{blank_icon} &nbsp;\n'
+        if git:
+            author_data += f'<a href="{git}" target="_blank">{github_icon}</a>\n'
+        else:
+            author_data += f'{blank_icon}'
+
+        authors_data += individual_contributor.format(author_name, author_data)
+    return authors_data
 
 def generate_key_val_table_without_headings(title, data_list, html_escape=True, width="70%"):
     '''Returns the html code for a key-value table (2 cols) without col names'''
