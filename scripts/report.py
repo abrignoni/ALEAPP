@@ -50,6 +50,7 @@ def get_icon_name(category, artifact):
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
     elif category == 'SMS & MMS':       icon = 'message-square'
+    elif category == 'ADB HOSTS':       icon = 'terminal'
     elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'CHATS':     icon = 'message-circle'
