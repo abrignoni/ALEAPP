@@ -52,6 +52,7 @@ from scripts.artifacts.wifiProfiles import get_wifiProfiles
 from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
 from scripts.artifacts.WordsWithFriends import get_WordsWithFriends
 from scripts.artifacts.ADB_Hosts import get_ADB_Hosts
+from scripts.artifacts.BashHistory import get_BashHistory
 
 from scripts.ilapfuncs import *
 
@@ -109,7 +110,8 @@ tosearch = {
     'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
     'ChessWithFriends':('Chats', ('**/com.zynga.chess.googleplay/databases/wf_database.sqlite', '**/com.zynga.chess.googleplay/db/wf_database.sqlite')),
     'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite'),
-    'ADB_Hosts':('ADB Hosts', '**/system/etc/hosts')
+    'ADB_Hosts':('ADB Hosts', '**/system/etc/hosts'),
+    'BashHistory':('Bash History', '**/.bash_history')
     }
 '''
 tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
