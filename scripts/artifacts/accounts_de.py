@@ -57,7 +57,7 @@ def process_accounts_de(folder, uid, report_folder):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'Accounts DE {uid}'
-        timeline(report_folder, tlactivity, data_list)
+        timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc(f'No accounts_de_{uid} data available')    
     db.close()

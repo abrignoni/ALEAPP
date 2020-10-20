@@ -147,7 +147,7 @@ def get_quicksearch(files_found, report_folder, seeker):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'Google Quick Search Box'
-        timeline(report_folder, tlactivity, data_list)
+        timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No recent quick search or now data available')            
             

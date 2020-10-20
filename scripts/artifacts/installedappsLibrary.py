@@ -38,7 +38,7 @@ def get_installedappsLibrary(files_found, report_folder, seeker):
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'Installed Apps Library'
-        timeline(report_folder, tlactivity, data_list)
+        timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Installed Apps (Library) data available')
     

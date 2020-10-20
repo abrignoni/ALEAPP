@@ -93,7 +93,7 @@ def get_chromeLoginData(files_found, report_folder, seeker):
             tsv(report_folder, data_headers, data_list, tsvname)
             
             tlactivity = f'{browser_name} Login Data'
-            timeline(report_folder, tlactivity, data_list)
+            timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc(f'No {browser_name} Login Data available')
         
