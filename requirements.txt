@@ -3,3 +3,4 @@ beautifulsoup4==4.8.2
 protobuf==3.10.0
 PySimpleGUI==4.16.0
 PyCryptodome
+xmltodict
