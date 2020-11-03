@@ -156,7 +156,7 @@ def get_wifiProfiles(files_found, report_folder, seeker):
         report.start_artifact_report(report_folder, 'Wi-Fi Profiles')
         report.add_script()
         data_headers = ('SecurityMode', 'SSID', 'PreSharedKey', 'WEPKeys', 'Password', 'Identity', 'DefaultGwMacAddress', 'semCreationTime', 'semUpdateTime', 'LastConnectedTime', 'CaptivePortal', 'LoginUrl', 'IpAssignment', 'Path')
-        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.write_artifact_data_table(data_headers, data_list, ", ".join(files_found))
         report.end_artifact_report()
         
         tsvname = f'wifi profiles'
