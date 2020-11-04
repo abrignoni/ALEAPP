@@ -44,7 +44,7 @@ def get_search_query_from_blob(data):
             str_len = struct.unpack('<I', data[pos:pos+4])[0]
             if str_len > 0:
                 pos += 4
-                query = data[pos : pos + str_len*2]
+                query = data[pos : pos + str_len*2] # TODO PROBLEM - With Android 11, this is utf8! No indication of format anywhere
                 query = query.decode('utf-16', 'backslashreplace')
     return query
 
@@ -129,7 +129,8 @@ def get_quicksearch(files_found, report_folder, seeker):
         folder_name = os.path.basename(report_folder)
     entries = len(sessions)
     if entries > 0:
-        description = "Recently searched terms from the Google Search widget and any interaction with the Google Personal Assistant / app (previously known as 'Google Now') appear here."
+        description = "Recently searched terms from the Google Search widget and any interaction with the Google Personal Assistant / app (previously "\
+                        "known as 'Google Now') appear here. This can include previously searched items from another device too!"
         report = ArtifactHtmlReport('Google App & Quick Search queries')
         report.start_artifact_report(report_folder, 'Searches & Personal assistant', description)
         report.add_script()
