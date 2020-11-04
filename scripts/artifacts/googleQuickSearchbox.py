@@ -105,6 +105,7 @@ def parse_session_data(values, file_name, file_last_mod_date, report_folder):
 
 def get_quicksearch(files_found, report_folder, seeker):
     sessions = []
+    base_folder = ''
     for file_found in files_found:
         file_found = str(file_found)
         if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
@@ -113,6 +114,7 @@ def get_quicksearch(files_found, report_folder, seeker):
         elif os.path.isdir(file_found): # skip folders (there shouldn't be any)
             continue
         
+        base_folder = os.path.dirname(file_found)
         file_name = os.path.basename(file_found)
         with open(file_found, 'rb') as f:
             pb = f.read()
@@ -140,7 +142,7 @@ def get_quicksearch(files_found, report_folder, seeker):
                 response = f'<audio controls><source src="{folder_name}/{filename}"></audio>'
             data_list.append( (s.file_last_mod_date, s.session_type, escape(', '.join(s.session_queries)), response, s.source_file) )
 
-        report.write_artifact_data_table(data_headers, data_list, '', html_escape=False, write_location=False)
+        report.write_artifact_data_table(data_headers, data_list, base_folder, html_escape=False)
         report.end_artifact_report()
         
         tsvname = f'google quick search box'
