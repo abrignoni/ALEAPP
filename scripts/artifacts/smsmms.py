@@ -64,20 +64,21 @@ def get_sms_mms(files_found, report_folder, seeker):
         if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
             # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
             continue
-        elif file_found.find('{0}user_de{0}'.format(slash)) >= 0:
-            # Skip data/user_de/0/com.android.providers.telephony/databases/mmssms.db, it is always empty
-            continue
+        #elif file_found.find('{0}user_de{0}'.format(slash)) >= 0:
+        #    # Skip data/user_de/0/com.android.providers.telephony/databases/mmssms.db, it is always empty
+        #    continue
         elif not file_found.endswith('mmssms.db'):
             continue # Skip all other files
         
         db = sqlite3.connect(file_found)
         db.row_factory = sqlite3.Row # For fetching columns by name
 
-        read_sms_messages(db, report_folder, file_found)
+        got_messages = read_sms_messages(db, report_folder, file_found)
         read_mms_messages(db, report_folder, file_found, seeker)
 
         db.close()
-        return
+        if got_messages:
+            return
         
 def read_sms_messages(db, report_folder, file_found):
     cursor = db.cursor()
@@ -106,6 +107,8 @@ def read_sms_messages(db, report_folder, file_found):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No SMS messages found!')
+        return False
+    return True
 
 class MmsMessage:
     def __init__(self, mms_id, thread_id, date, date_sent, read, From, to, cc, bcc, type, part_id, seq, ct, cl, data, text):
@@ -137,7 +140,7 @@ def add_mms_to_data_list(data_list, mms_list, folder_name):
         else:
             if mms.filename:
                 if mms.ct.find('image') >= 0:
-                    body = '<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" alt="{0}"></a>'.format(mms.filename, folder_name)
+                    body = '<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" title="{0}"></a>'.format(mms.filename, folder_name)
                 elif mms.ct.find('audio') >= 0:
                     body = '<audio controls><source src="{1}/{0}"></audio>'.format(mms.filename, folder_name)
                 elif mms.ct.find('video') >= 0:
@@ -233,3 +236,5 @@ def read_mms_messages(db, report_folder, file_found, seeker):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No MMS messages found!')
+        return False
+    return True

@@ -190,11 +190,11 @@ def process_recentactivity(folder, uid, report_folder):
         if row[11] == 'NO IMAGE':
             image_data_row.append('No Image')
         else:
-            image_data_row.append('<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" alt="{0}"></a>'.format(str(row[11]), folder_name))
+            image_data_row.append('<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" title="{0}"></a>'.format(str(row[11]), folder_name))
         if row[12] == 'NO IMAGE':
             image_data_row.append('No Image')
         else:
-            image_data_row.append('<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" alt="{0}"></a>'.format(str(row[12]), folder_name))
+            image_data_row.append('<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" title="{0}"></a>'.format(str(row[12]), folder_name))
         report.write_artifact_data_table(image_data_headers, image_data_list, folder, table_id='', table_style="width: auto", 
             write_total=False, write_location=False, html_escape=False, cols_repeated_at_bottom=False)
         report.write_raw_html('<br />')

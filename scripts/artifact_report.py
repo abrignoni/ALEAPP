@@ -1,6 +1,7 @@
 import html
 import os
 from scripts.html_parts import *
+from scripts.ilapfuncs import is_platform_windows
 from scripts.version_info import aleapp_version
 
 class ArtifactHtmlReport:
@@ -69,6 +70,8 @@ class ArtifactHtmlReport:
         if write_total:
             self.write_minor_header(f'Total number of entries: {num_entries}', 'h6')
         if write_location:
+            if is_platform_windows():
+                source_path = source_path.replace('/', '\\')
             self.write_lead_text(f'{self.artifact_name} located at: {source_path}')
 
         self.report_file.write('<br />')

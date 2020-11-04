@@ -1,6 +1,7 @@
 import glob
 import json
 import os
+import re
 import xml.etree.ElementTree as ET
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -23,12 +24,17 @@ def get_settingsSecure(files_found, report_folder, seeker):
         except ValueError:
                 pass # uid was not a number
 
-def process_ssecure(folder, uid, report_folder):
+def process_ssecure(file_path, uid, report_folder):
     
-    tree = ET.parse(folder)
-    root = tree.getroot()
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+    except ET.ParseError: # Fix for android 11 invalid XML file (no root element present)
+        with open(file_path) as f:
+            xml = f.read()
+            root = ET.fromstring(re.sub(r"(<\?xml[^>]+\?>)", r"\1<root>", xml) + "</root>")
     data_list = []
-    for setting in root.findall('setting'):
+    for setting in root.iter('setting'):
         nme = setting.get('name')
         val = setting.get('value')
         if nme == 'bluetooth_name':
@@ -45,7 +51,7 @@ def process_ssecure(folder, uid, report_folder):
         report.start_artifact_report(report_folder, f'Settings_Secure_{uid}')
         report.add_script()
         data_headers = ('Name', 'Value')
-        report.write_artifact_data_table(data_headers, data_list, folder)
+        report.write_artifact_data_table(data_headers, data_list, file_path)
         report.end_artifact_report()
         
         tsvname = f'settings secure'
