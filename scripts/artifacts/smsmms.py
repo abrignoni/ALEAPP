@@ -140,7 +140,7 @@ def add_mms_to_data_list(data_list, mms_list, folder_name):
         else:
             if mms.filename:
                 if mms.ct.find('image') >= 0:
-                    body = '<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" alt="{0}"></a>'.format(mms.filename, folder_name)
+                    body = '<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid z-depth-2 zoom" style="max-height: 400px" title="{0}"></a>'.format(mms.filename, folder_name)
                 elif mms.ct.find('audio') >= 0:
                     body = '<audio controls><source src="{1}/{0}"></audio>'.format(mms.filename, folder_name)
                 elif mms.ct.find('video') >= 0:
