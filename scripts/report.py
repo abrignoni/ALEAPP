@@ -113,7 +113,7 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
             old_filename = os.path.basename(path)
             filename = old_filename.replace(".temphtml", ".html")
             # search for it in nav_list_data, then mark that one as 'active' tab
-            active_nav_list_data = mark_item_active(nav_list_data, filename) + icon_display_trigger
+            active_nav_list_data = mark_item_active(nav_list_data, filename) + nav_bar_script
             artifact_data = get_file_content(path)
 
             # Now write out entire html page for artifact
