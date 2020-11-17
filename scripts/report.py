@@ -188,7 +188,7 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     page_title = 'ALEAPP Report'
     body_heading = 'Android Logs Events And Protobuf Parser'
     body_description = 'ALEAPP is an open source project that aims to parse every known Android artifact for the purpose of forensic analysis.'
-    active_nav_list_data = mark_item_active(nav_list_data, filename)
+    active_nav_list_data = mark_item_active(nav_list_data, filename) + nav_bar_script
 
     f = open(os.path.join(reportfolderbase, filename), 'w', encoding='utf8')
     f.write(page_header.format(page_title))
@@ -198,7 +198,7 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     f.write(content)
     f.write(thank_you_note)
     f.write(credits_code)
-    f.write(body_main_trailer + body_end + page_footer)
+    f.write(body_main_trailer + body_end + nav_bar_script_footer + page_footer)
     f.close()
 
 def generate_authors_table_code(aleapp_contributors):

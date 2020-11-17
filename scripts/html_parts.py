@@ -284,6 +284,22 @@ nav_bar_script = \
     </script>
 """
 
+nav_bar_script_footer = \
+"""
+    <script>
+        var elemScrollTop = document.getElementById("sidebar_id").scrollTop.toString();
+        document.addEventListener("DOMContentLoaded", function() {
+            var element = document.getElementById("sidebar_id");
+            element.addEventListener("scroll", function() {
+                elemScrollTop = document.getElementById("sidebar_id").scrollTop.toString();
+            });
+        });
+        $('a.nav-link').click(function(e) {
+            e.preventDefault();
+            location.href = $(this).attr('href') + "?navpos=" + elemScrollTop;
+        });
+    </script>
+"""
 default_responsive_table_script = \
 """
     <script>
@@ -297,17 +313,6 @@ default_responsive_table_script = \
             $('.dataTables_length').addClass('bs-select');
             $('#mySpinner').remove();
             //$('#infiniteLoading').remove();
-        });
-        var elemScrollTop = document.getElementById("sidebar_id").scrollTop.toString();
-        document.addEventListener("DOMContentLoaded", function() {
-            var element = document.getElementById("sidebar_id");
-            element.addEventListener("scroll", function() {
-                elemScrollTop = document.getElementById("sidebar_id").scrollTop.toString();
-            });
-        });
-        $('a.nav-link').click(function(e) {
-            e.preventDefault();
-            location.href = $(this).attr('href') + "?navpos=" + elemScrollTop;
         });
     </script>
 """
