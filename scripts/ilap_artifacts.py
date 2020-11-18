@@ -111,7 +111,7 @@ tosearch = {
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
-    'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
+    'usagestats':('Usage Stats', ('**/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'walStrings':('SQLite Journaling', '**/*-wal'),
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),

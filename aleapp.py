@@ -80,7 +80,7 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio):
     logfunc(f'ALEAPP v{aleapp_version}: Android Logs, Events, and Protobuf Parser')
     logfunc('Objective: Triage Android Full System Extractions.')
     logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
-    logfunc('By: Yogesh Khatri | @SwiftForensics | swiftforensics.com')
+    logfunc('By: Yogesh Khatri   | @SwiftForensics | swiftforensics.com')
 
     seeker = None
     if extracttype == 'fs':

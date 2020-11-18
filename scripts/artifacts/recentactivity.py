@@ -135,7 +135,8 @@ def process_recentactivity(folder, uid, report_folder):
                     db.commit()
     
     report = ArtifactHtmlReport('Recent Tasks, Snapshots & Images')
-    report.start_artifact_report(report_folder, f'Recent Activity_{uid}')
+    location = os.path.join(folder, 'recent_tasks')
+    report.start_artifact_report(report_folder, f'Recent Activity_{uid}', f'Artifacts located at {location}')
     report.add_script()
     data_headers = ('Key', 'Value')
     image_data_headers = ('Snapshot_Image', 'Recent_Image')

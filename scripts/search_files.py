@@ -49,7 +49,7 @@ class FileSeekerTar(FileSeekerBase):
                     clean_name = sanitize_file_path(member.name)
                     full_path = os.path.join(self.temp_folder, Path(clean_name))
                     if member.isdir():
-                        os.makedirs(full_path)
+                        os.makedirs(full_path, exist_ok=True)
                     else:
                         parent_dir = os.path.dirname(full_path)
                         if not os.path.exists(parent_dir):
