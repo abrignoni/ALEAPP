@@ -55,6 +55,7 @@ def get_icon_name(category, artifact):
     elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'CHATS':     icon = 'message-circle'
+    elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
@@ -112,7 +113,7 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
             old_filename = os.path.basename(path)
             filename = old_filename.replace(".temphtml", ".html")
             # search for it in nav_list_data, then mark that one as 'active' tab
-            active_nav_list_data = mark_item_active(nav_list_data, filename) + icon_display_trigger
+            active_nav_list_data = mark_item_active(nav_list_data, filename) + nav_bar_script
             artifact_data = get_file_content(path)
 
             # Now write out entire html page for artifact
@@ -187,7 +188,7 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     page_title = 'ALEAPP Report'
     body_heading = 'Android Logs Events And Protobuf Parser'
     body_description = 'ALEAPP is an open source project that aims to parse every known Android artifact for the purpose of forensic analysis.'
-    active_nav_list_data = mark_item_active(nav_list_data, filename)
+    active_nav_list_data = mark_item_active(nav_list_data, filename) + nav_bar_script
 
     f = open(os.path.join(reportfolderbase, filename), 'w', encoding='utf8')
     f.write(page_header.format(page_title))
@@ -197,7 +198,7 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     f.write(content)
     f.write(thank_you_note)
     f.write(credits_code)
-    f.write(body_main_trailer + body_end + page_footer)
+    f.write(body_main_trailer + body_end + nav_bar_script_footer + page_footer)
     f.close()
 
 def generate_authors_table_code(aleapp_contributors):

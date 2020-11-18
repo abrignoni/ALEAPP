@@ -5,9 +5,14 @@
 
 import traceback
 
+from scripts.artifacts.ADB_Hosts import get_ADB_Hosts
+from scripts.artifacts.BashHistory import get_BashHistory
+from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
+from scripts.artifacts.WordsWithFriends import get_WordsWithFriends
 from scripts.artifacts.accounts_ce import get_accounts_ce
 from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
 from scripts.artifacts.accounts_de import get_accounts_de
+from scripts.artifacts.appicons import get_appicons
 from scripts.artifacts.build import get_build
 from scripts.artifacts.calllog import get_calllog
 from scripts.artifacts.chrome import get_chrome 
@@ -20,39 +25,37 @@ from scripts.artifacts.chromeSearchTerms import get_chromeSearchTerms
 from scripts.artifacts.chromeTopSites import get_chromeTopSites
 from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
 from scripts.artifacts.cmh import get_cmh
+from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
+from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.googleQuickSearchbox import get_quicksearch
 from scripts.artifacts.googleQuickSearchboxRecent import get_quicksearch_recent
-from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.installedappsGass import get_installedappsGass
-from scripts.artifacts.installedappsVending import get_installedappsVending
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
+from scripts.artifacts.installedappsVending import get_installedappsVending
 from scripts.artifacts.journalStrings import get_journalStrings 
 from scripts.artifacts.pSettings import get_pSettings
+from scripts.artifacts.packageInfo import get_package_info
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.scontextLog import get_scontextLog
 from scripts.artifacts.settingsSecure import get_settingsSecure
 from scripts.artifacts.siminfo import get_siminfo
 from scripts.artifacts.smanagerCrash import get_smanagerCrash
 from scripts.artifacts.smanagerLow import get_smanagerLow
-from scripts.artifacts.smembersEvents import get_smembersEvents
 from scripts.artifacts.smembersAppInv import get_smembersAppInv
+from scripts.artifacts.smembersEvents import get_smembersEvents
 from scripts.artifacts.smsmms import get_sms_mms
 from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
+from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.userDict import get_userDict
 from scripts.artifacts.walStrings import get_walStrings
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingURLs import get_wellbeingURLs
-from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
-from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
-from scripts.artifacts.WordsWithFriends import get_WordsWithFriends
-from scripts.artifacts.ADB_Hosts import get_ADB_Hosts
-from scripts.artifacts.BashHistory import get_BashHistory
 
 from scripts.ilapfuncs import *
 
@@ -64,54 +67,57 @@ from scripts.ilapfuncs import *
 # Don't forget to import the module above!!!!
 
 tosearch = {
+    'ADB_Hosts':('ADB Hosts', '**/system/etc/hosts'),
+    'BashHistory':('Bash History', '**/.bash_history'),
+    'ChessWithFriends':('Chats', ('**/com.zynga.chess.googleplay/databases/wf_database.sqlite', '**/com.zynga.chess.googleplay/db/wf_database.sqlite')),
+    'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite'),
+    'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db'),
+    'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
+    'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
+    'appicons':('Installed Apps', '**/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
+    'build':('Device Info', '**/vendor/build.prop'),
+    'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
+    'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
+    'chromeBookmarks':('Chrome', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*')),
+    'chromeCookies':('Chrome', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*')),
+    'chromeDownloads':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
+    'chromeLoginData':('Chrome', ('**/app_chrome/Default/Login Data*', '**/app_sbrowser/Default/Login Data*')),
+    'chromeOfflinePages':('Chrome', ('**/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '**/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*')),
+    'chromeSearchTerms':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
+    'chromeTopSites':('Chrome', ('**/app_chrome/Default/Top Sites*', '**/app_sbrowser/Default/Top Sites*')),
+    'chromeWebsearch':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
+    'cmh':('Samsung_CMH', '**/cmh.db'),
+    'emulatedSmeta':('Emulated Storage Metadata', '**/com.google.android.providers.media.module/databases/external.db*'),
+    'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
+    'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
+    'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
+    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
+    'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
+    'journalStrings':('SQLite Journaling', '**/*-journal'),
+    'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
+    'package_info': ('Installed Apps', '**/system/packages.xml'),
+    'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
+    'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
+    'recentactivity':('Recent Activity', '**/system_ce/*'),
+    'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
+    'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
+    'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),
+    'smanagerCrash':('App Interaction', '**/com.samsung.android.sm/databases/sm.db'),
+    'smanagerLow':('App Interaction', '**/com.samsung.android.sm/databases/lowpowercontext-system-db'),
+    'smembersAppInv':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
+    'smembersEvents':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
+    'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
+    'smyfilesRecents':('Media Metadata', '**/com.sec.android.app.myfiles/databases/myfiles.db'),
+    'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
+    'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
+    'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
+    'usagestats':('Usage Stats', ('**/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
+    'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
+    'walStrings':('SQLite Journaling', '**/*-wal'),
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
-    'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
-    'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
-    'usagestats':('Usage Stats', '**/system/usagestats/*'), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
-    'recentactivity':('Recent Activity', '**/system_ce/*'),
-    'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
-    'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
-    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
-    'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
-    'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
-    'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db'),
-    'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
-    'cmh':('Samsung_CMH', '**/cmh.db'),
-    'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
-    'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
-    'chromeSearchTerms':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
-    'chromeDownloads':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
-    'chromeLoginData':('Chrome', ('**/app_chrome/Default/Login Data*', '**/app_sbrowser/Default/Login Data*')),
-    'chromeBookmarks':('Chrome', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*')),
-    'chromeCookies':('Chrome', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*')),
-    'chromeTopSites':('Chrome', ('**/app_chrome/Default/Top Sites*', '**/app_sbrowser/Default/Top Sites*')),
-    'chromeWebsearch':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
-    'chromeOfflinePages':('Chrome', ('**/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '**/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*')),
-    'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
-    'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
-    'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
-    'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
-    'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),
-    'build':('Device Info', '**/vendor/build.prop'),
-    'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
-    'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
-    'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
-    'wifiProfiles':('WiFi Profiles', '**/misc/wifi/WifiConfigStore.xml'),
-    'journalStrings':('SQLite Journaling', '**/*-journal'),
-    'walStrings':('SQLite Journaling', '**/*-wal'),
-    'smyfilesRecents':('Media Metadata', '**/com.sec.android.app.myfiles/databases/myfiles.db'),
-    'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
-    'smembersAppInv':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
-    'smembersEvents':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
-    'smanagerLow':('App Interaction', '**/com.samsung.android.sm/databases/lowpowercontext-system-db'),
-    'smanagerCrash':('App Interaction', '**/com.samsung.android.sm/databases/sm.db'),
-    'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
-    'ChessWithFriends':('Chats', ('**/com.zynga.chess.googleplay/databases/wf_database.sqlite', '**/com.zynga.chess.googleplay/db/wf_database.sqlite')),
-    'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite'),
-    'ADB_Hosts':('ADB Hosts', '**/system/etc/hosts'),
-    'BashHistory':('Bash History', '**/.bash_history')
+    'wifiProfiles':('WiFi Profiles', ('**/misc**/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
     }
 '''
 tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
@@ -137,7 +143,7 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
 
             seeker: FileSeeker object to pass to method
     '''
-    logfunc('{} artifact executing'.format(artifact_name))
+    logfunc('{} [{}] artifact executing'.format(artifact_name, artifact_func))
     report_folder = os.path.join(report_folder_base, artifact_name) + slash
     try:
         if os.path.isdir(report_folder):
@@ -158,4 +164,4 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
         logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
         return
 
-    logfunc('{} artifact completed'.format(artifact_name))
+    logfunc('{} [{}] artifact completed'.format(artifact_name, artifact_func))

@@ -2,6 +2,7 @@ import glob
 import json
 import os
 import scripts.artifacts.usagestats_pb.usagestatsservice_pb2 as usagestatsservice_pb2
+import scripts.artifacts.usagestats_pb.usagestatsservice_v2_pb2 as usagestatsservice_v2_pb2
 import sqlite3
 import xml.etree.ElementTree as ET  
 
@@ -9,10 +10,12 @@ from enum import IntEnum
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
+# Event types referenced from core\java\android\app\usage\UsageEvents.java
+
 class EventType(IntEnum):
     NONE = 0
-    MOVE_TO_FOREGROUND = 1
-    MOVE_TO_BACKGROUND = 2
+    ACTIVITY_RESUMED = 1  # prev MOVE_TO_FOREGROUND
+    ACTIVITY_PAUSED = 2   # prev MOVE_TO_BACKGROUND
     END_OF_DAY = 3
     CONTINUE_PREVIOUS_DAY = 4
     CONFIGURATION_CHANGE = 5
@@ -29,6 +32,18 @@ class EventType(IntEnum):
     SCREEN_NON_INTERACTIVE = 16
     KEYGUARD_SHOWN = 17
     KEYGUARD_HIDDEN = 18
+    FOREGROUND_SERVICE_START = 19
+    FOREGROUND_SERVICE_STOP = 20
+    CONTINUING_FOREGROUND_SERVICE = 21
+    ROLLOVER_FOREGROUND_SERVICE = 22
+    ACTIVITY_STOPPED = 23
+    ACTIVITY_DESTROYED = 24
+    FLUSH_TO_DISK = 25
+    DEVICE_SHUTDOWN = 26
+    DEVICE_STARTUP = 27
+    USER_UNLOCKED = 28
+    USER_STOPPED = 29
+    LOCUS_ID_SET = 30
 
     def __str__(self):
         return self.name # This returns 'KNOWN' instead of 'EventType.KNOWN'
@@ -38,6 +53,95 @@ class EventFlag(IntEnum):
     
     def __str__(self):
         return self.name
+
+def get_string_by_token(packages, token1, token2=0):
+    strings = packages.get(token1, None)
+    if strings:
+        if token2 == 0:
+            return strings[0]
+        if len(strings) >= token2:
+            return strings[token2 - 1]
+        else:
+            logfunc(f'index {token2 - 1} out of range')
+    else:
+        pass
+        # logfunc('No strings!') # This happens with deleted processes
+    return ''
+
+def ReadUsageStatsV2PbFile(input_path):
+    '''Opens file, reads usagestats protobuf and returns IntervalStatsObfuscatedProto object'''
+    stats_ob = usagestatsservice_v2_pb2.IntervalStatsObfuscatedProto()
+
+    with open (input_path, 'rb') as f:
+        stats_ob.ParseFromString(f.read())
+        #print(stats_ob)
+        return stats_ob
+
+def AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages):
+    cursor = db.cursor()
+    # packages
+    for usagestat_ob in stats_ob.packages:
+        finalt = ''
+        if usagestat_ob.HasField('last_time_active_ms'):
+            finalt = usagestat_ob.last_time_active_ms
+            if finalt < 0:
+                finalt = abs(finalt)
+            else:
+                finalt += file_name_int
+        tac = ''
+        if usagestat_ob.HasField('total_time_active_ms'):
+            tac = abs(usagestat_ob.total_time_active_ms)
+        pkg = get_string_by_token(packages, usagestat_ob.package_token)
+        alc = ''
+        if usagestat_ob.HasField('app_launch_count'):
+            alc = abs(usagestat_ob.app_launch_count)
+
+        datainsert = ('packages', finalt, tac, '', '', '', alc, pkg, '' , '' , sourced, '')
+        #print(datainsert)
+        cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
+                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+    #configurations
+    for conf in stats_ob.configurations:
+        usagetype = 'configurations'
+        finalt = ''
+        if conf.HasField('last_time_active_ms'):
+            finalt = conf.last_time_active_ms
+            if finalt < 0:
+                finalt = abs(finalt)
+            else:
+                finalt += file_name_int
+        tac = ''
+        if conf.HasField('total_time_active_ms'):
+            tac = abs(conf.total_time_active_ms)
+        fullatti_str = str(conf.config)
+        datainsert = (usagetype, finalt, tac, '', '', '', '', '', '', '', sourced, fullatti_str)
+        #print(datainsert)
+        cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
+                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)                            
+    #event-log
+    usagetype = 'event-log'
+    for event in stats_ob.event_log:
+        pkg = ''
+        classy = ''
+        tipes = ''
+        finalt = ''
+        if event.HasField('time_ms'):
+            finalt = event.time_ms
+            if finalt < 0:
+                finalt = abs(finalt)
+            else:
+                finalt += file_name_int
+        if event.HasField('package_token'):
+            pkg = get_string_by_token(packages, event.package_token)
+        if event.HasField('class_token'):
+            classy = get_string_by_token(packages, event.package_token, event.class_token)
+        if event.HasField('type'):
+            tipes = str(EventType(event.type)) if event.type <= 30 else str(event.type)
+        datainsert = (usagetype, finalt, '' , '' , '' , '' ,'' , pkg , tipes , classy , sourced, '')
+        cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
+                    'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+
+    db.commit()
 
 def ReadUsageStatsPbFile(input_path):
     '''Opens file, reads usagestats protobuf and returns IntervalStatsProto object'''
@@ -75,15 +179,15 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
     for conf in stats.configurations:
         usagetype = 'configurations'
         finalt = ''
-        if usagestat.HasField('last_time_active_ms'):
-            finalt = usagestat.last_time_active_ms
+        if conf.HasField('last_time_active_ms'):
+            finalt = conf.last_time_active_ms
             if finalt < 0:
                 finalt = abs(finalt)
             else:
                 finalt += file_name_int
         tac = ''
-        if usagestat.HasField('total_time_active_ms'):
-            tac = abs(usagestat.total_time_active_ms)
+        if conf.HasField('total_time_active_ms'):
+            tac = abs(conf.total_time_active_ms)
         fullatti_str = str(conf.config)
         datainsert = (usagetype, finalt, tac, '', '', '', '', '', '', '', sourced, fullatti_str)
         #print(datainsert)
@@ -107,7 +211,7 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
         if event.HasField('class_index'):
             classy = stats.stringpool.strings[event.class_index - 1]
         if event.HasField('type'):
-            tipes = str(EventType(event.type)) if event.type <= 18 else str(event.type)
+            tipes = str(EventType(event.type)) if event.type <= 30 else str(event.type)
         datainsert = (usagetype, finalt, '' , '' , '' , '' ,'' , pkg , tipes , classy , sourced, '')
         cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
                     'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
@@ -122,40 +226,40 @@ def get_usagestats(files_found, report_folder, seeker):
     
     slash = '\\' if is_platform_windows() else '/' 
 
+    uids_processed = set()
+
     for file_found in files_found:
         file_found = str(file_found)
         parts = file_found.split(slash)
-        if len(parts) > 2 and parts[-2] == 'usagestats':
-            uid = parts[-1]
-            try:
-                uid_int = int(uid)
-                # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
-                if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
-                    continue
-                process_usagestats(file_found, uid, report_folder)
-            except ValueError:
-                pass # uid was not a number
+        if os.path.isdir(file_found): # filter for directory only. 
+            # Target = .../system/usagestats/0  <-- Android <= 10
+            # Target = .../system_ce/0/usagestats  <-- Android = 11
+            if len(parts) > 2 and parts[-2] == 'usagestats' and parts[-3] == 'system':
+                uid = parts[-1]
+                try:
+                    uid_int = int(uid)
+                    # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
+                    if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
+                        continue
+                    process_usagestats(file_found, uid, report_folder, 1)
+                except ValueError:
+                    pass # uid was not a number
+            elif len(parts) > 3 and parts[-1] == 'usagestats' and parts[-3] == 'system_ce':
+                uid = parts[-2]
+                try:
+                    uid_int = int(uid)
+                    if uid_int in uids_processed:
+                        continue
+                    uids_processed.add(uid_int)
+                    # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
+                    if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
+                        continue
+                    process_usagestats(file_found, uid, report_folder, 2)
+                except ValueError:
+                    pass # uid was not a number
 
-def process_usagestats(folder, uid, report_folder):
-
-    processed = 0
-    
-    #Create sqlite databases
-    db = sqlite3.connect(os.path.join(report_folder, 'usagestats_{}.db'.format(uid)))
-    cursor = db.cursor()
-
-    #Create table usagedata.
-
-    cursor.execute('''
-        CREATE TABLE data(usage_type TEXT, lastime INTEGER, timeactive INTEGER,
-                          last_time_service_used INTEGER, last_time_visible INTEGER, total_time_visible INTEGER,
-                          app_launch_count INTEGER,
-                          package TEXT, types TEXT, classs TEXT,
-                          source TEXT, fullatt TEXT)
-    ''')
-
-    db.commit()
-
+def add_xml_or_v1_usagestats_to_db(folder, db):
+    '''Process usagestats xml files or version 1 of protobuf files'''
     err=0
     ferr = 0
     stats = None
@@ -311,7 +415,77 @@ def process_usagestats(folder, uid, report_folder):
                                     #cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?)', datainsert)
                                     db.commit()
                                     
+def add_v2_usagestats_to_db(folder, db):
+    '''Process usagestats version 2 protobuf files'''
+    mappings_path = os.path.join(folder, 'mappings')
+    mappings = usagestatsservice_v2_pb2.ObfuscatedPackagesProto()
+    packages = {} # { token: (string, string, ..), .. }
+
+    with open (mappings_path, 'rb') as f:
+        mappings.ParseFromString(f.read())
+        for package in mappings.packages_map:
+            if package.HasField('package_token'):
+                #print(f'package_token = {package.package_token}')
+                packages[package.package_token] = package.strings
+            else:
+                logfunc('No package_token, mapping may be problematic!')
+        #print(mappings)
+
+    for filepath in glob.iglob(os.path.join(folder, '**'), recursive=True):
+        if os.path.isfile(filepath): # filter dirs
+            file_name = os.path.basename(filepath)
+            if file_name in ('version', 'migrated', 'mappings'):
+                continue    
+
+            if 'daily' in filepath:
+                sourced = 'daily'
+            elif 'weekly' in filepath:
+                sourced = 'weekly'
+            elif 'monthly' in filepath:
+                sourced = 'monthly'
+            elif 'yearly' in filepath:
+                sourced = 'yearly'
+            
+            try:
+                file_name_int = int(file_name)
+            except: 
+                logfunc('Invalid filename at {filename}')
+                continue
+
+            # An Android R protobuf file
+            try:
+                stats_ob = ReadUsageStatsV2PbFile(filepath)
+                AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages)
+            except:
+                logfunc(f'Parse error - Error parsing Protobuf file: {filepath}')
+
+def process_usagestats(folder, uid, report_folder, version):
+
+    processed = 0
+    
+    #Create sqlite databases
+    db = sqlite3.connect(os.path.join(report_folder, 'usagestats_{}.db'.format(uid)))
+    cursor = db.cursor()
+
+    #Create table usagedata.
+
+    cursor.execute('''
+        CREATE TABLE data(usage_type TEXT, lastime INTEGER, timeactive INTEGER,
+                          last_time_service_used INTEGER, last_time_visible INTEGER, total_time_visible INTEGER,
+                          app_launch_count INTEGER,
+                          package TEXT, types TEXT, classs TEXT,
+                          source TEXT, fullatt TEXT)
+    ''')
+
+    db.commit()
+
+    if version == 1:
+        add_xml_or_v1_usagestats_to_db(folder, db)
+    else:
+        add_v2_usagestats_to_db(folder, db)
+
     #query for reporting
+    # Types mentioned here: UsageEvents.Event in platform_frameworks_base\api\current.txt
     cursor.execute('''
     select 
     case lastime WHEN '' THEN ''
@@ -330,11 +504,22 @@ def process_usagestats(folder, uid, report_folder):
     app_launch_count,
     package,
     CASE types
-         WHEN '1' THEN 'MOVE_TO_FOREGROUND'
-         WHEN '2' THEN 'MOVE_TO_BACKGROUND'
+         WHEN '0' THEN 'NONE'
+         WHEN '1' THEN 'ACTIVITY_RESUMED'
+         WHEN '2' THEN 'ACTIVITY_PAUSED'
          WHEN '5' THEN 'CONFIGURATION_CHANGE'
          WHEN '7' THEN 'USER_INTERACTION'
          WHEN '8' THEN 'SHORTCUT_INVOCATION'
+         WHEN '11' THEN 'STANDBY_BUCKET_CHANGED'
+         WHEN '15' THEN 'SCREEN_INTERACTIVE'
+         WHEN '16' THEN 'SCREEN_NON_INTERACTIVE'
+         WHEN '17' THEN 'KEYGUARD_SHOWN'
+         WHEN '18' THEN 'KEYGUARD_HIDDEN'
+         WHEN '19' THEN 'FOREGROUND_SERVICE_START'
+         WHEN '20' THEN 'FOREGROUND_SERVICE_STOP'
+         WHEN '23' THEN 'ACTIVITY_STOPPED'
+         WHEN '26' THEN 'DEVICE_SHUTDOWN'
+         WHEN '27' THEN 'DEVICE_STARTUP'
          ELSE types
     END types,
     classs,

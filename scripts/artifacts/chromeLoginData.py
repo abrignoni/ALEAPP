@@ -15,8 +15,12 @@ def decrypt(ciphertxt, key=b"peanuts"):
     derived_key = PBKDF2(key, salt, 0x10, 1)
     iv = b" "*0x10
     cipher = AES.new(derived_key, AES.MODE_CBC, IV=iv)
-    plaintxt_pad = cipher.decrypt(ciphertxt)
-    plaintxt = plaintxt_pad[:-ord(plaintxt_pad[len(plaintxt_pad)-1:])]
+    try:
+        plaintxt_pad = cipher.decrypt(ciphertxt)
+        plaintxt = plaintxt_pad[:-ord(plaintxt_pad[len(plaintxt_pad)-1:])]
+    except ValueError as ex:
+        logfunc('Exception while decrypting data: ' + str(ex))
+        plaintxt = b''
     return plaintxt
 
 def get_valid_date(d1, d2):
