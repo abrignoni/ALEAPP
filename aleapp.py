@@ -66,10 +66,16 @@ def main():
             parser.error('OUTPUT folder does not exist! Run the program again.')
             return  
 
-    
-    out_params = OutputParameters(output_path)
+        # File system extractions can contain paths > 260 char, which causes problems
+        # This fixes the problem by prefixing \\?\ on each windows path.
+        if is_platform_windows():
+            if input_path[1] == ':' and extracttype =='fs': input_path = '\\\\?\\' + input_path.replace('/', '\\')
+            if output_path[1] == ':': output_path = '\\\\?\\' + output_path.replace('/', '\\')
 
-    crunch_artifacts(tosearch, extracttype, input_path, out_params, 1)
+    
+        out_params = OutputParameters(output_path)
+
+        crunch_artifacts(tosearch, extracttype, input_path, out_params, 1)
 
 def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio):
     start = process_time()
@@ -83,18 +89,26 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio):
     logfunc('By: Yogesh Khatri   | @SwiftForensics | swiftforensics.com')
 
     seeker = None
-    if extracttype == 'fs':
-        seeker = FileSeekerDir(input_path)
+    try:
+        if extracttype == 'fs':
+            seeker = FileSeekerDir(input_path)
 
-    elif extracttype == 'tar':
-        seeker = FileSeekerTar(input_path, out_params.temp_folder)
+        elif extracttype == 'tar':
+            seeker = FileSeekerTar(input_path, out_params.temp_folder)
 
-    elif extracttype == 'zip':
-        seeker = FileSeekerZip(input_path, out_params.temp_folder)
+        elif extracttype == 'zip':
+            seeker = FileSeekerZip(input_path, out_params.temp_folder)
 
-    else:
-        logfunc('Error on argument -o (input type)')
-        return
+        else:
+            logfunc('Error on argument -o (input type)')
+            return False
+    except Exception as ex:
+        logfunc('Had an exception in Seeker - see details below. Terminating Program!')
+        temp_file = io.StringIO()
+        traceback.print_exc(file=temp_file)
+        logfunc(temp_file.getvalue())
+        temp_file.close()
+        return False
 
     # Now ready to run
     logfunc(f'Artifact categories to parse: {str(len(search_list))}')
@@ -141,10 +155,17 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio):
 
     logfunc('')
     logfunc('Report generation started.')
+    # remove the \\?\ prefix we added to input and output paths, so it does not reflect in report
+    if is_platform_windows(): 
+        if out_params.report_folder_base.startswith('\\\\?\\'):
+            out_params.report_folder_base = out_params.report_folder_base[4:]
+        if input_path.startswith('\\\\?\\'):
+            input_path = input_path[4:]
     report.generate_report(out_params.report_folder_base, run_time_secs, run_time_HMS, extracttype, input_path)
     logfunc('Report generation Completed.')
     logfunc('')
     logfunc(f'Report location: {out_params.report_folder_base}')
+    return True
 
 if __name__ == '__main__':
     main()

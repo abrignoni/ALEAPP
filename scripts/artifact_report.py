@@ -72,6 +72,8 @@ class ArtifactHtmlReport:
         if write_location:
             if is_platform_windows():
                 source_path = source_path.replace('/', '\\')
+            if source_path.startswith('\\\\?\\'):
+                source_path = source_path[4:]
             self.write_lead_text(f'{self.artifact_name} located at: {source_path}')
 
         self.report_file.write('<br />')

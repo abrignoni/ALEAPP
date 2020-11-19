@@ -5,7 +5,8 @@
 
 import traceback
 
-from scripts.artifacts.ADB_Hosts import get_ADB_Hosts
+from scripts.artifacts.adb_hosts import get_adb_hosts
+from scripts.artifacts.etc_hosts import get_etc_hosts
 from scripts.artifacts.BashHistory import get_BashHistory
 from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
 from scripts.artifacts.WordsWithFriends import get_WordsWithFriends
@@ -68,7 +69,8 @@ from scripts.ilapfuncs import *
 # Don't forget to import the module above!!!!
 
 tosearch = {
-    'ADB_Hosts':('ADB Hosts', '**/system/etc/hosts'),
+    'adb_hosts':('ADB Hosts', '**/data/misc/adb/adb_keys'),
+    'etc_hosts':('Etc Hosts', '**/system/etc/hosts'),
     'BashHistory':('Bash History', '**/.bash_history'),
     'ChessWithFriends':('Chats', ('**/com.zynga.chess.googleplay/databases/wf_database.sqlite', '**/com.zynga.chess.googleplay/db/wf_database.sqlite')),
     'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite'),
