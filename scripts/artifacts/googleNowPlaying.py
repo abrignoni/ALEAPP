@@ -5,7 +5,7 @@ import time
 
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -53,7 +53,7 @@ def get_googleNowPlaying(files_found, report_folder, seeker):
         elif not file_found.endswith('history_db'):
             continue # Skip all other files (-wal)
 
-        db = sqlite3.connect(file_found)
+        db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
         Select

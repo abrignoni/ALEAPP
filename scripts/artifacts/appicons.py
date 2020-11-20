@@ -4,7 +4,7 @@ import os
 import sqlite3
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -29,7 +29,7 @@ def get_appicons(files_found, report_folder, seeker):
             continue
         
         file_name = os.path.basename(file_found)
-        db = sqlite3.connect(file_found)
+        db = open_sqlite_db_readonly(file_found)
         db.row_factory = sqlite3.Row # For fetching columns by name
 
         cursor = db.cursor()
