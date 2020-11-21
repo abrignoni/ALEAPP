@@ -1,7 +1,7 @@
 import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
 def get_wellbeing(files_found, report_folder, seeker):
 
@@ -10,7 +10,7 @@ def get_wellbeing(files_found, report_folder, seeker):
         if not file_found.endswith('app_usage'):
             continue # Skip all other files
         
-        db = sqlite3.connect(file_found)
+        db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
         SELECT 

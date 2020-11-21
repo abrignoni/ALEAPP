@@ -3,7 +3,7 @@ import json
 import sqlite3
 import time
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -43,7 +43,7 @@ def get_usageapps(files_found, report_folder, seeker):
         elif not file_found.endswith('reflection_gel_events.db'):
             continue # Skip all other files (-wal, -journal)
 
-        db = sqlite3.connect(file_found)
+        db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
         SELECT
