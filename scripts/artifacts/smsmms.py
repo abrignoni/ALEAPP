@@ -4,7 +4,7 @@ import sqlite3
 
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
 # Reference for flag values for mms:
 # ---------------------------------- 
@@ -70,7 +70,7 @@ def get_sms_mms(files_found, report_folder, seeker):
         elif not file_found.endswith('mmssms.db'):
             continue # Skip all other files
         
-        db = sqlite3.connect(file_found)
+        db = open_sqlite_db_readonly(file_found)
         db.row_factory = sqlite3.Row # For fetching columns by name
 
         got_messages = read_sms_messages(db, report_folder, file_found)

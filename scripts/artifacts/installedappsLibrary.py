@@ -1,12 +1,12 @@
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline 
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 def get_installedappsLibrary(files_found, report_folder, seeker):
     
     file_found = str(files_found[0])
-    db = sqlite3.connect(file_found)
+    db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()
     cursor.execute('''
     SELECT

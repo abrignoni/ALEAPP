@@ -5,7 +5,8 @@
 
 import traceback
 
-from scripts.artifacts.ADB_Hosts import get_ADB_Hosts
+from scripts.artifacts.adb_hosts import get_adb_hosts
+from scripts.artifacts.etc_hosts import get_etc_hosts
 from scripts.artifacts.BashHistory import get_BashHistory
 from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
 from scripts.artifacts.WordsWithFriends import get_WordsWithFriends
@@ -46,6 +47,7 @@ from scripts.artifacts.smembersAppInv import get_smembersAppInv
 from scripts.artifacts.smembersEvents import get_smembersEvents
 from scripts.artifacts.smsmms import get_sms_mms
 from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
+from scripts.artifacts.smyFiles import get_smyFiles
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
 from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.usageapps import get_usageapps
@@ -55,6 +57,7 @@ from scripts.artifacts.walStrings import get_walStrings
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingURLs import get_wellbeingURLs
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
+from scripts.artifacts.wifiHotspot import get_wifiHotspot
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
 
 from scripts.ilapfuncs import *
@@ -67,7 +70,8 @@ from scripts.ilapfuncs import *
 # Don't forget to import the module above!!!!
 
 tosearch = {
-    'ADB_Hosts':('ADB Hosts', '**/system/etc/hosts'),
+    'adb_hosts':('ADB Hosts', '**/data/misc/adb/adb_keys'),
+    'etc_hosts':('Etc Hosts', '**/system/etc/hosts'),
     'BashHistory':('Bash History', '**/.bash_history'),
     'ChessWithFriends':('Chats', ('**/com.zynga.chess.googleplay/databases/wf_database.sqlite', '**/com.zynga.chess.googleplay/db/wf_database.sqlite')),
     'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite'),
@@ -108,6 +112,7 @@ tosearch = {
     'smembersEvents':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
     'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
     'smyfilesRecents':('Media Metadata', '**/com.sec.android.app.myfiles/databases/myfiles.db'),
+    'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
@@ -117,7 +122,8 @@ tosearch = {
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
-    'wifiProfiles':('WiFi Profiles', ('**/misc**/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
+    'wifiHotspot':('WiFi Profiles', ('**/misc/wifi/softap.conf', '**/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml')),
+    'wifiProfiles':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
     }
 '''
 tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),

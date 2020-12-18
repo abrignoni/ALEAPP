@@ -5,7 +5,7 @@ import shutil
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
 
 def get_accounts_ce_authtokens(files_found, report_folder, seeker):
 
@@ -28,7 +28,7 @@ def get_accounts_ce_authtokens(files_found, report_folder, seeker):
 def process_accounts_ce_authtokens(folder, uid, report_folder):
     
     #Query to create report
-    db = sqlite3.connect(folder)
+    db = open_sqlite_db_readonly(folder)
     cursor = db.cursor()
 
     #Query to create report
