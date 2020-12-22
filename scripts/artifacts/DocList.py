@@ -11,28 +11,28 @@ def get_DocList(files_found, report_folder, seeker):
     cursor = db.cursor()
     cursor.execute('''
     select
-		title,
-		owner,
-		case creationTime
-			when 0 then ''
-			else datetime("creationTime"/1000, 'unixepoch')
-		end	as C_D,
-		case lastModifiedTime
-			when 0 then ''
-			else datetime("lastModifiedTime"/1000, 'unixepoch') 
-		end as M_D,
-		case lastOpenedTime
-			when 0 then ''
-			else datetime("lastOpenedTime"/1000, 'unixepoch')
-		end as O_D,
-		lastModifierAccountAlias,
-		lastModifierAccountName,
-		kind,
-		shareableUri,
-		htmlUri,
-		md5Checksum,
-		size
-	from EntryView
+        title,
+        owner,
+        case creationTime
+            when 0 then ''
+            else datetime("creationTime"/1000, 'unixepoch')
+        end    as C_D,
+        case lastModifiedTime
+            when 0 then ''
+            else datetime("lastModifiedTime"/1000, 'unixepoch') 
+        end as M_D,
+        case lastOpenedTime
+            when 0 then ''
+            else datetime("lastOpenedTime"/1000, 'unixepoch')
+        end as O_D,
+        lastModifierAccountAlias,
+        lastModifierAccountName,
+        kind,
+        shareableUri,
+        htmlUri,
+        md5Checksum,
+        size
+    from EntryView
     ''')
 
     all_rows = cursor.fetchall()
