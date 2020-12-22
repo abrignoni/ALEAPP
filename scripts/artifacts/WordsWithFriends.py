@@ -12,18 +12,18 @@ def get_WordsWithFriends(files_found, report_folder, seeker):
     cursor.execute('''
     SELECT
     datetime(messages.created_at/1000, 'unixepoch'),
-	messages.conv_id,
-	users.name,
-	users.email_address,
-	messages.text
-	FROM
-	messages
-	INNER JOIN
-	users
-	ON
-	messages.user_zynga_id=users.zynga_account_id
-	ORDER BY
-	messages.created_at DESC
+    messages.conv_id,
+    users.name,
+    users.email_address,
+    messages.text
+    FROM
+    messages
+    INNER JOIN
+    users
+    ON
+    messages.user_zynga_id=users.zynga_account_id
+    ORDER BY
+    messages.created_at DESC
     ''')
 
     all_rows = cursor.fetchall()
