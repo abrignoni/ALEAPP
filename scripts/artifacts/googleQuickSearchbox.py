@@ -45,7 +45,10 @@ def get_search_query_from_blob(data):
             if str_len > 0:
                 pos += 4
                 query = data[pos : pos + str_len*2] # TODO PROBLEM - With Android 11, this is utf8! No indication of format anywhere
-                query = query.decode('utf-16', 'backslashreplace')
+                if data[pos + str_len : pos + str_len + 1] == b'\0': # then its utf8
+                    query = query[:str_len].decode('utf8', 'ignore')
+                else:
+                    query = query.decode('utf-16', 'backslashreplace')
     return query
 
 def parse_session_data(values, file_name, file_last_mod_date, report_folder):
