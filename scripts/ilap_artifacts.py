@@ -132,7 +132,7 @@ tosearch = {
 
 slash = '\\' if is_platform_windows() else '/'
 
-def process_artifact(files_found, artifact_func, artifact_name, seeker, report_folder_base):
+def process_artifact(files_found, artifact_func, artifact_name, seeker, report_folder_base, wrap_text):
     ''' Perform the common setup for each artifact, ie, 
         1. Create the report folder for it
         2. Fetch the method (function) and call it
@@ -146,6 +146,8 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
             artifact_name: Pretty name of artifact
 
             seeker: FileSeeker object to pass to method
+            
+            wrap_text: whether the text data will be wrapped or not using textwrap.  Useful for tools that want to parse the data.
     '''
     logfunc('{} [{}] artifact executing'.format(artifact_name, artifact_func))
     report_folder = os.path.join(report_folder_base, artifact_name) + slash
@@ -161,7 +163,7 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
         return
     try:
         method = globals()['get_' + artifact_func]
-        method(files_found, report_folder, seeker)
+        method(files_found, report_folder, seeker, wrap_text)
     except Exception as ex:
         logfunc('Reading {} artifact had errors!'.format(artifact_name))
         logfunc('Error was {}'.format(str(ex)))

@@ -7,7 +7,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
-def get_wifiProfiles(files_found, report_folder, seeker):
+def get_wifiProfiles(files_found, report_folder, seeker, wrap_text):
 
     #Create sqlite databases
     db = sqlite3.connect(os.path.join(report_folder, 'WiFiConfig.db'))
@@ -144,7 +144,10 @@ def get_wifiProfiles(files_found, report_folder, seeker):
                 'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
                 db.commit()
 
-                data_list.append((SecurityMode, SSID, PreSharedKey, WEPKeys, Password, Identity, DefaultGwMacAddress, semCreationTime, semUpdateTime, LastConnectedTime, CaptivePortal, (textwrap.fill(LoginUrl, width=10)), IpAssignment, file_found))
+                if wrap_text:
+                    data_list.append((SecurityMode, SSID, PreSharedKey, WEPKeys, Password, Identity, DefaultGwMacAddress, semCreationTime, semUpdateTime, LastConnectedTime, CaptivePortal, (textwrap.fill(LoginUrl, width=10)), IpAssignment, file_found))
+                else:
+                    data_list.append((SecurityMode, SSID, PreSharedKey, WEPKeys, Password, Identity, DefaultGwMacAddress, semCreationTime, semUpdateTime, LastConnectedTime, CaptivePortal, LoginUrl, IpAssignment, file_found))
                 
                 #data_list.append(datainsert)
                 Identity = ''

@@ -5,7 +5,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
 
-def get_chrome(files_found, report_folder, seeker):
+def get_chrome(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -41,8 +41,10 @@ def get_chrome(files_found, report_folder, seeker):
             data_headers = ('Last Visit Time','URL','Title','Visit Count','Hidden')
             data_list = []
             for row in all_rows:
-                data_list.append((textwrap.fill(row[0], width=100),row[1],row[2],row[3],row[4]))
-
+                if wrap_text:
+                    data_list.append((textwrap.fill(row[0], width=100),row[1],row[2],row[3],row[4]))
+                else:
+                    data_list.append((row[0],row[1],row[2],row[3],row[4]))
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             

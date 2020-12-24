@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
-def get_settingsSecure(files_found, report_folder, seeker):
+def get_settingsSecure(files_found, report_folder, seeker, wrap_text):
 
     slash = '\\' if is_platform_windows() else '/' 
     # Filter for path xxx/yyy/system_ce/0

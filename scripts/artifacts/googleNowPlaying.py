@@ -43,7 +43,7 @@ def AreContentsSame(last_data_set, timezones, songtitle, artist, duration, album
             last_data_set[6] == year
         
 
-def get_googleNowPlaying(files_found, report_folder, seeker):
+def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
 

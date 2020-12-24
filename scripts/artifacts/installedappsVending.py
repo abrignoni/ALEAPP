@@ -3,7 +3,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_installedappsVending(files_found, report_folder, seeker):
+def get_installedappsVending(files_found, report_folder, seeker, wrap_text):
 
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)
