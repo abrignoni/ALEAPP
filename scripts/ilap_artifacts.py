@@ -55,12 +55,15 @@ from scripts.artifacts.Turbo import get_Turbo
 from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.userDict import get_userDict
+from scripts.artifacts.Viber import get_Viber
 from scripts.artifacts.walStrings import get_walStrings
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingURLs import get_wellbeingURLs
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiHotspot import get_wifiHotspot
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
+from scripts.artifacts.Xender import get_Xender
+from scripts.artifacts.Zapya import get_Zapya
 
 from scripts.ilapfuncs import *
 
@@ -122,12 +125,15 @@ tosearch = {
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', ('**/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
+    'Viber':('SMS & MMS', '**/com.viber.voip/databases/*'),
     'walStrings':('SQLite Journaling', ('**/*-wal', '**/*-journal')),
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
     'wifiHotspot':('WiFi Profiles', ('**/misc/wifi/softap.conf', '**/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml')),
     'wifiProfiles':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
+    'Xender':('File Transfer', '**/cn.xender/databases/trans-history-db*'), # Get trans-history-db and trans-history-db-wal
+    'Zapya':('File Transfer', '**/com.dewmobile.kuaiya.play/databases/transfer20.db'),
     }
 
 slash = '\\' if is_platform_windows() else '/'
