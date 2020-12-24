@@ -144,6 +144,8 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
             artifact_name: Pretty name of artifact
 
             seeker: FileSeeker object to pass to method
+            
+            wrap_text: whether the text data will be wrapped or not using textwrap.  Useful for tools that want to parse the data.
     '''
     logfunc('{} [{}] artifact executing'.format(artifact_name, artifact_func))
     report_folder = os.path.join(report_folder_base, artifact_name) + slash
