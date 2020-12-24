@@ -16,6 +16,7 @@ def main():
     parser.add_argument('-o', '--output_path', required=False, action="store", help='Output folder path')
     parser.add_argument('-i', '--input_path', required=False, action="store", help='Path to input file/folder')
     parser.add_argument('-p', '--artifact_paths', required=False, action="store_true", help='Text file list of artifact paths')
+    parser.add_argument('-w', '--wrap_text', required=False, action="store_false", help='do not wrap text for output of data files')
         
     args = parser.parse_args()
     
@@ -39,6 +40,10 @@ def main():
         input_path = args.input_path
         extracttype = args.t
 
+        if args.wrap_text == None:
+            wrap_text = True
+        else:
+            wrap_text = args.wrap_text 
     
         if args.output_path == None:
             parser.error('No OUTPUT folder path provided')
@@ -75,9 +80,9 @@ def main():
     
         out_params = OutputParameters(output_path)
 
-        crunch_artifacts(tosearch, extracttype, input_path, out_params, 1)
+        crunch_artifacts(tosearch, extracttype, input_path, out_params, 1, wrap_text)
 
-def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio):
+def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio, wrap_text):
     start = process_time()
 
     logfunc('Procesing started. Please wait. This may take a few minutes...')
@@ -139,7 +144,7 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio):
                 files_found.extend(found)
         if files_found:
             logfunc()
-            process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base)
+            process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base, wrap_text)
             for pathh in files_found:
                 log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
         categories_searched += 1

@@ -16,7 +16,7 @@ class App:
         self.main_icon = None
         self.icons = {} # { Component: ('Label', icon), .. }
 
-def get_appicons(files_found, report_folder, seeker):
+def get_appicons(files_found, report_folder, seeker, wrap_text):
     sessions = []
     for file_found in files_found:
         file_found = str(file_found)
