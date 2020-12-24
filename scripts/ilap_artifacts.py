@@ -35,8 +35,7 @@ from scripts.artifacts.googleQuickSearchbox import get_quicksearch
 from scripts.artifacts.googleQuickSearchboxRecent import get_quicksearch_recent
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
-from scripts.artifacts.installedappsVending import get_installedappsVending
-from scripts.artifacts.journalStrings import get_journalStrings 
+from scripts.artifacts.installedappsVending import get_installedappsVending 
 from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageInfo import get_package_info
 from scripts.artifacts.recentactivity import get_recentactivity
@@ -83,7 +82,7 @@ tosearch = {
     'appicons':('Installed Apps', '**/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
     'build':('Device Info', '**/vendor/build.prop'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
-    'Cello': ('Google Docs', '**/com.google.android.apps.docs/app_cello/*/cello.db*'),
+    'Cello': ('Google Docs', ('**/com.google.android.apps.docs/app_cello/*/cello.db*', '**/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
     'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
     'chromeBookmarks':('Chrome', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*')),
     'chromeCookies':('Chrome', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*')),
@@ -101,7 +100,6 @@ tosearch = {
     'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
     'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
     'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
-    'journalStrings':('SQLite Journaling', '**/*-journal'),
     'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
     'package_info': ('Installed Apps', '**/system/packages.xml'),
     'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
@@ -122,19 +120,13 @@ tosearch = {
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', ('**/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
-    'walStrings':('SQLite Journaling', '**/*-wal'),
+    'walStrings':('SQLite Journaling', ('**/*-wal', '**/*-journal')),
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
     'wifiHotspot':('WiFi Profiles', ('**/misc/wifi/softap.conf', '**/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml')),
     'wifiProfiles':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
     }
-'''
-tosearch = {'journalStrings':('SQLite Journaling', '**/*-journal'),
-            'walStrings':('SQLite Journaling', '**/*-wal')
-            }
-'''
-#'walStrings':('SQLite Journaling - Strings', '**/*-wal')
 
 slash = '\\' if is_platform_windows() else '/'
 

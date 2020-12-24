@@ -11,19 +11,19 @@ def get_ChessWithFriends(files_found, report_folder, seeker):
     cursor = db.cursor()
     cursor.execute('''
     SELECT
-	chat_messages.chat_message_id,
-	users.name,
-	users.email_address,
-	chat_messages.message,
-	chat_messages.created_at
-	FROM
-	chat_messages
-	INNER JOIN
-	users
-	ON
-	chat_messages.user_id=users.user_id
-	ORDER BY
-	chat_messages.created_at DESC
+    chat_messages.chat_message_id,
+    users.name,
+    users.email_address,
+    chat_messages.message,
+    chat_messages.created_at
+    FROM
+    chat_messages
+    INNER JOIN
+    users
+    ON
+    chat_messages.user_id=users.user_id
+    ORDER BY
+    chat_messages.created_at DESC
     ''')
 
     all_rows = cursor.fetchall()

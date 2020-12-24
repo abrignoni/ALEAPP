@@ -1,6 +1,7 @@
-blackboxprotobuf
 beautifulsoup4==4.8.2
+blackboxprotobuf
 protobuf==3.10.0
-PySimpleGUI==4.16.0
 PyCryptodome
+PySimpleGUI==4.16.0
+simplekml
 xmltodict
