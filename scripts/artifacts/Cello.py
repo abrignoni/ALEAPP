@@ -28,7 +28,7 @@ def get_offline_path(files_found, blob_name):
             return file_found
     return ''
 
-def get_Cello(files_found, report_folder, seeker):
+def get_Cello(files_found, report_folder, seeker, wrap_text):
     file_found = get_cello_db_path(files_found)
     if not file_found:
         logfunc('Error: Could not get Cello.db path')

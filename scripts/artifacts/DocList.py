@@ -4,39 +4,43 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_DocList(files_found, report_folder, seeker):
+def get_DocList(files_found, report_folder, seeker, wrap_text):
     
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()
-    cursor.execute('''
-    select
-        title,
-        owner,
-        case creationTime
-            when 0 then ''
-            else datetime("creationTime"/1000, 'unixepoch')
-        end    as C_D,
-        case lastModifiedTime
-            when 0 then ''
-            else datetime("lastModifiedTime"/1000, 'unixepoch') 
-        end as M_D,
-        case lastOpenedTime
-            when 0 then ''
-            else datetime("lastOpenedTime"/1000, 'unixepoch')
-        end as O_D,
-        lastModifierAccountAlias,
-        lastModifierAccountName,
-        kind,
-        shareableUri,
-        htmlUri,
-        md5Checksum,
-        size
-    from EntryView
-    ''')
+    try:
+        cursor.execute('''
+        select
+            title,
+            owner,
+            case creationTime
+                when 0 then ''
+                else datetime("creationTime"/1000, 'unixepoch')
+            end    as C_D,
+            case lastModifiedTime
+                when 0 then ''
+                else datetime("lastModifiedTime"/1000, 'unixepoch') 
+            end as M_D,
+            case lastOpenedTime
+                when 0 then ''
+                else datetime("lastOpenedTime"/1000, 'unixepoch')
+            end as O_D,
+            lastModifierAccountAlias,
+            lastModifierAccountName,
+            kind,
+            shareableUri,
+            htmlUri,
+            md5Checksum,
+            size
+        from EntryView
+        ''')
 
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
+        all_rows = cursor.fetchall()
+        usageentries = len(all_rows)
+    except:
+        usageentries = 0
+    
     if usageentries > 0:
         report = ArtifactHtmlReport('DocList')
         report.start_artifact_report(report_folder, 'DocList')

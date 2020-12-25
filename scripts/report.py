@@ -60,7 +60,8 @@ def get_icon_name(category, artifact):
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
     elif category == 'GOOGLE DOCS':     icon = 'file'
-        
+    elif category == 'BATTERY': icon = 'battery-charging'
+    
     return icon
     
 def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
