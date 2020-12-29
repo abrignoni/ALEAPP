@@ -56,7 +56,7 @@ sms_query =\
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
 
-def get_sms_mms(files_found, report_folder, seeker):
+def get_sms_mms(files_found, report_folder, seeker, wrap_text):
 
     for file_found in files_found:
         file_found = str(file_found)

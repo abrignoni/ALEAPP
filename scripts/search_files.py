@@ -44,7 +44,7 @@ class FileSeekerTar(FileSeekerBase):
     def search(self, filepattern):
         pathlist = []
         for member in self.tar_file.getmembers():
-            if fnmatch.fnmatch(member.name, filepattern):
+            if fnmatch.fnmatch('root/' + member.name, filepattern):
                 try:
                     clean_name = sanitize_file_path(member.name)
                     full_path = os.path.join(self.temp_folder, Path(clean_name))
@@ -76,7 +76,7 @@ class FileSeekerZip(FileSeekerBase):
     def search(self, filepattern):
         pathlist = []
         for member in self.name_list:
-            if fnmatch.fnmatch(member, filepattern):
+            if fnmatch.fnmatch('root/' + member, filepattern):
                 try:
                     self.zip_file.extract(member, path=self.temp_folder) # already replaces illegal chars with _ when exporting
                     member = member.lstrip("/")

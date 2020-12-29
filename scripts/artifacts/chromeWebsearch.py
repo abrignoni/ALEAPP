@@ -6,7 +6,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
 
-def get_chromeWebsearch(files_found, report_folder, seeker):
+def get_chromeWebsearch(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -44,7 +44,10 @@ def get_chromeWebsearch(files_found, report_folder, seeker):
             for row in all_rows:
                 search = row[0].split('search?q=')[1].split('&')[0]
                 search = urllib.parse.unquote(search).replace('+', ' ')
-                data_list.append((row[3], search, (textwrap.fill(row[0], width=100)),row[1],row[2]))
+                if wrap_text:
+                    data_list.append((row[3], search, (textwrap.fill(row[0], width=100)),row[1],row[2]))
+                else:
+                    data_list.append((row[3], search, row[0], row[1], row[2]))
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
