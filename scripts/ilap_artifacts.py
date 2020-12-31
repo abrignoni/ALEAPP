@@ -86,7 +86,7 @@ tosearch = {
     'appicons':('Installed Apps', '**/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
     'build':('Device Info', '**/vendor/build.prop'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
-    'Cello': ('Google Docs', ('**/com.google.android.apps.docs/app_cello/*/cello.db*', '**/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
+    'Cello': ('Google Docs', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
     'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
     'chromeBookmarks':('Chrome', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*')),
     'chromeCookies':('Chrome', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*')),
