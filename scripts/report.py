@@ -55,6 +55,7 @@ def get_icon_name(category, artifact):
     elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'CHATS':     icon = 'message-circle'
+    elif category == 'RCS CHATS':     icon = 'message-circle'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
