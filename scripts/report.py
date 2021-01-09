@@ -23,10 +23,11 @@ def get_icon_name(category, artifact):
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
     elif category == 'ADB HOSTS':       icon = 'terminal'
-    elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
+    elif category == 'APP INTERACTION': icon = 'bar-chart-2'
     elif category == 'BASH HISTORY':    icon = 'terminal'
+    elif category == 'BATTERY':         icon = 'battery-charging'
     elif category == 'CALL LOGS':       icon = 'phone'
-    elif category == 'CHATS':     icon = 'message-circle'
+    elif category == 'CHATS':           icon = 'message-circle'
     elif category == 'CHROME':          
         if artifact.find('SEARCH TERMS') >= 0:      icon = 'search'
         elif artifact.find('DOWNLOADS') >= 0:       icon = 'download'

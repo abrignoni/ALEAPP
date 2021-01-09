@@ -27,7 +27,7 @@ def recursive_convert_bytes_to_str(obj):
             ret = str(obj)
     return ret
 
-def get_quicksearch_recent(files_found, report_folder, seeker):
+def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
     recents = []
     for file_found in files_found:
         file_found = str(file_found)

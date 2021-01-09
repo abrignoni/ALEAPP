@@ -52,15 +52,19 @@ from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
 from scripts.artifacts.smyFiles import get_smyFiles
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
 from scripts.artifacts.swellbeing import get_swellbeing
+from scripts.artifacts.Turbo import get_Turbo
 from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.userDict import get_userDict
+from scripts.artifacts.Viber import get_Viber
 from scripts.artifacts.walStrings import get_walStrings
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingURLs import get_wellbeingURLs
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.wifiHotspot import get_wifiHotspot
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
+from scripts.artifacts.Xender import get_Xender
+from scripts.artifacts.Zapya import get_Zapya
 
 from scripts.ilapfuncs import *
 
@@ -119,20 +123,24 @@ tosearch = {
     'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
+    'Turbo': ('Battery', '**/com.google.android.apps.turbo/databases/turbo.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', ('**/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
+    'Viber':('SMS & MMS', '**/com.viber.voip/databases/*'),
     'walStrings':('SQLite Journaling', ('**/*-wal', '**/*-journal')),
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
     'wifiHotspot':('WiFi Profiles', ('**/misc/wifi/softap.conf', '**/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml')),
     'wifiProfiles':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
+    'Xender':('File Transfer', '**/cn.xender/databases/trans-history-db*'), # Get trans-history-db and trans-history-db-wal
+    'Zapya':('File Transfer', '**/com.dewmobile.kuaiya.play/databases/transfer20.db'),
     }
 
 slash = '\\' if is_platform_windows() else '/'
 
-def process_artifact(files_found, artifact_func, artifact_name, seeker, report_folder_base):
+def process_artifact(files_found, artifact_func, artifact_name, seeker, report_folder_base, wrap_text):
     ''' Perform the common setup for each artifact, ie, 
         1. Create the report folder for it
         2. Fetch the method (function) and call it
@@ -146,6 +154,8 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
             artifact_name: Pretty name of artifact
 
             seeker: FileSeeker object to pass to method
+            
+            wrap_text: whether the text data will be wrapped or not using textwrap.  Useful for tools that want to parse the data.
     '''
     logfunc('{} [{}] artifact executing'.format(artifact_name, artifact_func))
     report_folder = os.path.join(report_folder_base, artifact_name) + slash
@@ -161,7 +171,7 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
         return
     try:
         method = globals()['get_' + artifact_func]
-        method(files_found, report_folder, seeker)
+        method(files_found, report_folder, seeker, wrap_text)
     except Exception as ex:
         logfunc('Reading {} artifact had errors!'.format(artifact_name))
         logfunc('Error was {}'.format(str(ex)))
