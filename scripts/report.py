@@ -51,6 +51,7 @@ def get_icon_name(category, artifact):
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'MEDIA METADATA':  icon = 'file-plus'
     elif category == 'NOW PLAYING':           icon = 'music'
+    elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'

@@ -40,6 +40,7 @@ from scripts.artifacts.installedappsVending import get_installedappsVending
 from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageInfo import get_package_info
 from scripts.artifacts.recentactivity import get_recentactivity
+from scripts.artifacts.lgRCS import get_lgRCS
 from scripts.artifacts.scontextLog import get_scontextLog
 from scripts.artifacts.settingsSecure import get_settingsSecure
 from scripts.artifacts.siminfo import get_siminfo
@@ -87,7 +88,7 @@ tosearch = {
     'appicons':('Installed Apps', '**/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
     'build':('Device Info', '**/vendor/build.prop'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
-    'Cello': ('Google Docs', ('**/com.google.android.apps.docs/app_cello/*/cello.db*', '**/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
+    'Cello': ('Google Docs', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
     'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
     'chromeBookmarks':('Chrome', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*')),
     'chromeCookies':('Chrome', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*')),
@@ -111,6 +112,7 @@ tosearch = {
     'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
     'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
     'recentactivity':('Recent Activity', '**/system_ce/*'),
+    'lgRCS':('RCS Chats', '*/mmssms.db*'),
     'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
     'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
     'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),
