@@ -22,8 +22,12 @@ def get_icon_name(category, artifact):
     if category.find('ACCOUNT') >= 0:
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
+    elif category == 'ADB HOSTS':       icon = 'terminal'
+    elif category == 'APP INTERACTION': icon = 'bar-chart-2'
+    elif category == 'BASH HISTORY':    icon = 'terminal'
+    elif category == 'BATTERY':         icon = 'battery-charging'
     elif category == 'CALL LOGS':       icon = 'phone'
-    elif category == 'USER DICTIONARY': icon = 'book'
+    elif category == 'CHATS':           icon = 'message-circle'
     elif category == 'CHROME':          
         if artifact.find('SEARCH TERMS') >= 0:      icon = 'search'
         elif artifact.find('DOWNLOADS') >= 0:       icon = 'download'
@@ -37,32 +41,29 @@ def get_icon_name(category, artifact):
         elif artifact == 'PARTNER SETTINGS':        icon = 'settings'
         elif artifact.find('SETTINGS_SECURE_') >= 0: icon = 'settings'
         else:                                       icon = 'info'
+    elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
+    elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
+    elif category == 'GOOGLE DOCS':     icon = 'file'
+    elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'GOOGLE PLAY':     
         if artifact == 'GOOGLE PLAY SEARCHES':      icon = 'search'
         else:                                       icon = 'play'
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'MEDIA METADATA':  icon = 'file-plus'
-    elif category == 'WIFI PROFILES':  icon = 'wifi'
-    elif category == 'SQLITE JOURNALING': icon = 'book-open'
-    elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
-    elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'NOW PLAYING':           icon = 'music'
+    elif category == 'RCS CHATS':       icon = 'message-circle'
+    elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
     elif category == 'SMS & MMS':       icon = 'message-square'
-    elif category == 'ADB HOSTS':       icon = 'terminal'
-    elif category == 'BASH HISTORY':    icon = 'terminal'
-    elif category == 'APP INTERACTION':     icon = 'bar-chart-2'
+    elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
-    elif category == 'CHATS':     icon = 'message-circle'
-    elif category == 'RCS CHATS':     icon = 'message-circle'
-    elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
+    elif category == 'USER DICTIONARY': icon = 'book'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
-    elif category == 'GOOGLE DOCS':     icon = 'file'
-    elif category == 'BATTERY': icon = 'battery-charging'
-    
+    elif category == 'WIFI PROFILES':  icon = 'wifi'
+        
     return icon
     
 def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
