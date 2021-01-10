@@ -118,4 +118,87 @@ def read_trainingcache2(file_found, report_folder, seeker):
 
 
 def read_trainingcachev2(file_found, report_folder, seeker):
-    logfunc(f"Skipping f{file_found}, parser not implemented yet!")
+    db = open_sqlite_db_readonly(file_found)
+    db.row_factory = sqlite3.Row # For fetching columns by name
+    cursor = db.cursor()
+    keyboard_events = []
+    try:
+        cursor.execute('''
+            SELECT i._payload as data_proto,  s._payload as desc_proto, 
+            datetime(i._timestamp/1000, 'unixepoch') as ts1, datetime(s._timestamp/1000, 'unixepoch') as ts2
+            , s._id as session, i._id as id
+            FROM input_action_table i LEFT JOIN session_table s ON s._session_id=i._session_id
+        ''')
+
+        all_rows = cursor.fetchall()
+        last_session = None
+        ke = None
+        for row in all_rows:
+            session = row['session']
+            if last_session != session:
+                # write out last_session
+                if ke and ke.text:
+                    keyboard_events.append(ke)
+                last_session = session
+                ke = keyboard_event(row['id'], '', '', '', '', row['ts2'], row['ts1'], row['ts1'])
+                desc_proto = row['desc_proto']
+                if desc_proto:
+                    desc, actual_types = blackboxprotobuf.decode_message(desc_proto, None)
+                    try:
+                        ke.textbox_name = desc.get('6', b'').decode('utf8', 'ignore')
+                    except AttributeError:
+                        pass
+                    try:
+                        ke.app = desc.get('7', b'').decode('utf8', 'ignore')
+                    except AttributeError:
+                        pass
+            ke.end_date = row['ts1']
+            data_proto = row['data_proto']
+            if data_proto:
+                data, actual_types = blackboxprotobuf.decode_message(data_proto, None)
+                input_dict = data.get('6', None) # It's either an input or an output (suggested words) proto type
+                if input_dict:
+                    index = input_dict.get('1', {}).get('1', -1)
+                    chars_items = input_dict.get('4', {})
+                    chars = ''
+                    if isinstance(chars_items, list):
+                        for item in chars_items:
+                            try:
+                                chars += item.get('1', b'').decode('utf8', 'ignore')
+                            except AttributeError:
+                                pass
+                    else:
+                        try:
+                            chars = chars_items.get('1', b'').decode('utf8', 'ignore')
+                        except AttributeError:
+                            pass
+                    ke.text += chars
+        if ke and ke.text: # write out last event
+            keyboard_events.append(ke)
+    except (sqlite3.Error, TypeError, ValueError) as ex:
+        logfunc(f'read_trainingcache2 had an error reading {file_found} ' + str(ex))
+
+    file_name = os.path.basename(file_found)
+    if keyboard_events:
+        description = "Keystrokes typed by the user in various input fields of apps, that have been temporarily cached by the Gboard keyboard app are seen here."
+        report = ArtifactHtmlReport(f'Gboard Keystroke cache - {file_name}')
+        report.start_artifact_report(report_folder, f'{file_name}', description)
+        report.add_script()
+
+        data_headers = ('Id','Text','App','Input Name','Input ID','Event Timestamp')
+        data_list = []
+        for ke in keyboard_events:
+            data_list.append((ke.id, ke.text, ke.app, ke.textbox_name, ke.textbox_id, ke.event_date))
+
+        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.end_artifact_report()
+        
+        tsvname = f'Gboard Keystroke cache - {file_name}'
+        tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Gboard Keystroke cache - {file_name}'
+        timeline(report_folder, tlactivity, data_list, data_headers)
+    else:
+        logfunc(f'No Gboard data available in {file_name}')
+    
+    db.close()
