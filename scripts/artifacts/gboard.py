@@ -16,7 +16,7 @@ class keyboard_event:
         self.start_date = start_date
         self.end_date = end_date
 
-def get_gboardCache(files_found, report_folder, seeker):
+def get_gboardCache(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
