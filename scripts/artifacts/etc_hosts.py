@@ -14,8 +14,12 @@ def get_etc_hosts(files_found, report_folder, seeker, wrap_text):
             sline = sline.split('\t')
             sline_one = sline[0]
             sline_two = sline[1]
-            data_list.append((sline_one, sline_two))
-    
+            if (sline_one == '127.0.0.1' and sline_two == 'localhost') or \
+                (sline_one == '::1' and sline_two == 'ip6-localhost'):
+                pass # Skipping the defaults, so only anomaly entries are seen
+            else:
+                 data_list.append((sline_one, sline_two))
+
     if len(data_list) > 0:
         report = ArtifactHtmlReport('Etc Hosts')
         report.start_artifact_report(report_folder, f'Etc Hosts')
@@ -28,4 +32,4 @@ def get_etc_hosts(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
         
     else:
-        logfunc(f'No etc hosts file available')
+        logfunc(f'No etc hosts file available, or nothing significant found.')
