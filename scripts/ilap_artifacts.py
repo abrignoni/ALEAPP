@@ -16,6 +16,7 @@ from scripts.artifacts.accounts_de import get_accounts_de
 from scripts.artifacts.appicons import get_appicons
 from scripts.artifacts.build import get_build
 from scripts.artifacts.calllog import get_calllog
+from scripts.artifacts.Cast import get_Cast
 from scripts.artifacts.Cello import get_Cello
 from scripts.artifacts.chrome import get_chrome 
 from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
@@ -29,6 +30,7 @@ from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
 from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.DocList import get_DocList
 from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
+from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.googleQuickSearchbox import get_quicksearch
@@ -87,6 +89,7 @@ tosearch = {
     'appicons':('Installed Apps', '**/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
     'build':('Device Info', '**/vendor/build.prop'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
+    'Cast':('Cast', '**/com.google.android.gms/databases/cast.db'),
     'Cello': ('Google Docs', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
     'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
     'chromeBookmarks':('Chrome', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*')),
@@ -100,6 +103,7 @@ tosearch = {
     'cmh':('Samsung_CMH', '**/cmh.db'),
     'DocList':('Google Docs', '**/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '**/com.google.android.providers.media.module/databases/external.db*'),
+    'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
     'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
