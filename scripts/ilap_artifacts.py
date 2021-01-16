@@ -5,6 +5,7 @@
 
 import traceback
 
+from time import process_time, gmtime, strftime
 from scripts.artifacts.adb_hosts import get_adb_hosts
 from scripts.artifacts.etc_hosts import get_etc_hosts
 from scripts.artifacts.BashHistory import get_BashHistory
@@ -161,6 +162,7 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
             
             wrap_text: whether the text data will be wrapped or not using textwrap.  Useful for tools that want to parse the data.
     '''
+    start_time = process_time()
     logfunc('{} [{}] artifact executing'.format(artifact_name, artifact_func))
     report_folder = os.path.join(report_folder_base, artifact_name) + slash
     try:
@@ -182,4 +184,7 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
         logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
         return
 
-    logfunc('{} [{}] artifact completed'.format(artifact_name, artifact_func))
+    end_time = process_time()
+    run_time_secs = end_time - start_time
+    # run_time_HMS = strftime('%H:%M:%S', gmtime(run_time_secs))
+    logfunc('{} [{}] artifact completed in time {} seconds'.format(artifact_name, artifact_func, run_time_secs))
