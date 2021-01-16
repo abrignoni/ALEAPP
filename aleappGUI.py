@@ -27,7 +27,7 @@ def ValidateInput(values, window):
     elif os.path.isdir(i_path):
         ext_type = 'fs'
     else: # must be an existing file then
-        if not i_path.lower().endswith('.tar') and not i_path.lower().endswith('.zip'):
+        if not i_path.lower().endswith('.tar') and i_path.lower().endswith('.zip') and  not i_path.lower().endswith('.gz'):
             sg.PopupError('Input file is not a supported archive! ', i_path)
             return False, ext_type
         else:
@@ -85,7 +85,7 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
                      sg.FolderBrowse(font=normal_font, button_text='Browse Folder', target=(sg.ThisRow, -2), key='INPUTFOLDERBROWSE')
                     ]
                 ],
-                title='Select the file type or directory of the target Android full file system extraction for parsing:')],
+                title='Select a file (tar/zip/gz) or directory of the target Android full file system extraction for parsing:')],
             [sg.Frame(layout=[
                     [sg.Input(size=(112,1)), sg.FolderBrowse(font=normal_font, button_text='Browse Folder')]
                 ], 
