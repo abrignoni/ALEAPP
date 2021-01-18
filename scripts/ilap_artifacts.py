@@ -31,6 +31,8 @@ from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
 from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.DocList import get_DocList
 from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
+from scripts.artifacts.FilesByGoogle_FilesMaster import get_FilesByGoogle_FilesMaster
+from scripts.artifacts.FilesByGoogle_SearchHistory import get_FilesByGoogle_SearchHistory
 from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
@@ -104,6 +106,8 @@ tosearch = {
     'cmh':('Samsung_CMH', '**/cmh.db'),
     'DocList':('Google Docs', '**/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '**/com.google.android.providers.media.module/databases/external.db*'),
+    'FilesByGoogle_FilesMaster':('Files By Google', '**/com.google.android.apps.nbu.files/databases/files_master_database*'),
+    'FilesByGoogle_SearchHistory':('Files By Google','**/com.google.android.apps.nbu.files/databases/search_history_database*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
