@@ -5,6 +5,7 @@
 
 import traceback
 
+from time import process_time, gmtime, strftime
 from scripts.artifacts.adb_hosts import get_adb_hosts
 from scripts.artifacts.etc_hosts import get_etc_hosts
 from scripts.artifacts.BashHistory import get_BashHistory
@@ -30,6 +31,8 @@ from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
 from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.DocList import get_DocList
 from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
+from scripts.artifacts.FilesByGoogle_FilesMaster import get_FilesByGoogle_FilesMaster
+from scripts.artifacts.FilesByGoogle_SearchHistory import get_FilesByGoogle_SearchHistory
 from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
@@ -104,6 +107,8 @@ tosearch = {
     'cmh':('Samsung_CMH', '**/cmh.db'),
     'DocList':('Google Docs', '**/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '**/com.google.android.providers.media.module/databases/external.db*'),
+    'FilesByGoogle_FilesMaster':('Files By Google', '**/com.google.android.apps.nbu.files/databases/files_master_database*'),
+    'FilesByGoogle_SearchHistory':('Files By Google','**/com.google.android.apps.nbu.files/databases/search_history_database*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
@@ -163,6 +168,7 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
             
             wrap_text: whether the text data will be wrapped or not using textwrap.  Useful for tools that want to parse the data.
     '''
+    start_time = process_time()
     logfunc('{} [{}] artifact executing'.format(artifact_name, artifact_func))
     report_folder = os.path.join(report_folder_base, artifact_name) + slash
     try:
@@ -184,4 +190,7 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
         logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
         return
 
-    logfunc('{} [{}] artifact completed'.format(artifact_name, artifact_func))
+    end_time = process_time()
+    run_time_secs = end_time - start_time
+    # run_time_HMS = strftime('%H:%M:%S', gmtime(run_time_secs))
+    logfunc('{} [{}] artifact completed in time {} seconds'.format(artifact_name, artifact_func, run_time_secs))

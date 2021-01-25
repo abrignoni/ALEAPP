@@ -44,6 +44,7 @@ def get_icon_name(category, artifact):
         else:                                       icon = 'info'
     elif category == 'ETC HOSTS':       icon = 'globe'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
+    elif category == 'FILES BY GOOGLE': icon = 'file'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
     elif category == 'GOOGLE DOCS':     icon = 'file'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'

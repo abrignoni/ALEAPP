@@ -12,7 +12,7 @@ from time import process_time, gmtime, strftime
 
 def main():
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
-    parser.add_argument('-t', choices=['fs','tar','zip'], required=False, action="store", help="Input type (fs = extracted to file system folder)")
+    parser.add_argument('-t', choices=['fs','tar','zip', 'gz'], required=False, type=str.lower, action="store", help="Input type (fs = extracted to file system folder)")
     parser.add_argument('-o', '--output_path', required=False, action="store", help='Output folder path')
     parser.add_argument('-i', '--input_path', required=False, action="store", help='Path to input file/folder')
     parser.add_argument('-p', '--artifact_paths', required=False, action="store_true", help='Text file list of artifact paths')
@@ -77,7 +77,6 @@ def main():
             if input_path[1] == ':' and extracttype =='fs': input_path = '\\\\?\\' + input_path.replace('/', '\\')
             if output_path[1] == ':': output_path = '\\\\?\\' + output_path.replace('/', '\\')
 
-    
         out_params = OutputParameters(output_path)
 
         crunch_artifacts(tosearch, extracttype, input_path, out_params, 1, wrap_text)
@@ -98,7 +97,7 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio, wr
         if extracttype == 'fs':
             seeker = FileSeekerDir(input_path)
 
-        elif extracttype == 'tar':
+        elif extracttype in ('tar', 'gz'):
             seeker = FileSeekerTar(input_path, out_params.temp_folder)
 
         elif extracttype == 'zip':
@@ -146,9 +145,11 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio, wr
             logfunc()
             process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base, wrap_text)
             for pathh in files_found:
+                if pathh.startswith('\\\\?\\'):
+                    pathh = pathh[4:]
                 log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
         categories_searched += 1
-        GuiWindow.SetProgressBar(categories_searched*ratio)
+        GuiWindow.SetProgressBar(categories_searched * ratio)
     log.close()
 
     logfunc('')
