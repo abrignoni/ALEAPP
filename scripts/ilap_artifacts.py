@@ -42,6 +42,7 @@ from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageInfo import get_package_info
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.lgRCS import get_lgRCS
+from scripts.artifacts.runtimePerms import get_runtimePerms
 from scripts.artifacts.scontextLog import get_scontextLog
 from scripts.artifacts.settingsSecure import get_settingsSecure
 from scripts.artifacts.siminfo import get_siminfo
@@ -115,6 +116,7 @@ tosearch = {
     'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
     'recentactivity':('Recent Activity', '**/system_ce/*'),
     'lgRCS':('RCS Chats', '*/mmssms.db*'),
+    'runtimePerms':('Runtime Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
     'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
     'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
     'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),

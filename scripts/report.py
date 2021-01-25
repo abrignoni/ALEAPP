@@ -65,6 +65,7 @@ def get_icon_name(category, artifact):
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
     elif category == 'WIFI PROFILES':  icon = 'wifi'
+    elif category == 'RUNTIME PERMISSIONS':  icon = 'check'
         
     return icon
     
