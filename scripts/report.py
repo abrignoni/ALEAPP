@@ -34,6 +34,7 @@ def get_icon_name(category, artifact):
         elif artifact.find('DOWNLOADS') >= 0:       icon = 'download'
         elif artifact.find('BOOKMARKS') >= 0:       icon = 'bookmark'
         elif artifact.find('LOGIN') >= 0:           icon = 'log-in'
+        elif artifact.find('MEDIA HISTORY') >= 0:   icon = 'video'
         elif artifact.find('TOP SITES') >= 0:       icon = 'list'
         elif artifact.find('OFFLINE PAGES') >= 0:   icon = 'cloud-off'
         else:                                       icon = 'chrome'
