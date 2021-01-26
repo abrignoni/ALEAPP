@@ -45,6 +45,7 @@ from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageInfo import get_package_info
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.lgRCS import get_lgRCS
+from scripts.artifacts.runtimePerms import get_runtimePerms
 from scripts.artifacts.scontextLog import get_scontextLog
 from scripts.artifacts.settingsSecure import get_settingsSecure
 from scripts.artifacts.siminfo import get_siminfo
@@ -93,7 +94,7 @@ tosearch = {
     'build':('Device Info', '**/vendor/build.prop'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
     'Cast':('Cast', '**/com.google.android.gms/databases/cast.db'),
-    'Cello': ('Google Docs', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
+    'Cello': ('Google Drive', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
     'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
     'chromeBookmarks':('Chrome', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*')),
     'chromeCookies':('Chrome', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*')),
@@ -104,7 +105,7 @@ tosearch = {
     'chromeTopSites':('Chrome', ('**/app_chrome/Default/Top Sites*', '**/app_sbrowser/Default/Top Sites*')),
     'chromeWebsearch':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
     'cmh':('Samsung_CMH', '**/cmh.db'),
-    'DocList':('Google Docs', '**/com.google.android.apps.docs/databases/DocList.db*'),
+    'DocList':('Google Drive', '**/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '**/com.google.android.providers.media.module/databases/external.db*'),
     'FilesByGoogle_FilesMaster':('Files By Google', '**/com.google.android.apps.nbu.files/databases/files_master_database*'),
     'FilesByGoogle_SearchHistory':('Files By Google','**/com.google.android.apps.nbu.files/databases/search_history_database*'),
@@ -120,6 +121,7 @@ tosearch = {
     'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
     'recentactivity':('Recent Activity', '**/system_ce/*'),
     'lgRCS':('RCS Chats', '*/mmssms.db*'),
+    'runtimePerms':('Runtime Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
     'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
     'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
     'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),
