@@ -20,10 +20,20 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
     cursor = db.cursor()
     try:
         cursor.execute('''
-        SELECT canonized_number, case type when 2 then "Outgoing" else "Incoming" end AS direction, 
-               duration as duration_in_seconds, date AS start_time, 
-               case viber_call_type when 1 then "Audio Call" when 4 then "Video Call" else "Unknown" end AS call_type
-          FROM calls 
+        SELECT
+        datetime(date/1000, 'unixepoch') AS start_time,
+        canonized_number,
+        case type
+            when 2 then "Outgoing"
+            else "Incoming"
+        end AS direction,
+        strftime('%H:%M:%S',duration, 'unixepoch') as duration,
+        case viber_call_type
+            when 1 then "Audio Call"
+            when 4 then "Video Call"
+            else "Unknown"
+        end AS viber_call_type
+        FROM calls
         ''')
 
         all_rows = cursor.fetchall()
@@ -32,10 +42,10 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         usageentries = 0
         
     if usageentries > 0:
-        report = ArtifactHtmlReport('Viber - call logs')
-        report.start_artifact_report(report_folder, 'Viber - call logs')
+        report = ArtifactHtmlReport('Viber - Call Logs')
+        report.start_artifact_report(report_folder, 'Viber - Call Logs')
         report.add_script()
-        data_headers = ('canonized_number','call_direction', 'duration_in_seconds', 'start_time', 'call_type') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Call Start Time', 'Phone Number','Call Direction', 'Call Duration', 'Call Type') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1], row[2], row[3], row[4]))
@@ -43,10 +53,10 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'Viber - call logs'
+        tsvname = f'Viber - Call Logs'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Viber - call logs'
+        tlactivity = f'Viber - Call Logs'
         timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
@@ -54,8 +64,11 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         
     try:        
         cursor.execute('''
-        SELECT C.display_name, coalesce(D.data2, D.data1, D.data3) as phone_number 
-          FROM phonebookcontact AS C JOIN phonebookdata AS D ON C._id = D.contact_id
+        SELECT
+        C.display_name,
+        coalesce(D.data2, D.data1, D.data3) as phone_number
+        FROM phonebookcontact AS C
+        JOIN phonebookdata AS D ON C._id = D.contact_id
         ''')
         
         all_rows = cursor.fetchall()
@@ -67,7 +80,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Viber - Contacts')
         report.start_artifact_report(report_folder, 'Viber - Contacts')
         report.add_script()
-        data_headers = ('display_name','phone_number') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Display Name','Phone Number') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1]))
@@ -87,34 +100,41 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
     cursor = db.cursor()
     try:
         cursor.execute('''
-                     SELECT convo_participants.from_number AS from_number, 
-                            convo_participants.recipients  AS recipients, 
-                            M.conversation_id              AS thread_id, 
-                            M.body                         AS msg_content, 
-                            case M.send_type when 1 then "Outgoing" else "Incoming" end AS direction, 
-                            M.msg_date                     AS msg_date, 
-                            case M.unread when 0 then "Read" else "Unread" end AS read_status,
-                            M.extra_uri                    AS file_attachment                            
-                     FROM   (SELECT *, 
-                                    group_concat(TO_RESULT.number) AS recipients 
-                             FROM   (SELECT P._id     AS FROM_ID, 
-                                            P.conversation_id, 
-                                            PI.number AS FROM_NUMBER 
-                                     FROM   participants AS P 
-                                            JOIN participants_info AS PI 
-                                              ON P.participant_info_id = PI._id) AS FROM_RESULT 
-                                    JOIN (SELECT P._id AS TO_ID, 
-                                                 P.conversation_id, 
-                                                 PI.number 
-                                          FROM   participants AS P 
-                                                 JOIN participants_info AS PI 
-                                                   ON P.participant_info_id = PI._id) AS TO_RESULT 
-                                      ON FROM_RESULT.from_id != TO_RESULT.to_id 
-                                         AND FROM_RESULT.conversation_id = TO_RESULT.conversation_id 
-                             GROUP  BY FROM_RESULT.from_id) AS convo_participants 
-                            JOIN messages AS M 
-                              ON M.participant_id = convo_participants.from_id 
-                                 AND M.conversation_id = convo_participants.conversation_id
+        SELECT 
+        datetime(M.msg_date/1000, 'unixepoch') AS msg_date,
+        convo_participants.from_number AS from_number, 
+        convo_participants.recipients AS recipients, 
+        M.conversation_id AS thread_id, 
+        M.body AS msg_content, 
+        case M.send_type
+            when 1 then "Outgoing" 
+            else "Incoming"
+        end AS direction, 
+        case M.unread 
+            when 0 then "Read" 
+            else "Unread" 
+        end AS read_status,
+        M.extra_uri AS file_attachment                            
+        FROM   (SELECT *, 
+                        group_concat(TO_RESULT.number) AS recipients 
+                 FROM   (SELECT P._id     AS FROM_ID, 
+                                P.conversation_id, 
+                                PI.number AS FROM_NUMBER 
+                         FROM   participants AS P 
+                                JOIN participants_info AS PI 
+                                  ON P.participant_info_id = PI._id) AS FROM_RESULT 
+                        JOIN (SELECT P._id AS TO_ID, 
+                                     P.conversation_id, 
+                                     PI.number 
+                              FROM   participants AS P 
+                                     JOIN participants_info AS PI 
+                                       ON P.participant_info_id = PI._id) AS TO_RESULT 
+                          ON FROM_RESULT.from_id != TO_RESULT.to_id 
+                             AND FROM_RESULT.conversation_id = TO_RESULT.conversation_id 
+                 GROUP  BY FROM_RESULT.from_id) AS convo_participants 
+                JOIN messages AS M 
+                  ON M.participant_id = convo_participants.from_id 
+                     AND M.conversation_id = convo_participants.conversation_id
         ''')
 
         all_rows = cursor.fetchall()
@@ -126,7 +146,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Viber - Messages')
         report.start_artifact_report(report_folder, 'Viber - Messages')
         report.add_script()
-        data_headers = ('from_number','recipients', 'thread_id', 'msg_content', 'direction', 'msg_date', 'read_status', 'file_attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Message Date', 'From Phone Number','Recipients', 'Thread ID', 'Message', 'Direction', 'Read Status', 'File Attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
