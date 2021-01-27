@@ -21,8 +21,10 @@ def get_roles(files_found, report_folder, seeker, wrap_text):
             user = 'mirror'
         elif 'users' in parts:
             user = parts[-2]
+            ver = 'Android 10'
         elif 'misc_de' in parts:
             user = parts[-4]
+            ver = 'Android 11'
         
         if user == 'mirror':
             continue
@@ -47,7 +49,7 @@ def get_roles(files_found, report_folder, seeker, wrap_text):
                 
                 if len(data_list) > 0:
                     report = ArtifactHtmlReport('App Roles')
-                    report.start_artifact_report(report_folder, f'App Roles_{user}')
+                    report.start_artifact_report(report_folder, f'{ver} Roles_{user}')
                     report.add_script()
                     data_headers = ('Role', 'Holder')
                     report.write_artifact_data_table(data_headers, data_list, file_found)
