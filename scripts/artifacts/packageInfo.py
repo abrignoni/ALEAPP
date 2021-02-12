@@ -70,10 +70,10 @@ def get_package_info(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Packages')
         report.start_artifact_report(report_folder, 'Packages', description)
         report.add_script()
-        data_headers = ('Name', 'ft', 'Install Time', 'Update Time', 'Install Originator', 'Installer', 'Code Path', 'Public Flags', 'Private Flags')
+        data_headers = ('ft','Name', 'Install Time', 'Update Time', 'Install Originator', 'Installer', 'Code Path', 'Public Flags', 'Private Flags')
         data_list = []
         for p in packages:
-            data_list.append( (p.name, p.ft, p.install_time, p.update_time, p.install_originator, p.installer, p.code_path, p.public_flags, p.private_flags) )
+            data_list.append( (p.ft, p.name, p.install_time, p.update_time, p.install_originator, p.installer, p.code_path, p.public_flags, p.private_flags) )
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()

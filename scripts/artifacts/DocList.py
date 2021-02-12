@@ -12,20 +12,20 @@ def get_DocList(files_found, report_folder, seeker, wrap_text):
     try:
         cursor.execute('''
         select
-            title,
-            owner,
             case creationTime
                 when 0 then ''
                 else datetime("creationTime"/1000, 'unixepoch')
-            end    as C_D,
+            end as creationTime,
+            title,
+            owner,
             case lastModifiedTime
                 when 0 then ''
                 else datetime("lastModifiedTime"/1000, 'unixepoch') 
-            end as M_D,
+            end as lastModifiedTime,
             case lastOpenedTime
                 when 0 then ''
                 else datetime("lastOpenedTime"/1000, 'unixepoch')
-            end as O_D,
+            end as lastOpenedTime,
             lastModifierAccountAlias,
             lastModifierAccountName,
             kind,
@@ -45,7 +45,7 @@ def get_DocList(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('DocList')
         report.start_artifact_report(report_folder, 'DocList')
         report.add_script()
-        data_headers = ('File Name','Owner','Created Date','Modified Date','Opened Date','Last Modifier Account Alias','Last Modifier Account Name','File Type','Shareable URI','HTML URI','MD5 Checkusm','Size') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Created Date','File Name','Owner','Modified Date','Opened Date','Last Modifier Account Alias','Last Modifier Account Name','File Type','Shareable URI','HTML URI','MD5 Checkusm','Size') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],))
@@ -53,13 +53,13 @@ def get_DocList(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'Google Docs - DocList'
+        tsvname = f'Google Drive - DocList'
         tsv(report_folder, data_headers, data_list, tsvname)
         
-        tlactivity = f'Google Docs - DocList'
+        tlactivity = f'Google Drive - DocList'
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
-        logfunc('No Google Docs - DocList data available')
+        logfunc('No Google Drive - DocList data available')
     
     db.close()
     return

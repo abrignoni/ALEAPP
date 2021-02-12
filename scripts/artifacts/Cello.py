@@ -43,42 +43,42 @@ def get_Cello(files_found, report_folder, seeker, wrap_text):
     cursor = db.cursor()
     cursor.execute('''
     SELECT
-        title,
         case created_date
             when 0 then ''
             else datetime(created_date/1000, 'unixepoch')
-        end    as C_D,
+        end as created_date,
+        title,
         case modified_date
             when 0 then ''
             else datetime(modified_date/1000, 'unixepoch')
-        end as M_D,
+        end as modified_date,
         case shared_with_me_date
             when 0 then ''
             else datetime(shared_with_me_date/1000, 'unixepoch')
-        end    as Shared_D,
+        end as shared_with_me_date,
         case modified_by_me_date
             when 0 then ''
             else datetime(modified_by_me_date/1000, 'unixepoch')
-        end as M_M_D,
+        end as modified_by_me_date,
         case viewed_by_me_date
             when 0 then ''
             else datetime(viewed_by_me_date/1000, 'unixepoch')
-        end    as V_D,
+        end as viewed_by_me_date,
         mime_type,
         Quota_bytes,
         case is_folder
             when 0 then ''
             when 1 then 'Yes'
-        end as FOLDER_ITEM,
+        end as is_folder,
         case is_owner
             when 0 then ''
             when 1 then 'Yes'
-        end as OWNER_ITEM,
+        end as is_owner,
         case trashed
             when 0 then ''
             when 1 then 'Yes'
-        end as DELETED_ITEM,
-        (SELECT value from item_properties where key='offlineStatus' and item_stable_id=stable_id) as offlinestatus,
+        end as trashed,
+        (SELECT value from item_properties where key='offlineStatus' and item_stable_id=stable_id) as offline_status,
         (SELECT json_extract(value, '$.blobKey') from item_properties where key LIKE 'com.google.android.apps.docs:content_metadata%' and item_stable_id=stable_id) as content_metadata
     FROM items
     ''')
@@ -89,12 +89,12 @@ def get_Cello(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Cello')
         report.start_artifact_report(report_folder, 'Cello')
         report.add_script()
-        data_headers = ('File Name','Created Date','Modified Date','Shared with User Date','Modified by User Date','Viewed by User Date', \
+        data_headers = ('Created Date','File Name','Modified Date','Shared with User Date','Modified by User Date','Viewed by User Date','Mime Type', \
                         'Offline','Quota Size','Folder','User is Owner','Deleted')
         data_list = []
         tsv_list = []
         for row in all_rows:
-            doc_name = row[0]
+            doc_name = row[1]
             offline_status = "No"
             if row[11] == 1: # file is offline
                 offline_status = "Yes"
@@ -117,19 +117,19 @@ def get_Cello(files_found, report_folder, seeker, wrap_text):
                     doc_name = '<i data-feather="file" stroke="green"></i> ' + doc_name
                 else:
                     doc_name = '<i data-feather="file"></i> ' + doc_name
-            data_list.append((doc_name,row[1],row[2],row[3],row[4],row[5],offline_status,row[7],row[8],row[9],row[10]))
-            tsv_list.append((row[0],row[1],row[2],row[3],row[4],row[5],offline_status,row[7],row[8],row[9],row[10]))
+            data_list.append((row[0],doc_name,row[2],row[3],row[4],row[5],row[6],offline_status,row[7],row[8],row[9],row[10]))
+            tsv_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],offline_status,row[7],row[8],row[9],row[10]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
         report.end_artifact_report()
         
-        tsvname = f'Google Docs - Cello'
+        tsvname = f'Google Drive - Cello'
         tsv(report_folder, data_headers, tsv_list, tsvname)
         
-        tlactivity = f'Google Docs - Cello'
+        tlactivity = f'Google Drive - Cello'
         timeline(report_folder, tlactivity, tsv_list, data_headers)
     else:
-        logfunc('No Google Docs - Cello data available')
+        logfunc('No Google Drive - Cello data available')
     
     db.close()
     return
