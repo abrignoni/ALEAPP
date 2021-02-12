@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
-def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
+def get_roles(files_found, report_folder, seeker, wrap_text):
     
     run = 0
     slash = '\\' if is_platform_windows() else '/' 
@@ -19,10 +19,12 @@ def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
         parts = file_found.split(slash)
         if 'mirror' in parts:
             user = 'mirror'
-        elif 'system' in parts:
+        elif 'users' in parts:
             user = parts[-2]
+            ver = 'Android 10'
         elif 'misc_de' in parts:
             user = parts[-4]
+            ver = 'Android 11'
         
         if user == 'mirror':
             continue
@@ -30,7 +32,7 @@ def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
             try:
                 ET.parse(file_found)
             except ET.ParseError:
-                logfunc('Parse error - Non XML file.') 
+                print('Parse error - Non XML file.') #change to logfunc
                 err = 1
                 
             if err == 0:
@@ -38,27 +40,23 @@ def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
                 root = tree.getroot()
 
                 for elem in root:
-                    #print(elem.tag)
-                    usagetype = elem.tag
-                    name = elem.attrib['name']
-                    #print("Usage type: "+usagetype)
-                    #print('name')
+                    holder = ''
+                    role = elem.attrib['name']
                     for subelem in elem:
-                        permission = subelem.attrib['name']
-                        granted = subelem.attrib['granted']
-                        flags = subelem.attrib['flags']
+                        holder = subelem.attrib['name']
                         
-                        data_list.append((usagetype, name, permission, granted, flags))
-    
+                    data_list.append((role, holder))
+                
                 if len(data_list) > 0:
-                    report = ArtifactHtmlReport('Runtime Permissions')
-                    report.start_artifact_report(report_folder, f'Runtime Permissions_{user}')
+                    report = ArtifactHtmlReport('App Roles')
+                    report.start_artifact_report(report_folder, f'{ver} Roles_{user}')
                     report.add_script()
-                    data_headers = ('Type', 'Name', 'Permission', 'Granted?','Flag')
+                    data_headers = ('Role', 'Holder')
                     report.write_artifact_data_table(data_headers, data_list, file_found)
                     report.end_artifact_report()
                     
-                    tsvname = f'Runtime Permissions_{user}'
+                    tsvname = f'App Roles_{user}'
                     tsv(report_folder, data_headers, data_list, tsvname)
+
                 
             

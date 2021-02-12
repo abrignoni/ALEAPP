@@ -45,9 +45,8 @@ def get_icon_name(category, artifact):
         else:                                       icon = 'info'
     elif category == 'ETC HOSTS':       icon = 'globe'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
-    elif category == 'FILES BY GOOGLE': icon = 'file'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
-    elif category == 'GOOGLE DRIVE':     icon = 'file'
+    elif category == 'GOOGLE DOCS':     icon = 'file'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'GOOGLE PLAY':     
         if artifact == 'GOOGLE PLAY SEARCHES':      icon = 'search'
@@ -67,7 +66,8 @@ def get_icon_name(category, artifact):
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
     elif category == 'WIFI PROFILES':  icon = 'wifi'
-    elif category == 'RUNTIME PERMISSIONS':  icon = 'check'
+    elif category == 'PERMISSIONS':  icon = 'check'
+    elif category == 'APP ROLES':  icon = 'tool'
         
     return icon
     
