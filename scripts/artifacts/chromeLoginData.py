@@ -8,6 +8,15 @@ from Crypto.Protocol.KDF import PBKDF2
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
 
+def get_browser_name(file_name):
+
+    if 'microsoft' in file_name.lower():
+        return 'Edge'
+    elif 'chrome' in file_name.lower():
+        return 'Chrome'
+    else:
+        return 'Unknown'
+
 def decrypt(ciphertxt, key=b"peanuts"):
     if re.match(rb"^v1[01]",ciphertxt): 
         ciphertxt = ciphertxt[3:]
@@ -47,7 +56,7 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
         file_found = str(file_found)
         if not os.path.basename(file_found) == 'Login Data': # skip -journal and other files
             continue
-        browser_name = 'Chrome'
+        browser_name = get_browser_name(file_found)
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
         elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:

@@ -4,13 +4,22 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
 
+def get_browser_name(file_name):
+
+    if 'microsoft' in file_name.lower():
+        return 'Edge'
+    elif 'chrome' in file_name.lower():
+        return 'Chrome'
+    else:
+        return 'Unknown'
+
 def get_chromeTopSites(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
         if not os.path.basename(file_found) == 'Top Sites': # skip -journal and other files
             continue
-        browser_name = 'Chrome'
+        browser_name = get_browser_name(file_found)
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
         elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
