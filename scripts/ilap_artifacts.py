@@ -23,6 +23,8 @@ from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
 from scripts.artifacts.chromeCookies import get_chromeCookies
 from scripts.artifacts.chromeDownloads import get_chromeDownloads
 from scripts.artifacts.chromeLoginData import get_chromeLoginData
+from scripts.artifacts.chromeMediaHistory import get_chromeMediaHistory
+from scripts.artifacts.chromeNetworkActionPredictor import get_chromeNetworkActionPredictor
 from scripts.artifacts.chromeOfflinePages import get_chromeOfflinePages
 from scripts.artifacts.chromeSearchTerms import get_chromeSearchTerms
 from scripts.artifacts.chromeTopSites import get_chromeTopSites
@@ -40,6 +42,7 @@ from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.artifacts.installedappsVending import get_installedappsVending 
 from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageInfo import get_package_info
+from scripts.artifacts.permissions import get_permissions
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.lgRCS import get_lgRCS
 from scripts.artifacts.roles import get_roles
@@ -98,6 +101,8 @@ tosearch = {
     'chromeCookies':('Chrome', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*')),
     'chromeDownloads':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
     'chromeLoginData':('Chrome', ('**/app_chrome/Default/Login Data*', '**/app_sbrowser/Default/Login Data*')),
+    'chromeMediaHistory':('Chrome', ('**/app_chrome/Default/Media History*','**/app_sbrowser/Default/Media History*')),
+    'chromeNetworkActionPredictor':('Chrome', ('**/app_Chrome/Default/Network Action Predictor*','**/app_sbrowser/Default/Network Action Predictor*')),
     'chromeOfflinePages':('Chrome', ('**/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '**/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*')),
     'chromeSearchTerms':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
     'chromeTopSites':('Chrome', ('**/app_chrome/Default/Top Sites*', '**/app_sbrowser/Default/Top Sites*')),
@@ -117,8 +122,9 @@ tosearch = {
     'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
     'recentactivity':('Recent Activity', '**/system_ce/*'),
     'lgRCS':('RCS Chats', '*/mmssms.db*'),
+    'permissions':('Permissions', '*/system/packages.xml'),
     'roles':('App Roles',('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml')),
-    'runtimePerms':('Runtime Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
+    'runtimePerms':('Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
     'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
     'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
     'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),

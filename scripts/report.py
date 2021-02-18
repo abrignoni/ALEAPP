@@ -34,6 +34,8 @@ def get_icon_name(category, artifact):
         elif artifact.find('DOWNLOADS') >= 0:       icon = 'download'
         elif artifact.find('BOOKMARKS') >= 0:       icon = 'bookmark'
         elif artifact.find('LOGIN') >= 0:           icon = 'log-in'
+        elif artifact.find('MEDIA HISTORY') >= 0:   icon = 'video'
+        elif artifact.find('NETWORK ACTION PREDICTOR') >=0:    icon = 'type'
         elif artifact.find('TOP SITES') >= 0:       icon = 'list'
         elif artifact.find('OFFLINE PAGES') >= 0:   icon = 'cloud-off'
         else:                                       icon = 'chrome'
@@ -65,7 +67,7 @@ def get_icon_name(category, artifact):
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
     elif category == 'WIFI PROFILES':  icon = 'wifi'
-    elif category == 'RUNTIME PERMISSIONS':  icon = 'check'
+    elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'APP ROLES':  icon = 'tool'
         
     return icon
