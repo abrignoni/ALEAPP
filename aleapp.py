@@ -12,7 +12,7 @@ from time import process_time, gmtime, strftime
 
 def main():
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
-    parser.add_argument('-t', choices=['fs','tar','zip', 'gz'], required=False, type=str.lower, action="store", help="Input type (fs = extracted to file system folder)")
+    parser.add_argument('-t', choices=['fs','tar','zip', 'gz', 'ab'], required=False, type=str.lower, action="store", help="Input type (fs = extracted to file system folder)")
     parser.add_argument('-o', '--output_path', required=False, action="store", help='Output folder path')
     parser.add_argument('-i', '--input_path', required=False, action="store", help='Path to input file/folder')
     parser.add_argument('-p', '--artifact_paths', required=False, action="store_true", help='Text file list of artifact paths')
@@ -102,6 +102,9 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio, wr
 
         elif extracttype == 'zip':
             seeker = FileSeekerZip(input_path, out_params.temp_folder)
+
+        elif extracttype == 'ab':
+            seeker = FileSeekerABackup(input_path, out_params.temp_folder)
 
         else:
             logfunc('Error on argument -o (input type)')

@@ -98,3 +98,67 @@ class FileSeekerZip(FileSeekerBase):
 
     def cleanup(self):
         self.zip_file.close()
+
+class FileSeekerABackup(FileSeekerTar):
+    def __init__(self, ab_file_path, temp_folder):
+        logfunc("Generating tar from AB file")
+        logfunc(f"Tar will be generated in {temp_folder}")
+        tar_file_path = self.build_tar_filepath(ab_file_path, temp_folder)
+        try:
+            self.generate_tar_file(ab_file_path, tar_file_path)
+        except TypeError:
+            logfunc("File doesn't seem to be an AB backup")
+            raise TypeError
+        FileSeekerTar.__init__(self, tar_file_path, temp_folder)
+
+    def build_tar_filepath(self, input_path, output_dir):
+        input_filename = os.path.splitext(os.path.basename(input_path))[0]
+        output_filename = f"{input_filename}.tar.gz"
+        logfunc(f"Output filename: {output_filename}")
+        output_filepath = os.path.join(output_dir, output_filename)
+        return output_filepath
+
+    def generate_tar_file(self, ab_file_path, tar_file_path):
+        ab_header = b"ANDROID BACKUP"
+        tar_header = b"\x1f\x8b\x08\x00\x00\x00\x00\x00"
+        ignore_offset = 24
+
+        ab_data = open(ab_file_path, 'rb')
+
+        ab_bytes_to_remove = ab_data.read(ignore_offset)
+
+        if ab_bytes_to_remove[:14] == ab_header:
+            logfunc("AB Header checked and intact")
+        else:
+            logfunc("AB Header not found; is it definitely the right file?")
+            raise TypeError
+
+        # Open the target tar file
+        output_path = tar_file_path
+
+        try:
+            output_file = open(output_path, 'wb')
+        except:
+            logfunc("Unable to open file at {output_path}")
+            raise FileNotFoundError
+
+        logfunc("Writing tar header..")
+        output_file.write(tar_header)
+
+        logfunc("Writing rest of AB file..")
+        output_file.write(ab_data.read())
+
+        logfunc("..done.")
+        logfunc("Closing files..")
+
+        output_file.close()
+        ab_data.close()
+
+        # quick verify
+        try:
+            test_val = tarfile.is_tarfile(output_path)
+            logfunc("Output verified OK")
+        except:
+            logfunc("Verification failed; maybe it's encrypted?")
+            raise TypeError
+
