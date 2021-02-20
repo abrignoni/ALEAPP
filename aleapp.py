@@ -3,6 +3,7 @@ import os
 import scripts.report as report
 import shutil
 import traceback
+import io
 
 from scripts.search_files import *
 from scripts.ilapfuncs import *
