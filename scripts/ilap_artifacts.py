@@ -72,6 +72,8 @@ from scripts.artifacts.wifiHotspot import get_wifiHotspot
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
 from scripts.artifacts.Xender import get_Xender
 from scripts.artifacts.Zapya import get_Zapya
+from scripts.artifacts.vlcMedia import get_vlcMedia
+from scripts.artifacts.vlcThumbs import get_vlcThumbs
 
 from scripts.ilapfuncs import *
 
@@ -142,6 +144,8 @@ tosearch = {
     'usagestats':('Usage Stats', ('**/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'Viber':('SMS & MMS', '**/com.viber.voip/databases/*'),
+    'vlcMedia': ('VLC', '*vlc_media.db*'),
+    'vlcThumbs': ('VLC', '*/org.videolan.vlc/files/medialib/*.jpg'),
     'walStrings':('SQLite Journaling', ('**/*-wal', '**/*-journal')),
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
