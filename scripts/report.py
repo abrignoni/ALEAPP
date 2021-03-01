@@ -69,7 +69,9 @@ def get_icon_name(category, artifact):
     elif category == 'WIFI PROFILES':  icon = 'wifi'
     elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'APP ROLES':  icon = 'tool'
-        
+    elif category == 'VLC':
+        if artifact == 'VLC MEDIA LIST':  icon = 'film'
+        if artifact == 'VLC THUMBNAILS':  icon = 'image'
     return icon
     
 def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
@@ -281,3 +283,4 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0 : pos] + " active" + data[pos:]
         return ret
+    
