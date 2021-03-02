@@ -72,6 +72,9 @@ def get_icon_name(category, artifact):
     elif category == 'VLC':
         if artifact == 'VLC MEDIA LIST':  icon = 'film'
         if artifact == 'VLC THUMBNAILS':  icon = 'image'
+    elif category == 'TIKTOK':
+        if artifact == 'MESSAGES':  icon = 'message-square'
+        if artifact == 'CONTACTS':  icon = 'user'
     return icon
     
 def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
