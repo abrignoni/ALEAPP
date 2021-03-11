@@ -170,7 +170,7 @@ def html2csv(reportfolderbase):
                             writer = csv.writer(csvfile, quotechar='"', quoting=csv.QUOTE_ALL)
                             writer.writerows(output_rows)
 
-def tsv(report_folder, data_headers, data_list, tsvname):
+def tsv(report_folder, data_headers, data_list, tsvname, source_file=None):
     report_folder = report_folder.rstrip('/')
     report_folder = report_folder.rstrip('\\')
     report_folder_base, tail = os.path.split(report_folder)
@@ -185,13 +185,28 @@ def tsv(report_folder, data_headers, data_list, tsvname):
         with codecs.open(os.path.join(tsv_report_folder, tsvname +'.tsv'), 'a') as tsvfile:
             tsv_writer = csv.writer(tsvfile, delimiter='\t')
             for i in data_list:
-                tsv_writer.writerow(i)
+                if source_file == None:
+                    tsv_writer.writerow(i)
+                else:
+                    row_data = list(i)
+                    row_data.append(source_file)
+                    tsv_writer.writerow(tuple(row_data))
     else:    
         with codecs.open(os.path.join(tsv_report_folder, tsvname +'.tsv'), 'a', 'utf-8-sig') as tsvfile:
             tsv_writer = csv.writer(tsvfile, delimiter='\t')
-            tsv_writer.writerow(data_headers)
-            for i in data_list:
-                tsv_writer.writerow(i)
+            if source_file ==  None:
+                tsv_writer.writerow(data_headers)
+                for i in data_list:
+                    tsv_writer.writerow(i)
+            else:
+                data_hdr = list(data_headers)
+                data_hdr.append("source file")
+                tsv_writer.writerow(tuple(data_hdr))
+                for i in data_list:
+                    row_data = list(i)
+                    row_data.append(source_file)
+                    tsv_writer.writerow(tuple(row_data))
+            
 
 def timeline(report_folder, tlactivity, data_list, data_headers):
     report_folder = report_folder.rstrip('/')
