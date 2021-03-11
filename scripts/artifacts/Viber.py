@@ -4,18 +4,20 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
 def get_Viber(files_found, report_folder, seeker, wrap_text):
-    
+
+    source_file_messages = ''
+    source_file_data = ''
+
     for file_found in files_found:
         
         if file_found.endswith('_messages'):
            viber_messages_db = str(file_found)
-#        file_found = str(file_found)
- 
+           source_file_messages = file_found.replace(seeker.directory, '')
+
         if file_found.endswith('_data'):
-           viber_data_db = str(file_found)        
-#        if file_found.endswith('-db'):
-#            break
-        
+           viber_data_db = str(file_found)
+           source_file_data = file_found.replace(seeker.directory, '')
+
     db = open_sqlite_db_readonly(viber_data_db)
     cursor = db.cursor()
     try:
@@ -27,7 +29,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
             when 2 then "Outgoing"
             else "Incoming"
         end AS direction,
-        strftime('%H:%M:%S',duration, 'unixepoch') as duration,
+        datetime((date + (duration * 1000))/1000, 'unixepoch') as end_time,
         case viber_call_type
             when 1 then "Audio Call"
             when 4 then "Video Call"
@@ -45,7 +47,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Viber - Call Logs')
         report.start_artifact_report(report_folder, 'Viber - Call Logs')
         report.add_script()
-        data_headers = ('Call Start Time', 'Phone Number','Call Direction', 'Call Duration', 'Call Type') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Call Start Time', 'Phone Number','Call Direction', 'Call End Time', 'Call Type') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1], row[2], row[3], row[4]))
@@ -54,7 +56,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         report.end_artifact_report()
         
         tsvname = f'Viber - Call Logs'
-        tsv(report_folder, data_headers, data_list, tsvname)
+        tsv(report_folder, data_headers, data_list, tsvname, source_file_data)
 
         tlactivity = f'Viber - Call Logs'
         timeline(report_folder, tlactivity, data_list, data_headers)
@@ -89,7 +91,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         report.end_artifact_report()
         
         tsvname = f'Viber - Contacts'
-        tsv(report_folder, data_headers, data_list, tsvname)
+        tsv(report_folder, data_headers, data_list, tsvname, source_file_messages)
         
     else:
         logfunc('No Viber Contacts data available')
@@ -110,10 +112,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
             when 1 then "Outgoing" 
             else "Incoming"
         end AS direction, 
-        case M.unread 
-            when 0 then "Read" 
-            else "Unread" 
-        end AS read_status,
+        M.unread read_status,
         M.extra_uri AS file_attachment                            
         FROM   (SELECT *, 
                         group_concat(TO_RESULT.number) AS recipients 
@@ -155,7 +154,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         report.end_artifact_report()
         
         tsvname = f'Viber - Messages'
-        tsv(report_folder, data_headers, data_list, tsvname)
+        tsv(report_folder, data_headers, data_list, tsvname, source_file_messages)
 
         tlactivity = f'Viber - Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)
