@@ -46,6 +46,7 @@ def get_icon_name(category, artifact):
         else:                                       icon = 'info'
     elif category == 'ETC HOSTS':       icon = 'globe'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
+    elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
     elif category == 'GOOGLE DOCS':     icon = 'file'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
@@ -69,7 +70,12 @@ def get_icon_name(category, artifact):
     elif category == 'WIFI PROFILES':  icon = 'wifi'
     elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'APP ROLES':  icon = 'tool'
-        
+    elif category == 'VLC':
+        if artifact == 'VLC MEDIA LIST':  icon = 'film'
+        if artifact == 'VLC THUMBNAILS':  icon = 'image'
+    elif category == 'TIKTOK':
+        if artifact == 'MESSAGES':  icon = 'message-square'
+        if artifact == 'CONTACTS':  icon = 'user'
     return icon
     
 def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
@@ -281,3 +287,4 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0 : pos] + " active" + data[pos:]
         return ret
+    

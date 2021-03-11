@@ -32,6 +32,7 @@ from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
 from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.DocList import get_DocList
 from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
+from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
 from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
@@ -62,6 +63,7 @@ from scripts.artifacts.smyFiles import get_smyFiles
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
 from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.tangomessage import get_tangomessage
+from scripts.artifacts.tikTok import get_tikTok
 from scripts.artifacts.Turbo import get_Turbo
 from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
@@ -78,6 +80,9 @@ from scripts.artifacts.Xender import get_Xender
 from scripts.artifacts.Zapya import get_Zapya
 from scripts.artifacts.contacts import get_contacts
 from scripts.artifacts.Oruxmaps import get_Oruxmaps
+from scripts.artifacts.vlcMedia import get_vlcMedia
+from scripts.artifacts.vlcThumbs import get_vlcThumbs
+
 
 from scripts.ilapfuncs import *
 
@@ -116,6 +121,7 @@ tosearch = {
     'cmh':('Samsung_CMH', '**/cmh.db'),
     'DocList':('Google Docs', '**/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '**/com.google.android.providers.media.module/databases/external.db*'),
+    'FacebookMessenger':('Facebook Messenger', '**/threads_db2*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
@@ -143,11 +149,14 @@ tosearch = {
     'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
+    'tikTok': ('TikTok', ('*_im.db*', '*db_im_xx*')),
     'Turbo': ('Battery', '**/com.google.android.apps.turbo/databases/turbo.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', ('**/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'Viber':('SMS & MMS', '**/com.viber.voip/databases/*'),
+    'vlcMedia': ('VLC', '*vlc_media.db*'),
+    'vlcThumbs': ('VLC', '*/org.videolan.vlc/files/medialib/*.jpg'),
     'walStrings':('SQLite Journaling', ('**/*-wal', '**/*-journal')),
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
