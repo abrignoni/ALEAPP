@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
@@ -34,16 +35,17 @@ def get_shareit(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Shareit file transfer')
         report.start_artifact_report(report_folder, 'shareit file transfer')
         report.add_script()
-        data_headers = ('direction','from_id', 'to_id', 'device_name', 'description', 'timestamp', 'file_path', 'source_file') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('direction','from_id', 'to_id', 'device_name', 'description', 'timestamp', 'file_path') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
-            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], source_file))
+            timestamp = datetime.datetime.fromtimestamp(int(row[5])).strftime('%Y-%m-%d %H:%M:%S')
+            data_list.append((row[0], row[1], row[2], row[3], row[4], timestamp, row[6]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
         tsvname = f'Shareit file transfer'
-        tsv(report_folder, data_headers, data_list, tsvname)
+        tsv(report_folder, data_headers, data_list, tsvname, source_file)
                 
         tlactivity = f'Shareit file transfer'
         timeline(report_folder, tlactivity, data_list, data_headers)

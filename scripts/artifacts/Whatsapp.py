@@ -8,6 +8,9 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
 
     source_file_msg = ''
     source_file_wa = ''
+    whatsapp_msgstore_db = ''
+    whatsapp_wa_db = ''
+    
     for file_found in files_found:
         
         file_name = str(file_found)
@@ -120,12 +123,13 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
                            end as recipients, 
                            key_from_me              AS direction, 
                            messages.data            AS content, 
-                           messages.timestamp       AS send_timestamp, 
-                           messages.received_timestamp, 
+                           messages.timestamp/1000       AS send_timestamp, 
+                           messages.received_timestamp/1000, 
                            case 
-                                       when messages.remote_resource is null then messages.key_remote_jid 
-                                       else messages.remote_resource
-                           end AS group_sender, 
+                              when messages.remote_resource is null then messages.key_remote_jid 
+                              else messages.remote_resource
+                           end AS group_sender,
+                           messages.media_url       AS attachment
                     FROM   (SELECT jid, 
                                    recipients 
                             FROM   wadb.wa_contacts AS contacts 
@@ -140,7 +144,6 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
                             GROUP  BY jid) AS contact_book_w_groups 
                            join messages 
                              ON messages.key_remote_jid = contact_book_w_groups.jid
-
         ''')
         
         all_rows = cursor.fetchall()
@@ -170,7 +173,7 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
-        logfunc('No Whatsapp Single Calllog data available')
+        logfunc('No Whatsapp messages data available')
         
     
 

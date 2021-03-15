@@ -1,5 +1,6 @@
 import sqlite3
 import base64
+import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
@@ -48,7 +49,9 @@ def get_tangomessage(files_found, report_folder, seeker, wrap_text):
         data_list = []
         for row in all_rows:
             message = _decodeMessage(row[0], row[1]) 
-            data_list.append((row[2], row[3], message))
+            timestamp = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+
+            data_list.append((timestamp, row[3], message))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()

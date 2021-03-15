@@ -82,7 +82,9 @@ from scripts.artifacts.contacts import get_contacts
 from scripts.artifacts.Oruxmaps import get_Oruxmaps
 from scripts.artifacts.vlcMedia import get_vlcMedia
 from scripts.artifacts.vlcThumbs import get_vlcThumbs
-
+from scripts.artifacts.textnow import get_textnow
+from scripts.artifacts.skype import get_skype
+from scripts.artifacts.line import get_line
 
 from scripts.ilapfuncs import *
 
@@ -164,13 +166,16 @@ tosearch = {
     'wifiHotspot':('WiFi Profiles', ('**/misc/wifi/softap.conf', '**/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml')),
     'wifiProfiles':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
     'Xender':('File Transfer', '**/cn.xender/databases/trans-history-db*'), # Get trans-history-db and trans-history-db-wal
-    'Zapya':('File Transfer', '**/com.dewmobile.kuaiya.play/databases/transfer20.db'),
+    'Zapya':('File Transfer', '**/com.dewmobile.kuaiya.play/databases/transfer20.db*'),
     'Whatsapp':('SMS & MMS', '**/com.whatsapp/databases/*.db*'),
     'shareit':('File Transfer', '**/com.lenovo.anyshare.gps/databases/history.db*'),
     'tangomessage':('SMS & MMS', '**/com.sgiggle.production/files/tc.db*'),
     'imo':('SMS & MMS', ('**/com.imo.android.imous/databases/*.db*')),
     'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contacts*.db*')),
     'Oruxmaps':('GEO Locatiokn', '**/oruxmaps/tracklogs/oruxmapstracks.db*'),
+    'textnow': ('SMS & MMS', '**/com.enflick.android.TextNow/databases/textnow_data.db*'),
+    'skype': ('SMS & MMS', '**/com.skype.raider/databases/live*'),	
+    'line': ('SMS & MMS', '**/jp.naver.line.android/databases/**'),
     }
 
 slash = '\\' if is_platform_windows() else '/'

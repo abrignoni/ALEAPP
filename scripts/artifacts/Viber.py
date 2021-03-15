@@ -7,7 +7,9 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
 
     source_file_messages = ''
     source_file_data = ''
-
+    viber_data_db = ''
+    viber_messages_db = ''
+    
     for file_found in files_found:
         
         if file_found.endswith('_messages'):

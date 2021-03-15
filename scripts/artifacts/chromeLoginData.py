@@ -91,7 +91,7 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
-            data_headers = ('Created Time','Username','Password','Origin URL','Blacklisted by User') 
+            data_headers = ('Created Time','Username','Password','Origin URL','Blacklisted by User', 'Browser Name') 
             data_list = []
             for row in all_rows:
                 password = ''
@@ -99,7 +99,7 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
                 if password_enc:
                     password = decrypt(password_enc).decode("utf-8", 'replace')
                 valid_date = get_valid_date(row[2], row[3])
-                data_list.append( (valid_date, row[0], password, row[4], row[5]) )
+                data_list.append( (valid_date, row[0], password, row[4], row[5], browser_name) )
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
