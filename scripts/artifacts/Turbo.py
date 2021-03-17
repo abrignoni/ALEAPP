@@ -8,7 +8,7 @@ def get_Turbo(files_found, report_folder, seeker, wrap_text):
     
 
     file_found = str(files_found[0])
-    source_file = file_found.replace(seeker.directory, '')
+    
     db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()
     cursor.execute('''
