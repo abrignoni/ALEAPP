@@ -112,8 +112,7 @@ def get_skype(files_found, report_folder, seeker, wrap_text):
                            messages.device_gallery_path,
                            case messages.is_sender_me when 0 then "Incoming" else "Outgoing"
                            end is_sender_me, 
-                           case messages.is_sender_me when 0 then messages.person_id
-                           else null end as sender_id
+                           messages.person_id
                            FROM   (SELECT conversation_id,
                                    Group_concat(person_id) AS participant_ids
                             FROM   particiapnt

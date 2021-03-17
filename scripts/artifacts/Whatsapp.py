@@ -167,7 +167,7 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
         report.end_artifact_report()
         
         tsvname = f'Whatsapp - Messages Logs'
-        tsv(report_folder, data_headers, data_list, tsvname, source_file_wa)
+        tsv(report_folder, data_headers, data_list, tsvname, source_file_msg)
         
         tlactivity = f'Whatsapp - Messages Logs'
         timeline(report_folder, tlactivity, data_list, data_headers)

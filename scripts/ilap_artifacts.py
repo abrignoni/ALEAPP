@@ -85,6 +85,10 @@ from scripts.artifacts.vlcThumbs import get_vlcThumbs
 from scripts.artifacts.textnow import get_textnow
 from scripts.artifacts.skype import get_skype
 from scripts.artifacts.line import get_line
+from scripts.artifacts.calllogs import get_calllogs
+from scripts.artifacts.cachelocation import get_cachelocation
+from scripts.artifacts.browserlocation import get_browserlocation
+from scripts.artifacts.googlemaplocation import get_googlemaplocation
 
 from scripts.ilapfuncs import *
 
@@ -171,11 +175,15 @@ tosearch = {
     'shareit':('File Transfer', '**/com.lenovo.anyshare.gps/databases/history.db*'),
     'tangomessage':('SMS & MMS', '**/com.sgiggle.production/files/tc.db*'),
     'imo':('SMS & MMS', ('**/com.imo.android.imous/databases/*.db*')),
-    'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contacts*.db*')),
-    'Oruxmaps':('GEO Locatiokn', '**/oruxmaps/tracklogs/oruxmapstracks.db*'),
+    'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
+    'calllogs':('Call Logs', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
+    'Oruxmaps':('GEO Location', '**/oruxmaps/tracklogs/oruxmapstracks.db*'),
     'textnow': ('SMS & MMS', '**/com.enflick.android.TextNow/databases/textnow_data.db*'),
     'skype': ('SMS & MMS', '**/com.skype.raider/databases/live*'),	
     'line': ('SMS & MMS', '**/jp.naver.line.android/databases/**'),
+    'cachelocation': ('GEO Location', ('**/com.google.android.location/files/cache.cell/cache.cell', '**/com.google.android.location/files/cache.wifi/cache.wifi')),
+    'browserlocation': ('GEO Location', ('**/com.android.browser/app_geolocation/CachedGeoposition.db')),
+    'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     }
 
 slash = '\\' if is_platform_windows() else '/'

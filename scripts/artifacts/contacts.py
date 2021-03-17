@@ -11,7 +11,8 @@ def get_contacts(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         
         file_name = str(file_found)
-        if not os.path.basename(file_name) == 'contacts2.db' and not os.path.basename(file_name) == 'contacts.db': # skip -journal and other files
+        if not os.path.basename(file_name) == 'contacts2.db' and \
+           not os.path.basename(file_name) == 'contacts.db': # skip -journal and other files
             continue
 
         source_file = file_found.replace(seeker.directory, '')
