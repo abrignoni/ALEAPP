@@ -51,6 +51,7 @@ class FileSeekerTar(FileSeekerBase):
         mode ='r:gz' if self.is_gzip else 'r'
         self.tar_file = tarfile.open(tar_file_path, mode)
         self.temp_folder = temp_folder
+        self.directory = temp_folder
 
     def search(self, filepattern, return_on_first_hit=False):
         pathlist = []
@@ -83,6 +84,7 @@ class FileSeekerZip(FileSeekerBase):
         self.zip_file = ZipFile(zip_file_path)
         self.name_list = self.zip_file.namelist()
         self.temp_folder = temp_folder
+        self.directory = temp_folder
 
     def search(self, filepattern, return_on_first_hit=False):
         pathlist = []
