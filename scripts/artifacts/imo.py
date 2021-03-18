@@ -33,10 +33,10 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
         usageentries = 0
         
     if usageentries > 0:
-        report = ArtifactHtmlReport('IMO - AccountId')
-        report.start_artifact_report(report_folder, 'IMO - AccountId')
+        report = ArtifactHtmlReport('IMO - Account ID')
+        report.start_artifact_report(report_folder, 'IMO - Account ID')
         report.add_script()
-        data_headers = ('account_id','name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Account ID','Name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1]))
@@ -44,14 +44,11 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, imo_account_db)
         report.end_artifact_report()
         
-        tsvname = f'IMO - AccountId'
+        tsvname = f'IMO - Account ID'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_account)
-
-        tlactivity = f'IMO - AccountId'
-        timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
-        logfunc('No IMO AccountId found')
+        logfunc('No IMO Account ID found')
         
     db.close()
 
@@ -74,7 +71,7 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('IMO - Messages')
         report.start_artifact_report(report_folder, 'IMO - Messages')
         report.add_script()
-        data_headers = ('from_id', 'to_id', 'last_message', 'timestamp', 'direction', 'message_read', 'attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Timestamp','From ID', 'To ID', 'Last Message',  'Direction', 'Message Read', 'Attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             from_id = ''
@@ -95,13 +92,16 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
                     attachmentPath = attachmentLocalPath
                                 
             timestamp = datetime.datetime.fromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
-            data_list.append((from_id, to_id, row[2], timestamp, row[4], row[5], attachmentPath))
+            data_list.append((timestamp, from_id, to_id, row[2],  row[4], row[5], attachmentPath))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
         tsvname = f'IMO - Messages'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_friends)
+        
+        tlactivity = f'IMO - Messages'
+        timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
         logfunc('No IMO Messages found')

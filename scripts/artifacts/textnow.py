@@ -33,10 +33,10 @@ def get_textnow(files_found, report_folder, seeker, wrap_text):
         usageentries = 0
         
     if usageentries > 0:
-        report = ArtifactHtmlReport('Textnow - Call Logs')
-        report.start_artifact_report(report_folder, 'Textnow - Call Logs')
+        report = ArtifactHtmlReport('Text Now - Call Logs')
+        report.start_artifact_report(report_folder, 'Text Now - Call Logs')
         report.add_script()
-        data_headers = ('start_time', 'end_time', 'from_id', 'to_id', 'call_direction') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Start Time', 'End Time', 'From ID', 'To ID', 'Call Direction') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             phone_number_from = None
@@ -52,17 +52,17 @@ def get_textnow(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'Textnow - Call Logs'
+        tsvname = f'Text Now - Call Logs'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_msg)
 
-        tlactivity = f'Textnow - Call Logs'
+        tlactivity = f'Text Now - Call Logs'
         timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
-        logfunc('No textnow Call Logs found')
+        logfunc('No Text Now Call Logs found')
         
     
-    try:        
+    try:
         cursor.execute('''
                     SELECT CASE 
                              WHEN messages.message_direction == 2 THEN NULL 
@@ -107,27 +107,27 @@ def get_textnow(files_found, report_folder, seeker, wrap_text):
         usageentries = 0
         
     if usageentries > 0:
-        report = ArtifactHtmlReport('Textnow - Messages')
-        report.start_artifact_report(report_folder, 'Textnow - Messages')
+        report = ArtifactHtmlReport('Text Now - Messages')
+        report.start_artifact_report(report_folder, 'Text Now - Messages')
         report.add_script()
-        data_headers = ('message_id','from_id', 'to_id', 'direction', 'message', 'read', 'send_timestamp', 'attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Send Timestamp','Message ID','From ID', 'To ID', 'Direction', 'Message', 'Read',  'Attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             sendtime = datetime.datetime.fromtimestamp(int(row[5])).strftime('%Y-%m-%d %H:%M:%S')
 
-            data_list.append((row[7], row[0], row[1], row[2], row[3], row[4], sendtime, row[6]))
+            data_list.append((sendtime, row[7], row[0], row[1], row[2], row[3], row[4],  row[6]))
             
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'Textnow - Messages'
+        tsvname = f'Text Now - Messages'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_msg)
         
-        tlactivity = f'Textnow - Messages'
+        tlactivity = f'Text Now - Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
-        logfunc('No Textnow messages data available')
+        logfunc('No Text Now messages data available')
 
     cursor = db.cursor()
     try:
@@ -146,8 +146,8 @@ def get_textnow(files_found, report_folder, seeker, wrap_text):
         usageentries = 0
         
     if usageentries > 0:
-        report = ArtifactHtmlReport('Textnow - Contacts')
-        report.start_artifact_report(report_folder, 'Textnow - Contacts')
+        report = ArtifactHtmlReport('Text Now - Contacts')
+        report.start_artifact_report(report_folder, 'Text Now - Contacts')
         report.add_script()
         data_headers = ('number','name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
@@ -157,11 +157,11 @@ def get_textnow(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'Textnow - Contacts'
+        tsvname = f'Text Now - Contacts'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_msg    )
 
     else:
-        logfunc('No Textnow Contacts found')
+        logfunc('No Text Now Contacts found')
 
     db.close
     
