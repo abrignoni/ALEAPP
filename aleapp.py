@@ -23,15 +23,12 @@ def main():
     if args.artifact_paths == True:
         print('Artifact path list generation started.')
         print('')
-        with open('path_list.txt', 'a') as paths:
-            for key, value in tosearch.items():
-                if type(value[1]) is tuple:
-                    for x in value[1]:
-                        paths.write(x+'\n')
-                        print(x)
-                else:
-                    paths.write(value[1]+'\n')
-                    print(value[1])
+        for key, value in tosearch.items():
+            if type(value[1]) is tuple:
+                for x in value[1]:
+                    print(x)
+            else:
+                print(value[1])
         print('')
         print('Artifact path list generation completed')    
         return
