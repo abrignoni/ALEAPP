@@ -48,9 +48,6 @@ def get_line(files_found, report_folder, seeker, wrap_text):
         
         tsvname = f'Line - Contacts'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_msg)
-
-        tlactivity = f'Line - Contacts'
-        timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
         logfunc('No Line Contact Logs found')
@@ -85,10 +82,10 @@ def get_line(files_found, report_folder, seeker, wrap_text):
         usageentries = 0
         
     if usageentries > 0:
-        report = ArtifactHtmlReport('Line - messages')
-        report.start_artifact_report(report_folder, 'Line - messages')
+        report = ArtifactHtmlReport('Line - Messages')
+        report.start_artifact_report(report_folder, 'Line - Messages')
         report.add_script()
-        data_headers = ('start_time','from_id', 'to_id', 'direction', 'thread_id', 'message', 'attachments') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Start Time','From ID', 'To ID', 'Direction', 'Thread ID', 'Message', 'Attachments') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             thread_id = None
@@ -111,14 +108,14 @@ def get_line(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'Line - messages'
+        tsvname = f'Line - Messages'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_msg)
         
-        tlactivity = f'Line - messages'
+        tlactivity = f'Line - Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
-        logfunc('No Line messages available')
+        logfunc('No Line Messages available')
             
 
     db.close()
@@ -158,10 +155,10 @@ def get_line(files_found, report_folder, seeker, wrap_text):
         usageentries = 0
         
     if usageentries > 0:
-        report = ArtifactHtmlReport('Line - Calllogs')
-        report.start_artifact_report(report_folder, 'Line - Calllogs')
+        report = ArtifactHtmlReport('Line - Call Logs')
+        report.start_artifact_report(report_folder, 'Line - Call Logs')
         report.add_script()
-        data_headers = ('start_time', 'end_time', 'to_id', 'from_id', 'direction', 'call_type') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Start Time', 'End Time', 'To ID', 'From ID', 'Direction', 'Call Type') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             start_time = datetime.datetime.fromtimestamp(int(row[1])).strftime('%Y-%m-%d %H:%M:%S')
@@ -171,11 +168,14 @@ def get_line(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'Line - Calllogs'
+        tsvname = f'Line - Call Logs'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_call)
+        
+        tlactivity = f'Line - Call Logs'
+        timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
-        logfunc('No Line Calllogs found')
+        logfunc('No Line Call Logs found')
 
     db.close
     

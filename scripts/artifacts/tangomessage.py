@@ -42,10 +42,10 @@ def get_tangomessage(files_found, report_folder, seeker, wrap_text):
         usageentries = 0
         
     if usageentries > 0:
-        report = ArtifactHtmlReport('Tangomessage messages')
-        report.start_artifact_report(report_folder, 'tangomessage messages')
+        report = ArtifactHtmlReport('Tango - Messages')
+        report.start_artifact_report(report_folder, 'Tango - Messages')
         report.add_script()
-        data_headers = ('create_time', 'direction','message') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Create Time', 'Direction','Message') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             message = _decodeMessage(row[0], row[1]) 
@@ -56,13 +56,13 @@ def get_tangomessage(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'tangomessages messages'
+        tsvname = f'Tango Messages'
         tsv(report_folder, data_headers, data_list, tsvname, source_file)
                 
-        tlactivity = f'tangomessages messages'
+        tlactivity = f'Tango Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
-        logfunc('No tangomessages data available')
+        logfunc('No Tango Messages data available')
 
     db.close()
     return

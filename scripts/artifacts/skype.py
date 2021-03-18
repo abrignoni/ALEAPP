@@ -78,7 +78,7 @@ def get_skype(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('Skype - Call Logs')
             report.start_artifact_report(report_folder, 'Skype - Call Logs')
             report.add_script()
-            data_headers = ('start_time', 'end_time', 'from_id', 'to_id', 'call_direction') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Start Time', 'End Time', 'From ID', 'To ID', 'Call Direction') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
                 to_id = None
@@ -101,7 +101,7 @@ def get_skype(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
             
         else:
-            logfunc('No Skype Calllog available')
+            logfunc('No Skype Call Log available')
                 
         try:        
             cursor.execute('''
@@ -132,10 +132,10 @@ def get_skype(files_found, report_folder, seeker, wrap_text):
             usageentries = 0
             
         if usageentries > 0:
-            report = ArtifactHtmlReport('Skype - Messages Logs')
-            report.start_artifact_report(report_folder, 'Skype - Messages Logs')
+            report = ArtifactHtmlReport('Skype - Messages')
+            report.start_artifact_report(report_folder, 'Skype - Messages')
             report.add_script()
-            data_headers = ('thread_id', 'send_time', 'content', 'direction', 'from_id', 'to_id', 'attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Send Time','Thread ID', 'Content', 'Direction', 'From ID', 'To ID', 'Attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
                 thread_id = None
@@ -151,15 +151,15 @@ def get_skype(files_found, report_folder, seeker, wrap_text):
                         to_id = row[0]
                 sendtime = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
 
-                data_list.append((thread_id, sendtime, row[3], row[5], row[6], to_id, row[4]))
+                data_list.append((sendtime, thread_id,  row[3], row[5], row[6], to_id, row[4]))
                 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Skype - Messages Logs'
+            tsvname = f'Skype - Messages'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
-            tlactivity = f'Skype - Messages Logs'
+            tlactivity = f'Skype - Messages'
             timeline(report_folder, tlactivity, data_list, data_headers)
             
         else:
@@ -187,7 +187,7 @@ def get_skype(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('Skype - Contacts')
             report.start_artifact_report(report_folder, 'Skype - Contacts')
             report.add_script()
-            data_headers = ('entry_id','name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Entry ID','Name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
                 data_list.append((row[0], row[1]))

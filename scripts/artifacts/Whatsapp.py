@@ -51,12 +51,12 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Whatsapp - Group Call Logs')
         report.start_artifact_report(report_folder, 'Whatsapp - Group Call Logs')
         report.add_script()
-        data_headers = ('call_type','start_time', 'end_time', 'call_direction', 'from_id', 'group_members') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Start Time', 'End Time','Call Type', 'Call Direction', 'From ID', 'Group Members') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             starttime = datetime.datetime.fromtimestamp(int(row[1])).strftime('%Y-%m-%d %H:%M:%S')
             endtime = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
-            data_list.append((row[0], starttime, endtime, row[3], row[4], row[5]))
+            data_list.append(( starttime, endtime, row[0], row[3], row[4], row[5]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
@@ -93,7 +93,7 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Whatsapp - Single Call Logs')
         report.start_artifact_report(report_folder, 'Whatsapp - Single Call Logs')
         report.add_script()
-        data_headers = ('start_time','call_type', 'end_time', 'num', 'call_direction') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Start Time','Call Type','End Time','Number','Call Direction') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             starttime = datetime.datetime.fromtimestamp(int(row[0])).strftime('%Y-%m-%d %H:%M:%S')
@@ -110,11 +110,11 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
-        logfunc('No Whatsapp Single Calllog available')
+        logfunc('No Whatsapp Single Call Log available')
             
     cursor.execute('''attach database "''' + whatsapp_wa_db + '''" as wadb ''')
     
-    try:        
+    try:
         cursor.execute('''
                     SELECT messages.key_remote_jid  AS id, 
                            case 
@@ -152,24 +152,24 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
         usageentries = 0
         
     if usageentries > 0:
-        report = ArtifactHtmlReport('Whatsapp - Messages Logs')
-        report.start_artifact_report(report_folder, 'Whatsapp - Messages Logs')
+        report = ArtifactHtmlReport('Whatsapp - Messages')
+        report.start_artifact_report(report_folder, 'Whatsapp - Messages')
         report.add_script()
-        data_headers = ('message_id','recipients', 'direction', 'content', 'send_timestamp', 'received_timestamp', 'group_sender', 'attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Send Timestamp', 'Received Timestamp','Message ID','Recipients', 'Direction', 'Content', 'Group Sender', 'Attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             sendtime = datetime.datetime.fromtimestamp(int(row[4])).strftime('%Y-%m-%d %H:%M:%S')
             receivetime = datetime.datetime.fromtimestamp(int(row[5])).strftime('%Y-%m-%d %H:%M:%S')
 
-            data_list.append((row[0], row[1], row[2], row[3], sendtime, receivetime, row[6], row[7]))
+            data_list.append((sendtime, receivetime, row[0], row[1], row[2], row[3],row[6], row[7]))
             
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'Whatsapp - Messages Logs'
+        tsvname = f'Whatsapp - Messages'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_msg)
         
-        tlactivity = f'Whatsapp - Messages Logs'
+        tlactivity = f'Whatsapp - Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
@@ -213,7 +213,7 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Whatsapp - Contacts')
         report.start_artifact_report(report_folder, 'Whatsapp - Contacts')
         report.add_script()
-        data_headers = ('number','name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Number','Name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1]))

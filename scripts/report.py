@@ -60,6 +60,7 @@ def get_icon_name(category, artifact):
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
+    elif category == 'VIBER':     icon = 'message-square'
     elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
@@ -70,14 +71,39 @@ def get_icon_name(category, artifact):
     elif category == 'WIFI PROFILES':  icon = 'wifi'
     elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'APP ROLES':  icon = 'tool'
+    elif category == 'LINE':
+        if artifact == 'LINE - CONTACTS':  icon = 'user'
+        if artifact == 'LINE - MESSAGES':  icon = 'message-square'
+        if artifact == 'LINE - CALL LOGS':  icon = 'phone'
+    elif category == 'IMO':
+        if artifact == 'IMO - ACCOUNT ID':  icon = 'user'
+        if artifact == 'IMO - MESSAGES':  icon = 'message-square'
+    elif category == 'TANGO':
+        if artifact == 'TANGO - MESSAGES':  icon = 'message-square'
     elif category == 'VLC':
         if artifact == 'VLC MEDIA LIST':  icon = 'film'
         if artifact == 'VLC THUMBNAILS':  icon = 'image'
+    elif category == 'SKYPE':
+        if artifact == 'SKYPE - CALL LOGS':  icon = 'phone'
+        if artifact == 'SKYPE - MESSAGES':  icon = 'message-square'
+        if artifact == 'SKYPE - CONTACTS':  icon = 'user'
+    elif category == 'TEXT NOW':
+        if artifact == 'TEXT NOW - CALL LOGS':  icon = 'phone'
+        if artifact == 'TEXT NOW - MESSAGES':  icon = 'message-square'
+        if artifact == 'TEXT NOW - CONTACTS':  icon = 'user'
     elif category == 'TIKTOK':
-        if artifact == 'MESSAGES':  icon = 'message-square'
-        if artifact == 'CONTACTS':  icon = 'user'
+        if artifact == 'TIKTOK - MESSAGES':  icon = 'message-square'
+        if artifact == 'TIKTOK - CONTACTS':  icon = 'user'
+    elif category == 'WHATSAPP':
+        if artifact == 'WHATSAPP - MESSAGES':  icon = 'messages-square'
+        if artifact == 'WHATSAPP - CONTACTS':  icon = 'user'
+        else:                           icon = 'phone'
+    elif category == 'CONTACTS':  icon = 'user'
     return icon
     
+    '''
+
+    '''
 def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
 
     control = None
@@ -287,4 +313,5 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0 : pos] + " active" + data[pos:]
         return ret
+    
     
