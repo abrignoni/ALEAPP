@@ -32,11 +32,13 @@ from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
 from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.DocList import get_DocList
 from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
+from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
 from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.googleQuickSearchbox import get_quicksearch
 from scripts.artifacts.googleQuickSearchboxRecent import get_quicksearch_recent
+from scripts.artifacts.imo import get_imo
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.artifacts.installedappsVending import get_installedappsVending 
@@ -49,6 +51,7 @@ from scripts.artifacts.roles import get_roles
 from scripts.artifacts.runtimePerms import get_runtimePerms
 from scripts.artifacts.scontextLog import get_scontextLog
 from scripts.artifacts.settingsSecure import get_settingsSecure
+from scripts.artifacts.shareit import get_shareit
 from scripts.artifacts.siminfo import get_siminfo
 from scripts.artifacts.smanagerCrash import get_smanagerCrash
 from scripts.artifacts.smanagerLow import get_smanagerLow
@@ -59,11 +62,14 @@ from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
 from scripts.artifacts.smyFiles import get_smyFiles
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
 from scripts.artifacts.swellbeing import get_swellbeing
+from scripts.artifacts.tangomessage import get_tangomessage
+from scripts.artifacts.tikTok import get_tikTok
 from scripts.artifacts.Turbo import get_Turbo
 from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.userDict import get_userDict
 from scripts.artifacts.Viber import get_Viber
+from scripts.artifacts.Whatsapp import get_Whatsapp
 from scripts.artifacts.walStrings import get_walStrings
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingURLs import get_wellbeingURLs
@@ -72,6 +78,18 @@ from scripts.artifacts.wifiHotspot import get_wifiHotspot
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
 from scripts.artifacts.Xender import get_Xender
 from scripts.artifacts.Zapya import get_Zapya
+from scripts.artifacts.contacts import get_contacts
+from scripts.artifacts.Oruxmaps import get_Oruxmaps
+from scripts.artifacts.vlcMedia import get_vlcMedia
+from scripts.artifacts.vlcThumbs import get_vlcThumbs
+from scripts.artifacts.textnow import get_textnow
+from scripts.artifacts.skype import get_skype
+from scripts.artifacts.line import get_line
+from scripts.artifacts.calllogs import get_calllogs
+from scripts.artifacts.cachelocation import get_cachelocation
+from scripts.artifacts.browserlocation import get_browserlocation
+from scripts.artifacts.googlemaplocation import get_googlemaplocation
+from scripts.artifacts.packageGplinks import get_packageGplinks
 
 from scripts.ilapfuncs import *
 
@@ -91,57 +109,62 @@ tosearch = {
     'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db'),
     'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
     'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
-    'appicons':('Installed Apps', '**/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
+    'appicons':('Installed Apps', '*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
     'build':('Device Info', '**/vendor/build.prop'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
     'Cast':('Cast', '**/com.google.android.gms/databases/cast.db'),
     'Cello': ('Google Docs', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
-    'chrome':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
-    'chromeBookmarks':('Chrome', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*')),
-    'chromeCookies':('Chrome', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*')),
-    'chromeDownloads':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
-    'chromeLoginData':('Chrome', ('**/app_chrome/Default/Login Data*', '**/app_sbrowser/Default/Login Data*')),
-    'chromeMediaHistory':('Chrome', ('**/app_chrome/Default/Media History*','**/app_sbrowser/Default/Media History*')),
-    'chromeNetworkActionPredictor':('Chrome', ('**/app_Chrome/Default/Network Action Predictor*','**/app_sbrowser/Default/Network Action Predictor*')),
-    'chromeOfflinePages':('Chrome', ('**/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '**/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*')),
-    'chromeSearchTerms':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
-    'chromeTopSites':('Chrome', ('**/app_chrome/Default/Top Sites*', '**/app_sbrowser/Default/Top Sites*')),
-    'chromeWebsearch':('Chrome', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*')),
+    'chrome':('Chromium', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*', '**/app_opera/History*')),
+    'chromeBookmarks':('Chromium', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*', '**/app_opera/Bookmarks*')),
+    'chromeCookies':('Chromium', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*', '**/app_opera/Cookies*')),
+    'chromeDownloads':('Chromium', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*', '**/app_opera/History*')),
+    'chromeLoginData':('Chromium', ('**/app_chrome/Default/Login Data*', '**/app_sbrowser/Default/Login Data*', '**/app_opera/Login Data*')),
+    'chromeMediaHistory':('Chromium', ('**/app_chrome/Default/Media History*','**/app_sbrowser/Default/Media History*', '**/app_opera/Media History*')),
+    'chromeNetworkActionPredictor':('Chromium', ('**/app_Chrome/Default/Network Action Predictor*','**/app_sbrowser/Default/Network Action Predictor*', '**/app_opera/Network Action Predicator*')),
+    'chromeOfflinePages':('Chromium', ('**/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '**/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*')),
+    'chromeSearchTerms':('Chromium', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*', '**/app_opera/History*')),
+    'chromeTopSites':('Chromium', ('**/app_chrome/Default/Top Sites*', '**/app_sbrowser/Default/Top Sites*', '**/app_opera/Top Sites*')),
+    'chromeWebsearch':('Chromium', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*', '**/app_opera/History*')),
     'cmh':('Samsung_CMH', '**/cmh.db'),
     'DocList':('Google Docs', '**/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '**/com.google.android.providers.media.module/databases/external.db*'),
+    'FacebookMessenger':('Facebook Messenger', '**/threads_db2*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
-    'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
-    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
-    'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
-    'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
-    'package_info': ('Installed Apps', '**/system/packages.xml'),
-    'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
-    'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
-    'recentactivity':('Recent Activity', '**/system_ce/*'),
+    'installedappsGass':('Installed Apps', '*/com.google.android.gms/databases/gass.db'),
+    'installedappsLibrary': ('Installed Apps', '*/com.android.vending/databases/library.db'),
+    'installedappsVending': ('Installed Apps', '*/com.android.vending/databases/localappstate.db'),
+    'pSettings':('Device Info', '*/com.google.android.gsf/databases/googlesettings.db*'),
+    'package_info': ('Installed Apps', '*/system/packages.xml'),
+    'packageGplinks': ('Installed Apps', '*/system/packages.list'),
+    'quicksearch':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
+    'quicksearch_recent':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/files/recently/*'),
+    'recentactivity':('Recent Activity', '*/system_ce/*'),
     'lgRCS':('RCS Chats', '*/mmssms.db*'),
     'permissions':('Permissions', '*/system/packages.xml'),
     'roles':('App Roles',('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml')),
     'runtimePerms':('Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
-    'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
-    'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
-    'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),
-    'smanagerCrash':('App Interaction', '**/com.samsung.android.sm/databases/sm.db'),
-    'smanagerLow':('App Interaction', '**/com.samsung.android.sm/databases/lowpowercontext-system-db'),
-    'smembersAppInv':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
-    'smembersEvents':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
-    'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
-    'smyfilesRecents':('Media Metadata', '**/com.sec.android.app.myfiles/databases/myfiles.db'),
+    'scontextLog':('App Interaction', '*/com.samsung.android.providers.context/databases/ContextLog.db'),
+    'settingsSecure':('Device Info', '*/system/users/*/settings_secure.xml'),
+    'siminfo':('Device Info', '*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
+    'smanagerCrash':('App Interaction', '*/com.samsung.android.sm/databases/sm.db'),
+    'smanagerLow':('App Interaction', '*/com.samsung.android.sm/databases/lowpowercontext-system-db'),
+    'smembersAppInv':('App Interaction', '*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
+    'smembersEvents':('App Interaction', '*/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
+    'sms_mms':('SMS & MMS', '*/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
+    'smyfilesRecents':('Media Metadata', '*/com.sec.android.app.myfiles/databases/myfiles.db'),
     'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
-    'Turbo': ('Battery', '**/com.google.android.apps.turbo/databases/turbo.db*'),
+    'tikTok': ('TikTok', ('*_im.db*', '*db_im_xx*')),
+    'Turbo': ('Battery', '*/com.google.android.apps.turbo/databases/turbo.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
-    'usagestats':('Usage Stats', ('**/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
+    'usagestats':('Usage Stats', ('*/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
-    'Viber':('SMS & MMS', '**/com.viber.voip/databases/*'),
+    'Viber':('Viber', '**/com.viber.voip/databases/*'),
+    'vlcMedia': ('VLC', '*vlc_media.db*'),
+    'vlcThumbs': ('VLC', '*/org.videolan.vlc/files/medialib/*.jpg'),
     'walStrings':('SQLite Journaling', ('**/*-wal', '**/*-journal')),
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
@@ -149,7 +172,20 @@ tosearch = {
     'wifiHotspot':('WiFi Profiles', ('**/misc/wifi/softap.conf', '**/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml')),
     'wifiProfiles':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
     'Xender':('File Transfer', '**/cn.xender/databases/trans-history-db*'), # Get trans-history-db and trans-history-db-wal
-    'Zapya':('File Transfer', '**/com.dewmobile.kuaiya.play/databases/transfer20.db'),
+    'Zapya':('File Transfer', '**/com.dewmobile.kuaiya.play/databases/transfer20.db*'),
+    'Whatsapp':('Whatsapp', '*/com.whatsapp/databases/*.db*'),
+    'shareit':('File Transfer', '*/com.lenovo.anyshare.gps/databases/history.db*'),
+    'tangomessage':('Tango', '**/com.sgiggle.production/files/tc.db*'),
+    'imo':('IMO', ('**/com.imo.android.imous/databases/*.db*')),
+    'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
+    'calllogs':('Call Logs', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
+    'Oruxmaps':('GEO Location', '**/oruxmaps/tracklogs/oruxmapstracks.db*'),
+    'textnow': ('Text Now', '**/com.enflick.android.TextNow/databases/textnow_data.db*'),
+    'skype': ('Skype', '**/com.skype.raider/databases/live*'),	
+    'line': ('LIne', '**/jp.naver.line.android/databases/**'),
+    'cachelocation': ('GEO Location', ('**/com.google.android.location/files/cache.cell/cache.cell', '**/com.google.android.location/files/cache.wifi/cache.wifi')),
+    'browserlocation': ('GEO Location', ('**/com.android.browser/app_geolocation/CachedGeoposition.db')),
+    'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     }
 
 slash = '\\' if is_platform_windows() else '/'
