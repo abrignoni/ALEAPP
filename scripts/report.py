@@ -60,7 +60,10 @@ def get_icon_name(category, artifact):
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
-    elif category == 'VIBER':     icon = 'message-square'
+    elif category == 'VIBER':
+        if artifact == 'VIBER - CONTACTS':  icon = 'user'
+        if artifact == 'VIBER - MESSAGES':  icon = 'message-square'
+        if artifact == 'VIBER - CALL LOGS':  icon = 'phone'
     elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
@@ -127,6 +130,7 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     side_list = OrderedDict() # { Category1 : [path1, path2, ..], Cat2:[..] } Dictionary containing paths as values, key=category
 
     for root, dirs, files in sorted(os.walk(reportfolderbase)):
+        files = sorted(files)
         for file in files:
             if file.endswith(".temphtml"):    
                 fullpath = (os.path.join(root, file))
