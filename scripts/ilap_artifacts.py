@@ -89,6 +89,7 @@ from scripts.artifacts.calllogs import get_calllogs
 from scripts.artifacts.cachelocation import get_cachelocation
 from scripts.artifacts.browserlocation import get_browserlocation
 from scripts.artifacts.googlemaplocation import get_googlemaplocation
+from scripts.artifacts.packageGplinks import get_packageGplinks
 
 from scripts.ilapfuncs import *
 
@@ -108,7 +109,7 @@ tosearch = {
     'accounts_ce': ('Accounts_ce', '**/system_ce/*/accounts_ce.db'),
     'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
     'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
-    'appicons':('Installed Apps', '**/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
+    'appicons':('Installed Apps', '*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
     'build':('Device Info', '**/vendor/build.prop'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
     'Cast':('Cast', '**/com.google.android.gms/databases/cast.db'),
@@ -131,34 +132,35 @@ tosearch = {
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
-    'installedappsGass':('Installed Apps', '**/com.google.android.gms/databases/gass.db'),
-    'installedappsLibrary': ('Installed Apps', '**/com.android.vending/databases/library.db'),
-    'installedappsVending': ('Installed Apps', '**/com.android.vending/databases/localappstate.db'),
-    'pSettings':('Device Info', '**/com.google.android.gsf/databases/googlesettings.db*'),
-    'package_info': ('Installed Apps', '**/system/packages.xml'),
-    'quicksearch':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
-    'quicksearch_recent':('Google Now & QuickSearch', '**/com.google.android.googlequicksearchbox/files/recently/*'),
-    'recentactivity':('Recent Activity', '**/system_ce/*'),
+    'installedappsGass':('Installed Apps', '*/com.google.android.gms/databases/gass.db'),
+    'installedappsLibrary': ('Installed Apps', '*/com.android.vending/databases/library.db'),
+    'installedappsVending': ('Installed Apps', '*/com.android.vending/databases/localappstate.db'),
+    'pSettings':('Device Info', '*/com.google.android.gsf/databases/googlesettings.db*'),
+    'package_info': ('Installed Apps', '*/system/packages.xml'),
+    'packageGplinks': ('Installed Apps', '*/system/packages.list'),
+    'quicksearch':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
+    'quicksearch_recent':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/files/recently/*'),
+    'recentactivity':('Recent Activity', '*/system_ce/*'),
     'lgRCS':('RCS Chats', '*/mmssms.db*'),
     'permissions':('Permissions', '*/system/packages.xml'),
     'roles':('App Roles',('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml')),
     'runtimePerms':('Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
-    'scontextLog':('App Interaction', '**/com.samsung.android.providers.context/databases/ContextLog.db'),
-    'settingsSecure':('Device Info', '**/system/users/*/settings_secure.xml'),
-    'siminfo':('Device Info', '**/user_de/*/com.android.providers.telephony/databases/telephony.db'),
-    'smanagerCrash':('App Interaction', '**/com.samsung.android.sm/databases/sm.db'),
-    'smanagerLow':('App Interaction', '**/com.samsung.android.sm/databases/lowpowercontext-system-db'),
-    'smembersAppInv':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
-    'smembersEvents':('App Interaction', '**/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
-    'sms_mms':('SMS & MMS', '**/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
-    'smyfilesRecents':('Media Metadata', '**/com.sec.android.app.myfiles/databases/myfiles.db'),
+    'scontextLog':('App Interaction', '*/com.samsung.android.providers.context/databases/ContextLog.db'),
+    'settingsSecure':('Device Info', '*/system/users/*/settings_secure.xml'),
+    'siminfo':('Device Info', '*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
+    'smanagerCrash':('App Interaction', '*/com.samsung.android.sm/databases/sm.db'),
+    'smanagerLow':('App Interaction', '*/com.samsung.android.sm/databases/lowpowercontext-system-db'),
+    'smembersAppInv':('App Interaction', '*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
+    'smembersEvents':('App Interaction', '*/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
+    'sms_mms':('SMS & MMS', '*/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
+    'smyfilesRecents':('Media Metadata', '*/com.sec.android.app.myfiles/databases/myfiles.db'),
     'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
     'tikTok': ('TikTok', ('*_im.db*', '*db_im_xx*')),
-    'Turbo': ('Battery', '**/com.google.android.apps.turbo/databases/turbo.db*'),
+    'Turbo': ('Battery', '*/com.google.android.apps.turbo/databases/turbo.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
-    'usagestats':('Usage Stats', ('**/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
+    'usagestats':('Usage Stats', ('*/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'Viber':('Viber', '**/com.viber.voip/databases/*'),
     'vlcMedia': ('VLC', '*vlc_media.db*'),
@@ -171,8 +173,8 @@ tosearch = {
     'wifiProfiles':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
     'Xender':('File Transfer', '**/cn.xender/databases/trans-history-db*'), # Get trans-history-db and trans-history-db-wal
     'Zapya':('File Transfer', '**/com.dewmobile.kuaiya.play/databases/transfer20.db*'),
-    'Whatsapp':('Whatsapp', '**/com.whatsapp/databases/*.db*'),
-    'shareit':('File Transfer', '**/com.lenovo.anyshare.gps/databases/history.db*'),
+    'Whatsapp':('Whatsapp', '*/com.whatsapp/databases/*.db*'),
+    'shareit':('File Transfer', '*/com.lenovo.anyshare.gps/databases/history.db*'),
     'tangomessage':('Tango', '**/com.sgiggle.production/files/tc.db*'),
     'imo':('IMO', ('**/com.imo.android.imous/databases/*.db*')),
     'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
