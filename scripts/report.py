@@ -60,7 +60,10 @@ def get_icon_name(category, artifact):
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
-    elif category == 'VIBER':     icon = 'message-square'
+    elif category == 'VIBER':
+        if artifact == 'VIBER - CONTACTS':  icon = 'user'
+        if artifact == 'VIBER - MESSAGES':  icon = 'message-square'
+        if artifact == 'VIBER - CALL LOGS':  icon = 'phone'
     elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
