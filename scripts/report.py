@@ -127,6 +127,7 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     side_list = OrderedDict() # { Category1 : [path1, path2, ..], Cat2:[..] } Dictionary containing paths as values, key=category
 
     for root, dirs, files in sorted(os.walk(reportfolderbase)):
+        files = sorted(files)
         for file in files:
             if file.endswith(".temphtml"):    
                 fullpath = (os.path.join(root, file))
