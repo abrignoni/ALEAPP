@@ -29,7 +29,7 @@ def get_icon_name(category, artifact):
     elif category == 'CAST':            icon = 'cast'
     elif category == 'CALL LOGS':       icon = 'phone'
     elif category == 'CHATS':           icon = 'message-circle'
-    elif category == 'CHROME':          
+    elif category == 'CHROMIUM':          
         if artifact.find('SEARCH TERMS') >= 0:      icon = 'search'
         elif artifact.find('DOWNLOADS') >= 0:       icon = 'download'
         elif artifact.find('BOOKMARKS') >= 0:       icon = 'bookmark'
