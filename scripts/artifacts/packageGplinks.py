@@ -9,6 +9,7 @@ def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         if 'sbin' not in file_found:
             file_found = str(file_found)
+            source_file = file_found.replace(seeker.directory, '')
     
     with open(file_found) as data:
         values = data.readlines()
@@ -28,7 +29,7 @@ def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
         report.end_artifact_report()
         
         tsvname = f'Google Play Links for Apps'
-        tsv(report_folder, data_headers, data_list, tsvname)
+        tsv(report_folder, data_headers, data_list, tsvname, source_file)
         
     else:
         logfunc('No Google Play Links for Apps data available')
