@@ -6,7 +6,9 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_
 
 def get_Turbo(files_found, report_folder, seeker, wrap_text):
     
+
     file_found = str(files_found[0])
+    
     db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()
     cursor.execute('''

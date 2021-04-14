@@ -73,14 +73,14 @@ def get_sms_mms(files_found, report_folder, seeker, wrap_text):
         db = open_sqlite_db_readonly(file_found)
         db.row_factory = sqlite3.Row # For fetching columns by name
 
-        got_messages = read_sms_messages(db, report_folder, file_found)
+        got_messages = read_sms_messages(db, report_folder, file_found, seeker, wrap_text)
         read_mms_messages(db, report_folder, file_found, seeker)
 
         db.close()
         if got_messages:
             return
         
-def read_sms_messages(db, report_folder, file_found):
+def read_sms_messages(db, report_folder, file_found, seeker, wrap_text):
     cursor = db.cursor()
     cursor.execute(sms_query)
     all_rows = cursor.fetchall()
@@ -93,15 +93,20 @@ def read_sms_messages(db, report_folder, file_found):
             'Date sent', 'Read', 'Type', 'Body', 'Service Center', 'Error code')
         data_list = []
         for row in all_rows:
-            data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
-                row['person'],row['date_sent'], row['read'],
-                row['type'], row['body'], row['service_center'], row['error_code']))
+            if wrap_text:
+                data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
+                    row['person'],row['date_sent'], row['read'],
+                    row['type'], row['body'].replace("\n",""), row['service_center'], row['error_code']))
+            else:
+                data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
+                    row['person'],row['date_sent'], row['read'],
+                    row['type'], row['body'], row['service_center'], row['error_code']))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
         tsvname = f'sms messages'
-        tsv(report_folder, data_headers, data_list, tsvname)
+        tsv(report_folder, data_headers, data_list, tsvname, file_found.replace(seeker.directory, ''))
         
         tlactivity = f'SMS Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)
@@ -230,7 +235,7 @@ def read_mms_messages(db, report_folder, file_found, seeker):
         report.end_artifact_report()
         
         tsvname = f'mms messages'
-        tsv(report_folder, data_headers, data_list, tsvname)
+        tsv(report_folder, data_headers, data_list, tsvname, file_found.replace(seeker.directory, ''))
         
         tlactivity = f'MMS Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)

@@ -11,6 +11,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         if not file_found.endswith('threads_db2'):
             continue # Skip all other files
     
+        source_file = file_found.replace(seeker.directory, '')
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -25,8 +26,6 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         messages.text,
         messages.snippet,
         (select json_extract (messages.attachments, '$[0].filename')) as AttachmentName,
-        --messages.attachments,
-        --messages.shares,
         (select json_extract (messages.shares, '$[0].name')) as ShareName,
         (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
         (select json_extract (messages.shares, '$[0].href')) as ShareLink
@@ -50,7 +49,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             report.end_artifact_report()
             
             tsvname = f'Facebook Messenger - Chats'
-            tsv(report_folder, data_headers, data_list, tsvname)
+            tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
             tlactivity = f'Facebook Messenger - Chats'
             timeline(report_folder, tlactivity, data_list, data_headers)
@@ -63,7 +62,6 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         (select json_extract (messages.generic_admin_message_extensible_data, '$.caller_id')) as "Caller ID",
         (select json_extract (messages.sender, '$.name')) as "Receiver",
         substr((select json_extract (messages.sender, '$.user_key')),10) as "Receiver ID",
-        --messages.generic_admin_message_extensible_data,
         strftime('%H:%M:%S',(select json_extract (messages.generic_admin_message_extensible_data, '$.call_duration')), 'unixepoch')as "Call Duration",
         case (select json_extract (messages.generic_admin_message_extensible_data, '$.video'))
             when false then ''
@@ -89,7 +87,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             report.end_artifact_report()
             
             tsvname = f'Facebook Messenger - Calls'
-            tsv(report_folder, data_headers, data_list, tsvname)
+            tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
             tlactivity = f'Facebook Messenger - Calls'
             timeline(report_folder, tlactivity, data_list, data_headers)
@@ -129,7 +127,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             report.end_artifact_report()
             
             tsvname = f'Facebook Messenger - Contacts'
-            tsv(report_folder, data_headers, data_list, tsvname)
+            tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
             tlactivity = f'Facebook Messenger - Contacts'
             timeline(report_folder, tlactivity, data_list, data_headers)
@@ -137,4 +135,4 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             logfunc('No Facebook Messenger - Contacts data available')
         
         db.close()
-        return
+

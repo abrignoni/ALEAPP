@@ -8,6 +8,17 @@ from Crypto.Protocol.KDF import PBKDF2
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
 
+def get_browser_name(file_name):
+
+    if 'microsoft' in file_name.lower():
+        return 'Edge'
+    elif 'chrome' in file_name.lower():
+        return 'Chrome'
+    elif 'opera' in file_name.lower():
+        return 'Opera'
+    else:
+        return 'Unknown'
+
 def decrypt(ciphertxt, key=b"peanuts"):
     if re.match(rb"^v1[01]",ciphertxt): 
         ciphertxt = ciphertxt[3:]
@@ -47,7 +58,7 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
         file_found = str(file_found)
         if not os.path.basename(file_found) == 'Login Data': # skip -journal and other files
             continue
-        browser_name = 'Chrome'
+        browser_name = get_browser_name(file_found)
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
         elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
@@ -80,7 +91,7 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
-            data_headers = ('Created Time','Username','Password','Origin URL','Blacklisted by User') 
+            data_headers = ('Created Time','Username','Password','Origin URL','Blacklisted by User', 'Browser Name') 
             data_list = []
             for row in all_rows:
                 password = ''
@@ -88,7 +99,7 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
                 if password_enc:
                     password = decrypt(password_enc).decode("utf-8", 'replace')
                 valid_date = get_valid_date(row[2], row[3])
-                data_list.append( (valid_date, row[0], password, row[4], row[5]) )
+                data_list.append( (valid_date, row[0], password, row[4], row[5], browser_name) )
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
