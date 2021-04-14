@@ -48,7 +48,8 @@ def get_icon_name(category, artifact):
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
-    elif category == 'GOOGLE DOCS':     icon = 'file'
+    elif category == 'GOOGLE DRIVE':     icon = 'file'
+    elif category == 'GOOGLE PHOTOS':  icon = 'aperture'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'GOOGLE PLAY':     
         if artifact == 'GOOGLE PLAY SEARCHES':      icon = 'search'
