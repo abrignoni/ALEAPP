@@ -28,10 +28,6 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
         when NULL then ''
         else datetime(trash_timestamp/1000, 'unixepoch')
     end,
-    case purge_timestamp
-        when NULL then ''
-        else datetime(purge_timestamp/1000, 'unixepoch')
-    end
     from local_media
     ''')
 
