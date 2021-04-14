@@ -34,6 +34,7 @@ from scripts.artifacts.DocList import get_DocList
 from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
 from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
 from scripts.artifacts.gboard import get_gboardCache
+from scripts.artifacts.googlePhotos import get_googlePhotos
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.googleQuickSearchbox import get_quicksearch
@@ -113,7 +114,7 @@ tosearch = {
     'build':('Device Info', '**/vendor/build.prop'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
     'Cast':('Cast', '**/com.google.android.gms/databases/cast.db'),
-    'Cello': ('Google Docs', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
+    'Cello': ('Google Drive', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
     'chrome':('Chromium', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*', '**/app_opera/History*')),
     'chromeBookmarks':('Chromium', ('**/app_chrome/Default/Bookmarks*', '**/app_sbrowser/Default/Bookmarks*', '**/app_opera/Bookmarks*')),
     'chromeCookies':('Chromium', ('**/app_chrome/Default/Cookies*', '**/app_sbrowser/Default/Cookies*', '**/app_opera/Cookies*')),
@@ -126,10 +127,11 @@ tosearch = {
     'chromeTopSites':('Chromium', ('**/app_chrome/Default/Top Sites*', '**/app_sbrowser/Default/Top Sites*', '**/app_opera/Top Sites*')),
     'chromeWebsearch':('Chromium', ('**/app_chrome/Default/History*', '**/app_sbrowser/Default/History*', '**/app_opera/History*')),
     'cmh':('Samsung_CMH', '**/cmh.db'),
-    'DocList':('Google Docs', '**/com.google.android.apps.docs/databases/DocList.db*'),
+    'DocList':('Google Drive', '**/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '**/com.google.android.providers.media.module/databases/external.db*'),
     'FacebookMessenger':('Facebook Messenger', '**/threads_db2*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
+    'googlePhotos':('Google Photos', '**/com.google.android.apps.photos/databases/gphotos0.db*'),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
     'installedappsGass':('Installed Apps', '*/com.google.android.gms/databases/gass.db'),
