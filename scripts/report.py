@@ -216,15 +216,19 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     """
 
     # Get script run log (this will be tab2)
+    devinfo_files_path = os.path.join(reportfolderbase, 'Script Logs', 'DeviceInfo.html')
+    tab2_content = get_file_content(devinfo_files_path)
+    
+    # Get script run log (this will be tab3)
     script_log_path = os.path.join(reportfolderbase, 'Script Logs', 'Screen Output.html')
-    tab2_content = get_file_content(script_log_path)
-
+    tab3_content = get_file_content(script_log_path)
+    
     # Get processed files list (this will be tab3)
     processed_files_path = os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html')
-    tab3_content = get_file_content(processed_files_path)
-
-    content += tabs_code.format(tab1_content, tab2_content, tab3_content)
-
+    tab4_content = get_file_content(processed_files_path)
+    
+    content += tabs_code.format(tab1_content, tab2_content, tab3_content, tab4_content)
+    
     content += '</div>' # CARD end
 
     authors_data = generate_authors_table_code(aleapp_contributors)
@@ -318,5 +322,6 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0 : pos] + " active" + data[pos:]
         return ret
+    
     
     
