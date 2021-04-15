@@ -22,7 +22,8 @@ class OutputParameters:
         self.report_folder_base = os.path.join(output_folder, 'ALEAPP_Reports_' + currenttime) # aleapp , aleappGUI, ileap_artifacts, report.py
         self.temp_folder = os.path.join(self.report_folder_base, 'temp')
         OutputParameters.screen_output_file_path = os.path.join(self.report_folder_base, 'Script Logs', 'Screen Output.html')
-
+        OutputParameters.screen_output_file_path_devinfo = os.path.join(self.report_folder_base, 'Script Logs', 'DeviceInfo.html')
+        
         os.makedirs(os.path.join(self.report_folder_base, 'Script Logs'))
         os.makedirs(self.temp_folder)
 
@@ -121,6 +122,10 @@ def logfunc(message=""):
 
     if GuiWindow.window_handle:
         GuiWindow.window_handle.refresh()
+        
+def logdevinfo(message=""):
+    with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
+        b.write(message + '<br>' + OutputParameters.nl)
     
 """ def deviceinfoin(ordes, kas, vas, sources): # unused function
     sources = str(sources)

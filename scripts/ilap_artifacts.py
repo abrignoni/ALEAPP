@@ -68,6 +68,7 @@ from scripts.artifacts.tikTok import get_tikTok
 from scripts.artifacts.Turbo import get_Turbo
 from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
+from scripts.artifacts.usagestatsVersion import get_usagestatsVersion
 from scripts.artifacts.userDict import get_userDict
 from scripts.artifacts.Viber import get_Viber
 from scripts.artifacts.Whatsapp import get_Whatsapp
@@ -102,6 +103,7 @@ from scripts.ilapfuncs import *
 # Don't forget to import the module above!!!!
 
 tosearch = {
+    'build':('Device Info', '**/vendor/build.prop'),
     'adb_hosts':('ADB Hosts', '**/data/misc/adb/adb_keys'),
     'etc_hosts':('Etc Hosts', '**/system/etc/hosts'),
     'BashHistory':('Bash History', '**/.bash_history'),
@@ -111,7 +113,6 @@ tosearch = {
     'accounts_ce_authtokens':('Accounts_ce', '**/accounts_ce.db'),
     'accounts_de': ('Accounts_de', '**/system_de/*/accounts_de.db'),
     'appicons':('Installed Apps', '*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
-    'build':('Device Info', '**/vendor/build.prop'),
     'calllog': ('Call Logs', '**/com.android.providers.contacts/databases/calllog.db'),
     'Cast':('Cast', '**/com.google.android.gms/databases/cast.db'),
     'Cello': ('Google Drive', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
@@ -163,6 +164,7 @@ tosearch = {
     'Turbo': ('Battery', '*/com.google.android.apps.turbo/databases/turbo.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', ('*/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
+    'usagestatsVersion':('Usage Stats', ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version')),
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
     'Viber':('Viber', '**/com.viber.voip/databases/*'),
     'vlcMedia': ('VLC', '*vlc_media.db*'),
