@@ -225,7 +225,7 @@ thank_you_note = \
 credits_block = \
 """
     <div class="alert alert-light mb-4 bg-white" style="border-style: none">
-        <h4 class="text-center">Aleapp contributors</h4>
+        <h4 class="text-center">ALEAPP contributors</h4>
         <ul class="list-group" style="max-width: 500px; margin:auto">
             {}
         </ul>
