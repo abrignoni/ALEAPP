@@ -5,7 +5,7 @@ import shutil
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, logdevinfo, is_platform_windows, open_sqlite_db_readonly
 
 def get_siminfo(files_found, report_folder, seeker, wrap_text):
 
@@ -77,10 +77,12 @@ def process_siminfo(folder, uid, report_folder):
                 row4 = row[4]
                 row5 = row[5]
             data_list.append((row[0], row1, row[2], row[3], row4, row5, row[6]))
+            logdevinfo(f"SIM Number & IMSI: {row[0]} - {row1}")
+            logdevinfo(f"SIM Display Name: {row[2]}")
         report.write_artifact_data_table(data_headers, data_list, folder)
         report.end_artifact_report()
         
-        tsvname = f'sim info {uid}'
+        tsvname = f'Sim info {uid}'
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc(f'No SIM_Info{uid} data available')    

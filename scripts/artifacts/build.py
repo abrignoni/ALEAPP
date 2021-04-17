@@ -1,10 +1,13 @@
 import os
+import scripts.artifacts.artGlobals 
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, logdevinfo, tsv, is_platform_windows
 
 def get_build(files_found, report_folder, seeker, wrap_text):
     data_list = []
+    Androidversion = scripts.artifacts.artGlobals.versionf
+    
     file_found = str(files_found[0])
     with open(file_found, "r") as f:
         for line in f: 
@@ -12,29 +15,39 @@ def get_build(files_found, report_folder, seeker, wrap_text):
             if splits[0] == 'ro.product.vendor.manufacturer':
                 key = 'Manufacturer'
                 value = splits[1]
+                logdevinfo(f"Manufacturer: {value}")
             elif splits[0] == 'ro.product.vendor.brand':
                 key = 'Brand'
                 value = splits[1]
+                logdevinfo(f"Brand: {value}")
                 data_list.append((key, value))
             elif splits[0] == 'ro.product.vendor.model':
                 key = 'Model'
                 value = splits[1]
+                logdevinfo(f"Model: {value}")
                 data_list.append((key, value))
             elif splits[0] == 'ro.product.vendor.device':
                 key = 'Device'
                 value = splits[1]
+                logdevinfo(f"Device: {value}")
                 data_list.append((key, value))
             elif splits[0] == 'ro.vendor.build.version.release':
                 key = 'Android Version'
                 value = splits[1]
+                if Androidversion == 0:
+                    scripts.artifacts.artGlobals.versionf = value
+                logfunc(f"Android version per build.props: {value}")
+                logdevinfo(f"Android version per build.props: {value}")
                 data_list.append((key, value))
             elif splits[0] == 'ro.vendor.build.version.sdk':
                 key = 'SDK'
                 value = splits[1]
+                logdevinfo(f"SDK: {value}")
                 data_list.append((key, value))
             elif splits[0] == 'ro.system.build.version.release':
                 key = ''
                 value = splits[1]
+                logdevinfo(f"Version release: {value}")
                 data_list.append((key, value))
             elif splits[0] == 'ro.system.build.version.release':
                 key = ''

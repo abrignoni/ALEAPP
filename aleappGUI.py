@@ -50,8 +50,12 @@ def ValidateInput(values, window):
     return True, ext_type
 
 # initialize CheckBox control with module name   
-def CheckList(mtxt, lkey, mdstring):
-    return [sg.CBox(mtxt, default=True, key=lkey, metadata=mdstring)]
+def CheckList(mtxt, lkey, mdstring, disable=False):
+    if mdstring == 'test1' or mdstring == 'test2' : #items in the if are modules that take a long time to run. Deselects them by default.
+        dstate = False
+    else:
+        dstate = True
+    return [sg.CBox(mtxt, default=dstate, key=lkey, metadata=mdstring, disabled=disable)]
 
 def pickModules():
     global indx
@@ -60,11 +64,12 @@ def pickModules():
     script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'scripts', 'artifacts')
 
     # Create sorted dict from 'tosearch' dictionary based on plugin category
-    sorted_tosearch = {k: v for k, v in sorted(tosearch.items(), key=lambda item: item[1][0])}
+    sorted_tosearch = {k: v for k, v in sorted(tosearch.items(), key=lambda item: item[1][0].upper())}
 
     indx = 1000     # arbitrary number to not interfere with other controls
     for key, val in sorted_tosearch.items():
-        mlist.append( CheckList(val[0] + f' [{key}]', indx, key) )
+        disabled = False if key != 'usagestatsVersion' else True # usagestatsVersion is REQUIRED
+        mlist.append( CheckList(val[0] + f' [{key}]', indx, key, disabled) )
         indx = indx + 1
         
 sg.theme('LightGreen5')   # Add a touch of color
@@ -114,7 +119,7 @@ while True:
     if event == "DESELECT ALL":  
          # none modules
         for x in range(1000,indx):
-            window[x].Update(False) 
+            window[x].Update(False if window[x].metadata != 'usagestatsVersion' else True)  # usagestatsVersion.py is REQUIRED
     if event == 'Process':
         #check is selections made properly; if not we will return to input form without exiting app altogether
         is_valid, extracttype = ValidateInput(values, window)
@@ -130,16 +135,17 @@ while True:
                 if output_folder[1] == ':': output_folder = '\\\\?\\' + output_folder.replace('/', '\\')
             
             # re-create modules list based on user selection
-            search_list = {}
+            search_list = { 'usagestatsVersion' : tosearch['usagestatsVersion'] } # hardcode usagestatsVersion as first item
             s_items = 0
             for x in range(1000,indx):
                 if window.FindElement(x).Get():
-                    if window[x].metadata in tosearch:
-                        search_list[window[x].metadata] = tosearch[window[x].metadata]
-                        s_items = s_items + 1 #for progress bar
+                    key = window[x].metadata
+                    if (key in tosearch) and (key != 'usagestatsVersion'):
+                        search_list[key] = tosearch[key]
+                    s_items = s_items + 1 # for progress bar
                 
-            # no more selections allowed
-            window[x].Update(disabled = True)
+                # no more selections allowed
+                window[x].Update(disabled = True)
                 
             window['SELECT ALL'].update(disabled=True)
             window['DESELECT ALL'].update(disabled=True)

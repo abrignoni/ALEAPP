@@ -1,4 +1,5 @@
 import argparse
+import io
 import os
 import scripts.report as report
 import shutil
@@ -88,6 +89,7 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio, wr
     logfunc('Objective: Triage Android Full System Extractions.')
     logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
     logfunc('By: Yogesh Khatri   | @SwiftForensics | swiftforensics.com')
+    logdevinfo()
 
     seeker = None
     try:
