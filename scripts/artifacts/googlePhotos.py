@@ -23,7 +23,10 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
         width,
         height,
         size_bytes,
-        strftime('%H:%M:%S', duration/1000, 'unixepoch'),
+        case duration
+            when 0 then ''
+            else strftime('%H:%M:%S', duration/1000, 'unixepoch')
+        end,
         latitude,
         longitude,
         folder_name,
@@ -72,7 +75,10 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
         width,
         height,
         size_bytes,
-        strftime('%H:%M:%S', duration/1000, 'unixepoch'),
+        case duration
+            when 0 then ''
+            else strftime('%H:%M:%S', duration/1000, 'unixepoch')
+        end,
         latitude,
         longitude,
         folder_name,
