@@ -8,7 +8,7 @@ from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly
 
-def get_googlePhotos_all(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
     
     source_file_photos = ''
     source_file_cache = ''
