@@ -49,7 +49,9 @@ def get_icon_name(category, artifact):
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
-    elif category == 'GOOGLE PHOTOS': icon = 'image'
+    elif category == 'GOOGLE PHOTOS':
+        if artifact == 'GOOGLE PHOTOS - LOCAL TRASH': icon = 'trash-2'
+        else:                                   icon = 'image'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'GOOGLE PLAY':     
         if artifact == 'GOOGLE PLAY SEARCHES':      icon = 'search'
@@ -216,19 +218,15 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     """
 
     # Get script run log (this will be tab2)
-    devinfo_files_path = os.path.join(reportfolderbase, 'Script Logs', 'DeviceInfo.html')
-    tab2_content = get_file_content(devinfo_files_path)
-    
-    # Get script run log (this will be tab3)
     script_log_path = os.path.join(reportfolderbase, 'Script Logs', 'Screen Output.html')
-    tab3_content = get_file_content(script_log_path)
-    
+    tab2_content = get_file_content(script_log_path)
+
     # Get processed files list (this will be tab3)
     processed_files_path = os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html')
-    tab4_content = get_file_content(processed_files_path)
-    
-    content += tabs_code.format(tab1_content, tab2_content, tab3_content, tab4_content)
-    
+    tab3_content = get_file_content(processed_files_path)
+
+    content += tabs_code.format(tab1_content, tab2_content, tab3_content)
+
     content += '</div>' # CARD end
 
     authors_data = generate_authors_table_code(aleapp_contributors)
@@ -322,6 +320,5 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0 : pos] + " active" + data[pos:]
         return ret
-    
     
     
