@@ -35,7 +35,6 @@ from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
 from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
 from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.googlePhotos import get_googlePhotos
-from scripts.artifacts.googlePhotosCache import get_googlePhotosCache
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.googleQuickSearchbox import get_quicksearch
@@ -133,8 +132,7 @@ tosearch = {
     'emulatedSmeta':('Emulated Storage Metadata', '**/com.google.android.providers.media.module/databases/external.db*'),
     'FacebookMessenger':('Facebook Messenger', '**/threads_db2*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
-    'googlePhotos':('Google Photos', '**/com.google.android.apps.photos/databases/gphotos0.db*'),
-    'googlePhotosCache':('Google Photos', ('**/com.google.android.apps.photos/databases/disk_cache*','**/com.google.android.apps.photos/cache/glide_cache/*')),
+    'googlePhotos':('Google Photos', ('**/com.google.android.apps.photos/databases/gphotos0.db*','**/com.google.android.apps.photos/databases/disk_cache*','**/com.google.android.apps.photos/cache/glide_cache/*','**/com.google.android.apps.photos/databases/local_trash.db*','**/com.google.android.apps.photos/files/trash_files/*')),
     'googleNowPlaying':('Now Playing', '**/com.google.intelligence.sense/db/history_db*'),
     'googlePlaySearches':('Google Play', '**/com.android.vending/databases/suggestions.db*'),
     'installedappsGass':('Installed Apps', '*/com.google.android.gms/databases/gass.db'),

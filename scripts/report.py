@@ -49,7 +49,9 @@ def get_icon_name(category, artifact):
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
-    elif category == 'GOOGLE PHOTOS': icon = 'image'
+    elif category == 'GOOGLE PHOTOS':
+        if artifact == 'GOOGLE PHOTOS - LOCAL TRASH': icon = 'trash-2'
+        else:                                   icon = 'image'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'GOOGLE PLAY':     
         if artifact == 'GOOGLE PLAY SEARCHES':      icon = 'search'
@@ -106,7 +108,6 @@ def get_icon_name(category, artifact):
     return icon
     
     '''
-
     '''
 def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
 
@@ -322,6 +323,3 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0 : pos] + " active" + data[pos:]
         return ret
-    
-    
-    
