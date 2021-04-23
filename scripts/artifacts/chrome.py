@@ -53,7 +53,7 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
             data_list = []
             for row in all_rows:
                 if wrap_text:
-                    data_list.append((textwrap.fill(row[0], width=100),row[1],row[2],row[3],row[4]))
+                    data_list.append((row[0],textwrap.fill(row[1], width=100),row[2],row[3],row[4]))
                 else:
                     data_list.append((row[0],row[1],row[2],row[3],row[4]))
             report.write_artifact_data_table(data_headers, data_list, file_found)
