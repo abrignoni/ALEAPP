@@ -6,55 +6,97 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_n
 
 def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
     
+    #logfunc(str(files_found))
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('threads_db2'):
             continue # Skip all other files
-    
+                
         source_file = file_found.replace(seeker.directory, '')
         db = open_sqlite_db_readonly(file_found)
+        
+        if 'user' in file_found:
+            usernum = file_found.split("/")
+            usernum = '_'+str(usernum[-4])
+        else:
+            usernum = ''
+            
+        if 'katana' in file_found:
+            typeof = ' Katana '
+        elif 'orca' in file_found:
+            typeof = ' Orca '
+        else:
+            typeof =''
+        
         cursor = db.cursor()
-        cursor.execute('''
-        select
-        case messages.timestamp_ms
-            when 0 then ''
-            else datetime(messages.timestamp_ms/1000,'unixepoch')
-        End	as Datestamp,
-        (select json_extract (messages.sender, '$.name')) as "Sender",
-        substr((select json_extract (messages.sender, '$.user_key')),10) as "Sender ID",
-        messages.thread_key,
-        messages.text,
-        messages.snippet,
-        (select json_extract (messages.attachments, '$[0].filename')) as AttachmentName,
-        (select json_extract (messages.shares, '$[0].name')) as ShareName,
-        (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
-        (select json_extract (messages.shares, '$[0].href')) as ShareLink
-        from messages, threads
-        where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
-        order by messages.thread_key, datestamp;
-        ''')
-
+        try:
+            cursor.execute('''
+            select
+            case messages.timestamp_ms
+                when 0 then ''
+                else datetime(messages.timestamp_ms/1000,'unixepoch')
+            End	as Datestamp,
+            (select json_extract (messages.sender, '$.name')) as "Sender",
+            substr((select json_extract (messages.sender, '$.user_key')),10) as "Sender ID",
+            messages.thread_key,
+            messages.text,
+            messages.snippet,
+            (select json_extract (messages.attachments, '$[0].filename')) as AttachmentName,
+            (select json_extract (messages.shares, '$[0].name')) as ShareName,
+            (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
+            (select json_extract (messages.shares, '$[0].href')) as ShareLink
+            from messages, threads
+            where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
+            order by messages.thread_key, datestamp;
+            ''')
+            snippet = 1
+        except:
+            cursor.execute('''
+            select
+            case messages.timestamp_ms
+                when 0 then ''
+                else datetime(messages.timestamp_ms/1000,'unixepoch')
+            End	as Datestamp,
+            (select json_extract (messages.sender, '$.name')) as "Sender",
+            substr((select json_extract (messages.sender, '$.user_key')),10) as "Sender ID",
+            messages.thread_key,
+            messages.text,
+            (select json_extract (messages.attachments, '$[0].filename')) as AttachmentName,
+            (select json_extract (messages.shares, '$[0].name')) as ShareName,
+            (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
+            (select json_extract (messages.shares, '$[0].href')) as ShareLink
+            from messages, threads
+            where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
+            order by messages.thread_key, datestamp;
+            ''')
+            
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
             report = ArtifactHtmlReport('Facebook Messenger - Chats')
-            report.start_artifact_report(report_folder, 'Facebook Messenger - Chats')
+            report.start_artifact_report(report_folder, f'Facebook Messenger{typeof}- Chats{usernum}')
             report.add_script()
-            data_headers = ('Timestamp','Sender Name','Sender ID','Thread Key','Message','Snippet','Attachment Name','Share Name','Share Description','Share Link') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]))
-
+            
+            if snippet == 1:
+                data_headers = ('Timestamp','Sender Name','Sender ID','Thread Key','Message','Snippet','Attachment Name','Share Name','Share Description','Share Link')
+                for row in all_rows:
+                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]))
+            else:
+                data_headers = ('Timestamp','Sender Name','Sender ID','Thread Key','Message','Attachment Name','Share Name','Share Description','Share Link')
+                for row in all_rows:
+                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
+                    
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Facebook Messenger - Chats'
+            tsvname = f'Facebook Messenger{typeof}-- Chats{usernum}'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
-            tlactivity = f'Facebook Messenger - Chats'
+            tlactivity = f'Facebook Messenger{typeof}-- Chats{usernum}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Facebook Messenger - Chats data available')
+            logfunc(f'No Facebook Messenger{typeof} - Chats data available{usernum}')
         
         cursor.execute('''
         select
@@ -76,7 +118,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         usageentries = len(all_rows)
         if usageentries > 0:
             report = ArtifactHtmlReport('Facebook Messenger - Calls')
-            report.start_artifact_report(report_folder, 'Facebook Messenger - Calls')
+            report.start_artifact_report(report_folder, f'Facebook Messenger{typeof}- Calls{usernum}')
             report.add_script()
             data_headers = ('Timestamp','Caller ID','Receiver Name','Receiver ID','Call Duration','Video Call') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
@@ -86,13 +128,13 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Facebook Messenger - Calls'
+            tsvname = f'Facebook Messenger{typeof}- Calls{usernum}'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
-            tlactivity = f'Facebook Messenger - Calls'
+            tlactivity = f'Facebook Messenger{typeof}- Calls{usernum}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Facebook Messenger - Calls data available')
+            logfunc(f'No Facebook Messenger{typeof}- Calls data available{usernum}')
         
         cursor.execute('''
         select
@@ -116,7 +158,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         usageentries = len(all_rows)
         if usageentries > 0:
             report = ArtifactHtmlReport('Facebook Messenger - Contacts')
-            report.start_artifact_report(report_folder, 'Facebook Messenger - Contacts')
+            report.start_artifact_report(report_folder, f'Facebook Messenger{typeof}- Contacts{usernum}')
             report.add_script()
             data_headers = ('User ID','First Name','Last Name','Username','Profile Pic URL','Is App User','Is Friend') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
@@ -126,13 +168,14 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Facebook Messenger - Contacts'
+            tsvname = f'Facebook Messenger{typeof}- Contacts{usernum}'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
-            tlactivity = f'Facebook Messenger - Contacts'
+            tlactivity = f'Facebook Messenger{typeof}- Contacts{usernum}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Facebook Messenger - Contacts data available')
+            logfunc(f'No Facebook Messenger{typeof}- Contacts data available{usernum}')
         
         db.close()
 
+        
