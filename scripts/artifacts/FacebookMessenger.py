@@ -9,12 +9,14 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
     #logfunc(str(files_found))
     for file_found in files_found:
         file_found = str(file_found)
-        if not file_found.endswith('threads_db2'):
-            continue # Skip all other files
-                
-        source_file = file_found.replace(seeker.directory, '')
-        db = open_sqlite_db_readonly(file_found)
         
+        if 'mirror' in file_found: #remove to process mirror data. Should be a copy of actual data.
+            continue 
+        
+        if '/user/0/' in file_found: #remove to process user 0. Should be a copy data in /data/data/com.facebook.orca
+            continue
+            
+                
         if 'user' in file_found:
             usernum = file_found.split("/")
             usernum = '_'+str(usernum[-4])
@@ -22,12 +24,38 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             usernum = ''
             
         if 'katana' in file_found:
-            typeof = ' Katana '
+            typeof = ' App '
         elif 'orca' in file_found:
-            typeof = ' Orca '
+            typeof = ' Messenger '
         else:
             typeof =''
         
+        if file_found.endswith('threads_db2-uid'):
+            source_file = file_found.replace(seeker.directory, '')
+            userid = ''
+            data_list = []
+            with open(file_found, 'r') as dat:
+                for line in dat:
+                    userid = line
+                    if userid != '':
+                        data_list.append((userid,))
+            logfunc(f'Userid: {str(userid)}')            
+            if len(userid) > 0:
+                report = ArtifactHtmlReport('Facebook - User ID')
+                report.start_artifact_report(report_folder, f'Facebook{typeof}- User ID{usernum}')
+                report.add_script()
+                data_headers = ('User ID',) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+                report.write_artifact_data_table(data_headers, data_list, file_found)
+                report.end_artifact_report()
+                
+                tsvname = f'Facebook{typeof}- User ID{usernum}'
+                tsv(report_folder, data_headers, data_list, tsvname, source_file)
+            
+        if not file_found.endswith('threads_db2'):
+            continue # Skip all other files
+    
+        source_file = file_found.replace(seeker.directory, '')
+        db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         try:
             cursor.execute('''
@@ -73,8 +101,8 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport('Facebook Messenger - Chats')
-            report.start_artifact_report(report_folder, f'Facebook Messenger{typeof}- Chats{usernum}')
+            report = ArtifactHtmlReport('Facebook - Chats')
+            report.start_artifact_report(report_folder, f'Facebook{typeof}- Chats{usernum}')
             report.add_script()
             data_list = []
             
@@ -96,7 +124,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             tlactivity = f'Facebook Messenger{typeof}-- Chats{usernum}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc(f'No Facebook Messenger{typeof} - Chats data available{usernum}')
+            logfunc(f'No Facebook{typeof} - Chats data available{usernum}')
         
         cursor.execute('''
         select
@@ -117,8 +145,8 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport('Facebook Messenger - Calls')
-            report.start_artifact_report(report_folder, f'Facebook Messenger{typeof}- Calls{usernum}')
+            report = ArtifactHtmlReport('Facebook - Calls')
+            report.start_artifact_report(report_folder, f'Facebook{typeof}- Calls{usernum}')
             report.add_script()
             data_headers = ('Timestamp','Caller ID','Receiver Name','Receiver ID','Call Duration','Video Call') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
@@ -128,13 +156,13 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Facebook Messenger{typeof}- Calls{usernum}'
+            tsvname = f'Facebook{typeof}- Calls{usernum}'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
-            tlactivity = f'Facebook Messenger{typeof}- Calls{usernum}'
+            tlactivity = f'Facebook{typeof}- Calls{usernum}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc(f'No Facebook Messenger{typeof}- Calls data available{usernum}')
+            logfunc(f'No Facebook{typeof}- Calls data available{usernum}')
         
         cursor.execute('''
         select
@@ -157,8 +185,8 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport('Facebook Messenger - Contacts')
-            report.start_artifact_report(report_folder, f'Facebook Messenger{typeof}- Contacts{usernum}')
+            report = ArtifactHtmlReport('Facebook - Contacts')
+            report.start_artifact_report(report_folder, f'Facebook{typeof}- Contacts{usernum}')
             report.add_script()
             data_headers = ('User ID','First Name','Last Name','Username','Profile Pic URL','Is App User','Is Friend') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
@@ -168,13 +196,13 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Facebook Messenger{typeof}- Contacts{usernum}'
+            tsvname = f'Facebook{typeof}- Contacts{usernum}'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
-            tlactivity = f'Facebook Messenger{typeof}- Contacts{usernum}'
+            tlactivity = f'Facebook{typeof}- Contacts{usernum}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc(f'No Facebook Messenger{typeof}- Contacts data available{usernum}')
+            logfunc(f'No Facebook{typeof}- Contacts data available{usernum}')
         
         db.close()
 
