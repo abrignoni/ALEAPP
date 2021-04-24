@@ -33,6 +33,7 @@ from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.DocList import get_DocList
 from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
 from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
+from scripts.artifacts.fitbitExercise import get_fitbitExercise
 from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.googlePhotos import get_googlePhotos
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
@@ -131,6 +132,7 @@ tosearch = {
     'DocList':('Google Drive', '*/data/data/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '*/data/data/com.google.android.providers.media.module/databases/external.db*'),
     'FacebookMessenger':('Facebook Messenger', '**/threads_db2*'),
+    'fitbitExercise':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/exercise_db*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'googlePhotos':('Google Photos', ('*/data/data/com.google.android.apps.photos/databases/gphotos0.db*','*/data/data/com.google.android.apps.photos/databases/disk_cache*','*/data/data/com.google.android.apps.photos/cache/glide_cache/*','*/data/data/com.google.android.apps.photos/databases/local_trash.db*','*/data/data/com.google.android.apps.photos/files/trash_files/*')),
     'googleNowPlaying':('Now Playing', '*/data/data/com.google.intelligence.sense/db/history_db*'),

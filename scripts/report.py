@@ -27,6 +27,7 @@ def get_icon_name(category, artifact):
     elif category == 'BASH HISTORY':    icon = 'terminal'
     elif category == 'BATTERY':         icon = 'battery-charging'
     elif category == 'CAST':            icon = 'cast'
+    elif category == 'FITBIT':            icon = 'watch'
     elif category == 'CALL LOGS':       icon = 'phone'
     elif category == 'CHATS':           icon = 'message-circle'
     elif category == 'CHROMIUM':          
