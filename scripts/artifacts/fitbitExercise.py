@@ -52,7 +52,7 @@ def get_fitbitExercise(files_found, report_folder, seeker, wrap_text):
                     
                     data_list_current =[]
                 
-            report = ArtifactHtmlReport('Fitbit')
+            report = ArtifactHtmlReport('Fitbit Exercise')
             report.start_artifact_report(report_folder, 'Fitbit Exercise')
             report.add_script()
             
