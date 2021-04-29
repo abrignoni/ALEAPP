@@ -98,6 +98,7 @@ from scripts.artifacts.cachelocation import get_cachelocation
 from scripts.artifacts.browserlocation import get_browserlocation
 from scripts.artifacts.googlemaplocation import get_googlemaplocation
 from scripts.artifacts.packageGplinks import get_packageGplinks
+from scripts.artifacts.teams import get_teams
 
 from scripts.ilapfuncs import *
 
@@ -172,6 +173,7 @@ tosearch = {
     'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
+    'teams':('Teams', '*/com.microsoft.teams/databases/SkypeTeams.db*'),
     'tikTok': ('TikTok', ('*_im.db*', '*db_im_xx*')),
     'Turbo': ('Battery', '*/com.google.android.apps.turbo/databases/turbo.db*'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),

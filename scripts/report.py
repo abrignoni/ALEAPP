@@ -64,6 +64,13 @@ def get_icon_name(category, artifact):
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
+    elif category == 'TEAMS':
+        if artifact == 'TEAMS MESSAGES':  icon = 'message-circle'
+        elif artifact == 'TEAMS USERS':  icon = 'users'
+        elif artifact == 'TEAMS CALL LOG':  icon = 'phone'
+        elif artifact == 'TEAMS ACTIVITY FEED':  icon = 'at-sign'
+        elif artifact == 'TEAMS FILE INFO':  icon = 'file'
+        else:                           icon = 'file-text'
     elif category == 'VIBER':
         if artifact == 'VIBER - CONTACTS':  icon = 'user'
         if artifact == 'VIBER - MESSAGES':  icon = 'message-square'
@@ -324,3 +331,4 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0 : pos] + " active" + data[pos:]
         return ret
+    
