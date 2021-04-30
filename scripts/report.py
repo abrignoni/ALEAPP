@@ -46,6 +46,7 @@ def get_icon_name(category, artifact):
         elif artifact.find('SETTINGS_SECURE_') >= 0: icon = 'settings'
         else:                                       icon = 'info'
     elif category == 'ETC HOSTS':       icon = 'globe'
+    elif category == 'LBC':       icon = 'map-pin'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'

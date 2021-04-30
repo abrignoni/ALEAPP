@@ -82,7 +82,7 @@ pickModules()
 GuiWindow.progress_bar_total = len(aleapp.tosearch)
 
 
-layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helvetica", 22))],
+layout = [  [sg.Text('Logs, Events, And Protobuf Parser', font=("Helvetica", 22))],
             [sg.Text('https://github.com/abrignoni/ALEAPP', font=("Helvetica", 14))],
             [sg.Frame(layout=[
                     [sg.Input(size=(97,1)), 
@@ -102,7 +102,7 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
             [sg.Submit('Process',font=normal_font), sg.Button('Close', font=normal_font)] ]
             
 # Create the Window
-window = sg.Window(f'ALEAPP version {aleapp_version}', layout)
+window = sg.Window(f'LEAPP version {aleapp_version}', layout)
 GuiWindow.progress_bar_handle = window['PROGRESSBAR']
 
 
