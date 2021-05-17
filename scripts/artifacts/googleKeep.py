@@ -63,21 +63,16 @@ def get_googleKeep(files_found, report_folder, seeker, wrap_text):
             data_headers = ('Time Created','Time Last Updated', 'Account ID','Title', 'Text', 'Synced Text', 'List Parent ID' , 'Is deleted', 'Last Modifier Email')
             data_list = []
             for row in all_rows:
-                # print(row)
                 data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 'True' if row[7]==1 else 'False', row[8]))
 
             report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
             report.end_artifact_report()
-            # print(all_rows)
 
             tsvname = "Google Keep - Notes"
             tsv(report_folder, data_headers, data_list, tsvname)
 
             tlactivity = "Google Keep - Notes"
             timeline(report_folder, tlactivity, data_list, data_headers)
-
-            # kmlactivity = "Google Keep"
-            # kmlgen(".", kmlactivity, data_list, data_headers)
         else:
             logfunc("No Google Keep - Notes data found")
 
