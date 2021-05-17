@@ -1,0 +1,85 @@
+import os
+import sqlite3
+import textwrap
+
+from scripts.artifact_report import ArtifactHtmlReport
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen
+
+is_windows = is_platform_windows()
+slash = '\\' if is_windows else '/' 
+
+def get_googleKeep(files_found, report_folder, seeker, wrap_text):
+    for file_found in files_found:
+        file_found = str(file_found)
+        
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        
+        cursor.execute('''
+            Select
+            CASE
+                list_item.time_created
+                WHEN
+                    "0"
+                THEN
+                    ""
+                ELSE
+                    datetime(list_item.time_created / 1000, "unixepoch")
+            END AS time_created,
+            CASE
+                list_item.time_last_updated
+                WHEN
+                    "0"
+                THEN
+                    ""
+                ELSE
+                    datetime(list_item.time_last_updated / 1000, "unixepoch")
+            END AS time_last_updated,
+            name,
+            title,
+            text,
+            synced_text,
+            list_parent_id,
+            list_item.is_deleted,
+            last_modifier_email
+            FROM
+            account
+            INNER JOIN
+            list_item
+            ON
+            account._id == list_item.account_id
+            INNER JOIN
+            tree_entity
+            ON
+            tree_entity._id == list_item._id
+        ''')
+
+        all_rows = cursor.fetchall()
+        usageentries = len(all_rows)
+        if(usageentries > 0):
+            report = ArtifactHtmlReport('Google Keep - Notes')
+            report.start_artifact_report(report_folder,"Google Keep - Notes")
+            report.add_script()
+            data_headers = ('Time Created','Time Last Updated', 'Account ID','Title', 'Text', 'Synced Text', 'List Parent ID' , 'Is deleted', 'Last Modifier Email')
+            data_list = []
+            for row in all_rows:
+                # print(row)
+                data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 'True' if row[7]==1 else 'False', row[8]))
+
+            report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+            report.end_artifact_report()
+            # print(all_rows)
+
+            tsvname = "Google Keep - Notes"
+            tsv(report_folder, data_headers, data_list, tsvname)
+
+            tlactivity = "Google Keep - Notes"
+            timeline(report_folder, tlactivity, data_list, data_headers)
+
+            # kmlactivity = "Google Keep"
+            # kmlgen(".", kmlactivity, data_list, data_headers)
+        else:
+            logfunc("No Google Keep - Notes data found")
+
+        db.close()
+        return
