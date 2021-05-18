@@ -64,6 +64,7 @@ def get_icon_name(category, artifact):
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
+    elif category == 'GOOGLE KEEP':     icon = 'list'
     elif category == 'SKOUT':
         if artifact == 'SKOUT MESSAGES':  icon = 'message-circle'
         if artifact == 'SKOUT USERS':  icon = 'users'
