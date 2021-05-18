@@ -17,7 +17,6 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
         
         cursor.execute('''
             Select
-            list_parent_id,
             CASE
                 list_item.time_created
                 WHEN
@@ -36,6 +35,7 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
                 ELSE
                     datetime(list_item.time_last_updated / 1000, "unixepoch")
             END AS time_last_updated,
+            list_parent_id,
             name AS creator_email,
             title,
             text,
@@ -60,7 +60,7 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('Google Keep - Notes')
             report.start_artifact_report(report_folder,"Google Keep - Notes")
             report.add_script()
-            data_headers = ('List Parent ID', 'Notes Creation Time','Notes Last Modified Time', 'Creator Email', 'Title', 'Text', 'Synced Text', 'Is deleted', 'Last Modifier Email')
+            data_headers = ('Notes Creation Time','Notes Last Modified Time', 'List Parent ID', 'Creator Email', 'Title', 'Text', 'Synced Text', 'Is deleted', 'Last Modifier Email')
             data_list = []
             for row in all_rows:
                 data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 'True' if row[7]==1 else 'False', row[8]))
