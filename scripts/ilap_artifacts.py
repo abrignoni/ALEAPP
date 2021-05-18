@@ -100,7 +100,7 @@ from scripts.artifacts.browserlocation import get_browserlocation
 from scripts.artifacts.googlemaplocation import get_googlemaplocation
 from scripts.artifacts.packageGplinks import get_packageGplinks
 from scripts.artifacts.teams import get_teams
-from scripts.artifacts.googleKeep import get_googleKeep
+from scripts.artifacts.googleKeepNotes import get_googleKeepNotes
 
 from scripts.ilapfuncs import *
 
@@ -207,7 +207,7 @@ tosearch = {
     'cachelocation': ('GEO Location', ('**/com.google.android.location/files/cache.cell/cache.cell', '**/com.google.android.location/files/cache.wifi/cache.wifi')),
     'browserlocation': ('GEO Location', ('**/com.android.browser/app_geolocation/CachedGeoposition.db')),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
-    'googleKeep':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
+    'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
     }
 
 slash = '\\' if is_platform_windows() else '/'
