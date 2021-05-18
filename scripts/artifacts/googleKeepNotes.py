@@ -41,17 +41,7 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
             text,
             synced_text,
             list_item.is_deleted,
-            last_modifier_email,
-            coalesce(sharer_email,"Unknown") AS sharer_email,
-            CASE
-                shared_timestamp
-                WHEN
-                    "0"
-                THEN
-                    ""
-                ELSE
-                    coalesce(datetime(shared_timestamp /1000, "unixepoch"), "Unknown")
-            END AS shared_timestamp
+            last_modifier_email
             FROM
             account
             INNER JOIN
@@ -70,10 +60,10 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('Google Keep - Notes')
             report.start_artifact_report(report_folder,"Google Keep - Notes")
             report.add_script()
-            data_headers = ('List Parent ID', 'Time Created','Time Last Updated', 'Account ID/Creator Email', 'Title', 'Text', 'Synced Text', 'Is deleted', 'Last Modifier Email', 'Sharer Email', 'Shared Timestamp')
+            data_headers = ('List Parent ID', 'Notes Creation Time','Notes Last Modified Time', 'Creator Email', 'Title', 'Text', 'Synced Text', 'Is deleted', 'Last Modifier Email')
             data_list = []
             for row in all_rows:
-                data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 'True' if row[7]==1 else 'False', row[8], row[9], row[10]))
+                data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 'True' if row[7]==1 else 'False', row[8]))
 
             report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
             report.end_artifact_report()

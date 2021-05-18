@@ -101,6 +101,7 @@ from scripts.artifacts.googlemaplocation import get_googlemaplocation
 from scripts.artifacts.packageGplinks import get_packageGplinks
 from scripts.artifacts.teams import get_teams
 from scripts.artifacts.googleKeepNotes import get_googleKeepNotes
+from scripts.artifacts.googleKeepNotesSharing import get_googleKeepNotesSharing
 
 from scripts.ilapfuncs import *
 
@@ -208,6 +209,7 @@ tosearch = {
     'browserlocation': ('GEO Location', ('**/com.android.browser/app_geolocation/CachedGeoposition.db')),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
+    'googleKeepNotesSharing':('Google Keep', "**/data/com.google.android.keep/databases/keep.db")
     }
 
 slash = '\\' if is_platform_windows() else '/'
