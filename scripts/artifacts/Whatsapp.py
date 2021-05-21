@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+import xmltodict
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
@@ -228,5 +229,40 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
         logfunc('No Whatsapp Contacts found')
 
     db.close
-    
+
+    for file_found in files_found:
+        if('com.whatsapp_preferences_light.xml' in file_found):
+            with open(file_found, encoding='utf-8') as fd:
+                xml_dict = xmltodict.parse(fd.read())
+                string_dict = xml_dict.get('map','').get('string','')
+                data = []
+                for i in range(len(string_dict)):
+                    if(string_dict[i]['@name'] == 'push_name'):                 # User Profile Name
+                        data.append(string_dict[i]['#text'])
+                    if(string_dict[i]['@name'] == 'my_current_status'):         # User Current Status
+                        data.append(string_dict[i]['#text'])
+                    if(string_dict[i]['@name'] == 'version'):                   # User current whatsapp version
+                        data.append(string_dict[i]['#text'])
+                    if(string_dict[i]['@name'] == 'ph'):                        # User Mobile Number
+                        data.append(string_dict[i]['#text'])
+                    if(string_dict[i]['@name'] == 'cc'):                        # User country code
+                        data.append(string_dict[i]['#text'])
+
+                if(len(data)>0):
+                    report = ArtifactHtmlReport('Whatsapp - User Profile')
+                    report.start_artifact_report(report_folder,'Whatapp - User Profile')
+                    report.add_script()
+                    data_headers = ('Version', 'Name', 'User Status', 'Country Code', 'Mobile Number')
+                    data_list = []
+                    data_list.append((data[0], data[3], data[2], data[1], data[4]))
+                    report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+                    report.end_artifact_report()
+
+                    tsvname = "Whatsapp - User Profile"
+                    tsv(report_folder, data_headers, data_list,tsvname)
+
+                    tlactivity = "Whatsapp - User Profile"
+                    timeline(report_folder, tlactivity, data_list, data_headers)
+                else:
+                    logfunc("No Whatsapp - Profile data found")
     return
