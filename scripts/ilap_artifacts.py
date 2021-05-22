@@ -195,7 +195,7 @@ tosearch = {
     'wifiProfiles':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
     'Xender':('File Transfer', '**/cn.xender/databases/trans-history-db*'), # Get trans-history-db and trans-history-db-wal
     'Zapya':('File Transfer', '**/com.dewmobile.kuaiya.play/databases/transfer20.db*'),
-    'Whatsapp':('Whatsapp', '*/com.whatsapp/databases/*.db*'),
+    'Whatsapp':('Whatsapp', ('*/com.whatsapp/databases/*.db*','**/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml')),
     'shareit':('File Transfer', '*/com.lenovo.anyshare.gps/databases/history.db*'),
     'tangomessage':('Tango', '**/com.sgiggle.production/files/tc.db*'),
     'imo':('IMO', ('**/com.imo.android.imous/databases/*.db*')),
