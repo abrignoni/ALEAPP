@@ -1,5 +1,6 @@
 beautifulsoup4==4.8.2
 blackboxprotobuf
+packaging==20.1
 protobuf==3.10.0
 PyCryptodome
 PySimpleGUI==4.16.0
