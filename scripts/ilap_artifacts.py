@@ -18,7 +18,8 @@ from scripts.artifacts.build import get_build
 from scripts.artifacts.calllog import get_calllog
 from scripts.artifacts.Cast import get_Cast
 from scripts.artifacts.Cello import get_Cello
-from scripts.artifacts.chrome import get_chrome 
+from scripts.artifacts.chrome import get_chrome
+from scripts.artifacts.chromeAutofill import get_chromeAutofill
 from scripts.artifacts.chromeBookmarks import get_chromeBookmarks
 from scripts.artifacts.chromeCookies import get_chromeCookies
 from scripts.artifacts.chromeDownloads import get_chromeDownloads
@@ -127,6 +128,7 @@ tosearch = {
     'Cast':('Cast', '*/com.google.android.gms/databases/cast.db'),
     'Cello': ('Google Drive', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
     'chrome':('Chromium', ('*/data/data/*/app_chrome/Default/History*', '*/data/data/*/app_sbrowser/Default/History*', '*/data/data/*/app_opera/History*')),
+    'chromeAutofill':('Chromium', ('*/data/data/*/app_chrome/Default/Web Data*', '*/data/data/*/app_sbrowser/Default/Web Data*', '*/data/data/*/app_opera/Web Data*')),
     'chromeBookmarks':('Chromium', ('*/data/data/*/app_chrome/Default/Bookmarks*', '*/data/data/*/app_sbrowser/Default/Bookmarks*', '*/data/data/*/app_opera/Bookmarks*')),
     'chromeCookies':('Chromium', ('*/data/data/*/app_chrome/Default/Cookies*', '*/data/data/*/app_sbrowser/Default/Cookies*', '*/data/data/*/app_opera/Cookies*')),
     'chromeDownloads':('Chromium', ('*/data/data/*/app_chrome/Default/History*', '*/data/data/*/app_sbrowser/Default/History*', '*/data/data/*/app_opera/History*')),

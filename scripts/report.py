@@ -39,6 +39,7 @@ def get_icon_name(category, artifact):
         elif artifact.find('NETWORK ACTION PREDICTOR') >=0:    icon = 'type'
         elif artifact.find('TOP SITES') >= 0:       icon = 'list'
         elif artifact.find('OFFLINE PAGES') >= 0:   icon = 'cloud-off'
+        elif artifact.find('AUTOFILL') >= 0:        icon = 'edit-3'
         else:                                       icon = 'chrome'
     elif category == 'DEVICE INFO':     
         if artifact == 'BUILD INFO':                icon = 'terminal'
