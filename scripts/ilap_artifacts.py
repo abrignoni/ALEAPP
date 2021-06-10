@@ -45,7 +45,6 @@ from scripts.artifacts.fitbitHeart import get_fitbitHeart
 from scripts.artifacts.fitbitActivity import get_fitbitActivity
 from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.googleKeepNotes import get_googleKeepNotes
-#from scripts.artifacts.googleKeepNotesSharing import get_googleKeepNotesSharing
 from scripts.artifacts.googlePhotos import get_googlePhotos
 from scripts.artifacts.googlemaplocation import get_googlemaplocation
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
@@ -154,7 +153,6 @@ tosearch = {
     'fitbitActivity':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/activity_db*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
-    #'googleKeepNotesSharing':('Google Keep', "**/data/com.google.android.keep/databases/keep.db")
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     'googleNowPlaying':('Now Playing', '*/data/data/com.google.intelligence.sense/db/history_db*'),
     'googlePhotos':('Google Photos', ('*/data/data/com.google.android.apps.photos/databases/gphotos0.db*','*/data/data/com.google.android.apps.photos/databases/disk_cache*','*/data/data/com.google.android.apps.photos/cache/glide_cache/*','*/data/data/com.google.android.apps.photos/databases/local_trash.db*','*/data/data/com.google.android.apps.photos/files/trash_files/*')),
