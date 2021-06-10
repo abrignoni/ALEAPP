@@ -49,12 +49,14 @@ def get_icon_name(category, artifact):
     elif category == 'ETC HOSTS':       icon = 'globe'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
+    elif category == 'GOOGLE KEEP':     icon = 'list'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
-    elif category == 'GOOGLE PHOTOS':
-        if artifact == 'GOOGLE PHOTOS - LOCAL TRASH': icon = 'trash-2'
-        else:                                   icon = 'image'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
+    elif category == 'GOOGLE PHOTOS':
+        if artifact.find('LOCAL TRASH') >=0:            icon = 'trash-2'
+        elif artifact.find('BACKED UP FOLDER') >= 0:    icon = 'refresh-cw'
+        else:                                           icon = 'image'
     elif category == 'GOOGLE PLAY':     
         if artifact == 'GOOGLE PLAY SEARCHES':      icon = 'search'
         else:                                       icon = 'play'
@@ -65,7 +67,6 @@ def get_icon_name(category, artifact):
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
-    elif category == 'GOOGLE KEEP':     icon = 'list'
     elif category == 'SKOUT':
         if artifact == 'SKOUT MESSAGES':  icon = 'message-circle'
         if artifact == 'SKOUT USERS':  icon = 'users'
