@@ -192,7 +192,7 @@ tosearch = {
     'teams':('Teams', '*/com.microsoft.teams/databases/SkypeTeams.db*'),
     'textnow': ('Text Now', '**/com.enflick.android.TextNow/databases/textnow_data.db*'),
     'tikTok': ('TikTok', ('*_im.db*', '*db_im_xx*')),
-    'Turbo': ('Battery', '*/com.google.android.apps.turbo/databases/turbo.db*'),
+    'Turbo': ('Battery', ('*/com.google.android.apps.turbo/databases/turbo.db*','*/com.google.android.apps.turbo/databases/bluetooth.db*')),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', ('*/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'usagestatsVersion':('Usage Stats', ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version')),
