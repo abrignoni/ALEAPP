@@ -60,7 +60,7 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'BBluetooth Connections'
+        tsvname = f'Bluetooth Connections'
         tsv(report_folder, data_headers, data_list, tsvname)
         
         tlactivity = f'Bluetooth Connections'
@@ -68,3 +68,28 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc(f'No Bluetooth Connections data available')
    
+    data_list = []
+    with open(file_found, "r") as f:
+        for line in f: 
+            
+            p = re.compile(r'(\[[0-9a-f]{2}(?::[0-9a-f]{2}){5}\])', re.IGNORECASE)
+            macaddr = re.findall(p, line)
+            if macaddr:
+                break
+            if '=' in line:
+                splits = line.split(' = ')
+                data_list.append((splits[0], splits[1].strip()))
+                
+    if len(data_list) > 0:
+        report = ArtifactHtmlReport('Bluetooth Adapter Information')
+        report.start_artifact_report(report_folder, f'Bluetooth Adapter Information')
+        report.add_script()
+        data_headers = ('Key','Value')
+        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.end_artifact_report()
+        
+        tsvname = f'Bluetooth Adapter Information'
+        tsv(report_folder, data_headers, data_list, tsvname)
+    else:
+        logfunc(f'No Bluetooth Adapter Information data available')
+                    
