@@ -85,7 +85,8 @@ from scripts.artifacts.tangomessage import get_tangomessage
 from scripts.artifacts.teams import get_teams
 from scripts.artifacts.textnow import get_textnow
 from scripts.artifacts.tikTok import get_tikTok
-from scripts.artifacts.Turbo import get_Turbo
+from scripts.artifacts.Turbo_Battery import get_Turbo_Battery
+from scripts.artifacts.Turbo_AppUsage import get_Turbo_AppUsage
 from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.usagestatsVersion import get_usagestatsVersion
@@ -120,8 +121,8 @@ tosearch = {
     'accounts_de': ('Accounts_de', '*/data/system_de/*/accounts_de.db'),
     'adb_hosts':('ADB Hosts', '*/data/misc/adb/adb_keys'),
     'appicons':('Installed Apps', '*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
-    'BashHistory':('Bash History', '**/.bash_history'),
     'bluetoothConnections':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
+    'BashHistory':('Bash History', '**/.bash_history'),
     'browserlocation': ('GEO Location', ('**/com.android.browser/app_geolocation/CachedGeoposition.db')),
     'cachelocation': ('GEO Location', ('**/com.google.android.location/files/cache.cell/cache.cell', '**/com.google.android.location/files/cache.wifi/cache.wifi')),
     'calllog': ('Call Logs', '*/data/com.android.providers.contacts/databases/calllog.db'),
@@ -194,7 +195,8 @@ tosearch = {
     'teams':('Teams', '*/com.microsoft.teams/databases/SkypeTeams.db*'),
     'textnow': ('Text Now', '**/com.enflick.android.TextNow/databases/textnow_data.db*'),
     'tikTok': ('TikTok', ('*_im.db*', '*db_im_xx*')),
-    'Turbo': ('Battery', ('*/com.google.android.apps.turbo/databases/turbo.db*','*/com.google.android.apps.turbo/databases/bluetooth.db*')),
+    'Turbo_Battery': ('Device Health Services', ('*/com.google.android.apps.turbo/databases/turbo.db*','*/com.google.android.apps.turbo/databases/bluetooth.db*',)),
+    'Turbo_AppUsage': ('Device Health Services', '*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
     'usagestats':('Usage Stats', ('*/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'usagestatsVersion':('Usage Stats', ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version')),

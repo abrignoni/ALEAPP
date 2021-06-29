@@ -9,7 +9,7 @@ from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_Turbo(files_found, report_folder, seeker, wrap_text):
+def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text):
     
     source_file_bluetooth = ''
     source_file_turbo = ''
@@ -91,8 +91,8 @@ def get_Turbo(files_found, report_folder, seeker, wrap_text):
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
-        report = ArtifactHtmlReport('Turbo - Bluetooth Device')
-        report.start_artifact_report(report_folder, 'Turbo - Bluetooth Device')
+        report = ArtifactHtmlReport('Turbo - Bluetooth Device Info')
+        report.start_artifact_report(report_folder, 'Turbo - Bluetooth Device Info')
         report.add_script()
         data_headers = ('Timestamp','BT Device MAC Address','BT Device ID','Battery Level','Volume Level','Timezone') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
@@ -102,13 +102,13 @@ def get_Turbo(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, source_file_bluetooth)
         report.end_artifact_report()
         
-        tsvname = f'Turbo - Bluetooth Device'
+        tsvname = f'Turbo - Bluetooth Device Info'
         tsv(report_folder, data_headers, data_list, tsvname)
         
-        tlactivity = f'Turbo - Bluetooth Device'
+        tlactivity = f'Turbo - Bluetooth Device Info'
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
-        logfunc('No Turbo - Bluetooth Device data available')
+        logfunc('No Turbo - Bluetooth Device Info data available')
     
     db.close()
     return

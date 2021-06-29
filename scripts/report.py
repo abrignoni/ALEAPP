@@ -25,10 +25,11 @@ def get_icon_name(category, artifact):
     elif category == 'ADB HOSTS':       icon = 'terminal'
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
     elif category == 'BASH HISTORY':    icon = 'terminal'
-    elif category == 'BATTERY':         
+    elif category == 'DEVICE HEALTH SERVICES':         
         if artifact.find('BLUETOOTH') >=0:  icon = 'bluetooth'
-        else:                               icon = 'battery-charging'
-    elif category == 'BLUETOOTH CONNECTIONS':   icon = 'bluetooth'
+        elif artifact.find('BATTERY') >=0:  icon = 'battery-charging'
+        else:                           icon = 'bar-chart-2'
+    elif category == 'BLUETOOTH CONNECTIONS':       icon = 'bluetooth'
     elif category == 'CAST':            icon = 'cast'
     elif category == 'FITBIT':            icon = 'watch'
     elif category == 'CALL LOGS':       icon = 'phone'

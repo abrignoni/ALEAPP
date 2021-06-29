@@ -32,6 +32,7 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
                         timestamp_value = ''
                         linkkey_value = ''
                     macaddrf = macaddr[0].strip('[]')
+                    macaddrf = macaddrf.upper()
                 except:
                     pass
                 
