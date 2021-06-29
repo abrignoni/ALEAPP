@@ -11,7 +11,7 @@ from scripts.artifacts.accounts_de import get_accounts_de
 from scripts.artifacts.adb_hosts import get_adb_hosts
 from scripts.artifacts.appicons import get_appicons
 from scripts.artifacts.BashHistory import get_BashHistory
-#from scripts.artifacts.bluetooth import get_bluetooth
+from scripts.artifacts.bluetooth import get_bluetooth
 from scripts.artifacts.browserlocation import get_browserlocation
 from scripts.artifacts.build import get_build
 from scripts.artifacts.cachelocation import get_cachelocation
@@ -121,7 +121,7 @@ tosearch = {
     'accounts_de': ('Accounts_de', '*/data/system_de/*/accounts_de.db'),
     'adb_hosts':('ADB Hosts', '*/data/misc/adb/adb_keys'),
     'appicons':('Installed Apps', '*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
-    #'bluetooth':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
+    'bluetooth':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
     'BashHistory':('Bash History', '**/.bash_history'),
     'browserlocation': ('GEO Location', ('**/com.android.browser/app_geolocation/CachedGeoposition.db')),
     'cachelocation': ('GEO Location', ('**/com.google.android.location/files/cache.cell/cache.cell', '**/com.google.android.location/files/cache.wifi/cache.wifi')),
