@@ -250,7 +250,7 @@ def get_Whatsapp(files_found, report_folder, seeker, wrap_text):
 
                 if(len(data)>0):
                     report = ArtifactHtmlReport('Whatsapp - User Profile')
-                    report.start_artifact_report(report_folder,'Whatapp - User Profile')
+                    report.start_artifact_report(report_folder,'Whatsapp - User Profile')
                     report.add_script()
                     data_headers = ('Version', 'Name', 'User Status', 'Country Code', 'Mobile Number')
                     data_list = []
