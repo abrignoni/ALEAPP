@@ -156,7 +156,7 @@ tosearch = {
     'fitbitHeart':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/heart_rate_db*'),
     'fitbitActivity':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/activity_db*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
-    'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*')),
+    'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*.*')),
     'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     'googleNowPlaying':('Now Playing', ('*/data/data/com.google.intelligence.sense/db/history_db*','*/data/data/com.google.android.as/databases/history_db*')),
