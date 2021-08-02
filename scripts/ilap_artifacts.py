@@ -45,6 +45,7 @@ from scripts.artifacts.fitbitWalk import get_fitbitWalk
 from scripts.artifacts.fitbitHeart import get_fitbitHeart
 from scripts.artifacts.fitbitActivity import get_fitbitActivity
 from scripts.artifacts.gboard import get_gboardCache
+from scripts.artifacts.googleDuo import get_googleDuo
 from scripts.artifacts.googleKeepNotes import get_googleKeepNotes
 from scripts.artifacts.googlePhotos import get_googlePhotos
 from scripts.artifacts.googlemaplocation import get_googlemaplocation
@@ -155,6 +156,7 @@ tosearch = {
     'fitbitHeart':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/heart_rate_db*'),
     'fitbitActivity':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/activity_db*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
+    'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*.*')),
     'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     'googleNowPlaying':('Now Playing', ('*/data/data/com.google.intelligence.sense/db/history_db*','*/data/data/com.google.android.as/databases/history_db*')),
