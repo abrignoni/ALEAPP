@@ -76,7 +76,8 @@ def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
             description = 'This is data stored by the Now Playing feature in Pixel phones, which '\
                         'shows song data on the lock screen for any music playing nearby. It\'s ' \
                         'part of <a href="https://play.google.com/store/apps/details?id=com.google.intelligence.sense"'\
-                        ' target="_blank">Pixel Ambient Services</a>.'
+                        ' target="_blank">Pixel Ambient Services</a> or part of <a href="https://play.google.com/store/apps/details?id=com.google.android.as"'\
+                        ' target="_blank">Pixel Device Personalization Services</a> depending on OS version.'
             report = ArtifactHtmlReport('Now Playing History')
             report.start_artifact_report(report_folder, 'Now Playing', description)
             report.add_script()

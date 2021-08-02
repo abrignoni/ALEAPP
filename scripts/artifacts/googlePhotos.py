@@ -265,6 +265,37 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Google Photos - Shared Media data available')
     
+    cursor.execute('''
+    select 
+    DISTINCT(local_media.bucket_id),
+    local_media.folder_name,
+    rtrim(local_media.filepath, replace(local_media.filepath, '/', ''))
+    from local_media, backup_folders
+    where local_media.bucket_id = backup_folders.bucket_id
+    ''')
+
+    all_rows = cursor.fetchall()
+    usageentries = len(all_rows)
+    if usageentries > 0:
+        report = ArtifactHtmlReport('Google Photos - Backed Up Folders')
+        report.start_artifact_report(report_folder, 'Google Photos - Backed Up Folders')
+        report.add_script()
+        data_headers = ('Bucket ID','Backed Up Folder Name','Backed Up Folder Path',)
+        data_list = []
+        for row in all_rows:
+            data_list.append((row[0],row[1],row[2]))
+
+        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.end_artifact_report()
+        
+        tsvname = f'Google Photos - Backed Up Folders'
+        tsv(report_folder, data_headers, data_list, tsvname, source_file_photos)
+        
+        tlactivity = f'Google Photos - Backed Up Folders'
+        timeline(report_folder, tlactivity, data_list, data_headers)
+    else:
+        logfunc('No Google Photos - Backed Up Folders data available')
+    
     db.close()
     
     db = open_sqlite_db_readonly(gphotos_cache_db)

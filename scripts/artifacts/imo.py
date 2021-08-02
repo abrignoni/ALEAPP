@@ -94,7 +94,7 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
             timestamp = datetime.datetime.fromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
             data_list.append((timestamp, from_id, to_id, row[2],  row[4], row[5], attachmentPath))
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.write_artifact_data_table(data_headers, data_list, imo_friends_db)
         report.end_artifact_report()
         
         tsvname = f'IMO - Messages'
