@@ -31,7 +31,6 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
         data_list = []
         
         if usageentries > 0:
-        
             for row in all_rows:
             
                 lm_ts = row[0]
@@ -44,22 +43,22 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
                 for match in files_found:
                     if recording_filename in match:
                         shutil.copy2(match, report_folder)
-                        data_file_name = os.path.basename(match)
+                        audio_file_path = os.path.abspath(match)
                         audio_clip = ''' 
                             <audio controls>
                                 <source src={} type="audio/wav">
                                 <p>Your browser does not support HTML5 audio elements.</p>
                             </audio> 
-                            '''.format(recording_filename)
+                            '''.format(audio_file_path)
                             
-                data_list.append((row[0],row[1],row[2],row[3],audio_clip))
+                data_list.append((lm_ts,recording_path,conversation,convo_id,audio_clip))
         
             report = ArtifactHtmlReport('Google Call Screen')
             report.start_artifact_report(report_folder, 'Google Call Screen')
             report.add_script()
             data_headers = ('Timestamp','Recording File Path','Conversation','ID','Audio') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
+            report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Audio'])
             report.end_artifact_report()
             
             tsvname = f'Google Call Screen'
@@ -70,5 +69,5 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Google Call Screen data available')
     
-    db.close()
+        db.close()
     return
