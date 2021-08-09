@@ -77,8 +77,10 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
                                 
                 data_list.append((lm_ts,recording_path,conversation,audio_clip))
         
+            description = 'Transcripts and recordings from the use of Google Assistant\'s Call Screen feature. '\
+                          'Timestamps found in the Conversation column are in the local timezone offset.'
             report = ArtifactHtmlReport('Google Call Screen')
-            report.start_artifact_report(report_folder, 'Google Call Screen')
+            report.start_artifact_report(report_folder, 'Google Call Screen', description)
             report.add_script()
             data_headers = ('Timestamp','Recording File Path','Conversation','Audio') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
 
