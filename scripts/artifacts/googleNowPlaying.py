@@ -136,13 +136,13 @@ def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
             report.end_artifact_report()
             
-            tsvname = f'google now playing'
+            tsvname = f'Google Now Playing'
             tsv(report_folder, data_headers, data_list, tsvname)
             
             tlactivity = f'Google Now Playing'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Now playing history')
+            logfunc('No Google Now Playing history')
 
         db.close()
         return

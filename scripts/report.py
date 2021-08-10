@@ -53,6 +53,7 @@ def get_icon_name(category, artifact):
     elif category == 'ETC HOSTS':       icon = 'globe'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
+    elif category == 'GOOGLE CALL SCREEN':      icon = 'phone-call'
     elif category == 'GOOGLE DUO':
         if artifact == 'GOOGLE DUO - CALL HISTORY':
             icon = 'phone-call'
