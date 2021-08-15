@@ -51,6 +51,10 @@ def get_icon_name(category, artifact):
         elif artifact.find('SETTINGS_SECURE_') >= 0: icon = 'settings'
         else:                                       icon = 'info'
     elif category == 'ETC HOSTS':       icon = 'globe'
+    elif category == 'WIPE & SETUP':
+        if artifact == 'SUGGESTIONS.XML':                icon = 'loader'
+        if artifact == 'SETUP_WIZARD_INFO.XML':          icon = 'loader'
+        if artifact == 'APPOPS.XML':                     icon = 'loader'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
     elif category == 'GOOGLE CALL SCREEN':      icon = 'phone-call'
@@ -349,4 +353,5 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0 : pos] + " active" + data[pos:]
         return ret
+    
     
