@@ -28,6 +28,7 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
                         pp = subelem3.attrib.get('pp')
                         pu = subelem3.attrib.get('pu')
                         n = subelem3.attrib.get('n')
+                        id = subelem3.attrib.get('id')
                         if timesr:
                             timestampr = (datetime.datetime.fromtimestamp(int(timesr)/1000).strftime('%Y-%m-%d %H:%M:%S'))
                         else:
@@ -42,15 +43,17 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
                             pu = ''
                         if not n:
                             n = ''
+                        if not id:
+                            id = ''
                             
-                        data_list.append((timestampt, timestampr, pkg, pp, pu, n))
+                        data_list.append((timestampt, timestampr, pkg, id, pp, pu, n))
                             
                         
         if data_list:
             report = ArtifactHtmlReport('Appops.xml')
             report.start_artifact_report(report_folder, 'Appops.xml')
             report.add_script()
-            data_headers = ('Timestamp T', 'Timestamp R', 'PKG', 'PP', 'PU', 'N')
+            data_headers = ('Timestamp T', 'Timestamp R', 'PKG', 'ID', 'PP', 'PU', 'N')
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
