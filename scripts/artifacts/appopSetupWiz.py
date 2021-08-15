@@ -16,17 +16,18 @@ def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
         root = tree.getroot()
         
         for elem in root.iter('pkg'):
-            pkg = elem.attrib['n']
-            for subelem in elem:
-                #print(subelem.attrib)
-                for subelem2 in subelem:
-                    #print(subelem2.attrib)
-                    for subelem3 in subelem2:
-                        timestamp = (datetime.datetime.fromtimestamp(int(subelem3.attrib['t'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
-                        data_list.append((timestamp, pkg))
+            if elem.attrib['n'] == 'com.google.android.setupwizard':
+                pkg = elem.attrib['n']
+                for subelem in elem:
+                    #print(subelem.attrib)
+                    for subelem2 in subelem:
+                        #print(subelem2.attrib)
+                        for subelem3 in subelem2:
+                            timestamp = (datetime.datetime.fromtimestamp(int(subelem3.attrib['t'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            data_list.append((timestamp, pkg))
         if data_list:
-            report = ArtifactHtmlReport('Appops.xml')
-            report.start_artifact_report(report_folder, 'Appops.xml')
+            report = ArtifactHtmlReport('Appops.xml Setup Wizard')
+            report.start_artifact_report(report_folder, 'Appops.xml Setup Wizard')
             report.add_script()
             data_headers = ('Timestamp','Package')
             report.write_artifact_data_table(data_headers, data_list, file_found)
