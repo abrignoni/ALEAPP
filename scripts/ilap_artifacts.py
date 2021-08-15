@@ -10,6 +10,8 @@ from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
 from scripts.artifacts.accounts_de import get_accounts_de
 from scripts.artifacts.adb_hosts import get_adb_hosts
 from scripts.artifacts.appicons import get_appicons
+from scripts.artifacts.appops import get_appops
+from scripts.artifacts.appopSetupWiz import get_appopSetupWiz 
 from scripts.artifacts.BashHistory import get_BashHistory
 from scripts.artifacts.bluetoothConnections import get_bluetoothConnections
 from scripts.artifacts.browserlocation import get_browserlocation
@@ -69,7 +71,7 @@ from scripts.artifacts.Oruxmaps import get_Oruxmaps
 from scripts.artifacts.roles import get_roles
 from scripts.artifacts.runtimePerms import get_runtimePerms
 from scripts.artifacts.scontextLog import get_scontextLog
-from scripts.artifacts.settingsSecure import get_settingsSecure
+from scripts.artifacts.setupWizardinfo import get_setupWizardinfo
 from scripts.artifacts.shareit import get_shareit
 from scripts.artifacts.siminfo import get_siminfo
 from scripts.artifacts.skout import get_skout
@@ -82,6 +84,7 @@ from scripts.artifacts.smsmms import get_sms_mms
 from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
 from scripts.artifacts.smyFiles import get_smyFiles
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
+from scripts.artifacts.suggestions import get_suggestions
 from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.tangomessage import get_tangomessage
 from scripts.artifacts.teams import get_teams
@@ -123,6 +126,8 @@ tosearch = {
     'accounts_de': ('Accounts_de', '*/data/system_de/*/accounts_de.db'),
     'adb_hosts':('ADB Hosts', '*/data/misc/adb/adb_keys'),
     'appicons':('Installed Apps', '*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
+    'appops': ('Permissions', '*/data/system/appops.xml'),
+    'appopSetupWiz': ('Wipe & Setup', '*/data/system/appops.xml'),
     'bluetoothConnections':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
     'BashHistory':('Bash History', '**/.bash_history'),
     'browserlocation': ('GEO Location', ('**/com.android.browser/app_geolocation/CachedGeoposition.db')),
@@ -182,6 +187,7 @@ tosearch = {
     'runtimePerms':('Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
     'scontextLog':('App Interaction', '*/com.samsung.android.providers.context/databases/ContextLog.db'),
     'settingsSecure':('Device Info', '*/system/users/*/settings_secure.xml'),
+    'setupWizardinfo': ('Wipe & Setup', '*/data/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml'),
     'shareit':('File Transfer', '*/com.lenovo.anyshare.gps/databases/history.db*'),
     'siminfo':('Device Info', '*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
     'skout':('Skout', '*/data/com.skout.android/databases/skoutDatabase*'),
@@ -194,6 +200,7 @@ tosearch = {
     'smyfilesRecents':('Media Metadata', '*/com.sec.android.app.myfiles/databases/myfiles.db'),
     'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
+    'suggestions': ('Wipe & Setup', '*/data/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
     'tangomessage':('Tango', '**/com.sgiggle.production/files/tc.db*'),
     'teams':('Teams', '*/com.microsoft.teams/databases/SkypeTeams.db*'),
@@ -261,3 +268,4 @@ def process_artifact(files_found, artifact_func, artifact_name, seeker, report_f
         return
 
     logfunc('{} [{}] artifact completed'.format(artifact_name, artifact_func))
+    
