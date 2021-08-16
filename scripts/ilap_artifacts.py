@@ -38,6 +38,7 @@ from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.contacts import get_contacts
 from scripts.artifacts.DocList import get_DocList
 from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
+from scripts.artifacts.errp import get_errp
 from scripts.artifacts.etc_hosts import get_etc_hosts
 from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
 from scripts.artifacts.fitbitExercise import get_fitbitExercise
@@ -71,6 +72,7 @@ from scripts.artifacts.Oruxmaps import get_Oruxmaps
 from scripts.artifacts.roles import get_roles
 from scripts.artifacts.runtimePerms import get_runtimePerms
 from scripts.artifacts.scontextLog import get_scontextLog
+from scripts.artifacts.setupWizardinfo import get_setupWizardinfo
 from scripts.artifacts.setupWizardinfo import get_setupWizardinfo
 from scripts.artifacts.shareit import get_shareit
 from scripts.artifacts.siminfo import get_siminfo
@@ -155,6 +157,7 @@ tosearch = {
     'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
     'DocList':('Google Drive', '*/data/data/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '*/data/data/com.google.android.providers.media.module/databases/external.db*'),
+    'errp':('Wipe & Setup', '*/data/system/users/service/eRR.p'),
     'etc_hosts':('Etc Hosts', '*/system/etc/hosts'),
     'FacebookMessenger':('Facebook Messenger', '**/threads_db2*'),
     'fitbitExercise':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/exercise_db*'),
