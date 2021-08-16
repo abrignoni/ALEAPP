@@ -86,6 +86,8 @@ from scripts.artifacts.smyFiles import get_smyFiles
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
 from scripts.artifacts.suggestions import get_suggestions
 from scripts.artifacts.swellbeing import get_swellbeing
+from scripts.artifacts.sWipehist import get_sWipehist
+from scripts.artifacts.sRecoveryhist import get_sRecoveryhist
 from scripts.artifacts.tangomessage import get_tangomessage
 from scripts.artifacts.teams import get_teams
 from scripts.artifacts.textnow import get_textnow
@@ -202,6 +204,8 @@ tosearch = {
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
     'suggestions': ('Wipe & Setup', '*/data/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
+    'sWipehist': ('Wipe & Setup', '*/efs/recovery/history'),
+    'sRecoveryhist': ('Wipe & Setup', '*/efs/recovery/history'),
     'tangomessage':('Tango', '**/com.sgiggle.production/files/tc.db*'),
     'teams':('Teams', '*/com.microsoft.teams/databases/SkypeTeams.db*'),
     'textnow': ('Text Now', '**/com.enflick.android.TextNow/databases/textnow_data.db*'),

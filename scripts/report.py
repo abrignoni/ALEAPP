@@ -55,6 +55,7 @@ def get_icon_name(category, artifact):
         if artifact == 'SUGGESTIONS.XML':                icon = 'loader'
         if artifact == 'SETUP_WIZARD_INFO.XML':          icon = 'loader'
         if artifact == 'APPOPS.XML':                     icon = 'loader'
+        if artifact == 'SAMSUNG WIPE HISTORY':           icon = 'trash-2'
         else:                                            icon = 'loader'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
