@@ -61,7 +61,6 @@ from scripts.artifacts.imo import get_imo
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.artifacts.installedappsVending import get_installedappsVending 
-from scripts.artifacts.kikReturns import get_kikReturns
 from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageGplinks import get_packageGplinks
 from scripts.artifacts.packageInfo import get_package_info
@@ -124,11 +123,6 @@ from scripts.ilapfuncs import *
 # For example: If modulename='profit', function name must be get_profit(..)
 # Don't forget to import the module above!!!!
 
-tosearch = {
-    'usagestatsVersion':('Usage Stats', ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version')),
-    'kikReturns':('Kik Returns', ('*/logs/*.txt','*/content/*')),
-}
-'''
 tosearch = {
     'build':('Device Info', '*/vendor/build.prop'),
     'accounts_ce': ('Accounts_ce', '*/data/system_ce/*/accounts_ce.db'),
@@ -239,7 +233,7 @@ tosearch = {
     'Xender':('File Transfer', '**/cn.xender/databases/trans-history-db*'), # Get trans-history-db and trans-history-db-wal
     'Zapya':('File Transfer', '**/com.dewmobile.kuaiya.play/databases/transfer20.db*')
     }
-'''
+
 slash = '\\' if is_platform_windows() else '/'
 
 def process_artifact(files_found, artifact_func, artifact_name, seeker, report_folder_base, wrap_text):
