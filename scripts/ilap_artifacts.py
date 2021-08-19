@@ -65,6 +65,7 @@ from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageGplinks import get_packageGplinks
 from scripts.artifacts.packageInfo import get_package_info
 from scripts.artifacts.permissions import get_permissions
+from scripts.artifacts.persistentProp import get_persistentProp
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.lgRCS import get_lgRCS
 from scripts.artifacts.line import get_line
@@ -188,6 +189,7 @@ tosearch = {
     'lgRCS':('RCS Chats', '*/mmssms.db*'),
     'Oruxmaps':('GEO Location', '**/oruxmaps/tracklogs/oruxmapstracks.db*'),
     'permissions':('Permissions', '*/system/packages.xml'),
+    'persistentProp': ('Wipe & Setup', '*/data/property/persistent_properties'),
     'roles':('App Roles',('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml')),
     'runtimePerms':('Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
     'scontextLog':('App Interaction', '*/com.samsung.android.providers.context/databases/ContextLog.db'),
