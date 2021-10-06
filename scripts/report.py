@@ -33,6 +33,7 @@ def get_icon_name(category, artifact):
     elif category == 'CAST':            icon = 'cast'
     elif category == 'FITBIT':            icon = 'watch'
     elif category == 'CALL LOGS':       icon = 'phone'
+    elif category == 'CASH APP':        icon = 'credit-card'
     elif category == 'CHATS':           icon = 'message-circle'
     elif category == 'CHROMIUM':          
         if artifact.find('SEARCH TERMS') >= 0:      icon = 'search'
