@@ -20,6 +20,7 @@ from scripts.artifacts.cachelocation import get_cachelocation
 from scripts.artifacts.calllog import get_calllog
 from scripts.artifacts.calllogs import get_calllogs
 from scripts.artifacts.Cast import get_Cast
+from scripts.artifacts.cashApp import get_cashApp
 from scripts.artifacts.Cello import get_Cello
 from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
 from scripts.artifacts.chrome import get_chrome
@@ -140,6 +141,7 @@ tosearch = {
     'cachelocation': ('GEO Location', ('**/com.google.android.location/files/cache.cell/cache.cell', '**/com.google.android.location/files/cache.wifi/cache.wifi')),
     'calllog': ('Call Logs', '*/data/com.android.providers.contacts/databases/calllog.db'),
     'calllogs':('Call Logs', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
+    'cashApp':('Cash App', '*/data/data/com.squareup.cash/databases/cash_money.db*'),
     'Cast':('Cast', '*/com.google.android.gms/databases/cast.db'),
     'Cello': ('Google Drive', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
     'ChessWithFriends':('Chats', ('*/data/data/com.zynga.chess.googleplay/databases/wf_database.sqlite', '*/data/data/com.zynga.chess.googleplay/db/wf_database.sqlite')),
