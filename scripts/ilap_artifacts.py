@@ -59,6 +59,7 @@ from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.googleQuickSearchbox import get_quicksearch
 from scripts.artifacts.googleQuickSearchboxRecent import get_quicksearch_recent
 from scripts.artifacts.googleTasks import get_googleTasks
+from scripts.artifacts.HideX import get_HideX
 from scripts.artifacts.imo import get_imo
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
@@ -68,6 +69,7 @@ from scripts.artifacts.packageGplinks import get_packageGplinks
 from scripts.artifacts.packageInfo import get_package_info
 from scripts.artifacts.permissions import get_permissions
 from scripts.artifacts.persistentProp import get_persistentProp
+from scripts.artifacts.powerOffReset import get_powerOffReset
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.lgRCS import get_lgRCS
 from scripts.artifacts.line import get_line
@@ -179,6 +181,7 @@ tosearch = {
     'googlePhotos':('Google Photos', ('*/data/data/com.google.android.apps.photos/databases/gphotos0.db*','*/data/data/com.google.android.apps.photos/databases/disk_cache*','*/data/data/com.google.android.apps.photos/cache/glide_cache/*','*/data/data/com.google.android.apps.photos/databases/local_trash.db*','*/data/data/com.google.android.apps.photos/files/trash_files/*')),
     'googlePlaySearches':('Google Play', '*/data/data/com.android.vending/databases/suggestions.db*'),
     'googleTasks':('Google Tasks', '*/com.google.android.apps.tasks/files/tasks-*/data.db'),
+    'HideX':('HideX', '*/com.flatfish.cal.privacy/databases/hidex.db*'),
     'imo':('IMO', ('**/com.imo.android.imous/databases/*.db*')),
     'installedappsGass':('Installed Apps', ('*/data/data/com.google.android.gms/databases/gass.db*', '*/data/user/*/com.google.android.gms/databases/gass.db*' )),
     'installedappsLibrary': ('Installed Apps', '*/data/data/com.android.vending/databases/library.db'),
@@ -187,6 +190,7 @@ tosearch = {
     'pSettings':('Device Info', '*/data/data/com.google.android.gsf/databases/googlesettings.db*'),
     'package_info': ('Installed Apps', '*/system/packages.xml'),
     'packageGplinks': ('Installed Apps', '*/system/packages.list'),
+    'powerOffReset': ('Power Off Reset', ('*/data/log/power_off_reset_reason.txt','*/data/log/power_off_reset_reason_backup.txt')),
     'quicksearch':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
     'quicksearch_recent':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/files/recently/*'),
     'recentactivity':('Recent Activity', '*/data/system_ce/*'),
