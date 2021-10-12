@@ -11,8 +11,6 @@ def get_Turbo_AppUsage(files_found, report_folder, seeker, wrap_text):
     splits = []
     app_name = ''
     timestamp_split = ''
-    #start_time = ''
-    #end_time = ''
     
     for file_found in files_found:
         file_name = str(file_found)
@@ -24,7 +22,6 @@ def get_Turbo_AppUsage(files_found, report_folder, seeker, wrap_text):
             app_name = splits[0]
             timesplitter = splits[1].split(',')
             count = len(timesplitter)
-            #print(count)
 
             for i in range(len(timesplitter)):
                 timestamp_split = datetime.datetime.fromtimestamp(int(timesplitter[i])/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
