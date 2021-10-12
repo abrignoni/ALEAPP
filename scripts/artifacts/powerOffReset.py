@@ -43,7 +43,7 @@ def get_powerOffReset(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Power Off Reset')
         report.start_artifact_report(report_folder, 'Power Off Reset')
         report.add_script()
-        data_headers = ('Timestamp','Timezone Offset','Action','Reason')
+        data_headers = ('Timestamp (Local)','Timezone Offset','Action','Reason')
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
