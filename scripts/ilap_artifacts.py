@@ -76,6 +76,7 @@ from scripts.artifacts.line import get_line
 from scripts.artifacts.Oruxmaps import get_Oruxmaps
 from scripts.artifacts.roles import get_roles
 from scripts.artifacts.runtimePerms import get_runtimePerms
+from scripts.artifacts.samsungWeatherClock import get_samsungWeatherClock
 from scripts.artifacts.scontextLog import get_scontextLog
 from scripts.artifacts.setupWizardinfo import get_setupWizardinfo
 from scripts.artifacts.setupWizardinfo import get_setupWizardinfo
@@ -207,6 +208,7 @@ tosearch = {
     'siminfo':('Device Info', '*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
     'skout':('Skout', '*/data/com.skout.android/databases/skoutDatabase*'),
     'skype': ('Skype', '**/com.skype.raider/databases/live*'),
+    'samsungWeatherClock': ('Samsung Weather Clock', '*/com.sec.android.daemonapp/databases/WeatherClock*'),
     'smanagerCrash':('App Interaction', '*/com.samsung.android.sm/databases/sm.db'),
     'smanagerLow':('App Interaction', '*/com.samsung.android.sm/databases/lowpowercontext-system-db'),
     'smembersAppInv':('App Interaction', '*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),

@@ -1,7 +1,7 @@
 import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
 
 def get_browser_name(file_name):
 
@@ -57,9 +57,7 @@ def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_te
             
             tsvname = f'{browser_name} Network Action Predictor'
             tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} Network Action Predictor'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+
         else:
             logfunc('No Browser Network Action Predictor data available')
         

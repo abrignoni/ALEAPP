@@ -2,7 +2,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
 
 def get_HideX(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
@@ -38,9 +38,7 @@ def get_HideX(files_found, report_folder, seeker, wrap_text):
         
         tsvname = f'HideX'
         tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'HideX'
-        timeline(report_folder, tlactivity, data_list, data_headers)
+
     else:
         logfunc('No HideX data available')
     
