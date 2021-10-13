@@ -83,6 +83,10 @@ def get_icon_name(category, artifact):
     elif category == 'POWER OFF RESET':     icon = 'power'
     elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
+    elif category == 'SAMSUNG WEATHER CLOCK':
+        if artifact.find('DAILY') >=0:            icon = 'sunrise'
+        elif artifact.find('HOURLY') >=0:            icon = 'thermometer'
+        else:                                          icon = 'sun'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
     elif category == 'SKOUT':
