@@ -4,5 +4,6 @@ packaging==20.1
 protobuf==3.10.0
 PyCryptodome
 PySimpleGUI==4.16.0
+wheel
 simplekml
 xmltodict
