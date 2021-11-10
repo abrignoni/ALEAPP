@@ -2,8 +2,6 @@ import html
 import os
 import pathlib
 import shutil
-import sqlite3
-import sys
 
 from collections import OrderedDict
 from scripts.html_parts import *
@@ -79,6 +77,7 @@ def get_icon_name(category, artifact):
     elif category == 'HIDEX': icon = 'eye-off'
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'MEDIA METADATA':  icon = 'file-plus'
+    elif category == 'MEWE':  icon = 'message-circle'
     elif category == 'NOW PLAYING':           icon = 'music'
     elif category == 'POWER OFF RESET':     icon = 'power'
     elif category == 'RCS CHATS':       icon = 'message-circle'
@@ -125,6 +124,7 @@ def get_icon_name(category, artifact):
     elif category == 'VLC':
         if artifact == 'VLC MEDIA LIST':  icon = 'film'
         if artifact == 'VLC THUMBNAILS':  icon = 'image'
+    elif category == 'SNAPCHAT': icon = 'bell'
     elif category == 'SKYPE':
         if artifact == 'SKYPE - CALL LOGS':  icon = 'phone'
         if artifact == 'SKYPE - MESSAGES':  icon = 'message-square'
@@ -142,11 +142,8 @@ def get_icon_name(category, artifact):
         else:                           icon = 'phone'
     elif category == 'CONTACTS':  icon = 'user'
     return icon
-    
-    '''
-    '''
-def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
 
+def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
     control = None
     side_heading = \
     """<h6 class="sidebar-heading justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -167,12 +164,12 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     # Get all files
     side_list = OrderedDict() # { Category1 : [path1, path2, ..], Cat2:[..] } Dictionary containing paths as values, key=category
 
-    for root, dirs, files in sorted(os.walk(reportfolderbase)):
+    for root, _, files in sorted(os.walk(reportfolderbase)):
         files = sorted(files)
         for file in files:
             if file.endswith(".temphtml"):    
                 fullpath = (os.path.join(root, file))
-                head, tail = os.path.split(fullpath)
+                _, tail = os.path.split(fullpath)
                 p = pathlib.Path(fullpath)
                 SectionHeader = (p.parts[-2])
                 if SectionHeader == '_elements':
@@ -192,7 +189,7 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
 
     # Now that we have all the file paths, start writing the files
 
-    for category, path_list in side_list.items():
+    for path_list in side_list.values():
         for path in path_list:
             old_filename = os.path.basename(path)
             filename = old_filename.replace(".temphtml", ".html")
@@ -359,5 +356,4 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0 : pos] + " active" + data[pos:]
         return ret
-    
     

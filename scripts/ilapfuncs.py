@@ -2,10 +2,8 @@ import codecs
 import csv
 import datetime
 import os
-import pathlib
 import re
 import sqlite3
-import sys
 import simplekml
 
 from bs4 import BeautifulSoup
@@ -146,28 +144,24 @@ def html2csv(reportfolderbase):
         pass
     else:
         os.makedirs(os.path.join(reportfolderbase, '_CSV Exports'))
-    for root, dirs, files in sorted(os.walk(reportfolderbase)):
+    for root, _, files in sorted(os.walk(reportfolderbase)):
         for file in files:
             if file.endswith(".html"):
                 fullpath = (os.path.join(root, file))
-                head, tail = os.path.split(fullpath)
                 if file in itemstoignore:
                     pass
                 else:
                     data = open(fullpath, 'r', encoding='utf8')
-                    soup=BeautifulSoup(data,'html.parser')
+                    soup = BeautifulSoup(data,'html.parser')
                     tables = soup.find_all("table")
                     data.close()
-                    output_final_rows=[]
 
                     for table in tables:
                         output_rows = []
                         for table_row in table.findAll('tr'):
 
                             columns = table_row.findAll('td')
-                            output_row = []
-                            for column in columns:
-                                    output_row.append(column.text)
+                            output_row = [column.text for column in columns]
                             output_rows.append(output_row)
         
                         file = (os.path.splitext(file)[0])
@@ -216,11 +210,11 @@ def tsv(report_folder, data_headers, data_list, tsvname, source_file=None):
 def timeline(report_folder, tlactivity, data_list, data_headers):
     report_folder = report_folder.rstrip('/')
     report_folder = report_folder.rstrip('\\')
-    report_folder_base, tail = os.path.split(report_folder)
+    report_folder_base, _ = os.path.split(report_folder)
     tl_report_folder = os.path.join(report_folder_base, '_Timeline')
 
-    if os.path.isdir(tl_report_folder):
-        tldb = os.path.join(tl_report_folder, 'tl.db')
+    tldb = os.path.join(tl_report_folder, 'tl.db')
+    if os.path.isdir(tl_report_folder):    
         db = sqlite3.connect(tldb)
         cursor = db.cursor()
         cursor.execute('''PRAGMA synchronous = EXTRA''')
@@ -228,7 +222,6 @@ def timeline(report_folder, tlactivity, data_list, data_headers):
     else:
         os.makedirs(tl_report_folder)
         #create database
-        tldb = os.path.join(tl_report_folder, 'tl.db')
         db = sqlite3.connect(tldb, isolation_level = 'exclusive')
         cursor = db.cursor()
         cursor.execute(
@@ -238,19 +231,17 @@ def timeline(report_folder, tlactivity, data_list, data_headers):
             )
         db.commit()
     
-    a = 0
-    length = (len(data_list))
-    while a < length: 
-        modifiedList = list(map(lambda x, y: x + ': ' +  str(y), data_headers, data_list[a]))
-        cursor.executemany("INSERT INTO data VALUES(?,?,?)", [(str(data_list[a][0]), tlactivity, str(modifiedList))])
-        a += 1
+    for idx in range(len(data_list)):    
+        modifiedList = list(map(lambda x, y: x + ': ' +  str(y), data_headers, data_list[idx]))
+        cursor.executemany("INSERT INTO data VALUES(?,?,?)", [(str(data_list[idx][0]), tlactivity, str(modifiedList))])
+        
     db.commit()
     db.close()
     
 def kmlgen(report_folder, kmlactivity, data_list, data_headers):
     report_folder = report_folder.rstrip('/')
     report_folder = report_folder.rstrip('\\')
-    report_folder_base, tail = os.path.split(report_folder)
+    report_folder_base, _ = os.path.split(report_folder)
     kml_report_folder = os.path.join(report_folder_base, '_KML Exports')
     
     if os.path.isdir(kml_report_folder):
@@ -274,10 +265,8 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
     
     kml = simplekml.Kml(open=1)
     
-    a = 0
-    length = (len(data_list))
-    while a < length:
-        modifiedDict = dict(zip(data_headers, data_list[a]))
+    for idx in range(len(data_list)):
+        modifiedDict = dict(zip(data_headers, data_list[idx]))
         times = modifiedDict['Timestamp']
         lon = modifiedDict['Longitude']
         lat = modifiedDict['Latitude']
@@ -287,7 +276,7 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
             pnt.description = f"Timestamp: {times} - {kmlactivity}"
             pnt.coords = [(lon, lat)]
             cursor.execute("INSERT INTO data VALUES(?,?,?,?)", (times, lat, lon, kmlactivity))
-        a += 1
+        
     db.commit()
     db.close()
     kml.save(os.path.join(kml_report_folder, f'{kmlactivity}.kml'))
