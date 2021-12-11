@@ -7,3 +7,4 @@ PySimpleGUI==4.16.0
 wheel
 simplekml
 xmltodict
+bcrypt==3.2.0
