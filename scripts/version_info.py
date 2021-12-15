@@ -1,4 +1,4 @@
-aleapp_version = '1.9.9'
+aleapp_version = '1.9.10'
 
 # Contributors List
 # Format = [ Name, Blog-url, Twitter-handle, Github-url]
@@ -10,5 +10,6 @@ aleapp_contributors = [
     [ 'Troy Schnack', 'https://troy4n6.blogspot.com/', '@TroySchnack',''],
     [ 'B Krishna Sai Nihith', 'https://g4rud4.gitlab.io', '@_Nihith', 'https://github.com/bolisettynihith'],
     ['Geraldine Blay', 'https://gforce4n6.blogspot.com', '@i_am_the_gia', ''],
-    ['Bo Amos', '', '@Bo_Knows_65', '']
+    ['Bo Amos', '', '@Bo_Knows_65', ''],
+    ['Incidentalchewtoy', 'https://theincidentalchewtoy.wordpress.com/', '', '']
 ]

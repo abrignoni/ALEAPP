@@ -10,6 +10,9 @@ from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
 from scripts.artifacts.accounts_de import get_accounts_de
 from scripts.artifacts.adb_hosts import get_adb_hosts
 from scripts.artifacts.appicons import get_appicons
+from scripts.artifacts.appLockerfishingnet import get_appLockerfishingnet
+from scripts.artifacts.appLockerfishingnetpat import get_appLockerfishingnetpat
+from scripts.artifacts.appLockerfishingnetdb import get_appLockerfishingnetdb
 from scripts.artifacts.appops import get_appops
 from scripts.artifacts.appopSetupWiz import get_appopSetupWiz 
 from scripts.artifacts.BashHistory import get_BashHistory
@@ -137,6 +140,9 @@ tosearch = {
     'accounts_de': ('Accounts_de', '*/data/system_de/*/accounts_de.db'),
     'adb_hosts':('ADB Hosts', '*/data/misc/adb/adb_keys'),
     'appicons':('Installed Apps', '*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
+    'appLockerfishingnet': ('Calculator Locker',('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*')),
+    'appLockerfishingnetpat': ('Calculator Locker',('*/data/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml')),
+    'appLockerfishingnetdb': ('Calculator Locker',('*/.privacy_safe/db/privacy_safe.db')),
     'appops': ('Permissions', '*/data/system/appops.xml'),
     'appopSetupWiz': ('Wipe & Setup', '*/data/system/appops.xml'),
     'bluetoothConnections':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
