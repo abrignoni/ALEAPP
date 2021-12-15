@@ -67,7 +67,8 @@ from scripts.artifacts.HideX import get_HideX
 from scripts.artifacts.imo import get_imo
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
-from scripts.artifacts.installedappsVending import get_installedappsVending 
+from scripts.artifacts.installedappsVending import get_installedappsVending
+from scripts.artifacts.mewe import get_mewe
 from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageGplinks import get_packageGplinks
 from scripts.artifacts.packageInfo import get_package_info
@@ -96,6 +97,7 @@ from scripts.artifacts.smsmms import get_sms_mms
 from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
 from scripts.artifacts.smyFiles import get_smyFiles
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
+from scripts.artifacts.snapchat import get_snapchat
 from scripts.artifacts.suggestions import get_suggestions
 from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.sWipehist import get_sWipehist
@@ -197,6 +199,7 @@ tosearch = {
     'installedappsVending': ('Installed Apps', '*/data/data/com.android.vending/databases/localappstate.db'),
     'line': ('Line', '**/jp.naver.line.android/databases/**'),
     'pSettings':('Device Info', '*/data/data/com.google.android.gsf/databases/googlesettings.db*'),
+    'mewe': ('MeWe', ('**/com.mewe/databases/app_database', '**/com.mewe/shared_prefs/SGSession.xml')),
     'package_info': ('Installed Apps', '*/system/packages.xml'),
     'packageGplinks': ('Installed Apps', '*/system/packages.list'),
     'powerOffReset': ('Power Off Reset', ('*/data/log/power_off_reset_reason.txt','*/data/log/power_off_reset_reason_backup.txt')),
@@ -225,6 +228,7 @@ tosearch = {
     'smyfilesRecents':('Media Metadata', '*/com.sec.android.app.myfiles/databases/myfiles.db'),
     'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
+    'snapchat': ('Snapchat', ('**/data/com.snapchat.android/databases/*.db', '**/data/com.snapchat.android/shared_prefs/*.xml')),
     'suggestions': ('Wipe & Setup', '*/data/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
     'sWipehist': ('Wipe & Setup', '*/efs/recovery/history'),
