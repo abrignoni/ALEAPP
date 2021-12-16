@@ -8,3 +8,6 @@ wheel
 simplekml
 xmltodict
 bcrypt==3.2.0
+filetype==1.0.8
+mimetypes-magic==0.4.30
+python-magic-bin==0.4.14
