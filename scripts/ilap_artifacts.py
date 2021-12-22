@@ -16,6 +16,7 @@ from scripts.artifacts.appLockerfishingnetdb import get_appLockerfishingnetdb
 from scripts.artifacts.appops import get_appops
 from scripts.artifacts.appopSetupWiz import get_appopSetupWiz 
 from scripts.artifacts.BashHistory import get_BashHistory
+from scripts.artifacts.battery_usage_v4 import get_battery_usage_v4
 from scripts.artifacts.bluetoothConnections import get_bluetoothConnections
 from scripts.artifacts.browserlocation import get_browserlocation
 from scripts.artifacts.build import get_build
@@ -147,8 +148,9 @@ tosearch = {
     'appLockerfishingnetdb': ('Calculator Locker',('*/.privacy_safe/db/privacy_safe.db')),
     'appops': ('Permissions', '*/data/system/appops.xml'),
     'appopSetupWiz': ('Wipe & Setup', '*/data/system/appops.xml'),
-    'bluetoothConnections':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
     'BashHistory':('Bash History', '**/.bash_history'),
+    'battery_usage_v4':('Settings Services', '**/com.google.android.settings.intelligence/databases/battery-usage-db-v4*'),
+    'bluetoothConnections':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
     'browserlocation': ('GEO Location', ('**/com.android.browser/app_geolocation/CachedGeoposition.db')),
     'cachelocation': ('GEO Location', ('**/com.google.android.location/files/cache.cell/cache.cell', '**/com.google.android.location/files/cache.wifi/cache.wifi')),
     'calllog': ('Call Logs', '*/data/com.android.providers.contacts/databases/calllog.db'),
