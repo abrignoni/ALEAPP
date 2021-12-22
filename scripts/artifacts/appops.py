@@ -2,7 +2,7 @@ import os
 import datetime
 import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, abxread, checkabx
 
 def get_appops(files_found, report_folder, seeker, wrap_text):
 
@@ -12,7 +12,11 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
             continue # Skip all other files
         
         data_list = []
-        tree = ET.parse(file_found)
+        #check if file is abx
+        if (checkabx(file_found)):
+            tree = abxread(file_found)
+        else:
+            tree = ET.parse(file_found)
         root = tree.getroot()
         
         for elem in root.iter('pkg'):
