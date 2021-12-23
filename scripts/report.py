@@ -24,6 +24,8 @@ def get_icon_name(category, artifact):
     elif category == 'CALCULATOR LOCKER':       icon = 'lock'
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
     elif category == 'BASH HISTORY':    icon = 'terminal'
+    elif category == 'SETTINGS SERVICES':    
+        if artifact.find('BATTERY') >=0:    icon = 'battery-charging'
     elif category == 'DEVICE HEALTH SERVICES':         
         if artifact.find('BLUETOOTH') >=0:  icon = 'bluetooth'
         elif artifact.find('BATTERY') >=0:  icon = 'battery-charging'
