@@ -65,6 +65,7 @@ def get_icon_name(category, artifact):
         if artifact.find('CONTACTS') >= 0:      icon = 'users'
         if artifact.find('NOTES') >= 0:      icon = 'edit-3'
     elif category == 'GOOGLE KEEP':     icon = 'list'
+    elif category == 'TOR':     icon = 'globe'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'GOOGLE PHOTOS':
