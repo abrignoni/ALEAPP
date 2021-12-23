@@ -9,3 +9,6 @@ PySimpleGUI==4.16.0
 simplekml
 wheel
 xmltodict
+filetype==1.0.8
+python-magic-bin==0.4.14
+
