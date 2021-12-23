@@ -1,12 +1,14 @@
+bcrypt==3.2.0
 beautifulsoup4==4.8.2
 blackboxprotobuf
+filetype
 packaging==20.1
 protobuf==3.10.0
 PyCryptodome
 PySimpleGUI==4.16.0
-wheel
 simplekml
+wheel
 xmltodict
-bcrypt==3.2.0
 filetype==1.0.8
 python-magic-bin==0.4.14
+
