@@ -107,6 +107,7 @@ from scripts.artifacts.tangomessage import get_tangomessage
 from scripts.artifacts.teams import get_teams
 from scripts.artifacts.textnow import get_textnow
 from scripts.artifacts.tikTok import get_tikTok
+from scripts.artifacts.torThumbs import get_torThumbs
 from scripts.artifacts.Turbo_Battery import get_Turbo_Battery
 from scripts.artifacts.Turbo_AppUsage import get_Turbo_AppUsage
 from scripts.artifacts.usageapps import get_usageapps
@@ -239,6 +240,7 @@ tosearch = {
     'teams':('Teams', '*/com.microsoft.teams/databases/SkypeTeams.db*'),
     'textnow': ('Text Now', '**/com.enflick.android.TextNow/databases/textnow_data.db*'),
     'tikTok': ('TikTok', ('*_im.db*', '*db_im_xx*')),
+    'torThumbs': ('TOR', '*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/thumbnails/*.0'),
     'Turbo_Battery': ('Device Health Services', ('*/com.google.android.apps.turbo/databases/turbo.db*','*/com.google.android.apps.turbo/databases/bluetooth.db*',)),
     'Turbo_AppUsage': ('Device Health Services', '*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
