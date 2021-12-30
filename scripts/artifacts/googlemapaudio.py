@@ -50,8 +50,8 @@ def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
 
         source_dir = str(Path(files_found[0]).parent)
 
-        report = ArtifactHtmlReport('Google Maps Audio Directions')
-        report.start_artifact_report(report_folder, 'Google Maps Audio Directions')
+        report = ArtifactHtmlReport('Google Maps Voice Guidance')
+        report.start_artifact_report(report_folder, 'Google Maps Voice Guidance')
         report.add_script()
 
         report.write_artifact_data_table(data_headers, audio_info, source_dir)
