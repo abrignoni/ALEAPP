@@ -59,6 +59,7 @@ from scripts.artifacts.googleDuo import get_googleDuo
 from scripts.artifacts.googleKeepNotes import get_googleKeepNotes
 from scripts.artifacts.googlePhotos import get_googlePhotos
 from scripts.artifacts.googlemaplocation import get_googlemaplocation
+from scripts.artifacts.googlemapaudio import get_googlemapaudio
 from scripts.artifacts.googleNowPlaying import get_googleNowPlaying
 from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.googleQuickSearchbox import get_quicksearch
@@ -191,6 +192,7 @@ tosearch = {
     'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*.*')),
     'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
+    "googlemapaudio": ('GEO Location', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
     'googleNowPlaying':('Now Playing', ('*/data/data/com.google.intelligence.sense/db/history_db*','*/data/data/com.google.android.as/databases/history_db*')),
     'googlePhotos':('Google Photos', ('*/data/data/com.google.android.apps.photos/databases/gphotos0.db*','*/data/data/com.google.android.apps.photos/databases/disk_cache*','*/data/data/com.google.android.apps.photos/cache/glide_cache/*','*/data/data/com.google.android.apps.photos/databases/local_trash.db*','*/data/data/com.google.android.apps.photos/files/trash_files/*')),
     'googlePlaySearches':('Google Play', '*/data/data/com.android.vending/databases/suggestions.db*'),
