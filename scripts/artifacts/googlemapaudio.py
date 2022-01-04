@@ -3,8 +3,9 @@ from datetime import datetime
 from pathlib import Path
 from os.path import getsize
 
+
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, media_to_html
 
 def convertGeo(s):
     length = len(s)
@@ -17,7 +18,7 @@ def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
 
     files_found = list(filter(lambda x: "sbin" not in x, files_found))
 
-    data_headers = ("Timestamp", "Filename", "Size")
+    data_headers = ("Timestamp", "Filename", "Audio", "Size")
     audio_info = []
     source_dir = ""
 
@@ -37,12 +38,15 @@ def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
             timestamp = Path(file_found).name.split("_")[1]
             timestamp_datetime = datetime.fromtimestamp(int(timestamp) / 1000)
             timestamp_str = timestamp_datetime.isoformat(timespec="seconds", sep=" ")
-
+            
+            # Audio
+            audio = media_to_html(name, files_found, report_folder)
+            
             # Size
             file_size_kb = f"{round(file_size / 1024, 2)} kb"
 
             # Artefacts
-            info = (timestamp_str, name, file_size_kb)
+            info = (timestamp_str, name, audio, file_size_kb)
             audio_info.append(info)
 
 
@@ -54,7 +58,7 @@ def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
         report.start_artifact_report(report_folder, 'Google Maps Voice Guidance')
         report.add_script()
 
-        report.write_artifact_data_table(data_headers, audio_info, source_dir)
+        report.write_artifact_data_table(data_headers, audio_info, source_dir, html_escape=False)
         report.end_artifact_report()
             
         tsvname = f'Google Map Audio'

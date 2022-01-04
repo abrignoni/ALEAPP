@@ -6,7 +6,7 @@ import sqlite3
 import xml.etree.ElementTree as ET
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, abxread, checkabx
 
 def get_recentactivity(files_found, report_folder, seeker, wrap_text):
 
@@ -54,7 +54,10 @@ def process_recentactivity(folder, uid, report_folder):
             #numid = file_name.split('_')[0]
     
             try:
-                ET.parse(filename)
+                if (checkabx(filename)):
+                    tree = abxread(filename)
+                else:
+                    tree = ET.parse(filename)
             except ET.ParseError:
                 logfunc('Parse error - Non XML file? at: '+filename)
                 err = 1
@@ -64,7 +67,7 @@ def process_recentactivity(folder, uid, report_folder):
                 err = 0
                 continue
             else:
-                tree = ET.parse(filename)
+                #tree = ET.parse(filename)
                 root = tree.getroot()
                 #print('Processed: '+filename)
                 for child in root:
