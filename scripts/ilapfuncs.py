@@ -5,6 +5,7 @@ import os
 import re
 import sqlite3
 import simplekml
+import magic
 
 from bs4 import BeautifulSoup
 
@@ -289,6 +290,8 @@ def media_to_html(media_path, files_found, report_folder):
                 thumb = f'<video width="320" height="240" controls="controls"><source src="{source}" type="video/mp4">Your browser does not support the video tag.</video>'
             elif 'image' in mimetype:
                 thumb = f'<img src="{source}"width="300"></img>'
+            elif 'audio' in mimetype:
+                thumb = f'<audio controls><source src="{source}" type="audio/ogg"><source src="{source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
             else:
                 thumb = f'<a href="{source}"> Link to {mimetype} </>'
     return thumb
@@ -338,7 +341,7 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
     
 def abxread(in_path):
     """
-    Copyright 2021, CCL Forensics
+    Copyright 2021-2022, CCL Forensics
     Permission is hereby granted, free of charge, to any person obtaining a copy of
     this software and associated documentation files (the "Software"), to deal in
     the Software without restriction, including without limitation the rights to
@@ -363,7 +366,7 @@ def abxread(in_path):
     import xml.etree.ElementTree as etree
     
     
-    __version__ = "0.0.2"
+    __version__ = "0.0.3"
     __description__ = "Python module to convert Android ABX binary XML files"
     __contact__ = "Alex Caithness"
     
@@ -466,6 +469,7 @@ def abxread(in_path):
             root_closed = False
             root = None
             element_stack = []  # because ElementTree doesn't support parents we maintain a stack
+            current_text = ""
             
             while True:
                 # Read the token. This gives us the XML data type and the raw data type.
@@ -520,8 +524,13 @@ def abxread(in_path):
                         root_closed = True
                         root = last
                 elif xml_type == XmlType.TEXT:
+                    if len(element_stack[-1]):
+                        raise NotImplementedError("Can't deal with elements with mixed text and element contents")
                     value = self._read_string_raw()
-                    raise NotImplementedError()  # don't know how to best account for text vs tail yet
+                    if element_stack[-1].text is None:
+                        element_stack[-1].text = value
+                    else:
+                        element_stack[-1].text += value
                 elif xml_type == XmlType.ATTRIBUTE:
                     assert len(element_stack) >= 0
                     

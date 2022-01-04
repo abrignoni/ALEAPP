@@ -42,7 +42,7 @@ def get_teams(files_found, report_folder, seeker, wrap_text):
                 if timetwo == '1970-01-01 00:00:00':
                     timetwo = ''
                 data_list.append((timeone, row[1], row[2], row[3], timetwo, row[5], row[6]))
-            report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+            report.write_artifact_data_table(data_headers, data_list, file_found) #, html_escape=False
             report.end_artifact_report()
             
             tsvname = 'Teams Messages'
