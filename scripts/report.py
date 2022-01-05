@@ -56,6 +56,7 @@ def get_icon_name(category, artifact):
         else:                                       icon = 'info'
     elif category == 'ETC HOSTS':       icon = 'globe'
     elif category == 'WIPE & SETUP':
+        if artifact == 'FACTORY RESET':                  icon = 'loader'
         if artifact == 'SUGGESTIONS.XML':                icon = 'loader'
         if artifact == 'SETUP_WIZARD_INFO.XML':          icon = 'loader'
         if artifact == 'APPOPS.XML':                     icon = 'loader'
