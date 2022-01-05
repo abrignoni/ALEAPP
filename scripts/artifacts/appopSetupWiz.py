@@ -2,7 +2,7 @@ import os
 import datetime
 import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, abxread, checkabx
 
 def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
 
@@ -12,7 +12,12 @@ def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
             continue # Skip all other files
         
         data_list = []
-        tree = ET.parse(file_found)
+        #check if file is abx
+        if (checkabx(file_found)):
+            multi_root = False
+            tree = abxread(file_found, multi_root)
+        else:
+            tree = ET.parse(file_found)
         root = tree.getroot()
         
         for elem in root.iter('pkg'):
@@ -23,7 +28,11 @@ def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
                     for subelem2 in subelem:
                         #print(subelem2.attrib)
                         for subelem3 in subelem2:
-                            timestamp = (datetime.datetime.fromtimestamp(int(subelem3.attrib['t'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            test = subelem3.attrib.get('t', 0)
+                            if int(test) > 0:
+                                timestamp = (datetime.datetime.fromtimestamp(int(subelem3.attrib['t'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            else:
+                                timestamp = ''
                             data_list.append((timestamp, pkg))
         if data_list:
             report = ArtifactHtmlReport('Appops.xml Setup Wizard')

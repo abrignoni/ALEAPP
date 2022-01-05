@@ -100,6 +100,7 @@ from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
 from scripts.artifacts.smyFiles import get_smyFiles
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
 from scripts.artifacts.snapchat import get_snapchat
+from scripts.artifacts.settingsSecure import get_settingsSecure
 from scripts.artifacts.suggestions import get_suggestions
 from scripts.artifacts.swellbeing import get_swellbeing
 from scripts.artifacts.sWipehist import get_sWipehist
@@ -192,7 +193,7 @@ tosearch = {
     'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*.*')),
     'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
-    "googlemapaudio": ('GEO Location', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
+    "googlemapaudio": ('Google Maps Voice Guidance', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
     'googleNowPlaying':('Now Playing', ('*/data/data/com.google.intelligence.sense/db/history_db*','*/data/data/com.google.android.as/databases/history_db*')),
     'googlePhotos':('Google Photos', ('*/data/data/com.google.android.apps.photos/databases/gphotos0.db*','*/data/data/com.google.android.apps.photos/databases/disk_cache*','*/data/data/com.google.android.apps.photos/cache/glide_cache/*','*/data/data/com.google.android.apps.photos/databases/local_trash.db*','*/data/data/com.google.android.apps.photos/files/trash_files/*')),
     'googlePlaySearches':('Google Play', '*/data/data/com.android.vending/databases/suggestions.db*'),

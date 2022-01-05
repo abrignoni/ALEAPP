@@ -14,7 +14,8 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
         data_list = []
         #check if file is abx
         if (checkabx(file_found)):
-            tree = abxread(file_found)
+            multi_root = False
+            tree = abxread(file_found, multi_root)
         else:
             tree = ET.parse(file_found)
         root = tree.getroot()
