@@ -339,7 +339,8 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
     db.close()
     kml.save(os.path.join(kml_report_folder, f'{kmlactivity}.kml'))
     
-def abxread(in_path):
+def abxread(in_path, multi_root): #multi_root should be False under most circumstances. XML with no root tabs or multi-root argument needs to be set to True
+    
     """
     Copyright 2021-2022, CCL Forensics
     Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -366,7 +367,7 @@ def abxread(in_path):
     import xml.etree.ElementTree as etree
     
     
-    __version__ = "0.0.3"
+    __version__ = "0.0.5"
     __description__ = "Python module to convert Android ABX binary XML files"
     __contact__ = "Alex Caithness"
     
@@ -460,7 +461,14 @@ def abxread(in_path):
             self._interned_strings = []
             self._stream = stream
             
-        def read(self):
+        def read(self, *, is_multi_root=False):
+            """
+            Read the ABX file
+            :param is_multi_root: some xml files on Android contain multiple root elements making reading them using a
+            document model problematic. For these files, set is_multi_root to True and the output ElementTree will wrap
+            the elements in a single "root" element.
+            :return: ElementTree representation of the data.
+            """
             magic = self._read_raw(len(AbxReader.MAGIC))
             if magic != AbxReader.MAGIC:
                 raise ValueError(f"Invalid magic. Expected {AbxReader.MAGIC.hex()}; got: {magic.hex()}")
@@ -469,8 +477,10 @@ def abxread(in_path):
             root_closed = False
             root = None
             element_stack = []  # because ElementTree doesn't support parents we maintain a stack
-            current_text = ""
-            
+            if is_multi_root:
+                root = etree.Element("root")
+                element_stack.append(root)
+                
             while True:
                 # Read the token. This gives us the XML data type and the raw data type.
                 token_raw = self._stream.read(1)
@@ -481,7 +491,7 @@ def abxread(in_path):
                 data_start_offset = self._stream.tell()
                 
                 # The lower nibble gives us the XML type. This is mostly defined in XmlPullParser.java, other than
-                # AATRIBUTE which is from BinaryXmlSerializer
+                # ATTRIBUTE which is from BinaryXmlSerializer
                 xml_type = token & 0x0f
                 if xml_type == XmlType.START_DOCUMENT:
                     assert token & 0xf0 == DataType.TYPE_NULL
@@ -491,7 +501,7 @@ def abxread(in_path):
                     
                 elif xml_type == XmlType.END_DOCUMENT:
                     assert token & 0xf0 == DataType.TYPE_NULL
-                    assert len(element_stack) == 0
+                    assert len(element_stack) == 0 or (len(element_stack) == 1 and is_multi_root)
                     assert document_opened
                     break
                 
@@ -524,9 +534,12 @@ def abxread(in_path):
                         root_closed = True
                         root = last
                 elif xml_type == XmlType.TEXT:
-                    if len(element_stack[-1]):
-                        raise NotImplementedError("Can't deal with elements with mixed text and element contents")
                     value = self._read_string_raw()
+                    if len(element_stack[-1]):
+                        if len(value.strip()) == 0:  # layout whitespace can be safely discarded
+                            continue
+                        raise NotImplementedError("Can't deal with elements with mixed text and element contents")
+                    
                     if element_stack[-1].text is None:
                         element_stack[-1].text = value
                     else:
@@ -553,7 +566,7 @@ def abxread(in_path):
                     elif data_type == DataType.TYPE_LONG:
                         value = self._read_long()
                     elif data_type == DataType.TYPE_LONG_HEX:
-                        value = f"{self._read_int():x}"  # don't do this conversion in dict
+                        value = f"{self._read_long():x}"  # don't do this conversion in dict
                     elif data_type == DataType.TYPE_FLOAT:
                         value = self._read_float()
                     elif data_type == DataType.TYPE_DOUBLE:
@@ -577,7 +590,7 @@ def abxread(in_path):
                 else:
                     raise NotImplementedError(f"unexpected XML type: {xml_type}")
                     
-            assert root_closed
+            assert root_closed or (is_multi_root and len(element_stack) == 1 and element_stack[0] is root)
             assert root is not None
             tree = etree.ElementTree(root)
             
@@ -585,7 +598,7 @@ def abxread(in_path):
         
     with open(in_path, "rb") as f:
         reader = AbxReader(f)
-        doc = reader.read()
+        doc = reader.read(is_multi_root=multi_root)
         
     return doc
 

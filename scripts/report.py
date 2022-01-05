@@ -22,6 +22,8 @@ def get_icon_name(category, artifact):
         else:                           icon = 'user'
     elif category == 'ADB HOSTS':       icon = 'terminal'
     elif category == 'CALCULATOR LOCKER':       icon = 'lock'
+    elif category == 'GOOGLE MAPS VOICE GUIDANCE': icon = 'map'
+    elif category == 'GMAIL': icon = 'at-sign'
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
     elif category == 'BASH HISTORY':    icon = 'terminal'
     elif category == 'SETTINGS SERVICES':    

@@ -55,7 +55,8 @@ def process_recentactivity(folder, uid, report_folder):
     
             try:
                 if (checkabx(filename)):
-                    tree = abxread(filename)
+                    multi_root = False
+                    tree = abxread(filename, multi_root)
                 else:
                     tree = ET.parse(filename)
             except ET.ParseError:
