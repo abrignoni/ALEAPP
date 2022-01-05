@@ -18,7 +18,7 @@ def get_setupWizardinfo(files_found, report_folder, seeker, wrap_text):
         for elem in root:
             item = elem.attrib
             if item['name'] == 'suw_finished_time_ms':
-                timestamp = (datetime.datetime.fromtimestamp(int(item['value'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                timestamp = (datetime.datetime.utcfromtimestamp(int(item['value'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
                 data_list.append((timestamp, item['name']))
         
         if data_list:
