@@ -50,7 +50,7 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                     
                     if (elem.attrib.get('name')) == 'LastConnectedTime':
                         timestamp = datetime.datetime.fromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
-                        print(f'WIFI Last Connected Time: {timestamp}')
+                        logdevinfo(f'WIFI Last Connected Time: {timestamp}')
                     
         if data_list:
             report = ArtifactHtmlReport('Wifi Configuration Store.xml')
