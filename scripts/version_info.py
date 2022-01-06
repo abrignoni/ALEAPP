@@ -10,9 +10,9 @@ aleapp_contributors = [
     [ 'Alex Caithness', 'https://www.cclsolutionsgroup.com/resources/blog', '@kviddy','https://github.com/cclgroupltd'],
     [ 'Troy Schnack', 'https://troy4n6.blogspot.com/', '@TroySchnack',''],
     [ 'B Krishna Sai Nihith', 'https://g4rud4.gitlab.io', '@_Nihith', 'https://github.com/bolisettynihith'],
-    ['Geraldine Blay', 'https://gforce4n6.blogspot.com', '@i_am_the_gia', ''],
-    ['Bo Amos', '', '@Bo_Knows_65', ''],
+    [ 'Geraldine Blay', 'https://gforce4n6.blogspot.com', '@i_am_the_gia', ''],
+    [ 'Bo Amos', '', '@Bo_Knows_65', ''],
     [ 'Andrea Canepa', '', '', 'https://github.com/A-725-K'],
-    ['Incidentalchewtoy', 'https://theincidentalchewtoy.wordpress.com/', '', ''],
-    ['LoicForensics', '', '', '']
+    [ 'Incidentalchewtoy', 'https://theincidentalchewtoy.wordpress.com/', '', ''],
+    [ 'LoicForensics', '', '', '']
 ]
