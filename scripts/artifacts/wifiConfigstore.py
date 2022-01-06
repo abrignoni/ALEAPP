@@ -48,8 +48,10 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                         splitted = elem.text.split('"')
                         logdevinfo(f'Pre-Shared Key: {splitted[1]}')
                     
-                            
-                        
+                    if (elem.attrib.get('name')) == 'LastConnectedTime':
+                        timestamp = datetime.datetime.fromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
+                        print(f'WIFI Last Connected Time: {timestamp}')
+                    
         if data_list:
             report = ArtifactHtmlReport('Wifi Configuration Store.xml')
             report.start_artifact_report(report_folder, 'Wifi Configuration Store')
