@@ -18,13 +18,13 @@ def get_suggestions(files_found, report_folder, seeker, wrap_text):
         for elem in root:
             item = elem.attrib
             if item['name'] == 'com.android.settings.suggested.category.DEFERRED_SETUP_setup_time':
-                timestamp = (datetime.datetime.fromtimestamp(int(item['value'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                timestamp = (datetime.datetime.utcfromtimestamp(int(item['value'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
                 data_list.append((timestamp, item['name']))
             if item['name'] == 'com.android.settings/com.android.settings.biometrics.fingerprint.FingerprintEnrollSuggestionActivity_setup_time':
-                timestamp = (datetime.datetime.fromtimestamp(int(item['value'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                timestamp = (datetime.datetime.utcfromtimestamp(int(item['value'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
                 data_list.append((timestamp, item['name']))
             if item['name'] == 'com.google.android.setupwizard/com.google.android.setupwizard.deferred.DeferredSettingsSuggestionActivity_setup_time':
-                timestamp = (datetime.datetime.fromtimestamp(int(item['value'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                timestamp = (datetime.datetime.utcfromtimestamp(int(item['value'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
                 data_list.append((timestamp, item['name']))
         
         if data_list:

@@ -46,6 +46,7 @@ from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
 from scripts.artifacts.errp import get_errp
 from scripts.artifacts.etc_hosts import get_etc_hosts
 from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
+from scripts.artifacts.factory_reset import get_factory_reset
 from scripts.artifacts.fitbitExercise import get_fitbitExercise
 from scripts.artifacts.fitbitSleep import get_fitbitSleep
 from scripts.artifacts.fitbitSocial import get_fitbitSocial
@@ -70,6 +71,7 @@ from scripts.artifacts.imo import get_imo
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.artifacts.installedappsVending import get_installedappsVending
+from scripts.artifacts.last_boot_time import get_last_boot_time
 from scripts.artifacts.mewe import get_mewe
 from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageGplinks import get_packageGplinks
@@ -182,6 +184,7 @@ tosearch = {
     'errp':('Wipe & Setup', '*/data/system/users/service/eRR.p'),
     'etc_hosts':('Etc Hosts', '*/system/etc/hosts'),
     'FacebookMessenger':('Facebook Messenger', '**/threads_db2*'),
+    'factory_reset':('Wipe & Setup', '*/data/misc/bootstat/factory_reset'),
     'fitbitExercise':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/exercise_db*'),
     'fitbitSleep':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/sleep*'),
     'fitbitSocial':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/social_db*'),
@@ -204,6 +207,7 @@ tosearch = {
     'installedappsGass':('Installed Apps', ('*/data/data/com.google.android.gms/databases/gass.db*', '*/data/user/*/com.google.android.gms/databases/gass.db*' )),
     'installedappsLibrary': ('Installed Apps', '*/data/data/com.android.vending/databases/library.db'),
     'installedappsVending': ('Installed Apps', '*/data/data/com.android.vending/databases/localappstate.db'),
+    'last_boot_time': ('Wipe & Setup', '**/data/misc/bootstat/last_boot_time_utc'),
     'line': ('Line', '**/jp.naver.line.android/databases/**'),
     'pSettings':('Device Info', '*/data/data/com.google.android.gsf/databases/googlesettings.db*'),
     'mewe': ('MeWe', ('**/com.mewe/databases/app_database', '**/com.mewe/shared_prefs/SGSession.xml')),
