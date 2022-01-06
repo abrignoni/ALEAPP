@@ -22,10 +22,9 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                 if elem.attrib.get('name') is not None:
                     if elem.text is not None:
                         data_list.append((elem.attrib.get('name'), elem.text ))
-                        print(elem.attrib.get('name'), elem.text)
                     elif elem.attrib.get('value')is not None:
                         data_list.append((elem.attrib.get('name'), elem.attrib.get('value') ))
-                        print(elem.attrib.get('name'), elem.attrib.get('value'))
+                        
                     if (elem.attrib.get('name')) == 'RandomizedMacAddress':
                         logdevinfo(f'Randomized MAC Address: {elem.text}')
                         
@@ -50,7 +49,7 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                     
                     if (elem.attrib.get('name')) == 'LastConnectedTime':
                         timestamp = datetime.datetime.fromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
-                        print(f'WIFI Last Connected Time: {timestamp}')
+                        logdevinfo(f'WIFI Last Connected Time: {timestamp}')
                     
         if data_list:
             report = ArtifactHtmlReport('Wifi Configuration Store.xml')
