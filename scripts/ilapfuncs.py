@@ -339,7 +339,7 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
     db.close()
     kml.save(os.path.join(kml_report_folder, f'{kmlactivity}.kml'))
     
-def abxread(in_path, multi_root): #multi_root should be False under most circumstances. XML with no root tabs or multi-root argument needs to be set to True
+def abxread(in_path, multi_root): #multi_root should be False under most circumstances. File with no root tags set the multi_root argument to True.
     
     """
     Copyright 2021-2022, CCL Forensics
@@ -367,13 +367,17 @@ def abxread(in_path, multi_root): #multi_root should be False under most circums
     import xml.etree.ElementTree as etree
     
     
-    __version__ = "0.0.5"
+    __version__ = "0.1.0"
     __description__ = "Python module to convert Android ABX binary XML files"
     __contact__ = "Alex Caithness"
     
     # See: base/core/java/com/android/internal/util/BinaryXmlSerializer.java
     
     
+    class AbxDecodeError(Exception):
+        pass
+        
+        
     class XmlType(enum.IntEnum):
         # These first constants are from: libcore/xml/src/main/java/org/xmlpull/v1/XmlPullParser.java
         # most of them are unused, but here for completeness
@@ -494,22 +498,30 @@ def abxread(in_path, multi_root): #multi_root should be False under most circums
                 # ATTRIBUTE which is from BinaryXmlSerializer
                 xml_type = token & 0x0f
                 if xml_type == XmlType.START_DOCUMENT:
-                    assert token & 0xf0 == DataType.TYPE_NULL
+                    if token & 0xf0 != DataType.TYPE_NULL:
+                        raise AbxDecodeError(
+                            f"START_DOCUMENT with an invalid data type at offset {data_start_offset} - 1")
                     if document_opened:
-                        raise ValueError(f"Unexpected START_DOCUMENT at offset {self._stream.tell()}")
+                        raise AbxDecodeError(f"Unexpected START_DOCUMENT at offset {data_start_offset}")
                     document_opened = True
                     
                 elif xml_type == XmlType.END_DOCUMENT:
-                    assert token & 0xf0 == DataType.TYPE_NULL
-                    assert len(element_stack) == 0 or (len(element_stack) == 1 and is_multi_root)
-                    assert document_opened
+                    if token & 0xf0 != DataType.TYPE_NULL:
+                        raise AbxDecodeError(f"END_DOCUMENT with an invalid data type at offset {data_start_offset}")
+                    if not (len(element_stack) == 0 or (len(element_stack) == 1 and is_multi_root)):
+                        raise AbxDecodeError(f"END_DOCUMENT with unclosed elements at offset {data_start_offset}")
+                    if not document_opened:
+                        raise AbxDecodeError(f"END_DOCUMENT before document started at offset {data_start_offset}")
                     break
                 
                 elif xml_type == XmlType.START_TAG:
-                    assert token & 0xf0 == DataType.TYPE_STRING_INTERNED
-                    assert document_opened
-                    assert not root_closed
-                    
+                    if token & 0xf0 != DataType.TYPE_STRING_INTERNED:
+                        raise AbxDecodeError(f"START_TAG with an invalid data type at offset {data_start_offset}")
+                    if not document_opened:
+                        raise AbxDecodeError(f"START_TAG before document started at offset {data_start_offset}")
+                    if root_closed:
+                        raise AbxDecodeError(f"START_TAG after root was closed started at offset {data_start_offset}")
+                        
                     tag_name = self._read_interned_string()
                     if len(element_stack) == 0:
                         element = etree.Element(tag_name)
@@ -520,12 +532,14 @@ def abxread(in_path, multi_root): #multi_root should be False under most circums
                         element_stack.append(element)
                         
                 elif xml_type == XmlType.END_TAG:
-                    assert token & 0xf0 == DataType.TYPE_STRING_INTERNED
-                    assert len(element_stack) >= 0
-                    
+                    if token & 0xf0 != DataType.TYPE_STRING_INTERNED:
+                        raise AbxDecodeError(f"END_TAG with an invalid data type at offset {data_start_offset}")
+                    if len(element_stack) == 0 or (is_multi_root and len(element_stack) == 1):
+                        raise AbxDecodeError(f"END_TAG without any elements left at offset {data_start_offset}")
+                        
                     tag_name = self._read_interned_string()
                     if element_stack[-1].tag != tag_name:
-                        raise ValueError(
+                        raise AbxDecodeError(
                             f"Unexpected END_TAG name at {data_start_offset}. "
                             f"Expected: {element_stack[-1].tag}; got: {tag_name}")
                         
@@ -545,12 +559,14 @@ def abxread(in_path, multi_root): #multi_root should be False under most circums
                     else:
                         element_stack[-1].text += value
                 elif xml_type == XmlType.ATTRIBUTE:
-                    assert len(element_stack) >= 0
-                    
+                    if len(element_stack) == 0 or (is_multi_root and len(element_stack) == 1):
+                        raise AbxDecodeError(f"ATTRIBUTE without any elements left at offset {data_start_offset}")
+                        
                     attribute_name = self._read_interned_string()
                     
-                    assert attribute_name not in element_stack[-1].attrib
-                    
+                    if attribute_name in element_stack[-1].attrib:
+                        raise AbxDecodeError(f"ATTRIBUTE name already in target element at offset {data_start_offset}")
+                        
                     data_type = token & 0xf0
                     
                     if data_type == DataType.TYPE_NULL:
@@ -584,14 +600,18 @@ def abxread(in_path, multi_root): #multi_root should be False under most circums
                         value = self._read_raw(length)
                         value = base64.encodebytes(value).decode().strip()
                     else:
-                        raise ValueError(f"Unexpected datatype at offset: {data_start_offset}")
+                        raise AbxDecodeError(f"Unexpected attribute datatype at offset: {data_start_offset}")
                         
                     element_stack[-1].attrib[attribute_name] = str(value)
                 else:
                     raise NotImplementedError(f"unexpected XML type: {xml_type}")
                     
-            assert root_closed or (is_multi_root and len(element_stack) == 1 and element_stack[0] is root)
-            assert root is not None
+            if not (root_closed or (is_multi_root and len(element_stack) == 1 and element_stack[0] is root)):
+                raise AbxDecodeError("Elements still in the stack when completing the document")
+                
+            if root is None:
+                raise AbxDecodeError("Document was never assigned a root element")
+                
             tree = etree.ElementTree(root)
             
             return tree
@@ -599,7 +619,7 @@ def abxread(in_path, multi_root): #multi_root should be False under most circums
     with open(in_path, "rb") as f:
         reader = AbxReader(f)
         doc = reader.read(is_multi_root=multi_root)
-        
+        #print(etree.tostring(doc.getroot()).decode())
     return doc
 
 def checkabx(in_path):

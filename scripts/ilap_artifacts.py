@@ -124,6 +124,7 @@ from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingURLs import get_wellbeingURLs
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
 from scripts.artifacts.Whatsapp import get_Whatsapp
+from scripts.artifacts.wifiConfigstore import get_wifiConfigstore
 from scripts.artifacts.wifiHotspot import get_wifiHotspot
 from scripts.artifacts.wifiProfiles import get_wifiProfiles
 from scripts.artifacts.WordsWithFriends import get_WordsWithFriends
@@ -258,6 +259,7 @@ tosearch = {
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),
     'Whatsapp':('Whatsapp', ('*/com.whatsapp/databases/*.db*','**/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml')),
+    'wifiConfigstore':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
     'wifiHotspot':('WiFi Profiles', ('**/misc/wifi/softap.conf', '**/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml')),
     'wifiProfiles':('WiFi Profiles', ('**/misc/wifi/WifiConfigStore.xml', '**/misc**/apexdata/com.android.wifi/WifiConfigStore.xml')),
     'WordsWithFriends':('Chats', '**/com.zynga.words/db/wf_database.sqlite'),
