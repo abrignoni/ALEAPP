@@ -1,4 +1,4 @@
-aleapp_version = '1.9.11'
+aleapp_version = '2.0.0'
 
 # Contributors List
 # Format = [ Name, Blog-url, Twitter-handle, Github-url]
@@ -7,6 +7,7 @@ aleapp_contributors = [
     [ 'Alexis Brignoni', 'https://abrignoni.com', '@AlexisBrignoni', 'https://github.com/abrignoni'],
     [ 'Yogesh Khatri', 'https://swiftforensics.com', '@SwiftForensics', 'https://github.com/ydkhatri'],
     [ 'Kevin Pagano', 'https://stark4n6.com', '@KevinPagano3', 'https://github.com/stark4n6'],
+    [ 'Alex Caithness', 'https://www.cclsolutionsgroup.com/resources/blog', '@kviddy','https://github.com/cclgroupltd'],
     [ 'Troy Schnack', 'https://troy4n6.blogspot.com/', '@TroySchnack',''],
     [ 'B Krishna Sai Nihith', 'https://g4rud4.gitlab.io', '@_Nihith', 'https://github.com/bolisettynihith'],
     ['Geraldine Blay', 'https://gforce4n6.blogspot.com', '@i_am_the_gia', ''],
