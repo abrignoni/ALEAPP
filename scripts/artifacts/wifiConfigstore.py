@@ -22,10 +22,9 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                 if elem.attrib.get('name') is not None:
                     if elem.text is not None:
                         data_list.append((elem.attrib.get('name'), elem.text ))
-                        print(elem.attrib.get('name'), elem.text)
                     elif elem.attrib.get('value')is not None:
                         data_list.append((elem.attrib.get('name'), elem.attrib.get('value') ))
-                        print(elem.attrib.get('name'), elem.attrib.get('value'))
+                        
                     if (elem.attrib.get('name')) == 'RandomizedMacAddress':
                         logdevinfo(f'Randomized MAC Address: {elem.text}')
                         
