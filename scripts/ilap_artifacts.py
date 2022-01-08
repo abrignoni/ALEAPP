@@ -9,6 +9,8 @@ from scripts.artifacts.accounts_ce import get_accounts_ce
 from scripts.artifacts.accounts_ce_authtokens import get_accounts_ce_authtokens
 from scripts.artifacts.accounts_de import get_accounts_de
 from scripts.artifacts.adb_hosts import get_adb_hosts
+from scripts.artifacts.airGuard import get_airGuard
+from scripts.artifacts.atrackerdetect import get_atrackerdetect
 from scripts.artifacts.appicons import get_appicons
 from scripts.artifacts.appLockerfishingnet import get_appLockerfishingnet
 from scripts.artifacts.appLockerfishingnetpat import get_appLockerfishingnetpat
@@ -149,6 +151,8 @@ tosearch = {
     'accounts_ce_authtokens':('Accounts_ce', '*/data/system_ce/*/accounts_ce.db'),
     'accounts_de': ('Accounts_de', '*/data/system_de/*/accounts_de.db'),
     'adb_hosts':('ADB Hosts', '*/data/misc/adb/adb_keys'),
+    'airGuard': ('AirTags', '*/data/de.seemoo.at_tracking_detection.release/databases/attd_db'),
+    'atrackerdetect': ('AirTags', '*/data/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml'),
     'appicons':('Installed Apps', '*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
     'appLockerfishingnet': ('Calculator Locker',('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*')),
     'appLockerfishingnetpat': ('Calculator Locker',('*/data/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml')),
