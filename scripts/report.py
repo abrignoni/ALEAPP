@@ -21,6 +21,7 @@ def get_icon_name(category, artifact):
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
     elif category == 'ADB HOSTS':       icon = 'terminal'
+    elif category == 'AIRTAGS':       icon = 'map-pin'
     elif category == 'CALCULATOR LOCKER':       icon = 'lock'
     elif category == 'GOOGLE MAPS VOICE GUIDANCE': icon = 'map'
     elif category == 'GMAIL': icon = 'at-sign'
