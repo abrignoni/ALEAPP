@@ -39,6 +39,7 @@ from scripts.artifacts.chromeOfflinePages import get_chromeOfflinePages
 from scripts.artifacts.chromeSearchTerms import get_chromeSearchTerms
 from scripts.artifacts.chromeTopSites import get_chromeTopSites
 from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
+from scripts.artifacts.clipBoard import get_clipBoard
 from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.contacts import get_contacts
 from scripts.artifacts.DocList import get_DocList
@@ -177,6 +178,7 @@ tosearch = {
     'chromeSearchTerms':('Chromium', ('*/data/data/*/app_chrome/Default/History*', '*/data/data/*/app_sbrowser/Default/History*', '*/data/*/app_opera/History*')),
     'chromeTopSites':('Chromium', ('*/data/data/*/app_chrome/Default/Top Sites*', '*/data/data/*/app_sbrowser/Default/Top Sites*', '*/data/*/app_opera/Top Sites*')),
     'chromeWebsearch':('Chromium', ('*/data/data/*/app_chrome/Default/History*', '*/data/data/*/app_sbrowser/Default/History*', '*/data/data/*/app_opera/History*')),
+    'clipBoard':('Clipboard', '*/data/*clipboard/*/*'),
     'cmh':('Samsung_CMH', '**/cmh.db'),
     'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
     'DocList':('Google Drive', '*/data/data/com.google.android.apps.docs/databases/DocList.db*'),
