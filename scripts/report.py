@@ -89,7 +89,9 @@ def get_icon_name(category, artifact):
     elif category == 'MEDIA METADATA':  icon = 'file-plus'
     elif category == 'MEWE':  icon = 'message-circle'
     elif category == 'NOW PLAYING':           icon = 'music'
-    elif category == 'POWER OFF RESET':     icon = 'power'
+    elif category == 'POWER EVENTS':
+        if artifact.find('POWER OFF RESET'):    icon = 'power'
+        elif artifact.find('SHUTDOWN CHECKPOINTS'):    icon = 'power'
     elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG WEATHER CLOCK':
@@ -116,6 +118,7 @@ def get_icon_name(category, artifact):
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'USER DICTIONARY': icon = 'book'
+    elif category == 'WAZE': icon = 'navigation-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
