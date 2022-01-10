@@ -3,10 +3,11 @@ import io
 import json
 import os
 import shutil
+import magic
 
 from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly, media_to_html
 
 def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
     
@@ -319,15 +320,9 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
     
     if usageentries > 0:
         for row in all_rows:
-        
             fileNameKey = row[1]
-            thumb = ''
             
-            for match in files_found:
-                if fileNameKey in match:
-                    shutil.copy2(match, report_folder)
-                    data_file_name = os.path.basename(match)
-                    thumb = f'<img src="{report_folder}/{data_file_name}" width="300"></img>'
+            thumb = media_to_html(fileNameKey, files_found, report_folder)
                 
             data_list.append((row[0],row[1],thumb,row[2],row[3]))
     
