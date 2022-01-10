@@ -1,9 +1,10 @@
 import os
 import datetime
+from pathlib import Path
 from PIL import Image
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly, is_platform_windows
 
 
 def get_torThumbs(files_found, report_folder, seeker, wrap_text):
@@ -23,8 +24,12 @@ def get_torThumbs(files_found, report_folder, seeker, wrap_text):
         img = Image.open(file_found) 
         img.save(savepath,'png')
         
-        thumb = f'<img src="{report_folder}/{newfilename}"width="300"></img>'
+        thumb = f'<img src="{savepath}"width="300"></img>'
         
+        platform = is_platform_windows()
+        if platform:
+            thumb = thumb.replace('?', '')
+            
         data_list.append((modifiedtime, thumb, filename, location))
     
     path_to_files = os.path.dirname(filename)
