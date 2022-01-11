@@ -11,6 +11,13 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_window
 
 def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
     
+    platform = is_platform_windows()
+    if platform:
+        media_path = media_path.replace('/', '\\')
+        splitter = '\\'
+    else:
+        splitter = '/'
+
     source_file_photos = ''
     source_file_cache = ''
     source_file_trash = ''
@@ -322,6 +329,13 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
         for row in all_rows:
             fileNameKey = row[1]
             
+            for match in files_found:
+                if fileNameKey in match:
+                    mimetype = magic.from_file(match, mime = True)
+                    ext = (mimetype.split(splitter)[1])
+                    newname = os.path.join(report_folder, f'{fileNameKey}.{ext}')
+                    shutil.copy2(match, newname)
+            
             thumb = media_to_html(fileNameKey, files_found, report_folder)
                 
             data_list.append((row[0],row[1],thumb,row[2],row[3]))
@@ -373,9 +387,12 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
             
             for match in files_found:
                 if fileNameKey in match:
-                    shutil.copy2(match, report_folder)
-                    data_file_name = os.path.basename(match)
-                    thumb = f'<img src="{report_folder}/{data_file_name}" width="300"></img>'
+                    mimetype = magic.from_file(match, mime = True)
+                    ext = (mimetype.split(splitter)[1])
+                    newname = os.path.join(report_folder, f'{fileNameKey}.{ext}')
+                    shutil.copy2(match, newname)
+                    
+            thumb = media_to_html(fileNameKey, files_found, report_folder)
                 
             data_list.append((row[0],row[1],row[2],row[3],thumb,row[4],row[5]))
     
