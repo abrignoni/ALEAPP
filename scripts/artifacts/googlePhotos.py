@@ -11,12 +11,6 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_window
 
 def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
     
-    platform = is_platform_windows()
-    if platform:
-        splitter = '\\'
-    else:
-        splitter = '/'
-
     source_file_photos = ''
     source_file_cache = ''
     source_file_trash = ''
@@ -331,7 +325,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
             for match in files_found:
                 if fileNameKey in match:
                     mimetype = magic.from_file(match, mime = True)
-                    ext = (mimetype.split(splitter)[1])
+                    ext = (mimetype.split('/')[1])
                     newname = os.path.join(report_folder, f'{fileNameKey}.{ext}')
                     shutil.copy2(match, newname)
             
@@ -387,7 +381,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
             for match in files_found:
                 if fileNameKey in match:
                     mimetype = magic.from_file(match, mime = True)
-                    ext = (mimetype.split(splitter)[1])
+                    ext = (mimetype.split('/')[1])
                     newname = os.path.join(report_folder, f'{fileNameKey}.{ext}')
                     shutil.copy2(match, newname)
                     
