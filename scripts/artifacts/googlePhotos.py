@@ -13,7 +13,6 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
     
     platform = is_platform_windows()
     if platform:
-        media_path = media_path.replace('/', '\\')
         splitter = '\\'
     else:
         splitter = '/'
