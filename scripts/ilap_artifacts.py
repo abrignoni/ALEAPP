@@ -51,6 +51,7 @@ from scripts.artifacts.etc_hosts import get_etc_hosts
 from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
 from scripts.artifacts.factory_reset import get_factory_reset
 from scripts.artifacts.firefox import get_firefox
+from scripts.artifacts.firefoxCookies import get_firefoxCookies
 from scripts.artifacts.fitbitExercise import get_fitbitExercise
 from scripts.artifacts.fitbitSleep import get_fitbitSleep
 from scripts.artifacts.fitbitSocial import get_fitbitSocial
@@ -195,6 +196,7 @@ tosearch = {
     'FacebookMessenger':('Facebook Messenger', '**/threads_db2*'),
     'factory_reset':('Wipe & Setup', '*/data/misc/bootstat/factory_reset'),
     'firefox':('Firefox', '*/data/data/org.mozilla.firefox/files/places.sqlite*'),
+    'firefoxCookies':('Firefox', '*/data/data/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*'),
     'fitbitExercise':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/exercise_db*'),
     'fitbitSleep':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/sleep*'),
     'fitbitSocial':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/social_db*'),

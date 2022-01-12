@@ -66,12 +66,15 @@ def get_icon_name(category, artifact):
         else:                                            icon = 'loader'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
-    elif category == 'FIREFOX':         icon = 'globe'
+    elif category == 'FIREFOX':
+        if artifact.find('HISTORY') >= 0:           icon = 'globe'
+        elif artifact.find('VISITS') >= 0:          icon = 'globe'
+        elif artifact.find('COOKIES') >= 0:         icon = 'info'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
     elif category == 'GOOGLE DUO':
         if artifact.find('CALL HISTORY') >= 0:      icon = 'phone-call'
-        if artifact.find('CONTACTS') >= 0:      icon = 'users'
-        if artifact.find('NOTES') >= 0:      icon = 'edit-3'
+        elif artifact.find('CONTACTS') >= 0:      icon = 'users'
+        elif artifact.find('NOTES') >= 0:      icon = 'edit-3'
     elif category == 'GOOGLE KEEP':     icon = 'list'
     elif category == 'TOR':     icon = 'globe'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
