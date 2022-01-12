@@ -59,7 +59,6 @@ def get_icon_name(category, artifact):
     elif category == 'ETC HOSTS':       icon = 'globe'
     elif category == 'WIPE & SETUP':
         if artifact == 'FACTORY RESET':                  icon = 'loader'
-        elif artifact == 'LAST BOOT TIME':                 icon = 'power'
         elif artifact == 'SUGGESTIONS.XML':                icon = 'loader'
         elif artifact == 'SETUP_WIZARD_INFO.XML':          icon = 'loader'
         elif artifact == 'APPOPS.XML':                     icon = 'loader'
@@ -67,6 +66,7 @@ def get_icon_name(category, artifact):
         else:                                            icon = 'loader'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
+    elif category == 'FIREFOX':         icon = 'globe'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
     elif category == 'GOOGLE DUO':
         if artifact.find('CALL HISTORY') >= 0:      icon = 'phone-call'
@@ -91,6 +91,7 @@ def get_icon_name(category, artifact):
     elif category == 'NOW PLAYING':           icon = 'music'
     elif category == 'POWER EVENTS':
         if artifact.find('POWER OFF RESET'):    icon = 'power'
+        elif artifact.find('LAST BOOT TIME'):          icon = 'power'
         elif artifact.find('SHUTDOWN CHECKPOINTS'):    icon = 'power'
     elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
