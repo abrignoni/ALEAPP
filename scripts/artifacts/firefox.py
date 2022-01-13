@@ -45,10 +45,10 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('Firefox - Web History')
             report.start_artifact_report(report_folder, 'Firefox - Web History')
             report.add_script()
-            data_headers = ('Last Visit Date','URL','Title','Visit ID','Visit Count','Description','Hidden','Typed','Frecency','Preview Image URL') 
+            data_headers = ('Last Visit Date','URL','Title','Visit Count','Description','Hidden','Typed','Frecency','Preview Image URL') 
             data_list = []
             for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]))
+                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
