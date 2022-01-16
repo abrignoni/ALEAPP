@@ -81,6 +81,7 @@ from scripts.artifacts.packageGplinks import get_packageGplinks
 from scripts.artifacts.packageInfo import get_package_info
 from scripts.artifacts.permissions import get_permissions
 from scripts.artifacts.persistentProp import get_persistentProp
+from scripts.artifacts.playgroundVault import get_playgroundVault
 from scripts.artifacts.powerOffReset import get_powerOffReset
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.lgRCS import get_lgRCS
@@ -154,9 +155,9 @@ tosearch = {
     'airGuard': ('AirTags', '*/data/de.seemoo.at_tracking_detection.release/databases/attd_db'),
     'atrackerdetect': ('AirTags', '*/data/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml'),
     'appicons':('Installed Apps', '*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
-    'appLockerfishingnet': ('Calculator Locker',('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*')),
-    'appLockerfishingnetpat': ('Calculator Locker',('*/data/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml')),
-    'appLockerfishingnetdb': ('Calculator Locker',('*/.privacy_safe/db/privacy_safe.db')),
+    'appLockerfishingnet': ('Encrypting Media Apps',('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*')),
+    'appLockerfishingnetpat': ('Encrypting Media Apps',('*/data/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml')),
+    'appLockerfishingnetdb': ('Encrypting Media Apps',('*/.privacy_safe/db/privacy_safe.db')),
     'appops': ('Permissions', '*/data/system/appops.xml'),
     'appopSetupWiz': ('Wipe & Setup', '*/data/system/appops.xml'),
     'BashHistory':('Bash History', '**/.bash_history'),
@@ -227,6 +228,7 @@ tosearch = {
     'Oruxmaps':('GEO Location', '**/oruxmaps/tracklogs/oruxmapstracks.db*'),
     'permissions':('Permissions', '*/system/packages.xml'),
     'persistentProp': ('Wipe & Setup', '*/data/property/persistent_properties'),
+    'playgroundVault':('Encrypting Media Apps',('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml','*/applocker/vault/*')),
     'roles':('App Roles',('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml')),
     'runtimePerms':('Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
     'scontextLog':('App Interaction', '*/com.samsung.android.providers.context/databases/ContextLog.db'),
