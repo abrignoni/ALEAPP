@@ -14,6 +14,6 @@ aleapp_contributors = [
     [ 'Geraldine Blay', 'https://gforce4n6.blogspot.com', '@i_am_the_gia', ''],
     [ 'Bo Amos', '', '@Bo_Knows_65', ''],
     [ 'Andrea Canepa', '', '', 'https://github.com/A-725-K'],
-    [ 'Incidentalchewtoy', 'https://theincidentalchewtoy.wordpress.com/', '', ''],
+    [ 'Incidentalchewtoy', 'https://theincidentalchewtoy.wordpress.com/', '@4n6chewtoy', ''],
     [ 'LoicForensics', '', '', '']
 ]
