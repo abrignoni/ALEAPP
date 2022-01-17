@@ -155,5 +155,34 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Firefox - Bookmarks data available')
+            
+        cursor = db.cursor()
+        cursor.execute('''
+        SELECT
+        id AS 'ID',
+        term AS 'Search Term'
+        FROM moz_places_metadata_search_queries
+        ORDER BY id ASC
+        ''')
+
+        all_rows = cursor.fetchall()
+        usageentries = len(all_rows)
+        if usageentries > 0:
+            report = ArtifactHtmlReport('Firefox - Search Terms')
+            report.start_artifact_report(report_folder, 'Firefox - Search Terms')
+            report.add_script()
+            data_headers = ('ID','Search Term') 
+            data_list = []
+            for row in all_rows:
+                data_list.append((row[0],row[1]))
+
+            report.write_artifact_data_table(data_headers, data_list, file_found)
+            report.end_artifact_report()
+            
+            tsvname = f'Firefox - Search Terms'
+            tsv(report_folder, data_headers, data_list, tsvname)
+            
+        else:
+            logfunc('No Firefox - Search Terms data available')
         
         db.close()
