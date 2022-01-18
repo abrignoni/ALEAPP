@@ -15,15 +15,16 @@ def get_firefoxCookies(files_found, report_folder, seeker, wrap_text):
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
-        select
-        datetime(lastAccessed/1000000,'unixepoch'),
-        datetime(creationTime/1000000,'unixepoch'),
-        host,
-        name,
-        value,
-        datetime(expiry,'unixepoch'),
-        path
+        SELECT
+        datetime(lastAccessed/1000000,'unixepoch') AS LastAccessedDate,
+        datetime(creationTime/1000000,'unixepoch') AS CreationDate,
+        host AS Host,
+        name AS Name,
+        value AS Value,
+        datetime(expiry,'unixepoch') AS ExpirationDate,
+        path AS Path
         from moz_cookies
+        ORDER BY lastAccessedDate ASC
         ''')
 
         all_rows = cursor.fetchall()

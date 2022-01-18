@@ -16,18 +16,19 @@ def get_firefoxPermissions(files_found, report_folder, seeker, wrap_text):
         cursor = db.cursor()
         cursor.execute('''
         SELECT
-        datetime(modificationTime/1000,'unixepoch'),
-        origin,
-        type,
+        datetime(modificationTime/1000,'unixepoch') AS ModDate,
+        origin AS Origin,
+        type AS PermType,
         CASE permission
             WHEN 1 THEN 'Allow'
             WHEN 2 THEN 'Block'
-        END,
+        END AS PermState,
         CASE expireTime
             WHEN 0 THEN ''
             else datetime(expireTime/1000,'unixepoch')
-        END
+        END AS ExpireDate
         FROM moz_perms
+        ORDER BY ModDate ASC
         ''')
 
         all_rows = cursor.fetchall()
