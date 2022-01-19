@@ -5,7 +5,9 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_n
 
 def get_browser_name(file_name):
 
-    if 'microsoft' in file_name.lower():
+    if 'brave' in file_name.lower():
+        return 'Brave'
+    elif 'microsoft' in file_name.lower():
         return 'Edge'
     elif 'chrome' in file_name.lower():
         return 'Chrome'

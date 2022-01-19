@@ -62,7 +62,6 @@ def get_icon_name(category, artifact):
     elif category == 'ETC HOSTS':       icon = 'globe'
     elif category == 'WIPE & SETUP':
         if artifact == 'FACTORY RESET':                  icon = 'loader'
-        elif artifact == 'LAST BOOT TIME':                 icon = 'power'
         elif artifact == 'SUGGESTIONS.XML':                icon = 'loader'
         elif artifact == 'SETUP_WIZARD_INFO.XML':          icon = 'loader'
         elif artifact == 'APPOPS.XML':                     icon = 'loader'
@@ -70,11 +69,22 @@ def get_icon_name(category, artifact):
         else:                                            icon = 'loader'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
+    elif category == 'FIREFOX':
+        if artifact.find('BOOKMARKS') >= 0:                 icon = 'bookmark'
+        elif artifact.find('COOKIES') >= 0:                 icon = 'info'
+        elif artifact.find('DOWNLOADS') >= 0:               icon = 'download'
+        elif artifact.find('FORM HISTORY') >= 0:            icon = 'edit-3'
+        elif artifact.find('PERMISSIONS') >= 0:             icon = 'sliders'
+        elif artifact.find('RECENTLY CLOSED TABS') >= 0:    icon = 'x-square'
+        elif artifact.find('SEARCH TERMS') >= 0:            icon = 'search'
+        elif artifact.find('TOP SITES') >= 0:               icon = 'list'
+        elif artifact.find('VISITS') >= 0:                  icon = 'globe'
+        elif artifact.find('WEB HISTORY') >= 0:             icon = 'globe'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
     elif category == 'GOOGLE DUO':
         if artifact.find('CALL HISTORY') >= 0:      icon = 'phone-call'
-        if artifact.find('CONTACTS') >= 0:      icon = 'users'
-        if artifact.find('NOTES') >= 0:      icon = 'edit-3'
+        elif artifact.find('CONTACTS') >= 0:      icon = 'users'
+        elif artifact.find('NOTES') >= 0:      icon = 'edit-3'
     elif category == 'GOOGLE KEEP':     icon = 'list'
     elif category == 'TOR':     icon = 'globe'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
@@ -92,7 +102,10 @@ def get_icon_name(category, artifact):
     elif category == 'MEDIA METADATA':  icon = 'file-plus'
     elif category == 'MEWE':  icon = 'message-circle'
     elif category == 'NOW PLAYING':           icon = 'music'
-    elif category == 'POWER OFF RESET':     icon = 'power'
+    elif category == 'POWER EVENTS':
+        if artifact.find('POWER OFF RESET'):    icon = 'power'
+        elif artifact.find('LAST BOOT TIME'):          icon = 'power'
+        elif artifact.find('SHUTDOWN CHECKPOINTS'):    icon = 'power'
     elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG WEATHER CLOCK':
@@ -119,6 +132,7 @@ def get_icon_name(category, artifact):
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'USER DICTIONARY': icon = 'book'
+    elif category == 'WAZE': icon = 'navigation-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'

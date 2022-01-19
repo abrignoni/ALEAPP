@@ -51,6 +51,13 @@ from scripts.artifacts.errp import get_errp
 from scripts.artifacts.etc_hosts import get_etc_hosts
 from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
 from scripts.artifacts.factory_reset import get_factory_reset
+from scripts.artifacts.firefox import get_firefox
+from scripts.artifacts.firefoxCookies import get_firefoxCookies
+from scripts.artifacts.firefoxDownloads import get_firefoxDownloads
+from scripts.artifacts.firefoxFormHistory import get_firefoxFormHistory
+from scripts.artifacts.firefoxRecentlyClosedTabs import get_firefoxRecentlyClosedTabs
+from scripts.artifacts.firefoxPermissions import get_firefoxPermissions
+from scripts.artifacts.firefoxTopSites import get_firefoxTopSites
 from scripts.artifacts.fitbitExercise import get_fitbitExercise
 from scripts.artifacts.fitbitSleep import get_fitbitSleep
 from scripts.artifacts.fitbitSocial import get_fitbitSocial
@@ -95,6 +102,7 @@ from scripts.artifacts.scontextLog import get_scontextLog
 from scripts.artifacts.setupWizardinfo import get_setupWizardinfo
 from scripts.artifacts.setupWizardinfo import get_setupWizardinfo
 from scripts.artifacts.shareit import get_shareit
+from scripts.artifacts.shutdown_checkpoints import get_shutdown_checkpoints
 from scripts.artifacts.siminfo import get_siminfo
 from scripts.artifacts.skout import get_skout
 from scripts.artifacts.skype import get_skype
@@ -127,6 +135,7 @@ from scripts.artifacts.Viber import get_Viber
 from scripts.artifacts.vlcMedia import get_vlcMedia
 from scripts.artifacts.vlcThumbs import get_vlcThumbs
 from scripts.artifacts.walStrings import get_walStrings
+from scripts.artifacts.waze import get_waze
 from scripts.artifacts.wellbeing import get_wellbeing
 from scripts.artifacts.wellbeingURLs import get_wellbeingURLs
 from scripts.artifacts.wellbeingaccount import get_wellbeingaccount
@@ -194,6 +203,13 @@ tosearch = {
     'etc_hosts':('Etc Hosts', '*/system/etc/hosts'),
     'FacebookMessenger':('Facebook Messenger', '**/threads_db2*'),
     'factory_reset':('Wipe & Setup', '*/data/misc/bootstat/factory_reset'),
+    'firefox':('Firefox', '*/data/data/org.mozilla.firefox/files/places.sqlite*'),
+    'firefoxCookies':('Firefox', '*/data/data/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*'),
+    'firefoxDownloads':('Firefox', '*/data/data/org.mozilla.firefox/databases/mozac_downloads_database*'),
+    'firefoxFormHistory':('Firefox', '*/data/data/org.mozilla.firefox/files/mozilla/*.default/formhistory.sqlite*'),
+    'firefoxPermissions':('Firefox', '*/data/data/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*'),
+    'firefoxRecentlyClosedTabs':('Firefox', '*/data/data/org.mozilla.firefox/databases/recently_closed_tabs*'),
+    'firefoxTopSites':('Firefox', '*/data/data/org.mozilla.firefox/databases/top_sites*'),
     'fitbitExercise':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/exercise_db*'),
     'fitbitSleep':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/sleep*'),
     'fitbitSocial':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/social_db*'),
@@ -222,7 +238,7 @@ tosearch = {
     'mewe': ('MeWe', ('**/com.mewe/databases/app_database', '**/com.mewe/shared_prefs/SGSession.xml')),
     'package_info': ('Installed Apps', '*/system/packages.xml'),
     'packageGplinks': ('Installed Apps', '*/system/packages.list'),
-    'powerOffReset': ('Power Off Reset', ('*/data/log/power_off_reset_reason.txt','*/data/log/power_off_reset_reason_backup.txt')),
+    'powerOffReset': ('Power Events', ('*/data/log/power_off_reset_reason.txt','*/data/log/power_off_reset_reason_backup.txt')),
     'quicksearch':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
     'quicksearch_recent':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/files/recently/*'),
     'recentactivity':('Recent Activity', '*/data/system_ce/*'),
@@ -233,14 +249,15 @@ tosearch = {
     'playgroundVault':('Encrypting Media Apps',('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml','*/applocker/vault/*')),
     'roles':('App Roles',('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml')),
     'runtimePerms':('Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
+    'samsungWeatherClock': ('Samsung Weather Clock', '*/com.sec.android.daemonapp/databases/WeatherClock*'),
     'scontextLog':('App Interaction', '*/com.samsung.android.providers.context/databases/ContextLog.db'),
     'settingsSecure':('Device Info', '*/system/users/*/settings_secure.xml'),
     'setupWizardinfo': ('Wipe & Setup', '*/data/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml'),
     'shareit':('File Transfer', '*/com.lenovo.anyshare.gps/databases/history.db*'),
+    'shutdown_checkpoints':('Power Events', '**/data/system/shutdown-checkpoints/*'),
     'siminfo':('Device Info', '*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
     'skout':('Skout', '*/data/com.skout.android/databases/skoutDatabase*'),
     'skype': ('Skype', '**/com.skype.raider/databases/live*'),
-    'samsungWeatherClock': ('Samsung Weather Clock', '*/com.sec.android.daemonapp/databases/WeatherClock*'),
     'smanagerCrash':('App Interaction', '*/com.samsung.android.sm/databases/sm.db'),
     'smanagerLow':('App Interaction', '*/com.samsung.android.sm/databases/lowpowercontext-system-db'),
     'smembersAppInv':('App Interaction', '*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
@@ -269,6 +286,7 @@ tosearch = {
     'vlcMedia': ('VLC', '*vlc_media.db*'),
     'vlcThumbs': ('VLC', '*/org.videolan.vlc/files/medialib/*.jpg'),
     'walStrings':('SQLite Journaling', ('**/*-wal', '**/*-journal')),
+    'waze':('Waze', '**/com.waze/user.db*'),
     'wellbeing': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'),
     'wellbeingURLs': ('Wellbeing', '**/com.google.android.apps.wellbeing/databases/app_usage*'), # Get app_usage & app_usage-wal
     'wellbeingaccount': ('Wellbeing', '**/com.google.android.apps.wellbeing/files/AccountData.pb'),

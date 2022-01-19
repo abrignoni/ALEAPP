@@ -22,7 +22,6 @@ def timestampcalc(timevalue):
     return timestamp
 
 def get_discreteNative(files_found, report_folder, seeker, wrap_text):
-    
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
