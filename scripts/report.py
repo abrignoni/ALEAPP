@@ -28,6 +28,7 @@ def get_icon_name(category, artifact):
     elif category == 'GOOGLE MAPS VOICE GUIDANCE': icon = 'map'
     elif category == 'GMAIL': icon = 'at-sign'
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
+    elif category == 'PRIVACY DASHBOARD': icon = 'eye'
     elif category == 'BASH HISTORY':    icon = 'terminal'
     elif category == 'SETTINGS SERVICES':    
         if artifact.find('BATTERY') >=0:    icon = 'battery-charging'
