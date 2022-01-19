@@ -13,20 +13,9 @@ from pathlib import Path
 from os.path import isfile, join, basename, dirname, getsize, abspath
 from pathlib import Path
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, media_to_html
 
 def get_playgroundVault(files_found, report_folder, seeker, wrap_text):
-    
-    def media(fileinreportfolder):
-        mimetype = magic.from_file(fileinreportfolder, mime = True)
-        if 'video' in mimetype:
-            thumb = f'<video width="320" height="240" controls="controls"><source src="{fileinreportfolder}" type="video/mp4">Your browser does not support the video tag.</video>'
-        elif 'image' in mimetype:
-            thumb = f'<img src="{fileinreportfolder}"width="300"></img>'
-        else:
-            thumb = f'<a href="{fileinreportfolder}"> Link to {mimetype} </>'
-        
-        return thumb
     
     data_list = []
     
@@ -77,7 +66,10 @@ def get_playgroundVault(files_found, report_folder, seeker, wrap_text):
                 decryptedFile.write(decryptedData)
                 decryptedFile.close()
                 
-                thumb = media(join(report_folder, basename(file_found)))
+                tolink = []
+                pathdec = join(report_folder, basename(file_found))
+                tolink.append(pathdec)
+                thumb = media_to_html(pathdec, tolink, report_folder)
                 filename = basename(file_found)
                 
                 if 'EIF' in filename:

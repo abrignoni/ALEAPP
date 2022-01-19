@@ -243,7 +243,19 @@ def timeline(report_folder, tlactivity, data_list, data_headers):
     db.commit()
     db.close()
     
-def media_to_html(media_path, files_found, report_folder):
+def media_to_html(media_path, files_found, report_folder): 
+    """
+    Show selected media files in the HTML report with proper relative pathing.
+
+    Provide the media file unique path or identifier, search for it in the list of paths for the artifact.
+    Place the responsive files in the folder for the artifact and generate realative paths for them in the report.
+
+    :param str media_path: Can be a path or a string that is unique to selected to be shown image.
+    :param list files_found: Paths that are a result of the regex executed when the artifact script is called.
+    :param str report_folder: Folder within the report stucture that is automatically named as the artifact.
+    :return: The relative path to the file in the report folder with proper HTML tags applied.
+    :rtype: str
+    """
     
     def relative_paths(source, splitter):
         splitted_a = source.split(splitter)
