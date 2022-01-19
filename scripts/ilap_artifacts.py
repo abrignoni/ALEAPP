@@ -44,6 +44,7 @@ from scripts.artifacts.chromeWebsearch import get_chromeWebsearch
 from scripts.artifacts.clipBoard import get_clipBoard
 from scripts.artifacts.cmh import get_cmh
 from scripts.artifacts.contacts import get_contacts
+from scripts.artifacts.discreteNative import get_discreteNative
 from scripts.artifacts.DocList import get_DocList
 from scripts.artifacts.emulatedSmeta import get_emulatedSmeta
 from scripts.artifacts.errp import get_errp
@@ -186,6 +187,7 @@ tosearch = {
     'clipBoard':('Clipboard', '*/data/*clipboard/*/*'),
     'cmh':('Samsung_CMH', '**/cmh.db'),
     'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
+    'discreteNative':('Privacy Dashboard',('*/data/system/appops/discrete/*')),
     'DocList':('Google Drive', '*/data/data/com.google.android.apps.docs/databases/DocList.db*'),
     'emulatedSmeta':('Emulated Storage Metadata', '*/data/data/com.google.android.providers.media.module/databases/external.db*'),
     'errp':('Wipe & Setup', '*/data/system/users/service/eRR.p'),
