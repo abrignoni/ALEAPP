@@ -52,6 +52,10 @@ from scripts.artifacts.FacebookMessenger import get_FacebookMessenger
 from scripts.artifacts.factory_reset import get_factory_reset
 from scripts.artifacts.firefox import get_firefox
 from scripts.artifacts.firefoxCookies import get_firefoxCookies
+from scripts.artifacts.firefoxDownloads import get_firefoxDownloads
+from scripts.artifacts.firefoxFormHistory import get_firefoxFormHistory
+from scripts.artifacts.firefoxRecentlyClosedTabs import get_firefoxRecentlyClosedTabs
+from scripts.artifacts.firefoxPermissions import get_firefoxPermissions
 from scripts.artifacts.firefoxTopSites import get_firefoxTopSites
 from scripts.artifacts.fitbitExercise import get_fitbitExercise
 from scripts.artifacts.fitbitSleep import get_fitbitSleep
@@ -199,6 +203,10 @@ tosearch = {
     'factory_reset':('Wipe & Setup', '*/data/misc/bootstat/factory_reset'),
     'firefox':('Firefox', '*/data/data/org.mozilla.firefox/files/places.sqlite*'),
     'firefoxCookies':('Firefox', '*/data/data/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*'),
+    'firefoxDownloads':('Firefox', '*/data/data/org.mozilla.firefox/databases/mozac_downloads_database*'),
+    'firefoxFormHistory':('Firefox', '*/data/data/org.mozilla.firefox/files/mozilla/*.default/formhistory.sqlite*'),
+    'firefoxPermissions':('Firefox', '*/data/data/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*'),
+    'firefoxRecentlyClosedTabs':('Firefox', '*/data/data/org.mozilla.firefox/databases/recently_closed_tabs*'),
     'firefoxTopSites':('Firefox', '*/data/data/org.mozilla.firefox/databases/top_sites*'),
     'fitbitExercise':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/exercise_db*'),
     'fitbitSleep':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/sleep*'),
