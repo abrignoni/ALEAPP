@@ -6,7 +6,7 @@ If you want to contribute hit me up on twitter: https://twitter.com/AlexisBrigno
 Details in blog post here: https://abrignoni.blogspot.com/2020/02/aleapp-android-logs-events-and-protobuf.html  
 
 ## Requirements
-**Python 3.9 or above** (older versions of 3.x will also work with the exception of one or two modules)
+**Python 3.9.x ** (older versions of 3.x will also work with the exception of one or two modules)
 
 ### Dependencies
 
