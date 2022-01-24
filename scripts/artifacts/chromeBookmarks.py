@@ -11,10 +11,10 @@ def get_browser_name(file_name):
         return 'Brave'
     elif 'microsoft' in file_name.lower():
         return 'Edge'
-    elif 'chrome' in file_name.lower():
-        return 'Chrome'
     elif 'opera' in file_name.lower():
         return 'Opera'
+    elif 'android.chrome' in file_name.lower():
+        return 'Chrome'
     else:
         return 'Unknown'
 
@@ -53,9 +53,9 @@ def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
                                 data_list.append((dateaddconv, url, name, parent, typed))
         num_entries = len(data_list)
         if num_entries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} Bookmarks')
+            report = ArtifactHtmlReport(f'{browser_name} - Bookmarks')
             #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} Bookmarks.temphtml')
+            report_path = os.path.join(report_folder, f'{browser_name} - Bookmarks.temphtml')
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
@@ -63,10 +63,10 @@ def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'{browser_name} Bookmarks'
+            tsvname = f'{browser_name} - Bookmarks'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'{browser_name} Bookmarks'
+            tlactivity = f'{browser_name} - Bookmarks'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Browser Bookmarks data available')
+            logfunc(f'No {browser_name} - Bookmarks data available')
