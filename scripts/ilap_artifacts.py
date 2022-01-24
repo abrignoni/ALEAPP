@@ -55,12 +55,13 @@ from scripts.artifacts.firefoxFormHistory import get_firefoxFormHistory
 from scripts.artifacts.firefoxRecentlyClosedTabs import get_firefoxRecentlyClosedTabs
 from scripts.artifacts.firefoxPermissions import get_firefoxPermissions
 from scripts.artifacts.firefoxTopSites import get_firefoxTopSites
+from scripts.artifacts.fitbitActivity import get_fitbitActivity
+from scripts.artifacts.fitbitDevices import get_fitbitDevices
 from scripts.artifacts.fitbitExercise import get_fitbitExercise
+from scripts.artifacts.fitbitHeart import get_fitbitHeart
 from scripts.artifacts.fitbitSleep import get_fitbitSleep
 from scripts.artifacts.fitbitSocial import get_fitbitSocial
 from scripts.artifacts.fitbitWalk import get_fitbitWalk
-from scripts.artifacts.fitbitHeart import get_fitbitHeart
-from scripts.artifacts.fitbitActivity import get_fitbitActivity
 from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.gmail import get_gmailActive
 from scripts.artifacts.googleCallScreen import get_googleCallScreen
@@ -204,12 +205,13 @@ tosearch = {
     'firefoxPermissions':('Firefox', '*/data/data/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*'),
     'firefoxRecentlyClosedTabs':('Firefox', '*/data/data/org.mozilla.firefox/databases/recently_closed_tabs*'),
     'firefoxTopSites':('Firefox', '*/data/data/org.mozilla.firefox/databases/top_sites*'),
+    'fitbitActivity':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/activity_db*'),
+    'fitbitDevices':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/device_database*'),
     'fitbitExercise':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/exercise_db*'),
+    'fitbitHeart':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/heart_rate_db*'),
     'fitbitSleep':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/sleep*'),
     'fitbitSocial':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/social_db*'),
     'fitbitWalk':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/mobile_track_db*'),
-    'fitbitHeart':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/heart_rate_db*'),
-    'fitbitActivity':('Fitbit', '*/data/data/com.fitbit.FitbitMobile/databases/activity_db*'),
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'gmailActive':('Gmail', '**/com.google.android.gm/shared_prefs/Gmail.xml'),
     'googleCallScreen':('Google Call Screen', ('**/com.google.android.dialer/databases/callscreen_transcripts*','**/com.google.android.dialer/files/callscreenrecordings/*.*')),
@@ -226,7 +228,7 @@ tosearch = {
     'installedappsGass':('Installed Apps', ('*/data/data/com.google.android.gms/databases/gass.db*', '*/data/user/*/com.google.android.gms/databases/gass.db*' )),
     'installedappsLibrary': ('Installed Apps', '*/data/data/com.android.vending/databases/library.db'),
     'installedappsVending': ('Installed Apps', '*/data/data/com.android.vending/databases/localappstate.db'),
-    'last_boot_time': ('Wipe & Setup', '**/data/misc/bootstat/last_boot_time_utc'),
+    'last_boot_time': ('Power Events', '**/data/misc/bootstat/last_boot_time_utc'),
     'line': ('Line', '**/jp.naver.line.android/databases/**'),
     'pSettings':('Device Info', '*/data/data/com.google.android.gsf/databases/googlesettings.db*'),
     'mewe': ('MeWe', ('**/com.mewe/databases/app_database', '**/com.mewe/shared_prefs/SGSession.xml')),
