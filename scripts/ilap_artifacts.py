@@ -89,6 +89,8 @@ from scripts.artifacts.permissions import get_permissions
 from scripts.artifacts.persistentProp import get_persistentProp
 from scripts.artifacts.playgroundVault import get_playgroundVault
 from scripts.artifacts.powerOffReset import get_powerOffReset
+from scripts.artifacts.protonmailContacts import get_protonmailContacts
+from scripts.artifacts.protonmailMessages import get_protonmailMessages
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.lgRCS import get_lgRCS
 from scripts.artifacts.line import get_line
@@ -235,6 +237,8 @@ tosearch = {
     'package_info': ('Installed Apps', '*/system/packages.xml'),
     'packageGplinks': ('Installed Apps', '*/system/packages.list'),
     'powerOffReset': ('Power Events', ('*/data/log/power_off_reset_reason.txt','*/data/log/power_off_reset_reason_backup.txt')),
+    'protonmailContacts': ('ProtonMail', '*/data/data/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
+    'protonmailMessages': ('ProtonMail', '*/data/data/ch.protonmail.android/databases/*-MessagesDatabase.db*'),
     'quicksearch':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
     'quicksearch_recent':('Google Now & QuickSearch', '*/com.google.android.googlequicksearchbox/files/recently/*'),
     'recentactivity':('Recent Activity', '*/data/system_ce/*'),

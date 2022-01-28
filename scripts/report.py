@@ -107,6 +107,10 @@ def get_icon_name(category, artifact):
         if artifact.find('POWER OFF RESET'):    icon = 'power'
         elif artifact.find('LAST BOOT TIME'):          icon = 'power'
         elif artifact.find('SHUTDOWN CHECKPOINTS'):    icon = 'power'
+    elif category == 'PROTONMAIL':
+        if artifact.find('CONTACTS') >=0: icon = 'users'
+        elif artifact.find('MESSAGES') >=0: icon = 'inbox'
+        else:                           icon = 'mail'
     elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG WEATHER CLOCK':
