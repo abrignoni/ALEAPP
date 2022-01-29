@@ -94,6 +94,7 @@ def get_icon_name(category, artifact):
         if artifact.find('LOCAL TRASH') >=0:            icon = 'trash-2'
         elif artifact.find('BACKED UP FOLDER') >= 0:    icon = 'refresh-cw'
         else:                                           icon = 'image'
+    elif category == 'GOOGLE MESSAGES':     icon = 'message-circle'
     elif category == 'GOOGLE PLAY':     
         if artifact == 'GOOGLE PLAY SEARCHES':      icon = 'search'
         else:                                       icon = 'play'
