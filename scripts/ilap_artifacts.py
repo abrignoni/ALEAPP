@@ -67,6 +67,7 @@ from scripts.artifacts.gmail import get_gmailActive
 from scripts.artifacts.googleCallScreen import get_googleCallScreen
 from scripts.artifacts.googleDuo import get_googleDuo
 from scripts.artifacts.googleKeepNotes import get_googleKeepNotes
+from scripts.artifacts.googleMessages import get_googleMessages
 from scripts.artifacts.googlePhotos import get_googlePhotos
 from scripts.artifacts.googlemaplocation import get_googlemaplocation
 from scripts.artifacts.googlemapaudio import get_googlemapaudio
@@ -221,6 +222,7 @@ tosearch = {
     'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     "googlemapaudio": ('Google Maps Voice Guidance', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
+    'googleMessages': ('Google Messages', ('**/com.google.android.apps.messaging/databases/bugle_db*')),
     'googleNowPlaying':('Now Playing', ('*/data/data/com.google.intelligence.sense/db/history_db*','*/data/data/com.google.android.as/databases/history_db*')),
     'googlePhotos':('Google Photos', ('*/data/data/com.google.android.apps.photos/databases/gphotos0.db*','*/data/data/com.google.android.apps.photos/databases/disk_cache*','*/data/data/com.google.android.apps.photos/cache/glide_cache/*','*/data/data/com.google.android.apps.photos/databases/local_trash.db*','*/data/data/com.google.android.apps.photos/files/trash_files/*')),
     'googlePlaySearches':('Google Play', '*/data/data/com.android.vending/databases/suggestions.db*'),
