@@ -1,4 +1,4 @@
-aleapp_version = '2.0.04'
+aleapp_version = '2.0.05'
 
 # Contributors List
 # Format = [ Name, Blog-url, Twitter-handle, Github-url]

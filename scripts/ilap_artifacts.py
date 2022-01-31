@@ -95,6 +95,7 @@ from scripts.artifacts.protonmailMessages import get_protonmailMessages
 from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.lgRCS import get_lgRCS
 from scripts.artifacts.line import get_line
+from scripts.artifacts.mega import get_mega
 from scripts.artifacts.Oruxmaps import get_Oruxmaps
 from scripts.artifacts.roles import get_roles
 from scripts.artifacts.runtimePerms import get_runtimePerms
@@ -221,7 +222,7 @@ tosearch = {
     'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*.*')),
     'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
-    "googlemapaudio": ('Google Maps Voice Guidance', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
+    'googlemapaudio': ('Google Maps Voice Guidance', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
     'googleMessages': ('Google Messages', ('**/com.google.android.apps.messaging/databases/bugle_db*')),
     'googleNowPlaying':('Now Playing', ('*/data/data/com.google.intelligence.sense/db/history_db*','*/data/data/com.google.android.as/databases/history_db*')),
     'googlePhotos':('Google Photos', ('*/data/data/com.google.android.apps.photos/databases/gphotos0.db*','*/data/data/com.google.android.apps.photos/databases/disk_cache*','*/data/data/com.google.android.apps.photos/cache/glide_cache/*','*/data/data/com.google.android.apps.photos/databases/local_trash.db*','*/data/data/com.google.android.apps.photos/files/trash_files/*')),
@@ -235,6 +236,7 @@ tosearch = {
     'last_boot_time': ('Power Events', '**/data/misc/bootstat/last_boot_time_utc'),
     'line': ('Line', '**/jp.naver.line.android/databases/**'),
     'pSettings':('Device Info', '*/data/data/com.google.android.gsf/databases/googlesettings.db*'),
+    'mega':('MEGA', '*/data/data/mega.privacy.android.app/karere-*.db*'),
     'mewe': ('MeWe', ('**/com.mewe/databases/app_database', '**/com.mewe/shared_prefs/SGSession.xml')),
     'package_info': ('Installed Apps', '*/system/packages.xml'),
     'packageGplinks': ('Installed Apps', '*/system/packages.list'),
