@@ -65,7 +65,9 @@ from scripts.artifacts.fitbitWalk import get_fitbitWalk
 from scripts.artifacts.gboard import get_gboardCache
 from scripts.artifacts.gmail import get_gmailActive
 from scripts.artifacts.googleCallScreen import get_googleCallScreen
+from scripts.artifacts.googleChat import get_googleChat
 from scripts.artifacts.googleDuo import get_googleDuo
+from scripts.artifacts.googleFitGMS import get_googleFitGMS
 from scripts.artifacts.googleKeepNotes import get_googleKeepNotes
 from scripts.artifacts.googleMessages import get_googleMessages
 from scripts.artifacts.googlePhotos import get_googlePhotos
@@ -218,7 +220,9 @@ tosearch = {
     'gboardCache':('Gboard Keyboard', '**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
     'gmailActive':('Gmail', '**/com.google.android.gm/shared_prefs/Gmail.xml'),
     'googleCallScreen':('Google Call Screen', ('**/com.google.android.dialer/databases/callscreen_transcripts*','**/com.google.android.dialer/files/callscreenrecordings/*.*')),
+    'googleChat':('Google Chat', ('**/com.google.android.gm/databases/user_accounts/*/dynamite*.db','**/com.google.android.apps.dynamite/databases/dynamite*.db')),
     'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*.*')),
+    'googleFitGMS': ('Google Fit (GMS)', ('*/data/data/com.google.android.gms/databases/fitness.db.*')),
     'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     "googlemapaudio": ('Google Maps Voice Guidance', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
