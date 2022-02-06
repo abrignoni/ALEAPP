@@ -22,9 +22,6 @@ def get_icon_name(category, artifact):
         else:                           icon = 'user'
     elif category == 'ADB HOSTS':       icon = 'terminal'
     elif category == 'AIRTAGS':       icon = 'map-pin'
-    elif category == 'BURNER':
-        if artifact.find('NUMBER INFORMATION') >= 0:         icon = 'user'
-        elif artifact.find('COMMUNICATION INFORMATION') >= 0:           icon = 'message-circle'
     elif category == 'CALCULATOR LOCKER':       icon = 'lock'
     elif category == 'PLAYGROUND VAULT':       icon = 'lock'
     elif category == 'ENCRYPTING MEDIA APPS':       icon = 'lock'

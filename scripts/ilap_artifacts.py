@@ -22,7 +22,6 @@ from scripts.artifacts.battery_usage_v4 import get_battery_usage_v4
 from scripts.artifacts.bluetoothConnections import get_bluetoothConnections
 from scripts.artifacts.browserlocation import get_browserlocation
 from scripts.artifacts.build import get_build
-from scripts.artifacts.burner import get_burner
 from scripts.artifacts.cachelocation import get_cachelocation
 from scripts.artifacts.calllog import get_calllog
 from scripts.artifacts.calllogs import get_calllogs
@@ -178,7 +177,6 @@ tosearch = {
     'battery_usage_v4':('Settings Services', '**/com.google.android.settings.intelligence/databases/battery-usage-db-v4*'),
     'bluetoothConnections':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
     'browserlocation': ('GEO Location', ('**/com.android.browser/app_geolocation/CachedGeoposition.db')),
-    'burner': ('Burner', ('**/com.adhoclabs.burner/databases/burners.db')),
     'cachelocation': ('GEO Location', ('**/com.google.android.location/files/cache.cell/cache.cell', '**/com.google.android.location/files/cache.wifi/cache.wifi')),
     'calllog': ('Call Logs', '*/data/com.android.providers.contacts/databases/calllog.db'),
     'calllogs':('Call Logs', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
