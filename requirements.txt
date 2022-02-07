@@ -11,4 +11,4 @@ wheel
 xmltodict
 filetype==1.0.8
 python-magic-bin==0.4.14
-
+pillow
