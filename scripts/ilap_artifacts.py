@@ -79,6 +79,7 @@ from scripts.artifacts.googlePlaySearches import get_googlePlaySearches
 from scripts.artifacts.googleQuickSearchbox import get_quicksearch
 from scripts.artifacts.googleQuickSearchboxRecent import get_quicksearch_recent
 from scripts.artifacts.googleTasks import get_googleTasks
+from scripts.artifacts.groupMe import get_groupMe
 from scripts.artifacts.HideX import get_HideX
 from scripts.artifacts.imo import get_imo
 from scripts.artifacts.installedappsGass import get_installedappsGass
@@ -234,6 +235,7 @@ tosearch = {
     'googlePhotos':('Google Photos', ('*/data/data/com.google.android.apps.photos/databases/gphotos0.db*','*/data/data/com.google.android.apps.photos/databases/disk_cache*','*/data/data/com.google.android.apps.photos/cache/glide_cache/*','*/data/data/com.google.android.apps.photos/databases/local_trash.db*','*/data/data/com.google.android.apps.photos/files/trash_files/*')),
     'googlePlaySearches':('Google Play', '*/data/data/com.android.vending/databases/suggestions.db*'),
     'googleTasks':('Google Tasks', '*/com.google.android.apps.tasks/files/tasks-*/data.db'),
+    'groupMe':('GroupMe','**/com.groupme.android/databases/groupme.db'),
     'HideX':('HideX', '*/com.flatfish.cal.privacy/databases/hidex.db*'),
     'imo':('IMO', ('**/com.imo.android.imous/databases/*.db*')),
     'installedappsGass':('Installed Apps', ('*/data/data/com.google.android.gms/databases/gass.db*', '*/data/user/*/com.google.android.gms/databases/gass.db*' )),
