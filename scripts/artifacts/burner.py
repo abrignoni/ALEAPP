@@ -81,7 +81,7 @@ def get_burner(files_found, report_folder, seeker, wrap_text):
         FROM
         messages
         JOIN contacts ON contacts.phone_number=messages.contact_phone_number
-        ORDER BY "Group Created Time (UTC)" ASC
+        ORDER BY "Communication Time" ASC
         ''')
 
         all_rows = cursor.fetchall()

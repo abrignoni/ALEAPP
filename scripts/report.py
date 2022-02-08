@@ -106,6 +106,9 @@ def get_icon_name(category, artifact):
         if artifact == 'GOOGLE PLAY SEARCHES':      icon = 'search'
         else:                                       icon = 'play'
     elif category == 'GOOGLE TASKS':     icon = 'list'
+    elif category == 'GROUPME':
+        if artifact.find('GROUP INFORMATION') >= 0:         icon = 'users'
+        elif artifact.find('CHAT INFORMATION') >= 0:           icon = 'message-circle'
     elif category == 'HIDEX': icon = 'eye-off'
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'MEDIA METADATA':  icon = 'file-plus'
