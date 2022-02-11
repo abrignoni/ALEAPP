@@ -2,7 +2,7 @@ bcrypt==3.2.0
 beautifulsoup4==4.8.2
 blackboxprotobuf
 packaging==20.1
-protobuf==3.10.0
+protobuf==3.15.0
 PyCryptodome
 PySimpleGUI==4.16.0
 simplekml
