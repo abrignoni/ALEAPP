@@ -12,13 +12,13 @@ def get_vaulty_files(files_found, report_folder, seeker, wrap_text):
     db_filepath = str(files_found[0])
     conn = sqlite3.connect(db_filepath)
     c = conn.cursor()
-    sql = """SELECT _id, datetime(Media.datetaken / 1000, 'unixepoch'), datetime(Media.date_modified / 1000, 'unixepoch'), path, _data FROM Media"""
+    sql = """SELECT Media._id, datetime(Media.datetaken / 1000, 'unixepoch'), datetime(Media.date_added, 'unixepoch'), datetime(Media.date_modified / 1000, 'unixepoch'), Media.path, Media._data, Media.latitude, Media.longitude FROM Media"""
     c.execute(sql)
     results = c.fetchall()
     conn.close()
 
     # Data results
-    data_headers = ('ID', 'Created', 'Added to Vault', 'Original Filepath', 'Vault Filepath')
+    data_headers = ('ID', 'Date Taken', 'Date Added', 'Date Modified', 'Original Path', 'Vault Path', 'Latitude', 'Longitude')
     data_list = results
     
     # Reporting
