@@ -137,6 +137,8 @@ from scripts.artifacts.usageapps import get_usageapps
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.usagestatsVersion import get_usagestatsVersion
 from scripts.artifacts.userDict import get_userDict
+from scripts.artifacts.vaulty_info import get_vaulty_info
+from scripts.artifacts.vaulty_files import get_vaulty_files
 from scripts.artifacts.Viber import get_Viber
 from scripts.artifacts.vlcMedia import get_vlcMedia
 from scripts.artifacts.vlcThumbs import get_vlcThumbs
@@ -294,6 +296,8 @@ tosearch = {
     'usagestats':('Usage Stats', ('*/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'usagestatsVersion':('Usage Stats', ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version')),
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),
+    'vaulty_info': ('Vaulty', '**/data/data/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml'),
+    'vaulty_files': ('Vaulty', '**/data/data/com.theronrogers.vaultyfree/databases/media.db'),
     'Viber':('Viber', '**/com.viber.voip/databases/*'),
     'vlcMedia': ('VLC', '*vlc_media.db*'),
     'vlcThumbs': ('VLC', '*/org.videolan.vlc/files/medialib/*.jpg'),
