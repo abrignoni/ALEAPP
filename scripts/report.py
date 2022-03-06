@@ -43,6 +43,7 @@ def get_icon_name(category, artifact):
     elif category == 'CAST':            icon = 'cast'
     elif category == 'FITBIT':            icon = 'watch'
     elif category == 'CALL LOGS':       icon = 'phone'
+    elif category == 'IMAGE MANAGER CACHE':       icon = 'image'
     elif category == 'CLIPBOARD':        icon = 'clipboard'
     elif category == 'CASH APP':        icon = 'credit-card'
     elif category == 'CHATS':           icon = 'message-circle'
