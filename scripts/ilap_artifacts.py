@@ -81,6 +81,7 @@ from scripts.artifacts.googleQuickSearchboxRecent import get_quicksearch_recent
 from scripts.artifacts.googleTasks import get_googleTasks
 from scripts.artifacts.groupMe import get_groupMe
 from scripts.artifacts.HideX import get_HideX
+from scripts.artifacts.imagemngCache import get_imagemngCache
 from scripts.artifacts.imo import get_imo
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
@@ -237,6 +238,7 @@ tosearch = {
     'googleTasks':('Google Tasks', '*/com.google.android.apps.tasks/files/tasks-*/data.db'),
     'groupMe':('GroupMe','**/com.groupme.android/databases/groupme.db'),
     'HideX':('HideX', '*/com.flatfish.cal.privacy/databases/hidex.db*'),
+    'imagemngCache':('Image Manager Cache', ('*/data/data/*/cache/image_manager_disk_cache/*.*')),
     'imo':('IMO', ('**/com.imo.android.imous/databases/*.db*')),
     'installedappsGass':('Installed Apps', ('*/data/data/com.google.android.gms/databases/gass.db*', '*/data/user/*/com.google.android.gms/databases/gass.db*' )),
     'installedappsLibrary': ('Installed Apps', '*/data/data/com.android.vending/databases/library.db'),
