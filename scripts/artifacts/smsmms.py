@@ -4,7 +4,7 @@ import sqlite3
 
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import does_column_exist_in_db, logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist
 
 # Reference for flag values for mms:
 # ---------------------------------- 
@@ -47,12 +47,40 @@ sms_query =\
         read,
         CASE WHEN type=1 THEN "Received"
              WHEN type=2 THEN "Sent"
+             WHEN type=3 THEN "Draft"
+             WHEN type=4 THEN "Outbox"
+             WHEN type=5 THEN "Failed"
+             WHEN type=6 THEN "Queued"
              ELSE type 
         END as type,
         body, service_center, error_code
     FROM sms
     ORDER BY date
 '''
+
+samsung_blocked_sms_query =\
+'''
+    SELECT _id as msg_id, thread_id, address, person, 
+        CASE WHEN date>0 THEN datetime(date/1000, 'UNIXEPOCH')
+             ELSE ""
+        END as date,
+        CASE WHEN date_sent>0 THEN datetime(date_sent/1000, 'UNIXEPOCH')
+             ELSE ""
+        END as date_sent,
+        read,
+        CASE WHEN type=1 THEN "Received"
+             WHEN type=2 THEN "Sent"
+             WHEN type=3 THEN "Draft"
+             WHEN type=4 THEN "Outbox"
+             WHEN type=5 THEN "Failed"
+             WHEN type=6 THEN "Queued"
+             ELSE type 
+        END as type,
+        body, service_center, error_code
+    FROM spam_sms
+    ORDER BY date
+'''
+
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
 
@@ -81,6 +109,7 @@ def get_sms_mms(files_found, report_folder, seeker, wrap_text):
             return
         
 def read_sms_messages(db, report_folder, file_found, seeker, wrap_text):
+    samsung_spam_table_exists = does_table_exist(db, 'spam_sms')
     cursor = db.cursor()
     cursor.execute(sms_query)
     all_rows = cursor.fetchall()
@@ -101,6 +130,21 @@ def read_sms_messages(db, report_folder, file_found, seeker, wrap_text):
                 data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
                     row['person'],row['date_sent'], row['read'],
                     row['type'], row['body'], row['service_center'], row['error_code']))
+
+        if samsung_spam_table_exists:
+            cursor.execute(samsung_blocked_sms_query)
+            all_rows = cursor.fetchall()
+            entries = len(all_rows)
+            if entries > 0:
+                for row in all_rows:
+                    if wrap_text:
+                        data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
+                            row['person'],row['date_sent'], row['read'],
+                            row['type'], row['body'].replace("\n",""), row['service_center'], row['error_code']))
+                    else:
+                        data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
+                            row['person'],row['date_sent'], row['read'],
+                            row['type'], row['body'], row['service_center'], row['error_code']))                          
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
