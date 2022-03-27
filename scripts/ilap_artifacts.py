@@ -29,6 +29,10 @@ from scripts.artifacts.calllogs import get_calllogs
 from scripts.artifacts.Cast import get_Cast
 from scripts.artifacts.cashApp import get_cashApp
 from scripts.artifacts.Cello import get_Cello
+from scripts.artifacts.ChessComAccount import get_ChessComAccount
+from scripts.artifacts.ChessComFriends import get_ChessComFriends
+from scripts.artifacts.ChessComMessages import get_ChessComMessages
+from scripts.artifacts.ChessComGames import get_ChessComGames
 from scripts.artifacts.ChessWithFriends import get_ChessWithFriends
 from scripts.artifacts.chrome import get_chrome
 from scripts.artifacts.chromeAutofill import get_chromeAutofill
@@ -190,6 +194,10 @@ tosearch = {
     'cashApp':('Cash App', '*/data/data/com.squareup.cash/databases/cash_money.db*'),
     'Cast':('Cast', '*/com.google.android.gms/databases/cast.db'),
     'Cello': ('Google Drive', ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*')),
+    'ChessComAccount':('Chess.com', ('*/data/data/com.chess/shared_prefs/com.chess.app.login_credentials.xml', '*/data/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml')),
+    'ChessComFriends':('Chess.com', ('*/data/data/com.chess/databases/chess-database*')),
+    'ChessComMessages':('Chess.com', ('*/data/data/com.chess/databases/chess-database*')),
+    'ChessComGames':('Chess.com', ('*/data/data/com.chess/databases/chess-database*', '*/data/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml')),
     'ChessWithFriends':('Chats', ('*/data/data/com.zynga.chess.googleplay/databases/wf_database.sqlite', '*/data/data/com.zynga.chess.googleplay/db/wf_database.sqlite')),
     'chrome':('Chromium', ('*/data/data/*/app_chrome/Default/History*', '*/data/data/*/app_sbrowser/Default/History*', '*/data/data/*/app_opera/History*')),
     'chromeAutofill':('Chromium', ('*/data/data/*/app_chrome/Default/Web Data*', '*/data/data/*/app_sbrowser/Default/Web Data*', '*/data/data/*/app_opera/Web Data*')),
