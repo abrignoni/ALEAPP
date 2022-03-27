@@ -4,7 +4,7 @@ import sqlite3
 
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import does_column_exist_in_db, logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist, does_column_exist_in_db
 
 # Reference for flag values for mms:
 # ---------------------------------- 
@@ -51,35 +51,33 @@ sms_query =\
              WHEN type=4 THEN "Outbox"
              WHEN type=5 THEN "Failed"
              WHEN type=6 THEN "Queued"
+             {extendedType}
              ELSE type 
         END as type,
         body, service_center, error_code
-    FROM sms
+    FROM {smsTableName}
     ORDER BY date
 '''
 
-samsung_blocked_sms_query =\
+lgElectronicsExtendedTypes =\
 '''
-    SELECT _id as msg_id, thread_id, address, person, 
-        CASE WHEN date>0 THEN datetime(date/1000, 'UNIXEPOCH')
-             ELSE ""
-        END as date,
-        CASE WHEN date_sent>0 THEN datetime(date_sent/1000, 'UNIXEPOCH')
-             ELSE ""
-        END as date_sent,
-        read,
-        CASE WHEN type=1 THEN "Received"
-             WHEN type=2 THEN "Sent"
-             WHEN type=3 THEN "Draft"
-             WHEN type=4 THEN "Outbox"
-             WHEN type=5 THEN "Failed"
-             WHEN type=6 THEN "Queued"
-             ELSE type 
-        END as type,
-        body, service_center, error_code
-    FROM spam_sms
-    ORDER BY date
+             WHEN type=7 THEN "Blocked Number"
+             WHEN type=8 THEN "Scheduled Send"
+             WHEN type=19 THEN "Broadcast Alert"
 '''
+
+def GetSmsQueryForTable(tableName, extendedTypes = ''):
+    return sms_query.format(smsTableName = tableName, extendedType = extendedTypes)
+
+def AppendSmsRowToDataList(data_list, row, wrap_text):
+    if wrap_text:
+        data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
+            row['person'],row['date_sent'], row['read'],
+            row['type'], row['body'].replace("\n",""), row['service_center'], row['error_code']))        
+    else:
+        data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
+            row['person'],row['date_sent'], row['read'],
+            row['type'], row['body'], row['service_center'], row['error_code']))
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -109,9 +107,15 @@ def get_sms_mms(files_found, report_folder, seeker, wrap_text):
             return
         
 def read_sms_messages(db, report_folder, file_found, seeker, wrap_text):
-    samsung_spam_table_exists = does_table_exist(db, 'spam_sms')
+    samsung_spam_sms_table_exists = does_table_exist(db, 'spam_sms')
+    lg_electronics_device_data = does_column_exist_in_db(db, 'sms', 'lgeSiid')
     cursor = db.cursor()
-    cursor.execute(sms_query)
+
+    if not lg_electronics_device_data:
+        cursor.execute(GetSmsQueryForTable('sms'))
+    else:
+        cursor.execute(GetSmsQueryForTable('sms', lgElectronicsExtendedTypes))
+
     all_rows = cursor.fetchall()
     entries = len(all_rows)
     if entries > 0:
@@ -122,29 +126,15 @@ def read_sms_messages(db, report_folder, file_found, seeker, wrap_text):
             'Date sent', 'Read', 'Type', 'Body', 'Service Center', 'Error code')
         data_list = []
         for row in all_rows:
-            if wrap_text:
-                data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
-                    row['person'],row['date_sent'], row['read'],
-                    row['type'], row['body'].replace("\n",""), row['service_center'], row['error_code']))
-            else:
-                data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
-                    row['person'],row['date_sent'], row['read'],
-                    row['type'], row['body'], row['service_center'], row['error_code']))
-
-        if samsung_spam_table_exists:
-            cursor.execute(samsung_blocked_sms_query)
+            AppendSmsRowToDataList(data_list, row, wrap_text)
+            
+        if samsung_spam_sms_table_exists:
+            cursor.execute(GetSmsQueryForTable('spam_sms'))
             all_rows = cursor.fetchall()
             entries = len(all_rows)
             if entries > 0:
                 for row in all_rows:
-                    if wrap_text:
-                        data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
-                            row['person'],row['date_sent'], row['read'],
-                            row['type'], row['body'].replace("\n",""), row['service_center'], row['error_code']))
-                    else:
-                        data_list.append((row['date'],row['msg_id'], row['thread_id'], row['address'],
-                            row['person'],row['date_sent'], row['read'],
-                            row['type'], row['body'], row['service_center'], row['error_code']))                          
+                    AppendSmsRowToDataList(data_list, row, wrap_text)
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
