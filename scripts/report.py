@@ -268,6 +268,10 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     shutil.copy2(os.path.join(__location__,"dark-mode.css"), elements_folder)
     shutil.copy2(os.path.join(__location__,"dark-mode-switch.js"), elements_folder)
     shutil.copytree(os.path.join(__location__,"MDB-Free_4.13.0"), os.path.join(elements_folder, 'MDB-Free_4.13.0'))
+    
+    #Copies custom.css & sidebard.js files to local directory
+    shutil.copyfile(os.path.join(__location__, "custom.css"), os.path.join(elements_folder, "custom.css"))
+    shutil.copyfile(os.path.join(__location__, "sidebar.js"), os.path.join(elements_folder, "sidebar.js"))
 
 def get_file_content(path):
     f = open(path, 'r', encoding='utf8')
