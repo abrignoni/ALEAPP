@@ -117,6 +117,7 @@ from scripts.artifacts.shutdown_checkpoints import get_shutdown_checkpoints
 from scripts.artifacts.siminfo import get_siminfo
 from scripts.artifacts.skout import get_skout
 from scripts.artifacts.skype import get_skype
+from scripts.artifacts.slopes import get_slopes
 from scripts.artifacts.smanagerCrash import get_smanagerCrash
 from scripts.artifacts.smanagerLow import get_smanagerLow
 from scripts.artifacts.smembersAppInv import get_smembersAppInv
@@ -280,6 +281,7 @@ tosearch = {
     'shareit':('File Transfer', '*/com.lenovo.anyshare.gps/databases/history.db*'),
     'shutdown_checkpoints':('Power Events', '**/data/system/shutdown-checkpoints/*'),
     'siminfo':('Device Info', '*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
+    'slopes':('Slopes', '*/data/com.consumedbycode.slopes/databases/slopes.db*'),
     'skout':('Skout', '*/data/com.skout.android/databases/skoutDatabase*'),
     'skype': ('Skype', '**/com.skype.raider/databases/live*'),
     'smanagerCrash':('App Interaction', '*/com.samsung.android.sm/databases/sm.db'),
