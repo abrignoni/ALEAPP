@@ -239,7 +239,7 @@ tosearch = {
     'googleChat':('Google Chat', ('**/com.google.android.gm/databases/user_accounts/*/dynamite*.db','**/com.google.android.apps.dynamite/databases/dynamite*.db')),
     'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*.*')),
     'googleFitGMS': ('Google Fit (GMS)', ('*/data/data/com.google.android.gms/databases/fitness.db.*')),
-    'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
+    'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db*"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     'googlemapaudio': ('Google Maps Voice Guidance', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
     'googleMessages': ('Google Messages', ('**/com.google.android.apps.messaging/databases/bugle_db*')),
