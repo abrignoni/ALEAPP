@@ -13,6 +13,7 @@ import filetype
 from itertools import permutations
 from pathlib import Path
 import json
+import datetime
 
 ### Import ALEAPP Modules
 from scripts.artifact_report import ArtifactHtmlReport
@@ -297,7 +298,7 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
                 if append == '':
                     if basename(files) in metaDataDict:
                         origFilePath = metaDataDict[basename(files)]["Original File Path"]
-                        encryptedDate = metaDataDict[basename(files)]["Encrypted Date"]
+                        encryptedDate = datetime.datetime.fromtimestamp(int(metaDataDict[basename(files)]["Encrypted Date"]) / 1000)
                         fileSize = metaDataDict[basename(files)]["File Size"]
                     else:
                         origFilePath, encryptedDate, fileSize = "No Data"
