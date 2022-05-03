@@ -16,7 +16,8 @@ from scripts.artifacts.appLockerfishingnet import get_appLockerfishingnet
 from scripts.artifacts.appLockerfishingnetpat import get_appLockerfishingnetpat
 from scripts.artifacts.appLockerfishingnetdb import get_appLockerfishingnetdb
 from scripts.artifacts.appops import get_appops
-from scripts.artifacts.appopSetupWiz import get_appopSetupWiz 
+from scripts.artifacts.appopSetupWiz import get_appopSetupWiz
+from scripts.artifacts.AVG import get_AVG 
 from scripts.artifacts.BashHistory import get_BashHistory
 from scripts.artifacts.battery_usage_v4 import get_battery_usage_v4
 from scripts.artifacts.bluetoothConnections import get_bluetoothConnections
@@ -183,6 +184,8 @@ tosearch = {
     'appLockerfishingnetdb': ('Encrypting Media Apps',('*/.privacy_safe/db/privacy_safe.db')),
     'appops': ('Permissions', '*/data/system/appops.xml'),
     'appopSetupWiz': ('Wipe & Setup', '*/data/system/appops.xml'),
+    'AVG': ('Encrypting Media Apps',('*/data/data/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*')),
+    'playgroundVault':('Encrypting Media Apps',('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml','*/applocker/vault/*')),
     'BashHistory':('Bash History', '**/.bash_history'),
     'battery_usage_v4':('Settings Services', '**/com.google.android.settings.intelligence/databases/battery-usage-db-v4*'),
     'bluetoothConnections':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
