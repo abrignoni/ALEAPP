@@ -118,6 +118,7 @@ from scripts.artifacts.shutdown_checkpoints import get_shutdown_checkpoints
 from scripts.artifacts.siminfo import get_siminfo
 from scripts.artifacts.skout import get_skout
 from scripts.artifacts.skype import get_skype
+from scripts.artifacts.slopes import get_slopes
 from scripts.artifacts.smanagerCrash import get_smanagerCrash
 from scripts.artifacts.smanagerLow import get_smanagerLow
 from scripts.artifacts.smembersAppInv import get_smembersAppInv
@@ -241,7 +242,7 @@ tosearch = {
     'googleChat':('Google Chat', ('**/com.google.android.gm/databases/user_accounts/*/dynamite*.db','**/com.google.android.apps.dynamite/databases/dynamite*.db')),
     'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*.*')),
     'googleFitGMS': ('Google Fit (GMS)', ('*/data/data/com.google.android.gms/databases/fitness.db.*')),
-    'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
+    'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db*"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     'googlemapaudio': ('Google Maps Voice Guidance', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
     'googleMessages': ('Google Messages', ('**/com.google.android.apps.messaging/databases/bugle_db*')),
@@ -283,6 +284,7 @@ tosearch = {
     'shareit':('File Transfer', '*/com.lenovo.anyshare.gps/databases/history.db*'),
     'shutdown_checkpoints':('Power Events', '**/data/system/shutdown-checkpoints/*'),
     'siminfo':('Device Info', '*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
+    'slopes':('Slopes', '*/data/com.consumedbycode.slopes/databases/slopes.db*'),
     'skout':('Skout', '*/data/com.skout.android/databases/skoutDatabase*'),
     'skype': ('Skype', '**/com.skype.raider/databases/live*'),
     'smanagerCrash':('App Interaction', '*/com.samsung.android.sm/databases/sm.db'),

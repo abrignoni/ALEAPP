@@ -132,6 +132,10 @@ def get_icon_name(category, artifact):
         else:                                          icon = 'sun'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
+    elif category == 'SLOPES':
+        if artifact == 'SLOPES - ACTIONS': icon = 'trending-down'
+        if artifact == 'SLOPES - LIFT DETAILS': icon = 'shuffle'
+        if artifact == 'SLOPES - RESORT DETAILS': icon = 'home'
     elif category == 'SKOUT':
         if artifact == 'SKOUT MESSAGES':  icon = 'message-circle'
         if artifact == 'SKOUT USERS':  icon = 'users'
