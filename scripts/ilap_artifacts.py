@@ -91,6 +91,9 @@ from scripts.artifacts.imo import get_imo
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.artifacts.installedappsVending import get_installedappsVending
+from scripts.artifacts.kijijiConversations import get_kijijiConversations
+from scripts.artifacts.kijijiLocalUserInfo import get_kijijiLocalUserInfo
+from scripts.artifacts.kijijiRecentSearches import get_kijijiRecentSearches
 from scripts.artifacts.last_boot_time import get_last_boot_time
 from scripts.artifacts.mewe import get_mewe
 from scripts.artifacts.pSettings import get_pSettings
@@ -257,6 +260,9 @@ tosearch = {
     'installedappsGass':('Installed Apps', ('*/data/data/com.google.android.gms/databases/gass.db*', '*/data/user/*/com.google.android.gms/databases/gass.db*' )),
     'installedappsLibrary': ('Installed Apps', '*/data/data/com.android.vending/databases/library.db'),
     'installedappsVending': ('Installed Apps', '*/data/data/com.android.vending/databases/localappstate.db'),
+    'kijijiConversations':('Kijiji Conversations', ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*')),
+    'kijijiLocalUserInfo':('Kijiji Local User Information', ('*/com.ebay.kijiji.ca/shared_prefs/LoginData.xml')),
+    'kijijiRecentSearches':('Kijiji Recent Searches', ('*/com.ebay.kijiji.ca/databases/searches.*')),    
     'last_boot_time': ('Power Events', '**/data/misc/bootstat/last_boot_time_utc'),
     'line': ('Line', '**/jp.naver.line.android/databases/**'),
     'pSettings':('Device Info', '*/data/data/com.google.android.gsf/databases/googlesettings.db*'),
