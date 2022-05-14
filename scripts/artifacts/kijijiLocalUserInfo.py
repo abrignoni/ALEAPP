@@ -1,6 +1,6 @@
 # Kijiji Local User Information
 # Author:  Terry Chabot (Krypterry)
-# Version: 1.0.0
+# Version: 1.0.1
 # Kijiji App Version Tested: v17.5.0b172 (2022-05-06)
 # Requirements:  None
 #
@@ -17,9 +17,10 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv
 
+userEmailXPath = "./string/[@name='UserEmailAddress']"
 loggedInUserXPath = "./string/[@name='LoggedInAsUser']"
 userDisplayNameXPath = "./string/[@name='UserDisplayName']"
-eBayUserIdXPath = "./string/[@name='userEbayId{loggedInUserPart}']"
+eBayUserIdXPath = "./string/[@name='userEbayId{userEmailAddressPlaceholder}']"
 
 def TryGetStringValue(root, xPathExpression):
     elems = root.findall(xPathExpression)
@@ -37,15 +38,16 @@ def get_kijijiLocalUserInfo(files_found, report_folder, seeker, wrap_text):
 
     document = ET.parse(file_found)
     root = document.getroot()
-    loggedInUser = TryGetStringValue(root, loggedInUserXPath)
-    userDisplayName = TryGetStringValue(root, userDisplayNameXPath)  
+    userEmailAddress = TryGetStringValue(root, userEmailXPath) # May be available when logged-in/out.
+    loggedInAsUser = TryGetStringValue(root, loggedInUserXPath)
+    userDisplayName = TryGetStringValue(root, userDisplayNameXPath)
 
     # Build a unique user XPath expression in order to obtain their eBay user Id.
-    loggedInUserId = TryGetStringValue(root, eBayUserIdXPath.format(loggedInUserPart = loggedInUser))
+    userEbayId = TryGetStringValue(root, eBayUserIdXPath.format(userEmailAddressPlaceholder = userEmailAddress))
 
-    data_headers = ('User Display Name', 'Logged In User', 'User Ebay ID')
+    data_headers = ('User Email', 'User Ebay ID', 'User Display Name', 'Logged In User',)
     data_list = []
-    data_list.append((userDisplayName, loggedInUser, loggedInUserId))
+    data_list.append((userEmailAddress, userEbayId, userDisplayName, loggedInAsUser))
 
     report.write_artifact_data_table(data_headers, data_list, file_found)
     report.end_artifact_report()
