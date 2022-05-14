@@ -1,6 +1,6 @@
 # Kijiji Conversations
 # Author:  Terry Chabot (Krypterry)
-# Version: 1.0.0
+# Version: 1.0.1
 # Kijiji App Version Tested: v17.5.0b172 (2022-05-06)
 # Requirements:  None
 #
@@ -18,8 +18,8 @@ import json
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, open_sqlite_db_readonly, does_table_exist
 
-local_user = 'Local User'
-local_user_indicator = 'ME'
+LOCAL_USER = 'Local User'
+LOCAL_USER_INDICATOR = 'ME'
 
 conversations_query = \
 '''
@@ -49,7 +49,7 @@ def get_kijijiConversations(files_found, report_folder, seeker, wrap_text):
         report.start_artifact_report(report_folder, 'Kijiji Conversations')
         report.add_script()
 
-        data_headers = ('Date Sent', 'Message ID', 'Sender ID', 'Sender Name', 'Recipient ID', 'Recipient Name', 'State', 'Message')
+        data_headers = ('Date Sent', 'Conversation ID', 'Message ID', 'Sender ID', 'Sender Name', 'Recipient ID', 'Recipient Name', 'State', 'Message')
         data_list = []
         for row in all_rows:
             # Each row is for a conversation thread, with JSON for the individual message data.
@@ -86,15 +86,15 @@ def AppendMessageRowsToDataList(data_list, conversationId, conversationPartyId, 
     messages = json.loads(messagesJson)
     for message in messages:
         # Determine sender (local user or counter party)
-        if message['sender'] == local_user_indicator:
+        if message['sender'] == LOCAL_USER_INDICATOR:
             senderId = ''
-            senderName = local_user
+            senderName = LOCAL_USER
             recipientId = conversationPartyId
             recipientName = conversationPartyName
         else:            
             senderId = conversationPartyId
             senderName = conversationPartyName
             recipientId = ''
-            recipientName = local_user
+            recipientName = LOCAL_USER
 
-        data_list.append((message['sortByDate'], message['identifier'], senderId, senderName, recipientId, recipientName, message['state'], message['text']))
+        data_list.append((message['sortByDate'], conversationId, message['identifier'], senderId, senderName, recipientId, recipientName, message['state'], message['text']))
