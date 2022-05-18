@@ -1,6 +1,6 @@
 # Kijiji Conversations
 # Author:  Terry Chabot (Krypterry)
-# Version: 1.0.1
+# Version: 1.0.2
 # Kijiji App Version Tested: v17.5.0b172 (2022-05-06)
 # Requirements:  None
 #
@@ -25,6 +25,7 @@ conversations_query = \
 '''
     SELECT
         identifier,
+        ad,
         counterParty,
         messages
     FROM conversations
@@ -49,7 +50,7 @@ def get_kijijiConversations(files_found, report_folder, seeker, wrap_text):
         report.start_artifact_report(report_folder, 'Kijiji Conversations')
         report.add_script()
 
-        data_headers = ('Date Sent', 'Conversation ID', 'Message ID', 'Sender ID', 'Sender Name', 'Recipient ID', 'Recipient Name', 'State', 'Message')
+        data_headers = ('Date Sent', 'Conversation ID', 'Ad ID', 'Ad Title', 'Message ID', 'Sender ID', 'Sender Name', 'Recipient ID', 'Recipient Name', 'State', 'Message')
         data_list = []
         for row in all_rows:
             # Each row is for a conversation thread, with JSON for the individual message data.
@@ -62,12 +63,18 @@ def get_kijijiConversations(files_found, report_folder, seeker, wrap_text):
             counterPartyName = counterPartyInfo["name"]
             messagesJson = row['messages']
 
+            advertJson = row['ad']
+            advertInfo = json.loads(advertJson)
+            advertId = advertInfo["identifier"]
+            advertTitle = advertInfo["displayTitle"]
+
             AppendMessageRowsToDataList(data_list,
                 conversationId,
+                advertId,
+                advertTitle,
                 counterPartyId,
                 counterPartyName,
-                messagesJson,
-                wrap_text)
+                messagesJson)
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
@@ -82,7 +89,13 @@ def get_kijijiConversations(files_found, report_folder, seeker, wrap_text):
 
 # Appends a row for each message sent in a unique conversation thread.
 #  Row ordinal: Date Sent, Message ID, Sender ID, Sender Name, Recipient ID, Recipient Name, State, Message
-def AppendMessageRowsToDataList(data_list, conversationId, conversationPartyId, conversationPartyName, messagesJson, wrap_text):
+def AppendMessageRowsToDataList(data_list, 
+    conversationId, 
+    advertId,
+    advertTitle,    
+    conversationPartyId,
+    conversationPartyName, 
+    messagesJson):
     messages = json.loads(messagesJson)
     for message in messages:
         # Determine sender (local user or counter party)
@@ -97,4 +110,4 @@ def AppendMessageRowsToDataList(data_list, conversationId, conversationPartyId, 
             recipientId = ''
             recipientName = LOCAL_USER
 
-        data_list.append((message['sortByDate'], conversationId, message['identifier'], senderId, senderName, recipientId, recipientName, message['state'], message['text']))
+        data_list.append((message['sortByDate'], conversationId, advertId, advertTitle, message['identifier'], senderId, senderName, recipientId, recipientName, message['state'], message['text']))
