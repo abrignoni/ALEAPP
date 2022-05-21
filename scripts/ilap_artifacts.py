@@ -16,7 +16,8 @@ from scripts.artifacts.appLockerfishingnet import get_appLockerfishingnet
 from scripts.artifacts.appLockerfishingnetpat import get_appLockerfishingnetpat
 from scripts.artifacts.appLockerfishingnetdb import get_appLockerfishingnetdb
 from scripts.artifacts.appops import get_appops
-from scripts.artifacts.appopSetupWiz import get_appopSetupWiz 
+from scripts.artifacts.appopSetupWiz import get_appopSetupWiz
+from scripts.artifacts.AVG import get_AVG 
 from scripts.artifacts.BashHistory import get_BashHistory
 from scripts.artifacts.battery_usage_v4 import get_battery_usage_v4
 from scripts.artifacts.bluetoothConnections import get_bluetoothConnections
@@ -90,6 +91,9 @@ from scripts.artifacts.imo import get_imo
 from scripts.artifacts.installedappsGass import get_installedappsGass
 from scripts.artifacts.installedappsLibrary import get_installedappsLibrary
 from scripts.artifacts.installedappsVending import get_installedappsVending
+from scripts.artifacts.kijijiConversations import get_kijijiConversations
+from scripts.artifacts.kijijiLocalUserInfo import get_kijijiLocalUserInfo
+from scripts.artifacts.kijijiRecentSearches import get_kijijiRecentSearches
 from scripts.artifacts.last_boot_time import get_last_boot_time
 from scripts.artifacts.mewe import get_mewe
 from scripts.artifacts.pSettings import get_pSettings
@@ -117,6 +121,7 @@ from scripts.artifacts.shutdown_checkpoints import get_shutdown_checkpoints
 from scripts.artifacts.siminfo import get_siminfo
 from scripts.artifacts.skout import get_skout
 from scripts.artifacts.skype import get_skype
+from scripts.artifacts.slopes import get_slopes
 from scripts.artifacts.smanagerCrash import get_smanagerCrash
 from scripts.artifacts.smanagerLow import get_smanagerLow
 from scripts.artifacts.smembersAppInv import get_smembersAppInv
@@ -183,6 +188,8 @@ tosearch = {
     'appLockerfishingnetdb': ('Encrypting Media Apps',('*/.privacy_safe/db/privacy_safe.db')),
     'appops': ('Permissions', '*/data/system/appops.xml'),
     'appopSetupWiz': ('Wipe & Setup', '*/data/system/appops.xml'),
+    'AVG': ('Encrypting Media Apps',('*/data/data/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*')),
+    'playgroundVault':('Encrypting Media Apps',('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml','*/applocker/vault/*')),
     'BashHistory':('Bash History', '**/.bash_history'),
     'battery_usage_v4':('Settings Services', '**/com.google.android.settings.intelligence/databases/battery-usage-db-v4*'),
     'bluetoothConnections':('Bluetooth Connections', '*/data/misc/bluedroid/bt_config.conf'),
@@ -238,7 +245,7 @@ tosearch = {
     'googleChat':('Google Chat', ('**/com.google.android.gm/databases/user_accounts/*/dynamite*.db','**/com.google.android.apps.dynamite/databases/dynamite*.db')),
     'googleDuo':('Google Duo', ('**/com.google.android.apps.tachyon/databases/tachyon.db*','**/com.google.android.apps.tachyon/files/media/*.*')),
     'googleFitGMS': ('Google Fit (GMS)', ('*/data/data/com.google.android.gms/databases/fitness.db.*')),
-    'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db"),
+    'googleKeepNotes':('Google Keep', "**/data/com.google.android.keep/databases/keep.db*"),
     'googlemaplocation': ('GEO Location', ('**/com.google.android.apps.maps/databases/da_destination_history*')),
     'googlemapaudio': ('Google Maps Voice Guidance', '**/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
     'googleMessages': ('Google Messages', ('**/com.google.android.apps.messaging/databases/bugle_db*')),
@@ -253,6 +260,9 @@ tosearch = {
     'installedappsGass':('Installed Apps', ('*/data/data/com.google.android.gms/databases/gass.db*', '*/data/user/*/com.google.android.gms/databases/gass.db*' )),
     'installedappsLibrary': ('Installed Apps', '*/data/data/com.android.vending/databases/library.db'),
     'installedappsVending': ('Installed Apps', '*/data/data/com.android.vending/databases/localappstate.db'),
+    'kijijiConversations':('Kijiji Conversations', ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*')),
+    'kijijiLocalUserInfo':('Kijiji Local User Information', ('*/com.ebay.kijiji.ca/shared_prefs/LoginData.xml')),
+    'kijijiRecentSearches':('Kijiji Recent Searches', ('*/com.ebay.kijiji.ca/databases/searches.*')),    
     'last_boot_time': ('Power Events', '**/data/misc/bootstat/last_boot_time_utc'),
     'line': ('Line', '**/jp.naver.line.android/databases/**'),
     'pSettings':('Device Info', '*/data/data/com.google.android.gsf/databases/googlesettings.db*'),
@@ -280,6 +290,7 @@ tosearch = {
     'shareit':('File Transfer', '*/com.lenovo.anyshare.gps/databases/history.db*'),
     'shutdown_checkpoints':('Power Events', '**/data/system/shutdown-checkpoints/*'),
     'siminfo':('Device Info', '*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
+    'slopes':('Slopes', '*/data/com.consumedbycode.slopes/databases/slopes.db*'),
     'skout':('Skout', '*/data/com.skout.android/databases/skoutDatabase*'),
     'skype': ('Skype', '**/com.skype.raider/databases/live*'),
     'smanagerCrash':('App Interaction', '*/com.samsung.android.sm/databases/sm.db'),
