@@ -109,6 +109,7 @@ from scripts.artifacts.recentactivity import get_recentactivity
 from scripts.artifacts.lgRCS import get_lgRCS
 from scripts.artifacts.line import get_line
 from scripts.artifacts.mega import get_mega
+from scripts.artifacts.mega_transfers import get_mega_transfers
 from scripts.artifacts.Oruxmaps import get_Oruxmaps
 from scripts.artifacts.roles import get_roles
 from scripts.artifacts.runtimePerms import get_runtimePerms
@@ -267,6 +268,7 @@ tosearch = {
     'line': ('Line', '**/jp.naver.line.android/databases/**'),
     'pSettings':('Device Info', '*/data/data/com.google.android.gsf/databases/googlesettings.db*'),
     'mega':('MEGA', '*/data/data/mega.privacy.android.app/karere-*.db*'),
+    'mega_transfers':('MEGA', '*/data/data/mega.privacy.android.app/databases/megapreferences'),
     'mewe': ('MeWe', ('**/com.mewe/databases/app_database', '**/com.mewe/shared_prefs/SGSession.xml')),
     'package_info': ('Installed Apps', '*/system/packages.xml'),
     'packageGplinks': ('Installed Apps', '*/system/packages.list'),
