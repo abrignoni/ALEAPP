@@ -29,6 +29,8 @@ def get_gboardCache(files_found, report_folder, seeker, wrap_text):
             read_trainingcachev2(file_found, report_folder, seeker)
         elif file_found.endswith('trainingcache2.db') or file_found.endswith('trainingcache3.db'):
             read_trainingcache2(file_found, report_folder, seeker)
+        elif file_found.endswith('trainingcachev3.db'):
+                read_trainingcachev3_sessions(file_found, report_folder, seeker)
 
 def read_trainingcache2(file_found, report_folder, seeker):
     db = open_sqlite_db_readonly(file_found)
@@ -202,3 +204,41 @@ def read_trainingcachev2(file_found, report_folder, seeker):
         logfunc(f'No Gboard data available in {file_name}')
     
     db.close()
+
+
+def read_trainingcachev3_sessions(file_found, report_folder, seeker):
+
+    title = "Gboard Sessions"
+
+    # Connect to database
+    conn = sqlite3.connect(file_found)
+    cursor = conn.cursor()
+
+    # Sessions
+    sql = """
+        SELECT
+            session._session_id AS Session,
+            datetime(session._session_id / 1000, 'unixepoch') AS Start,
+            datetime(session._timestamp_ / 1000, 'unixepoch') AS Finish,
+            session.package_name AS Application 
+        FROM 
+            session
+        """
+    cursor.execute(sql)
+    results = cursor.fetchall()
+
+    if results:
+        data_headers = ("Session ID", "Start", "Finish", "Application")
+        data_list = results
+
+        description = "GBoard Sessions"
+        report = ArtifactHtmlReport(title)
+        report.start_artifact_report(report_folder, title, description)
+        report.add_script()
+        report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+        report.end_artifact_report()
+
+        tsv(report_folder, data_headers, data_list, title)
+
+    # Close
+    conn.close()
