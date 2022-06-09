@@ -44,19 +44,39 @@ def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
 
     data_headers = [
             "Timestamp",
-            "Folder",
+            "Mega Folder",
             "Filename",
             "Size",
             "Direction",
-            "transferstate",
-            "transferoriginalpath",
+            "State",
+            "Transfer Path",
             ]
     data_list = []
+
+    direction = {
+            "0": "Download",
+            "1": "Upload",
+            "2": "Download",
+            }
+
+    state = {
+            "0": "None",
+            "1": "Queued",
+            "2": "Active",
+            "3": "Paused",
+            "4": "Retrying",
+            "5": "Completing",
+            "6": "Completed",
+            "7": "Cancelled",
+            "8": "Failed",
+            }
 
     for r in results:
         decrypted = list(map(lambda x: decrypt(x), r))
         timestamp = datetime.datetime.fromtimestamp(int(decrypted[0]) / 1000)
-        decrypted[0] = f"{timestamp}"
+        decrypted[0] = f"{timestamp}" 
+        decrypted[4] = direction[decrypted[4]]
+        decrypted[5] = state[decrypted[5]]
         data_list.append(decrypted)
 
     if data_list:
