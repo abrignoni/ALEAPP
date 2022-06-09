@@ -161,6 +161,9 @@ def get_icon_name(category, artifact):
     elif category == 'WIFI PROFILES':  icon = 'wifi'
     elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'APP ROLES':  icon = 'tool'
+    elif category == 'DUCKDUCKGO':
+        if artifact == 'DUCKDUCKGO TAB THUMBNAILS':  icon = 'image'
+        else:                           icon = 'layers'
     elif category == 'LINE':
         if artifact == 'LINE - CONTACTS':  icon = 'user'
         if artifact == 'LINE - MESSAGES':  icon = 'message-square'
