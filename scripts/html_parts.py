@@ -20,14 +20,12 @@ page_header = \
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/mdb.min.css">
         <!-- Your custom styles (optional) -->
         <link rel="stylesheet" href="_elements/dashboard.css">
-        <link rel="stylesheet" href="_elements/custom.css"> <!-------Link to custom.css-------!>
         <!-- MDBootstrap Datatables  -->
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/addons/datatables.min.css" rel="stylesheet">
 
         <!-- Icons -->
         <!--script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script-->
         <script src="_elements/feather.min.js"></script>
-        <script src="_elements/sidebar.js"></script> <!-------Link to sidebar.js-------!>
     </head>
     <body>
 """
@@ -37,9 +35,6 @@ body_start = \
 """
     <!-- Start your project here-->
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-     <button type="button" class="toggle" id="toggle" onclick="sidebar_toggle()">  <!-------Added toggle button-------!>
-       <span></span>
-      </button>
         <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">{0}</a>
         <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" id="darkSwitch" />
@@ -53,7 +48,7 @@ body_start = \
 """
 body_sidebar_setup = \
 """
-            <nav class="col-md-2 d-none d-md-block bg-light sidebar" id="sidebar_id"> <!-------Added html ID tag sidebar_id-------!>
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                 <div class="sidebar-sticky" id="sidebar_id">
                     <ul class="nav flex-column">
 """
@@ -124,7 +119,7 @@ body_sidebar_trailer = \
 
 body_main_header = \
 """
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" id="main"> <!-------Added html ID tag main-------!>
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 """
 # Variable {title}, {description}
 body_main_data_title = \
