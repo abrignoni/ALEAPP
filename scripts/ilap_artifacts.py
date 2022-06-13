@@ -113,6 +113,7 @@ from scripts.artifacts.mega import get_mega
 from scripts.artifacts.Oruxmaps import get_Oruxmaps
 from scripts.artifacts.roles import get_roles
 from scripts.artifacts.runtimePerms import get_runtimePerms
+from scripts.artifacts.samsungSmartThings import get_samsungSmartThings
 from scripts.artifacts.samsungWeatherClock import get_samsungWeatherClock
 from scripts.artifacts.scontextLog import get_scontextLog
 from scripts.artifacts.setupWizardinfo import get_setupWizardinfo
@@ -285,6 +286,7 @@ tosearch = {
     'playgroundVault':('Encrypting Media Apps',('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml','*/applocker/vault/*')),
     'roles':('App Roles',('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml')),
     'runtimePerms':('Permissions',('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml')),
+    'samsungSmartThings':('Samsung SmartThings','*/com.samsung.android.oneconnect/databases/QcDB.db*'),
     'samsungWeatherClock': ('Samsung Weather Clock', '*/com.sec.android.daemonapp/databases/WeatherClock*'),
     'scontextLog':('App Interaction', '*/com.samsung.android.providers.context/databases/ContextLog.db'),
     'settingsSecure':('Device Info', '*/system/users/*/settings_secure.xml'),

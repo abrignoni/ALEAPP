@@ -126,6 +126,7 @@ def get_icon_name(category, artifact):
         else:                           icon = 'mail'
     elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
+    elif category == 'SAMSUNG SMARTTHINGS': icon = 'bluetooth'
     elif category == 'SAMSUNG WEATHER CLOCK':
         if artifact.find('DAILY') >=0:            icon = 'sunrise'
         elif artifact.find('HOURLY') >=0:            icon = 'thermometer'
