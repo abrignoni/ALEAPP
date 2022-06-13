@@ -36,7 +36,10 @@ FRIEND_QUERY = '''
         displayName,
         phone,
         birthday,
-        DATETIME(addedTimestamp/1000, 'unixepoch', 'localtime')
+        case addedTimestamp
+			when 0 then ''
+			else datetime(addedTimestamp/1000, 'unixepoch', 'localtime')
+		end
     FROM Friend
     WHERE addedTimestamp IS NOT NULL;
 '''
