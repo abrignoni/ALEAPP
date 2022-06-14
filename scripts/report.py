@@ -135,11 +135,11 @@ def get_icon_name(category, artifact):
     elif category == 'SCRIPT LOGS':     icon = 'archive'
     elif category == 'SLOPES':
         if artifact == 'SLOPES - ACTIONS': icon = 'trending-down'
-        if artifact == 'SLOPES - LIFT DETAILS': icon = 'shuffle'
-        if artifact == 'SLOPES - RESORT DETAILS': icon = 'home'
+        elif artifact == 'SLOPES - LIFT DETAILS': icon = 'shuffle'
+        elif artifact == 'SLOPES - RESORT DETAILS': icon = 'home'
     elif category == 'SKOUT':
         if artifact == 'SKOUT MESSAGES':  icon = 'message-circle'
-        if artifact == 'SKOUT USERS':  icon = 'users'
+        elif artifact == 'SKOUT USERS':  icon = 'users'
     elif category == 'TEAMS':
         if artifact == 'TEAMS MESSAGES':  icon = 'message-circle'
         elif artifact == 'TEAMS USERS':  icon = 'users'
@@ -149,8 +149,8 @@ def get_icon_name(category, artifact):
         else:                           icon = 'file-text'
     elif category == 'VIBER':
         if artifact == 'VIBER - CONTACTS':  icon = 'user'
-        if artifact == 'VIBER - MESSAGES':  icon = 'message-square'
-        if artifact == 'VIBER - CALL LOGS':  icon = 'phone'
+        elif artifact == 'VIBER - MESSAGES':  icon = 'message-square'
+        elif artifact == 'VIBER - CALL LOGS':  icon = 'phone'
     elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
@@ -167,32 +167,36 @@ def get_icon_name(category, artifact):
         else:                           icon = 'layers'
     elif category == 'LINE':
         if artifact == 'LINE - CONTACTS':  icon = 'user'
-        if artifact == 'LINE - MESSAGES':  icon = 'message-square'
-        if artifact == 'LINE - CALL LOGS':  icon = 'phone'
+        elif artifact == 'LINE - MESSAGES':  icon = 'message-square'
+        elif artifact == 'LINE - CALL LOGS':  icon = 'phone'
     elif category == 'IMO':
         if artifact == 'IMO - ACCOUNT ID':  icon = 'user'
-        if artifact == 'IMO - MESSAGES':  icon = 'message-square'
+        elif artifact == 'IMO - MESSAGES':  icon = 'message-square'
     elif category == 'TANGO':
         if artifact == 'TANGO - MESSAGES':  icon = 'message-square'
     elif category == 'VLC':
         if artifact == 'VLC MEDIA LIST':  icon = 'film'
-        if artifact == 'VLC THUMBNAILS':  icon = 'image'
+        elif artifact == 'VLC THUMBNAILS':  icon = 'image'
     elif category == 'SNAPCHAT': icon = 'bell'
     elif category == 'SKYPE':
         if artifact == 'SKYPE - CALL LOGS':  icon = 'phone'
-        if artifact == 'SKYPE - MESSAGES':  icon = 'message-square'
-        if artifact == 'SKYPE - CONTACTS':  icon = 'user'
+        elif artifact == 'SKYPE - MESSAGES':  icon = 'message-square'
+        elif artifact == 'SKYPE - CONTACTS':  icon = 'user'
     elif category == 'TEXT NOW':
         if artifact == 'TEXT NOW - CALL LOGS':  icon = 'phone'
-        if artifact == 'TEXT NOW - MESSAGES':  icon = 'message-square'
-        if artifact == 'TEXT NOW - CONTACTS':  icon = 'user'
+        elif artifact == 'TEXT NOW - MESSAGES':  icon = 'message-square'
+        elif artifact == 'TEXT NOW - CONTACTS':  icon = 'user'
     elif category == 'TIKTOK':
         if artifact == 'TIKTOK - MESSAGES':  icon = 'message-square'
-        if artifact == 'TIKTOK - CONTACTS':  icon = 'user'
+        elif artifact == 'TIKTOK - CONTACTS':  icon = 'user'
     elif category == 'WHATSAPP':
-        if artifact == 'WHATSAPP - MESSAGES':  icon = 'messages-square'
-        if artifact == 'WHATSAPP - CONTACTS':  icon = 'user'
-        else:                           icon = 'phone'
+        if artifact == 'WHATSAPP - CONTACTS':  icon = 'users'
+        elif artifact == 'WHATSAPP - ONE TO ONE MESSAGES': icon = 'message-circle'
+        elif artifact == 'WHATSAPP - GROUP MESSAGES': icon = 'message-circle'
+        elif artifact == 'WHATSAPP - CALL LOGS': icon = 'phone'
+        elif artifact == 'WHATSAPP - GROUP DETAILS': icon = 'users'
+        elif artifact == 'WHATSAPP - MESSAGES':  icon = 'message-square'
+        else:                           icon = 'user'
     elif category == 'CONTACTS':  icon = 'user'
     return icon
 
