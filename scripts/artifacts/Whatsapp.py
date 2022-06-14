@@ -3,9 +3,14 @@ import datetime
 import xmltodict
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db, media_to_html
 
 def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
+
+    if is_platform_windows():
+      separator = '\\'
+    else:
+      separator = '/'
 
     source_file_msg = ''
     source_file_wa = ''
@@ -266,12 +271,19 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('WhatsApp - One To One Messages')
             report.start_artifact_report(report_folder, 'WhatsApp - One To One Messages')
             report.add_script()
-            data_headers = ('Message Timestamp','Received Timestamp','Other Participant WA User Name','Sending Party JID','Message Direction','Message Type','Message','Local Path to Media','Media File Size','Shared Latitude/Starting Latitude (Live Location)','Shared Longitude/Starting Longitude (Live Location)','Duration Live Location Shared (Seconds)','Final Live Latitude','Final Live Longitude','Final Location Timestamp') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Message Timestamp','Received Timestamp','Other Participant WA User Name','Sending Party JID','Message Direction','Message Type','Message','Media','Local Path To Media','Media File Size','Shared Latitude/Starting Latitude (Live Location)','Shared Longitude/Starting Longitude (Live Location)','Duration Live Location Shared (Seconds)','Final Live Latitude','Final Live Longitude','Final Location Timestamp') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
-                data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]))
+              
+                if row[7] is not None:
+                  mediaident = row[7].split(separator)[-1]
+                  media = media_to_html(mediaident, files_found, report_folder)
+                else:
+                  media = row[7]
+                  
+                data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], media, row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]))
 
-            report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db)
+            report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db, html_no_escape=['Media'])
             report.end_artifact_report()
             
             tsvname = f'WhatsApp - One To One Messages'
@@ -347,12 +359,18 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('WhatsApp - Group Messages')
             report.start_artifact_report(report_folder, 'WhatsApp - Group Messages')
             report.add_script()
-            data_headers = ('Message Timestamp','Received Timestamp','Conversation Name','Sending Party','Sending Party JID','Message Direction','Message Type','Message','Local Path to Media','Media File Size','Shared Latitude/Starting Latitude (Live Location)','Shared Longitude/Starting Longitude (Live Location)','Duration Live Location Shared (Seconds)','Final Live Latitude','Final Live Longitude','Final Location Timestamp') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Message Timestamp','Received Timestamp','Conversation Name','Sending Party','Sending Party JID','Message Direction','Message Type','Message','Media','Local Path to Media','Media File Size','Shared Latitude/Starting Latitude (Live Location)','Shared Longitude/Starting Longitude (Live Location)','Duration Live Location Shared (Seconds)','Final Live Latitude','Final Live Longitude','Final Location Timestamp') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
-                data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15]))
+              if row[8] is not None:
+                mediaident = row[8].split(separator)[-1]
+                media = media_to_html(mediaident, files_found, report_folder)
+              else:
+                media = row[8]
 
-            report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db)
+              data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], media, row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15]))
+
+            report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db, html_no_escape=['Media'])
             report.end_artifact_report()
             
             tsvname = f'WhatsApp - Group Messages'
