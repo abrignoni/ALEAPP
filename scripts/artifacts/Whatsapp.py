@@ -7,11 +7,7 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_
 
 def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 
-    if is_platform_windows():
-      separator = '\\'
-    else:
-      separator = '/'
-
+    separator = '/'
     source_file_msg = ''
     source_file_wa = ''
     whatsapp_msgstore_db = ''
@@ -277,6 +273,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
               
                 if row[7] is not None:
                   mediaident = row[7].split(separator)[-1]
+                  print(mediaident)
                   media = media_to_html(mediaident, files_found, report_folder)
                 else:
                   media = row[7]
@@ -364,6 +361,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             for row in all_rows:
               if row[8] is not None:
                 mediaident = row[8].split(separator)[-1]
+                print(mediaident)
                 media = media_to_html(mediaident, files_found, report_folder)
               else:
                 media = row[8]
