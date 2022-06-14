@@ -59,7 +59,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('WhatsApp - Contacts')
         report.start_artifact_report(report_folder, 'WhatsApp - Contacts')
         report.add_script()
-        data_headers = ('JID','Number','Name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Name','JID','Number') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
             data_list.append((row[0], row[1], row[2]))
