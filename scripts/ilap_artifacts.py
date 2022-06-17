@@ -134,6 +134,7 @@ from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
 from scripts.artifacts.smyFiles import get_smyFiles
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
 from scripts.artifacts.snapchat import get_snapchat
+from scripts.artifacts.snapchatMEO import get_snapchatMEO
 from scripts.artifacts.settingsSecure import get_settingsSecure
 from scripts.artifacts.suggestions import get_suggestions
 from scripts.artifacts.swellbeing import get_swellbeing
@@ -308,6 +309,7 @@ tosearch = {
     'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
     'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
     'snapchat': ('Snapchat', ('**/data/com.snapchat.android/databases/*.db', '**/data/com.snapchat.android/shared_prefs/*.xml')),
+    'snapchatMEO': ('Snapchat My Eyes Only PIN', '**/data/com.snapchat.android/databases/memories.db'),
     'suggestions': ('Wipe & Setup', '*/data/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
     'sWipehist': ('Wipe & Setup', '*/efs/recovery/history'),
