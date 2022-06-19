@@ -97,6 +97,7 @@ from scripts.artifacts.kijijiLocalUserInfo import get_kijijiLocalUserInfo
 from scripts.artifacts.kijijiRecentSearches import get_kijijiRecentSearches
 from scripts.artifacts.last_boot_time import get_last_boot_time
 from scripts.artifacts.mewe import get_mewe
+from scripts.artifacts.NQVault import get_NQVault
 from scripts.artifacts.pSettings import get_pSettings
 from scripts.artifacts.packageGplinks import get_packageGplinks
 from scripts.artifacts.packageInfo import get_package_info
@@ -273,6 +274,7 @@ tosearch = {
     'mega':('MEGA', '*/data/data/mega.privacy.android.app/karere-*.db*'),
     'mega_transfers':('MEGA', '*/data/data/mega.privacy.android.app/databases/megapreferences'),
     'mewe': ('MeWe', ('**/com.mewe/databases/app_database', '**/com.mewe/shared_prefs/SGSession.xml')),
+    'NQVault': ('Encrypting Media apps',('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11', '*/SystemAndroid/Data/*')),
     'package_info': ('Installed Apps', '*/system/packages.xml'),
     'packageGplinks': ('Installed Apps', '*/system/packages.list'),
     'powerOffReset': ('Power Events', ('*/data/log/power_off_reset_reason.txt','*/data/log/power_off_reset_reason_backup.txt')),
