@@ -133,6 +133,7 @@ from scripts.artifacts.smembersEvents import get_smembersEvents
 from scripts.artifacts.smsmms import get_sms_mms
 from scripts.artifacts.smyfilesRecents import get_smyfilesRecents
 from scripts.artifacts.smyFiles import get_smyFiles
+from scripts.artifacts.smyfilescache import get_smyfilescache
 from scripts.artifacts.smyfilesStored import get_smyfilesStored
 from scripts.artifacts.snapchat import get_snapchat
 from scripts.artifacts.settingsSecure import get_settingsSecure
@@ -306,9 +307,10 @@ tosearch = {
     'smembersAppInv':('App Interaction', '*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
     'smembersEvents':('App Interaction', '*/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
     'sms_mms':('SMS & MMS', '*/com.android.providers.telephony/databases/mmssms*'), # Get mmssms.db, mms-wal.db
-    'smyfilesRecents':('Media Metadata', '*/com.sec.android.app.myfiles/databases/myfiles.db'),
-    'smyFiles':('Media Metadata', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
-    'smyfilesStored':('Media Metadata', '**/com.sec.android.app.myfiles/databases/FileCache.db'),
+    'smyfilesRecents':('My Files', '*/com.sec.android.app.myfiles/databases/myfiles.db'),
+    'smyFiles':('My Files', '**/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
+    'smyfilescache':('My Files', ('**/com.sec.android.app.myfiles/databases/FileCache.db*','*/com.sec.android.app.myfiles/cache/*.*')),
+    'smyfilesStored':('My Files', '*/com.sec.android.app.myfiles/databases/FileCache.db*'),
     'snapchat': ('Snapchat', ('**/data/com.snapchat.android/databases/*.db', '**/data/com.snapchat.android/shared_prefs/*.xml')),
     'suggestions': ('Wipe & Setup', '*/data/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
     'swellbeing': ('Wellbeing', '**/com.samsung.android.forest/databases/dwbCommon.db*'),
