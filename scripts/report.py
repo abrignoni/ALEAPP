@@ -113,6 +113,9 @@ def get_icon_name(category, artifact):
     elif category == 'HIDEX': icon = 'eye-off'
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'MEDIA METADATA':  icon = 'file-plus'
+    elif category == 'MY FILES':
+        if artifact.find('MY FILES DB - CACHE MEDIA') >=0: icon = 'image'
+        else:                           icon = 'file-plus'
     elif category == 'MEGA': icon = 'message-circle'
     elif category == 'MEWE':  icon = 'message-circle'
     elif category == 'NOW PLAYING':           icon = 'music'
