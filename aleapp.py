@@ -1,13 +1,16 @@
 import argparse
 import io
 import os
+import typing
+
+import plugin_loader
 import scripts.report as report
 import shutil
 import traceback
 
 from scripts.search_files import *
 from scripts.ilapfuncs import *
-from scripts.ilap_artifacts import *
+#from scripts.ilap_artifacts import *
 from scripts.version_info import aleapp_version
 from time import process_time, gmtime, strftime
 
@@ -20,16 +23,20 @@ def main():
     parser.add_argument('-w', '--wrap_text', required=False, action="store_false", help='do not wrap text for output of data files')
         
     args = parser.parse_args()
-    
-    if args.artifact_paths == True:
+
+    loader = plugin_loader.PluginLoader()
+
+    if args.artifact_paths:
         print('Artifact path list generation started.')
         print('')
-        for key, value in tosearch.items():
-            if type(value[1]) is tuple:
-                for x in value[1]:
+        #for key, value in tosearch.items():
+        for plugin in loader.plugins:
+            #if type(value[1]) is tuple:
+            if isinstance(plugin.search, tuple):
+                for x in plugin.search:
                     print(x)
-            else:
-                print(value[1])
+            else:  # TODO check that this is actually a string?
+                print(plugin.search)
         print('')
         print('Artifact path list generation completed')    
         return
@@ -38,26 +45,26 @@ def main():
         input_path = args.input_path
         extracttype = args.t
 
-        if args.wrap_text == None:
+        if args.wrap_text is None:
             wrap_text = True
         else:
             wrap_text = args.wrap_text 
     
-        if args.output_path == None:
+        if args.output_path is None:
             parser.error('No OUTPUT folder path provided')
             return
         else:
             output_path = os.path.abspath(args.output_path)
         
-        if output_path == None:
+        if output_path is None:
             parser.error('No OUTPUT folder selected. Run the program again.')
             return
             
-        if input_path == None:
+        if input_path is None:
             parser.error('No INPUT file or folder selected. Run the program again.')
             return
         
-        if args.t == None:
+        if args.t is None:
             parser.error('No INPUT file or folder selected. Run the program again.')
             return
 
@@ -77,9 +84,11 @@ def main():
 
         out_params = OutputParameters(output_path)
 
-        crunch_artifacts(tosearch, extracttype, input_path, out_params, 1, wrap_text)
+        crunch_artifacts(list(loader.plugins), extracttype, input_path, out_params, 1, wrap_text)
 
-def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio, wrap_text):
+
+def crunch_artifacts(
+        plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, ratio, wrap_text):
     start = process_time()
 
     logfunc('Procesing started. Please wait. This may take a few minutes...')
@@ -114,7 +123,7 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio, wr
         return False
 
     # Now ready to run
-    logfunc(f'Artifact categories to parse: {str(len(search_list))}')
+    logfunc(f'Artifact categories to parse: {str(len(plugins))}')
     logfunc(f'File/Directory selected: {input_path}')
     logfunc('\n--------------------------------------------------------------------------------------')
 
@@ -124,25 +133,27 @@ def crunch_artifacts(search_list, extracttype, input_path, out_params, ratio, wr
     
     categories_searched = 0
     # Search for the files per the arguments
-    for key, val in search_list.items():
-        search_regexes = []
-        artifact_pretty_name = val[0]
-        if isinstance(val[1], list) or isinstance(val[1], tuple):
-            search_regexes = val[1]
+    #for key, val in search_list.items():
+    for plugin in plugins:
+        #search_regexes = []
+        artifact_pretty_name = plugin.name
+        if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
+            search_regexes = plugin.search
         else:
-            search_regexes.append(val[1])
+            search_regexes = [plugin.search]
         files_found = []
         for artifact_search_regex in search_regexes:
             found = seeker.search(artifact_search_regex)
             if not found:
                 logfunc()
-                logfunc(f'No files found for {key} -> {artifact_search_regex}')
-                log.write(f'No files found for {key} -> {artifact_search_regex}<br><br>')
+                logfunc(f'No files found for {plugin.name} -> {artifact_search_regex}')
+                log.write(f'No files found for {plugin.name} -> {artifact_search_regex}<br><br>')
             else:
                 files_found.extend(found)
         if files_found:
             logfunc()
-            process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base, wrap_text)
+            #process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base, wrap_text)
+            plugin.method(files_found, out_params.report_folder_base, seeker, wrap_text)
             for pathh in files_found:
                 if pathh.startswith('\\\\?\\'):
                     pathh = pathh[4:]

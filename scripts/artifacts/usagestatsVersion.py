@@ -4,6 +4,7 @@ import scripts.artifacts.artGlobals
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, logdevinfo, is_platform_windows
 
+
 def get_usagestatsVersion(files_found, report_folder, seeker, wrap_text):
     data_list = []
     file_found = str(files_found[0])
@@ -38,7 +39,6 @@ def get_usagestatsVersion(files_found, report_folder, seeker, wrap_text):
                 logdevinfo(f"Build version per Usagestats: {splits[2]}")
                 data_list.append(('Build Version', splits[2]))
 
-
     if len(data_list) > 0:
         report = ArtifactHtmlReport('OS Version')
         report.start_artifact_report(report_folder, f'OS Version')
@@ -52,3 +52,8 @@ def get_usagestatsVersion(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc(f'No OS Version file available')
+
+
+__artifacts__ = {
+    "Usage Stats Version": (('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'), get_usagestatsVersion)
+}
