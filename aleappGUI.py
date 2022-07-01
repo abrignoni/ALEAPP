@@ -1,16 +1,11 @@
 import typing
-
 import aleapp
-import os
 import PySimpleGUI as sg
-import sys
 import webbrowser
-
 import plugin_loader
 from scripts.ilapfuncs import *
 from scripts.version_info import aleapp_version
 from time import process_time, gmtime, strftime
-#from scripts.ilap_artifacts import *
 from scripts.search_files import *
 
 MODULE_START_INDEX = 1000
@@ -55,6 +50,7 @@ def ValidateInput(values, window):
 
     return True, ext_type
 
+
 # initialize CheckBox control with module name   
 def CheckList(mtxt, lkey, mdstring, disable=False):
     if mdstring == 'test1' or mdstring == 'test2' : #items in the if are modules that take a long time to run. Deselects them by default.
@@ -71,17 +67,10 @@ def pickModules():
 
     loader = plugin_loader.PluginLoader()
 
-    #script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'scripts', 'artifacts')
-
-    # Create sorted dict from 'tosearch' dictionary based on plugin category
-    #sorted_tosearch = {k: v for k, v in sorted(tosearch.items(), key=lambda item: item[1][0].upper())}
-    # sorted_tosearch = {p.name: p for p in loader.plugins}
-
     indx = MODULE_START_INDEX     # arbitrary number to not interfere with other controls
     for plugin in sorted(loader.plugins, key=lambda p: p.name.upper()):
-        #disabled = False if plugin_name != 'usagestatsVersion' else True # usagestatsVersion is REQUIRED
         disabled = plugin.module_name == 'usagestatsVersion'
-        mlist.append(CheckList(f'{plugin.name} [{plugin.module_name}]', indx, plugin.name, disabled))
+        mlist.append(CheckList(f'{plugin.category} [{plugin.name} - {plugin.module_name}.py]', indx, plugin.name, disabled))
         indx = indx + 1
 
 

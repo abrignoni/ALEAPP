@@ -10,6 +10,7 @@ PLUGINPATH = pathlib.Path("./scripts/artifacts")
 class PluginSpec:
     name: str
     module_name: str
+    category: str
     search: str
     method: typing.Callable  # todo define callable signature
 
@@ -37,11 +38,11 @@ class PluginLoader:
             except AttributeError:
                 continue  # no artifacts defined in this plugin
 
-            for name, (search, func) in mod_artifacts.items():
+            for name, (category, search, func) in mod_artifacts.items():
                 #self._plugins.append(PluginSpec(name, search, func))
                 if name in self._plugins:
                     raise KeyError("Duplicate plugin")
-                self._plugins[name] = PluginSpec(name, py_file.stem, search, func)
+                self._plugins[name] = PluginSpec(name, py_file.stem, category, search, func)
 
     @property
     def plugins(self) -> typing.Iterable[PluginSpec]:

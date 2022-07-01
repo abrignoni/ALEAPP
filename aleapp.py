@@ -1,6 +1,7 @@
 import argparse
 import io
 import os
+import os.path
 import typing
 
 import plugin_loader
@@ -153,7 +154,10 @@ def crunch_artifacts(
         if files_found:
             logfunc()
             #process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base, wrap_text)
-            plugin.method(files_found, out_params.report_folder_base, seeker, wrap_text)
+            category_folder = os.path.join(out_params.report_folder_base, plugin.category)
+            if not os.path.exists(category_folder):
+                os.mkdir(category_folder)
+            plugin.method(files_found, category_folder, seeker, wrap_text)
             for pathh in files_found:
                 if pathh.startswith('\\\\?\\'):
                     pathh = pathh[4:]
