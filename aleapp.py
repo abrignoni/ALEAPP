@@ -1,19 +1,15 @@
 import argparse
 import io
-import os
 import os.path
 import typing
-
 import plugin_loader
 import scripts.report as report
-import shutil
 import traceback
-
 from scripts.search_files import *
 from scripts.ilapfuncs import *
-#from scripts.ilap_artifacts import *
 from scripts.version_info import aleapp_version
 from time import process_time, gmtime, strftime
+
 
 def main():
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
@@ -156,8 +152,21 @@ def crunch_artifacts(
             #process_artifact(files_found, key, artifact_pretty_name, seeker, out_params.report_folder_base, wrap_text)
             category_folder = os.path.join(out_params.report_folder_base, plugin.category)
             if not os.path.exists(category_folder):
-                os.mkdir(category_folder)
-            plugin.method(files_found, category_folder, seeker, wrap_text)
+                try:
+                    os.mkdir(category_folder)
+                except (FileExistsError, FileNotFoundError) as ex:
+                    logfunc('Error creating {} report directory at path {}'.format(plugin.name, category_folder))
+                    # logfunc('Reading {} artifact failed!'.format(plugin.name))
+                    logfunc('Error was {}'.format(str(ex)))
+                    continue  # cannot do work
+            try:
+                plugin.method(files_found, category_folder, seeker, wrap_text)
+            except Exception as ex:
+                logfunc('Reading {} artifact had errors!'.format(plugin.name))
+                logfunc('Error was {}'.format(str(ex)))
+                logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
+                continue  # nope
+
             for pathh in files_found:
                 if pathh.startswith('\\\\?\\'):
                     pathh = pathh[4:]
@@ -186,6 +195,7 @@ def crunch_artifacts(
     logfunc('')
     logfunc(f'Report location: {out_params.report_folder_base}')
     return True
+
 
 if __name__ == '__main__':
     main()
