@@ -167,6 +167,8 @@ def crunch_artifacts(
                 logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
                 continue  # nope
 
+            logfunc('{} [{}] artifact completed'.format(plugin.name, plugin.module_name))
+
             for pathh in files_found:
                 if pathh.startswith('\\\\?\\'):
                     pathh = pathh[4:]
@@ -178,7 +180,7 @@ def crunch_artifacts(
     logfunc('')
     logfunc('Processes completed.')
     end = process_time()
-    run_time_secs =  end - start
+    run_time_secs = end - start
     run_time_HMS = strftime('%H:%M:%S', gmtime(run_time_secs))
     logfunc("Processing time = {}".format(run_time_HMS))
 
