@@ -56,5 +56,12 @@ def process_accounts_ce(folder, uid, report_folder):
         tsvname = f'accounts ce {uid}'
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
-        logfunc(f'No accounts_ce_{uid} data available')    
+        logfunc(f'No accounts_ce_{uid} data available')
     db.close()
+    
+__artifacts__ = {
+        "Accounts_ce": (
+                "Accounts_ce",
+                ('*/data/system_ce/*/accounts_ce.db'),
+                get_accounts_ce)
+}
