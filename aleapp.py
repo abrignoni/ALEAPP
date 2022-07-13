@@ -148,10 +148,6 @@ def crunch_artifacts(
                 for pathh in found:
                     if pathh.startswith('\\\\?\\'):
                         pathh = pathh[4:]
-<<<<<<< Updated upstream
-=======
-                        #logfunc(f'Files for {artifact_search_regex} located at {pathh}')
->>>>>>> Stashed changes
                     log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
                 files_found.extend(found)
         if files_found:
