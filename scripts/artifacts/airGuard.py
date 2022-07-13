@@ -54,9 +54,4 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text):
         
     db.close()
 
-__artifacts__ = {
-        "AirGuard": (
-                "AirTags",
-                ('*/data/de.seemoo.at_tracking_detection.release/databases/attd_db'),
-                get_airGuard)
-}
+    

@@ -30,12 +30,7 @@ def get_vlcThumbs(files_found, report_folder, seeker, wrap_text):
     tsvname = 'VLC Thumbnails'
     tsv(report_folder, data_headers, data_list, tsvname)
         
-__artifacts__ = {
-        "VLC Thumbs": (
-                "VLC",
-                ('*/org.videolan.vlc/files/medialib/*.jpg'),
-                get_vlcThumbs)
-}
+
 
         
         

@@ -51,9 +51,8 @@ def get_vlcMedia(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No VLC Media data available')
     
-__artifacts__ = {
-        "VLC": (
-                "VLC",
-                ('*vlc_media.db*'),
-                get_vlcMedia)
-}
+    db.close()
+    return 
+
+        
+        
