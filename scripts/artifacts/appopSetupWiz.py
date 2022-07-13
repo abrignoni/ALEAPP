@@ -49,3 +49,10 @@ def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Appops Setup Wizard data available')
+
+__artifacts__ = {
+        "appopSetupWiz": (
+                "Wipe & Setup",
+                ('*/data/system/appops.xml'),
+                get_appopSetupWiz)
+}
