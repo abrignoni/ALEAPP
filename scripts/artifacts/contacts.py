@@ -73,14 +73,6 @@ def get_contacts(files_found, report_folder, seeker, wrap_text):
             logfunc('No Contacts found')
             
 
-        db.close()
+        db.close
     
     return
-
-# 'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
-__artifacts__ = {
-    "Contacts": (
-        "Contacts",
-        ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*'),
-        get_contacts)
-}

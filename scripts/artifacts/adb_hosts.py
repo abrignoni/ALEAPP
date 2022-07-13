@@ -24,10 +24,3 @@ def get_adb_hosts(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc(f'No ADB Hosts file available')
-
-__artifacts__ = {
-        "Adb hosts": (
-                "adb hosts",
-                ('*/data/misc/adb/adb_keys'),
-                get_adb_hosts)
-}

@@ -3,18 +3,16 @@
 block_cipher = None
 
 a = Analysis(['aleappGUI.py'],
-             pathex=['.\\scripts\\artifacts'],
+             pathex=[],
              binaries=[],
              datas=[('.\\scripts\\logo.jpg', '.\\scripts'),
                     ('.\\scripts\\dashboard.css', '.\\scripts'),
                     ('.\\scripts\\dark-mode.css', '.\\scripts'),
                     ('.\\scripts\\dark-mode-switch.js', '.\\scripts'),
                     ('.\\scripts\\feather.min.js', '.\\scripts'),
-                    ('.\\scripts\\MDB-Free_4.13.0', '.\\scripts\\MDB-Free_4.13.0'),
-                    ('.\\scripts\\artifacts', '\\scripts\\artifacts')],
-
+                    ('.\\scripts\\MDB-Free_4.13.0', '.\\scripts\\MDB-Free_4.13.0')],
              hiddenimports=[],
-             hookspath=['.\\'],
+             hookspath=[],
              runtime_hooks=[],
              excludes=[],
              win_no_prefer_redirects=False,
@@ -36,4 +34,5 @@ exe = EXE(pyz,
           upx=True,
           console=False,
           upx_exclude=[],
-          runtime_tmpdir=None )
+          runtime_tmpdir=None,
+          console=False )
