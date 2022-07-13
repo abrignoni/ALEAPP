@@ -61,3 +61,11 @@ def process_accounts_de(folder, uid, report_folder):
     else:
         logfunc(f'No accounts_de_{uid} data available')    
     db.close()
+    
+    
+__artifacts__ = {
+        "Accounts_de": (
+                "Accounts_de",
+                ('*/data/system_de/*/accounts_de.db'),
+                get_accounts_de)
+}

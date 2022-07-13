@@ -141,17 +141,22 @@ def crunch_artifacts(
         for artifact_search_regex in search_regexes:
             found = seeker.search(artifact_search_regex)
             if not found:
-                logfunc()
-                logfunc(f'No files found for {plugin.name} -> {artifact_search_regex}')
+                #logfunc()
+                #logfunc(f'No files found for {plugin.name} -> {artifact_search_regex}')
                 log.write(f'No files found for {plugin.name} -> {artifact_search_regex}<br><br>')
             else:
                 for pathh in found:
                     if pathh.startswith('\\\\?\\'):
                         pathh = pathh[4:]
+<<<<<<< Updated upstream
+=======
+                        #logfunc(f'Files for {artifact_search_regex} located at {pathh}')
+>>>>>>> Stashed changes
                     log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
                 files_found.extend(found)
         if files_found:
             logfunc()
+            logfunc('{} [{}] artifact started'.format(plugin.name, plugin.module_name))
             category_folder = os.path.join(out_params.report_folder_base, plugin.category)
             if not os.path.exists(category_folder):
                 try:
