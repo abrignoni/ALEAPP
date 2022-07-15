@@ -117,6 +117,10 @@ def get_usageapps(files_found, report_folder, seeker, wrap_text):
             logfunc('No Usage Apps data available')
         
         db.close()
-        return
-    
 
+__artifacts__ = {
+        "usageapps": (
+                "App Interaction",
+                ('*/com.google.android.as/databases/reflection_gel_events.db*'),
+                get_usageapps)
+}

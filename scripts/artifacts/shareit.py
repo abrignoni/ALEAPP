@@ -53,4 +53,10 @@ def get_shareit(files_found, report_folder, seeker, wrap_text):
         logfunc('No Shareit file transfer data available')
 
     db.close()
-    return
+
+__artifacts__ = {
+        "shareit": (
+                "File Transfer",
+                ('*/com.lenovo.anyshare.gps/databases/history.db*'),
+                get_shareit)
+}

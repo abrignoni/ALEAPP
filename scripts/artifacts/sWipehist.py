@@ -72,3 +72,10 @@ def get_sWipehist(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Samsung Wipe History data available')
+
+__artifacts__ = {
+        "sWipehist": (
+                "Wipe & Setup",
+                ('*/efs/recovery/history'),
+                get_sWipehist)
+}

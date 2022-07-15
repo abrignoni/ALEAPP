@@ -37,7 +37,7 @@ def get_cachelocation(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('Cache Locations')
             report.start_artifact_report(report_folder, 'Cache Locations')
             report.add_script()
-            data_headers = ('accuracy', 'confidence', 'latitude', 'longitude', 'readtime') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Accuracy', 'Confidence', 'Latitude', 'Longitude', 'Readtime') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
@@ -51,3 +51,9 @@ def get_cachelocation(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Cachelocation Logs found')
 
+__artifacts__ = {
+        "Cache Location": (
+                "GEO Location",
+                ('*/com.google.android.location/files/cache.cell/cache.cell', '*/com.google.android.location/files/cache.wifi/cache.wifi'),
+                get_cachelocation)
+}

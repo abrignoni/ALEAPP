@@ -69,3 +69,10 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Appops.xml data available')
+            
+__artifacts__ = {
+        "appops": (
+                "Permissions",
+                ('*/data/system/appops.xml'),
+                get_appops)
+}

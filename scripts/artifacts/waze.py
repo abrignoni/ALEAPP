@@ -51,4 +51,10 @@ def get_waze(files_found, report_folder, seeker, wrap_text):
         
     db.close()
 
+__artifacts__ = {
+        "waze": (
+                "Waze",
+                ('*/com.waze/user.db*'),
+                get_waze)
+}
     

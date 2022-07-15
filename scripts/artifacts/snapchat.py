@@ -382,3 +382,10 @@ def get_snapchat(files_found, report_folder, seeker, wrap_text):
     ]
     if not (True in artifacts):
         logfunc(f'{APP_NAME} data not found')
+
+__artifacts__ = {
+        "snapchat": (
+                "Snapchat",
+                ('*/data/com.snapchat.android/databases/*.db', '*/data/com.snapchat.android/shared_prefs/*.xml'),
+                get_snapchat)
+}

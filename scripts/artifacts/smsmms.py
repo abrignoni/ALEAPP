@@ -277,3 +277,10 @@ def read_mms_messages(db, report_folder, file_found, seeker):
         logfunc('No MMS messages found!')
         return False
     return True
+
+__artifacts__ = {
+        "sms_mms": (
+                "SMS & MMS",
+                ('*/com.android.providers.telephony/databases/mmssms*'),
+                get_sms_mms)
+}

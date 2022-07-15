@@ -47,3 +47,10 @@ def get_fitbitDevices(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Fitbit Device Info data available')
+            
+__artifacts__ = {
+        "FitbitDevices": (
+                "Fitbit",
+                ('*/data/data/com.fitbit.FitbitMobile/databases/device_database*'),
+                get_fitbitDevices)
+}

@@ -70,3 +70,10 @@ def get_sRecoveryhist(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Samsung Recovery History data available')
+
+__artifacts__ = {
+        "sRecoveryhist": (
+                "Wipe & Setup",
+                ('*/efs/recovery/history'),
+                get_sRecoveryhist)
+}

@@ -49,4 +49,11 @@ def get_browserlocation(files_found, report_folder, seeker, wrap_text):
             logfunc('No Browser Locations found')
             
         db.close()
+        
+__artifacts__ = {
+        "Browser Location": (
+                "GEO Location",
+                ('**/com.android.browser/app_geolocation/CachedGeoposition.db'),
+                get_browserlocation)
+}
     

@@ -133,3 +133,10 @@ def get_mewe(files_found, report_folder, seeker, wrap_text):
     ]
     if not (True in artifacts):
         logfunc(f'{APP_NAME} data not found')
+
+__artifacts__ = {
+        "mewe": (
+                "MeWe",
+                ('*/com.mewe/databases/app_database', '*/com.mewe/shared_prefs/SGSession.xml'),
+                get_mewe)
+}

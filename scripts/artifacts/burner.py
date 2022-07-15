@@ -39,7 +39,7 @@ def get_burner(files_found, report_folder, seeker, wrap_text):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            logfunc(str(all_rows))
+            #logfunc(str(all_rows))
             report = ArtifactHtmlReport('Number Information')
             report.start_artifact_report(report_folder, 'Number Information')
             report.add_script()
@@ -107,3 +107,10 @@ def get_burner(files_found, report_folder, seeker, wrap_text):
             logfunc('No Burner Communication Information data available')
                 
         db.close()
+        
+__artifacts__ = {
+        "Burner": (
+                "Burner",
+                ('*/com.adhoclabs.burner/databases/burners.db'),
+                get_burner)
+}

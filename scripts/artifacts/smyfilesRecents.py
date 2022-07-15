@@ -49,4 +49,10 @@ def get_smyfilesRecents(files_found, report_folder, seeker, wrap_text):
         logfunc('No My Files DB Recents data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "smyfilesRecents": (
+                "My Files",
+                ('*/com.sec.android.app.myfiles/databases/myfiles.db'),
+                get_smyfilesRecents)
+}

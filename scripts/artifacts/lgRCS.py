@@ -90,4 +90,10 @@ def get_lgRCS(files_found, report_folder, seeker, wrap_text):
         logfunc('No RCS Chats - LG data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "lgRCS": (
+                "RCS Chats",
+                ('*/mmssms.db*'),
+                get_lgRCS)
+}

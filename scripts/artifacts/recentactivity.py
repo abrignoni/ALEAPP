@@ -207,4 +207,10 @@ def process_recentactivity(folder, uid, report_folder):
             report.write_raw_html('<br />')
         
         report.end_artifact_report()
-    
+
+__artifacts__ = {
+        "recentactivity": (
+                "Recent Activity",
+                ('*/data/system_ce/*'),
+                get_recentactivity)
+}

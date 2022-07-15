@@ -63,3 +63,10 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Messages data available')
         
         db.close()
+
+__artifacts__ = {
+        "GoogleMessages": (
+                "Google Messages",
+                ('*/com.google.android.apps.messaging/databases/bugle_db*'),
+                get_googleMessages)
+}
