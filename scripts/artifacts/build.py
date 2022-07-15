@@ -67,4 +67,10 @@ def get_build(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc(f'No Build Info data available')    
-   
+
+__artifacts__ = {
+        "Build": (
+                "Device Info",
+                ('*/vendor/build.prop'),
+                get_build)
+}

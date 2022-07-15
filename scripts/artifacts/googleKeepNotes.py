@@ -133,4 +133,10 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc("No Google Keep - Notes Sharing data found")
         db.close()
-        return
+        
+__artifacts__ = {
+        "GoogleKeepNotes": (
+                "Google Keep",
+                ('*/data/com.google.android.keep/databases/keep.db*'),
+                get_googleKeepNotes)
+}

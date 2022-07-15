@@ -54,4 +54,10 @@ def get_cmh(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc(f'No Samsung_CMH_GeoData available')    
     db.close()
-    return
+
+__artifacts__ = {
+        "cmh": (
+                "Samsung_CMH",
+                ('*/cmh.db'),
+                get_cmh)
+}

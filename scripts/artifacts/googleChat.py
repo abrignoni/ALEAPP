@@ -135,3 +135,10 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Chat Group Information data available')
                 
         db.close()
+
+__artifacts__ = {
+        "GoogleChat": (
+                "Google Chat",
+                ('*/com.google.android.gm/databases/user_accounts/*/dynamite*.db','*/com.google.android.apps.dynamite/databases/dynamite*.db'),
+                get_googleChat)
+}

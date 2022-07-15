@@ -64,4 +64,10 @@ def get_FilesByGoogle_FilesMaster(files_found, report_folder, seeker, wrap_text)
             logfunc('No Files By Google - Files Master data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "FilesMaster": (
+                "Files by Google",
+                ('*/com.google.android.apps.nbu.files/databases/*.*'),
+                get_FilesByGoogle_FilesMaster)
+}

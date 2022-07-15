@@ -53,5 +53,11 @@ def get_cashApp(files_found, report_folder, seeker, wrap_text):
         logfunc('No Cash App Transactions data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "Cash App": (
+                "Cash App",
+                ('*/data/data/com.squareup.cash/databases/cash_money.db*'),
+                get_cashApp)
+}
 

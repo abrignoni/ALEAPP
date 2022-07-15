@@ -60,4 +60,10 @@ def get_installedappsVending(files_found, report_folder, seeker, wrap_text):
             logfunc('No Installed Apps data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "InstalledappsVending": (
+                "Installed Apps",
+                ('*/data/data/com.android.vending/databases/localappstate.db'),
+                get_installedappsVending)
+}

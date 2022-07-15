@@ -89,6 +89,7 @@ def get_icon_name(category, artifact):
         if artifact.find('GROUP INFORMATION') >= 0:         icon = 'users'
         elif artifact.find('CHAT MESSAGES') >= 0:           icon = 'message-circle'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
+    elif category == 'FILES BY GOOGLE':     icon = 'file'
     elif category == 'GOOGLE DUO':
         if artifact.find('CALL HISTORY') >= 0:      icon = 'phone-call'
         elif artifact.find('CONTACTS') >= 0:      icon = 'users'

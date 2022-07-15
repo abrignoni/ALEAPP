@@ -46,4 +46,10 @@ def get_FilesByGoogle_SearchHistory(files_found, report_folder, seeker, wrap_tex
             logfunc('No Files By Google - Search History data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "FilesSearchHist": (
+                "Files by Google",
+                ('*/com.google.android.apps.nbu.files/databases/*.*'),
+                get_FilesByGoogle_SearchHistory)
+}

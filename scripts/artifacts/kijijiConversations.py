@@ -111,3 +111,10 @@ def AppendMessageRowsToDataList(data_list,
             recipientName = LOCAL_USER
 
         data_list.append((message['sortByDate'], conversationId, advertId, advertTitle, message['identifier'], senderId, senderName, recipientId, recipientName, message['state'], message['text']))
+
+__artifacts__ = {
+        "kijijiConversations": (
+                "Kijiji Conversations",
+                ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*'),
+                get_kijijiConversations)
+}

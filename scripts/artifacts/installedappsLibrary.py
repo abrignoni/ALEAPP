@@ -43,4 +43,10 @@ def get_installedappsLibrary(files_found, report_folder, seeker, wrap_text):
         logfunc('No Installed Apps (Library) data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "InstalledappsLibrary": (
+                "Installed Apps",
+                ('*/data/data/com.android.vending/databases/library.db'),
+                get_installedappsLibrary)
+}
