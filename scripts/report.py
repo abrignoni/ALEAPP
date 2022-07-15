@@ -158,6 +158,7 @@ def get_icon_name(category, artifact):
     elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
+    elif category == 'USAGE HISTORY':     icon = 'bar-chart-2'
     elif category == 'USER DICTIONARY': icon = 'book'
     elif category == 'WAZE': icon = 'navigation-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 

@@ -149,6 +149,7 @@ from scripts.artifacts.torThumbs import get_torThumbs
 from scripts.artifacts.Turbo_Battery import get_Turbo_Battery
 from scripts.artifacts.Turbo_AppUsage import get_Turbo_AppUsage
 from scripts.artifacts.usageapps import get_usageapps
+from scripts.artifacts.usageHistory import get_usageHistory
 from scripts.artifacts.usagestats import get_usagestats
 from scripts.artifacts.usagestatsVersion import get_usagestatsVersion
 from scripts.artifacts.userDict import get_userDict
@@ -324,6 +325,7 @@ tosearch = {
     'Turbo_Battery': ('Device Health Services', ('*/com.google.android.apps.turbo/databases/turbo.db*','*/com.google.android.apps.turbo/databases/bluetooth.db*',)),
     'Turbo_AppUsage': ('Device Health Services', '*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml'),
     'usageapps': ('App Interaction', '**/com.google.android.as/databases/reflection_gel_events.db*'),
+    'usageHistory': ('App Interaction', '*/usage-history.xml'),
     'usagestats':('Usage Stats', ('*/system/usagestats/*', '**/system_ce/*/usagestats*')), # fs: matches only 1st level folders under usagestats/, tar/zip matches every single file recursively under usagestats/
     'usagestatsVersion':('Usage Stats', ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version')),
     'userDict':('User Dictionary', '**/com.android.providers.userdictionary/databases/user_dict.db*'),

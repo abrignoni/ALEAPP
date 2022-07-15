@@ -66,21 +66,13 @@ def get_contacts(files_found, report_folder, seeker, wrap_text):
             tsvname = f'Contacts'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
 
-            tlactivity = f'Contaccts'
+            tlactivity = f'Contacts'
             timeline(report_folder, tlactivity, data_list, data_headers)
             
         else:
             logfunc('No Contacts found')
             
 
-        db.close()
+        db.close
     
     return
-
-# 'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
-__artifacts__ = {
-    "Contacts": (
-        "Contacts",
-        ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*'),
-        get_contacts)
-}
