@@ -89,6 +89,7 @@ def get_icon_name(category, artifact):
         if artifact.find('GROUP INFORMATION') >= 0:         icon = 'users'
         elif artifact.find('CHAT MESSAGES') >= 0:           icon = 'message-circle'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
+    elif category == 'FILES BY GOOGLE':     icon = 'file'
     elif category == 'GOOGLE DUO':
         if artifact.find('CALL HISTORY') >= 0:      icon = 'phone-call'
         elif artifact.find('CONTACTS') >= 0:      icon = 'users'
@@ -157,7 +158,6 @@ def get_icon_name(category, artifact):
     elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
-    elif category == 'USAGE HISTORY':     icon = 'bar-chart-2'
     elif category == 'USER DICTIONARY': icon = 'book'
     elif category == 'WAZE': icon = 'navigation-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 

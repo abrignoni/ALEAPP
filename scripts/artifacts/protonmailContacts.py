@@ -47,3 +47,10 @@ def get_protonmailContacts(files_found, report_folder, seeker, wrap_text):
             logfunc('No ProtonMail - Contacts data available')
         
         db.close()
+        
+__artifacts__ = {
+        "protonmailContacts": (
+                "ProtonMail",
+                ('*/data/data/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
+                get_protonmailContacts)
+}

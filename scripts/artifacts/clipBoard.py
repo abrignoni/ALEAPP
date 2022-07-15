@@ -71,4 +71,10 @@ def get_clipBoard(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc(f'No Clipboard Data available')
-    
+
+__artifacts__ = {
+        "ClipBoard": (
+                "Clipboard",
+                ('*/data/*clipboard/*/*'),
+                get_clipBoard)
+}

@@ -84,4 +84,10 @@ def get_calllog(files_found, report_folder, seeker, wrap_text):
         logfunc('No Call Log data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "Call logs ": (
+                "Call Logs",
+                ('*/data/com.android.providers.contacts/databases/calllog.db'),
+                get_calllog)
+}

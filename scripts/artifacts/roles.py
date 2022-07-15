@@ -58,5 +58,10 @@ def get_roles(files_found, report_folder, seeker, wrap_text):
                     tsvname = f'App Roles_{user}'
                     tsv(report_folder, data_headers, data_list, tsvname)
 
-                
+__artifacts__ = {
+        "roles": (
+                "App Roles",
+                ('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml'),
+                get_roles)
+}
             

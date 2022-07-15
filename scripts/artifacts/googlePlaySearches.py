@@ -40,5 +40,10 @@ def get_googlePlaySearches(files_found, report_folder, seeker, wrap_text):
         logfunc('No Google Play Searches data available')
     
     db.close()
-    return
 
+__artifacts__ = {
+        "GooglePlaySearches": (
+                "Google Play",
+                ('*/data/data/com.android.vending/databases/suggestions.db*'),
+                get_googlePlaySearches)
+}

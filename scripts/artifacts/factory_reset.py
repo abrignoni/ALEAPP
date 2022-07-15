@@ -36,3 +36,10 @@ def get_factory_reset(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Factory Reset data available')
+
+__artifacts__ = {
+        "Factory_reset": (
+                "Wipe & Setup",
+                ('*/data/misc/bootstat/factory_reset'),
+                get_factory_reset)
+}

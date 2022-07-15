@@ -146,4 +146,10 @@ def get_slopes(files_found, report_folder, seeker, wrap_text):
             logfunc('No Slopes - Lift Details data available')
 
         db.close()
-        return
+
+__artifacts__ = {
+        "slopes": (
+                "Slopes",
+                ('*/data/com.consumedbycode.slopes/databases/slopes.db*'),
+                get_slopes)
+}

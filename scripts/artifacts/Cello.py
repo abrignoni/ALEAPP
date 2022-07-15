@@ -132,4 +132,10 @@ def get_Cello(files_found, report_folder, seeker, wrap_text):
         logfunc('No Google Drive - Cello data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "Cello": (
+                "Google Drive",
+                ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*'),
+                get_Cello)
+}

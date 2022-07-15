@@ -53,3 +53,10 @@ def get_wifiHotspot(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No Wi-Fi Hotspot data available')
+
+__artifacts__ = {
+        "wifiHotspot": (
+                "WiFi Profiles",
+                ('*/misc/wifi/softap.conf', '*/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml'),
+                get_wifiHotspot)
+}
