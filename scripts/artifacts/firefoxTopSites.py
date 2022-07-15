@@ -49,10 +49,3 @@ def get_firefoxTopSites(files_found, report_folder, seeker, wrap_text):
             logfunc('No Firefox - Top Sites data available')
         
         db.close()
-    
-__artifacts__ = {
-        "FirefoxTopSites": (
-                "Firefox",
-                ('*/data/data/org.mozilla.firefox/databases/top_sites*'),
-                get_firefoxTopSites)
-}

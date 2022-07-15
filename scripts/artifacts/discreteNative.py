@@ -75,10 +75,3 @@ def get_discreteNative(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Privacy Dashboard data available')
-        
-__artifacts__ = {
-        "DiscreteNative": (
-                "Privacy Dashboard",
-                ('*/data/system/appops/discrete/*'),
-                get_discreteNative)
-}

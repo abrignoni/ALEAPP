@@ -211,9 +211,4 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-__artifacts__ = {
-  "Viber": (
-    "Viber",
-    ('*/com.viber.voip/databases/*'),
-    get_Viber)
-}
+    return

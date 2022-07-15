@@ -61,3 +61,10 @@ def process_accounts_ce_authtokens(folder, uid, report_folder):
     else:
         logfunc(f'No Authtokens_{uid} data available')    
     db.close()
+    
+__artifacts__ = {
+        "Accounts_ce authtokens": (
+                "Accounts_ce",
+                ('*/data/system_ce/*/accounts_ce.db'),
+                get_accounts_ce_authtokens)
+}

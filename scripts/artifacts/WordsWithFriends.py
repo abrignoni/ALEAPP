@@ -49,10 +49,4 @@ def get_WordsWithFriends(files_found, report_folder, seeker, wrap_text):
         logfunc('No Words With Friends data available')
     
     db.close()
-
-__artifacts__ = {
-        "WordsWithFriends": (
-                "Chats",
-                ('*/com.zynga.words/db/wf_database.sqlite'),
-                get_WordsWithFriends)
-}
+    return

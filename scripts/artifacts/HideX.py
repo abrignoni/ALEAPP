@@ -43,10 +43,4 @@ def get_HideX(files_found, report_folder, seeker, wrap_text):
         logfunc('No HideX data available')
     
     db.close()
-
-__artifacts__ = {
-        "HideX": (
-                "GroupMe",
-                ('*/com.flatfish.cal.privacy/databases/hidex.db*'),
-                get_HideX)
-}
+    return

@@ -42,10 +42,5 @@ def get_fitbitHeart(files_found, report_folder, seeker, wrap_text):
         logfunc('No Fitbit Heart Rate Summary data available')
         
     db.close()
+
     
-__artifacts__ = {
-        "FitbitHeart": (
-                "Fitbit",
-                ('*/data/data/com.fitbit.FitbitMobile/databases/heart_rate_db*'),
-                get_fitbitHeart)
-}

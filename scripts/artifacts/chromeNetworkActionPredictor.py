@@ -64,10 +64,4 @@ def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_te
             logfunc(f'No {browser_name} - Network Action Predictor data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeNetworkActionPredictor": (
-                "Chromium",
-                ('*/data/data/*/app_Chrome/Default/Network Action Predictor*','*/data/data/*/app_sbrowser/Default/Network Action Predictor*', '*/data/data/*/app_opera/Network Action Predicator*'),
-                get_chromeNetworkActionPredictor)
-}
+        return

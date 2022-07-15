@@ -26,10 +26,3 @@ def get_BashHistory(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc(f'No Bash History file available')
-    
-__artifacts__ = {
-        "Bash History": (
-                "Bash History",
-                ('**/.bash_history'),
-                get_BashHistory)
-}

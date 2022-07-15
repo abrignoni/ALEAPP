@@ -98,10 +98,4 @@ def get_playgroundVault(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Playground Vault data available')
-
-__artifacts__ = {
-        "playgroundVault": (
-                "Encrypting Media Apps",
-                ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml','*/applocker/vault/*'),
-                get_playgroundVault)
-}
+        

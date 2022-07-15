@@ -45,10 +45,3 @@ def get_errp(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Samsung Samsung eRR.p data available')
-            
-__artifacts__ = {
-        "Errp": (
-                "Wipe & Setup",
-                ('*/data/system/users/service/eRR.p'),
-                get_errp)
-}

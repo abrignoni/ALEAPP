@@ -459,10 +459,4 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
                     timeline(report_folder, tlactivity, data_list, data_headers)
                 else:
                     logfunc("No WhatsApp - Profile data found")
-
-__artifacts__ = {
-    "WhatsApp": (
-        "WhatsApp",
-        ('*/com.whatsapp/databases/*.db*','**/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml','*/WhatsApp Images/*.*','*/WhatsApp Video/*.*'),
-        get_WhatsApp)
-}
+    return 

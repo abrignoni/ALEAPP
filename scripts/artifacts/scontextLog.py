@@ -48,10 +48,4 @@ def get_scontextLog(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Context Log data available')
     
     db.close()
-
-__artifacts__ = {
-        "scontextLog": (
-                "App Interaction",
-                ('*/com.samsung.android.providers.context/databases/ContextLog.db'),
-                get_scontextLog)
-}
+    return

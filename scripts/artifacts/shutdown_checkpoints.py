@@ -49,10 +49,3 @@ def get_shutdown_checkpoints(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc('No Shutdown Checkpoints data available')
-
-__artifacts__ = {
-        "shutdown_checkpoints": (
-                "Power Events",
-                ('*/data/system/shutdown-checkpoints/*'),
-                get_shutdown_checkpoints)
-}

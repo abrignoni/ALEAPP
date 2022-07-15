@@ -56,10 +56,3 @@ def get_powerOffReset(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc('No Power Off Reset data available')
-
-__artifacts__ = {
-        "powerOffReset": (
-                "Power Events",
-                ('*/data/log/power_off_reset_reason.txt','*/data/log/power_off_reset_reason_backup.txt'),
-                get_powerOffReset)
-}

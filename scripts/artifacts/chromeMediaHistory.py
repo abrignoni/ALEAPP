@@ -148,10 +148,4 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Media History - Origins data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeMediaHistory": (
-                "Chromium",
-                ('*/data/data/*/app_chrome/Default/Media History*','*/data/data/*/app_sbrowser/Default/Media History*', '*/data/data/*/app_opera/Media History*'),
-                get_chromeMediaHistory)
-}
+        return

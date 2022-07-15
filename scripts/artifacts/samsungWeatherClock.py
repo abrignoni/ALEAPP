@@ -135,11 +135,4 @@ def get_samsungWeatherClock(files_found, report_folder, seeker, wrap_text):
             logfunc('No Samsung Weather Clock - Hourly data available')
         
     db.close()
-
-__artifacts__ = {
-        "samsungWeatherClock": (
-                "Samsung Weather Clock",
-                ('*/com.sec.android.daemonapp/databases/WeatherClock*'),
-                get_samsungWeatherClock)
-}
-
+    return

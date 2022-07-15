@@ -89,10 +89,4 @@ def get_Xender(files_found, report_folder, seeker, wrap_text):
         logfunc('No Xender file transfer messages data available')
 
     db.close()
-
-__artifacts__ = {
-        "Xender": (
-                "File Transfer",
-                ('*/cn.xender/databases/trans-history-db*'),
-                get_Xender)
-}
+    return

@@ -53,9 +53,6 @@ def get_torThumbs(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No TOR Thumbnails data available')
         
-__artifacts__ = {
-        "torThumbs": (
-                "TOR",
-                ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/thumbnails/*.0'),
-                get_torThumbs)
-}
+
+        
+        

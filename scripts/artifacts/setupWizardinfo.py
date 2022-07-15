@@ -36,10 +36,3 @@ def get_setupWizardinfo(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Setup_Wizard_Info XML data available')
-            
-__artifacts__ = {
-        "setupWizardinfo": (
-                "Wipe & Setup",
-                ('*/data/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml'),
-                get_setupWizardinfo)
-}

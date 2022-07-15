@@ -205,10 +205,5 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No Facebook{typeof}- Contacts data available{usernum}')
         
         db.close()
+
         
-__artifacts__ = {
-        "FacebookMessenger": (
-                "Facebook Messenger",
-                ('*/threads_db2*'),
-                get_FacebookMessenger)
-}

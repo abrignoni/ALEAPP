@@ -29,10 +29,4 @@ def get_imagemngCache(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc(f'No Image Manager Cache files available')
-
-__artifacts__ = {
-        "ImagemngCache": (
-                "Image Manager Cache",
-                ('*/data/data/*/cache/image_manager_disk_cache/*.*'),
-                get_imagemngCache)
-}
+        

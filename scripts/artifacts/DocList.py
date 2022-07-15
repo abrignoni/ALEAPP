@@ -62,10 +62,4 @@ def get_DocList(files_found, report_folder, seeker, wrap_text):
         logfunc('No Google Drive - DocList data available')
     
     db.close()
-
-__artifacts__ = {
-        "DocList'": (
-                "Google Drive",
-                ('*/data/data/com.google.android.apps.docs/databases/DocList.db*'),
-                get_DocList)
-}
+    return

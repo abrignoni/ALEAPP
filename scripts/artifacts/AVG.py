@@ -318,10 +318,3 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, media_data_list, tsvname)                  
     else:
         logfunc('No files found to decrypt')
-        
-__artifacts__ = {
-        "AVG": (
-                "Encrypting Media Apps",
-                ('*/data/data/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
-                get_AVG)
-}

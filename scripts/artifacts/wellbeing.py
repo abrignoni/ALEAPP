@@ -57,10 +57,4 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text):
             logfunc('No Wellbeing event data available')
         
         db.close()
-
-__artifacts__ = {
-        "wellbeing": (
-                "Wellbeing",
-                ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
-                get_wellbeing)
-}
+        return

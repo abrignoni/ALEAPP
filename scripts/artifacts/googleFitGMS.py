@@ -58,9 +58,4 @@ def get_googleFitGMS(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Google Fit (GMS) - Activity Sessions data available')
                 
-__artifacts__ = {
-        "GoogleFitGMS": (
-                "Google Fit (GMS)",
-                ('*/data/data/com.google.android.gms/databases/fitness.db.*'),
-                get_googleFitGMS)
-}
+        db.close()

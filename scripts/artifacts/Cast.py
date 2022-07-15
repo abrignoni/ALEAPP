@@ -62,10 +62,4 @@ def get_Cast(files_found, report_folder, seeker, wrap_text):
         logfunc('No Cast data available')
     
     db.close()
-
-__artifacts__ = {
-        "Cast": (
-                "Cast",
-                ('*/com.google.android.gms/databases/cast.db'),
-                get_Cast)
-}
+    return

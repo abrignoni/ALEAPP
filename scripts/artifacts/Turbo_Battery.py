@@ -111,10 +111,4 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text):
         logfunc('No Turbo - Bluetooth Device Info data available')
     
     db.close()
-
-__artifacts__ = {
-        "Turbo_Battery": (
-                "Device Health Services",
-                ('*/com.google.android.apps.turbo/databases/turbo.db*','*/com.google.android.apps.turbo/databases/bluetooth.db*'),
-                get_Turbo_Battery)
-}
+    return

@@ -90,10 +90,4 @@ def get_permissions(files_found, report_folder, seeker, wrap_text):
                     
                     tsvname = f'Permissions - Packages and Shared User'
                     tsv(report_folder, data_headers, data_list_packages_su, tsvname)
-
-__artifacts__ = {
-        "permissions": (
-                "Permissions",
-                ('*/system/packages.xml'),
-                get_permissions)
-}
+            

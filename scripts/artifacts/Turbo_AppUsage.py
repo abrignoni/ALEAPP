@@ -44,10 +44,3 @@ def get_Turbo_AppUsage(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc(f'No Turbo - Application Usage data available')
-
-__artifacts__ = {
-        "Turbo_AppUsage": (
-                "Device Health Services",
-                ('*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml'),
-                get_Turbo_AppUsage)
-}

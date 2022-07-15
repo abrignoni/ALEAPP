@@ -75,10 +75,4 @@ def get_kijijiRecentSearches(files_found, report_folder, seeker, wrap_text):
         logfunc('No Kijiji Recent Search data was found.')
 
     db.close()
-
-__artifacts__ = {
-    "kijijiRecentSearches": (
-        "Kijiji Recent Searches",
-        ('*/com.ebay.kijiji.ca/databases/searches.*'),
-        get_kijijiRecentSearches)
-}
+    return True

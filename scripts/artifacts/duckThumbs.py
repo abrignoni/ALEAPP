@@ -43,9 +43,6 @@ def get_duckThumbs(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No DuckDuckGo Tab Thumbnails data available')
         
-__artifacts__ = {
-        "DuckThumbs'": (
-                "DuckDuckGo",
-                ('*/com.duckduckgo.mobile.android/cache/tabPreviews/*/*.jpg'),
-                get_duckThumbs)
-}
+
+        
+        

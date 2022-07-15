@@ -36,10 +36,3 @@ def get_last_boot_time(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Last Boot Time data available')
-
-__artifacts__ = {
-        "last_boot_time": (
-                "Power Events",
-                ('*/data/misc/bootstat/last_boot_time_utc'),
-                get_last_boot_time)
-}

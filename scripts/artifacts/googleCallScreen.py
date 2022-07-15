@@ -96,10 +96,4 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Call Screen data available')
     
         db.close()
-
-__artifacts__ = {
-        "GoogleCallScreen": (
-                "Google Call Screen",
-                ('**/com.google.android.dialer/databases/callscreen_transcripts*','**/com.google.android.dialer/files/callscreenrecordings/*.*'),
-                get_googleCallScreen)
-}
+    return

@@ -93,10 +93,4 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc(f'No Bluetooth Adapter Information data available')
-
-__artifacts__ = {
-        "Bluetooth Connections": (
-                "Bluetooth Connections",
-                ('*/data/misc/bluedroid/bt_config.conf'),
-                get_bluetoothConnections)
-}
+                    

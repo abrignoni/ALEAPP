@@ -92,9 +92,3 @@ def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No MEGA files data available')
     
-__artifacts__ = {
-        "mega_transfers": (
-                "Mega",
-                ('*/data/data/mega.privacy.android.app/databases/megapreferences'),
-                get_mega_transfers)
-}

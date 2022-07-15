@@ -58,10 +58,4 @@ def get_walStrings(files_found, report_folder, seeker, wrap_text):
     report.write_artifact_data_table(data_headers, data_list, location, html_escape=False)
     report.end_artifact_report()
 
-__artifacts__ = {
-        "walStrings": (
-                "SQLite Journaling",
-                ('*/*-wal', '*/*-journal'),
-                get_walStrings)
-}
-    
+  
