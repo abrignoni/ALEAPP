@@ -60,14 +60,16 @@ def get_FilesByGoogle_FilesMaster(files_found, report_folder, seeker, wrap_text)
             
             tlactivity = f'Files By Google - Files Master'
             timeline(report_folder, tlactivity, data_list, data_headers)
+            
+            db.close()
         else:
             logfunc('No Files By Google - Files Master data available')
+            db.close()
     
-    db.close()
 
 __artifacts__ = {
         "FilesMaster": (
                 "Files by Google",
-                ('*/com.google.android.apps.nbu.files/databases/*.*'),
+                ('*/com.google.android.apps.nbu.files/databases/files_master_database*'),
                 get_FilesByGoogle_FilesMaster)
 }

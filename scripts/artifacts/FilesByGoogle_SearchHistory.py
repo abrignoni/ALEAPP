@@ -42,14 +42,14 @@ def get_FilesByGoogle_SearchHistory(files_found, report_folder, seeker, wrap_tex
             
             tlactivity = f'Files By Google - Search History'
             timeline(report_folder, tlactivity, data_list, data_headers)
+            db.close()
         else:
             logfunc('No Files By Google - Search History data available')
-    
-    db.close()
+            db.close()
 
 __artifacts__ = {
         "FilesSearchHist": (
                 "Files by Google",
-                ('*/com.google.android.apps.nbu.files/databases/*.*'),
+                ('*/com.google.android.apps.nbu.files/databases/search_history_database*'),
                 get_FilesByGoogle_SearchHistory)
 }

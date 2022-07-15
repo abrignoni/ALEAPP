@@ -39,4 +39,10 @@ def get_smanagerCrash(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Smart Manager - Crash data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "smanagerCrash": (
+                "App Interaction",
+                ('*/com.samsung.android.sm/databases/sm.db'),
+                get_smanagerCrash)
+}

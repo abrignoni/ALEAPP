@@ -93,4 +93,10 @@ def get_tikTok(files_found, report_folder, seeker, wrap_text):
         logfunc('No TikTok Contacts available')
     
     db.close()
-    
+
+__artifacts__ = {
+        "tikTok": (
+                "TikTok",
+                ('*_im.db*', '*db_im_xx*'),
+                get_tikTok)
+}

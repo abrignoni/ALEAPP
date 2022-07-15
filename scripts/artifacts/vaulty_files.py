@@ -30,3 +30,10 @@ def get_vaulty_files(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
+
+__artifacts__ = {
+    "vaulty_files": (
+        "Vaulty",
+        ('*/data/data/com.theronrogers.vaultyfree/databases/media.db'),
+        get_vaulty_files)
+}

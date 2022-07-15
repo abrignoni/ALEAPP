@@ -43,4 +43,10 @@ def get_smyfilesStored(files_found, report_folder, seeker, text_wrap):
         logfunc('No My Files DB Stored data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "smyfilesStored": (
+                "My Files",
+                ('*/com.sec.android.app.myfiles/databases/FileCache.db*'),
+                get_smyfilesStored)
+}

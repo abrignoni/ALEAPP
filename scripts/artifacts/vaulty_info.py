@@ -84,3 +84,10 @@ def get_vaulty_info(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
+
+__artifacts__ = {
+    "vaulty_info": (
+        "Vaulty",
+        ('*/data/data/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml'),
+        get_vaulty_info)
+}
