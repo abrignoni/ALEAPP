@@ -115,10 +115,3 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Login Data available')
         
         db.close()
-    
-__artifacts__ = {
-        "ChromeLoginData": (
-                "Chromium",
-                ('*/data/data/*/app_chrome/Default/Login Data*', '*/data/data/*/app_sbrowser/Default/Login Data*', '*/data/data/*/app_opera/Login Data*'),
-                get_chromeLoginData)
-}

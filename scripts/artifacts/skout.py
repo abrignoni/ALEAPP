@@ -92,10 +92,4 @@ def get_skout(files_found, report_folder, seeker, wrap_text):
                 
         
     db.close()
-
-__artifacts__ = {
-        "skout": (
-                "Skout",
-                ('*/data/com.skout.android/databases/skoutDatabase*'),
-                get_skout)
-}
+    

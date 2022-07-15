@@ -65,10 +65,4 @@ def get_swellbeing(files_found, report_folder, seeker, wrap_text):
             logfunc('No Samsung Wellbeing event data available')
         
         db.close()
-
-__artifacts__ = {
-        "swellbeing": (
-                "Wellbeing",
-                ('*/com.samsung.android.forest/databases/dwbCommon.db*'),
-                get_swellbeing)
-}
+        return

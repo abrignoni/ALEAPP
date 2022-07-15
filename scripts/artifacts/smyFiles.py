@@ -93,10 +93,4 @@ def get_smyFiles(files_found, report_folder, seeker, wrap_text):
         logfunc('No My Files DB Recent Files data available')
 
     db.close()
-
-__artifacts__ = {
-        "smyFiles": (
-                "My Files",
-                ('*/com.sec.android.app.myfiles/databases/MyFiles*.db*'),
-                get_smyFiles)
-}
+    return

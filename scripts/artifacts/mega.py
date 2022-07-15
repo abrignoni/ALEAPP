@@ -82,10 +82,3 @@ def get_mega(files_found, report_folder, seeker, wrap_text):
             logfunc('No MEGA - Chat data available')
         
         db.close()
-
-__artifacts__ = {
-        "mega": (
-                "Mega",
-                ('*/data/data/mega.privacy.android.app/karere-*.db*'),
-                get_mega)
-}

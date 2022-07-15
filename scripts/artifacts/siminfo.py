@@ -87,10 +87,3 @@ def process_siminfo(folder, uid, report_folder):
     else:
         logfunc(f'No SIM_Info{uid} data available')    
     db.close()
-
-__artifacts__ = {
-        "siminfo": (
-                "Device Info",
-                ('*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
-                get_siminfo)
-}

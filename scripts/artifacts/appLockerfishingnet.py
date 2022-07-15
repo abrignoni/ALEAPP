@@ -84,3 +84,10 @@ def get_appLockerfishingnet(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Calculator Locker data available')
+
+__artifacts__ = {
+        "App Locker": (
+                "Encrypting Media Apps",
+                ('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*'),
+                get_appLockerfishingnet)
+}

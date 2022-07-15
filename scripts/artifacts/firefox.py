@@ -186,10 +186,3 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
             logfunc('No Firefox - Search Terms data available')
         
         db.close()
-    
-__artifacts__ = {
-        "Firefox": (
-                "Firefox",
-                ('*/data/data/org.mozilla.firefox/files/places.sqlite*'),
-                get_firefox)
-}

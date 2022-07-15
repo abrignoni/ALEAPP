@@ -43,11 +43,5 @@ def get_ChessComGames(files_found, report_folder, seeker, wrap_text):
     
     tsv(report_folder, data_headers, data_list, title)
 
-__artifacts__ = {
-        "ChessComGames": (
-                "Chess.com",
-                ('*/data/data/com.chess/databases/chess-database*', '*/data/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
-                get_ChessComGames)
-}
 
 

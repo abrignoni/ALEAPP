@@ -67,9 +67,4 @@ def process_ssecure(file_path, uid, report_folder):
     else:
         logfunc('No Settings Secure data available')
         
-__artifacts__ = {
-        "settingsSecure": (
-                "Device Info",
-                ('*/system/users/*/settings_secure.xml'),
-                get_settingsSecure)
-}
+    

@@ -94,10 +94,4 @@ def get_package_info(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No package data available')            
-
-__artifacts__ = {
-        "package_info": (
-                "Installed Apps",
-                ('*/system/packages.xml'),
-                get_package_info)
-}
+            

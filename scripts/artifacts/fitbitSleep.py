@@ -80,9 +80,4 @@ def get_fitbitSleep(files_found, report_folder, seeker, wrap_text):
         
     db.close()
 
-__artifacts__ = {
-        "fitbitSleep": (
-                "Fitbit",
-                ('*/data/data/com.fitbit.FitbitMobile/databases/sleep*'),
-                get_fitbitSleep)
-}
+    

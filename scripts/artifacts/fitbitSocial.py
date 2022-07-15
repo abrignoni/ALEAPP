@@ -87,9 +87,4 @@ def get_fitbitSocial(files_found, report_folder, seeker, wrap_text):
         
     db.close()
 
-__artifacts__ = {
-        "FitbitSocial": (
-                "Fitbit",
-                ('*/data/data/com.fitbit.FitbitMobile/databases/social_db*'),
-                get_fitbitSocial)
-}
+    

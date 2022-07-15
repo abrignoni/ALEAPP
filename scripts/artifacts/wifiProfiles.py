@@ -166,10 +166,4 @@ def get_wifiProfiles(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No Wi-Fi Profiles data available')
-
-__artifacts__ = {
-        "wifiProfiles": (
-                "WiFi Profiles",
-                ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
-                get_wifiProfiles)
-}
+  

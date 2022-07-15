@@ -168,10 +168,4 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Duo - Notes data available')
     
     db.close()
-
-__artifacts__ = {
-        "googleDuo": (
-                "Google Duo",
-                ('*/com.google.android.apps.tachyon/databases/tachyon.db*','*/com.google.android.apps.tachyon/files/media/*.*'),
-                get_googleDuo)
-}
+    return

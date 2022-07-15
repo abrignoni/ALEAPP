@@ -98,10 +98,3 @@ def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Cookies data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeCookies": (
-                "Chromium",
-                ('*/data/data/*/app_chrome/Default/Cookies*', '*/data/data/*/app_sbrowser/Default/Cookies*', '*/data/data/*/app_opera/Cookies*'),
-                get_chromeCookies)
-}

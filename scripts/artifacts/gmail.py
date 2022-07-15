@@ -47,10 +47,3 @@ def get_gmailActive(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No active Gmail account found')
-
-__artifacts__ = {
-        "GmailActive": (
-                "Gmail",
-                ('**/com.google.android.gm/shared_prefs/Gmail.xml'),
-                get_gmailActive)
-}

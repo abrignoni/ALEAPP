@@ -33,10 +33,3 @@ def get_etc_hosts(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc(f'No etc hosts file available, or nothing significant found.')
-        
-__artifacts__ = {
-        "Etc_hosts": (
-                "Etc Hosts",
-                ('*/system/etc/hosts'),
-                get_etc_hosts)
-}

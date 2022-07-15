@@ -23,10 +23,3 @@ def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text):
     
     tsvname = f'wellbeing account'
     tsv(report_folder, data_headers, data_list, tsvname)
-
-__artifacts__ = {
-        "wellbeingaccount": (
-                "Wellbeing",
-                ('*/com.google.android.apps.wellbeing/files/AccountData.pb'),
-                get_wellbeingaccount)
-}

@@ -190,11 +190,6 @@ def get_NQVault(files_found, report_folder, seeker, wrap_text):
             logfunc('No Encrypted Media Present in Database.')
             return
 
-__artifacts__ = {
-        "NQVault": (
-                "Encrypting Media apps",
-                ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11', '*/SystemAndroid/Data/*'),
-                get_NQVault)
-}
+
 
 

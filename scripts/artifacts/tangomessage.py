@@ -65,10 +65,4 @@ def get_tangomessage(files_found, report_folder, seeker, wrap_text):
         logfunc('No Tango Messages data available')
 
     db.close()
-
-__artifacts__ = {
-        "tangomessage": (
-                "Tango",
-                ('*/com.sgiggle.production/files/tc.db*'),
-                get_tangomessage)
-}
+    return

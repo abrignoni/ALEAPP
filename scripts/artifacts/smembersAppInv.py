@@ -44,10 +44,4 @@ def get_smembersAppInv(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Members - Apps data available')
     
     db.close()
-
-__artifacts__ = {
-        "smembersAppInv": (
-                "App Interaction",
-                ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
-                get_smembersAppInv)
-}
+    return

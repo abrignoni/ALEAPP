@@ -53,10 +53,4 @@ def get_wellbeingURLs(files_found, report_folder, seeker, wrap_text):
             logfunc('No Wellbeing URL event data available')
         
         db.close()
-
-__artifacts__ = {
-        "wellbeingURLs": (
-                "Wellbeing",
-                ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
-                get_wellbeingURLs)
-}
+        return

@@ -41,10 +41,4 @@ def get_smembersEvents(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Members - Events data available')
     
     db.close()
-
-__artifacts__ = {
-        "smembersEvents": (
-                "App Interaction",
-                ('*/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
-                get_smembersEvents)
-}
+    return

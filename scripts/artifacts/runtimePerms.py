@@ -61,9 +61,4 @@ def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
                     tsvname = f'Runtime Permissions_{user}'
                     tsv(report_folder, data_headers, data_list, tsvname)
                 
-__artifacts__ = {
-        "runtimePerms": (
-                "Permissions",
-                ('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml'),
-                get_runtimePerms)
-}
+            

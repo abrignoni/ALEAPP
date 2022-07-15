@@ -57,11 +57,4 @@ def get_googlemaplocation(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Map Locations found')
             
         db.close()
-        
-__artifacts__ = {
-        "Googlemaplocation": (
-                "GEO Location",
-                ('*/com.google.android.apps.maps/databases/da_destination_history*'),
-                get_googlemaplocation)
-}
     

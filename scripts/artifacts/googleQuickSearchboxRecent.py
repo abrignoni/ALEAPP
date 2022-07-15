@@ -108,10 +108,3 @@ def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No recent quick search or now data available')
-
-__artifacts__ = {
-        "Quicksearch_recent": (
-                "Google Now & QuickSearch",
-                ('*/com.google.android.googlequicksearchbox/files/recently/*'),
-                get_quicksearch_recent)
-}

@@ -71,10 +71,3 @@ def get_protonmailMessages(files_found, report_folder, seeker, wrap_text):
             logfunc('No ProtonMail - Messages data available')
         
         db.close()
-        
-__artifacts__ = {
-        "protonmailMessages": (
-                "ProtonMail",
-                ('*/data/data/ch.protonmail.android/databases/*-MessagesDatabase.db*'),
-                get_protonmailMessages)
-}

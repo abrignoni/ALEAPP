@@ -54,10 +54,4 @@ def get_kijijiLocalUserInfo(files_found, report_folder, seeker, wrap_text):
     
     tsvname = f'Kijiji Local User Information'
     tsv(report_folder, data_headers, data_list, tsvname)    
-
-__artifacts__ = {
-        "kijijiLocalUserInfo": (
-                "Kijiji Local User Information",
-                ('*/com.ebay.kijiji.ca/shared_prefs/LoginData.xml'),
-                get_kijijiLocalUserInfo)
-}
+    return True

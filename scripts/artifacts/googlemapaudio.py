@@ -67,9 +67,3 @@ def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Google Audio Locations found')
             
-__artifacts__ = {
-        "Googlemapaudio": (
-                "Google Maps Voice Guidance",
-                ('*/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
-                get_googlemapaudio)
-}

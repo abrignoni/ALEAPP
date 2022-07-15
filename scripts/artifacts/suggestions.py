@@ -42,10 +42,3 @@ def get_suggestions(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Suggestions XML data available')
-
-__artifacts__ = {
-        "suggestions": (
-                "Wipe & Setup",
-                ('*/data/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
-                get_suggestions)
-}

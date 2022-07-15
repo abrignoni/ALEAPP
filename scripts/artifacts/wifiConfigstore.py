@@ -66,10 +66,3 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Wifi Configuration Store data available')
-            
-__artifacts__ = {
-        "wifiConfigstore": (
-                "WiFi Profiles",
-                ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
-                get_wifiConfigstore)
-}

@@ -198,12 +198,6 @@ def get_teams(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Teams File Info data available')
             
+            
     db.close()
-
-__artifacts__ = {
-        "teams": (
-                "Teams",
-                ('*/com.microsoft.teams/databases/SkypeTeams.db*'),
-                get_teams)
-}
     
