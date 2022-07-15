@@ -31,5 +31,10 @@ def get_ChessComMessages(files_found, report_folder, seeker, wrap_text):
     
     tsv(report_folder, data_headers, data_list, title)
 
-
+__artifacts__ = {
+        "ChessComMessages": (
+                "Chess.com",
+                ('*/data/data/com.chess/databases/chess-database*'),
+                get_ChessComMessages)
+}
 

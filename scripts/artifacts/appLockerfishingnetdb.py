@@ -29,3 +29,10 @@ def get_appLockerfishingnetdb(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Calculator Locker Database data available')
+            
+__artifacts__ = {
+        "App Locker DB": (
+                "Encrypting Media Apps",
+                ('*/.privacy_safe/db/privacy_safe.db'),
+                get_appLockerfishingnetdb)
+}

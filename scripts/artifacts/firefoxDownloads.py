@@ -54,3 +54,10 @@ def get_firefoxDownloads(files_found, report_folder, seeker, wrap_text):
             logfunc('No Firefox - Downloads data available')
         
         db.close()
+    
+__artifacts__ = {
+        "FirefoxDownloads": (
+                "Firefox",
+                ('*/data/data/org.mozilla.firefox/databases/mozac_downloads_database*'),
+                get_firefoxDownloads)
+}

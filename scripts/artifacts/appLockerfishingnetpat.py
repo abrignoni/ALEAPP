@@ -38,3 +38,10 @@ def get_appLockerfishingnetpat(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Calculator Locker Pattern data available')
+            
+__artifacts__ = {
+        "App Locker Pat": (
+                "Encrypting Media Apps",
+                ('*/data/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml'),
+                get_appLockerfishingnetpat)
+}

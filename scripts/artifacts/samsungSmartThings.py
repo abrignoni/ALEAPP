@@ -55,3 +55,10 @@ def get_samsungSmartThings(files_found, report_folder, seeker, wrap_text):
             logfunc('No Samsung SmartThings - Quick Connect data available')
         
         db.close()
+        
+__artifacts__ = {
+        "samsungSmartThings": (
+                "Samsung SmartThings",
+                ('*/com.samsung.android.oneconnect/databases/QcDB.db*'),
+                get_samsungSmartThings)
+}

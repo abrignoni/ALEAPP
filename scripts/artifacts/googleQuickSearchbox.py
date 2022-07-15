@@ -155,5 +155,12 @@ def get_quicksearch(files_found, report_folder, seeker, wrap_text):
         tlactivity = f'Google Quick Search Box'
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
-        logfunc('No recent quick search or now data available')            
+        logfunc('No recent quick search or now data available')
+
+__artifacts__ = {
+        "Quicksearch": (
+                "Google Now & QuickSearch",
+                ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
+                get_quicksearch)
+}
             

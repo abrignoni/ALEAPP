@@ -45,4 +45,9 @@ def get_fitbitWalk(files_found, report_folder, seeker, wrap_text):
         
     db.close()
 
-    
+__artifacts__ = {
+        "FitbitWalk": (
+                "Fitbit",
+                ('*/data/data/com.fitbit.FitbitMobile/databases/mobile_track_db*'),
+                get_fitbitWalk)
+}

@@ -39,5 +39,11 @@ def get_userDict(files_found, report_folder, seeker, wrap_text):
         logfunc('No User Dictionary data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+    "userDict": (
+        "User Dictionary",
+        ('*/com.android.providers.userdictionary/databases/user_dict.db*'),
+        get_userDict)
+}
 

@@ -58,4 +58,10 @@ def get_smyfilescache(files_found, report_folder, seeker, text_wrap):
         logfunc('No My Files DB Stored data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "smyfilescache": (
+                "My Files",
+                ('*/com.sec.android.app.myfiles/databases/FileCache.db*','*/com.sec.android.app.myfiles/cache/*.*'),
+                get_smyfilescache)
+}

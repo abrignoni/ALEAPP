@@ -66,10 +66,11 @@ def pickModules():
     # Create sorted dict from 'tosearch' dictionary based on plugin category
     sorted_tosearch = {k: v for k, v in sorted(tosearch.items(), key=lambda item: item[1][0].upper())}
 
-    indx = 1000     # arbitrary number to not interfere with other controls
-    for key, val in sorted_tosearch.items():
-        disabled = False if key != 'usagestatsVersion' else True # usagestatsVersion is REQUIRED
-        mlist.append( CheckList(val[0] + f' [{key}]', indx, key, disabled) )
+
+    indx = MODULE_START_INDEX     # arbitrary number to not interfere with other controls
+    for plugin in sorted(loader.plugins, key=lambda p: p.category.upper()):
+        disabled = plugin.module_name == 'usagestatsVersion'
+        mlist.append(CheckList(f'{plugin.category} [{plugin.name} - {plugin.module_name}.py]', indx, plugin.name, disabled))
         indx = indx + 1
         
 sg.theme('LightGreen5')   # Add a touch of color

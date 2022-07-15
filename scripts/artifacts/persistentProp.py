@@ -48,3 +48,10 @@ def get_persistentProp(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Persistent Properties data available')
+            
+__artifacts__ = {
+        "persistentProp": (
+                "Wipe & Setup",
+                ('*/data/property/persistent_properties'),
+                get_persistentProp)
+}
