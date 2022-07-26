@@ -47,4 +47,10 @@ def get_Zapya(files_found, report_folder, seeker, wrap_text):
         logfunc('No Zapya data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "Zapya": (
+                "File Transfer",
+                ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*'),
+                get_Zapya)
+}

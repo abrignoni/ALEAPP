@@ -5,12 +5,14 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_n
 
 def get_browser_name(file_name):
 
-    if 'microsoft' in file_name.lower():
+    if 'brave' in file_name.lower():
+        return 'Brave'
+    elif 'microsoft' in file_name.lower():
         return 'Edge'
-    elif 'chrome' in file_name.lower():
-        return 'Chrome'
     elif 'opera' in file_name.lower():
         return 'Opera'
+    elif 'android.chrome' in file_name.lower():
+        return 'Chrome'
     else:
         return 'Unknown'
 
@@ -46,9 +48,9 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} Media History - Sessions')
+            report = ArtifactHtmlReport(f'{browser_name} - Media History - Sessions')
             #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} Media History - Sessions.temphtml')
+            report_path = os.path.join(report_folder, f'{browser_name} - Media History - Sessions.temphtml')
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
@@ -60,13 +62,13 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'{browser_name} Media History - Sessions'
+            tsvname = f'{browser_name} - Media History - Sessions'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'{browser_name} Media History - Sessions'
+            tlactivity = f'{browser_name} - Media History - Sessions'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Browser Media History - Sessions data available')
+            logfunc(f'No {browser_name} - Media History - Sessions data available')
         
         cursor.execute('''
         select
@@ -89,9 +91,9 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} Media History - Playbacks')
+            report = ArtifactHtmlReport(f'{browser_name} - Media History - Playbacks')
             #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} Media History - Playbacks.temphtml')
+            report_path = os.path.join(report_folder, f'{browser_name} - Media History - Playbacks.temphtml')
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
@@ -103,13 +105,13 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'{browser_name}  Media History - Playbacks'
+            tsvname = f'{browser_name} - Media History - Playbacks'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'{browser_name} Media History - Playbacks'
+            tlactivity = f'{browser_name} - Media History - Playbacks'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Browser Media History - Playbacks data available')
+            logfunc(f'No {browser_name} - Media History - Playbacks data available')
         
         cursor.execute('''
         select
@@ -123,9 +125,9 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} Media History - Origins')
+            report = ArtifactHtmlReport(f'{browser_name} - Media History - Origins')
             #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} Media History - Origins.temphtml')
+            report_path = os.path.join(report_folder, f'{browser_name} - Media History - Origins.temphtml')
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
@@ -137,13 +139,19 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'{browser_name} Media History - Origins'
+            tsvname = f'{browser_name} - Media History - Origins'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'{browser_name} Media History - Origins'
+            tlactivity = f'{browser_name} - Media History - Origins'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Browser Media History - Origins data available')
+            logfunc(f'No {browser_name} - Media History - Origins data available')
         
         db.close()
-        return
+
+__artifacts__ = {
+        "ChromeMediaHistory": (
+                "Chromium",
+                ('*/data/data/*/app_chrome/Default/Media History*','*/data/data/*/app_sbrowser/Default/Media History*', '*/data/data/*/app_opera/Media History*'),
+                get_chromeMediaHistory)
+}

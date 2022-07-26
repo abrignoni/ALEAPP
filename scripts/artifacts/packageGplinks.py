@@ -33,4 +33,10 @@ def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc('No Google Play Links for Apps data available')
-            
+
+__artifacts__ = {
+        "packageGplinks": (
+                "Installed Apps",
+                ('*/system/packages.list'),
+                get_packageGplinks)
+}

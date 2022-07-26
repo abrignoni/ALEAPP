@@ -93,6 +93,11 @@ def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
                 if os.path.exists(screenshot_file_path):
                     shutil.copy2(screenshot_file_path, report_folder)
                 img_html = '<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid" style="max-height:600px; min-width:300px" title="{0}"></a>'.format(f'{base_name}-{screenshot_id}.jpg', folder_name)
+                
+                platform = is_platform_windows()
+                if platform:
+                    img_html = img_html.replace('?', '')
+                
                 recursive_convert_bytes_to_str(item) # convert all 'bytes' to str
                 data_list.append( (img_html, '<pre id="json" style="font-size: 110%">'+ escape(json.dumps(item, indent=4)).replace('\\n', '<br>') +'</pre>') )
 
@@ -103,3 +108,10 @@ def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No recent quick search or now data available')
+
+__artifacts__ = {
+        "Quicksearch_recent": (
+                "Google Now & QuickSearch",
+                ('*/com.google.android.googlequicksearchbox/files/recently/*'),
+                get_quicksearch_recent)
+}

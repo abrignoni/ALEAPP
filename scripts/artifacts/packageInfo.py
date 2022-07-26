@@ -1,8 +1,9 @@
 import datetime
 import os
 import xmltodict
+import xml.etree.ElementTree as etree
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, abxread, checkabx
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -42,21 +43,29 @@ def get_package_info(files_found, report_folder, seeker, wrap_text):
             continue
         
         file_name = os.path.basename(file_found)
-        with open(file_found) as fd:
-            doc = xmltodict.parse(fd.read())
-            package_dict = doc.get('packages', {}).get('package', {})
-            for package in package_dict:
-                name = package.get('@name', '')
-                ft = ReadUnixTimeMs(package.get('@ft', None))
-                it = ReadUnixTimeMs(package.get('@it', None))
-                ut = ReadUnixTimeMs(package.get('@ut', None))
-                install_originator = package.get('@installOriginator', '')
-                installer = package.get('@installer', '')
-                code_path = package.get('@codePath', '')
-                public_flags  = hex(int(package.get('@publicFlags', 0)) & (2**32-1))
-                private_flags = hex(int(package.get('@privateFlags', 0)) & (2**32-1))
-                package = Package(name, ft, it, ut, install_originator, installer, code_path, public_flags, private_flags)
-                packages.append(package)
+        if (checkabx(file_found)):
+            multi_root = False
+            tree = abxread(file_found, multi_root)
+            xlmstring = (etree.tostring(tree.getroot()).decode())
+            doc = xmltodict.parse(xlmstring)
+        else:
+            with open(file_found) as fd:
+                doc = xmltodict.parse(fd.read())
+        
+        package_dict = doc.get('packages', {}).get('package', {})
+        for package in package_dict:
+            name = package.get('@name', '')
+            ft = ReadUnixTimeMs(package.get('@ft', None))
+            it = ReadUnixTimeMs(package.get('@it', None))
+            ut = ReadUnixTimeMs(package.get('@ut', None))
+            install_originator = package.get('@installOriginator', '')
+            installer = package.get('@installer', '')
+            code_path = package.get('@codePath', '')
+            public_flags  = hex(int(package.get('@publicFlags', 0)) & (2**32-1))
+            private_flags = hex(int(package.get('@privateFlags', 0)) & (2**32-1))
+            package = Package(name, ft, it, ut, install_originator, installer, code_path, public_flags, private_flags)
+            packages.append(package)
+        
         if len(packages):
             break
 
@@ -85,4 +94,10 @@ def get_package_info(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No package data available')            
-            
+
+__artifacts__ = {
+        "package_info": (
+                "Installed Apps",
+                ('*/system/packages.xml'),
+                get_package_info)
+}

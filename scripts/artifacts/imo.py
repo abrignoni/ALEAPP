@@ -108,4 +108,10 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
 
     db.close
     
-    return
+__artifacts__ = {
+        "Imo": (
+                "IMO",
+                ('**/com.imo.android.imous/databases/*.db*'),
+                get_imo)
+}
+    

@@ -2,8 +2,6 @@ import html
 import os
 import pathlib
 import shutil
-import sqlite3
-import sys
 
 from collections import OrderedDict
 from scripts.html_parts import *
@@ -23,8 +21,20 @@ def get_icon_name(category, artifact):
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
     elif category == 'ADB HOSTS':       icon = 'terminal'
+    elif category == 'AIRTAGS':       icon = 'map-pin'
+    elif category == 'BURNER':
+        if artifact.find('NUMBER INFORMATION') >= 0:         icon = 'user'
+        elif artifact.find('COMMUNICATION INFORMATION') >= 0:           icon = 'message-circle'
+    elif category == 'CALCULATOR LOCKER':       icon = 'lock'
+    elif category == 'PLAYGROUND VAULT':       icon = 'lock'
+    elif category == 'ENCRYPTING MEDIA APPS':       icon = 'lock'
+    elif category == 'GOOGLE MAPS VOICE GUIDANCE': icon = 'map'
+    elif category == 'GMAIL': icon = 'at-sign'
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
+    elif category == 'PRIVACY DASHBOARD': icon = 'eye'
     elif category == 'BASH HISTORY':    icon = 'terminal'
+    elif category == 'SETTINGS SERVICES':    
+        if artifact.find('BATTERY') >=0:    icon = 'battery-charging'
     elif category == 'DEVICE HEALTH SERVICES':         
         if artifact.find('BLUETOOTH') >=0:  icon = 'bluetooth'
         elif artifact.find('BATTERY') >=0:  icon = 'battery-charging'
@@ -33,17 +43,21 @@ def get_icon_name(category, artifact):
     elif category == 'CAST':            icon = 'cast'
     elif category == 'FITBIT':            icon = 'watch'
     elif category == 'CALL LOGS':       icon = 'phone'
+    elif category == 'IMAGE MANAGER CACHE':       icon = 'image'
+    elif category == 'CLIPBOARD':        icon = 'clipboard'
+    elif category == 'CASH APP':        icon = 'credit-card'
     elif category == 'CHATS':           icon = 'message-circle'
     elif category == 'CHROMIUM':          
-        if artifact.find('SEARCH TERMS') >= 0:      icon = 'search'
-        elif artifact.find('DOWNLOADS') >= 0:       icon = 'download'
+        if artifact.find('AUTOFILL') >= 0:        icon = 'edit-3'
         elif artifact.find('BOOKMARKS') >= 0:       icon = 'bookmark'
+        elif artifact.find('DOWNLOADS') >= 0:       icon = 'download'
         elif artifact.find('LOGIN') >= 0:           icon = 'log-in'
         elif artifact.find('MEDIA HISTORY') >= 0:   icon = 'video'
         elif artifact.find('NETWORK ACTION PREDICTOR') >=0:    icon = 'type'
-        elif artifact.find('TOP SITES') >= 0:       icon = 'list'
         elif artifact.find('OFFLINE PAGES') >= 0:   icon = 'cloud-off'
-        elif artifact.find('AUTOFILL') >= 0:        icon = 'edit-3'
+        elif artifact.find('SEARCH TERMS') >= 0:      icon = 'search'
+        elif artifact.find('TOP SITES') >= 0:       icon = 'list'
+        elif artifact.find('WEB VISITS') >= 0:      icon = 'globe'
         else:                                       icon = 'chrome'
     elif category == 'DEVICE INFO':     
         if artifact == 'BUILD INFO':                icon = 'terminal'
@@ -51,36 +65,85 @@ def get_icon_name(category, artifact):
         elif artifact.find('SETTINGS_SECURE_') >= 0: icon = 'settings'
         else:                                       icon = 'info'
     elif category == 'ETC HOSTS':       icon = 'globe'
+    elif category == 'WIPE & SETUP':
+        if artifact == 'FACTORY RESET':                  icon = 'loader'
+        elif artifact == 'SUGGESTIONS.XML':                icon = 'loader'
+        elif artifact == 'SETUP_WIZARD_INFO.XML':          icon = 'loader'
+        elif artifact == 'APPOPS.XML':                     icon = 'loader'
+        elif artifact == 'SAMSUNG WIPE HISTORY':           icon = 'trash-2'
+        else:                                            icon = 'loader'
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
-    elif category == 'GOOGLE DUO':
-        if artifact == 'GOOGLE DUO - CALL HISTORY':
-            icon = 'phone-call'
-        if artifact == 'GOOGLE DUO - CONTACTS':
-            icon = 'user'
-        if artifact == 'GOOGLE DUO - NOTES':
-            icon = 'message-circle'
-    elif category == 'GOOGLE KEEP':     icon = 'list'
-    elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
+    elif category == 'FIREFOX':
+        if artifact.find('BOOKMARKS') >= 0:                 icon = 'bookmark'
+        elif artifact.find('COOKIES') >= 0:                 icon = 'info'
+        elif artifact.find('DOWNLOADS') >= 0:               icon = 'download'
+        elif artifact.find('FORM HISTORY') >= 0:            icon = 'edit-3'
+        elif artifact.find('PERMISSIONS') >= 0:             icon = 'sliders'
+        elif artifact.find('RECENTLY CLOSED TABS') >= 0:    icon = 'x-square'
+        elif artifact.find('SEARCH TERMS') >= 0:            icon = 'search'
+        elif artifact.find('TOP SITES') >= 0:               icon = 'list'
+        elif artifact.find('VISITS') >= 0:                  icon = 'globe'
+        elif artifact.find('WEB HISTORY') >= 0:             icon = 'globe'
+    elif category == 'GOOGLE CHAT':
+        if artifact.find('GROUP INFORMATION') >= 0:         icon = 'users'
+        elif artifact.find('CHAT MESSAGES') >= 0:           icon = 'message-circle'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
+    elif category == 'FILES BY GOOGLE':     icon = 'file'
+    elif category == 'GOOGLE DUO':
+        if artifact.find('CALL HISTORY') >= 0:      icon = 'phone-call'
+        elif artifact.find('CONTACTS') >= 0:      icon = 'users'
+        elif artifact.find('NOTES') >= 0:      icon = 'edit-3'
+    elif category == 'GOOGLE FIT (GMS)':     icon = 'activity'           
+    elif category == 'GOOGLE KEEP':     icon = 'list'
+    elif category == 'TOR':     icon = 'globe'
+    elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'GOOGLE PHOTOS':
         if artifact.find('LOCAL TRASH') >=0:            icon = 'trash-2'
         elif artifact.find('BACKED UP FOLDER') >= 0:    icon = 'refresh-cw'
         else:                                           icon = 'image'
+    elif category == 'GOOGLE MESSAGES':     icon = 'message-circle'
     elif category == 'GOOGLE PLAY':     
         if artifact == 'GOOGLE PLAY SEARCHES':      icon = 'search'
         else:                                       icon = 'play'
+    elif category == 'GOOGLE TASKS':     icon = 'list'
+    elif category == 'GROUPME':
+        if artifact.find('GROUP INFORMATION') >= 0:         icon = 'users'
+        elif artifact.find('CHAT INFORMATION') >= 0:           icon = 'message-circle'
+    elif category == 'HIDEX': icon = 'eye-off'
     elif category == 'INSTALLED APPS':  icon = 'package'
     elif category == 'MEDIA METADATA':  icon = 'file-plus'
+    elif category == 'MY FILES':
+        if artifact.find('MY FILES DB - CACHE MEDIA') >=0: icon = 'image'
+        else:                           icon = 'file-plus'
+    elif category == 'MEGA': icon = 'message-circle'
+    elif category == 'MEWE':  icon = 'message-circle'
     elif category == 'NOW PLAYING':           icon = 'music'
+    elif category == 'POWER EVENTS':
+        if artifact.find('POWER OFF RESET'):    icon = 'power'
+        elif artifact.find('LAST BOOT TIME'):          icon = 'power'
+        elif artifact.find('SHUTDOWN CHECKPOINTS'):    icon = 'power'
+    elif category == 'PROTONMAIL':
+        if artifact.find('CONTACTS') >=0: icon = 'users'
+        elif artifact.find('MESSAGES') >=0: icon = 'inbox'
+        else:                           icon = 'mail'
     elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
+    elif category == 'SAMSUNG SMARTTHINGS': icon = 'bluetooth'
+    elif category == 'SAMSUNG WEATHER CLOCK':
+        if artifact.find('DAILY') >=0:            icon = 'sunrise'
+        elif artifact.find('HOURLY') >=0:            icon = 'thermometer'
+        else:                                          icon = 'sun'
     elif category == 'SAMSUNG_CMH':     icon = 'disc'
     elif category == 'SCRIPT LOGS':     icon = 'archive'
+    elif category == 'SLOPES':
+        if artifact == 'SLOPES - ACTIONS': icon = 'trending-down'
+        elif artifact == 'SLOPES - LIFT DETAILS': icon = 'shuffle'
+        elif artifact == 'SLOPES - RESORT DETAILS': icon = 'home'
     elif category == 'SKOUT':
         if artifact == 'SKOUT MESSAGES':  icon = 'message-circle'
-        if artifact == 'SKOUT USERS':  icon = 'users'
+        elif artifact == 'SKOUT USERS':  icon = 'users'
     elif category == 'TEAMS':
         if artifact == 'TEAMS MESSAGES':  icon = 'message-circle'
         elif artifact == 'TEAMS USERS':  icon = 'users'
@@ -90,52 +153,58 @@ def get_icon_name(category, artifact):
         else:                           icon = 'file-text'
     elif category == 'VIBER':
         if artifact == 'VIBER - CONTACTS':  icon = 'user'
-        if artifact == 'VIBER - MESSAGES':  icon = 'message-square'
-        if artifact == 'VIBER - CALL LOGS':  icon = 'phone'
+        elif artifact == 'VIBER - MESSAGES':  icon = 'message-square'
+        elif artifact == 'VIBER - CALL LOGS':  icon = 'phone'
     elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'USER DICTIONARY': icon = 'book'
+    elif category == 'WAZE': icon = 'navigation-2'
     elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
         if artifact == 'ACCOUNT DATA':  icon = 'user'
         else:                           icon = 'layers'
     elif category == 'WIFI PROFILES':  icon = 'wifi'
     elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'APP ROLES':  icon = 'tool'
+    elif category == 'DUCKDUCKGO':
+        if artifact == 'DUCKDUCKGO TAB THUMBNAILS':  icon = 'image'
+        else:                           icon = 'layers'
     elif category == 'LINE':
         if artifact == 'LINE - CONTACTS':  icon = 'user'
-        if artifact == 'LINE - MESSAGES':  icon = 'message-square'
-        if artifact == 'LINE - CALL LOGS':  icon = 'phone'
+        elif artifact == 'LINE - MESSAGES':  icon = 'message-square'
+        elif artifact == 'LINE - CALL LOGS':  icon = 'phone'
     elif category == 'IMO':
         if artifact == 'IMO - ACCOUNT ID':  icon = 'user'
-        if artifact == 'IMO - MESSAGES':  icon = 'message-square'
+        elif artifact == 'IMO - MESSAGES':  icon = 'message-square'
     elif category == 'TANGO':
         if artifact == 'TANGO - MESSAGES':  icon = 'message-square'
     elif category == 'VLC':
         if artifact == 'VLC MEDIA LIST':  icon = 'film'
-        if artifact == 'VLC THUMBNAILS':  icon = 'image'
+        elif artifact == 'VLC THUMBNAILS':  icon = 'image'
+    elif category == 'SNAPCHAT': icon = 'bell'
     elif category == 'SKYPE':
         if artifact == 'SKYPE - CALL LOGS':  icon = 'phone'
-        if artifact == 'SKYPE - MESSAGES':  icon = 'message-square'
-        if artifact == 'SKYPE - CONTACTS':  icon = 'user'
+        elif artifact == 'SKYPE - MESSAGES':  icon = 'message-square'
+        elif artifact == 'SKYPE - CONTACTS':  icon = 'user'
     elif category == 'TEXT NOW':
         if artifact == 'TEXT NOW - CALL LOGS':  icon = 'phone'
-        if artifact == 'TEXT NOW - MESSAGES':  icon = 'message-square'
-        if artifact == 'TEXT NOW - CONTACTS':  icon = 'user'
+        elif artifact == 'TEXT NOW - MESSAGES':  icon = 'message-square'
+        elif artifact == 'TEXT NOW - CONTACTS':  icon = 'user'
     elif category == 'TIKTOK':
         if artifact == 'TIKTOK - MESSAGES':  icon = 'message-square'
-        if artifact == 'TIKTOK - CONTACTS':  icon = 'user'
+        elif artifact == 'TIKTOK - CONTACTS':  icon = 'user'
     elif category == 'WHATSAPP':
-        if artifact == 'WHATSAPP - MESSAGES':  icon = 'messages-square'
-        if artifact == 'WHATSAPP - CONTACTS':  icon = 'user'
-        else:                           icon = 'phone'
+        if artifact == 'WHATSAPP - CONTACTS':  icon = 'users'
+        elif artifact == 'WHATSAPP - ONE TO ONE MESSAGES': icon = 'message-circle'
+        elif artifact == 'WHATSAPP - GROUP MESSAGES': icon = 'message-circle'
+        elif artifact == 'WHATSAPP - CALL LOGS': icon = 'phone'
+        elif artifact == 'WHATSAPP - GROUP DETAILS': icon = 'users'
+        elif artifact == 'WHATSAPP - MESSAGES':  icon = 'message-square'
+        else:                           icon = 'user'
     elif category == 'CONTACTS':  icon = 'user'
     return icon
-    
-    '''
-    '''
-def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
 
+def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path):
     control = None
     side_heading = \
     """<h6 class="sidebar-heading justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -156,12 +225,12 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     # Get all files
     side_list = OrderedDict() # { Category1 : [path1, path2, ..], Cat2:[..] } Dictionary containing paths as values, key=category
 
-    for root, dirs, files in sorted(os.walk(reportfolderbase)):
+    for root, _, files in sorted(os.walk(reportfolderbase)):
         files = sorted(files)
         for file in files:
             if file.endswith(".temphtml"):    
                 fullpath = (os.path.join(root, file))
-                head, tail = os.path.split(fullpath)
+                _, tail = os.path.split(fullpath)
                 p = pathlib.Path(fullpath)
                 SectionHeader = (p.parts[-2])
                 if SectionHeader == '_elements':
@@ -181,7 +250,7 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
 
     # Now that we have all the file paths, start writing the files
 
-    for category, path_list in side_list.items():
+    for path_list in side_list.values():
         for path in path_list:
             old_filename = os.path.basename(path)
             filename = old_filename.replace(".temphtml", ".html")

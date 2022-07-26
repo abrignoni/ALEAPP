@@ -35,12 +35,7 @@ def FilterInvalidValue(obj):
     return obj
 
 def AreContentsSame(last_data_set, timezones, songtitle, artist, duration, album, year):
-    return last_data_set[1] == timezones and \
-            last_data_set[2] == songtitle and \
-            last_data_set[3] == artist and \
-            last_data_set[4] == duration and \
-            last_data_set[5] == album and \
-            last_data_set[6] == year
+    return last_data_set[1] == timezones and last_data_set[2] == songtitle and last_data_set[3] == artist and last_data_set[4] == duration and last_data_set[5] == album and last_data_set[6] == year
         
 
 def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
@@ -73,11 +68,7 @@ def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            description = 'This is data stored by the Now Playing feature in Pixel phones, which '\
-                        'shows song data on the lock screen for any music playing nearby. It\'s ' \
-                        'part of <a href="https://play.google.com/store/apps/details?id=com.google.intelligence.sense"'\
-                        ' target="_blank">Pixel Ambient Services</a> or part of <a href="https://play.google.com/store/apps/details?id=com.google.android.as"'\
-                        ' target="_blank">Pixel Device Personalization Services</a> depending on OS version.'
+            description = 'This is data stored by the Now Playing feature in Pixel phones, which shows song data on the lock screen for any music playing nearby. It\'s part of <a href="https://play.google.com/store/apps/details?id=com.google.intelligence.sense" target="_blank">Pixel Ambient Services</a> or part of <a href="https://play.google.com/store/apps/details?id=com.google.android.as" target="_blank">Pixel Device Personalization Services</a> depending on OS version.'
             report = ArtifactHtmlReport('Now Playing History')
             report.start_artifact_report(report_folder, 'Now Playing', description)
             report.add_script()
@@ -136,13 +127,19 @@ def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
             report.end_artifact_report()
             
-            tsvname = f'google now playing'
+            tsvname = f'Google Now Playing'
             tsv(report_folder, data_headers, data_list, tsvname)
             
             tlactivity = f'Google Now Playing'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Now playing history')
+            logfunc('No Google Now Playing history')
 
         db.close()
-        return
+
+__artifacts__ = {
+        "GoogleNowPlaying": (
+                "Now Playing",
+                ('*/data/data/com.google.intelligence.sense/db/history_db*','*/data/data/com.google.android.as/databases/history_db*'),
+                get_googleNowPlaying)
+}

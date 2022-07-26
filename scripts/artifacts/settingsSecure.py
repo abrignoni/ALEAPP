@@ -5,7 +5,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, logdevinfo, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, logdevinfo, is_platform_windows, abxread, checkabx
 
 def get_settingsSecure(files_found, report_folder, seeker, wrap_text):
 
@@ -25,14 +25,20 @@ def get_settingsSecure(files_found, report_folder, seeker, wrap_text):
                 pass # uid was not a number
 
 def process_ssecure(file_path, uid, report_folder):
-    
-    try:
-        tree = ET.parse(file_path)
+     
+    if (checkabx(file_path)):
+        multi_root = True
+        tree = abxread(file_path, multi_root)
         root = tree.getroot()
-    except ET.ParseError: # Fix for android 11 invalid XML file (no root element present)
-        with open(file_path) as f:
-            xml = f.read()
-            root = ET.fromstring(re.sub(r"(<\?xml[^>]+\?>)", r"\1<root>", xml) + "</root>")
+    else:
+        try:
+            tree = ET.parse(file_path)
+            root = tree.getroot()
+        except ET.ParseError: # Fix for android 11 invalid XML file (no root element present)
+            with open(file_path) as f:
+                xml = f.read()
+                root = ET.fromstring(re.sub(r"(<\?xml[^>]+\?>)", r"\1<root>", xml) + "</root>")
+    
     data_list = []
     for setting in root.iter('setting'):
         nme = setting.get('name')
@@ -61,4 +67,9 @@ def process_ssecure(file_path, uid, report_folder):
     else:
         logfunc('No Settings Secure data available')
         
-    
+__artifacts__ = {
+        "settingsSecure": (
+                "Device Info",
+                ('*/system/users/*/settings_secure.xml'),
+                get_settingsSecure)
+}

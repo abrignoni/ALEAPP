@@ -69,4 +69,10 @@ def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
         logfunc('No Oruxmaps Tracks data available')
 
     db.close()
-    return
+
+__artifacts__ = {
+        "Oruxmaps": (
+                "GEO Location",
+                ('**/oruxmaps/tracklogs/oruxmapstracks.db*'),
+                get_Oruxmaps)
+}

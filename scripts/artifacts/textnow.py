@@ -165,4 +165,9 @@ def get_textnow(files_found, report_folder, seeker, wrap_text):
 
     db.close
     
-    return
+__artifacts__ = {
+    "textnow": (
+        "Text Now",
+        ('*/com.enflick.android.TextNow/databases/textnow_data.db*'),
+        get_textnow)
+}

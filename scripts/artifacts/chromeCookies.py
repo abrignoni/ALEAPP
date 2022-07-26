@@ -7,12 +7,14 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_n
 
 def get_browser_name(file_name):
 
-    if 'microsoft' in file_name.lower():
+    if 'brave' in file_name.lower():
+        return 'Brave'
+    elif 'microsoft' in file_name.lower():
         return 'Edge'
-    elif 'chrome' in file_name.lower():
-        return 'Chrome'
     elif 'opera' in file_name.lower():
         return 'Opera'
+    elif 'android.chrome' in file_name.lower():
+        return 'Chrome'
     else:
         return 'Unknown'
 
@@ -70,9 +72,9 @@ def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} Cookies')
+            report = ArtifactHtmlReport(f'{browser_name} - Cookies')
             #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} Cookies.temphtml')
+            report_path = os.path.join(report_folder, f'{browser_name} - Cookies.temphtml')
             report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
             report.start_artifact_report(report_folder, os.path.basename(report_path))
             report.add_script()
@@ -87,12 +89,19 @@ def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'{browser_name} cookies'
+            tsvname = f'{browser_name} - Cookies'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'{browser_name} Cookies'
+            tlactivity = f'{browser_name} - Cookies'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc(f'No {browser_name} cookies data available')
+            logfunc(f'No {browser_name} - Cookies data available')
         
         db.close()
+
+__artifacts__ = {
+        "ChromeCookies": (
+                "Chromium",
+                ('*/data/data/*/app_chrome/Default/Cookies*', '*/data/data/*/app_sbrowser/Default/Cookies*', '*/data/data/*/app_opera/Cookies*'),
+                get_chromeCookies)
+}

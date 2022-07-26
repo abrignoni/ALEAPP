@@ -11,6 +11,10 @@ def get_Cast(files_found, report_folder, seeker, wrap_text):
     cursor = db.cursor()
     cursor.execute('''
     SELECT
+        case last_published_timestamp_millis
+            when 0 then ''
+            else datetime(last_published_timestamp_millis/1000, 'unixepoch')
+        end as "Last Published Timestamp",
         device_id,
         capabilities,
         device_version,
@@ -24,10 +28,6 @@ def get_Cast(files_found, report_folder, seeker, wrap_text):
         rcn_enabled_status,
         hotspot_bssid,
         cloud_devcie_id,
-        case last_published_timestamp_millis
-            when 0 then ''
-            else datetime(last_published_timestamp_millis/1000, 'unixepoch')
-        end as "Last Published Timestamp",
         case last_discovered_timestamp_millis
             when 0 then ''
             else datetime(last_discovered_timestamp_millis/1000, 'unixepoch')
@@ -45,7 +45,7 @@ def get_Cast(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Cast')
         report.start_artifact_report(report_folder, 'Cast')
         report.add_script()
-        data_headers = ('Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID','Last Published Timestamp','Last Discovered Timestamp','Last Discovered By BLE Timestamp') 
+        data_headers = ('Last Published Timestamp','Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID','Last Discovered Timestamp','Last Discovered By BLE Timestamp') 
         data_list = []
         for row in all_rows:
             data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15]))
@@ -62,4 +62,10 @@ def get_Cast(files_found, report_folder, seeker, wrap_text):
         logfunc('No Cast data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "Cast": (
+                "Cast",
+                ('*/com.google.android.gms/databases/cast.db'),
+                get_Cast)
+}

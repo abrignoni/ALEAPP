@@ -6,7 +6,7 @@ If you want to contribute hit me up on twitter: https://twitter.com/AlexisBrigno
 Details in blog post here: https://abrignoni.blogspot.com/2020/02/aleapp-android-logs-events-and-protobuf.html  
 
 ## Requirements
-**Python 3.9 or above** (older versions of 3.x will also work with the exception of one or two modules)
+**Python 3.9.x ** (older versions of 3.x will also work with the exception of one or two modules)
 
 ### Dependencies
 
@@ -22,6 +22,23 @@ To run on **Linux**, you will also need to install `tkinter` separately like so:
 
 To install dependencies offline Troy Schnack has a neat process here:
 https://twitter.com/TroySchnack/status/1266085323651444736?s=19
+
+## Compile to executable
+
+To compile to an executable so you can run this on a system without python installed.
+
+To create aleapp.exe, run:
+
+```
+pyinstaller --onefile aleapp.spec
+````
+
+To create aleappGUI.exe, run:
+
+```
+pyinstaller --onefile --noconsole aleappGUI.spec
+```
+
 
 ## Usage
 

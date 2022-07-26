@@ -83,8 +83,13 @@ def get_fitbitSocial(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
-        logfunc('No Fitbit Sleep Summary data available')
+        logfunc('No Fitbit User Profile data available')
         
     db.close()
 
-    
+__artifacts__ = {
+        "FitbitSocial": (
+                "Fitbit",
+                ('*/data/data/com.fitbit.FitbitMobile/databases/social_db*'),
+                get_fitbitSocial)
+}

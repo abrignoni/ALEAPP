@@ -44,4 +44,10 @@ def get_smanagerLow(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Smart Manager - Usage data available')
     
     db.close()
-    return
+
+__artifacts__ = {
+        "smanagerLow": (
+                "App Interaction",
+                ('*/com.samsung.android.sm/databases/lowpowercontext-system-db'),
+                get_smanagerLow)
+}

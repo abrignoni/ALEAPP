@@ -1,4 +1,5 @@
 import sqlite3
+from hashlib import sha256
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
@@ -19,6 +20,10 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         if file_found.endswith('_data'):
            viber_data_db = str(file_found)
            source_file_data = file_found.replace(seeker.directory, '')
+
+        if file_found.endswith('viber_prefs'):
+            viber_prefs_db = str(file_found)
+            viber_prefs_data = file_found.replace(seeker.directory, '') 
 
     db = open_sqlite_db_readonly(viber_data_db)
     cursor = db.cursor()
@@ -54,7 +59,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         for row in all_rows:
             data_list.append((row[0], row[1], row[2], row[3], row[4]))
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.write_artifact_data_table(data_headers, data_list, viber_data_db)
         report.end_artifact_report()
         
         tsvname = f'Viber - Call Logs'
@@ -89,7 +94,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         for row in all_rows:
             data_list.append((row[0], row[1]))
             
-        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.write_artifact_data_table(data_headers, data_list, viber_data_db)
         report.end_artifact_report()
         
         tsvname = f'Viber - Contacts'
@@ -152,7 +157,7 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         for row in all_rows:
             data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.write_artifact_data_table(data_headers, data_list, viber_messages_db)
         report.end_artifact_report()
         
         tsvname = f'Viber - Messages'
@@ -166,4 +171,49 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
 
     db.close
     
-    return
+    db = open_sqlite_db_readonly(viber_prefs_db)
+    cursor = db.cursor()
+    try:
+        cursor.execute('''
+        SELECT key, value from kvdata WHERE key='key_hidden_chats_pin'
+        ''')
+        
+        all_rows = cursor.fetchall()
+        usageentries = len(all_rows)
+    except:
+        usageentries = 0
+
+    if usageentries > 0:
+        userPINHash = all_rows[0][1]
+        for i in range(0,10000):
+            currentPIN = ('{0:04}'.format(i)).encode('utf-8')
+            ## Section of code to try the hash process and print passcode if correct
+            ## Compare the current PIN SHA256 and the provided PIN hash
+            if sha256(currentPIN+"Shawl9_Valid_Yeastv".encode("utf-8")).hexdigest() == userPINHash:
+                currentPIN = currentPIN.decode("utf-8")
+                break
+        report = ArtifactHtmlReport('Viber - Additional')
+        report.start_artifact_report(report_folder, 'Viber - Additional')
+        report.add_script()
+        data_headers = ('User PIN Hash', 'User PIN',) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_list = [((userPINHash,currentPIN))]
+
+        report.write_artifact_data_table(data_headers, data_list, viber_prefs_db)
+        report.end_artifact_report()
+        
+        tsvname = f'Viber - Additional'
+        tsv(report_folder, data_headers, data_list, tsvname, viber_prefs_data)
+
+        tlactivity = f'Viber - Additional'
+        timeline(report_folder, tlactivity, data_list, data_headers)     
+    else:
+        logfunc('No Viber Hidden Chat PIN found')        
+
+    db.close()
+
+__artifacts__ = {
+  "Viber": (
+    "Viber",
+    ('*/com.viber.voip/databases/*'),
+    get_Viber)
+}

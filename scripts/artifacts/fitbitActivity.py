@@ -67,5 +67,12 @@ def get_fitbitActivity(files_found, report_folder, seeker, wrap_text):
         logfunc('No Fitbit Activity data available')
         
     db.close()
+    
+__artifacts__ = {
+        "FitbitActivity": (
+                "Fitbit",
+                ('*/data/data/com.fitbit.FitbitMobile/databases/activity_db*'),
+                get_fitbitActivity)
+}
 
     

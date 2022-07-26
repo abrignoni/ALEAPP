@@ -1,3 +1,4 @@
+bcrypt==3.2.0
 beautifulsoup4==4.8.2
 blackboxprotobuf
 packaging==20.1
@@ -5,4 +6,10 @@ protobuf==3.10.0
 PyCryptodome
 PySimpleGUI==4.16.0
 simplekml
+wheel
 xmltodict
+filetype==1.0.8
+python-magic==0.4.24; platform_system == "Linux"
+python-magic-bin==0.4.14; platform_system == "Windows"
+python-magic-bin==0.4.14; platform_system == "Darwin"
+pillow

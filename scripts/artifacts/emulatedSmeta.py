@@ -236,11 +236,12 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Emulated Storage Metadata Videos data available')
-        
-        
-        
-        
-        
-        
+
         db.close()
-        return
+
+__artifacts__ = {
+        "EmulatedSmeta'": (
+                "Emulated Storage Metadata",
+                ('*/data/data/com.google.android.providers.media.module/databases/external.db*'),
+                get_emulatedSmeta)
+}

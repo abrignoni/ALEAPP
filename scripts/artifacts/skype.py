@@ -203,4 +203,9 @@ def get_skype(files_found, report_folder, seeker, wrap_text):
 
         db.close
         
-    return
+__artifacts__ = {
+        "skype": (
+                "Skype",
+                ('*/com.skype.raider/databases/live*'),
+                get_skype)
+}

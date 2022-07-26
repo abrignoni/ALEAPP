@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET 
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, abxread, checkabx
 
 def get_permissions(files_found, report_folder, seeker, wrap_text):
     
@@ -24,13 +24,17 @@ def get_permissions(files_found, report_folder, seeker, wrap_text):
             continue
         else:
             try:
-                ET.parse(file_found)
+                if (checkabx(file_found)):
+                    multi_root = False
+                    tree = abxread(file_found, multi_root)
+                else:
+                    tree = ET.parse(file_found)
+                
             except ET.ParseError:
                 logfunc('Parse error - Non XML file.') 
                 err = 1
                 
             if err == 0:
-                tree = ET.parse(file_found)
                 root = tree.getroot()
                 
                 for elem in root:
@@ -86,4 +90,10 @@ def get_permissions(files_found, report_folder, seeker, wrap_text):
                     
                     tsvname = f'Permissions - Packages and Shared User'
                     tsv(report_folder, data_headers, data_list_packages_su, tsvname)
-            
+
+__artifacts__ = {
+        "permissions": (
+                "Permissions",
+                ('*/system/packages.xml'),
+                get_permissions)
+}

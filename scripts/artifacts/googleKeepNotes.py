@@ -11,6 +11,8 @@ slash = '\\' if is_windows else '/'
 def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
+        if not os.path.basename(file_found) == 'keep.db': # skip -journal and other files
+            continue
         
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
@@ -131,4 +133,10 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc("No Google Keep - Notes Sharing data found")
         db.close()
-        return
+        
+__artifacts__ = {
+        "GoogleKeepNotes": (
+                "Google Keep",
+                ('*/data/com.google.android.keep/databases/keep.db*'),
+                get_googleKeepNotes)
+}

@@ -43,3 +43,10 @@ def get_installedappsGass(files_found, report_folder, seeker, wrap_text):
                 logfunc('No Installed Apps data available{usernum}')
             
             db.close()
+
+__artifacts__ = {
+        "installedappsGass": (
+                "Installed Apps",
+                ('*/data/data/com.google.android.gms/databases/gass.db*', '*/data/user/*/com.google.android.gms/databases/gass.db*'),
+                get_installedappsGass)
+}

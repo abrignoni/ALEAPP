@@ -569,3 +569,10 @@ def process_usagestats(folder, uid, report_folder, version):
 
     logfunc(f'Records processed for user {uid}: {processed}')
     db.close()
+    
+__artifacts__ = {
+    "usagestats": (
+        "Usage Stats",
+        ('*/system/usagestats/*', '*/system_ce/*/usagestats*'),
+        get_usagestats)
+}
