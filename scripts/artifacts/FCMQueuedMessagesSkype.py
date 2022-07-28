@@ -69,7 +69,7 @@ class JustGetTextParser(HTMLParser):
             c = chr(int(name))
         self._text_list.append(c)
 
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+    def handle_starttag(self, tag: str, attrs: list[tuple]) -> None:
         if tag in ("div", "p"):
             self._text_list.append("\n")
         elif tag == "img":
