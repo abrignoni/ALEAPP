@@ -22,6 +22,7 @@ def get_icon_name(category, artifact):
         else:                           icon = 'user'
     elif category == 'ADB HOSTS':       icon = 'terminal'
     elif category == 'AIRTAGS':       icon = 'map-pin'
+    elif category == 'FIREBASE CLOUD MESSAGING':       icon = 'database'
     elif category == 'BURNER':
         if artifact.find('NUMBER INFORMATION') >= 0:         icon = 'user'
         elif artifact.find('COMMUNICATION INFORMATION') >= 0:           icon = 'message-circle'
