@@ -40,7 +40,7 @@ __version__ = "0.4.0"
 __description__ = """
 Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms related to com.skype.raider or 
 com.microsoft.teams"""
-__contact__ = "Alex Caithness"
+__contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
 
 def prepare_main_args(package: str, input_dir, output_dir):

@@ -31,7 +31,7 @@ import scripts.ilapfuncs
 __version__ = "1.1"
 __description__ = """Creates a summary report of all records from the fcm_queued_messages.ldb leveldb in 
 com.google.android.gms"""
-__contact__ = "Alex Caithness"
+__contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
 
 class SupportsContains(typing.Protocol):

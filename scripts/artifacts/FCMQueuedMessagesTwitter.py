@@ -32,7 +32,7 @@ __version__ = "0.4.0"
 __description__ = """
 Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms related to com.twitter.android 
 (currently only direct messages)"""
-__contact__ = "Alex Caithness"
+__contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
 EPOCH = datetime.datetime(1970, 1, 1)
 

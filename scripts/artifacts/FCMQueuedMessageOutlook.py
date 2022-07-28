@@ -30,7 +30,7 @@ __version__ = "0.2"
 __description__ = """
 Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms related to 
 com.microsoft.office.outlook"""
-__contact__ = "Alex Caithness"
+__contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
 
 def get_fcm_outlook(files_found, report_folder, seeker, wrap_text):

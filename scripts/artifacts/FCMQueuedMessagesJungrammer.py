@@ -31,7 +31,7 @@ __version__ = "0.2.0"
 __description__ = """
 Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms related to various kr.jungrammer apps 
 """
-__contact__ = "Alex Caithness"
+__contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
 KNOWN_JUNGRAMMERS = {
     "kr.jungrammer.bluetalk",

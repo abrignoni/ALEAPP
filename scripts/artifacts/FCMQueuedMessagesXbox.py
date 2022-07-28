@@ -20,7 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import sys
 import datetime
 import json
 import base64
@@ -32,7 +31,7 @@ import scripts.ilapfuncs
 __version__ = "0.1"
 __description__ = """
 Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms related to com.microsoft.xboxone.smartglass"""
-__contact__ = "Alex Caithness"
+__contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
 EXPECTED_PACKAGES = ("com.microsoft.xboxone.smartglass",)
 RUN_PER_PACKAGE = False

@@ -29,7 +29,7 @@ import scripts.ilapfuncs
 __version__ = "0.2"
 __description__ = """
 Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms related to com.instagram.android"""
-__contact__ = "Alex Caithness"
+__contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
 
 def get_fcm_instagram(files_found, report_folder, seeker, wrap_text):
