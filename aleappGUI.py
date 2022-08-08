@@ -207,7 +207,7 @@ while True:
             for x in range(MODULE_START_INDEX, module_end_index):
                 if window.FindElement(x).Get():
                     key = window[x].metadata
-                    if key in loader and key != 'Usage Stats Version':
+                    if key in loader and key != 'usagestatsVersion':
                         search_list.append(loader[key])
                     s_items = s_items + 1 # for progress bar
                 
