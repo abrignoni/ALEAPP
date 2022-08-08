@@ -1,3 +1,4 @@
+import json
 import pathlib
 import typing
 import aleapp
@@ -14,7 +15,7 @@ MODULE_START_INDEX = 1000
 
 def ValidateInput(values, window):
     '''Returns tuple (success, extraction_type)'''
-    global indx
+    global module_end_index
 
     i_path = values[0] # input file/folder
     o_path = values[1] # output folder
@@ -41,7 +42,7 @@ def ValidateInput(values, window):
         return False, ext_type
 
     one_element_is_selected = False
-    for x in range(1000, indx):
+    for x in range(1000, module_end_index):
         if window.FindElement(x).Get():
             one_element_is_selected = True
             break
@@ -62,17 +63,17 @@ def CheckList(mtxt, lkey, mdstring, disable=False):
 
 
 def pickModules():
-    global indx
+    global module_end_index
     global mlist
     global loader
 
     loader = plugin_loader.PluginLoader()
 
-    indx = MODULE_START_INDEX     # arbitrary number to not interfere with other controls
+    module_end_index = MODULE_START_INDEX     # arbitrary number to not interfere with other controls
     for plugin in sorted(loader.plugins, key=lambda p: p.category.upper()):
         disabled = plugin.module_name == 'usagestatsVersion'
-        mlist.append(CheckList(f'{plugin.category} [{plugin.name} - {plugin.module_name}.py]', indx, plugin.name, disabled))
-        indx = indx + 1
+        mlist.append(CheckList(f'{plugin.category} [{plugin.name} - {plugin.module_name}.py]', module_end_index, plugin.name, disabled))
+        module_end_index = module_end_index + 1
 
 
 sg.theme('LightGreen5')   # Add a touch of color
@@ -128,29 +129,61 @@ while True:
 
     if event == "SELECT ALL":  
         # mark all modules
-        for x in range(MODULE_START_INDEX, indx):
+        for x in range(MODULE_START_INDEX, module_end_index):
             window[x].Update(True)
     if event == "DESELECT ALL":  
          # none modules
-        for x in range(MODULE_START_INDEX, indx):
+        for x in range(MODULE_START_INDEX, module_end_index):
             window[x].Update(False if window[x].metadata != 'usagestatsVersion' else True)  # usagestatsVersion.py is REQUIRED
     if event == "SAVE PROFILE":
         destination_path = sg.popup_get_file(
             "Save a profile", save_as=True,
-            file_types=(('ALEAPP Profile (*.alprofile)', '*.alprofile'), ('All Files', '*')),
-            default_extension='.alprofile')
+            file_types=(('ALEAPP Profile (*.alprofile)', '*.alprofile'),),
+            default_extension='.alprofile', no_window=True)
 
         if destination_path is not None:
-            print(destination_path)
+            ticked = []
+            for x in range(MODULE_START_INDEX, module_end_index):
+                if window.FindElement(x).Get():
+                    key = window[x].metadata
+                    ticked.append(key)
+            with open(destination_path, "wt", encoding="utf-8") as profile_out:
+                json.dump({"leapp": "aleapp", "format_version": 1, "plugins": ticked}, profile_out)
+            sg.Popup(f"Profile saved: {destination_path}")
 
     if event == "LOAD PROFILE":
         destination_path = sg.popup_get_file(
             "Load a profile", save_as=False,
             file_types=(('ALEAPP Profile (*.alprofile)', '*.alprofile'), ('All Files', '*')),
-            default_extension='.alprofile')
+            default_extension='.alprofile', no_window=True)
 
-        if destination_path is not None:
-            print(destination_path)
+        if destination_path is not None and os.path.exists(destination_path):
+            profile_load_error = None
+            with open(destination_path, "rt", encoding="utf-8") as profile_in:
+                try:
+                    profile = json.load(profile_in)
+                except json.JSONDecodeError as json_ex:
+                    profile_load_error = f"File was not a valid profile file: {json_ex}"
+
+            if not profile_load_error:
+                if isinstance(profile, dict):
+                    if profile.get("leapp") != "aleapp" or profile.get("format_version") != 1:
+                        profile_load_error = "File was not a valid profile file: incorrect LEAPP or version"
+                    else:
+                        ticked = set(profile.get("plugins", []))
+                        ticked.add("usagestatsVersion")  # always
+                        for x in range(MODULE_START_INDEX, module_end_index):
+                            if window[x].metadata in ticked:
+                                window[x].update(True)
+                            else:
+                                window[x].update(False)
+                else:
+                    profile_load_error = "File was not a valid profile file: invalid format"
+
+            if profile_load_error:
+                sg.popup(profile_load_error)
+            else:
+                sg.popup(f"Loaded profile: {destination_path}")
 
     if event == 'Process':
         #check is selections made properly; if not we will return to input form without exiting app altogether
@@ -171,7 +204,7 @@ while True:
             search_list = [loader['Usage Stats Version']]  # hardcode usagestatsVersion as first item
 
             s_items = 0
-            for x in range(MODULE_START_INDEX, indx):
+            for x in range(MODULE_START_INDEX, module_end_index):
                 if window.FindElement(x).Get():
                     key = window[x].metadata
                     if key in loader and key != 'Usage Stats Version':
