@@ -201,7 +201,7 @@ while True:
             
             # re-create modules list based on user selection
             #search_list = { 'usagestatsVersion' : tosearch['usagestatsVersion'] } # hardcode usagestatsVersion as first item
-            search_list = [loader['Usage Stats Version']]  # hardcode usagestatsVersion as first item
+            search_list = [loader['usagestatsVersion']]  # hardcode usagestatsVersion as first item
 
             s_items = 0
             for x in range(MODULE_START_INDEX, module_end_index):
