@@ -201,13 +201,13 @@ while True:
             
             # re-create modules list based on user selection
             #search_list = { 'usagestatsVersion' : tosearch['usagestatsVersion'] } # hardcode usagestatsVersion as first item
-            search_list = [loader['Usage Stats Version']]  # hardcode usagestatsVersion as first item
+            search_list = [loader['usagestatsVersion']]  # hardcode usagestatsVersion as first item
 
             s_items = 0
             for x in range(MODULE_START_INDEX, module_end_index):
                 if window.FindElement(x).Get():
                     key = window[x].metadata
-                    if key in loader and key != 'Usage Stats Version':
+                    if key in loader and key != 'usagestatsVersion':
                         search_list.append(loader[key])
                     s_items = s_items + 1 # for progress bar
                 
