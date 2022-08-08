@@ -55,7 +55,7 @@ def get_usagestatsVersion(files_found, report_folder, seeker, wrap_text):
 
 
 __artifacts__ = {
-    "Usage Stats Version": (
+    "usagestatsVersion": (
         "Usage Stats",
         ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),
         get_usagestatsVersion)
