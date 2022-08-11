@@ -13,8 +13,11 @@ class PluginSpec:
     name: str
     module_name: str
     category: str
-    search: str
+    # targets: tuple  # todo: requires fixing every plugin
+    search: typing.Union[str, typing.Collection[str]]
     method: typing.Callable  # todo define callable signature
+    is_long_running: bool = False
+    is_required: bool = False
 
 
 class PluginLoader:
@@ -40,11 +43,23 @@ class PluginLoader:
             except AttributeError:
                 continue  # no artifacts defined in this plugin
 
+            try:
+                leapp_info = mod.__leapp_info__
+            except AttributeError:
+                leapp_info = {}
+            if not isinstance(leapp_info, typing.Mapping):
+                raise TypeError(f"__leap_info__ in {py_file} is not a mapping type")
+
             for name, (category, search, func) in mod_artifacts.items():
                 #self._plugins.append(PluginSpec(name, search, func))
                 if name in self._plugins:
                     raise KeyError("Duplicate plugin")
-                self._plugins[name] = PluginSpec(name, py_file.stem, category, search, func)
+                is_required = leapp_info.get(name, {}).get("is_required", False)
+                is_long_running = leapp_info.get(name, {}).get("is_long_running", False)
+
+                self._plugins[name] = PluginSpec(
+                    name, py_file.stem, category, search, func,
+                    is_required=is_required, is_long_running=is_long_running)
 
     @property
     def plugins(self) -> typing.Iterable[PluginSpec]:
@@ -58,8 +73,4 @@ class PluginLoader:
 
     def __len__(self):
         return len(self._plugins)
-
-
-
-
 
