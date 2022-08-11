@@ -60,3 +60,9 @@ __artifacts__ = {
         ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),
         get_usagestatsVersion)
 }
+
+__leapp_info__ = {
+    "usagestatsVersion": {
+        "is_required": True
+    }
+}
