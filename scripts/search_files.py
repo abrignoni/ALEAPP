@@ -8,7 +8,8 @@ from scripts.ilapfuncs import *
 from zipfile import ZipFile
 
 from fnmatch import _compile_pattern
-from os.path import normcase
+from functools import lru_cache
+normcase = lru_cache(maxsize=None)(os.path.normcase)
 
 class FileSeekerBase:
     # This is an abstract base class
