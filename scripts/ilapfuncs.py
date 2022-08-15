@@ -261,6 +261,9 @@ def media_to_html(media_path, files_found, report_folder):
     :rtype: str
     """
     
+    def media_path_filter(name):
+        return media_path in name
+    
     def relative_paths(source, splitter):
         splitted_a = source.split(splitter)
         for x in splitted_a:
@@ -278,42 +281,38 @@ def media_to_html(media_path, files_found, report_folder):
         splitter = '/'
         
     thumb = media_path
-    for match in files_found:
+    for match in filter(media_path_filter, files_found):
         filename = os.path.basename(match)
-        if filename.startswith('~'):
-            continue
-        if filename.startswith('._'):
+        if filename.startswith('~') or filename.startswith('._'):
             continue
         
-        if media_path in match:
+        dirs = os.path.dirname(report_folder)
+        dirs = os.path.dirname(dirs)
+        env_path = os.path.join(dirs, 'temp')
+        if env_path in match:
+            source = match
+            source = relative_paths(source, splitter)
+        else:
+            path = os.path.dirname(match)
+            dirname = os.path.basename(path)
+            filename = Path(match)
+            filename = filename.name
+            locationfiles = Path(report_folder).joinpath(dirname)
+            Path(f'{locationfiles}').mkdir(parents=True, exist_ok=True)
+            shutil.copy2(match, locationfiles)
+            source = Path(locationfiles, filename)
+            source = relative_paths(str(source), splitter)
             
-            dirs = os.path.dirname(report_folder)
-            dirs = os.path.dirname(dirs)
-            env_path = os.path.join(dirs, 'temp')
-            if env_path in match:
-                source = match
-                source = relative_paths(source, splitter)
-            else:
-                path = os.path.dirname(match)
-                dirname = os.path.basename(path)
-                filename = Path(match)
-                filename = filename.name
-                locationfiles = Path(report_folder).joinpath(dirname)
-                Path(f'{locationfiles}').mkdir(parents=True, exist_ok=True)
-                shutil.copy2(match, locationfiles)
-                source = Path(locationfiles, filename)
-                source = relative_paths(str(source), splitter)
-                
-            mimetype = magic.from_file(match, mime = True)
-            
-            if 'video' in mimetype:
-                thumb = f'<video width="320" height="240" controls="controls"><source src="{source}" type="video/mp4">Your browser does not support the video tag.</video>'
-            elif 'image' in mimetype:
-                thumb = f'<img src="{source}"width="300"></img>'
-            elif 'audio' in mimetype:
-                thumb = f'<audio controls><source src="{source}" type="audio/ogg"><source src="{source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
-            else:
-                thumb = f'<a href="{source}"> Link to {mimetype} </>'
+        mimetype = magic.from_file(match, mime = True)
+        
+        if 'video' in mimetype:
+            thumb = f'<video width="320" height="240" controls="controls"><source src="{source}" type="video/mp4">Your browser does not support the video tag.</video>'
+        elif 'image' in mimetype:
+            thumb = f'<img src="{source}"width="300"></img>'
+        elif 'audio' in mimetype:
+            thumb = f'<audio controls><source src="{source}" type="audio/ogg"><source src="{source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
+        else:
+            thumb = f'<a href="{source}"> Link to {mimetype} </>'
     return thumb
 
 def kmlgen(report_folder, kmlactivity, data_list, data_headers):
