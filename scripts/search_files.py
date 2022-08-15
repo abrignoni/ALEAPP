@@ -7,6 +7,9 @@ from pathlib import Path
 from scripts.ilapfuncs import *
 from zipfile import ZipFile
 
+from fnmatch import _compile_pattern
+from os.path import normcase
+
 class FileSeekerBase:
     # This is an abstract base class
     def search(self, filepattern_to_search, return_on_first_hit=False):
@@ -56,8 +59,10 @@ class FileSeekerTar(FileSeekerBase):
 
     def search(self, filepattern, return_on_first_hit=False):
         pathlist = []
+        pat = _compile_pattern( normcase(filepattern) )
+        root = normcase("root/")
         for member in self.tar_file.getmembers():
-            if fnmatch.fnmatch('root/' + member.name, filepattern):
+            if pat( root + normcase(member.name) ) is not None:
                 try:
                     clean_name = sanitize_file_path(member.name)
                     full_path = os.path.join(self.temp_folder, Path(clean_name))
