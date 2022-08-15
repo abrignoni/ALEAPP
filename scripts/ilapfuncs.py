@@ -12,6 +12,9 @@ import shutil
 from pathlib import Path
 
 from bs4 import BeautifulSoup
+from functools import lru_cache
+
+os.path.basename = lru_cache(maxsize=None)(os.path.basename)
 
 class OutputParameters:
     '''Defines the parameters that are common for '''
