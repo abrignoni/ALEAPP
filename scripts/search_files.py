@@ -7,6 +7,10 @@ from pathlib import Path
 from scripts.ilapfuncs import *
 from zipfile import ZipFile
 
+from fnmatch import _compile_pattern
+from functools import lru_cache
+normcase = lru_cache(maxsize=None)(os.path.normcase)
+
 class FileSeekerBase:
     # This is an abstract base class
     def search(self, filepattern_to_search, return_on_first_hit=False):
@@ -38,12 +42,18 @@ class FileSeekerDir(FileSeekerBase):
             logfunc(f'Error reading {directory} ' + str(ex))
 
     def search(self, filepattern, return_on_first_hit=False):
+        pat = _compile_pattern( normcase(filepattern) )
+        root = normcase("root/")
         if return_on_first_hit:
             for item in self._all_files:
-                if fnmatch.fnmatch(item, filepattern):
+                if pat( root + normcase(item) ) is not None:
                     return [item]
             return []
-        return fnmatch.filter(self._all_files, filepattern)
+        pathlist = []
+        for item in self._all_files:
+            if pat( root + normcase(item) ) is not None:
+                pathlist.append(item)
+        return pathlist
 
 class FileSeekerTar(FileSeekerBase):
     def __init__(self, tar_file_path, temp_folder):
@@ -56,8 +66,10 @@ class FileSeekerTar(FileSeekerBase):
 
     def search(self, filepattern, return_on_first_hit=False):
         pathlist = []
+        pat = _compile_pattern( normcase(filepattern) )
+        root = normcase("root/")
         for member in self.tar_file.getmembers():
-            if fnmatch.fnmatch('root/' + member.name, filepattern):
+            if pat( root + normcase(member.name) ) is not None:
                 try:
                     clean_name = sanitize_file_path(member.name)
                     full_path = os.path.join(self.temp_folder, Path(clean_name))
@@ -89,8 +101,10 @@ class FileSeekerZip(FileSeekerBase):
 
     def search(self, filepattern, return_on_first_hit=False):
         pathlist = []
+        pat = _compile_pattern( normcase(filepattern) )
+        root = normcase("root/")
         for member in self.name_list:
-            if fnmatch.fnmatch('root/' + member, filepattern):
+            if pat( root + normcase(member) ) is not None:
                 try:
                     extracted_path = self.zip_file.extract(member, path=self.temp_folder) # already replaces illegal chars with _ when exporting
                     f = self.zip_file.getinfo(member)
