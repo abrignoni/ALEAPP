@@ -95,8 +95,10 @@ class FileSeekerZip(FileSeekerBase):
 
     def search(self, filepattern, return_on_first_hit=False):
         pathlist = []
+        pat = _compile_pattern( normcase(filepattern) )
+        root = normcase("root/")
         for member in self.name_list:
-            if fnmatch.fnmatch('root/' + member, filepattern):
+            if pat( root + normcase(member) ) is not None:
                 try:
                     extracted_path = self.zip_file.extract(member, path=self.temp_folder) # already replaces illegal chars with _ when exporting
                     f = self.zip_file.getinfo(member)
