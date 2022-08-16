@@ -42,12 +42,18 @@ class FileSeekerDir(FileSeekerBase):
             logfunc(f'Error reading {directory} ' + str(ex))
 
     def search(self, filepattern, return_on_first_hit=False):
+        pat = _compile_pattern( normcase(filepattern) )
+        root = normcase("root/")
         if return_on_first_hit:
             for item in self._all_files:
-                if fnmatch.fnmatch(item, filepattern):
+                if pat( root + normcase(item) ) is not None:
                     return [item]
             return []
-        return fnmatch.filter(self._all_files, filepattern)
+        pathlist = []
+        for item in self._all_files:
+            if pat( root + normcase(item) ) is not None:
+                pathlist.append(item)
+        return pathlist
 
 class FileSeekerTar(FileSeekerBase):
     def __init__(self, tar_file_path, temp_folder):
