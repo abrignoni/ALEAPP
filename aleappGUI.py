@@ -11,11 +11,12 @@ from time import process_time, gmtime, strftime
 from scripts.search_files import *
 
 MODULE_START_INDEX = 1000
+MODULE_END_INDEX = MODULE_START_INDEX
 
 
 def ValidateInput(values, window):
     '''Returns tuple (success, extraction_type)'''
-    global module_end_index
+    global MODULE_END_INDEX
 
     i_path = values[0] # input file/folder
     o_path = values[1] # output folder
@@ -42,7 +43,7 @@ def ValidateInput(values, window):
         return False, ext_type
 
     one_element_is_selected = False
-    for x in range(1000, module_end_index):
+    for x in range(1000, MODULE_END_INDEX):
         if window.FindElement(x).Get():
             one_element_is_selected = True
             break
@@ -63,17 +64,18 @@ def CheckList(mtxt, lkey, mdstring, disable=False):
 
 
 def pickModules():
-    global module_end_index
+    global MODULE_END_INDEX
     global mlist
     global loader
 
     loader = plugin_loader.PluginLoader()
 
-    module_end_index = MODULE_START_INDEX     # arbitrary number to not interfere with other controls
+    MODULE_END_INDEX = MODULE_START_INDEX     # arbitrary number to not interfere with other controls
     for plugin in sorted(loader.plugins, key=lambda p: p.category.upper()):
-        disabled = plugin.module_name == 'usagestatsVersion'
-        mlist.append(CheckList(f'{plugin.category} [{plugin.name} - {plugin.module_name}.py]', module_end_index, plugin.name, disabled))
-        module_end_index = module_end_index + 1
+        disabled = plugin.is_required
+        mlist.append(CheckList(
+            f'{plugin.category} [{plugin.name} - {plugin.module_name}.py]', MODULE_END_INDEX, plugin, disabled))
+        MODULE_END_INDEX = MODULE_END_INDEX + 1
 
 
 sg.theme('LightGreen5')   # Add a touch of color
@@ -101,15 +103,9 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
                 ], 
                     title='Select Output Folder:')],
             [sg.Text('Available Modules')],
-            [sg.Button('Select All', key='SELECT ALL'), sg.Button('Deselect All', key='DESELECT ALL'),
-             sg.Button('Load Profile', key='LOAD PROFILE'), sg.Button('Save Profile', key='SAVE PROFILE')
-             # sg.FileBrowse(
-             #     button_text='Load Profile', key='LOADPROFILE', enable_events=True, target='LOADPROFILE',
-             #     file_types=(('ALEAPP Profile (*.alprofile)', '*.alprofile'), ('All Files', '*'))),
-             # sg.FileSaveAs(
-             #     button_text='Save Profile', key='SAVEPROFILE', enable_events=True, target='SAVEPROFILE',
-             #     file_types=(('ALEAPP Profile (*.alprofile)', '*.alprofile'), ('All Files', '*')),
-             #     default_extension='.alprofile')
+            [
+                sg.Button('Select All', key='SELECT ALL'), sg.Button('Deselect All', key='DESELECT ALL'),
+                sg.Button('Load Profile', key='LOAD PROFILE'), sg.Button('Save Profile', key='SAVE PROFILE')
              ],
             [sg.Column(mlist, size=(300,310), scrollable=True),  sg.Output(size=(85,20))] ,
             [sg.ProgressBar(max_value=GuiWindow.progress_bar_total, orientation='h', size=(86, 7), key='PROGRESSBAR', bar_color=('DarkGreen', 'White'))],
@@ -129,12 +125,12 @@ while True:
 
     if event == "SELECT ALL":  
         # mark all modules
-        for x in range(MODULE_START_INDEX, module_end_index):
+        for x in range(MODULE_START_INDEX, MODULE_END_INDEX):
             window[x].Update(True)
     if event == "DESELECT ALL":  
          # none modules
-        for x in range(MODULE_START_INDEX, module_end_index):
-            window[x].Update(False if window[x].metadata != 'usagestatsVersion' else True)  # usagestatsVersion.py is REQUIRED
+        for x in range(MODULE_START_INDEX, MODULE_END_INDEX):
+            window[x].Update(window[x].metadata.is_required)  # usagestatsVersion.py is REQUIRED
     if event == "SAVE PROFILE":
         destination_path = sg.popup_get_file(
             "Save a profile", save_as=True,
@@ -143,9 +139,9 @@ while True:
 
         if destination_path:
             ticked = []
-            for x in range(MODULE_START_INDEX, module_end_index):
+            for x in range(MODULE_START_INDEX, MODULE_END_INDEX):
                 if window.FindElement(x).Get():
-                    key = window[x].metadata
+                    key = window[x].metadata.name
                     ticked.append(key)
             with open(destination_path, "wt", encoding="utf-8") as profile_out:
                 json.dump({"leapp": "aleapp", "format_version": 1, "plugins": ticked}, profile_out)
@@ -171,12 +167,20 @@ while True:
                         profile_load_error = "File was not a valid profile file: incorrect LEAPP or version"
                     else:
                         ticked = set(profile.get("plugins", []))
-                        ticked.add("usagestatsVersion")  # always
-                        for x in range(MODULE_START_INDEX, module_end_index):
-                            if window[x].metadata in ticked:
+                        #ticked.add("usagestatsVersion")  # always
+                        for x in range(MODULE_START_INDEX, MODULE_END_INDEX):
+                            if window[x].metadata.is_required:
                                 window[x].update(True)
+                            elif window[x].metadata.name in ticked:
+                                window[x].update(True)
+                                ticked.remove(window[x].metadata.name)
                             else:
                                 window[x].update(False)
+
+                        # plugins leftover?
+                        if len(ticked) > 0:
+                            profile_load_error = "Warning: The following plugins were not found: "
+                            profile_load_error += "; ".join(sorted(ticked))
                 else:
                     profile_load_error = "File was not a valid profile file: invalid format"
 
@@ -201,14 +205,15 @@ while True:
             
             # re-create modules list based on user selection
             #search_list = { 'usagestatsVersion' : tosearch['usagestatsVersion'] } # hardcode usagestatsVersion as first item
-            search_list = [loader['usagestatsVersion']]  # hardcode usagestatsVersion as first item
+            #search_list = [loader['usagestatsVersion']]  # hardcode usagestatsVersion as first item
+            search_list = [x for x in loader.plugins if x.is_required]
 
             s_items = 0
-            for x in range(MODULE_START_INDEX, module_end_index):
+            for x in range(MODULE_START_INDEX, MODULE_END_INDEX):
                 if window.FindElement(x).Get():
-                    key = window[x].metadata
-                    if key in loader and key != 'usagestatsVersion':
-                        search_list.append(loader[key])
+                    if isinstance(window[x].metadata, plugin_loader.PluginSpec) and not window[x].metadata.is_required:
+                        search_list.append(window[x].metadata)
+
                     s_items = s_items + 1 # for progress bar
                 
                 # no more selections allowed
@@ -238,4 +243,5 @@ while True:
                     log_path = log_path[4:]
                 sg.Popup('Processing failed    :( ', f'See log for error details..\nLog file located at {log_path}')
             break
+
 window.close()
