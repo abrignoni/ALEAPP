@@ -169,10 +169,18 @@ while True:
                         ticked = set(profile.get("plugins", []))
                         #ticked.add("usagestatsVersion")  # always
                         for x in range(MODULE_START_INDEX, MODULE_END_INDEX):
-                            if window[x].metadata.name in ticked or window[x].metadata.is_required:
+                            if window[x].metadata.is_required:
                                 window[x].update(True)
+                            elif window[x].metadata.name in ticked:
+                                window[x].update(True)
+                                ticked.remove(window[x].metadata.name)
                             else:
                                 window[x].update(False)
+
+                        # plugins leftover?
+                        if len(ticked) > 0:
+                            profile_load_error = "Warning: The following plugins were not found: "
+                            profile_load_error += "; ".join(sorted(ticked))
                 else:
                     profile_load_error = "File was not a valid profile file: invalid format"
 
