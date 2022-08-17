@@ -1,4 +1,5 @@
 # ALEAPP
+
 Android Logs Events And Protobuf Parser
 
 If you want to contribute hit me up on twitter: https://twitter.com/AlexisBrignoni  
@@ -6,6 +7,7 @@ If you want to contribute hit me up on twitter: https://twitter.com/AlexisBrigno
 Details in blog post here: https://abrignoni.blogspot.com/2020/02/aleapp-android-logs-events-and-protobuf.html  
 
 ## Requirements
+
 **Python 3.9.x ** (older versions of 3.x will also work with the exception of one or two modules)
 
 ### Dependencies
@@ -32,14 +34,13 @@ To create aleapp.exe, run:
 
 ```
 pyinstaller --onefile aleapp.spec
-````
+```
 
 To create aleappGUI.exe, run:
 
 ```
 pyinstaller --onefile --noconsole aleappGUI.spec
 ```
-
 
 ## Usage
 
@@ -62,6 +63,7 @@ $ python aleapp.py --help
 ```
 
 ## Contributing artifact plugins
+
 Each plugin is a Python source file which should be added to the `scripts/artifacts` folder which will be loaded 
 dynamically each time ALEAPP is run.
 
@@ -87,6 +89,7 @@ __artifacts__ = {
 ```
 
 The functions referenced as entry points in the `__artifacts__` dictionary must take the following arguments:
+
 * An iterable of the files found which are to be processed (as strings)
 * The path of ALEAPP's output folder(as a string)
 * The seeker (of type FileSeekerBase) which found the files
