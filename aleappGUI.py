@@ -141,7 +141,7 @@ while True:
             file_types=(('ALEAPP Profile (*.alprofile)', '*.alprofile'),),
             default_extension='.alprofile', no_window=True)
 
-        if destination_path is not None:
+        if destination_path:
             ticked = []
             for x in range(MODULE_START_INDEX, module_end_index):
                 if window.FindElement(x).Get():
