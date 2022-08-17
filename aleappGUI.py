@@ -157,7 +157,7 @@ while True:
             file_types=(('ALEAPP Profile (*.alprofile)', '*.alprofile'), ('All Files', '*')),
             default_extension='.alprofile', no_window=True)
 
-        if destination_path is not None and os.path.exists(destination_path):
+        if destination_path and os.path.exists(destination_path):
             profile_load_error = None
             with open(destination_path, "rt", encoding="utf-8") as profile_in:
                 try:
