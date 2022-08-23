@@ -182,6 +182,9 @@ def get_icon_name(category, artifact):
     elif category == 'VLC':
         if artifact == 'VLC MEDIA LIST':  icon = 'film'
         elif artifact == 'VLC THUMBNAILS':  icon = 'image'
+    elif category ==  'VLC THUMBS':
+        if artifact == 'VLC MEDIA LIB':  icon = 'film'
+        elif artifact == 'VLC THUMBNAILS':  icon = 'image'
     elif category == 'SNAPCHAT': icon = 'bell'
     elif category == 'SKYPE':
         if artifact == 'SKYPE - CALL LOGS':  icon = 'phone'
