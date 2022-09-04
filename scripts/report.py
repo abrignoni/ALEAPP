@@ -129,6 +129,7 @@ def get_icon_name(category, artifact):
         if artifact.find('CONTACTS') >=0: icon = 'users'
         elif artifact.find('MESSAGES') >=0: icon = 'inbox'
         else:                           icon = 'mail'
+    elif category == 'PROTONVPN':       icon = 'shield'
     elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
     elif category == 'SAMSUNG SMARTTHINGS': icon = 'bluetooth'
