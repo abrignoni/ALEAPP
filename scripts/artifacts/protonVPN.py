@@ -1,4 +1,6 @@
 import os
+import re
+import socket
 import sqlite3
 import textwrap
 import datetime
@@ -59,7 +61,44 @@ def get_protonVPN(files_found, report_folder, seeker, wrap_text):
 				timeline(report_folder, tlactivity, data_list, data_headers)
 			else:
 				logfunc('No ProtonVPN - Device Info available')
-		else:
+
+		elif file_found.endswith('Data.log'):
+
+			data_list = []
+
+			protonvpn_log = open(file_found).readlines()
+			regex = re.compile(r"node.+\.protonvpn\.net")
+			for entry in protonvpn_log: 
+				initial_connect = entry.find('to:')
+				if initial_connect != -1:
+					timestamp = entry[:entry.find('|')-1].split('.')[0].replace('T', ' ')
+					try:
+						server_hostname = regex.search(entry)[0]
+						server_ip = socket.gethostbyname(server_hostname)
+						data_list.append((server_hostname + f"  -  [ {server_ip} ]", timestamp))
+					except socket.error:
+						server_hostname = regex.search(entry)[0]
+						data_list.append((server_hostname, timestamp))
+					except:
+						pass
+
+			if data_list:
+				report = ArtifactHtmlReport('ProtonVPN Connection History')
+				report.start_artifact_report(report_folder, 'ProtonVPN - Connection History')
+				report.add_script()
+				data_headers = ('Server Address', 'Timestamp')
+				report.write_artifact_data_table(data_headers, data_list, file_found)
+				report.end_artifact_report()
+
+				tsvname = f'ProtonVPN - Conncetion History'
+				tsv(report_folder, data_headers, data_list, tsvname)
+
+				tlactivity = f'ProtonVPN - Connection History'
+				timeline(report_folder, tlactivity, data_list, data_headers)
+			else:
+				logfunc('No ProtonVPN - Connection History available')
+
+		elif file_found.endswith('db'):
 			db = open_sqlite_db_readonly(file_found)
 
 			# Cursor for User Data
@@ -99,6 +138,6 @@ def get_protonVPN(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
 	"protonVPN User": (
 		"ProtonVPN", 
-		('**/ch.protonvpn.android/databases/db', '**/ch.protonvpn.android/shared_prefs/ServerListUpdater.xml'), get_protonVPN
+		('**/ch.protonvpn.android/databases/db', '**/ch.protonvpn.android/shared_prefs/ServerListUpdater.xml', '**/ch.protonvpn.android/log/Data.log'), get_protonVPN
 	)
 }
