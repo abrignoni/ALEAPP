@@ -66,9 +66,12 @@ def get_protonVPN(files_found, report_folder, seeker, wrap_text):
 
 			data_list = []
 
-			protonvpn_log = open(file_found).readlines()
+			protonvpn_log = open(file_found, 'r')
+			log_entries = protonvpn_log.readlines()
+			protonvpn_log.close()
+			
 			regex = re.compile(r"node.+\.protonvpn\.net")
-			for entry in protonvpn_log: 
+			for entry in log_entries: 
 				initial_connect = entry.find('to:')
 				if initial_connect != -1:
 					timestamp = entry[:entry.find('|')-1].split('.')[0].replace('T', ' ')
