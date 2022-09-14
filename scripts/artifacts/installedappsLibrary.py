@@ -47,6 +47,6 @@ def get_installedappsLibrary(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "InstalledappsLibrary": (
                 "Installed Apps",
-                ('*/data/data/com.android.vending/databases/library.db'),
+                ('*/com.android.vending/databases/library.db'),
                 get_installedappsLibrary)
 }

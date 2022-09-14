@@ -64,6 +64,6 @@ def get_installedappsVending(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "InstalledappsVending": (
                 "Installed Apps",
-                ('*/data/data/com.android.vending/databases/localappstate.db'),
+                ('*/com.android.vending/databases/localappstate.db'),
                 get_installedappsVending)
 }

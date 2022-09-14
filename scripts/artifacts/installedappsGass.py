@@ -47,6 +47,6 @@ def get_installedappsGass(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "installedappsGass": (
                 "Installed Apps",
-                ('*/data/data/com.google.android.gms/databases/gass.db*', '*/data/user/*/com.google.android.gms/databases/gass.db*'),
+                ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
                 get_installedappsGass)
 }
