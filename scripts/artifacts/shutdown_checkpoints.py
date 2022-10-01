@@ -53,6 +53,6 @@ def get_shutdown_checkpoints(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "shutdown_checkpoints": (
                 "Power Events",
-                ('*/data/system/shutdown-checkpoints/*'),
+                ('*/system/shutdown-checkpoints/*'),
                 get_shutdown_checkpoints)
 }

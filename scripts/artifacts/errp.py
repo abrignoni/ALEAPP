@@ -49,6 +49,6 @@ def get_errp(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Errp": (
                 "Wipe & Setup",
-                ('*/data/system/users/service/eRR.p'),
+                ('*/system/users/service/eRR.p'),
                 get_errp)
 }

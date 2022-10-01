@@ -140,6 +140,6 @@ def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "GoogleNowPlaying": (
                 "Now Playing",
-                ('*/data/data/com.google.intelligence.sense/db/history_db*','*/data/data/com.google.android.as/databases/history_db*'),
+                ('*/com.google.intelligence.sense/db/history_db*','*/com.google.android.as/databases/history_db*'),
                 get_googleNowPlaying)
 }

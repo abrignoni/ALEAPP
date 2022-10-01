@@ -410,6 +410,6 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "GooglePhotos": (
                 "Google Photos",
-                ('*/data/data/com.google.android.apps.photos/databases/gphotos0.db*','*/data/data/com.google.android.apps.photos/databases/disk_cache*','*/data/data/com.google.android.apps.photos/cache/glide_cache/*','*/data/data/com.google.android.apps.photos/databases/local_trash.db*','*/data/data/com.google.android.apps.photos/files/trash_files/*'),
+                ('*/com.google.android.apps.photos/databases/gphotos0.db*','*/com.google.android.apps.photos/databases/disk_cache*','*/com.google.android.apps.photos/cache/glide_cache/*','*/com.google.android.apps.photos/databases/local_trash.db*','*/com.google.android.apps.photos/files/trash_files/*'),
                 get_googlePhotos)
 }

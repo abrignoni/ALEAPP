@@ -53,6 +53,6 @@ def get_firefoxFormHistory(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "FirefoxFormHistory": (
                 "Firefox",
-                ('*/data/data/org.mozilla.firefox/files/mozilla/*.default/formhistory.sqlite*'),
+                ('*/org.mozilla.firefox/files/mozilla/*.default/formhistory.sqlite*'),
                 get_firefoxFormHistory)
 }

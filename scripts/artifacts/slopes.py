@@ -150,6 +150,6 @@ def get_slopes(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "slopes": (
                 "Slopes",
-                ('*/data/com.consumedbycode.slopes/databases/slopes.db*'),
+                ('*/com.consumedbycode.slopes/databases/slopes.db*'),
                 get_slopes)
 }

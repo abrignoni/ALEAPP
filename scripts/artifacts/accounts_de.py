@@ -66,6 +66,6 @@ def process_accounts_de(folder, uid, report_folder):
 __artifacts__ = {
         "Accounts_de": (
                 "Accounts_de",
-                ('*/data/system_de/*/accounts_de.db'),
+                ('*/system_de/*/accounts_de.db'),
                 get_accounts_de)
 }

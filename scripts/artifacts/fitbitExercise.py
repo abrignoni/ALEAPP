@@ -70,6 +70,6 @@ def get_fitbitExercise(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "FitbitExercise": (
                 "Fitbit",
-                ('*/data/data/com.fitbit.FitbitMobile/databases/exercise_db*'),
+                ('*/com.fitbit.FitbitMobile/databases/exercise_db*'),
                 get_fitbitExercise)
 }

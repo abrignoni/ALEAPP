@@ -51,6 +51,6 @@ def get_protonmailContacts(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "protonmailContacts": (
                 "ProtonMail",
-                ('*/data/data/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
+                ('*/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
                 get_protonmailContacts)
 }

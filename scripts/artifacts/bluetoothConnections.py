@@ -97,6 +97,6 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Bluetooth Connections": (
                 "Bluetooth Connections",
-                ('*/data/misc/bluedroid/bt_config.conf'),
+                ('*/misc/bluedroid/bt_config.conf'),
                 get_bluetoothConnections)
 }

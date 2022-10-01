@@ -65,6 +65,6 @@ def process_accounts_ce_authtokens(folder, uid, report_folder):
 __artifacts__ = {
         "Accounts_ce authtokens": (
                 "Accounts_ce",
-                ('*/data/system_ce/*/accounts_ce.db'),
+                ('*/system_ce/*/accounts_ce.db'),
                 get_accounts_ce_authtokens)
 }

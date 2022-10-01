@@ -58,6 +58,6 @@ def get_firefoxDownloads(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "FirefoxDownloads": (
                 "Firefox",
-                ('*/data/data/org.mozilla.firefox/databases/mozac_downloads_database*'),
+                ('*/org.mozilla.firefox/databases/mozac_downloads_database*'),
                 get_firefoxDownloads)
 }

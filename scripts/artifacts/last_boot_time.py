@@ -40,6 +40,6 @@ def get_last_boot_time(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "last_boot_time": (
                 "Power Events",
-                ('*/data/misc/bootstat/last_boot_time_utc'),
+                ('*/misc/bootstat/last_boot_time_utc'),
                 get_last_boot_time)
 }

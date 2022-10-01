@@ -182,6 +182,6 @@ def get_line(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "line": (
                 "Line",
-                ('**/jp.naver.line.android/databases/**'),
+                ('*/jp.naver.line.android/databases/**'),
                 get_line)
 }

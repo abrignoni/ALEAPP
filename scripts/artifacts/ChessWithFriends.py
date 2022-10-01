@@ -50,6 +50,6 @@ def get_ChessWithFriends(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChessWithFriends": (
                 "Chats",
-                ('*/data/data/com.zynga.chess.googleplay/databases/wf_database.sqlite', '*/data/data/com.zynga.chess.googleplay/db/wf_database.sqlite'),
+                ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite', '*/data/data/com.zynga.chess.googleplay/db/wf_database.sqlite'),
                 get_ChessWithFriends)
 }

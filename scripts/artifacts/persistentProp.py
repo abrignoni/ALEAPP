@@ -52,6 +52,6 @@ def get_persistentProp(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "persistentProp": (
                 "Wipe & Setup",
-                ('*/data/property/persistent_properties'),
+                ('*/property/persistent_properties'),
                 get_persistentProp)
 }

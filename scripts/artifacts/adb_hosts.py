@@ -28,6 +28,6 @@ def get_adb_hosts(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "adb hosts": (
                 "Adb Hosts",
-                ('*/data/misc/adb/adb_keys'),
+                ('*/misc/adb/adb_keys'),
                 get_adb_hosts)
 }

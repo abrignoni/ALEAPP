@@ -100,6 +100,6 @@ def get_appicons(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "App Icons": (
                 "Installed Apps",
-                ('*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
+                ('*/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
                 get_appicons)
 }

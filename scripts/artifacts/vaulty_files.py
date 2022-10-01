@@ -34,6 +34,6 @@ def get_vaulty_files(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
     "vaulty_files": (
         "Vaulty",
-        ('*/data/data/com.theronrogers.vaultyfree/databases/media.db'),
+        ('*/com.theronrogers.vaultyfree/databases/media.db'),
         get_vaulty_files)
 }

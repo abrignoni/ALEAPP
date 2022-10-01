@@ -46,6 +46,6 @@ def get_fitbitHeart(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "FitbitHeart": (
                 "Fitbit",
-                ('*/data/data/com.fitbit.FitbitMobile/databases/heart_rate_db*'),
+                ('*/com.fitbit.FitbitMobile/databases/heart_rate_db*'),
                 get_fitbitHeart)
 }

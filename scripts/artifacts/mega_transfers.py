@@ -95,6 +95,6 @@ def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "mega_transfers": (
                 "Mega",
-                ('*/data/data/mega.privacy.android.app/databases/megapreferences'),
+                ('*/mega.privacy.android.app/databases/megapreferences'),
                 get_mega_transfers)
 }

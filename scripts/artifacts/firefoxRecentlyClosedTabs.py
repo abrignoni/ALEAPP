@@ -49,6 +49,6 @@ def get_firefoxRecentlyClosedTabs(files_found, report_folder, seeker, wrap_text)
 __artifacts__ = {
         "FirefoxRecentlyClosedTabs": (
                 "Firefox",
-                ('*/data/data/org.mozilla.firefox/databases/recently_closed_tabs*'),
+                ('*/org.mozilla.firefox/databases/recently_closed_tabs*'),
                 get_firefoxRecentlyClosedTabs)
 }

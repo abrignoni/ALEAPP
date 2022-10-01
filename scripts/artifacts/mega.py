@@ -86,6 +86,6 @@ def get_mega(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "mega": (
                 "Mega",
-                ('*/data/data/mega.privacy.android.app/karere-*.db*'),
+                ('*/mega.privacy.android.app/karere-*.db*'),
                 get_mega)
 }

@@ -322,6 +322,6 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "AVG": (
                 "Encrypting Media Apps",
-                ('*/data/data/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
+                ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
                 get_AVG)
 }

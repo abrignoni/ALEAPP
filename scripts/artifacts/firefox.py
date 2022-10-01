@@ -190,6 +190,6 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Firefox": (
                 "Firefox",
-                ('*/data/data/org.mozilla.firefox/files/places.sqlite*'),
+                ('*/org.mozilla.firefox/files/places.sqlite*'),
                 get_firefox)
 }

@@ -242,6 +242,6 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "EmulatedSmeta'": (
                 "Emulated Storage Metadata",
-                ('*/data/data/com.google.android.providers.media.module/databases/external.db*'),
+                ('*/com.google.android.providers.media.module/databases/external.db*'),
                 get_emulatedSmeta)
 }

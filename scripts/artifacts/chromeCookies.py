@@ -102,6 +102,6 @@ def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChromeCookies": (
                 "Chromium",
-                ('*/data/data/*/app_chrome/Default/Cookies*', '*/data/data/*/app_sbrowser/Default/Cookies*', '*/data/data/*/app_opera/Cookies*'),
+                ('*/app_chrome/Default/Cookies*', '*/app_sbrowser/Default/Cookies*', '*/app_opera/Cookies*'),
                 get_chromeCookies)
 }

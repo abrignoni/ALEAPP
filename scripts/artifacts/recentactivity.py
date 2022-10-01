@@ -211,6 +211,6 @@ def process_recentactivity(folder, uid, report_folder):
 __artifacts__ = {
         "recentactivity": (
                 "Recent Activity",
-                ('*/data/system_ce/*'),
+                ('*/system_ce/*'),
                 get_recentactivity)
 }

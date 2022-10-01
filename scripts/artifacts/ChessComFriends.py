@@ -34,7 +34,7 @@ def get_ChessComFriends(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChessComFriends": (
                 "Chess.com",
-                ('*/data/data/com.chess/databases/chess-database*'),
+                ('*/com.chess/databases/chess-database*'),
                 get_ChessComFriends)
 }
 

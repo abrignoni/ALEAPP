@@ -51,6 +51,6 @@ def get_fitbitDevices(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "FitbitDevices": (
                 "Fitbit",
-                ('*/data/data/com.fitbit.FitbitMobile/databases/device_database*'),
+                ('*/com.fitbit.FitbitMobile/databases/device_database*'),
                 get_fitbitDevices)
 }
