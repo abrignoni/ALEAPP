@@ -83,6 +83,6 @@ def get_fitbitSleep(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "fitbitSleep": (
                 "Fitbit",
-                ('*/data/data/com.fitbit.FitbitMobile/databases/sleep*'),
+                ('*/com.fitbit.FitbitMobile/databases/sleep*'),
                 get_fitbitSleep)
 }

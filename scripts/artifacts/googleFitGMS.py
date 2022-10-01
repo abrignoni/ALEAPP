@@ -61,6 +61,6 @@ def get_googleFitGMS(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "GoogleFitGMS": (
                 "Google Fit (GMS)",
-                ('*/data/data/com.google.android.gms/databases/fitness.db.*'),
+                ('*/com.google.android.gms/databases/fitness.db.*'),
                 get_googleFitGMS)
 }

@@ -40,6 +40,6 @@ def get_setupWizardinfo(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "setupWizardinfo": (
                 "Wipe & Setup",
-                ('*/data/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml'),
+                ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml'),
                 get_setupWizardinfo)
 }

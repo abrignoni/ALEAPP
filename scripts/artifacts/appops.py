@@ -73,6 +73,6 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "appops": (
                 "Permissions",
-                ('*/data/system/appops.xml'),
+                ('*/system/appops.xml'),
                 get_appops)
 }

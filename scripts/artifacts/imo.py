@@ -111,7 +111,7 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Imo": (
                 "IMO",
-                ('**/com.imo.android.imous/databases/*.db*'),
+                ('*/com.imo.android.imous/databases/*.db*'),
                 get_imo)
 }
     

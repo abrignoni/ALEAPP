@@ -90,6 +90,6 @@ def get_fitbitSocial(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "FitbitSocial": (
                 "Fitbit",
-                ('*/data/data/com.fitbit.FitbitMobile/databases/social_db*'),
+                ('*/com.fitbit.FitbitMobile/databases/social_db*'),
                 get_fitbitSocial)
 }

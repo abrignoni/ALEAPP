@@ -57,7 +57,7 @@ def get_cashApp(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Cash App": (
                 "Cash App",
-                ('*/data/data/com.squareup.cash/databases/cash_money.db*'),
+                ('*/com.squareup.cash/databases/cash_money.db*'),
                 get_cashApp)
 }
 

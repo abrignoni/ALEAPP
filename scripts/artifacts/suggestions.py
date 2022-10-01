@@ -46,6 +46,6 @@ def get_suggestions(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "suggestions": (
                 "Wipe & Setup",
-                ('*/data/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
+                ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
                 get_suggestions)
 }

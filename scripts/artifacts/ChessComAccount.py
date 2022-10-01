@@ -51,7 +51,7 @@ def get_ChessComAccount(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChessComAcct": (
                 "Chess.com",
-                ('*/data/data/com.chess/shared_prefs/com.chess.app.login_credentials.xml', '*/data/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
+                ('*/com.chess/shared_prefs/com.chess.app.login_credentials.xml', '*/data/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
                 get_ChessComAccount)
 }
  

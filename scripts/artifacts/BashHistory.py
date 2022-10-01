@@ -30,6 +30,6 @@ def get_BashHistory(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Bash History": (
                 "Bash History",
-                ('**/.bash_history'),
+                ('*/.bash_history'),
                 get_BashHistory)
 }

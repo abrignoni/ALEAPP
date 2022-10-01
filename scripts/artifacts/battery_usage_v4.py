@@ -63,6 +63,6 @@ def get_battery_usage_v4(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "battery_usage_v4": (
                 "Settings Services",
-                ('**/com.google.android.settings.intelligence/databases/battery-usage-db-v4*'),
+                ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*'),
                 get_battery_usage_v4)
 }

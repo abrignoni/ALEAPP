@@ -246,6 +246,6 @@ def read_trainingcachev3_sessions(file_found, report_folder, seeker):
 __artifacts__ = {
         "GboardCache": (
                 "Gboard Keyboard",
-                ('**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
+                ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
                 get_gboardCache)
 }

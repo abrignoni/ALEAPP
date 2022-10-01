@@ -71,7 +71,7 @@ def get_fitbitActivity(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "FitbitActivity": (
                 "Fitbit",
-                ('*/data/data/com.fitbit.FitbitMobile/databases/activity_db*'),
+                ('*/com.fitbit.FitbitMobile/databases/activity_db*'),
                 get_fitbitActivity)
 }
 

@@ -66,6 +66,6 @@ def get_DocList(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "DocList'": (
                 "Google Drive",
-                ('*/data/data/com.google.android.apps.docs/databases/DocList.db*'),
+                ('*/com.google.android.apps.docs/databases/DocList.db*'),
                 get_DocList)
 }

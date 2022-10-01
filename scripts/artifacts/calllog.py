@@ -88,6 +88,6 @@ def get_calllog(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Call logs ": (
                 "Call Logs",
-                ('*/data/com.android.providers.contacts/databases/calllog.db'),
+                ('*/com.android.providers.contacts/databases/calllog.db'),
                 get_calllog)
 }

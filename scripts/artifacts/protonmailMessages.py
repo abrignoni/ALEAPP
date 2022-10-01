@@ -75,6 +75,6 @@ def get_protonmailMessages(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "protonmailMessages": (
                 "ProtonMail",
-                ('*/data/data/ch.protonmail.android/databases/*-MessagesDatabase.db*'),
+                ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*'),
                 get_protonmailMessages)
 }

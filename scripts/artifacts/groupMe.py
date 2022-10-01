@@ -124,6 +124,6 @@ def get_groupMe(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "GroupMe": (
                 "GroupMe",
-                ('**/com.groupme.android/databases/groupme.db'),
+                ('*/com.groupme.android/databases/groupme.db'),
                 get_groupMe)
 }

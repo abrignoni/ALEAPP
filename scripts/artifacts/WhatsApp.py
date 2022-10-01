@@ -463,6 +463,6 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
     "WhatsApp": (
         "WhatsApp",
-        ('*/com.whatsapp/databases/*.db*','**/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml','*/WhatsApp Images/*.*','*/WhatsApp Video/*.*'),
+        ('*/com.whatsapp/databases/*.db*','*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml','*/WhatsApp Images/*.*','*/WhatsApp Video/*.*'),
         get_WhatsApp)
 }

@@ -34,7 +34,7 @@ def get_ChessComMessages(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChessComMessages": (
                 "Chess.com",
-                ('*/data/data/com.chess/databases/chess-database*'),
+                ('*/com.chess/databases/chess-database*'),
                 get_ChessComMessages)
 }
 

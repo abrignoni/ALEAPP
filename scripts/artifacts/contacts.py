@@ -81,6 +81,6 @@ def get_contacts(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
     "Contacts": (
         "Contacts",
-        ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*'),
+        ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
         get_contacts)
 }

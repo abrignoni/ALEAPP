@@ -40,6 +40,6 @@ def get_atrackerdetect(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "atrackerdetect": (
                 "AirTags",
-                ('*/data/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml'),
+                ('*/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml'),
                 get_atrackerdetect)
 }

@@ -141,6 +141,6 @@ def get_protonVPN(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
 	"protonVPN User": (
 		"ProtonVPN", 
-		('**/ch.protonvpn.android/databases/db', '**/ch.protonvpn.android/shared_prefs/ServerListUpdater.xml', '**/ch.protonvpn.android/log/Data.log'), get_protonVPN
+		('*/ch.protonvpn.android/databases/db', '*/ch.protonvpn.android/shared_prefs/ServerListUpdater.xml', '*/ch.protonvpn.android/log/Data.log'), get_protonVPN
 	)
 }

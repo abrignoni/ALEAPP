@@ -40,6 +40,6 @@ def get_pSettings(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "pSettings": (
                 "Device Info",
-                ('*/data/data/com.google.android.gsf/databases/googlesettings.db*'),
+                ('*/com.google.android.gsf/databases/googlesettings.db*'),
                 get_pSettings)
 }
