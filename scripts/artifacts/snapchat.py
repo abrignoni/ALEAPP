@@ -1,5 +1,6 @@
 import bcrypt
 import xml.etree.ElementTree as ET
+import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.artifacts.mewe import APP_NAME
@@ -316,6 +317,7 @@ def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
     tree = ET.parse(xml_file)
     data_headers = ('Key', 'Value')
     data_list = []
+    unix_stamps = ['INSTALL_ON_DEVICE_TIMESTAMP','LONG_CLIENT_ID_DEVICE_TIMESTAMP','FIRST_LOGGED_IN_ON_DEVICE_TIMESTAMP']
 
     root = tree.getroot()
     for node in root:
@@ -325,6 +327,11 @@ def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
         except:
             value = node.text
             
+        if node.attrib['name'] in unix_stamps:
+            value = datetime.datetime.fromtimestamp(int(value)/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
+        else:
+            pass
+        
         data_list.append((node.attrib['name'], value))
 
     _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name)
