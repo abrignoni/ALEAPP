@@ -30,7 +30,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         else:
             typeof =''
         
-        if file_found.endswith('threads_db2-uid'):
+        if file_found.endswith('threads_db2-uid') or (file_found.startswith('ssus.') and file_found.endswith('threads_db2')):
             source_file = file_found.replace(seeker.directory, '')
             userid = ''
             data_list = []
@@ -209,6 +209,6 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "FacebookMessenger": (
                 "Facebook Messenger",
-                ('*/threads_db2*'),
+                ('*/*threads_db2*'),
                 get_FacebookMessenger)
 }
