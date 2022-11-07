@@ -41,6 +41,10 @@ def get_icon_name(category, artifact):
         elif artifact.find('BATTERY') >=0:  icon = 'battery-charging'
         else:                           icon = 'bar-chart-2'
     elif category == 'BLUETOOTH CONNECTIONS':       icon = 'bluetooth'
+    elif category == 'BUMBLE':
+        if artifact.find('USER SETTINGS') >= 0:   icon = 'user'
+        if artifact.find('CHAT MESSAGES') >= 0:   icon = 'message-circle'
+        if artifact.find('MATCHES') >= 0:   icon = 'smile'
     elif category == 'CAST':            icon = 'cast'
     elif category == 'FITBIT':            icon = 'watch'
     elif category == 'CALL LOGS':       icon = 'phone'
