@@ -1,3 +1,9 @@
+# Module Description: Parses Bumble chats, matches and user details
+# Author: @KevinPagano3
+# Date: 2022-11-07
+# Artifact version: 0.0.1
+# Requirements: none
+
 import sqlite3
 import os
 import shutil
