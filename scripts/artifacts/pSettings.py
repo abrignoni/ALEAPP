@@ -6,7 +6,11 @@ from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_
 
 def get_pSettings(files_found, report_folder, seeker, wrap_text):
     
-    file_found = str(files_found[0])
+    for file_found in files_found:
+        file_found = str(file_found)
+        if file_found.endswith('googlesettings.db'):
+            break# Skip all other files
+        
     db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()
     cursor.execute('''
