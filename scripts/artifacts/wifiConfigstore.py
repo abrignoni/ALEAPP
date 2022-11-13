@@ -44,8 +44,11 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                         logdevinfo(f'SSID: {splitted[1]}')
                         
                     if (elem.attrib.get('name')) == 'PreSharedKey':
-                        splitted = elem.text.split('"')
-                        logdevinfo(f'Pre-Shared Key: {splitted[1]}')
+                        try:
+                            splitted = elem.text.split('"')
+                            logdevinfo(f'Pre-Shared Key ASCII: {splitted[1]}')
+                        except:
+                            logdevinfo(f'Pre-Shared Key 64 hex digits raw PSK: {elem.text}')
                     
                     if (elem.attrib.get('name')) == 'LastConnectedTime':
                         timestamp = datetime.datetime.fromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
