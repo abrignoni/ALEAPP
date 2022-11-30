@@ -118,12 +118,16 @@ def get_icon_name(category, artifact):
         elif artifact.find('CHAT INFORMATION') >= 0:           icon = 'message-circle'
     elif category == 'HIDEX': icon = 'eye-off'
     elif category == 'INSTALLED APPS':  icon = 'package'
+    elif category == 'MASTODON':
+        if artifact.find('HASHTAG SEARCHES') >= 0:    icon = 'hash'
+        elif artifact.find('ACCOUNT SEARCHES') >= 0:    icon = 'user'
+        elif artifact.find('NOTIFICATIONS') >= 0:    icon = 'bell'
     elif category == 'MEDIA METADATA':  icon = 'file-plus'
+    elif category == 'MEGA': icon = 'message-circle'
+    elif category == 'MEWE':  icon = 'message-circle'
     elif category == 'MY FILES':
         if artifact.find('MY FILES DB - CACHE MEDIA') >=0: icon = 'image'
         else:                           icon = 'file-plus'
-    elif category == 'MEGA': icon = 'message-circle'
-    elif category == 'MEWE':  icon = 'message-circle'
     elif category == 'NOW PLAYING':           icon = 'music'
     elif category == 'POWER EVENTS':
         if artifact.find('POWER OFF RESET'):    icon = 'power'
