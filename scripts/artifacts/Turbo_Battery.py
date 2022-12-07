@@ -1,8 +1,6 @@
 import sqlite3
 import io
-import json
 import os
-import shutil
 import textwrap
 
 from packaging import version
