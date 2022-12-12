@@ -164,6 +164,9 @@ def get_icon_name(category, artifact):
         elif artifact == 'TEAMS ACTIVITY FEED':  icon = 'at-sign'
         elif artifact == 'TEAMS FILE INFO':  icon = 'file'
         else:                           icon = 'file-text'
+    elif category == 'TUSKY':
+        if artifact.find('TIMELINE') >=0:    icon = 'activity'
+        elif artifact.find('ACCOUNT') >=0:    icon = 'user'
     elif category == 'VIBER':
         if artifact == 'VIBER - CONTACTS':  icon = 'user'
         elif artifact == 'VIBER - MESSAGES':  icon = 'message-square'

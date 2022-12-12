@@ -1,7 +1,7 @@
 # Module Description: Parses Mastodon timeline, notifications and searches
 # Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
 # Date: 2022-12-07
-# Artifact version: 0.0.1
+# Artifact version: 0.0.2
 # Requirements: BeautifulSoup
 
 import datetime
@@ -36,9 +36,6 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text):
         if file_name.lower().endswith('.json') and file_name.lower().startswith('instance'):
            instance_json = str(file_found)
            source_file_instance_json = file_found.replace(seeker.directory, '')
-        
-        #if not file_found.endswith('.db'):
-            #continue
            
     db = open_sqlite_db_readonly(accout_db)
     cursor = db.cursor()
@@ -122,7 +119,7 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text):
     json_extract(notifications_all.json, '$.account.acct') as "Notification From",
     case type
         when 0 then "Follow"
-        when 2 then "Reply"
+        when 2 then "Mention"
         when 3 then "Boost"
         when 4 then "Favorite"
     end as "Notification Type",
@@ -211,7 +208,6 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text):
         
             data_list.append((notification_timestamp,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12]))
             
-            #if str(row[3]) and str(row[6]) == '':
             if row[3] and row[6] != None:
                 data_list_stripped.append((notification_timestamp,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12]))
                 
