@@ -1,7 +1,7 @@
 # Module Description: Parses Mastodon timeline, notifications and searches
 # Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
 # Date: 2022-12-07
-# Artifact version: 0.0.2
+# Artifact version: 0.0.3
 # Requirements: BeautifulSoup
 
 import datetime
@@ -188,7 +188,8 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text):
     json_extract(home_timeline.json, '$.reblogs_count') as "Boosted Count",
     json_extract(home_timeline.json, '$.favourites_count') as "Favorites Count",
     json_extract(home_timeline.json, '$.visibility') as "Visibility",
-    id
+    id,
+    json
     from home_timeline
     ''')
 
@@ -199,17 +200,27 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Mastodon - Timeline')
         report.start_artifact_report(report_folder, 'Mastodon - Timeline')
         report.add_script()
-        data_headers = ('Timestamp','Account Name','App Name','Text Content','URL','Boosted Account Name','Boosted Content','Boosted URL','Replies Count','Boosted Count','Favorites Count','Visibility','ID')
+        data_headers = ('Timestamp','Account Name','App Name','Text Content','Attachment URL','URL','Boosted Account Name','Boosted Content','Boosted URL','Replies Count','Boosted Count','Favorites Count','Visibility','ID')
         data_list = []
         data_list_stripped = []
         for row in all_rows:
+            data = json.loads(row[13])
+            attachment_list = []
+            attachments = ''
+            for x in data['media_attachments']:
+                attachment_item = x.get('url','')
+                attachment_list.append(attachment_item)
+                if len(attachment_list) > 0:
+                    attachments = '\n'.join(map(str,attachment_list))
+                else:
+                    attachments = ''
         
             notification_timestamp = row[0].replace('T', ' ').replace('Z', '')
         
-            data_list.append((notification_timestamp,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12]))
+            data_list.append((notification_timestamp,row[1],row[2],row[3],attachments,row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12]))
             
             if row[3] and row[6] != None:
-                data_list_stripped.append((notification_timestamp,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12]))
+                data_list_stripped.append((notification_timestamp,row[1],row[2],row[3],attachment_list,row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12]))
                 
             else:
                 soup1 = ''
@@ -219,7 +230,7 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text):
                 elif str(row[6]).startswith('<p>'):
                     soup2 = BeautifulSoup(row[6], 'html.parser').text
                     
-                data_list_stripped.append((notification_timestamp,row[1],row[2],soup1,row[4],soup2,row[6],row[7],row[8],row[9],row[10],row[11],row[12]))                        
+                data_list_stripped.append((notification_timestamp,row[1],row[2],soup1,attachment_list,row[4],soup2,row[6],row[7],row[8],row[9],row[10],row[11],row[12]))                      
 
         report.write_artifact_data_table(data_headers, data_list, source_file_account_db, html_no_escape=['Text Content','Boosted Content'])
         report.end_artifact_report()
