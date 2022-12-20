@@ -1,11 +1,12 @@
 import blackboxprotobuf
+import datetime
 import json
 import os
 import shutil
 import sqlite3
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -29,15 +30,42 @@ def recursive_convert_bytes_to_str(obj):
 
 def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
     recents = []
+    account_db = ''
+    account_name = ''
+    screenshot_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith('.jpg'):
+        if file_found.endswith('accounts.notifications.db'):
+            account_db = str(file_found)
+            
+            db = open_sqlite_db_readonly(account_db)
+            cursor = db.cursor()
+            
+            cursor.execute('''
+            select
+            account_name
+            from accounts''')
+            
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+            if usageentries > 0:
+                for row in all_rows:
+                    account_name = row[0]
+            
+            db.close()
+            
+            continue
+        
+        elif file_found.endswith('.jpg'):
+            screenshot_path = file_found
             continue # Skip jpg files, all others should be protobuf
         elif file_found.find('{0}mirror{0}'.format(slash)) >= 0:
             # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
             continue
         elif os.path.isdir(file_found): # skip folders
             continue
+        
+        
         
         with open(file_found, 'rb') as f:
             pb = f.read()
@@ -64,6 +92,7 @@ def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
                 }, 'name': ''} }
             values, types = blackboxprotobuf.decode_message(pb, types)
             items = values.get('1', None)
+            
             if items:
                 if isinstance(items, dict): 
                     # this means only one element was found
@@ -83,23 +112,25 @@ def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Google Now & Quick Search recent events')
         report.start_artifact_report(report_folder, 'Recent Searches & Google Now', description)
         report.add_script()
-        data_headers = ('Screenshot', 'Protobuf Data')
+        data_headers = ('Timestamp','Screenshot Path','Search Query','Screenshot', 'Protobuf Data')
         data_list = []
         for file_path, items in recents:
-            dir_path, base_name = os.path.split(file_path)
+            dir_path, base_name = os.path.split(screenshot_path)
             for item in items:
-                screenshot_id = str(item.get('screenshot-id', ''))
-                screenshot_file_path = os.path.join(dir_path, f'{base_name}-{screenshot_id}.jpg')
+                screenshot_id = str(item.get('screenshot-id', ''))  
+                search_timestamp = datetime.datetime.utcfromtimestamp(item.get('timestamp1', '')/1000).strftime('%Y-%m-%d %H:%M:%S')
+                search_query = str(item.get('search-query',''))
+                screenshot_file_path = os.path.join(dir_path, f'{account_name}-{screenshot_id}.jpg')
                 if os.path.exists(screenshot_file_path):
                     shutil.copy2(screenshot_file_path, report_folder)
-                img_html = '<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid" style="max-height:600px; min-width:300px" title="{0}"></a>'.format(f'{base_name}-{screenshot_id}.jpg', folder_name)
+                img_html = '<a href="{1}/{0}"><img src="{1}/{0}" class="img-fluid" style="max-height:600px; min-width:300px" title="{0}"></a>'.format(f'{account_name}-{screenshot_id}.jpg', folder_name)
                 
                 platform = is_platform_windows()
                 if platform:
                     img_html = img_html.replace('?', '')
                 
                 recursive_convert_bytes_to_str(item) # convert all 'bytes' to str
-                data_list.append( (img_html, '<pre id="json" style="font-size: 110%">'+ escape(json.dumps(item, indent=4)).replace('\\n', '<br>') +'</pre>') )
+                data_list.append((search_timestamp,screenshot_file_path,search_query,img_html, '<pre id="json" style="font-size: 110%">'+ escape(json.dumps(item, indent=4)).replace('\\n', '<br>') +'</pre>'))
 
         report.write_artifact_data_table(data_headers, data_list, dir_path, html_escape=False)
         report.end_artifact_report()
@@ -112,6 +143,6 @@ def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Quicksearch_recent": (
                 "Google Now & QuickSearch",
-                ('*/com.google.android.googlequicksearchbox/files/recently/*'),
+                ('*/com.google.android.googlequicksearchbox/files/recently/*','*/com.google.android.googlequicksearchbox/files/accounts/*/RecentsDataStore.pb','*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db'),
                 get_quicksearch_recent)
 }
