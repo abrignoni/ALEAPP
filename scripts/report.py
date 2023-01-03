@@ -32,7 +32,9 @@ def get_icon_name(category, artifact):
     elif category == 'PLAYGROUND VAULT':       icon = 'lock'
     elif category == 'ENCRYPTING MEDIA APPS':       icon = 'lock'
     elif category == 'GOOGLE MAPS VOICE GUIDANCE': icon = 'map'
-    elif category == 'GMAIL': icon = 'at-sign'
+    elif category == 'GMAIL': 
+        if artifact.find('ACTIVE') >= 0:  icon = 'at-sign'
+        elif artifact.find('LABEL DETAILS')  >= 0: icon = 'mail'
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
     elif category == 'PRIVACY DASHBOARD': icon = 'eye'
     elif category == 'BASH HISTORY':    icon = 'terminal'
