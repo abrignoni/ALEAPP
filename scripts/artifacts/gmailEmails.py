@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly, media_to_html
+from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, media_to_html
 
 
 def get_gmailEmails(files_found, report_folder, seeker, wrap_text):
@@ -50,11 +50,19 @@ def get_gmailEmails(files_found, report_folder, seeker, wrap_text):
             message,typedef = blackboxprotobuf.decode_message(decompressed_data)
             
             timestamp = (datetime.utcfromtimestamp(message['17']/1000))
-            to = (message['1']['2'].decode()) #receiver
-            toname = (message['1'].get('3','')) #receiver name
-            if isinstance(toname, bytes):
-                toname = toname.decode()
-                
+            
+            to = (message.get('1', '')) #receiver
+            if to != '':
+                to = message['1'].get('2', '')
+                if isinstance(to, bytes):
+                    to = to.decode()
+                    
+            toname = (message.get('1', '')) #receiver name
+            if toname != '':
+                toname = message['1'].get('3', '')
+                if isinstance(toname, bytes):
+                    toname = toname.decode()
+                    
             replyto = (message['11'].get('17', '')) #reply email
             if isinstance(replyto, bytes):
                     replyto = replyto.decode()
@@ -67,18 +75,34 @@ def get_gmailEmails(files_found, report_folder, seeker, wrap_text):
             else:
                 replytoname = ''
             
-            subjectline = (message['5'].decode()) #Subject line
+            subjectline = (message.get('5', '')) #Subject line
+            if subjectline != '':
+                if isinstance(subjectline, bytes):
+                    subjectline = subjectline.decode()
+                else:
+                    subjectline = ''
             
-            if isinstance(message['6']['2'], list):
-                for x in message['6']['2']:
-                    messagehtml = messagehtml + (x['3']['2'].decode())
-            else:
-                messagehtml = (message['6']['2']['3']['2'].decode()) #HTML message
-                        
-            mailedby = (message['11']['8'].decode()) #mailed by
-            signedby = (message['11'].get('9', '')) #signed by
-            if signedby != '':
-                signedby = signedby.decode()
+            messagetest = message.get('6', '')
+            if messagetest != '':
+                messagetest = message['6'].get('2','')
+                if messagetest != '':
+                    if isinstance(message['6']['2'], list):
+                        for x in message['6']['2']:
+                            messagehtml = messagehtml + (x['3']['2'].decode())
+                    else:
+                        messagehtml = (message['6']['2']['3']['2'].decode()) #HTML message
+            
+            mailedbytest = message.get('11', '')
+            if mailedbytest != '':
+                mailedbytest = message['11'].get('8','')
+                if mailedbytest != '':
+                    mailedby = (message['11']['8'].decode()) #mailed by
+            
+            signedbytest = message.get('11', '')
+            if signedbytest != '':
+                signedby = (message['11'].get('9', '')) #signed by
+                if signedby != '':
+                    signedby = signedby.decode()
             
             if attachname == 'noname':
                 attachname = ''
