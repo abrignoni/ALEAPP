@@ -65,8 +65,6 @@ def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
         elif os.path.isdir(file_found): # skip folders
             continue
         
-        
-        
         with open(file_found, 'rb') as f:
             pb = f.read()
             types = {'1': {'type': 'message', 'message_typedef': 

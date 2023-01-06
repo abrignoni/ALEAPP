@@ -34,6 +34,8 @@ def get_icon_name(category, artifact):
     elif category == 'GOOGLE MAPS VOICE GUIDANCE': icon = 'map'
     elif category == 'GMAIL': 
         if artifact.find('ACTIVE') >= 0:  icon = 'at-sign'
+        elif artifact.find('APP EMAILS') >= 0: icon = 'at-sign'
+        elif artifact.find('DOWNLOAD REQUESTS') >= 0: icon = 'download-cloud'
         elif artifact.find('LABEL DETAILS')  >= 0: icon = 'mail'
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
     elif category == 'PRIVACY DASHBOARD': icon = 'eye'
@@ -49,6 +51,9 @@ def get_icon_name(category, artifact):
         if artifact.find('USER SETTINGS') >= 0:   icon = 'user'
         if artifact.find('CHAT MESSAGES') >= 0:   icon = 'message-circle'
         if artifact.find('MATCHES') >= 0:   icon = 'smile'
+    elif category == 'CALENDAR':
+        if artifact.find('CALENDAR - EVENTS') >=0: icon = 'calendar'
+        else:   icon = 'calendar'
     elif category == 'CAST':            icon = 'cast'
     elif category == 'FITBIT':            icon = 'watch'
     elif category == 'CALL LOGS':       icon = 'phone'
