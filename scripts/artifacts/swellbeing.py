@@ -39,14 +39,13 @@ def get_swellbeing(files_found, report_folder, seeker, wrap_text):
         END as eventTypeDescription
         FROM usageEvents
         INNER JOIN foundPackages ON usageEvents.pkgId=foundPackages.pkgId
-        
         ''')
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport('Samsung Wellbeing events')
-            report.start_artifact_report(report_folder, 'Events')
+            report = ArtifactHtmlReport('Samsung Digital Wellbeing - Events')
+            report.start_artifact_report(report_folder, 'Samsung Digital Wellbeing - Events')
             report.add_script()
             data_headers = ('Timestamp','Event ID','Package Name','Event Type','Event Type Description')
             data_list = []
@@ -56,19 +55,19 @@ def get_swellbeing(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'samsung wellbeing - events'
+            tsvname = f'Samsung Digital Wellbeing - Events'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Samsung Wellbeing - Events'
+            tlactivity = f'Samsung Digital Wellbeing - Events'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Samsung Wellbeing event data available')
+            logfunc('No Samsung Digital Wellbeing - Events data available')
         
         db.close()
 
 __artifacts__ = {
         "swellbeing": (
-                "Wellbeing",
+                "Digital Wellbeing",
                 ('*/com.samsung.android.forest/databases/dwbCommon.db*'),
                 get_swellbeing)
 }

@@ -44,14 +44,14 @@ def get_clipBoard(files_found, report_folder, seeker, wrap_text):
                         path = file_found
                         modtime = os.path.getmtime(file_found)
                         modtime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modtime))
-                        data_list.append((thumb, modtime, path))
+                        data_list.append((modtime, thumb, path))
                 else:
                     #print('Outside of Matching')
                     path = file_found
                     textdata = triage_text(file_found)
                     modtime = os.path.getmtime(file_found)
                     modtime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modtime))
-                    data_list.append((textdata, modtime, path))
+                    data_list.append((modtime, textdata, path))
             
             
     
@@ -59,7 +59,7 @@ def get_clipBoard(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Clipboard Data')
         report.start_artifact_report(report_folder, f'Clipboard Data')
         report.add_script()
-        data_headers = ('Data', 'Modified Time', 'Path')
+        data_headers = ('Modified Time', 'Data', 'Path')
         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
         report.end_artifact_report()
         

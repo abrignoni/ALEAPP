@@ -100,10 +100,10 @@ def read_trainingcache2(file_found, report_folder, seeker):
         report.start_artifact_report(report_folder, f'{file_name}', description)
         report.add_script()
 
-        data_headers = ('Id','Text','App','Input Name','Input ID','Event Timestamp')
+        data_headers = ('Event Timestamp','ID','Text','App','Input Name','Input ID')
         data_list = []
         for ke in keyboard_events:
-            data_list.append((ke.id, ke.text, ke.app, ke.textbox_name, ke.textbox_id, ke.event_date))
+            data_list.append((ke.event_date, ke.id, ke.text, ke.app, ke.textbox_name, ke.textbox_id))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
@@ -187,10 +187,10 @@ def read_trainingcachev2(file_found, report_folder, seeker):
         report.start_artifact_report(report_folder, f'{file_name}', description)
         report.add_script()
 
-        data_headers = ('Id','Text','App','Input Name','Input ID','Event Timestamp')
+        data_headers = ('Event Timestamp','ID','Text','App','Input Name','Input ID')
         data_list = []
         for ke in keyboard_events:
-            data_list.append((ke.id, ke.text, ke.app, ke.textbox_name, ke.textbox_id, ke.event_date))
+            data_list.append((ke.event_date, ke.id, ke.text, ke.app, ke.textbox_name, ke.textbox_id))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
@@ -217,9 +217,9 @@ def read_trainingcachev3_sessions(file_found, report_folder, seeker):
     # Sessions
     sql = """
         SELECT
-            session._session_id AS Session,
             datetime(session._session_id / 1000, 'unixepoch') AS Start,
             datetime(session._timestamp_ / 1000, 'unixepoch') AS Finish,
+            session._session_id AS Session,
             session.package_name AS Application 
         FROM 
             session
@@ -228,7 +228,7 @@ def read_trainingcachev3_sessions(file_found, report_folder, seeker):
     results = cursor.fetchall()
 
     if results:
-        data_headers = ("Session ID", "Start", "Finish", "Application")
+        data_headers = ("Start", "Finish", "Session ID", "Application")
         data_list = results
 
         description = "GBoard Sessions"
@@ -239,6 +239,8 @@ def read_trainingcachev3_sessions(file_found, report_folder, seeker):
         report.end_artifact_report()
 
         tsv(report_folder, data_headers, data_list, title)
+        
+        timeline(report_folder, title, data_list, data_headers)
 
     # Close
     conn.close()

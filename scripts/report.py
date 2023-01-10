@@ -66,6 +66,9 @@ def get_icon_name(category, artifact):
         elif artifact == 'PARTNER SETTINGS':        icon = 'settings'
         elif artifact.find('SETTINGS_SECURE_') >= 0: icon = 'settings'
         else:                                       icon = 'info'
+    elif category == 'DIGITAL WELLBEING' or category == 'DIGITAL WELLBEING ACCOUNT': 
+        if artifact.find('ACCOUNT DATA') >= 0:  icon = 'user'
+        else:                           icon = 'layers'
     elif category == 'DOWNLOADS':   icon = 'download'        
     elif category == 'DUCKDUCKGO':
         if artifact == 'DUCKDUCKGO TAB THUMBNAILS':  icon = 'image'
@@ -213,9 +216,7 @@ def get_icon_name(category, artifact):
         if artifact == 'VLC MEDIA LIB':  icon = 'film'
         elif artifact == 'VLC THUMBNAILS':  icon = 'image'
     elif category == 'WAZE': icon = 'navigation-2'
-    elif category == 'WELLBEING' or category == 'WELLBEING ACCOUNT': 
-        if artifact == 'ACCOUNT DATA':  icon = 'user'
-        else:                           icon = 'layers'
+    
     elif category == 'WHATSAPP':
         if artifact == 'WHATSAPP - CONTACTS':  icon = 'users'
         elif artifact == 'WHATSAPP - ONE TO ONE MESSAGES': icon = 'message-circle'

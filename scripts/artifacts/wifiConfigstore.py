@@ -64,9 +64,7 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
             
             tsvname = f'Wifi Configuration Store data'
             tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Wifi Configuration Store data'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+
         else:
             logfunc('No Wifi Configuration Store data available')
             

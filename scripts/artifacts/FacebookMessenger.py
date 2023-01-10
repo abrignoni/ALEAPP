@@ -118,13 +118,13 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Facebook Messenger{typeof}-- Chats{usernum}'
+            tsvname = f'Facebook Messenger{typeof}- Chats{usernum}'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
-            tlactivity = f'Facebook Messenger{typeof}-- Chats{usernum}'
+            tlactivity = f'Facebook Messenger{typeof}- Chats{usernum}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc(f'No Facebook{typeof} - Chats data available{usernum}')
+            logfunc(f'No Facebook{typeof}- Chats data available{usernum}')
         
         cursor.execute('''
         select
@@ -199,8 +199,6 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             tsvname = f'Facebook{typeof}- Contacts{usernum}'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
             
-            tlactivity = f'Facebook{typeof}- Contacts{usernum}'
-            timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc(f'No Facebook{typeof}- Contacts data available{usernum}')
         

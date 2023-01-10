@@ -15,14 +15,14 @@ def get_FilesByGoogle_FilesMaster(files_found, report_folder, seeker, wrap_text)
         cursor = db.cursor()
         cursor.execute('''
         select
-            root_path,
-            root_relative_file_path,
-            file_name,
-            size,
             case file_date_modified_ms
                 when 0 then ''
                 else datetime(file_date_modified_ms/1000,'unixepoch')
             end as file_date_modified_ms,
+            root_path,
+            root_relative_file_path,
+            file_name,
+            size,
             mime_type,
             case media_type
                 when 0 then 'App/Data'
@@ -47,7 +47,7 @@ def get_FilesByGoogle_FilesMaster(files_found, report_folder, seeker, wrap_text)
             report = ArtifactHtmlReport('Files by Google - Files Master')
             report.start_artifact_report(report_folder, 'Files by Google - Files Master')
             report.add_script()
-            data_headers = ('Root Path','Root Relative Path','File Name','Size','Date Modified','Mime Type','Media Type','URI','Hidden','Title','Parent Folder') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Date Modified','Root Path','Root Relative Path','File Name','Size','Mime Type','Media Type','URI','Hidden','Title','Parent Folder') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
                 data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10]))

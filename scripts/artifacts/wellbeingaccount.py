@@ -26,7 +26,7 @@ def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text):
 
 __artifacts__ = {
         "wellbeingaccount": (
-                "Wellbeing",
+                "Digital Wellbeing",
                 ('*/com.google.android.apps.wellbeing/files/AccountData.pb'),
                 get_wellbeingaccount)
 }

@@ -312,7 +312,6 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             ELSE "" 
             END AS "Sending Party JID",
             CASE
-
             WHEN message.from_me=0 THEN "Incoming"
             WHEN message.from_me=1 THEN "Outgoing"
             END AS "Message Direction",
@@ -380,9 +379,6 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No WhatsApp - Group Messages found')
         
-        
-        
-            
         try:
             cursor.execute('''
             SELECT
@@ -455,8 +451,6 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
                     tsvname = "WhatsApp - User Profile"
                     tsv(report_folder, data_headers, data_list,tsvname)
 
-                    tlactivity = "WhatsApp - User Profile"
-                    timeline(report_folder, tlactivity, data_list, data_headers)
                 else:
                     logfunc("No WhatsApp - Profile data found")
 

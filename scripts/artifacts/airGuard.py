@@ -35,7 +35,11 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text):
         data_headers_kml = ('Timestamp','Time (Local)','Device MAC Address','Latitude','Longitude','Signal Strength (RSSI)','First Time Device Seen','Last Time User Notified') 
         data_list = []
         for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
+            last_time_dev_seen = str(row[0]).replace("T", " ")
+            time_local = str(row[1]).replace("T", " ")
+            first_time_dev_seen = str(row[6]).replace("T", " ")
+            last_time_user_notified = str(row[7]).replace("T", " ")
+            data_list.append((last_time_dev_seen,time_local,row[2],row[3],row[4],row[5],first_time_dev_seen,last_time_user_notified))
             
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
