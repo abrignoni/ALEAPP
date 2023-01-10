@@ -550,8 +550,6 @@ def get_bumble(files_found, report_folder, seeker, wrap_text):
             tsvname = f'Bumble - User Settings'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Bumble - User Settings'
-            timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Bumble - User Settings data available')
     

@@ -31,7 +31,6 @@ CHAT_MESSAGES_QUERY = '''
     JOIN CHAT_THREAD ON threadId = CHAT_THREAD.id
 '''
 
-
 def _perform_query(cursor, query):
     try:
         cursor.execute(query)

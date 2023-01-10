@@ -11,9 +11,9 @@ APP_NAME = 'Snapchat'
 # Last actions taken in the application and who did them
 FEED_QUERY = '''
     SELECT
+        DATETIME(lastInteractionTimestamp/1000, 'unixepoch', 'localtime'),
         key,
         displayInteractionType,
-        DATETIME(lastInteractionTimestamp/1000, 'unixepoch', 'localtime'),
         DATETIME(lastReadTimestamp/1000, 'unixepoch', 'localtime'),
         lastReader,
         DATETIME(lastWriteTimestamp/1000, 'unixepoch', 'localtime'),
@@ -171,7 +171,7 @@ def _parse_feeds(feeds_count, rows, report_folder, db_file_name):
     logfunc(f'{feeds_count} feeds found')
 
     data_headers = (
-        'Key', 'Display Interaction Type', 'Last Interaction Timestamp',
+        'Last Interaction Timestamp','Key', 'Display Interaction Type',
         'Last Read Timestamp', 'Last Reader', 'Last Write Timestamp',
         'Last Writer', 'Last Write Type'
     )

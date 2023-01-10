@@ -65,9 +65,6 @@ def get_contacts(files_found, report_folder, seeker, wrap_text):
             
             tsvname = f'Contacts'
             tsv(report_folder, data_headers, data_list, tsvname, source_file)
-
-            tlactivity = f'Contaccts'
-            timeline(report_folder, tlactivity, data_list, data_headers)
             
         else:
             logfunc('No Contacts found')

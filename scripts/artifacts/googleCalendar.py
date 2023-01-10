@@ -86,7 +86,10 @@ def get_calendar(files_found, report_folder, seeker, wrap_text):
     cursor = db.cursor()
     cursor.execute('''
     select
-    datetime(cal_sync8/1000,'unixepoch') as "Last Synced Timestamp",
+    case
+		when cal_sync8 is NULL then ''
+		else datetime(cal_sync8/1000,'unixepoch')
+	end,
     name,
     calendar_displayName,
     account_name,
