@@ -15,7 +15,9 @@ def get_downloads(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
         if not os.path.basename(file_found) == 'downloads.db': # skip -journal and other files
-            continue           
+            continue
+        else:
+            break
         
     db = open_sqlite_db_readonly(file_found)
     
