@@ -144,7 +144,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             SELECT 
             datetime(messages.timestamp/1000,'unixepoch') AS message_timestamp, 
             case messages.received_timestamp
-                WHEN 0 THEN 'N/A'
+                WHEN 0 THEN ''
                 ELSE datetime(messages.received_timestamp/1000,'unixepoch')
             end as received_timestamp,
             messages.key_remote_jid AS id, 
@@ -212,9 +212,13 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
         try:
             cursor.execute('''
             SELECT
-            datetime(message.timestamp/1000,'unixepoch') AS "Message Time",
             CASE
-            WHEN datetime(message.received_timestamp/1000,'unixepoch')="1970-01-01 00:00:00" THEN "N/A"
+			WHEN message.timestamp = 0 then ''
+			ELSE
+			datetime(message.timestamp/1000,'unixepoch')
+			END AS "Message Time",
+            CASE
+            WHEN message.received_timestamp = 0 then ''
             ELSE
             datetime(message.received_timestamp/1000,'unixepoch')
             END AS "Time Message Received",
@@ -295,9 +299,13 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
         try:
             cursor.execute('''
             SELECT
-            datetime(message.timestamp/1000,'unixepoch') AS "Message Time",
             CASE
-            WHEN datetime(message.received_timestamp/1000,'unixepoch')="1970-01-01 00:00:00" THEN "N/A"
+			WHEN message.timestamp = 0 then ''
+			ELSE
+			datetime(message.timestamp/1000,'unixepoch')
+			END AS "Message Time",
+            CASE
+            WHEN message.received_timestamp = 0 then ''
             ELSE
             datetime(message.received_timestamp/1000,'unixepoch')
             END AS "Time Message Received",
