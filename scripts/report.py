@@ -91,6 +91,12 @@ def get_icon_name(category, artifact):
         elif artifact.find('VISITS') >= 0:                  icon = 'globe'
         elif artifact.find('WEB HISTORY') >= 0:             icon = 'globe'
     elif category == 'FITBIT':            icon = 'watch'
+    elif category == 'GARMIN':      
+        if artifact.find('DEVICES') >= 0: icon = 'watch'
+        elif artifact.find('NOTIFICATIONS') >= 0: icon = 'bell'
+        elif artifact.find('SLEEP') >= 0: icon = 'moon'
+        elif artifact.find('WEATHER') >= 0: icon = 'sun'
+        else:                       icon = 'activity'
     elif category == 'GEO LOCATION':       icon = 'map-pin'
     elif category == 'GMAIL': 
         if artifact.find('ACTIVE') >= 0:  icon = 'at-sign'

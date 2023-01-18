@@ -72,6 +72,8 @@ def get_downloads(files_found, report_folder, seeker, wrap_text):
     
     else:
         logfunc('No Native Downloads data available')
+        
+    db.close()
     
 __artifacts__ = {
         "Downloads": (
