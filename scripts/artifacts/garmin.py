@@ -318,6 +318,7 @@ def get_garmin(files_found, report_folder, seeker, wrap_text):
             sleepTimeInSeconds,
             deepSleepSeconds,
             lightSleepSeconds,
+            remSleepSeconds,
             awakeSleepSeconds,
             averageSpO2Value,
             lowestSpO2Value,
@@ -337,15 +338,16 @@ def get_garmin(files_found, report_folder, seeker, wrap_text):
                     sleep_time = time.strftime('%H:%M:%S', time.gmtime(row[4]))
                     deep_sleep_time = time.strftime('%H:%M:%S', time.gmtime(row[5]))
                     light_sleep_time = time.strftime('%H:%M:%S', time.gmtime(row[6]))
-                    awake_sleep_time = time.strftime('%H:%M:%S', time.gmtime(row[7]))
+                    rem_sleep_time = time.strftime('%H:%M:%S', time.gmtime(row[7]))
+                    awake_sleep_time = time.strftime('%H:%M:%S', time.gmtime(row[8]))
                                     
-                    data_list.append((row[0],row[1],row[2],row[3],sleep_time,deep_sleep_time,light_sleep_time,awake_sleep_time,row[8],row[9],row[10],row[11],row[12],row[13]))
+                    data_list.append((row[0],row[1],row[2],row[3],sleep_time,deep_sleep_time,light_sleep_time,rem_sleep_time,awake_sleep_time,row[9],row[10],row[11],row[12],row[13],row[14]))
 
                 description = 'Garmin sleep activities'
                 report = ArtifactHtmlReport('Garmin - Sleep Activities')
                 report.start_artifact_report(report_folder, 'Garmin - Sleep Activities', description)
                 report.add_script()
-                data_headers = ('Sleep Start Timestamp (UTC)','Sleep End Timestamp (UTC)','Auto Sleep Start Timestamp (UTC)','Auto Sleep End Timestamp (UTC)','Sleep Time','Deep Sleep','Light Sleep','Awake Sleep','Average Sp02','Lowest Sp02','Average Breaths/min','Lowest Breaths/min','Highest Breaths/min','Last Updated Timestamp')
+                data_headers = ('Sleep Start Timestamp (UTC)','Sleep End Timestamp (UTC)','Auto Sleep Start Timestamp (UTC)','Auto Sleep End Timestamp (UTC)','Total Sleep Time','Deep Sleep','Light Sleep','REM Sleep','Awake Sleep','Average Sp02','Lowest Sp02','Average Breaths/min','Lowest Breaths/min','Highest Breaths/min','Last Updated Timestamp')
                 report.write_artifact_data_table(data_headers, data_list, file_found,html_escape=False)
                 report.end_artifact_report()
                 
