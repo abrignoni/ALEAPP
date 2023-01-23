@@ -238,6 +238,7 @@ def get_icon_name(category, artifact):
         elif artifact == 'SETUP_WIZARD_INFO.XML':          icon = 'loader'
         elif artifact == 'APPOPS.XML':                     icon = 'loader'
         elif artifact == 'SAMSUNG WIPE HISTORY':           icon = 'trash-2'
+        elif artifact == 'SAMSUNG WIPE RECOVERY HISTORY LOG':           icon = 'trash-2'
         else:                                            icon = 'loader'
     return icon
 
