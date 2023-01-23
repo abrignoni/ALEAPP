@@ -12,7 +12,7 @@ def get_smyfilesRecents(files_found, report_folder, seeker, wrap_text):
     try:
         cursor.execute('''
         select
-        datetime(date / 1000, "unixepoch"),
+        datetime(date_modified / 1000, "unixepoch"),
         name,
         size,
         _data,
@@ -53,6 +53,6 @@ def get_smyfilesRecents(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "smyfilesRecents": (
                 "My Files",
-                ('*/com.sec.android.app.myfiles/databases/myfiles.db'),
+                ('*/com.sec.android.app.myfiles/databases/myfiles.db','*/com.sec.android.app.myfiles/databases/FileInfo.db'),
                 get_smyfilesRecents)
 }
