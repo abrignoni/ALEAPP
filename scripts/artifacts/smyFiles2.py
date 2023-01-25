@@ -23,8 +23,7 @@ def get_smyFiles2(files_found, report_folder, seeker, wrap_text):
         is_hidden,
         is_trashed,
         _source,
-        _description,
-        _from_s_browser
+        _description
         from download_history
         ''')
 
@@ -63,8 +62,7 @@ def get_smyFiles2(files_found, report_folder, seeker, wrap_text):
         is_hidden,
         is_trashed,
         _source,
-        _description,
-        _from_s_browser
+        _description
         from recent_files
         ''')
         

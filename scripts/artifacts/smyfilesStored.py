@@ -25,7 +25,26 @@ def get_smyfilesStored(files_found, report_folder, seeker, text_wrap):
         usageentries = len(all_rows)
     except:
         usageentries = 0
+    
+    try:
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        cursor.execute('''
+        SELECT
+            datetime(date_modified / 1000, "unixepoch"),
+            storage,
+            _data,
+            size,
+            datetime(latest /1000, "unixepoch")
+            from FileCache
+            where _data is not NULL 
+        ''')
         
+        all_rows = cursor.fetchall()
+        usageentries = len(all_rows)
+    except:
+        usageentries = 0
+
     if usageentries > 0:
         report = ArtifactHtmlReport('My Files DB - Stored Files')
         report.start_artifact_report(report_folder, 'My Files DB - Stored Files')
