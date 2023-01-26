@@ -40,6 +40,7 @@ def get_icon_name(category, artifact):
         if artifact.find('CALENDAR - EVENTS') >=0: icon = 'calendar'
         else:   icon = 'calendar'
     elif category == 'CALL LOGS':       icon = 'phone'
+    elif category == 'OFFLINE PAGES':       icon = 'cloud-off'
     elif category == 'CASH APP':        icon = 'credit-card'
     elif category == 'CAST':            icon = 'cast'
     elif category == 'CHATS':           icon = 'message-circle'
