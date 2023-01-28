@@ -16,7 +16,10 @@ def get_icon_name(category, artifact):
     category = category.upper()
     artifact = artifact.upper()
     icon = 'alert-triangle' # default (if not defined!)
-
+    
+    if category.find('BROWSER CACHE') >= 0:
+        if artifact.find('CHROME BROWSER CACHE') >= 0:  icon = 'chrome'
+        else:                           icon = 'globe'
     if category.find('ACCOUNT') >= 0:
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
