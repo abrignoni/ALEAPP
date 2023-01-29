@@ -71,17 +71,19 @@ def get_browserCachechrome(files_found, report_folder, seeker, wrap_text):
                     spath = f'<video width="320" height="240" controls="controls"><source src="{spath}" type="video/mp4">Your browser does not support the video tag.</video>'
                 elif 'image' in mime:
                     spath = f'<img src="{spath}"width="300"></img>'
+                elif 'audio' in mime:
+                    spath = f'<audio controls><source src="{spath}" type="audio/ogg"><source src="{spath}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
                 else:
                     spath = f'<a href="{spath}"> Link to {mime} </>'
         
-                data_list.append((utc_modified_date, filename, spath, url, file_found))
+                data_list.append((utc_modified_date, filename, mime, spath, url, file_found))
         
     if len(data_list) > 0:
         note = 'Source location in extraction found in the report for each item.'
         report = ArtifactHtmlReport('Chrome Browser Cache')
         report.start_artifact_report(report_folder, f'Chrome Browser Cache')
         report.add_script()
-        data_headers = ('Timestamp Modified', 'Filename', 'Cached File', 'Source URL', 'Source')
+        data_headers = ('Timestamp Modified', 'Filename', 'Mime Type', 'Cached File', 'Source URL', 'Source')
         report.write_artifact_data_table(data_headers, data_list, note, html_no_escape=['Cached File'])
         report.end_artifact_report()
         
