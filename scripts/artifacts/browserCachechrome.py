@@ -8,7 +8,7 @@ import shutil
 from io import BytesIO
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, media_to_html
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, media_to_html, is_platform_windows
 
 def get_browserCachechrome(files_found, report_folder, seeker, wrap_text):
     
@@ -71,16 +71,9 @@ def get_browserCachechrome(files_found, report_folder, seeker, wrap_text):
                 filetosearch.append(spath)
                 
                 media = media_to_html(sfilename, filetosearch, report_folder)
-                """
-                if 'video' in mime:
-                    spath = f'<video width="320" height="240" controls="controls"><source src="{spath}" type="video/mp4">Your browser does not support the video tag.</video>'
-                elif 'image' in mime:
-                    spath = f'<img src="{spath}"width="300"></img>'
-                elif 'audio' in mime:
-                    spath = f'<audio controls><source src="{spath}" type="audio/ogg"><source src="{spath}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
-                else:
-                    spath = f'<a href="{spath}"> Link to {mime} </>'
-                """
+                if is_platform_windows:
+                    media = media.replace('/?','',1)
+
                 data_list.append((utc_modified_date, filename, mime, media, url, file_found))
         
     if len(data_list) > 0:
