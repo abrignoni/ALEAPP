@@ -7,7 +7,10 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text):
 
     for file_found in files_found:
         file_found = str(file_found)
-        if not file_found.endswith('app_usage'):
+        
+        if file_found.endswith('app_usage'):
+            break
+        else:
             continue # Skip all other files
         
     db = open_sqlite_db_readonly(file_found)

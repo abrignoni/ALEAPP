@@ -76,6 +76,7 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
         for row in all_rows:
             from_id = ''
             to_id = ''
+            attachmentPath = ''
             if row[4] == "Incoming":
                 from_id = row[0]
             else:
