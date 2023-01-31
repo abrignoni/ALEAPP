@@ -1,9 +1,12 @@
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
 
 def get_installedappsGass(files_found, report_folder, seeker, wrap_text):
+
+    slash = '\\' if is_platform_windows() else '/'
+
     for file_found in files_found:
         file_found = str(file_found)
         if file_found.endswith('.db'):
@@ -12,13 +15,15 @@ def get_installedappsGass(files_found, report_folder, seeker, wrap_text):
             cursor = db.cursor()
             cursor.execute('''
             SELECT 
-                distinct(package_name) 
+                distinct(package_name),
+                version_code,
+                digest_sha256
                 FROM
                 app_info  
             ''')
             
             if 'user' in file_found:
-                usernum = file_found.split("/")
+                usernum = file_found.split(slash)
                 usernum = '_'+str(usernum[-4])
             else:
                 usernum = ''
@@ -29,10 +34,10 @@ def get_installedappsGass(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Installed Apps')
                 report.start_artifact_report(report_folder, f'Installed Apps (GMS){usernum}')
                 report.add_script()
-                data_headers = ('Bundle ID',) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+                data_headers = ('Bundle ID','Version Code','SHA-256 Hash') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
                 data_list = []
                 for row in all_rows:
-                    data_list.append((row[0],))
+                    data_list.append((row[0],row[1],row[2]))
         
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()

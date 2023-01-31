@@ -6,12 +6,8 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_
 
 def get_smyfilescache(files_found, report_folder, seeker, text_wrap):
     
-    platform = is_platform_windows()
-    if platform:
-        media_path = media_path.replace('/', '\\')
-        splitter = '\\'
-    else:
-        splitter = '/'
+    is_windows = is_platform_windows()
+    splitter = '\\' if is_windows else '/'
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -37,7 +33,6 @@ def get_smyfilescache(files_found, report_folder, seeker, text_wrap):
     data_list = []
     for row in all_rows:
         thumb = media_to_html(splitter + str(row[1]) + '.jpg', files_found, report_folder)
-        
         
         data_list.append((row[0], thumb, row[1], row[2], row[3], row[4]))
     

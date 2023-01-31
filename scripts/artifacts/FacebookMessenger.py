@@ -6,6 +6,8 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_n
 
 def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
     
+    slash = '\\' if is_platform_windows() else '/'
+    
     #logfunc(str(files_found))
     for file_found in files_found:
         file_found = str(file_found)
@@ -18,7 +20,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             
                 
         if 'user' in file_found:
-            usernum = file_found.split("/")
+            usernum = file_found.split(slash)
             usernum = '_'+str(usernum[-4])
         else:
             usernum = ''
