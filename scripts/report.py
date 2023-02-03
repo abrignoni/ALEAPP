@@ -80,7 +80,11 @@ def get_icon_name(category, artifact):
     elif category == 'EMULATED STORAGE METADATA':     icon = 'database'
     elif category == 'ENCRYPTING MEDIA APPS':       icon = 'lock'
     elif category == 'ETC HOSTS':       icon = 'globe'
-    elif category == 'FACEBOOK MESSENGER':      icon = 'facebook'
+    elif category == 'FACEBOOK MESSENGER':
+        if artifact.find('CALLS') >= 0:     icon = 'phone-call'
+        elif artifact.find('CHAT') >= 0:  icon = 'message-circle'
+        elif artifact.find('CONTACTS') >= 0: icon = 'users'
+        else: icon = 'facebook'
     elif category == 'FILES BY GOOGLE':     icon = 'file'
     elif category == 'FIREBASE CLOUD MESSAGING':       icon = 'database'
     elif category == 'FIREFOX':
