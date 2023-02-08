@@ -9,11 +9,106 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
         file_found = str(file_found)
         if not file_found.endswith('external.db'):
             continue # Skip all other files
-        
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
-        SELECT
+            
+        if 'media.module' in file_found:
+            db = open_sqlite_db_readonly(file_found)
+            cursor = db.cursor()
+            cursor.execute('''
+            SELECT
+                datetime(date_added,  'unixepoch'),
+                datetime(date_modified, 'unixepoch'),
+                datetime(datetaken, 'unixepoch'),
+                _display_name,
+                _size,
+                owner_package_name,
+                bucket_display_name,
+                referer_uri,
+                download_uri,
+                relative_path,
+                is_download,
+                is_favorite,
+                is_trashed,
+                xmp
+            FROM downloads
+            ''')
+
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+            if usageentries > 0:
+                report = ArtifactHtmlReport('Emulated Storage Metadata - Downloads')
+                report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Downloads')
+                report.add_script()
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Referer URI','Download URI','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?','XMP')
+                data_list = []
+                for row in all_rows:
+                    if bool(row[0]):
+                        keytime = row[0]
+                    else:
+                        keytime = row[1]
+                    
+                    if isinstance(row[13], bytes):
+                        xmp = str(row[13])[2:-1]
+                    else:
+                        xmp = row[13]
+                    
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12],xmp))
+
+                report.write_artifact_data_table(data_headers, data_list, file_found)
+                report.end_artifact_report()
+                
+                tsvname = f'Emulated Storage Metadata - Downloads'
+                tsv(report_folder, data_headers, data_list, tsvname)
+                
+                tlactivity = f'Emulated Storage Metadata - Downloads'
+                timeline(report_folder, tlactivity, data_list, data_headers)
+            else:
+                logfunc('No Emulated Storage Metadata - Downloads data available')
+            
+            cursor.execute('''
+            SELECT
+            datetime(date_added,  'unixepoch'),
+            datetime(date_modified, 'unixepoch'),
+            datetime(datetaken, 'unixepoch'),
+            _display_name,
+            _size,
+            owner_package_name,
+            bucket_display_name,
+            relative_path,
+            is_download,
+            is_favorite,
+            is_trashed
+            from images
+            ''')
+
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+            if usageentries > 0:
+                report = ArtifactHtmlReport('Emulated Storage Metadata - Images')
+                report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Images')
+                report.add_script()
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
+                data_list = []
+                for row in all_rows:
+                    if bool(row[0]):
+                        keytime = row[0]
+                    else:
+                        keytime = row[1]
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+
+                report.write_artifact_data_table(data_headers, data_list, file_found)
+                report.end_artifact_report()
+                
+                tsvname = f'Emulated Storage Metadata - Images'
+                tsv(report_folder, data_headers, data_list, tsvname)
+                
+                tlactivity = f'Emulated Storage Metadata - Images'
+                timeline(report_folder, tlactivity, data_list, data_headers)
+            else:
+                logfunc('No Emulated Storage Metadata - Images data available')
+            
+            
+            cursor.execute('''
+            SELECT
             datetime(date_added,  'unixepoch'),
             datetime(date_modified, 'unixepoch'),
             datetime(datetaken, 'unixepoch'),
@@ -26,222 +121,171 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
             relative_path,
             is_download,
             is_favorite,
-            is_trashed,
-            xmp
-        FROM downloads
-        ''')
+            is_trashed
+            from files
+            ''')
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Downloads - Emulated Storage Metadata')
-            report.start_artifact_report(report_folder, 'Downloads')
-            report.add_script()
-            data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Referer URI','Download URI','Relative Path','Is download?','Is favorite?','Is trashed?','XMP')
-            data_list = []
-            for row in all_rows:
-                if bool(row[0]):
-                    keytime = row[0]
-                else:
-                    keytime = row[1]
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+            if usageentries > 0:
+                report = ArtifactHtmlReport('Emulated Storage Metadata - Files')
+                report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Files')
+                report.add_script()
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Referer URI','Download URI','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
+                data_list = []
+                for row in all_rows:
+                    if bool(row[0]):
+                        keytime = row[0]
+                    else:
+                        keytime = row[1]
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
+
+                report.write_artifact_data_table(data_headers, data_list, file_found)
+                report.end_artifact_report()
                 
-                if isinstance(row[13], bytes):
-                    xmp = str(row[13])[2:-1]
-                else:
-                    xmp = row[13]
+                tsvname = f'Emulated Storage Metadata - Files'
+                tsv(report_folder, data_headers, data_list, tsvname)
                 
-                data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12],xmp))
+                tlactivity = f'Emulated Storage Metadata - Files'
+                timeline(report_folder, tlactivity, data_list, data_headers)
+            else:
+                logfunc('No Emulated Storage Metadata - Files data available')
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
+            cursor.execute('''
+            SELECT
+            datetime(date_added,  'unixepoch'),
+            datetime(date_modified, 'unixepoch'),
+            datetime(datetaken, 'unixepoch'),
+            _display_name,
+            _size,
+            owner_package_name,
+            bucket_display_name,
+            relative_path,
+            is_download,
+            is_favorite,
+            is_trashed
+            from video
+            ''')
+
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+            if usageentries > 0:
+                report = ArtifactHtmlReport('Emulated Storage Metadata - Videos')
+                report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Videos')
+                report.add_script()
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
+                data_list = []
+                for row in all_rows:
+                    if bool(row[0]):
+                        keytime = row[0]
+                    else:
+                        keytime = row[1]
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+
+                report.write_artifact_data_table(data_headers, data_list, file_found)
+                report.end_artifact_report()
+                
+                tsvname = f'Emulated Storage Metadata - Videos'
+                tsv(report_folder, data_headers, data_list, tsvname)
+                
+                tlactivity = f'Emulated Storage Metadata - Videos'
+                timeline(report_folder, tlactivity, data_list, data_headers)
+            else:
+                logfunc('No Emulated Storage Metadata - Videos data available')
+
+            cursor.execute('''
+            SELECT
+            datetime(date_added,  'unixepoch'),
+            datetime(date_modified, 'unixepoch'),
+            datetime(datetaken, 'unixepoch'),
+            _display_name,
+            _size,
+            owner_package_name,
+            bucket_display_name,
+            relative_path,
+            is_download,
+            is_favorite,
+            is_trashed
+            from audio
+            ''')
+
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+            if usageentries > 0:
+                report = ArtifactHtmlReport('Emulated Storage Metadata - Audio')
+                report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Audio')
+                report.add_script()
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
+                data_list = []
+                for row in all_rows:
+                    if bool(row[0]):
+                        keytime = row[0]
+                    else:
+                        keytime = row[1]
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+
+                report.write_artifact_data_table(data_headers, data_list, file_found)
+                report.end_artifact_report()
+                
+                tsvname = f'Emulated Storage Metadata - Audio'
+                tsv(report_folder, data_headers, data_list, tsvname)
+                
+                tlactivity = f'Emulated Storage Metadata - Audio'
+                timeline(report_folder, tlactivity, data_list, data_headers)
+            else:
+                logfunc('No Emulated Storage Metadata - Audio data available')
+
+            db.close()
             
-            tsvname = f'Emulated Storage Metadata - Downloads'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Emulated Storage Metadata - Downloads'
-            timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Emulated Storage Metadata Downloads data available')
-        
-        cursor.execute('''
-        SELECT
-        datetime(date_added,  'unixepoch'),
-        datetime(date_modified, 'unixepoch'),
-        datetime(datetaken, 'unixepoch'),
-        _display_name,
-        _size,
-        owner_package_name,
-        bucket_display_name,
-        relative_path,
-        is_download,
-        is_favorite,
-        is_trashed
-        from images
-        ''')
+            db = open_sqlite_db_readonly(file_found)
+            cursor = db.cursor()
+            cursor.execute('''
+            SELECT
+            datetime(date_added,  'unixepoch') as "Timestamp Added",
+            datetime(date_modified, 'unixepoch') as "Timestamp Modified",
+            datetime(datetaken, 'unixepoch') as "Timestamp Taken",
+            _data,
+            title,
+            _display_name,
+            _size,
+            latitude,
+            longitude,
+            orientation,
+            bucket_display_name,
+            width,
+            height,
+            _id
+            from files
+            ''')
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Images - Emulated Storage Metadata')
-            report.start_artifact_report(report_folder, 'Images')
-            report.add_script()
-            data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is download?','Is favorite?','Is trashed?')
-            data_list = []
-            for row in all_rows:
-                if bool(row[0]):
-                    keytime = row[0]
-                else:
-                    keytime = row[1]
-                data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+            if usageentries > 0:
+                report = ArtifactHtmlReport('Emulated Storage Metadata - Files')
+                report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Files')
+                report.add_script()
+                data_headers = ('Timestamp Added','Timestamp Modified','Timestamp Taken','Path','Title','Display Name','Size','Latitude','Longitude','Orientation','Bucket Display Name','Parent Path','Width','Height','ID')
+                data_list = []
+                parent = ''
+                for row in all_rows:
+                    
+                    data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13]))
 
-            
-            
-            
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Emulated Storage Metadata - Images'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Emulated Storage Metadata - Images'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Emulated Storage Metadata Images data available')
-        
-        
-        cursor.execute('''
-        SELECT
-        datetime(date_added,  'unixepoch'),
-        datetime(date_modified, 'unixepoch'),
-        datetime(datetaken, 'unixepoch'),
-        _display_name,
-        _size,
-        owner_package_name,
-        bucket_display_name,
-        referer_uri,
-        download_uri,
-        relative_path,
-        is_download,
-        is_favorite,
-        is_trashed
-        from files
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Files - Emulated Storage Metadata')
-            report.start_artifact_report(report_folder, 'Files')
-            report.add_script()
-            data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Referer URI','Download URI','Relative Path','Is download?','Is favorite?','Is trashed?')
-            data_list = []
-            for row in all_rows:
-                if bool(row[0]):
-                    keytime = row[0]
-                else:
-                    keytime = row[1]
-                data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Emulated Storage Metadata - Files'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Emulated Storage Metadata - Files'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Emulated Storage Metadata Files data available')
-
-        cursor.execute('''
-        SELECT
-        datetime(date_added,  'unixepoch'),
-        datetime(date_modified, 'unixepoch'),
-        datetime(datetaken, 'unixepoch'),
-        _display_name,
-        _size,
-        owner_package_name,
-        bucket_display_name,
-        relative_path,
-        is_download,
-        is_favorite,
-        is_trashed
-        from video
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Videos - Emulated Storage Metadata')
-            report.start_artifact_report(report_folder, 'Videos')
-            report.add_script()
-            data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is download?','Is favorite?','Is trashed?')
-            data_list = []
-            for row in all_rows:
-                if bool(row[0]):
-                    keytime = row[0]
-                else:
-                    keytime = row[1]
-                data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Emulated Storage Metadata - Videos'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Emulated Storage Metadata - Videos'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Emulated Storage Metadata Videos data available')
-
-        cursor.execute('''
-        SELECT
-        datetime(date_added,  'unixepoch'),
-        datetime(date_modified, 'unixepoch'),
-        datetime(datetaken, 'unixepoch'),
-        _display_name,
-        _size,
-        owner_package_name,
-        bucket_display_name,
-        relative_path,
-        is_download,
-        is_favorite,
-        is_trashed
-        from audio
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Audio - Emulated Storage Metadata')
-            report.start_artifact_report(report_folder, 'Audio')
-            report.add_script()
-            data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is download?','Is favorite?','Is trashed?')
-            data_list = []
-            for row in all_rows:
-                if bool(row[0]):
-                    keytime = row[0]
-                else:
-                    keytime = row[1]
-                data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Emulated Storage Metadata - Audio'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Emulated Storage Metadata - Audio'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Emulated Storage Metadata Videos data available')
-
-        db.close()
+                report.write_artifact_data_table(data_headers, data_list, file_found)
+                report.end_artifact_report()
+                
+                tsvname = f'Emulated Storage Metadata - Files'
+                tsv(report_folder, data_headers, data_list, tsvname)
+                
+                tlactivity = f'Emulated Storage Metadata - Files'
+                timeline(report_folder, tlactivity, data_list, data_headers)
+            else:
+                logfunc('No Emulated Storage Metadata - Files data available')
 
 __artifacts__ = {
         "EmulatedSmeta'": (
                 "Emulated Storage Metadata",
-                ('*/com.google.android.providers.media.module/databases/external.db*'),
+                ('*/com.google.android.providers.media.module/databases/external.db*','*/com.android.providers.media/databases/external.db*'),
                 get_emulatedSmeta)
 }
