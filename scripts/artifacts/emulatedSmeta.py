@@ -18,6 +18,8 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
                 datetime(date_added,  'unixepoch'),
                 datetime(date_modified, 'unixepoch'),
                 datetime(datetaken, 'unixepoch'),
+                _data,
+                title,
                 _display_name,
                 _size,
                 owner_package_name,
@@ -25,9 +27,18 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
                 referer_uri,
                 download_uri,
                 relative_path,
-                is_download,
-                is_favorite,
-                is_trashed,
+                case is_download
+                    when 0 then ''
+                    when 1 then 'Yes'
+                end,
+                case is_favorite
+                    when 0 then ''
+                    when 1 then 'Yes'
+                end,
+                case is_trashed
+                    when 0 then ''
+                    when 1 then 'Yes'
+                end,
                 xmp
             FROM downloads
             ''')
@@ -38,7 +49,7 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Emulated Storage Metadata - Downloads')
                 report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Downloads')
                 report.add_script()
-                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Referer URI','Download URI','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?','XMP')
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Path','Title','Display Name','Size','Owner Package Name','Bucket Display Name','Referer URI','Download URI','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?','XMP')
                 data_list = []
                 for row in all_rows:
                     if bool(row[0]):
@@ -46,12 +57,12 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
                     else:
                         keytime = row[1]
                     
-                    if isinstance(row[13], bytes):
-                        xmp = str(row[13])[2:-1]
+                    if isinstance(row[15], bytes):
+                        xmp = str(row[15])[2:-1]
                     else:
-                        xmp = row[13]
+                        xmp = row[15]
                     
-                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12],xmp))
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], xmp))
 
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
@@ -69,14 +80,31 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
             datetime(date_added,  'unixepoch'),
             datetime(date_modified, 'unixepoch'),
             datetime(datetaken, 'unixepoch'),
+            _data,
+            title,
             _display_name,
             _size,
+            latitude,
+            longitude,
+            case orientation
+                when 0 then 'Horizontal'
+                else 'Vertical'
+            end,
             owner_package_name,
             bucket_display_name,
             relative_path,
-            is_download,
-            is_favorite,
-            is_trashed
+            case is_download
+                when 0 then ''
+                when 1 then 'Yes'
+            end,
+            case is_favorite
+                when 0 then ''
+                when 1 then 'Yes'
+            end,
+            case is_trashed
+                when 0 then ''
+                when 1 then 'Yes'
+            end
             from images
             ''')
 
@@ -86,14 +114,14 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Emulated Storage Metadata - Images')
                 report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Images')
                 report.add_script()
-                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Path','Title','Display Name','Size','Latitude','Longitude','Orientation','Owner Package Name','Bucket Display Name','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
                 data_list = []
                 for row in all_rows:
                     if bool(row[0]):
                         keytime = row[0]
                     else:
                         keytime = row[1]
-                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15]))
 
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
@@ -112,16 +140,33 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
             datetime(date_added,  'unixepoch'),
             datetime(date_modified, 'unixepoch'),
             datetime(datetaken, 'unixepoch'),
+            _data,
+            title,
             _display_name,
             _size,
+            latitude,
+            longitude,
+            case orientation
+                when 0 then 'Horizontal'
+                else 'Vertical'
+            end,
             owner_package_name,
             bucket_display_name,
             referer_uri,
             download_uri,
             relative_path,
-            is_download,
-            is_favorite,
-            is_trashed
+            case is_download
+                when 0 then ''
+                when 1 then 'Yes'
+            end,
+            case is_favorite
+                when 0 then ''
+                when 1 then 'Yes'
+            end,
+            case is_trashed
+                when 0 then ''
+                when 1 then 'Yes'
+            end
             from files
             ''')
 
@@ -131,14 +176,14 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Emulated Storage Metadata - Files')
                 report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Files')
                 report.add_script()
-                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Referer URI','Download URI','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Path','Title','Display Name','Size','Latitude','Longitude','Orientation','Owner Package Name','Bucket Display Name','Referer URI','Download URI','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
                 data_list = []
                 for row in all_rows:
                     if bool(row[0]):
                         keytime = row[0]
                     else:
                         keytime = row[1]
-                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17]))
 
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
@@ -156,14 +201,31 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
             datetime(date_added,  'unixepoch'),
             datetime(date_modified, 'unixepoch'),
             datetime(datetaken, 'unixepoch'),
+            _data,
+            title,
             _display_name,
             _size,
+            latitude,
+            longitude,
+            case orientation
+                when 0 then 'Horizontal'
+                else 'Vertical'
+            end,
             owner_package_name,
             bucket_display_name,
             relative_path,
-            is_download,
-            is_favorite,
-            is_trashed
+            case is_download
+                when 0 then ''
+                when 1 then 'Yes'
+            end,
+            case is_favorite
+                when 0 then ''
+                when 1 then 'Yes'
+            end,
+            case is_trashed
+                when 0 then ''
+                when 1 then 'Yes'
+            end
             from video
             ''')
 
@@ -173,14 +235,14 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Emulated Storage Metadata - Videos')
                 report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Videos')
                 report.add_script()
-                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Path','Title','Display Name','Size','Latitude','Longitude','Orientation','Owner Package Name','Bucket Display Name','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
                 data_list = []
                 for row in all_rows:
                     if bool(row[0]):
                         keytime = row[0]
                     else:
                         keytime = row[1]
-                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15]))
 
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
@@ -198,14 +260,25 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
             datetime(date_added,  'unixepoch'),
             datetime(date_modified, 'unixepoch'),
             datetime(datetaken, 'unixepoch'),
+            _data,
+            title,
             _display_name,
             _size,
             owner_package_name,
             bucket_display_name,
             relative_path,
-            is_download,
-            is_favorite,
-            is_trashed
+            case is_download
+                when 0 then ''
+                when 1 then 'Yes'
+            end,
+            case is_favorite
+                when 0 then ''
+                when 1 then 'Yes'
+            end,
+            case is_trashed
+                when 0 then ''
+                when 1 then 'Yes'
+            end
             from audio
             ''')
 
@@ -215,14 +288,14 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Emulated Storage Metadata - Audio')
                 report.start_artifact_report(report_folder, 'Emulated Storage Metadata - Audio')
                 report.add_script()
-                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
+                data_headers = ('Key Timestamp','Date Added','Date Modified','Date Taken','Path','Title','Display Name','Size','Owner Package Name','Bucket Display Name','Relative Path','Is Downloaded?','Is Favorited?','Is Trashed?')
                 data_list = []
                 for row in all_rows:
                     if bool(row[0]):
                         keytime = row[0]
                     else:
                         keytime = row[1]
-                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+                    data_list.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
 
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
@@ -251,7 +324,10 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
             _size,
             latitude,
             longitude,
-            orientation,
+            case orientation
+                when 0 then 'Horizontal'
+                else 'Vertical'
+            end,
             bucket_display_name,
             width,
             height,
@@ -284,7 +360,7 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
                 logfunc('No Emulated Storage Metadata - Files data available')
 
 __artifacts__ = {
-        "EmulatedSmeta'": (
+        "EmulatedSmeta": (
                 "Emulated Storage Metadata",
                 ('*/com.google.android.providers.media.module/databases/external.db*','*/com.android.providers.media/databases/external.db*'),
                 get_emulatedSmeta)
