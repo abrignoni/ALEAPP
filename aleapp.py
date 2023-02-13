@@ -87,11 +87,16 @@ def main():
 
         out_params = OutputParameters(output_path)
 
-        crunch_artifacts(list(loader.plugins), extracttype, input_path, out_params, 1, wrap_text)
-
+        try:
+            casedata
+        except NameError:
+            casedata = {}
+            
+        crunch_artifacts(list(loader.plugins), extracttype, input_path, out_params, 1, wrap_text, loader, casedata)
+        
 
 def crunch_artifacts(
-        plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, ratio, wrap_text):
+        plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, ratio, wrap_text, casedata):
     start = process_time()
 
     logfunc('Procesing started. Please wait. This may take a few minutes...')
@@ -195,7 +200,7 @@ def crunch_artifacts(
             out_params.report_folder_base = out_params.report_folder_base[4:]
         if input_path.startswith('\\\\?\\'):
             input_path = input_path[4:]
-    report.generate_report(out_params.report_folder_base, run_time_secs, run_time_HMS, extracttype, input_path)
+    report.generate_report(out_params.report_folder_base, run_time_secs, run_time_HMS, extracttype, input_path, casedata)
     logfunc('Report generation Completed.')
     logfunc('')
     logfunc(f'Report location: {out_params.report_folder_base}')
