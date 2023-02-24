@@ -105,6 +105,55 @@ def get_icon_name(category, artifact):
         elif artifact.find('SLEEP') >= 0: icon = 'moon'
         elif artifact.find('WEATHER') >= 0: icon = 'sun'
         else:                       icon = 'activity'
+    elif category == 'GARMIN-API':
+        if artifact.find('ACTIVITY API') >= 0:
+            icon = 'watch'
+        elif artifact.find('HEART RATE API') >= 0:
+            icon = 'heart'
+        elif artifact.find('STEPS API') >= 0:
+            icon = 'arrow-up-circle'
+        elif artifact.find('SLEEP API') >= 0:
+            icon = 'moon'
+        elif artifact.find('STRESS API') >= 0:
+            icon = 'frown'
+        elif artifact.find('POLYLINE API') >= 0:
+            icon = 'map-pin'
+    elif category == 'GARMIN-CACHE':
+        if artifact.find('ACTIVITIES') >= 0:
+            icon = 'watch'
+        elif artifact.find('CHARTS') >= 0:
+            icon = 'activity'
+        elif artifact.find('DAILIES') >= 0:
+            icon = 'calendar'
+        elif artifact.find('POLYLINE') >= 0:
+            icon = 'map-pin'
+        elif artifact.find('RESPONSE') >= 0:
+            icon = 'terminal'
+        elif artifact.find('SPO2') >= 0:
+            icon = 'heart'
+        elif artifact.find('SLEEP') >= 0:
+            icon = 'moon'
+        elif artifact.find('WEIGHT') >= 0:
+            icon = 'bar-chart-2'
+    elif category == 'GARMIN-FILES':
+        if artifact.find('LOG') >= 0:
+            icon = 'file-text'
+        elif artifact.find('PERSISTENT') >= 0:
+            icon = 'code'
+    elif category == 'GARMIN-GCM':
+        if artifact.find('ACTIVITIES') >= 0:
+            icon = 'watch'
+        elif artifact.find('JSON') >= 0:
+            icon = 'code'
+    elif category == 'GARMIN-NOTIFICATIONS':
+        icon = 'message-square'
+    elif category == 'GARMIN-SHAREDPREFS':
+        if artifact.find('FACEBOOK') >= 0:
+            icon = 'facebook'
+        elif artifact.find('USER') >= 0:
+            icon = 'user'
+    elif category == 'GARMIN-SYNC':
+        icon = 'loader'
     elif category == 'GEO LOCATION':       icon = 'map-pin'
     elif category == 'GMAIL': 
         if artifact.find('ACTIVE') >= 0:  icon = 'at-sign'
@@ -331,6 +380,23 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     shutil.copy2(os.path.join(__location__,"dark-mode.css"), elements_folder)
     shutil.copy2(os.path.join(__location__,"dark-mode-switch.js"), elements_folder)
     shutil.copytree(os.path.join(__location__,"MDB-Free_4.13.0"), os.path.join(elements_folder, 'MDB-Free_4.13.0'))
+    # Chart.js
+    shutil.copy2(os.path.join(__location__, "chart.umd.min.js"), elements_folder)
+    # Moment
+    shutil.copy2(os.path.join(__location__, "moment.min.js"), elements_folder)
+    # D3
+    shutil.copy2(os.path.join(__location__, "d3.v7.min.js"), elements_folder)
+    # Popper
+    shutil.copy2(os.path.join(__location__, "popper.min.js"), elements_folder)
+    # Cal-Heatmap
+    shutil.copy2(os.path.join(__location__, "cal-heatmap.css"), elements_folder)
+    shutil.copy2(os.path.join(__location__, "cal-heatmap.min.js"), elements_folder)
+    shutil.copy2(os.path.join(__location__, "Tooltip.min.js"), elements_folder)
+    # Highlight.js
+    shutil.copy2(os.path.join(__location__, "highlight.min.css"), elements_folder)
+    shutil.copy2(os.path.join(__location__, "highlight.min.js"), elements_folder)
+    # Garmin Custom JS
+    shutil.copy2(os.path.join(__location__, "garmin-functions.js"), elements_folder)
 
 def get_file_content(path):
     f = open(path, 'r', encoding='utf8')

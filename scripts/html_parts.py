@@ -18,6 +18,15 @@ page_header = \
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/bootstrap.min.css">
         <!-- Material Design Bootstrap - TOGGLE THIS FOR ALTERNATE DESIGN!-->
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/mdb.min.css">
+        <!-- Highlight.js -->
+        <link rel="stylesheet" href="_elements/highlight.min.css">
+        <script src="_elements/highlight.min.js"></script>
+        <!-- Cal-Heatmap -->
+        <script src="_elements/d3.v7.min.js"></script>
+        <script src="_elements/cal-heatmap.min.js"></script>
+        <link rel="stylesheet" href="_elements/cal-heatmap.css">
+        <script src="_elements/popper.min.js"></script>
+        <script src="_elements/Tooltip.min.js"></script>
         <!-- Your custom styles (optional) -->
         <link rel="stylesheet" href="_elements/dashboard.css">
         <!-- MDBootstrap Datatables  -->
@@ -270,6 +279,11 @@ body_end = \
     <!-- Your custom scripts -->
     <!-- MDBootstrap Datatables  -->
     <script type="text/javascript" src="_elements/MDB-Free_4.13.0/js/addons/datatables.min.js"></script>
+    <!-- Chart.js -->
+    <script type="text/javascript" src="_elements/chart.umd.min.js"></script>
+    <script type="text/javascript" src="_elements/moment.min.js"></script>
+    <!-- Garmin Functions -->
+    <script type="text/javascript" src="_elements/garmin-functions.js"></script>
     <script>
         feather.replace()
     </script>
