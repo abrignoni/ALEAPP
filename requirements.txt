@@ -11,7 +11,7 @@ xmltodict
 filetype==1.0.8
 python-magic==0.4.24; platform_system == "Linux"
 python-magic-bin==0.4.14; platform_system == "Windows"
-python-magic==0.4.27; platform_system == "Darwin"
+python-magic-bin; platform_system == "Darwin"
 pillow
 folium==0.14.0
 polyline==2.0.0
