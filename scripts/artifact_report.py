@@ -132,4 +132,176 @@ class ArtifactHtmlReport:
             self.report_file.close()
             self.report_file = None
 
-        
+    # Add image to artifact
+    def add_image_file(self, param, param1, param2, secondImage=False):
+        # break line
+        self.report_file.write('<br/><hr>')
+        # Heading
+        self.report_file.write(f'<h3 class="h3 text-center mb-3">{param2}</h3>')
+        # Image centered
+        if secondImage:
+            self.report_file.write(
+                f'<img src="{param}" alt="{param1}" title="{param2}" class="img-fluid mx-auto d-block"/>')
+        else:
+            self.report_file.write(
+                f'<img src="{param}" alt="{param1}" title="{param2}" id="chartImage" class="img-fluid mx-auto d-block"/>')
+
+    # Add HTML Element to artifact
+    def add_html_to_artifact(self, param, param1):
+        # break line
+        self.report_file.write('<br/><hr>')
+        # Heading
+        self.report_file.write(f'<h3 class="h3 text-center mb-3">{param1}</h3>')
+        # Image centered
+        self.report_file.write(f'{param}')
+
+    # Add Map Element to artifact
+    def add_map(self, param):
+        self.report_file.write(f'{param}')
+
+    # Add Chart Element to artifact
+    def add_chart(self, height=400):
+        # break line
+        self.report_file.write('<br/><hr>')
+        # Heading
+        self.report_file.write(f'<h3 class="h3 text-center mb-3">Data Chart</h3>')
+        self.report_file.write(f'<div style="height:{height}px;" class="d-flex justify-content-center">')
+        # Chart
+        self.report_file.write(f'<canvas id="myChart"></canvas>')
+        self.report_file.write('</div>')
+
+    # Add JSON Element to artifact
+    def add_json_to_artifact(self, param, param1, hidden=True, idJ='', gcm=False):
+        # Div
+        if not gcm:
+            if hidden:
+                self.report_file.write(f'<div id="{idJ}" class="jsonBlock" style="display:none">')
+            else:
+                self.report_file.write(f'<div id="{idJ}" class="jsonBlock">')
+            # break line
+            self.report_file.write('<br/><hr>')
+            # Heading
+            self.report_file.write(f'<h3 class="h3 text-center mb-3">{param}</h3>')
+            # Image centered
+            self.report_file.write(f'<pre><code>{param1}</code></pre>')
+            # Div
+            self.report_file.write('</div>')
+        else:
+            self.report_file.write(f'<div class="jsonBlock">')
+            # break line
+            self.report_file.write('<br/><hr>')
+            # Heading
+            self.report_file.write(f'<h3 class="h3 text-center mb-3">{param}</h3>')
+            # Image centered
+            self.report_file.write(f'<pre><code id="jsonCode">{param1}</code></pre>')
+            # Div
+            self.report_file.write('</div>')
+            self.report_file.write('<script>hljs.highlightAll();</script>')
+
+        # Function to create invisible elment to store data
+
+    # Add invisible data to artifact
+    def add_invisible_data(self, param, param1):
+        self.report_file.write(f'<div id="{param}" style="display:none" hidden>{param1}</div>')
+
+        # Function to create date input fields to filter data by date defined in the columns
+
+    # Function to create a filter for the datatable
+    def filter_by_date(self, id, col1):
+        # Row with 2 columns
+        self.report_file.write('<div class="row">')
+        # Column 1
+        self.report_file.write('<div class="col-md-6">')
+        # Date picker 1 with default value
+        self.report_file.write('<div class="form-group">')
+        self.report_file.write('<label for="dateFrom">From</label>')
+        self.report_file.write('<input type="date" class="form-control" id="dateFrom" value="2019-01-01">')
+        self.report_file.write('</div>')
+        # Column 1
+        self.report_file.write('</div>')
+
+        # Column 2
+        self.report_file.write('<div class="col-md-6">')
+        # Date picker 2 with default value
+        self.report_file.write('<div class="form-group">')
+        self.report_file.write('<label for="dateTo">To</label>')
+        self.report_file.write('<input type="date" class="form-control" id="dateTo">')
+        self.report_file.write('</div>')
+        # Column 2
+        self.report_file.write('</div>')
+        # Row
+        self.report_file.write('</div>')
+
+        # Add JS to filter data only after jquery is loaded
+        self.script_code += f"""<script>
+           $(document).ready(function() {{
+               var table = $('#{id}').DataTable();
+               //Put current date in dateTo
+               var today = new Date();
+               var dd = today.getDate();
+               var mm = today.getMonth()+1; //January is 0!
+               var yyyy = today.getFullYear();
+               if(dd<10){{
+                   dd='0'+dd
+               }}
+               if(mm<10){{
+                   mm='0'+mm
+               }}
+               today = yyyy+'-'+mm+'-'+dd;
+               $('#dateTo').val(today);
+               // All data above or equal to dateFrom and below or equal to dateTo
+               $.fn.dataTable.ext.search.push(
+                   function(settings, data, dataIndex) {{
+                       var dateFrom = new Date($('#dateFrom').val());
+                       var dateTo = new Date($('#dateTo').val());
+                       var date = new Date(data[{col1}]);
+                       if (dateFrom <= date && date <= dateTo) {{
+                           return true;
+                       }}
+                       return false;
+                   }}
+               );
+               // Event listener to the two range filtering inputs to redraw on input
+               $('#dateFrom, #dateTo').change(function() {{
+                   table.draw();
+               }});
+           }});
+           </script>
+           """
+
+    # Function to add a heatmap to the artifact
+    def add_heat_map(self, json):
+        # year input
+        self.report_file.write('<div class="row">')
+        self.report_file.write('<div class="col-md-2">')
+        self.report_file.write('<div class="form-group">')
+        self.report_file.write('<label for="year">Year</label>')
+        self.report_file.write(
+            '<input type="number" class="form-control" id="year" value="2022" onchange="changeYear(this)">')
+        self.report_file.write('</div>')
+        self.report_file.write('</div>')
+        self.report_file.write('</div>')
+        # break line
+        # Heading
+        self.report_file.write(f'<h3 class="h3 text-center mb-3">Nº Activities</h3>')
+        # Image centered
+        self.report_file.write(f'<div id="heatmap" class="overflow-auto d-flex justify-content-center"></div><br>')
+        self.report_file.write(
+            f'<a class="btn btn-sm btn-secondary ml-xs" href="#" onclick="previous()">← Previous</a>')
+        self.report_file.write(
+            f'<a class="btn btn-sm btn-secondary ml-xs" href="#" onclick="next()">Next →</a>')
+        self.report_file.write('<br/><hr>')
+        # heatmap function
+        self.script_code += f"""<script>
+           $(document).ready(function() {{
+           heatMap({json});
+           }});
+           </script>
+           """
+
+    # Function to add a chart to the artifact using a script call
+    def add_chart_script(self, id, type, data, labels, title, xLabel, yLabel):
+        self.script_code += f"""<script>
+           createChart('{id}', '{type}', {data}, {labels}, '{title}', '{xLabel}', '{yLabel}');
+           </script>
+           """
