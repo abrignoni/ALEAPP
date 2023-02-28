@@ -1,8 +1,10 @@
-# Get Information from the table user_daily_summary from the cache-database in the Garmin Connect App
+# Get Information related to the Daily summaries from the Garmin API using the JSON file extracted
+# Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
+# Date: 2023-02-28
 # Version: 1.0
-# Requirements: Python 3.7 or higher
+# Requirements: Python 3.7 or higher, json
+
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
