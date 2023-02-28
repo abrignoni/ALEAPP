@@ -16,5 +16,6 @@ aleapp_contributors = [
     [ 'Bo Amos', '', '@Bo_Knows_65', ''],
     [ 'Andrea Canepa', '', '', 'https://github.com/A-725-K'],
     [ 'Incidentalchewtoy', 'https://theincidentalchewtoy.wordpress.com/', '@4n6chewtoy', ''],
-    [ 'LoicForensics', '', '', '']
+    [ 'LoicForensics', '', '', ''],
+    [ 'Fabian Nunes', 'https://www.linkedin.com/in/fabian-nunes/', '', 'https://github.com/fabian-nunes'],
 ]
