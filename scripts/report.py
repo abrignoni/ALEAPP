@@ -108,6 +108,8 @@ def get_icon_name(category, artifact):
     elif category == 'GARMIN-API':
         if artifact.find('ACTIVITY API') >= 0:
             icon = 'watch'
+        elif artifact.find('DAILIES API') >= 0:
+            icon = 'calendar'
         elif artifact.find('HEART RATE API') >= 0:
             icon = 'heart'
         elif artifact.find('STEPS API') >= 0:
