@@ -16,7 +16,7 @@ def get_oldpowerOffReset(files_found, report_folder, seeker, wrap_text):
             for line in f:
                 if '/' in line:
                     fecha = line.strip()
-                    fecha = (datetime.strptime(fecha,'%d/%m/%y %H:%M:%S'))
+                    fecha = (datetime.strptime(fecha,'%y/%m/%d %H:%M:%S'))
                     
                     reason = next(f)
                     reason = reason.split(':')[1]
