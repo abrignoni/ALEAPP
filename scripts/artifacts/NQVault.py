@@ -153,11 +153,14 @@ def file_decryption(files_found, file_match_dict, xor_key, report_folder):
 # MAIN #
 def get_NQVault(files_found, report_folder, seeker, wrap_text):
     data_list = []
-
+    sucess = 0
     # Get the "encrypted" PIN from DB
-    try:
-        encoded_PIN, file_found_pin = extract_PIN_from_db(files_found)
-    except:
+
+    for file_found in files_found:
+        if file_found.endswith('322w465ay423xy11'):
+            encoded_PIN, file_found_pin = extract_PIN_from_db(files_found)
+            sucess = 1
+    if sucess == 0:
         logfunc('No Database DB Found or no hashed PIN present.')
         return
 
@@ -193,7 +196,7 @@ def get_NQVault(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "NQVault": (
                 "Encrypting Media apps",
-                ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11', '*/SystemAndroid/Data/*'),
+                ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11', '*/SystemAndroid/Data/*', '/media/0/SystemAndroid/Data/322w465ay423xy11'),
                 get_NQVault)
 }
 
