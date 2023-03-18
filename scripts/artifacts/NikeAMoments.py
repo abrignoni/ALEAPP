@@ -94,7 +94,7 @@ def get_nike_activMoments(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found, table_id=tableID, html_escape=False)
         report.add_section_heading("Timeline Data")
         for timeData in timelineList:
-            report.add_timeline(False, timeData[0], timeData[1])
+            report.add_timeline(timeData[0], timeData[1])
         report.add_timeline_script()
         report.end_artifact_report()
 

@@ -314,7 +314,8 @@ class ArtifactHtmlReport:
            </script>
            """
 
-    def add_timeline(self, begin, id, dataDict):
+    #Fucntion to add a timeline to the artifact
+    def add_timeline(self, id, dataDict):
         self.report_file.write(f'<div class="timeline" data-vertical-start-position="right" data-vertical-trigger="150px" id="{id}" hidden>')
         self.report_file.write('<div class="timeline__wrap">')
         self.report_file.write('<div class="timeline__items">')
@@ -330,6 +331,7 @@ class ArtifactHtmlReport:
         self.report_file.write('</div>')
         self.report_file.write('</div>')
 
+    # Function to add a timeline script to the artifact
     def add_timeline_script(self):
         self.script_code += f"""<script>
             $(document).ready(function() {{
