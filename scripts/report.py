@@ -211,6 +211,11 @@ def get_icon_name(category, artifact):
     elif category == 'MY FILES':
         if artifact.find('MY FILES DB - CACHE MEDIA') >=0: icon = 'image'
         else:                           icon = 'file-plus'
+    elif category == 'NIKE-RUN':
+        if artifact.find('ACTIVITIES') >=0: icon = 'watch'
+        elif artifact.find('ACTIVITY ROUTE') >=0: icon = 'map-pin'
+        elif artifact.find('ACTIVITY MOMENTS') >=0: icon = 'list'
+        elif artifact.find('NOTIFICATIONS') >= 0:    icon = 'bell'
     elif category == 'NOW PLAYING':           icon = 'music'
     elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'PLAYGROUND VAULT':       icon = 'lock'
@@ -399,6 +404,7 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     shutil.copy2(os.path.join(__location__, "highlight.min.js"), elements_folder)
     # Garmin Custom JS
     shutil.copy2(os.path.join(__location__, "garmin-functions.js"), elements_folder)
+    shutil.copytree(os.path.join(__location__, "timeline"), os.path.join(elements_folder, 'timeline'))
 
 def get_file_content(path):
     f = open(path, 'r', encoding='utf8')

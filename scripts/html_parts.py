@@ -11,7 +11,7 @@ page_header = \
         <!-- Dark mode -->
         <link rel="stylesheet" href="_elements/dark-mode.css">
         <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
         <!-- Google Fonts Roboto -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
         <!-- Bootstrap core CSS -->
@@ -31,6 +31,7 @@ page_header = \
         <link rel="stylesheet" href="_elements/dashboard.css">
         <!-- MDBootstrap Datatables  -->
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/addons/datatables.min.css" rel="stylesheet">
+        <link href="_elements/timeline/css/timeline.min.css" rel="stylesheet" />
 
         <!-- Icons -->
         <!--script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script-->
@@ -282,6 +283,7 @@ body_end = \
     <!-- Chart.js -->
     <script type="text/javascript" src="_elements/chart.umd.min.js"></script>
     <script type="text/javascript" src="_elements/moment.min.js"></script>
+    <script type="text/javascript" src="_elements/timeline/js/timeline.min.js"></script>
     <!-- Garmin Functions -->
     <script type="text/javascript" src="_elements/garmin-functions.js"></script>
     <script>
