@@ -409,3 +409,13 @@ function changeYear(date) {
             date: { start: new Date(date.value + '-01-01') },
         })
 }
+
+function openTimeline(id) {
+    //hide all elements with class="timeline__items"
+    let x = document.getElementsByClassName("timeline");
+    let i;
+    for (i = 0; i < x.length; i++) {
+        x[i].hidden = true;
+    }
+    document.getElementById(id).hidden = false;
+}
