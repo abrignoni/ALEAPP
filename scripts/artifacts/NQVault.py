@@ -6,19 +6,16 @@ from os.path import join
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, media_to_html, open_sqlite_db_readonly
 
-def extract_PIN_from_db(files_found):
+def extract_PIN_from_db(file_found):
     try:
-        for file_found in files_found:
-            file_found = str(file_found)
+        connection = open_sqlite_db_readonly(file_found)
 
-            connection = open_sqlite_db_readonly(file_found)
+        set_pointer = connection.cursor()
+        set_pointer.execute("SELECT passwd_temp FROM albumstemp")
 
-            set_pointer = connection.cursor()
-            set_pointer.execute("SELECT passwd_temp FROM albumstemp")
+        encrypted_password = set_pointer.fetchone()[0]
 
-            encrypted_password = set_pointer.fetchone()[0]
-
-            return encrypted_password, file_found
+        return encrypted_password, file_found
     except:
         return None
 
@@ -64,30 +61,27 @@ def raw_pin_to_XOR_key(pin):
     return hex_XOR_key
 
 
-def read_file_info(files_found):
+def read_file_info(file_found):
     file_match_dict = {}
+    print(f'readfileinfo: {file_found}')
+    connection = open_sqlite_db_readonly(file_found)
 
-    for file_found in files_found:
-        file_found = str(file_found)
+    set_pointer = connection.cursor()
+    set_pointer.execute("SELECT file_name_from, file_path_new FROM hideimagevideo")
+    
+    required_column = set_pointer.fetchall()
 
-        connection = open_sqlite_db_readonly(file_found)
-
-        set_pointer = connection.cursor()
-        try:
-            set_pointer.execute("SELECT file_name_from, file_path_new FROM hideimagevideo")
-        except:
-            logfunc('No encrypted media present')
-            return None
-
-        required_column = set_pointer.fetchall()
-
+    if len(required_column) < 1:
+        logfunc('No encrypted media present')
+        return
+    else:
         for filename in required_column:
             decrypted_filename = filename[0]
             encrypted_filename = filename[1].split('/')[-1]
-
+    
             file_match_dict[decrypted_filename] = encrypted_filename
 
-        return file_match_dict
+    return file_match_dict
 
 def file_decryption(files_found, file_match_dict, xor_key, report_folder):
 
@@ -158,7 +152,9 @@ def get_NQVault(files_found, report_folder, seeker, wrap_text):
 
     for file_found in files_found:
         if file_found.endswith('322w465ay423xy11'):
-            encoded_PIN, file_found_pin = extract_PIN_from_db(files_found)
+            print(file_found)
+            encoded_PIN, file_found_pin = extract_PIN_from_db(file_found)
+            database = file_found
             sucess = 1
     if sucess == 0:
         logfunc('No Database DB Found or no hashed PIN present.')
@@ -184,7 +180,7 @@ def get_NQVault(files_found, report_folder, seeker, wrap_text):
         report.end_artifact_report()
 
         # This is a dictionary that builds the connection between the encrypted and decrypted media files.
-        file_match_dict = read_file_info(files_found)
+        file_match_dict = read_file_info(database)
 
         # Media decryption funct
         if file_match_dict:
@@ -196,7 +192,7 @@ def get_NQVault(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "NQVault": (
                 "Encrypting Media apps",
-                ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11', '*/SystemAndroid/Data/*', '/media/0/SystemAndroid/Data/322w465ay423xy11'),
+                ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11', '*/SystemAndroid/Data/**', '/media/0/SystemAndroid/Data/322w465ay423xy11'),
                 get_NQVault)
 }
 
