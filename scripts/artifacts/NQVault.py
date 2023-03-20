@@ -152,7 +152,6 @@ def get_NQVault(files_found, report_folder, seeker, wrap_text):
 
     for file_found in files_found:
         if file_found.endswith('322w465ay423xy11'):
-            print(file_found)
             encoded_PIN, file_found_pin = extract_PIN_from_db(file_found)
             database = file_found
             sucess = 1
