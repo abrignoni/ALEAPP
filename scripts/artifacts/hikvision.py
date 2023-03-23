@@ -62,7 +62,7 @@ def get_hikvision(files_found, report_folder, seeker, wrap_text):
             
             else:
                 logfunc(f'No Hikvision - CCTV Channels data available')
-            
+
             #CCTV Info
             cursor.execute('''
                 select 
@@ -99,6 +99,7 @@ def get_hikvision(files_found, report_folder, seeker, wrap_text):
                 
             else:
                 logfunc(f'No Hikvision - CCTV Info data available')
+            db.close()
 
         if file_name == 'ezvizlog.db':
             db = open_sqlite_db_readonly(file_found)
@@ -135,6 +136,8 @@ def get_hikvision(files_found, report_folder, seeker, wrap_text):
                 timeline(report_folder, tlactivity, data_list, data_headers)
             else:
                 logfunc(f'No Hikvision - CCTV Activity data available')
+            
+            db.close()
 
         if file_name == 'image.db':
                     db = open_sqlite_db_readonly(file_found)
@@ -171,13 +174,11 @@ def get_hikvision(files_found, report_folder, seeker, wrap_text):
                         for row in all_rows:
                             if row[4] is not None:
                                 mediaident = row[4].split(separator)[-1]
-                                print(mediaident)
                                 media = media_to_html(mediaident, files_found, report_folder)
                             else:
                                 media = row[4]
                             if row[5] is not None:
                                 thumbident = row[5].split(separator)[-1]
-                                print(thumbident)
                                 thumb = media_to_html(thumbident, files_found, report_folder)
                             else:
                                 thumb = row[5]
@@ -194,7 +195,7 @@ def get_hikvision(files_found, report_folder, seeker, wrap_text):
                     else:
                         logfunc(f'No Hikvision - User Created Media data available')
 
-
+                    db.close()
 
 __artifacts__ = {
         "hikvision": (
