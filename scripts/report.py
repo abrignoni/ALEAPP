@@ -286,6 +286,8 @@ def get_icon_name(category, artifact):
     elif category ==  'VLC THUMBS':
         if artifact == 'VLC MEDIA LIB':  icon = 'film'
         elif artifact == 'VLC THUMBNAILS':  icon = 'image'
+        elif artifact == 'VLC THUMBNAIL DATA':  icon = 'image'
+        else:                                   icon = 'image'
     elif category == 'WAZE': icon = 'navigation-2'
     
     elif category == 'WHATSAPP':
