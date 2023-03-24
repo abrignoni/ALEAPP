@@ -16,4 +16,5 @@ python-magic; platform_system == "Darwin" and platform_machine == "arm64"
 pillow
 folium==0.14.0
 polyline==2.0.0
+fitdecode==0.10.0
 
