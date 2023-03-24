@@ -288,7 +288,11 @@ def get_icon_name(category, artifact):
         if artifact == 'VLC MEDIA LIB':  icon = 'film'
         elif artifact == 'VLC THUMBNAILS':  icon = 'image'
     elif category == 'WAZE': icon = 'navigation-2'
-    
+    elif category == 'HIKVISION':
+        if artifact.find('CCTV CHANNELS') >=0: icon = 'film'
+        elif artifact.find('CCTV ACTIVITY') >=0: icon = 'activity'
+        elif artifact.find('CCTV INFO') >=0: icon = 'settings'
+        elif artifact.find('USER CREATED MEDIA') >= 0:    icon = 'video'
     elif category == 'WHATSAPP':
         if artifact == 'WHATSAPP - CONTACTS':  icon = 'users'
         elif artifact == 'WHATSAPP - ONE TO ONE MESSAGES': icon = 'message-circle'
