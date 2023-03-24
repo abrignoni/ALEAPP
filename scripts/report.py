@@ -254,6 +254,7 @@ def get_icon_name(category, artifact):
     elif category == 'SMS & MMS':       icon = 'message-square'
     elif category == 'SNAPCHAT': icon = 'bell'
     elif category == 'SQLITE JOURNALING': icon = 'book-open'
+    elif category == 'STRAVA':  icon = 'map'
     elif category == 'TANGO':
         if artifact == 'TANGO - MESSAGES':  icon = 'message-square'
     elif category == 'TEAMS':
