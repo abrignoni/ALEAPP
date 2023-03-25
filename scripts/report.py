@@ -24,6 +24,9 @@ def get_icon_name(category, artifact):
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
     elif category == 'ADB HOSTS':       icon = 'terminal'
+    elif category == 'ADIDAS-RUNNING':
+        if artifact.find('ACTIVITIES') >= 0:   icon = 'activity'
+        elif artifact.find('USER') >= 0:       icon = 'user'
     elif category == 'AIRTAGS':       icon = 'map-pin'
     elif category == 'ANDROID SYSTEM INTELLIGENCE':
         if artifact.find('SIMPLESTORAGE') >=0:  icon = 'loader'
@@ -197,7 +200,10 @@ def get_icon_name(category, artifact):
     elif category == 'LINE':
         if artifact == 'LINE - CONTACTS':  icon = 'user'
         elif artifact == 'LINE - MESSAGES':  icon = 'message-square'
-        elif artifact == 'LINE - CALL LOGS':  icon = 'phone' 
+        elif artifact == 'LINE - CALL LOGS':  icon = 'phone'
+    elif category == 'MAP-MY-WALK':
+        if artifact.find('ACTIVITIES') >= 0:  icon = 'map'
+        elif artifact.find('USER') >= 0:  icon = 'user'
     elif category == 'MASTODON':
         if artifact.find('ACCOUNT DETAILS') >= 0:    icon = 'user'
         elif artifact.find('ACCOUNT SEARCHES') >= 0:    icon = 'users'
@@ -229,8 +235,14 @@ def get_icon_name(category, artifact):
         elif artifact.find('MESSAGES') >=0: icon = 'inbox'
         else:                           icon = 'mail'
     elif category == 'PROTONVPN':       icon = 'shield'
+    elif category == 'PUMA-TRAC':
+        if artifact.find('ACTIVITIES') >=0: icon = 'watch'
+        elif artifact.find('USER') >=0: icon = 'user'
     elif category == 'RCS CHATS':       icon = 'message-circle'
     elif category == 'RECENT ACTIVITY': icon = 'activity'
+    elif category == 'RUNKEEPER':
+        if artifact.find('ACTIVITIES') >=0: icon = 'watch'
+        elif artifact.find('USER') >=0: icon = 'user'
     elif category == 'SAMSUNG SMARTTHINGS': icon = 'bluetooth'
     elif category == 'SAMSUNG WEATHER CLOCK':
         if artifact.find('DAILY') >=0:            icon = 'sunrise'
