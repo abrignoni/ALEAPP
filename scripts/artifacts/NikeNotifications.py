@@ -1,6 +1,6 @@
-# Get Information relative to the notifications stored in the database of the Garmin Connect Mobile application
+# Get Information relative to the notifications stored in the database of the Nike Run Club Mobile application
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
+# Date: 2023-03-18
 # Version: 1.0
 # Requirements: Python 3.7 or higher
 
@@ -31,8 +31,8 @@ def get_nike_notifications(files_found, report_folder, seeker, wrap_text):
     usageentries = len(all_rows)
     if usageentries > 0:
         logfunc(f"Found {usageentries} notifications")
-        report = ArtifactHtmlReport('Garmin - Notifications')
-        report.start_artifact_report(report_folder, 'Garmin - Notifications')
+        report = ArtifactHtmlReport('Nike - Notifications')
+        report.start_artifact_report(report_folder, 'Nike - Notifications')
         report.add_script()
         data_headers = ('ID', 'Sender User ID', 'Sender App ID', 'Notification Timestamp', 'Notification Type', 'Message', 'Read', 'Deleted')
         data_list = []

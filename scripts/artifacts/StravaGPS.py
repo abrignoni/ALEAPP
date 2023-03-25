@@ -1,9 +1,8 @@
-# Get GPS coordinates from Garmin API related to activities
-# Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
+# Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
+# Date: 2023-03-24
 # Version: 1.0
-# Requirements: Python 3.7 or higher, json and datetime
+# Requirements: Python 3.7 or higher, folium and polyline, fitdecode, datetime
 from datetime import datetime
 import warnings
 import os
