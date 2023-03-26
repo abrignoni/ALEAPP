@@ -33,6 +33,7 @@ def get_icon_name(category, artifact):
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
     elif category == 'APP ROLES':  icon = 'tool'
     elif category == 'BASH HISTORY':    icon = 'terminal'
+    elif category == 'BITTORRENT':    icon = 'share'
     elif category == 'BLUETOOTH CONNECTIONS':       icon = 'bluetooth'
     elif category == 'BUMBLE':
         if artifact.find('USER SETTINGS') >= 0:   icon = 'user'

@@ -17,4 +17,5 @@ pillow
 folium==0.14.0
 polyline==2.0.0
 fitdecode==0.10.0
+bencoding
 
