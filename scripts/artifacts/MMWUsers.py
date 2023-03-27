@@ -10,7 +10,7 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 def get_map_users(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Map My Walk Users")
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('-journal') and not x.endswith('_gear') and not x.endswith('_gear-journal')]
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)
 

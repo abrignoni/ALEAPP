@@ -15,7 +15,7 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Adidas Activities")
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('-journal')]
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)
 
@@ -67,7 +67,13 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
                 humidity = 'N/A'
             poly = row[15]
             if poly:
-                coordinates = polyline.decode(poly)
+                # logfunc(f"Polyline: {poly}")
+                try:
+                    coordinates = polyline.decode(poly)
+                except:
+                    logfunc(f"Polyline: {poly} could not be decoded")
+                    poly = None
+                    break
                 place_lat = []
                 place_lon = []
                 for coordinate in coordinates:
