@@ -41,8 +41,8 @@ def get_nike_polyline(files_found, report_folder, seeker, wrap_text):
     usageentries = len(all_rows)
     if usageentries > 0:
         logfunc(f'Found {usageentries} activity_polyline entries')
-        report = ArtifactHtmlReport('Activity Route')
-        report.start_artifact_report(report_folder, 'Activity Route')
+        report = ArtifactHtmlReport('Nike - Activity Route')
+        report.start_artifact_report(report_folder, 'Nike - Activity Route')
         report.add_script()
         data_headers = ('Activity ID', 'Start Time UTC', 'End Time UTC', 'Duration', 'Coordinates File', 'Button')
         data_list = []

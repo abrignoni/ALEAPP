@@ -9,7 +9,8 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
 def get_nike_notifications(files_found, report_folder, seeker, wrap_text):
-    logfunc("Processing data for Garmin Notifications")
+    logfunc("Processing data for Nike Notifications")
+    files_found = [x for x in files_found if not x.endswith('-journal')]
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)
 
