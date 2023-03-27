@@ -32,18 +32,25 @@ def get_torrentinfo(files_found, report_folder, seeker, wrap_text):
                     for x, y in value.items():
                         if x == b'pieces':
                             pass
+                        elif key.decode() == 'info':
+                            for itemkey, itemvalue in value.items():
+                                if itemkey.decode() == 'files':
+                                    for y in itemvalue:
+                                        if len(y[b'path']) == 1:
+                                            file = (y[b'path'][0].decode())
+                                            aggregate = aggregate + f'Files: {file} <br>'
                         else:
-                            aggregate = aggregate + f'{x.decode()}: {y} <br>'
+                            aggregate = aggregate + f'{x.decode()}: {y.decode()} <br>'
+                
                 elif key.decode() == 'pieces':
                     pass
                 elif key.decode() == 'creation date':
                     aggregate = aggregate + f'{key.decode()}: {timestampcalc(value)} <br>'
                 else:
-                    aggregate = aggregate + f'{key.decode()}: {value} <br>' #add if value is binary decode
+                    aggregate = aggregate + f'{key.decode()}: {value.decode()} <br>' #add if value is binary decode
         
             data_list.append((textwrap.fill(file_found.strip(), width=25),infohash,aggregate))
-        except:
-            pass
+        except Exception as e: logfunc(str(e))
 
     # Reporting
     title = "Torrent Info"
