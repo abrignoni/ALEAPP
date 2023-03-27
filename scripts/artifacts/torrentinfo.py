@@ -16,31 +16,34 @@ def get_torrentinfo(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
 
-        with open(file_found, 'rb') as f:
-            decodedDict = bencoding.bdecode(f.read())
-        
-        aggregate = ''
         try:
-            infoh= hashlib.sha1(bencoding.bencode(decodedDict[b"info"])).hexdigest()
-            infohash = infoh
-        except:
-            infohash = ''
+            with open(file_found, 'rb') as f:
+                decodedDict = bencoding.bdecode(f.read())
             
-        for key, value in decodedDict.items():
-            if key.decode() == 'info':
-                for x, y in value.items():
-                    if x == b'pieces':
-                        pass
-                    else:
-                        aggregate = aggregate + f'{x.decode()}: {y} <br>'
-            elif key.decode() == 'pieces':
-                pass
-            elif key.decode() == 'creation date':
-                aggregate = aggregate + f'{key.decode()}: {timestampcalc(value)} <br>'
-            else:
-                aggregate = aggregate + f'{key.decode()}: {value} <br>' #add if value is binary decode
+            aggregate = ''
+            try:
+                infoh= hashlib.sha1(bencoding.bencode(decodedDict[b"info"])).hexdigest()
+                infohash = infoh
+            except:
+                infohash = ''
+                
+            for key, value in decodedDict.items():
+                if key.decode() == 'info':
+                    for x, y in value.items():
+                        if x == b'pieces':
+                            pass
+                        else:
+                            aggregate = aggregate + f'{x.decode()}: {y} <br>'
+                elif key.decode() == 'pieces':
+                    pass
+                elif key.decode() == 'creation date':
+                    aggregate = aggregate + f'{key.decode()}: {timestampcalc(value)} <br>'
+                else:
+                    aggregate = aggregate + f'{key.decode()}: {value} <br>' #add if value is binary decode
         
-        data_list.append((textwrap.fill(file_found.strip(), width=25),infohash,aggregate))
+            data_list.append((textwrap.fill(file_found.strip(), width=25),infohash,aggregate))
+        except:
+            pass
 
     # Reporting
     title = "Torrent Info"
