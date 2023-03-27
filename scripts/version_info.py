@@ -18,4 +18,5 @@ aleapp_contributors = [
     [ 'Incidentalchewtoy', 'https://theincidentalchewtoy.wordpress.com/', '@4n6chewtoy', ''],
     [ 'LoicForensics', '', '', ''],
     [ 'Fabian Nunes', 'https://www.linkedin.com/in/fabian-nunes/', '', 'https://github.com/fabian-nunes'],
+    ['Evangelos Dragonas', 'https://atropos4n6.com/','@theAtropos4n6','https://github.com/theAtropos4n6']
 ]
