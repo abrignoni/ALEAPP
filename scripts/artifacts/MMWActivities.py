@@ -211,6 +211,6 @@ def get_map_activities(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
     "MapWalkActivities": (
         "Map-My-Walk",
-        ('*com.mapmywalk.android2/databases/workout.db*'),
+        ('*com.mapmywalk.android2/databases/workout.db'),
         get_map_activities)
 }

@@ -187,6 +187,6 @@ def get_run_activities(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
     "RunkeeperActivities": (
         "Runkeeper",
-        ('*com.fitnesskeeper.runkeeper.pro/databases/RunKeeper.sqlite*'),
+        ('*com.fitnesskeeper.runkeeper.pro/databases/RunKeeper.sqlite'),
         get_run_activities)
 }

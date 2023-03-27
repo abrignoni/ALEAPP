@@ -95,6 +95,6 @@ def get_adidas_user(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
     "AdidasUser": (
         "Adidas-Running",
-        ('*com.runtastic.android/databases/user.db*'),
+        ('*com.runtastic.android/databases/user.db'),
         get_adidas_user)
 }
