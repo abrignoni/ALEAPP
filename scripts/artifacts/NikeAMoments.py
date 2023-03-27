@@ -26,8 +26,8 @@ def get_nike_activMoments(files_found, report_folder, seeker, wrap_text):
     usageentries = len(all_rows)
     if usageentries > 0:
         logfunc(f"Found {usageentries} Nike Activities")
-        report = ArtifactHtmlReport('Activity Moments')
-        report.start_artifact_report(report_folder, 'Activity Moments')
+        report = ArtifactHtmlReport('Nike - Activity Moments')
+        report.start_artifact_report(report_folder, 'Nike - Activity Moments')
         report.add_script()
         data_headers = ('Activity ID', 'Start Time UTC', 'End Time UTC', 'Duration', 'Timeline')
         data_list = []
