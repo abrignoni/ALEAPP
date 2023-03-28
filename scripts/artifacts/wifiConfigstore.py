@@ -52,7 +52,7 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                             logdevinfo(f'Pre-Shared Key 64 hex digits raw PSK {count}: {elem.text}')
                     
                     if (elem.attrib.get('name')) == 'LastConnectedTime':
-                        timestamp = datetime.datetime.fromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
+                        timestamp = datetime.datetime.utcfromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
                         logdevinfo(f'WIFI Last Connected Time {count}: {timestamp}')
                     
             if data_list:
