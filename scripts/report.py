@@ -317,6 +317,7 @@ def get_icon_name(category, artifact):
         elif artifact == 'WHATSAPP - MESSAGES':  icon = 'message-square'
         else:                           icon = 'user'
     elif category == 'WIFI PROFILES':  icon = 'wifi'
+    elif category == 'RAR LAB PREFS':  icon = 'settings'
     elif category == 'PIKPAK':  icon = 'cloud'
     elif category == 'WIPE & SETUP':
         if artifact == 'FACTORY RESET':                  icon = 'loader'
