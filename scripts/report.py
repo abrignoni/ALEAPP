@@ -54,6 +54,7 @@ def get_icon_name(category, artifact):
     elif category == 'CHROMIUM':          
         if artifact.find('AUTOFILL') >= 0:        icon = 'edit-3'
         elif artifact.find('BOOKMARKS') >= 0:       icon = 'bookmark'
+        elif artifact.find('DETECT INCIDENTAL PARTY STATE') >= 0:       icon = 'skip-forward'
         elif artifact.find('DOWNLOADS') >= 0:       icon = 'download'
         elif artifact.find('LOGIN') >= 0:           icon = 'log-in'
         elif artifact.find('MEDIA HISTORY') >= 0:   icon = 'video'
