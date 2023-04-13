@@ -33,12 +33,16 @@ def process_accounts_de(folder, uid, report_folder):
 
     #Query to create report
     cursor.execute('''
-    SELECT
-        datetime(last_password_entry_time_millis_epoch / 1000, 'unixepoch') as 'last pass entry',
-        name,
-        type
-        FROM
-    accounts
+    SELECT 
+    datetime(last_password_entry_time_millis_epoch / 1000, 'unixepoch') as 'last pass entry',
+    accounts.name, 
+    accounts._id, 
+    accounts.type, 
+    debug_table.action_type, 
+    debug_table.time
+    FROM accounts
+    INNER JOIN debug_table on accounts._id=debug_table._id
+    ORDER by time
     ''')
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
@@ -46,10 +50,10 @@ def process_accounts_de(folder, uid, report_folder):
         report = ArtifactHtmlReport('Accounts_de')
         report.start_artifact_report(report_folder, f'accounts_de_{uid}')
         report.add_script()
-        data_headers = ('Last password entry','Name','Type')
+        data_headers = ('Last password entry','Name', 'ID','Type','Action Type','Debug Time')
         data_list = []
         for row in all_rows:
-            data_list.append((row[0], row[1], row[2]))
+            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5]))
         report.write_artifact_data_table(data_headers, data_list, folder)
         report.end_artifact_report()
         
