@@ -68,7 +68,7 @@ def main():
             return
         
         if args.t is None:
-            parser.error('No INPUT file or folder selected. Run the program again.')
+            parser.error('No type parameter -t. Run the program again.')
             return
 
         if not os.path.exists(input_path):
@@ -96,7 +96,7 @@ def main():
         
 
 def crunch_artifacts(
-        plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, ratio, wrap_text, casedata):
+        plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, ratio, wrap_text, loader, casedata):
     start = process_time()
 
     logfunc('Procesing started. Please wait. This may take a few minutes...')
