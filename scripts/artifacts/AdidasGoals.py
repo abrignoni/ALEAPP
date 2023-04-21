@@ -1,4 +1,4 @@
-# Get Information related to users from the Adidas Running app stored in user.db
+# Get Information related to user defined goals from the Adidas Running app stored in goals
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-04-21
 # Version: 1.0
