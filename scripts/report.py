@@ -26,6 +26,7 @@ def get_icon_name(category, artifact):
     elif category == 'ADB HOSTS':       icon = 'terminal'
     elif category == 'ADIDAS-RUNNING':
         if artifact.find('ACTIVITIES') >= 0:   icon = 'activity'
+        elif artifact.find('GOALS') >= 0:   icon = 'target'
         elif artifact.find('USER') >= 0:       icon = 'user'
     elif category == 'AIRTAGS':       icon = 'map-pin'
     elif category == 'ANDROID SYSTEM INTELLIGENCE':
