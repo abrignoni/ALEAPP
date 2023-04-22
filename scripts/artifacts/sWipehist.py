@@ -27,10 +27,11 @@ def get_sWipehist(files_found, report_folder, seeker, wrap_text):
                         timestamp = timestamp[1].strip()
                         timestamp = timestamp.replace(']', '')
                         timestamp = timestamp.replace('/', '-')
+                        
                 if line.startswith('--wipe_data'):
                     wipe = 'Yes'
                 if line.startswith('--reason'):
-                    reason = line.split('=')
+                    reason = line.split('=', 1)
                     reason = reason[1]
                     if 'Fmm.RemoteWipeOut' in reason:
                         provider = 'Samsung Find My Mobile'
@@ -43,6 +44,11 @@ def get_sWipehist(files_found, report_folder, seeker, wrap_text):
                 if line.startswith('reboot_reason'):
                     rebootreason = line.split('=')
                     rebootreason = rebootreason[1]
+                    
+                    if wipe == 'Yes':
+                        
+                        data_list.append((timestamp, wipe, promptwipe, reason, provider, rebootreason, locale, reqtime))
+                        timestamp = wipe = promptwipe = reason = rebootreason = locale = updateorg = updatepkg = reqtime = ''
                 if line.startswith('reboot reason'):
                     rebootreason = line.split(':', 1)
                     rebootreason = rebootreason[1]
@@ -61,18 +67,12 @@ def get_sWipehist(files_found, report_folder, seeker, wrap_text):
                 if line.startswith('--prompt_and_wipe_data'):
                     promptwipe = 'Yes'
                     wipe = 'Yes'
-                if line.startswith('NP'):
-                    if wipe == 'Yes':
-                        data_list.append((timestamp, wipe, promptwipe, reason, provider, rebootreason, locale, reqtime, updateorg, updatepkg))
-                    timestamp = wipe = promptwipe = reason = rebootreason = locale = updateorg = updatepkg = reqtime = ''
-                    wipe = ''
-                            
                         
         if data_list:
             report = ArtifactHtmlReport(f'Samsung Wipe {name}')
             report.start_artifact_report(report_folder, f'Samsung Wipe {name}')
             report.add_script()
-            data_headers = ('Timestamp', 'Wipe', 'Prompt & Wipe', 'Reason', 'Provider', 'Reboot Reason', 'Locale', 'Request Timestamp', 'Update ORG', 'Update PKG')
+            data_headers = ('Timestamp', 'Wipe', 'Prompt & Wipe', 'Reason', 'Provider', 'Reboot Reason', 'Locale', 'Request Timestamp')
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
