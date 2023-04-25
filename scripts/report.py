@@ -24,6 +24,7 @@ def get_icon_name(category, artifact):
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
     elif category == 'ADB HOSTS':       icon = 'terminal'
+    elif category == 'GALLERY TRASH':       icon = 'image'
     elif category == 'ADIDAS-RUNNING':
         if artifact.find('ACTIVITIES') >= 0:   icon = 'activity'
         elif artifact.find('GOALS') >= 0:   icon = 'target'
