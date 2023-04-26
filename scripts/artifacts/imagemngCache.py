@@ -33,6 +33,6 @@ def get_imagemngCache(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ImagemngCache": (
                 "Image Manager Cache",
-                ('*/cache/image_manager_disk_cache/*.*'),
+                ('*/cache/image_manager_disk_cache/*.*','*/*.cnt'),
                 get_imagemngCache)
 }

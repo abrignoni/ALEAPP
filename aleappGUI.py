@@ -53,15 +53,13 @@ def ValidateInput(values, window):
 
     return True, ext_type
 
-
 # initialize CheckBox control with module name   
 def CheckList(mtxt, lkey, mdstring, disable=False):
-    if mdstring == 'test1' or mdstring == 'test2' : #items in the if are modules that take a long time to run. Deselects them by default.
+    if mdstring == 'test1' or mdstring == 'ImagemngCache' : #items in the if are modules that take a long time to run. Deselects them by default.
         dstate = False
     else:
         dstate = True
     return [sg.CBox(mtxt, default=dstate, key=lkey, metadata=mdstring, disabled=disable)]
-
 
 def pickModules():
     global MODULE_END_INDEX
@@ -76,7 +74,6 @@ def pickModules():
         mlist.append(CheckList(
             f'{plugin.category} [{plugin.name} - {plugin.module_name}.py]', MODULE_END_INDEX, plugin, disabled))
         MODULE_END_INDEX = MODULE_END_INDEX + 1
-
 
 sg.theme('LightGreen5')   # Add a touch of color
 # All the stuff inside your window.
