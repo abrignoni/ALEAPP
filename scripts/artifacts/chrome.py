@@ -271,7 +271,10 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
             WHEN "41" THEN "Browser Shutdown"
             WHEN "50" THEN "Browser Crashed"
         END,
-        opened, 
+        CASE opened
+            WHEN 0 THEN ''
+            WHEN 1 THEN 'Yes'
+        END, 
         received_bytes, 
         total_bytes
         FROM downloads
