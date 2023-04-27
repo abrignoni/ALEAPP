@@ -182,6 +182,7 @@ def get_icon_name(category, artifact):
     elif category == 'GOOGLE KEEP':     icon = 'list'
     elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
     elif category == 'GOOGLE MAPS VOICE GUIDANCE': icon = 'map'
+    elif category == 'GOOGLE MAPS TEMP VOICE GUIDANCE': icon = 'map'
     elif category == 'GOOGLE MESSAGES':     icon = 'message-circle'
     elif category == 'GOOGLE NOW & QUICKSEARCH': icon = 'search'
     elif category == 'GOOGLE PHOTOS':
