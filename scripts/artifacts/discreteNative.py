@@ -18,7 +18,7 @@ def oplist(opvalue):
         return result
     
 def timestampcalc(timevalue):
-    timestamp = (datetime.datetime.fromtimestamp(int(timevalue)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+    timestamp = (datetime.datetime.utcfromtimestamp(int(timevalue)/1000).strftime('%Y-%m-%d %H:%M:%S'))
     return timestamp
 
 def get_discreteNative(files_found, report_folder, seeker, wrap_text):
