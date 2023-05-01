@@ -180,7 +180,9 @@ def get_icon_name(category, artifact):
         elif artifact.find('NOTES') >= 0:      icon = 'edit-3'
     elif category == 'GOOGLE FIT (GMS)':     icon = 'activity'           
     elif category == 'GOOGLE KEEP':     icon = 'list'
-    elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
+    elif category == 'GBOARD KEYBOARD':
+        if artifact.find('CLIPBOARD') >= 0: icon = 'clipboard'
+        else: icon = 'edit-3'
     elif category == 'GOOGLE MAPS VOICE GUIDANCE': icon = 'map'
     elif category == 'GOOGLE MAPS TEMP VOICE GUIDANCE': icon = 'map'
     elif category == 'GOOGLE MESSAGES':     icon = 'message-circle'
