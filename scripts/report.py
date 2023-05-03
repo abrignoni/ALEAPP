@@ -35,6 +35,9 @@ def get_icon_name(category, artifact):
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
     elif category == 'APP ROLES':  icon = 'tool'
     elif category == 'BASH HISTORY':    icon = 'terminal'
+    elif category == 'BADOO':
+        if artifact.find('CHAT') >= 0:  icon = 'message-circle'
+        elif artifact.find('CONNECTIONS') >= 0:  icon = 'heart'
     elif category == 'BITTORRENT':    icon = 'share'
     elif category == 'BLUETOOTH CONNECTIONS':       icon = 'bluetooth'
     elif category == 'BUMBLE':
@@ -440,6 +443,8 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     # Garmin Custom JS
     shutil.copy2(os.path.join(__location__, "garmin-functions.js"), elements_folder)
     shutil.copytree(os.path.join(__location__, "timeline"), os.path.join(elements_folder, 'timeline'))
+    shutil.copy2(os.path.join(__location__, "chat.css"), elements_folder)
+    shutil.copy2(os.path.join(__location__, "chat.js"), elements_folder)
 
 def get_file_content(path):
     f = open(path, 'r', encoding='utf8')

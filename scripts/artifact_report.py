@@ -339,3 +339,23 @@ class ArtifactHtmlReport:
             }});
             </script>
             """
+
+    # Function to add a chat window to the artifact
+    def add_chat(self):
+        self.report_file.write('<div class="container py-5">')
+        self.report_file.write('<div class="row d-flex justify-content-center">')
+        self.report_file.write('<div class="col-md-8 col-lg-6 col-xl-4">')
+        self.report_file.write('<div class="card" id="chat">')
+        self.report_file.write('<div class="card-header d-flex justify-content-center align-items-center p-3 bg-dark text-white border-bottom-0">')
+        self.report_file.write('<p class="mb-0 fw-bold" id="title">Chat</p>')
+        self.report_file.write('</div>')
+        self.report_file.write('<div class="card-body" id="text-area">')
+        self.report_file.write('</div>')
+        self.report_file.write('</div>')
+        self.report_file.write('</div>')
+        self.report_file.write('</div>')
+        self.report_file.write('</div>')
+
+    # Function to add a empty element with the data to be added later (roundabout way to add data to the chat)
+    def add_chat_invisble(self, id, text):
+        self.report_file.write(f'<div id="{id}" hidden>{text}</div>')
