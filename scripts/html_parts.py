@@ -29,6 +29,7 @@ page_header = \
         <script src="_elements/Tooltip.min.js"></script>
         <!-- Your custom styles (optional) -->
         <link rel="stylesheet" href="_elements/dashboard.css">
+        <link rel="stylesheet" href="_elements/chat.css">
         <!-- MDBootstrap Datatables  -->
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/addons/datatables.min.css" rel="stylesheet">
         <link href="_elements/timeline/css/timeline.min.css" rel="stylesheet" />
@@ -286,6 +287,7 @@ body_end = \
     <script type="text/javascript" src="_elements/timeline/js/timeline.min.js"></script>
     <!-- Garmin Functions -->
     <script type="text/javascript" src="_elements/garmin-functions.js"></script>
+    <script type="text/javascript" src="_elements/chat.js"></script>
     <script>
         feather.replace()
     </script>
