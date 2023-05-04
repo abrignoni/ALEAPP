@@ -35,6 +35,9 @@ def get_icon_name(category, artifact):
     elif category == 'APP INTERACTION': icon = 'bar-chart-2'
     elif category == 'APP ROLES':  icon = 'tool'
     elif category == 'BASH HISTORY':    icon = 'terminal'
+    elif category == 'BADOO':
+        if artifact.find('CHAT') >= 0:  icon = 'message-circle'
+        elif artifact.find('CONNECTIONS') >= 0:  icon = 'heart'
     elif category == 'BITTORRENT':    icon = 'share'
     elif category == 'BLUETOOTH CONNECTIONS':       icon = 'bluetooth'
     elif category == 'BUMBLE':
@@ -180,7 +183,9 @@ def get_icon_name(category, artifact):
         elif artifact.find('NOTES') >= 0:      icon = 'edit-3'
     elif category == 'GOOGLE FIT (GMS)':     icon = 'activity'           
     elif category == 'GOOGLE KEEP':     icon = 'list'
-    elif category == 'GBOARD KEYBOARD': icon = 'edit-3'
+    elif category == 'GBOARD KEYBOARD':
+        if artifact.find('CLIPBOARD') >= 0: icon = 'clipboard'
+        else: icon = 'edit-3'
     elif category == 'GOOGLE MAPS VOICE GUIDANCE': icon = 'map'
     elif category == 'GOOGLE MAPS TEMP VOICE GUIDANCE': icon = 'map'
     elif category == 'GOOGLE MESSAGES':     icon = 'message-circle'
@@ -438,6 +443,8 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     # Garmin Custom JS
     shutil.copy2(os.path.join(__location__, "garmin-functions.js"), elements_folder)
     shutil.copytree(os.path.join(__location__, "timeline"), os.path.join(elements_folder, 'timeline'))
+    shutil.copy2(os.path.join(__location__, "chat.css"), elements_folder)
+    shutil.copy2(os.path.join(__location__, "chat.js"), elements_folder)
 
 def get_file_content(path):
     f = open(path, 'r', encoding='utf8')
