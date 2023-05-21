@@ -175,7 +175,9 @@ def get_icon_name(category, artifact):
     elif category == 'GOOGLE CALL SCREEN':  icon = 'phone-incoming'
     elif category == 'GOOGLE CHAT':
         if artifact.find('GROUP INFORMATION') >= 0:         icon = 'users'
-        elif artifact.find('CHAT MESSAGES') >= 0:           icon = 'message-circle'
+        elif artifact.find('MESSAGES') >= 0:           icon = 'message-circle'
+        elif artifact.find('DRAFTS') >= 0:      icon = 'edit-3'
+        elif artifact.find('USERS') >= 0:       icon = 'users'
     elif category == 'GOOGLE DRIVE':     icon = 'file'
     elif category == 'GOOGLE DUO':
         if artifact.find('CALL HISTORY') >= 0:      icon = 'phone-call'
@@ -233,6 +235,7 @@ def get_icon_name(category, artifact):
         elif artifact.find('ACTIVITY MOMENTS') >=0: icon = 'list'
         elif artifact.find('NOTIFICATIONS') >= 0:    icon = 'bell'
     elif category == 'NOW PLAYING':           icon = 'music'
+    elif category == 'PACKAGE PREDICTIONS':     icon = 'package'
     elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'PLAYGROUND VAULT':       icon = 'lock'
     elif category == 'POWER EVENTS':
@@ -293,10 +296,16 @@ def get_icon_name(category, artifact):
     elif category == 'TIKTOK':
         if artifact == 'TIKTOK - MESSAGES':  icon = 'message-square'
         elif artifact == 'TIKTOK - CONTACTS':  icon = 'user'
+    elif category == 'TODOIST':
+        if artifact.find('ITEMS') >=0:  icon = 'list'
+        elif artifact.find('NOTES') >=0:  icon = 'file-text'
+        elif artifact.find('PROJECTS') >=0:  icon = 'folder'
     elif category == 'TOR':     icon = 'globe'
     elif category == 'TUSKY':
         if artifact.find('TIMELINE') >=0:    icon = 'activity'
         elif artifact.find('ACCOUNT') >=0:    icon = 'user'
+    elif category == 'TWITTER':
+        if artifact.find('SEARCHES') >=0:      icon = 'twitter'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'USER DICTIONARY': icon = 'book'
     elif category == 'VIBER':

@@ -19,11 +19,11 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text):
         file_name = str(file_found)
         if file_name.lower().endswith('turbo.db'):
            turbo_db = str(file_found)
-           source_file_bluetooth = file_found.replace(seeker.directory, '')
+           source_file_turbo = file_found.replace(seeker.directory, '')
 
         if file_name.lower().endswith('bluetooth.db'):
            bluetooth_db = str(file_found)
-           source_file_turbo = file_found.replace(seeker.directory, '')
+           source_file_bluetooth = file_found.replace(seeker.directory, '')
     
     db = open_sqlite_db_readonly(turbo_db)
     cursor = db.cursor()
