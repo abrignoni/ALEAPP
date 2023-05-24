@@ -45,4 +45,4 @@ $ python aleapp.py --help
 
 ## Acknowledgements
 
-This tool is the result of a collaborative effort of many people in the DFIR community.
+This tool is the result of a collaborative effort of many people in the DFIR community..
