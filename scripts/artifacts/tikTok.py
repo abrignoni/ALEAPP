@@ -21,7 +21,7 @@ def get_tikTok(files_found, report_folder, seeker, wrap_text):
     cursor = db.cursor()
     cursor.execute(f"ATTACH DATABASE '{attachdb}' as db_im_xx;")
     cursor.execute('''
-             select
+        select
         datetime(created_time/1000, 'unixepoch', 'localtime') as created_time,
         UID,
         UNIQUE_ID,
