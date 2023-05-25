@@ -9,6 +9,7 @@ def get_smyFiles2(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
         
+        print(file_found)
         if file_found.endswith('.db'):
             break
         
@@ -36,10 +37,11 @@ def get_smyFiles2(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('My Files DB - Download History')
         report.start_artifact_report(report_folder, 'My Files DB - Download History')
         report.add_script()
-        data_headers = ('Timestamp','Name','Full Path','Is Hidden','Trashed?', 'Source', 'Description', 'From S Browser?' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        # data_headers = ('Timestamp','Name','Full Path','Is Hidden','Trashed?', 'Source', 'Description', 'From S Browser?' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Timestamp','Name','Full Path','Is Hidden','Trashed?', 'Source', 'Description')
         data_list = []
         for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
+            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
