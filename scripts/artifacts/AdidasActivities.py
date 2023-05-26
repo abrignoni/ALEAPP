@@ -5,16 +5,23 @@
 # Requirements: Python 3.7 or higher, json, polyline, folium
 import json
 import os
+import sqlite3
 
 import folium
 import polyline
+import xlsxwriter
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields
 
 
 def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Adidas Activities")
+    conn = sqlite3.connect('coordinates.db')
+    c = conn.cursor()
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS raw_fields (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_time TIMESTAMP DATETIME DEFAULT 
+        CURRENT_TIMESTAMP, latitude text, longitude text, road text, city text, postcode text, country text)''')
     files_found = [x for x in files_found if not x.endswith('-journal')]
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)
@@ -32,7 +39,7 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Activities')
         report.start_artifact_report(report_folder, 'Adidas Activities')
         report.add_script()
-        data_headers = ('Sample ID', 'User ID', 'Distance', 'Start Time', 'End Time', 'Run Time', 'Max Speed', 'Calories', 'Temperature', 'Note', 'Max Pulse', 'Avg Pulse', 'Max Elevation', 'Min Elevation', 'Humidity', 'Coordinates', 'Button')
+        data_headers = ('Sample ID', 'User ID', 'Distance', 'Start Time', 'End Time', 'Run Time', 'Max Speed', 'Calories', 'Temperature', 'Note', 'Max Pulse', 'Avg Pulse', 'Max Elevation', 'Min Elevation', 'Humidity', 'Coordinates KML', 'Coordinates Excel', 'Button')
         data_list = []
         activity_date = ''
         activity_json = []
@@ -76,11 +83,55 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
                     break
                 place_lat = []
                 place_lon = []
+                if os.name == 'nt':
+                    f = open(report_folder + "\\" + str(row[0]) + ".xlsx", "w")
+                    workbook = xlsxwriter.Workbook(report_folder + "\\" + str(row[0]) + ".xlsx")
+                else:
+                    f = open(report_folder + "/" + str(row[0]) + ".xlsx", "w")
+                    workbook = xlsxwriter.Workbook(report_folder + "/" + str(row[0]) + ".xlsx")
+                worksheet = workbook.add_worksheet()
+                rowE = 0
+                col = 0
+                worksheet.write(rowE, col, "Latitude")
+                worksheet.write(rowE, col + 1, "Longitude")
+                worksheet.write(rowE, col + 2, "Road")
+                worksheet.write(rowE, col + 3, "City")
+                worksheet.write(rowE, col + 4, "Postcode")
+                worksheet.write(rowE, col + 5, "Country")
+                rowE += 1
                 for coordinate in coordinates:
                     coordinate = str(coordinate)
                     # remove the parenthesis
                     coordinate = coordinate.replace("(", "")
-                    coordinate.replace(")", "")
+                    coordinate = coordinate.replace(")", "")
+                    coordinate = coordinate.split(",")
+                    lat = float(coordinate[0])
+                    lon = float(coordinate[1])
+                    lat = round(lat, 3)
+                    lon = round(lon, 3)
+                    worksheet.write(rowE, col, lat)
+                    worksheet.write(rowE, col + 1, lon)
+                    location = check_raw_fields(lat, lon, c)
+                    if location is None:
+                        logfunc('Getting coordinates data from API might take some time')
+                        location = get_raw_fields(lat, lon, c, conn)
+                        for key, value in location.items():
+                            if key == "road":
+                                worksheet.write(rowE, col + 2, value)
+                            elif key == "city":
+                                worksheet.write(rowE, col + 3, value)
+                            elif key == "postcode":
+                                worksheet.write(rowE, col + 4, value)
+                            elif key == "country":
+                                worksheet.write(rowE, col + 5, value)
+                    else:
+                        logfunc('Getting coordinate data from database')
+                        worksheet.write(rowE, col + 2, location[4])
+                        worksheet.write(rowE, col + 3, location[5])
+                        worksheet.write(rowE, col + 4, location[6])
+                        worksheet.write(rowE, col + 5, location[7])
+                    rowE += 1
+                workbook.close()
 
                 m = folium.Map(location=[row[16], row[17]], zoom_start=10, max_zoom=19)
 
@@ -186,9 +237,9 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
                 # Change the total of the last element of the list
                 activity_json[-1]['total'] += 1
             if poly:
-                data_list.append((sampleId, userId, distance, startTime, endTime, runtime, maxSpeed, calories, temperature, note, maxPulse, avgPulse, maxElevation, minElevation, humidity, '<a href=Adidas-Running/'+str(row[0])+'.kml class="badge badge-light" target="_blank">'+str(row[0])+'.kml</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(sampleId)+'\')">Show Map</button>'))
+                data_list.append((sampleId, userId, distance, startTime, endTime, runtime, maxSpeed, calories, temperature, note, maxPulse, avgPulse, maxElevation, minElevation, humidity, '<a href=Adidas-Running/'+str(row[0])+'.kml class="badge badge-light" target="_blank">'+str(row[0])+'.kml</a>', '<a href=Adidas-Running/'+str(row[0])+'.xlsx class="badge badge-light" target="_blank">'+str(row[0])+'.xlsx</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(sampleId)+'\')">Show Map</button>'))
             else:
-                data_list.append((sampleId, userId, distance, startTime, endTime, runtime, maxSpeed, calories, temperature, note, maxPulse, avgPulse, maxElevation, minElevation, humidity, 'N/A', 'N/A'))
+                data_list.append((sampleId, userId, distance, startTime, endTime, runtime, maxSpeed, calories, temperature, note, maxPulse, avgPulse, maxElevation, minElevation, humidity, 'N/A', 'N/A', 'N/A'))
         # Added feature to allow the user to sort the data by the selected collumns and with the ID of the table
         tableID = 'adidas_activities'
         report.add_heat_map(json.dumps(activity_json))
@@ -210,6 +261,7 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Adidas Activities data available')
 
+    conn.close()
     db.close()
 
 
