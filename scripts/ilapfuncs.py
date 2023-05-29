@@ -17,7 +17,6 @@ from geopy.geocoders import Nominatim
 
 os.path.basename = lru_cache(maxsize=None)(os.path.basename)
 
-
 class OutputParameters:
     '''Defines the parameters that are common for '''
     # static parameters
@@ -729,3 +728,10 @@ def check_raw_fields(latitude, longitude, c):
     data = c.fetchone()
     # convert to dict
     return data
+
+use_network = False
+def enable_network(activate):
+    if activate:
+        use_network = True
+    else:
+        use_network = False

@@ -13,15 +13,17 @@ import xlsxwriter
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields
+import scripts.ilapfuncs
 
 
 def get_puma_activities(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Puma Activities")
-    conn = sqlite3.connect('coordinates.db')
-    c = conn.cursor()
-    c.execute(
-        '''CREATE TABLE IF NOT EXISTS raw_fields (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_time TIMESTAMP DATETIME DEFAULT 
-        CURRENT_TIMESTAMP, latitude text, longitude text, road text, city text, postcode text, country text)''')
+    if scripts.ilapfuncs.use_network:
+        conn = sqlite3.connect('coordinates.db')
+        c = conn.cursor()
+        c.execute(
+            '''CREATE TABLE IF NOT EXISTS raw_fields (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_time TIMESTAMP DATETIME DEFAULT 
+            CURRENT_TIMESTAMP, latitude text, longitude text, road text, city text, postcode text, country text)''')
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)
@@ -93,54 +95,55 @@ def get_puma_activities(files_found, report_folder, seeker, wrap_text):
                                       icon=folium.Icon(color='red', icon='flag', prefix='fa')).add_to(m)
                     # middle points
 
-                # Create an excel file with the coordinates
-                if os.name == 'nt':
-                    f = open(report_folder + "\\" + str(row[0]) + ".xlsx", "w")
-                    workbook = xlsxwriter.Workbook(report_folder + "\\" + str(row[0]) + ".xlsx")
-                else:
-                    f = open(report_folder + "/" + str(row[0]) + ".xlsx", "w")
-                    workbook = xlsxwriter.Workbook(report_folder + "/" + str(row[0]) + ".xlsx")
-                worksheet = workbook.add_worksheet()
-                rowE = 0
-                col = 0
-                worksheet.write(rowE, col, "Timestamp")
-                worksheet.write(rowE, col + 1, "Latitude")
-                worksheet.write(rowE, col + 2, "Longitude")
-                worksheet.write(rowE, col + 3, "Road")
-                worksheet.write(rowE, col + 4, "City")
-                worksheet.write(rowE, col + 5, "Postcode")
-                worksheet.write(rowE, col + 6, "Country")
-                rowE += 1
-
-                for coordinate in coordinatesE:
-                    # coordinate = str(coordinate)
-                    # round to 5 decimal cases
-                    lat = round(coordinate[0], 3)
-                    lon = round(coordinate[1], 3)
-                    worksheet.write(rowE, col, coordinate[2])
-                    worksheet.write(rowE, col + 1, lat)
-                    worksheet.write(rowE, col + 2, lon)
-                    location = check_raw_fields(lat, lon, c)
-                    if location is None:
-                        logfunc('Getting coordinates data from API might take some time')
-                        location = get_raw_fields(lat, lon, c, conn)
-                        for key, value in location.items():
-                            if key == "road":
-                                worksheet.write(rowE, col + 3, value)
-                            elif key == "city":
-                                worksheet.write(rowE, col + 4, value)
-                            elif key == "postcode":
-                                worksheet.write(rowE, col + 5, value)
-                            elif key == "country":
-                                worksheet.write(rowE, col + 6, value)
+                if scripts.ilapfuncs.use_network:
+                    # Create an excel file with the coordinates
+                    if os.name == 'nt':
+                        f = open(report_folder + "\\" + str(row[0]) + ".xlsx", "w")
+                        workbook = xlsxwriter.Workbook(report_folder + "\\" + str(row[0]) + ".xlsx")
                     else:
-                        logfunc('Getting coordinate data from database')
-                        worksheet.write(rowE, col + 3, location[4])
-                        worksheet.write(rowE, col + 4, location[5])
-                        worksheet.write(rowE, col + 5, location[6])
-                        worksheet.write(rowE, col + 6, location[7])
+                        f = open(report_folder + "/" + str(row[0]) + ".xlsx", "w")
+                        workbook = xlsxwriter.Workbook(report_folder + "/" + str(row[0]) + ".xlsx")
+                    worksheet = workbook.add_worksheet()
+                    rowE = 0
+                    col = 0
+                    worksheet.write(rowE, col, "Timestamp")
+                    worksheet.write(rowE, col + 1, "Latitude")
+                    worksheet.write(rowE, col + 2, "Longitude")
+                    worksheet.write(rowE, col + 3, "Road")
+                    worksheet.write(rowE, col + 4, "City")
+                    worksheet.write(rowE, col + 5, "Postcode")
+                    worksheet.write(rowE, col + 6, "Country")
                     rowE += 1
-                workbook.close()
+
+                    for coordinate in coordinatesE:
+                        # coordinate = str(coordinate)
+                        # round to 5 decimal cases
+                        lat = round(coordinate[0], 3)
+                        lon = round(coordinate[1], 3)
+                        worksheet.write(rowE, col, coordinate[2])
+                        worksheet.write(rowE, col + 1, lat)
+                        worksheet.write(rowE, col + 2, lon)
+                        location = check_raw_fields(lat, lon, c)
+                        if location is None:
+                            logfunc('Getting coordinates data from API might take some time')
+                            location = get_raw_fields(lat, lon, c, conn)
+                            for key, value in location.items():
+                                if key == "road":
+                                    worksheet.write(rowE, col + 3, value)
+                                elif key == "city":
+                                    worksheet.write(rowE, col + 4, value)
+                                elif key == "postcode":
+                                    worksheet.write(rowE, col + 5, value)
+                                elif key == "country":
+                                    worksheet.write(rowE, col + 6, value)
+                        else:
+                            logfunc('Getting coordinate data from database')
+                            worksheet.write(rowE, col + 3, location[4])
+                            worksheet.write(rowE, col + 4, location[5])
+                            worksheet.write(rowE, col + 5, location[6])
+                            worksheet.write(rowE, col + 6, location[7])
+                        rowE += 1
+                    workbook.close()
                 # Create polyline
                 folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(m)
                 # Save the map to an HTML file
@@ -216,7 +219,15 @@ def get_puma_activities(files_found, report_folder, seeker, wrap_text):
                 activity_json[-1]['total'] += 1
 
             if map:
-                data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], '<a href=Puma-Trac/'+str(row[0])+'.kml class="badge badge-light" target="_blank">'+str(row[0])+'.kml</a>', '<a href=Puma-Trac/'+str(row[0])+'.xlsx class="badge badge-light" target="_blank">'+str(row[0])+'.xlsx</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(id)+'\')">Show Map</button>'))
+                if scripts.ilapfuncs.use_network:
+                    data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], '<a href=Puma-Trac/'+str(row[0])+'.kml class="badge badge-light" target="_blank">'+str(row[0])+'.kml</a>', '<a href=Puma-Trac/'+str(row[0])+'.xlsx class="badge badge-light" target="_blank">'+str(row[0])+'.xlsx</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(id)+'\')">Show Map</button>'))
+                else:
+                    data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9],
+                                      row[10], row[11], row[12], row[13], row[14], row[15], '<a href=Puma-Trac/' + str(
+                        row[0]) + '.kml class="badge badge-light" target="_blank">' + str(row[0]) + '.kml</a>',
+                                      'N/A',
+                                      '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\'' + str(
+                                          id) + '\')">Show Map</button>'))
             else:
                 data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], 'N/A', 'N/A', 'N/A'))
 
@@ -240,6 +251,8 @@ def get_puma_activities(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Puma Activities data available')
 
+    if scripts.ilapfuncs.use_network:
+        conn.close()
     db.close()
 
 

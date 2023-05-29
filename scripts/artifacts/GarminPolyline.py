@@ -14,17 +14,19 @@ import xlsxwriter
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields
+import scripts.ilapfuncs
 
 def get_garmin_polyline(files_found, report_folder, seeker, wrap_text):
     report_folder = report_folder.rstrip('/')
     report_folder = report_folder.rstrip('\\')
     report_folder_base, _ = os.path.split(report_folder)
     logfunc("Processing data for Garmin Polyline")
-    conn = sqlite3.connect('coordinates.db')
-    c = conn.cursor()
-    c.execute(
-        '''CREATE TABLE IF NOT EXISTS raw_fields (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_time TIMESTAMP DATETIME DEFAULT 
-        CURRENT_TIMESTAMP, latitude text, longitude text, road text, city text, postcode text, country text)''')
+    if scripts.ilapfuncs.use_network:
+        conn = sqlite3.connect('coordinates.db')
+        c = conn.cursor()
+        c.execute(
+            '''CREATE TABLE IF NOT EXISTS raw_fields (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_time TIMESTAMP DATETIME DEFAULT 
+            CURRENT_TIMESTAMP, latitude text, longitude text, road text, city text, postcode text, country text)''')
     # Generate title for map file
     title = 'Garmin_Polyline_Map_' + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
@@ -75,56 +77,57 @@ def get_garmin_polyline(files_found, report_folder, seeker, wrap_text):
             # convert polyline to lat/long
             coordinates = polyline.decode(row[9])
 
-            # Create an excel file with the coordinates
-            if os.name == 'nt':
-                f = open(report_folder + "\\" + str(row[0]) + ".xlsx", "w")
-                workbook = xlsxwriter.Workbook(report_folder + "\\" + str(row[0]) + ".xlsx")
-            else:
-                f = open(report_folder + "/" + str(row[0]) + ".xlsx", "w")
-                workbook = xlsxwriter.Workbook(report_folder + "/" + str(row[0]) + ".xlsx")
-            worksheet = workbook.add_worksheet()
-            rowE = 0
-            col = 0
-            worksheet.write(rowE, col, "Latitude")
-            worksheet.write(rowE, col + 1, "Longitude")
-            worksheet.write(rowE, col + 2, "Road")
-            worksheet.write(rowE, col + 3, "City")
-            worksheet.write(rowE, col + 4, "Postcode")
-            worksheet.write(rowE, col + 5, "Country")
-            rowE += 1
-            for coordinate in coordinates:
-                coordinate = str(coordinate)
-                # remove the parenthesis
-                coordinate = coordinate.replace("(", "")
-                coordinate = coordinate.replace(")", "")
-                coordinate = coordinate.split(",")
-                lat = float(coordinate[0])
-                lon = float(coordinate[1])
-                lat = round(lat, 3)
-                lon = round(lon, 3)
-                worksheet.write(rowE, col, lat)
-                worksheet.write(rowE, col + 1, lon)
-                location = check_raw_fields(lat, lon, c)
-                if location is None:
-                    logfunc('Getting coordinates data from API might take some time')
-                    location = get_raw_fields(lat, lon, c, conn)
-                    for key, value in location.items():
-                        if key == "road":
-                            worksheet.write(rowE, col + 2, value)
-                        elif key == "city":
-                            worksheet.write(rowE, col + 3, value)
-                        elif key == "postcode":
-                            worksheet.write(rowE, col + 4, value)
-                        elif key == "country":
-                            worksheet.write(rowE, col + 5, value)
+            if scripts.ilapfuncs.use_network:
+                # Create an excel file with the coordinates
+                if os.name == 'nt':
+                    f = open(report_folder + "\\" + str(row[0]) + ".xlsx", "w")
+                    workbook = xlsxwriter.Workbook(report_folder + "\\" + str(row[0]) + ".xlsx")
                 else:
-                    logfunc('Getting coordinate data from database')
-                    worksheet.write(rowE, col + 2, location[4])
-                    worksheet.write(rowE, col + 3, location[5])
-                    worksheet.write(rowE, col + 4, location[6])
-                    worksheet.write(rowE, col + 5, location[7])
+                    f = open(report_folder + "/" + str(row[0]) + ".xlsx", "w")
+                    workbook = xlsxwriter.Workbook(report_folder + "/" + str(row[0]) + ".xlsx")
+                worksheet = workbook.add_worksheet()
+                rowE = 0
+                col = 0
+                worksheet.write(rowE, col, "Latitude")
+                worksheet.write(rowE, col + 1, "Longitude")
+                worksheet.write(rowE, col + 2, "Road")
+                worksheet.write(rowE, col + 3, "City")
+                worksheet.write(rowE, col + 4, "Postcode")
+                worksheet.write(rowE, col + 5, "Country")
                 rowE += 1
-            workbook.close()
+                for coordinate in coordinates:
+                    coordinate = str(coordinate)
+                    # remove the parenthesis
+                    coordinate = coordinate.replace("(", "")
+                    coordinate = coordinate.replace(")", "")
+                    coordinate = coordinate.split(",")
+                    lat = float(coordinate[0])
+                    lon = float(coordinate[1])
+                    lat = round(lat, 3)
+                    lon = round(lon, 3)
+                    worksheet.write(rowE, col, lat)
+                    worksheet.write(rowE, col + 1, lon)
+                    location = check_raw_fields(lat, lon, c)
+                    if location is None:
+                        logfunc('Getting coordinates data from API might take some time')
+                        location = get_raw_fields(lat, lon, c, conn)
+                        for key, value in location.items():
+                            if key == "road":
+                                worksheet.write(rowE, col + 2, value)
+                            elif key == "city":
+                                worksheet.write(rowE, col + 3, value)
+                            elif key == "postcode":
+                                worksheet.write(rowE, col + 4, value)
+                            elif key == "country":
+                                worksheet.write(rowE, col + 5, value)
+                    else:
+                        logfunc('Getting coordinate data from database')
+                        worksheet.write(rowE, col + 2, location[4])
+                        worksheet.write(rowE, col + 3, location[5])
+                        worksheet.write(rowE, col + 4, location[6])
+                        worksheet.write(rowE, col + 5, location[7])
+                    rowE += 1
+                workbook.close()
 
             m = folium.Map(location=[row[10], row[12]], zoom_start=10, max_zoom=19)
 
@@ -215,17 +218,28 @@ def get_garmin_polyline(files_found, report_folder, seeker, wrap_text):
                 with open(report_folder + '/' + str(row[0]) + '.kml', 'w') as f:
                     f.write(kml)
                     f.close()
-            # Store the map in the report
-            data_list.append((row[0], row[3], row[1], row[2], row[4], row[5], row[6], row[7],
-                              '<a href=Garmin-Cache/' + str(
-                                  row[0]) + '.kml class="badge badge-light" target="_blank">' + str(
-                                  row[0]) + '.kml</a>',
-                              '<a href=Garmin-Cache/' + str(
-                                  row[0]) + '.xlsx class="badge badge-light" target="_blank">' + str(
-                                  row[0]) + '.xlsx</a>',
-                              row[10], row[11], row[12], row[13],
-                              '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\'' + str(
-                                  activity_id) + '\')">Show Map</button>'))
+            if scripts.ilapfuncs.use_network:
+                # Store the map in the report
+                data_list.append((row[0], row[3], row[1], row[2], row[4], row[5], row[6], row[7],
+                                  '<a href=Garmin-Cache/' + str(
+                                      row[0]) + '.kml class="badge badge-light" target="_blank">' + str(
+                                      row[0]) + '.kml</a>',
+                                  '<a href=Garmin-Cache/' + str(
+                                      row[0]) + '.xlsx class="badge badge-light" target="_blank">' + str(
+                                      row[0]) + '.xlsx</a>',
+                                  row[10], row[11], row[12], row[13],
+                                  '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\'' + str(
+                                      activity_id) + '\')">Show Map</button>'))
+            else:
+                # Store the map in the report
+                data_list.append((row[0], row[3], row[1], row[2], row[4], row[5], row[6], row[7],
+                                  '<a href=Garmin-Cache/' + str(
+                                      row[0]) + '.kml class="badge badge-light" target="_blank">' + str(
+                                      row[0]) + '.kml</a>',
+                                  'N/A',
+                                  row[10], row[11], row[12], row[13],
+                                  '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\'' + str(
+                                      activity_id) + '\')">Show Map</button>'))
 
         # Added feature to allow the user to sort the data by the selected collumns and with the ID of the table
         table_id = 'Garmin_Polyline'
@@ -248,7 +262,8 @@ def get_garmin_polyline(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Garmin Polyline data available')
 
-    conn.close()
+    if scripts.ilapfuncs.use_network:
+        conn.close()
     db.close()
 
 
