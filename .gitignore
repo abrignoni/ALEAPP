@@ -110,3 +110,6 @@ ENV/
 
 # OSX Cache
 .DS_Store
+
+#GPS database cache
+coordinates.db

@@ -7,21 +7,31 @@
 import datetime
 import json
 import os
+import sqlite3
 
 import folium
+import xlsxwriter
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv
+from scripts.ilapfuncs import logfunc, tsv, check_raw_fields, get_raw_fields, check_internet_connection
 
 
 def get_poly_api(files_found, report_folder, seeker, wrap_text):
 
     logfunc("Processing data for Polyline API")
+    use_network = check_internet_connection()
+    if use_network:
+        conn = sqlite3.connect('coordinates.db')
+        c = conn.cursor()
+        c.execute(
+            '''CREATE TABLE IF NOT EXISTS raw_fields (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_time TIMESTAMP DATETIME DEFAULT 
+            CURRENT_TIMESTAMP, latitude text, longitude text, road text, city text, postcode text, country text)''')
+
     report = ArtifactHtmlReport('Polyline API')
     report.start_artifact_report(report_folder, 'Polyline API')
     report.add_script()
     # report.filter_by_date('GarminActAPI', 1, 1)
-    data_headers = ('Activity ID', 'Start Time', 'End Time', 'Start Coordinates', 'End Coordinates', 'Coordinates', 'Button')
+    data_headers = ('Activity ID', 'Start Time', 'End Time', 'Start Coordinates', 'End Coordinates', 'Coordinates KML', 'Coordiantes Excel', 'Button')
     data_list = []
     html_map = []
     #file = str(files_found[0])
@@ -42,7 +52,7 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
             polyline = data['geoPolylineDTO']['polyline']
             place_lat = []
             place_lon = []
-            coords = ""
+            coordinates = []
             i = 0
             for geo in polyline:
                 if i == 0:
@@ -51,7 +61,6 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
                     start = '[' + str(geo['lat']) + ', ' + str(geo['lon']) + ']'
                     place_lat.append(geo['lat'])
                     place_lon.append(geo['lon'])
-                    coords += '[' + str(place_lat) + ', ' + str(place_lon) + ']'
                     m = folium.Map(location=[geo['lat'], geo['lon']], zoom_start=10, max_zoom=19)
                     i += 1
                 # last point
@@ -61,7 +70,6 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
                     end = '[' + str(geo['lat']) + ', ' + str(geo['lon']) + ']'
                     place_lat.append(geo['lat'])
                     place_lon.append(geo['lon'])
-                    coords += ', [' + str(place_lat) + ', ' + str(place_lon) + ']'
                     i += 1
                 else:
                     if len(place_lat) > 0 and abs(place_lat[-1] - geo['lat']) < 0.0002 and abs(
@@ -70,8 +78,9 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
                     else:
                         place_lat.append(geo['lat'])
                         place_lon.append(geo['lon'])
-                    coords += ', [' + str(place_lat) + ', ' + str(place_lon) + ']'
                     i += 1
+                time = datetime.datetime.fromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d')
+                coordinates.append([geo['lat'], geo['lon'], time])
 
             points = []
             for i in range(len(place_lat)):
@@ -89,7 +98,54 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
                                     popup=(('End Location\nActivity ID \n' + str(activity_id)).format(index)),
                                     icon=folium.Icon(color='red', icon='flag', prefix='fa')).add_to(m)
 
-
+            if use_network:
+                # Create an excel file with the coordinates
+                if os.name == 'nt':
+                    f = open(report_folder + "\\" + str(activity_id) + ".xlsx", "w")
+                    workbook = xlsxwriter.Workbook(report_folder + "\\" + str(activity_id) + ".xlsx")
+                else:
+                    f = open(report_folder + "/" + str(activity_id) + ".xlsx", "w")
+                    workbook = xlsxwriter.Workbook(report_folder + "/" + str(activity_id) + ".xlsx")
+                worksheet = workbook.add_worksheet()
+                rowE = 0
+                col = 0
+                worksheet.write(rowE, col, "Timestamp")
+                worksheet.write(rowE, col + 1, "Latitude")
+                worksheet.write(rowE, col + 2, "Longitude")
+                worksheet.write(rowE, col + 3, "Road")
+                worksheet.write(rowE, col + 4, "City")
+                worksheet.write(rowE, col + 5, "Postcode")
+                worksheet.write(rowE, col + 6, "Country")
+                rowE += 1
+                for coordinate in coordinates:
+                    lat = float(coordinate[0])
+                    lon = float(coordinate[1])
+                    lat = round(lat, 3)
+                    lon = round(lon, 3)
+                    worksheet.write(rowE, col, coordinate[2])
+                    worksheet.write(rowE, col + 1, lat)
+                    worksheet.write(rowE, col + 2, lon)
+                    location = check_raw_fields(lat, lon, c)
+                    if location is None:
+                        logfunc('Getting coordinates data from API might take some time')
+                        location = get_raw_fields(lat, lon, c, conn)
+                        for key, value in location.items():
+                            if key == "road":
+                                worksheet.write(rowE, col + 3, value)
+                            elif key == "city":
+                                worksheet.write(rowE, col + 4, value)
+                            elif key == "postcode":
+                                worksheet.write(rowE, col + 5, value)
+                            elif key == "country":
+                                worksheet.write(rowE, col + 6, value)
+                    else:
+                        logfunc('Getting coordinate data from database')
+                        worksheet.write(rowE, col + 3, location[4])
+                        worksheet.write(rowE, col + 4, location[5])
+                        worksheet.write(rowE, col + 5, location[6])
+                        worksheet.write(rowE, col + 6, location[7])
+                    rowE += 1
+                workbook.close()
             # Create polyline
             folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(m)
             # Save the map to an HTML file
@@ -149,7 +205,10 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
                 with open(report_folder + '/' + str(activity_id) + '.kml', 'w') as f:
                     f.write(kml)
                     f.close()
-            data_list.append((activity_id, start_time, end_time, start, end, '<a href=Garmin-API/'+str(activity_id)+'.kml class="badge badge-light" target="_blank">'+str(activity_id)+'.kml</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(activity_id)+'\')">Show Map</button>'))
+            if use_network:
+                data_list.append((activity_id, start_time, end_time, start, end, '<a href=Garmin-API/'+str(activity_id)+'.kml class="badge badge-light" target="_blank">'+str(activity_id)+'.kml</a>', '<a href=Garmin-API/'+str(activity_id)+'.xlsx class="badge badge-light" target="_blank">'+str(activity_id)+'.xlsx</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(activity_id)+'\')">Show Map</button>'))
+            else:
+                data_list.append((activity_id, start_time, end_time, start, end, str(activity_id)+'.kml', 'N/A', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(activity_id)+'\')">Show Map</button>'))
 
     report.filter_by_date('GarminPolyAPI', 1)
     report.write_artifact_data_table(data_headers, data_list, file, html_escape=False, table_id='GarminPolyAPI')
@@ -161,6 +220,9 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
 
     tsvname = f'Garmin Log'
     tsv(report_folder, data_headers, data_list, tsvname)
+
+    if use_network:
+        conn.close()
 
 
 __artifacts__ = {

@@ -6,12 +6,14 @@
 from datetime import datetime
 import warnings
 import os
+import sqlite3
 
 import folium
 import fitdecode
+import xlsxwriter
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv
+from scripts.ilapfuncs import logfunc, tsv, check_raw_fields, get_raw_fields, check_internet_connection
 
 
 def suppress_fitdecode_warnings(message, category, filename, lineno, file=None, line=None):
@@ -27,12 +29,19 @@ warnings.showwarning = suppress_fitdecode_warnings
 
 def get_gps(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Strava FIT Files")
+    use_network = check_internet_connection()
+    if use_network:
+        conn = sqlite3.connect('coordinates.db')
+        c = conn.cursor()
+        c.execute(
+            '''CREATE TABLE IF NOT EXISTS raw_fields (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_time TIMESTAMP DATETIME DEFAULT 
+            CURRENT_TIMESTAMP, latitude text, longitude text, road text, city text, postcode text, country text)''')
     report = ArtifactHtmlReport('Strava')
     report.start_artifact_report(report_folder, 'Strava')
     report.add_script()
     # report.filter_by_date('GarminActAPI', 1, 1)
     data_headers = (
-    'Activity Type', 'Start Time', 'End Time', 'Total Time (minutes)', 'Total Distance (km)', 'Coordinates', 'Button')
+    'Activity Type', 'Start Time', 'End Time', 'Total Time (minutes)', 'Total Distance (km)', 'Coordinates KML', 'Coordinates Excel', 'Button')
     data_list = []
     html_map = []
     act = 1
@@ -42,6 +51,7 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
         file = str(file)
         logfunc("Processing file: " + file)
         coordinates = []
+        coordinatesE = []
         # Decode FIT file
         with fitdecode.FitReader(file) as fit:
             logfunc("Found Strava FIT file")
@@ -53,6 +63,11 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
                         if frame.has_field('position_lat') and frame.has_field('position_long'):
                             lat = frame.get_value('position_lat')
                             lon = frame.get_value('position_long')
+                            timestamp = frame.get_value('timestamp')
+                            timestamp = timestamp.timestamp()
+                            # convert from UNIX timestamp to UTC
+                            timestamp = datetime.utcfromtimestamp(timestamp)
+                            timestamp = str(timestamp)
                             # convert from semicircles to degrees
                             lat = lat * (180.0 / 2 ** 31)
                             lon = lon * (180.0 / 2 ** 31)
@@ -60,6 +75,7 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
                             lat = round(lat, 5)
                             lon = round(lon, 5)
                             coordinates.append([lat, lon])
+                            coordinatesE.append([lat, lon, timestamp])
                     elif frame.name == 'session':
                         if frame.has_field('total_elapsed_time'):
                             total_elapsed_time = frame.get_value('total_elapsed_time')
@@ -112,6 +128,55 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
                                   icon=folium.Icon(color='red', icon='flag', prefix='fa')).add_to(m)
                 # middle points
 
+        if use_network:
+            # Create an excel file with the coordinates
+            if os.name == 'nt':
+                f = open(report_folder + "\\" + str(act) + ".xlsx", "w")
+                workbook = xlsxwriter.Workbook(report_folder + "\\" + str(act) + ".xlsx")
+            else:
+                f = open(report_folder + "/" + str(act) + ".xlsx", "w")
+                workbook = xlsxwriter.Workbook(report_folder + "/" + str(act) + ".xlsx")
+            worksheet = workbook.add_worksheet()
+            rowE = 0
+            col = 0
+            worksheet.write(rowE, col, "Timestamp")
+            worksheet.write(rowE, col + 1, "Latitude")
+            worksheet.write(rowE, col + 2, "Longitude")
+            worksheet.write(rowE, col + 3, "Road")
+            worksheet.write(rowE, col + 4, "City")
+            worksheet.write(rowE, col + 5, "Postcode")
+            worksheet.write(rowE, col + 6, "Country")
+            rowE += 1
+
+            for coordinate in coordinatesE:
+                # coordinate = str(coordinate)
+                # round to 5 decimal cases
+                lat = round(coordinate[0], 3)
+                lon = round(coordinate[1], 3)
+                worksheet.write(rowE, col, coordinate[2])
+                worksheet.write(rowE, col + 1, lat)
+                worksheet.write(rowE, col + 2, lon)
+                location = check_raw_fields(lat, lon, c)
+                if location is None:
+                    logfunc('Getting coordinates data from API might take some time')
+                    location = get_raw_fields(lat, lon, c, conn)
+                    for key, value in location.items():
+                        if key == "road":
+                            worksheet.write(rowE, col + 3, value)
+                        elif key == "city":
+                            worksheet.write(rowE, col + 4, value)
+                        elif key == "postcode":
+                            worksheet.write(rowE, col + 5, value)
+                        elif key == "country":
+                            worksheet.write(rowE, col + 6, value)
+                else:
+                    logfunc('Getting coordinate data from database')
+                    worksheet.write(rowE, col + 3, location[4])
+                    worksheet.write(rowE, col + 4, location[5])
+                    worksheet.write(rowE, col + 5, location[6])
+                    worksheet.write(rowE, col + 6, location[7])
+                rowE += 1
+            workbook.close()
         # Create polyline
         folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(m)
         # Save the map to an HTML file
@@ -172,10 +237,19 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
             with open(report_folder + '/' + str(act) + '.kml', 'w') as f:
                 f.write(kml)
                 f.close()
-        data_list.append((sport, start_time, end_time, total_elapsed_time_m, total_distance, '<a href=Strava/' + str(
-            act) + '.kml class="badge badge-light" target="_blank">' + str(act) + '.kml</a>',
-                          '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\'' + str(
-                              act) + '\')">Show Map</button>'))
+        if use_network:
+            data_list.append((sport, start_time, end_time, total_elapsed_time_m, total_distance, '<a href=Strava/' + str(
+                act) + '.kml class="badge badge-light" target="_blank">' + str(act) + '.kml</a>', '<a href=Strava/' + str(
+                act) + '.xlsx class="badge badge-light" target="_blank">' + str(act) + '.xlsx</a>',
+                              '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\'' + str(
+                                  act) + '\')">Show Map</button>'))
+        else:
+            data_list.append(
+                (sport, start_time, end_time, total_elapsed_time_m, total_distance, '<a href=Strava/' + str(
+                    act) + '.kml class="badge badge-light" target="_blank">' + str(act) + '.kml</a>',
+                 'N/A',
+                 '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\'' + str(
+                     act) + '\')">Show Map</button>'))
         act += 1
 
     report.filter_by_date('Strava', 1)
@@ -189,6 +263,8 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
     tsvname = f'Strava Log'
     tsv(report_folder, data_headers, data_list, tsvname)
 
+    if use_network:
+        conn.close()
 
 __artifacts__ = {
     "Strava": (

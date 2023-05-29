@@ -104,7 +104,7 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
                 sg.Button('Select All', key='SELECT ALL'), sg.Button('Deselect All', key='DESELECT ALL'),
                 sg.Button('Load Profile', key='LOAD PROFILE'), sg.Button('Save Profile', key='SAVE PROFILE'),
                 sg.Text('  |', font=("Helvetica", 14)),
-                sg.Button('Load Case Data', key='LOAD CASE DATA')
+                sg.Button('Load Case Data', key='LOAD CASE DATA'),
              ],
             [sg.Column(mlist, size=(300,310), scrollable=True),  sg.Output(size=(85,20))] ,
             [sg.ProgressBar(max_value=GuiWindow.progress_bar_total, orientation='h', size=(86, 7), key='PROGRESSBAR', bar_color=('DarkGreen', 'White'))],
@@ -212,7 +212,6 @@ while True:
                 sg.popup(profile_load_error)
             else:
                 sg.popup(f"Loaded Case Data: {destination_path}")
-                
     if event == 'Process':
         #check is selections made properly; if not we will return to input form without exiting app altogether
         is_valid, extracttype = ValidateInput(values, window)
