@@ -13,13 +13,13 @@ import polyline
 import xlsxwriter
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields
-import scripts.ilapfuncs
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields, check_internet_connection
 
 
 def get_nike_polyline(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Nike Polyline")
-    if scripts.ilapfuncs.use_network:
+    use_network = check_internet_connection()
+    if use_network:
         conn = sqlite3.connect('coordinates.db')
         c = conn.cursor()
         c.execute(
@@ -74,7 +74,7 @@ def get_nike_polyline(files_found, report_folder, seeker, wrap_text):
 
             #convert polyline to lat/long
             coordinates = polyline.decode(row[4])
-            if scripts.ilapfuncs.use_network:
+            if use_network:
                 if os.name == 'nt':
                     f = open(report_folder + "\\" + str(row[0]) + ".xlsx", "w")
                     workbook = xlsxwriter.Workbook(report_folder + "\\" + str(row[0]) + ".xlsx")
@@ -210,7 +210,7 @@ def get_nike_polyline(files_found, report_folder, seeker, wrap_text):
                     f.write(kml)
                     f.close()
             # Store the map in the report
-            if scripts.ilapfuncs.use_network:
+            if use_network:
                 data_list.append((activity_id, start_time_utc, end_time_utc, duration, '<a href=Nike-Run/'+str(activity_id)+'.kml class="badge badge-light" target="_blank">'+str(row[0])+'.kml</a>', '<a href=Nike-Run/'+str(activity_id)+'.xlsx class="badge badge-light" target="_blank">'+str(row[0])+'.xlsx</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(activity_id)+'\')">Show Map</button>'))
             else:
                 data_list.append((activity_id, start_time_utc, end_time_utc, duration, '<a href=Nike-Run/'+str(activity_id)+'.kml class="badge badge-light" target="_blank">'+str(row[0])+'.kml</a>', 'N/A', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(activity_id)+'\')">Show Map</button>'))
@@ -237,7 +237,7 @@ def get_nike_polyline(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Nike Polyline data available')
 
-    if scripts.ilapfuncs.use_network:
+    if use_network:
         conn.close()
     db.close()
 

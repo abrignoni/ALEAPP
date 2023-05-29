@@ -6,7 +6,6 @@ import PySimpleGUI as sg
 import webbrowser
 import plugin_loader
 from scripts.ilapfuncs import *
-import scripts.ilapfuncs
 from scripts.version_info import aleapp_version
 from time import process_time, gmtime, strftime
 from scripts.search_files import *
@@ -106,7 +105,6 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
                 sg.Button('Load Profile', key='LOAD PROFILE'), sg.Button('Save Profile', key='SAVE PROFILE'),
                 sg.Text('  |', font=("Helvetica", 14)),
                 sg.Button('Load Case Data', key='LOAD CASE DATA'),
-                sg.Button('Enable Network Modules', key='ALLOW NETWORK')
              ],
             [sg.Column(mlist, size=(300,310), scrollable=True),  sg.Output(size=(85,20))] ,
             [sg.ProgressBar(max_value=GuiWindow.progress_bar_total, orientation='h', size=(86, 7), key='PROGRESSBAR', bar_color=('DarkGreen', 'White'))],
@@ -214,16 +212,6 @@ while True:
                 sg.popup(profile_load_error)
             else:
                 sg.popup(f"Loaded Case Data: {destination_path}")
-    if event == 'ALLOW NETWORK':
-        if scripts.ilapfuncs.use_network:
-            scripts.ilapfuncs.use_network = False
-            sg.popup('Network modules disabled')
-            #change button text
-            window['ALLOW NETWORK'].update('Enable Network Modules')
-        else:
-            window['ALLOW NETWORK'].update('Disable Network Modules')
-            scripts.ilapfuncs.use_network = True
-            sg.popup('Network modules enabled')
     if event == 'Process':
         #check is selections made properly; if not we will return to input form without exiting app altogether
         is_valid, extracttype = ValidateInput(values, window)

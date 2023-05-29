@@ -13,14 +13,14 @@ import folium
 import xlsxwriter
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, check_raw_fields, get_raw_fields
-import scripts.ilapfuncs
+from scripts.ilapfuncs import logfunc, tsv, check_raw_fields, get_raw_fields, check_internet_connection
 
 
 def get_poly_api(files_found, report_folder, seeker, wrap_text):
 
     logfunc("Processing data for Polyline API")
-    if scripts.ilapfuncs.use_network:
+    use_network = check_internet_connection()
+    if use_network:
         conn = sqlite3.connect('coordinates.db')
         c = conn.cursor()
         c.execute(
@@ -98,7 +98,7 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
                                     popup=(('End Location\nActivity ID \n' + str(activity_id)).format(index)),
                                     icon=folium.Icon(color='red', icon='flag', prefix='fa')).add_to(m)
 
-            if scripts.ilapfuncs.use_network:
+            if use_network:
                 # Create an excel file with the coordinates
                 if os.name == 'nt':
                     f = open(report_folder + "\\" + str(activity_id) + ".xlsx", "w")
@@ -205,7 +205,7 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
                 with open(report_folder + '/' + str(activity_id) + '.kml', 'w') as f:
                     f.write(kml)
                     f.close()
-            if scripts.ilapfuncs.use_network:
+            if use_network:
                 data_list.append((activity_id, start_time, end_time, start, end, '<a href=Garmin-API/'+str(activity_id)+'.kml class="badge badge-light" target="_blank">'+str(activity_id)+'.kml</a>', '<a href=Garmin-API/'+str(activity_id)+'.xlsx class="badge badge-light" target="_blank">'+str(activity_id)+'.xlsx</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(activity_id)+'\')">Show Map</button>'))
             else:
                 data_list.append((activity_id, start_time, end_time, start, end, str(activity_id)+'.kml', 'N/A', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(activity_id)+'\')">Show Map</button>'))
@@ -221,7 +221,7 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
     tsvname = f'Garmin Log'
     tsv(report_folder, data_headers, data_list, tsvname)
 
-    if scripts.ilapfuncs.use_network:
+    if use_network:
         conn.close()
 
 

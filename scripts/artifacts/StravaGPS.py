@@ -13,8 +13,7 @@ import fitdecode
 import xlsxwriter
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, check_raw_fields, get_raw_fields
-import scripts.ilapfuncs
+from scripts.ilapfuncs import logfunc, tsv, check_raw_fields, get_raw_fields, check_internet_connection
 
 
 def suppress_fitdecode_warnings(message, category, filename, lineno, file=None, line=None):
@@ -30,7 +29,8 @@ warnings.showwarning = suppress_fitdecode_warnings
 
 def get_gps(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Strava FIT Files")
-    if scripts.ilapfuncs.use_network:
+    use_network = check_internet_connection()
+    if use_network:
         conn = sqlite3.connect('coordinates.db')
         c = conn.cursor()
         c.execute(
@@ -128,7 +128,7 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
                                   icon=folium.Icon(color='red', icon='flag', prefix='fa')).add_to(m)
                 # middle points
 
-        if scripts.ilapfuncs.use_network:
+        if use_network:
             # Create an excel file with the coordinates
             if os.name == 'nt':
                 f = open(report_folder + "\\" + str(act) + ".xlsx", "w")
@@ -237,7 +237,7 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
             with open(report_folder + '/' + str(act) + '.kml', 'w') as f:
                 f.write(kml)
                 f.close()
-        if scripts.ilapfuncs.use_network:
+        if use_network:
             data_list.append((sport, start_time, end_time, total_elapsed_time_m, total_distance, '<a href=Strava/' + str(
                 act) + '.kml class="badge badge-light" target="_blank">' + str(act) + '.kml</a>', '<a href=Strava/' + str(
                 act) + '.xlsx class="badge badge-light" target="_blank">' + str(act) + '.xlsx</a>',
@@ -263,7 +263,7 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
     tsvname = f'Strava Log'
     tsv(report_folder, data_headers, data_list, tsvname)
 
-    if scripts.ilapfuncs.use_network:
+    if use_network:
         conn.close()
 
 __artifacts__ = {

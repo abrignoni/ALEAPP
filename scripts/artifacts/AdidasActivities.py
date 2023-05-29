@@ -12,13 +12,13 @@ import polyline
 import xlsxwriter
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields
-import scripts.ilapfuncs
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields, check_internet_connection
 
 
 def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Adidas Activities")
-    if scripts.ilapfuncs.use_network:
+    use_network = check_internet_connection()
+    if use_network:
         conn = sqlite3.connect('coordinates.db')
         c = conn.cursor()
         c.execute(
@@ -85,7 +85,7 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
                     break
                 place_lat = []
                 place_lon = []
-                if scripts.ilapfuncs.use_network:
+                if use_network:
                     if os.name == 'nt':
                         f = open(report_folder + "\\" + str(row[0]) + ".xlsx", "w")
                         workbook = xlsxwriter.Workbook(report_folder + "\\" + str(row[0]) + ".xlsx")
@@ -240,7 +240,7 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
                 # Change the total of the last element of the list
                 activity_json[-1]['total'] += 1
             if poly:
-                if scripts.ilapfuncs.use_network:
+                if use_network:
                     data_list.append((sampleId, userId, distance, startTime, endTime, runtime, maxSpeed, calories, temperature, note, maxPulse, avgPulse, maxElevation, minElevation, humidity, '<a href=Adidas-Running/'+str(row[0])+'.kml class="badge badge-light" target="_blank">'+str(row[0])+'.kml</a>', '<a href=Adidas-Running/'+str(row[0])+'.xlsx class="badge badge-light" target="_blank">'+str(row[0])+'.xlsx</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(sampleId)+'\')">Show Map</button>'))
                 else:
                     data_list.append((sampleId, userId, distance, startTime, endTime, runtime, maxSpeed, calories, temperature, note, maxPulse, avgPulse, maxElevation, minElevation, humidity, '<a href=Adidas-Running/'+str(row[0])+'.kml class="badge badge-light" target="_blank">'+str(row[0])+'.kml</a>', 'N/A', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(sampleId)+'\')">Show Map</button>'))
@@ -267,7 +267,7 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Adidas Activities data available')
 
-    if scripts.ilapfuncs.use_network:
+    if use_network:
         conn.close()
     db.close()
 

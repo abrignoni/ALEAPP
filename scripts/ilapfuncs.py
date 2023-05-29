@@ -729,9 +729,13 @@ def check_raw_fields(latitude, longitude, c):
     # convert to dict
     return data
 
-use_network = False
-def enable_network(activate):
-    if activate:
-        use_network = True
-    else:
-        use_network = False
+#Function to check if the user as internet connection to do the geocoding features
+def check_internet_connection():
+    try:
+        geolocator = Nominatim(user_agent="check_internet_connection")
+        location = geolocator.reverse("39.7495, 8.8077")  # Leiria coordinates
+        logfunc("Internet connection is available.")
+        return True
+    except:
+        logfunc("Internet connection is not available.")
+        return False
