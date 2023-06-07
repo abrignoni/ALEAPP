@@ -8,7 +8,7 @@ DB_NAME = 'app_database'
 SGSESSION_FILE = 'SGSession.xml'
 CHAT_MESSAGES_QUERY = '''
     SELECT
-        DATETIME(createdAt, 'unixepoch', 'localtime'),
+        DATETIME(createdAt, 'unixepoch'),
         threadId,
         groupId,
         ownerId,
