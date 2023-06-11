@@ -22,6 +22,7 @@ SOFTWARE.
 
 import pathlib
 import typing
+import json
 
 from scripts.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.artifact_report import ArtifactHtmlReport
@@ -74,9 +75,31 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
 
             scripts.ilapfuncs.tsv(report_folder, data_headers, rows, report_name, source_files)
             scripts.ilapfuncs.timeline(report_folder, report_name, rows, data_headers)
-
-
-
+            
+            data_list_clean = []
+            if package == 'com.instagram.android':
+                for data in rows:
+                    fecha = data[0]
+                    datos = data[4]
+                    try:
+                        datos = json.loads(datos)
+                    except:
+                        pass
+                    if (type(datos)) is dict:
+                        data_list_clean.append((fecha, datos['collapse_key'], datos['m'], datos['s'], datos['u']))
+                
+                report = ArtifactHtmlReport(f"Firebase Cloud Messaging Queued Messages Clean: {package}")
+                report_name = f"FCM-Clean-Dump-{package}"
+                report.start_artifact_report(report_folder, report_name)
+                report.add_script()
+                data_headers = ["Timestamp", "Data", "M", "S", "U"]
+                
+                report.write_artifact_data_table(data_headers, data_list_clean, source_files)
+                report.end_artifact_report()
+                
+                scripts.ilapfuncs.tsv(report_folder, data_headers, data_list_clean, report_name, source_files)
+                scripts.ilapfuncs.timeline(report_folder, report_name, data_list_clean, data_headers)
+                
 __artifacts__ = {
         "FCM_Dump": (
                 "Firebase Cloud Messaging",
