@@ -79,25 +79,53 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
             scripts.ilapfuncs.tsv(report_folder, data_headers, rows, report_name, source_files)
             scripts.ilapfuncs.timeline(report_folder, report_name, rows, data_headers)
             
-            
-            if package == 'com.instagram.android':
+            if package == 'com.zhiliaoapp.musically':
                 data_list_clean = []
                 for data in rows:
                     fecha = data[0]
+                    origfile = data[1]
+                    llave = data[3]
                     datos = data[4]
-                    try:
-                        datos = json.loads(datos)
-                    except:
-                        pass
-                    if (type(datos)) is dict:
-                        data_list_clean.append((fecha, datos['collapse_key'], datos['m'], datos['s'], datos['u']))
+                    if llave == 'payload':
+                        try:
+                            datos = json.loads(datos)
+                        except:
+                            logfunc('Error reading json data')
+                        if (type(datos)) is dict:
+                            data_list_clean.append((fecha, origfile, datos['text'], datos['title']))
                         
                 if data_list_clean:
                     report = ArtifactHtmlReport(f"Firebase Cloud Messaging Queued Messages Clean: {package}")
                     report_name = f"FCM-Clean-Dump-{package}"
                     report.start_artifact_report(report_folder, report_name)
                     report.add_script()
-                    data_headers = ["Timestamp", "Data", "M", "S", "U"]
+                    data_headers = ["Timestamp","Originating File", "Data", "Title"]
+                    
+                    report.write_artifact_data_table(data_headers, data_list_clean, source_files)
+                    report.end_artifact_report()
+                    
+                    scripts.ilapfuncs.tsv(report_folder, data_headers, data_list_clean, report_name, source_files)
+                    scripts.ilapfuncs.timeline(report_folder, report_name, data_list_clean, data_headers)
+            
+            if package == 'com.instagram.android':
+                data_list_clean = []
+                for data in rows:
+                    fecha = data[0]
+                    origfile = data[1]
+                    datos = data[4]
+                    try:
+                        datos = json.loads(datos)
+                    except:
+                        pass
+                    if (type(datos)) is dict:
+                        data_list_clean.append((fecha, origfile, datos['collapse_key'], datos['m'], datos['s'], datos['u']))
+                        
+                if data_list_clean:
+                    report = ArtifactHtmlReport(f"Firebase Cloud Messaging Queued Messages Clean: {package}")
+                    report_name = f"FCM-Clean-Dump-{package}"
+                    report.start_artifact_report(report_folder, report_name)
+                    report.add_script()
+                    data_headers = ["Timestamp","Originating File", "Data", "M", "S", "U"]
                     
                     report.write_artifact_data_table(data_headers, data_list_clean, source_files)
                     report.end_artifact_report()
@@ -109,6 +137,7 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
                 data_list_clean = []
                 for data in rows:
                     fecha = data[0]
+                    origfile = data[1]
                     llave = data[3]
                     datos = data[4]
                 
@@ -129,14 +158,14 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
                             url = values['2']['14'].decode()
                             lat = url.split('?')[1].split('lat=')[1].split('&')[0]
                             lon = url.split('?')[1].split('lat=')[1].split('&')[1].split('lon=')[1]
-                            data_list_clean.append((fecha,lat,lon,url))
+                            data_list_clean.append((fecha,lat,lon,url,origfile))
                 
                 if data_list_clean:
                     report = ArtifactHtmlReport(f"Firebase Cloud Messaging Queued Messages Geolocation: {package}")
                     report_name = f"FCM-Clean-Dump-Geolocation-{package}"
                     report.start_artifact_report(report_folder, report_name)
                     report.add_script()
-                    data_headers = ["Timestamp", "Latitude", "Longitude", "URL"]
+                    data_headers = ["Timestamp", "Latitude", "Longitude", "URL","Originating File"]
                     
                     report.write_artifact_data_table(data_headers, data_list_clean, source_files)
                     report.end_artifact_report()
