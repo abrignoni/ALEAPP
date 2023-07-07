@@ -238,6 +238,7 @@ def get_icon_name(category, artifact):
     elif category == 'PACKAGE PREDICTIONS':     icon = 'package'
     elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'PLAYGROUND VAULT':       icon = 'lock'
+    elif category == 'PODCAST ADDICT': icon = 'music'
     elif category == 'POWER EVENTS':
         if artifact.find('POWER OFF RESET'):    icon = 'power'
         elif artifact.find('LAST BOOT TIME'):          icon = 'power'
