@@ -238,6 +238,7 @@ def get_icon_name(category, artifact):
     elif category == 'PACKAGE PREDICTIONS':     icon = 'package'
     elif category == 'PERMISSIONS':  icon = 'check'
     elif category == 'PLAYGROUND VAULT':       icon = 'lock'
+    elif category == 'PODCAST ADDICT': icon = 'music'
     elif category == 'POWER EVENTS':
         if artifact.find('POWER OFF RESET'):    icon = 'power'
         elif artifact.find('LAST BOOT TIME'):          icon = 'power'
@@ -308,6 +309,9 @@ def get_icon_name(category, artifact):
         if artifact.find('SEARCHES') >=0:      icon = 'twitter'
     elif category == 'USAGE STATS':     icon = 'bar-chart-2'
     elif category == 'USER DICTIONARY': icon = 'book'
+    elif category == 'VERIZON RDD ANALYTICS':
+        if artifact == 'VERIZON RDD - BATTERY HISTORY' : icon = 'power'
+        elif artifact == 'VERIZON RDD - WIFI DATA': icon = 'wifi'
     elif category == 'VIBER':
         if artifact == 'VIBER - CONTACTS':  icon = 'user'
         elif artifact == 'VIBER - MESSAGES':  icon = 'message-square'
