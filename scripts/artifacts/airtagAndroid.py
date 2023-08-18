@@ -2,6 +2,7 @@ import sqlite3
 import os
 import textwrap
 import blackboxprotobuf
+import datetime
 
 from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
@@ -94,10 +95,73 @@ def get_airtagAndroid(files_found, report_folder, seeker, wrap_text):
         
         
         db.close()
+    
+    for file_found in files_found:
+        file_name = str(file_found)
+        if not file_found.endswith('personalsafety_info.pb'):
+            continue # Skip all other files
+        
+        with open(file_found, 'rb') as f:
+            protodata = f.read()
+            
+        lastscan, types = blackboxprotobuf.decode_message(protodata)
+        lastscan = (lastscan['1'])
+        lastscan = (datetime.datetime.fromtimestamp(int(lastscan)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+        
+        report = ArtifactHtmlReport('Android Airtag Last Scan')
+        report.start_artifact_report(report_folder, 'Android Airtag Last Scan')
+        report.add_script()
+        data_headers = ('Timestamp',)
+        data_list = []
+        
+        data_list.append((lastscan,))
 
+        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.end_artifact_report()
+        
+        tsvname = f'Android Airtag Last Scan'
+        tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Android Airtag Last Scan'
+        timeline(report_folder, tlactivity, data_list, data_headers)
+        
+    for file_found in files_found:
+        file_name = str(file_found)
+        if not file_found.endswith('personalsafety_optin.pb'):
+            continue # Skip all other files
+        
+        with open(file_found, 'rb') as f:
+            protodata = f.read()
+            
+        passscan, types = blackboxprotobuf.decode_message(protodata)
+        passscan = (passscan['1'])
+        
+        if passscan == 1:
+            passscan = 'On'
+        elif passscan == 2:
+            passscan = 'Off'
+        
+        report = ArtifactHtmlReport('Android Airtag Passive Scan')
+        report.start_artifact_report(report_folder, 'Android Airtag Passive Scan')
+        report.add_script()
+        data_headers = ('Passive Scan',)
+        data_list = []
+        
+        data_list.append((passscan,))
+        
+        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.end_artifact_report()
+        
+        tsvname = f'Android Airtag Passive Scan'
+        tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Android Airtag Passive Scan'
+        timeline(report_folder, tlactivity, data_list, data_headers)
+        
+            
 __artifacts__ = {
         "airtag alerts": (
                 "Airtag Detection",
-                ('*/com.google.android.gms/databases/personalsafety_db*'),
+                ('*/com.google.android.gms/databases/personalsafety_db*','*/files/personalsafety/shared/personalsafety_info.pb','*/files/personalsafety/shared/personalsafety_optin.pb'),
                 get_airtagAndroid)
 }
