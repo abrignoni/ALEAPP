@@ -23,6 +23,7 @@ def get_icon_name(category, artifact):
     if category.find('ACCOUNT') >= 0:
         if artifact.find('AUTH') >= 0:  icon = 'key'
         else:                           icon = 'user'
+    elif category == 'AIRTAG DETECTION':       icon = 'alert-circle'
     elif category == 'ADB HOSTS':       icon = 'terminal'
     elif category == 'GALLERY TRASH':       icon = 'image'
     elif category == 'ADIDAS-RUNNING':
