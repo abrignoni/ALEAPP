@@ -6,9 +6,12 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_
 
 def get_airGuard(files_found, report_folder, seeker, wrap_text):
     
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
+    for file_found in files_found:
+        file_name = str(file_found)
+        if not file_found.endswith('attd_db'):
+            continue # Skip all other files
     
+    db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()
     cursor.execute('''
     SELECT
@@ -61,6 +64,6 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "AirGuard": (
                 "AirTags",
-                ('*/de.seemoo.at_tracking_detection.release/databases/attd_db'),
+                ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*'),
                 get_airGuard)
 }
