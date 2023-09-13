@@ -98,6 +98,7 @@ def get_icon_name(category, artifact):
         else: icon = 'facebook'
     elif category == 'FILES BY GOOGLE':     icon = 'file'
     elif category == 'FIREBASE CLOUD MESSAGING':       icon = 'database'
+    elif category == 'LIBRE TORRENT':       icon = 'download'
     elif category == 'FIREFOX':
         if artifact.find('BOOKMARKS') >= 0:                 icon = 'bookmark'
         elif artifact.find('COOKIES') >= 0:                 icon = 'info'
