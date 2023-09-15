@@ -41,11 +41,11 @@ def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
                         for keyb, valueb in value.items():
                             if keyb == 'children':
                                 if len(valueb) > 0:
-                                    url = valueb[0]['url']
-                                    dateadd = valueb[0]['date_added']
+                                    url = valueb[0].get('url','')
+                                    dateadd = valueb[0].get('date_added','')
                                     dateaddconv = datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=int(dateadd))
-                                    name = valueb[0]['name']
-                                    typed = valueb[0]['type']
+                                    name = valueb[0].get('name','')
+                                    typed = valueb[0].get('type','')
                                     flag = 1
                             if keyb == 'name' and flag == 1:
                                 flag = 0
