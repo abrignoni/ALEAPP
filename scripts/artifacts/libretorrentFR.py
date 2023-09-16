@@ -107,6 +107,6 @@ def get_libretorrentFR(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "LibretorrentFR": (
                 "Libre Torrent",
-                ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*'),
+                ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*','*/libretorrent.db*'),
                 get_libretorrentFR)
 }
