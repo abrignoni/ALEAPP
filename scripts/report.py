@@ -84,7 +84,8 @@ def get_icon_name(category, artifact):
     elif category == 'DIGITAL WELLBEING' or category == 'DIGITAL WELLBEING ACCOUNT': 
         if artifact.find('ACCOUNT DATA') >= 0:  icon = 'user'
         else:                           icon = 'layers'
-    elif category == 'DOWNLOADS':   icon = 'download'        
+    elif category == 'DOWNLOADS':   icon = 'download'
+    elif category == 'DISCORD CHATS':   icon = 'message-square'        
     elif category == 'DUCKDUCKGO':
         if artifact == 'DUCKDUCKGO TAB THUMBNAILS':  icon = 'image'
         else:                           icon = 'layers'
