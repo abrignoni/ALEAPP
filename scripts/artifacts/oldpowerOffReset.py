@@ -14,12 +14,12 @@ def get_oldpowerOffReset(files_found, report_folder, seeker, wrap_text):
     
         with open(file_found, 'r') as f:
             for line in f:
-                if '/' in line:
+                if '/' in line and len(line) == 18:
                     fecha = line.strip()
                     fecha = (datetime.strptime(fecha,'%y/%m/%d %H:%M:%S'))
                     
                     reason = next(f)
-                    reason = reason.split(':')[1]
+                    reason = reason.split(':')[1].replace('\n','')
                     
                     data_list.append((fecha, reason, filename))
     
