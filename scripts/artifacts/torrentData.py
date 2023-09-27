@@ -1,36 +1,26 @@
 import sqlite3
 import textwrap
 import bencoding
+import hashlib
 from datetime import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen
 
-def get_libretorrentFR(files_found, report_folder, seeker, wrap_text):
+def get_TorrentData(files_found, report_folder, seeker, wrap_text):
+    
+    data_list = []
     
     for file_found in files_found:
         file_name = str(file_found)
-        if file_found.endswith('libretorrent.db'):
-            break # Skip all other files
-    
-    db = open_sqlite_db_readonly(file_found)
-    cursor = db.cursor()
-    cursor.execute('''
-    SELECT
-    * from FastResume
-    ''')
-    
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        data_list = []
-        
-        for row in all_rows:
-            pass
-            torrentihash = row[0]
-            encoded_data = row[1]
-            decodedDict = bencoding.bdecode(encoded_data)
+        if file_found.endswith('.torrent'):
             
+            with open(file_found, 'rb') as f:
+                encoded_data = f.read()
+                
+            decodedDict = bencoding.bdecode(encoded_data)
+            info_hash = hashlib.sha1(bencoding.bencode(decodedDict[b"info"])).hexdigest().upper()
+                
             torrentihas = torrentname = spath = iname = tdown = tup = aggf = agg = ''
             for key,value in decodedDict.items():
                 #print(key,value)
@@ -40,14 +30,24 @@ def get_libretorrentFR(files_found, report_folder, seeker, wrap_text):
                             pass
                         if ikey == b'name':
                             torrentname = (ivalue.decode())
+                            #print(torrentname)
                         if ikey == b'files':
+                            aggf = '<table>'
                             for files in ivalue:
                                 for iikey, iivalue in files.items():
                                     if iikey == b'length':
                                         lenghtf = (iivalue)
                                     if iikey == b'path':
-                                        pathf = (iivalue[0].decode())
-                                aggf = aggf + f'Lenght: {lenghtf} Path: {pathf} <br>'
+                                        if len(iivalue) > 1:
+                                            dirr = (iivalue[0].decode())
+                                            filen = (iivalue[1].decode())
+                                        else:
+                                            dirr = ''
+                                            filen = (iivalue[0].decode())
+                                    #print(f'Path: {dirr}/{filen}')
+                                aggf = aggf + f'<tr><td>{dirr}</td><td>{filen}</td></tr>'
+                            aggf = aggf + f'</table>'    
+                        #print(ikey, ivalue)
                 elif key == b'trackers':
                     pass
                 elif key == b'pieces':
@@ -84,29 +84,29 @@ def get_libretorrentFR(files_found, report_folder, seeker, wrap_text):
                     elif (isinstance(value, list)):
                         value = str(value)
                     else:
-                        value = value.decode()
-                    agg = agg + f'{key.decode()}: {value} <br>'
+                        value = value
                     
-            data_list.append((torrentihash,torrentname,spath,iname,tdown,tup,aggf,agg))
-        
-        report = ArtifactHtmlReport('Libre Torrent - Fast Resume')
-        report.start_artifact_report(report_folder, 'Libre Torrent - Fast Resume')
+            data_list.append((torrentname,info_hash,aggf))
+    
+    if len(data_list) > 0:
+        report = ArtifactHtmlReport('Torrent Data')
+        report.start_artifact_report(report_folder, 'Torrent Data')
         report.add_script()
-        data_headers = ('Torrent InfoHash','Torrent Name','Save Path','Name','Total Downloaded','Total Uploaded','Length - Path','Key - Value')
+        data_headers = ('Torrent Name','Info Hash','Path')
         report.write_artifact_data_table(data_headers, data_list, file_found,html_escape=False)
         report.end_artifact_report()
         
-        tsvname = f'Libre Torrent - Fast Resume'
+        tsvname = f'Torrent Data'
         tsv(report_folder, data_headers, data_list, tsvname)
         
     else:
-        logfunc('No Libre Torrents Fast Resume data available')
+        logfunc('No Torrent Data available')
         
-    db.close()
+
 
 __artifacts__ = {
-        "LibretorrentFR": (
-                "Libre Torrent",
-                ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*','*/libretorrent.db*'),
-                get_libretorrentFR)
+        "TorrentData": (
+                "Torrent Data",
+                ('*/*.torrent'),
+                get_TorrentData)
 }
