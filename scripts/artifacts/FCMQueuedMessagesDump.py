@@ -181,7 +181,10 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
                         values, actual_types = blackboxprotobuf.decode_message(datos)
                         
                         values = (values['3'])
-                        smartspacecheck = values['3'].decode()
+                        try:
+                            smartspacecheck = values['3'].decode()
+                        except:
+                            smartspacecheck = values['3']
                         
                         if 'Smartspace' in smartspacecheck:
                             values = values['14']['2']['13']['2']
