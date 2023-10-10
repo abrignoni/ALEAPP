@@ -13,11 +13,8 @@ class PluginSpec:
     name: str
     module_name: str
     category: str
-    # targets: tuple  # todo: requires fixing every plugin
-    search: typing.Union[str, typing.Collection[str]]
+    search: str
     method: typing.Callable  # todo define callable signature
-    is_long_running: bool = False
-    is_required: bool = False
 
 
 class PluginLoader:
@@ -38,28 +35,20 @@ class PluginLoader:
     def _load_plugins(self):
         for py_file in self._plugin_path.glob("*.py"):
             mod = PluginLoader.load_module_lazy(py_file)
-            try:
-                mod_artifacts = mod.__artifacts__
-            except AttributeError:
+            mod_artifacts = getattr(mod, '__artifacts_v2__', None) or getattr(mod, '__artifacts__', None)
+            if mod_artifacts is None:
                 continue  # no artifacts defined in this plugin
 
-            try:
-                leapp_info = mod.__leapp_info__
-            except AttributeError:
-                leapp_info = {}
-            if not isinstance(leapp_info, typing.Mapping):
-                raise TypeError(f"__leap_info__ in {py_file} is not a mapping type")
+            version = 2 if '__artifacts_v2__' in dir(mod) else 1  # determine the version
 
-            for name, (category, search, func) in mod_artifacts.items():
-                #self._plugins.append(PluginSpec(name, search, func))
+            for name, artifact in mod_artifacts.items():
+                category, search, func_name = (
+                artifact.get('category'), artifact.get('paths'), artifact.get('function')) if version == 2 else artifact
+                func = getattr(mod, func_name) if version == 2 and isinstance(func_name, str) else func_name
                 if name in self._plugins:
                     raise KeyError("Duplicate plugin")
-                is_required = leapp_info.get(name, {}).get("is_required", False)
-                is_long_running = leapp_info.get(name, {}).get("is_long_running", False)
+                self._plugins[name] = PluginSpec(name, py_file.stem, category, search, func)
 
-                self._plugins[name] = PluginSpec(
-                    name, py_file.stem, category, search, func,
-                    is_required=is_required, is_long_running=is_long_running)
 
     @property
     def plugins(self) -> typing.Iterable[PluginSpec]:
