@@ -9,7 +9,7 @@ from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly, media_to_html
 
-def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_name = str(file_found)

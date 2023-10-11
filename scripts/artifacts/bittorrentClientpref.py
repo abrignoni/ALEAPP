@@ -8,7 +8,7 @@ def timestampcalc(timevalue):
     timestamp = (datetime.datetime.fromtimestamp(int(timevalue)/1000).strftime('%Y-%m-%d %H:%M:%S'))
     return timestamp
 
-def get_bittorrentClientpref(files_found, report_folder, seeker, wrap_text):
+def get_bittorrentClientpref(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)

@@ -11,7 +11,7 @@ def convertGeo(s):
     else:
         return (s)
 
-def get_googlemaplocation(files_found, report_folder, seeker, wrap_text):
+def get_googlemaplocation(files_found, report_folder, seeker, wrap_text, time_offset):
 
     source_file = ''
 

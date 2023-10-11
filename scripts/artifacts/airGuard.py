@@ -4,7 +4,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist
 
-def get_airGuard(files_found, report_folder, seeker, wrap_text):
+def get_airGuard(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_name = str(file_found)

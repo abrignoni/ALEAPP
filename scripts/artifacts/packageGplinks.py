@@ -3,7 +3,7 @@
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
+def get_packageGplinks(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list =[]
     
     for file_found in files_found:

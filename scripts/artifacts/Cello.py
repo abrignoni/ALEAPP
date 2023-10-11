@@ -17,7 +17,7 @@ def get_offline_path(files_found, blob_name):
             return file_found
     return ''
 
-def get_Cello(files_found, report_folder, seeker, wrap_text):
+def get_Cello(files_found, report_folder, seeker, wrap_text, time_offset):
     for file_found in files_found:
         
         if not os.path.basename(file_found) == 'cello.db': # skip -journal and other files

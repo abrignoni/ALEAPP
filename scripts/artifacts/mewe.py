@@ -111,7 +111,7 @@ def _parse_app_database(db_file, db_file_name, report_folder):
     db.close()
 
 
-def get_mewe(files_found, report_folder, seeker, wrap_text):
+def get_mewe(files_found, report_folder, seeker, wrap_text, time_offset):
     db_file = None
     db_file_name = None
     xml_file = None

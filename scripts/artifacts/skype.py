@@ -5,7 +5,7 @@ import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_skype(files_found, report_folder, seeker, wrap_text):
+def get_skype(files_found, report_folder, seeker, wrap_text, time_offset):
 
     user_id = None
     source_file = ''
