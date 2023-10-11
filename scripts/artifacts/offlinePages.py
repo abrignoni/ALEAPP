@@ -6,7 +6,7 @@ import pytz
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import timeline, logfunc, tsv, is_platform_windows, media_to_html
 
-def convert_utc_to_timezone(utc_time, time_offset):
+def convert_utc_int_to_timezone(utc_time, time_offset): 
     #fetch the timezone information
     timezone = pytz.timezone(time_offset)
     
