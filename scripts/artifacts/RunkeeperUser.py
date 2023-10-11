@@ -44,11 +44,11 @@ def get_run_user(files_found, report_folder, seeker, wrap_text, time_offset):
                     if i == "lastActive" or i == "lastWeightSyncTime" or i == "birthday":
                         time = child.attrib["value"]
                         time = int(time)
-                        user_info[i] = datetime.datetime.fromtimestamp(time / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                        user_info[i] = datetime.datetime.utcfromtimestamp(time / 1000).strftime('%Y-%m-%d %H:%M:%S')
                     elif i == "creationTime":
                         time = child.attrib["value"]
                         time = int(time)
-                        user_info[i] = datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')
+                        user_info[i] = datetime.datetime.utcfromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')
                     else:
                         user_info[i] = child.attrib["value"]
                 else:

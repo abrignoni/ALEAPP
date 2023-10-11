@@ -106,7 +106,7 @@ def get_airtagAndroid(files_found, report_folder, seeker, wrap_text, time_offset
             
         lastscan, types = blackboxprotobuf.decode_message(protodata)
         lastscan = (lastscan['1'])
-        lastscan = (datetime.datetime.fromtimestamp(int(lastscan)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+        lastscan = (datetime.datetime.utcfromtimestamp(int(lastscan)/1000).strftime('%Y-%m-%d %H:%M:%S'))
         
         report = ArtifactHtmlReport('Android Airtag Last Scan')
         report.start_artifact_report(report_folder, 'Android Airtag Last Scan')

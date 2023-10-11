@@ -62,7 +62,7 @@ def get_run_activities(files_found, report_folder, seeker, wrap_text, time_offse
             if usageentries_p > 0:
                 for row_p in positions:
                     coordinates.append((row_p[0], row_p[1]))
-                    time = datetime.datetime.fromtimestamp(row_p[2] / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                    time = datetime.datetime.utcfromtimestamp(row_p[2] / 1000).strftime('%Y-%m-%d %H:%M:%S')
                     coordinatesE.append((row_p[0], row_p[1], time))
                 place_lat = []
                 place_lon = []

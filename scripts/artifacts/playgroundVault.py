@@ -74,10 +74,10 @@ def get_playgroundVault(files_found, report_folder, seeker, wrap_text, time_offs
                 
                 if 'EIF' in filename:
                     utctime = filename.split('EIF')
-                    enctimestamp = datetime.datetime.fromtimestamp(int(utctime[1]) / 1000)
+                    enctimestamp = datetime.datetime.utcfromtimestamp(int(utctime[1]) / 1000)
                 elif 'EVF' in filename:
                     utctime = filename.split('EVF')
-                    enctimestamp = datetime.datetime.fromtimestamp(int(utctime[1]) / 1000)
+                    enctimestamp = datetime.datetime.utcfromtimestamp(int(utctime[1]) / 1000)
                 else:
                     enctimestamp = ''
                     

@@ -37,14 +37,14 @@ def get_nike_activMoments(files_found, report_folder, seeker, wrap_text, time_of
             id = row[0]
             start_time_utc = row[1]
             # convert ms to date
-            start_time_d = datetime.datetime.fromtimestamp(start_time_utc / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
-            start_hour = datetime.datetime.fromtimestamp(start_time_utc / 1000.0).strftime('%H:%M:%S')
+            start_time_d = datetime.datetime.utcfromtimestamp(start_time_utc / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
+            start_hour = datetime.datetime.utcfromtimestamp(start_time_utc / 1000.0).strftime('%H:%M:%S')
             start_hour = str(start_hour)
             timelineArray.append({'time': start_hour, 'text': 'Run started', 'type': 'fa-solid fa-person-running'})
             end_time_utc = row[2]
             # convert ms to date
-            end_time_d = datetime.datetime.fromtimestamp(end_time_utc / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
-            end_hour = datetime.datetime.fromtimestamp(end_time_utc / 1000.0).strftime('%H:%M:%S')
+            end_time_d = datetime.datetime.utcfromtimestamp(end_time_utc / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
+            end_hour = datetime.datetime.utcfromtimestamp(end_time_utc / 1000.0).strftime('%H:%M:%S')
             end_hour = str(end_hour)
             duration = row[3]
             # convert ms to minutes
@@ -62,7 +62,7 @@ def get_nike_activMoments(files_found, report_folder, seeker, wrap_text, time_of
                 for m_row in moment_rows:
                     time = m_row[2]
                     # convert ms to date
-                    time = datetime.datetime.fromtimestamp(time / 1000.0).strftime('%H:%M:%S')
+                    time = datetime.datetime.utcfromtimestamp(time / 1000.0).strftime('%H:%M:%S')
                     time = str(time)
                     if m_row[0] == 'halt':
                         if m_row[1] == 'auto_pause' or m_row[1] == 'pause':

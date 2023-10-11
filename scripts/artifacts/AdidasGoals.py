@@ -49,15 +49,15 @@ def get_adidas_goals(files_found, report_folder, seeker, wrap_text, time_offset)
             sport_types = row[10]
             created_at = row[11]
             created_at = int(created_at)
-            created_at = datetime.datetime.fromtimestamp(created_at / 1000).strftime('%Y-%m-%d %H:%M:%S')
+            created_at = datetime.datetime.utcfromtimestamp(created_at / 1000).strftime('%Y-%m-%d %H:%M:%S')
             updated_at = row[12]
             if updated_at:
                 updated_at = int(updated_at)
-                updated_at = datetime.datetime.fromtimestamp(updated_at / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                updated_at = datetime.datetime.utcfromtimestamp(updated_at / 1000).strftime('%Y-%m-%d %H:%M:%S')
             deleted_at = row[13]
             if deleted_at:
                 deleted_at = int(deleted_at)
-                deleted_at = datetime.datetime.fromtimestamp(deleted_at / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                deleted_at = datetime.datetime.utcfromtimestamp(deleted_at / 1000).strftime('%Y-%m-%d %H:%M:%S')
         data_list.append((id, metric, remote_id, user_id, version, target, recurrence, start_date, end_date, sport_types, created_at, updated_at, deleted_at))
 
         table_id = "AdidasGoals"

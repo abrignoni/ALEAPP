@@ -49,7 +49,7 @@ def get_tangomessage(files_found, report_folder, seeker, wrap_text, time_offset)
         data_list = []
         for row in all_rows:
             message = _decodeMessage(row[0], row[1]) 
-            timestamp = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
 
             data_list.append((timestamp, row[3], message))
 

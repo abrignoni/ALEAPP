@@ -26,9 +26,9 @@ def get_presisted(files_found, report_folder, seeker, wrap_text, time_offset):
         for i in attribute:
             if i in data:
                 if(i == "TokenCreationEpochInSecs"):
-                    user_info[i] = str(data[i]) + " (" + str(datetime.datetime.fromtimestamp(data[i])) + ")"
+                    user_info[i] = str(data[i]) + " (" + str(datetime.datetime.utcfromtimestamp(data[i])) + ")"
                 elif(i == "ExpiresInSecs"):
-                    user_info[i] = str(data[i]) + " (" + str(datetime.datetime.fromtimestamp(data[i] + data["TokenCreationEpochInSecs"])) + ")"
+                    user_info[i] = str(data[i]) + " (" + str(datetime.datetime.utcfromtimestamp(data[i] + data["TokenCreationEpochInSecs"])) + ")"
                 else:
                     user_info[i] = data[i]
 

@@ -24,7 +24,7 @@ def get_Turbo_AppUsage(files_found, report_folder, seeker, wrap_text, time_offse
             count = len(timesplitter)
 
             for i in range(len(timesplitter)):
-                timestamp_split = datetime.datetime.fromtimestamp(int(timesplitter[i])/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
+                timestamp_split = datetime.datetime.utcfromtimestamp(int(timesplitter[i])/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
                 timestamp_split = timestamp_split.strip('0')
 
                 data_list.append((timestamp_split, app_name, file_found))

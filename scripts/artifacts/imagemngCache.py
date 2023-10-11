@@ -13,7 +13,7 @@ def get_imagemngCache(files_found, report_folder, seeker, wrap_text, time_offset
         #else:
         filename = basename(file_found)
         thumb = media_to_html(filename, files_found, report_folder)
-        last_modified_date = datetime.datetime.fromtimestamp(getmtime(file_found))
+        last_modified_date = datetime.datetime.utcfromtimestamp(getmtime(file_found))
         data_list.append((last_modified_date, thumb, filename, file_found))
     
     if len(data_list) > 0:

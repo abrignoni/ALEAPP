@@ -57,7 +57,7 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text, time_offset):
             for geo in polyline:
                 if i == 0:
                     # convert unix timestamp to datetime
-                    start_time = datetime.datetime.fromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                    start_time = datetime.datetime.utcfromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
                     start = '[' + str(geo['lat']) + ', ' + str(geo['lon']) + ']'
                     place_lat.append(geo['lat'])
                     place_lon.append(geo['lon'])
@@ -66,7 +66,7 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text, time_offset):
                 # last point
                 elif i == len(polyline) - 1:
                     # convert unix timestamp to datetime
-                    end_time = datetime.datetime.fromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                    end_time = datetime.datetime.utcfromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
                     end = '[' + str(geo['lat']) + ', ' + str(geo['lon']) + ']'
                     place_lat.append(geo['lat'])
                     place_lon.append(geo['lon'])
@@ -79,7 +79,7 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text, time_offset):
                         place_lat.append(geo['lat'])
                         place_lon.append(geo['lon'])
                     i += 1
-                time = datetime.datetime.fromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d')
+                time = datetime.datetime.utcfromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d')
                 coordinates.append([geo['lat'], geo['lon'], time])
 
             points = []

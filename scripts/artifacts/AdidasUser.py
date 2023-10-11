@@ -52,7 +52,7 @@ def get_adidas_user(files_found, report_folder, seeker, wrap_text, time_offset):
                 created_at = row[1]
                 #convert from timestamp to date
                 created_at = int(created_at)
-                created_at = datetime.datetime.fromtimestamp(created_at/1000).strftime('%Y-%m-%d %H:%M:%S')
+                created_at = datetime.datetime.utcfromtimestamp(created_at/1000).strftime('%Y-%m-%d %H:%M:%S')
             if row[2] == 'AvatarUrl':
                 image = row[1]
             if row[2] == 'MY_FITNESS_PAL_CONNECTED':
@@ -74,7 +74,7 @@ def get_adidas_user(files_found, report_folder, seeker, wrap_text, time_offset):
                 last_sync = row[1]
                 #convert from timestamp to date
                 last_sync = int(last_sync)
-                last_sync = datetime.datetime.fromtimestamp(last_sync/1000).strftime('%Y-%m-%d %H:%M:%S')
+                last_sync = datetime.datetime.utcfromtimestamp(last_sync/1000).strftime('%Y-%m-%d %H:%M:%S')
         data_list.append((user_id, name, height, weight, country, gender, email, created_at, '<img src="'+image+'" alt="'+image+'" width="50" height="50">', my_fitness_pal, garmin_connect, polar, last_sync))
 
         table_id = "AdidasUser"

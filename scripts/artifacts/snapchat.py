@@ -339,7 +339,7 @@ def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
             value = node.text
             
         if node.attrib['name'] in unix_stamps:
-            value = datetime.datetime.fromtimestamp(int(value)/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
+            value = datetime.datetime.utcfromtimestamp(int(value)/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
         else:
             pass
         

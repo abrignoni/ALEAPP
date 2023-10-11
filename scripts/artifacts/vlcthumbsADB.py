@@ -17,7 +17,7 @@ def get_vlcthumbsADB(files_found, report_folder, seeker, wrap_text, time_offset)
         filepath = str(Path(file_found).parents[1])
         
         modifiedtime = os.path.getmtime(file_found)
-        modifiedtime = (datetime.datetime.fromtimestamp(int(modifiedtime)).strftime('%Y-%m-%d %H:%M:%S'))
+        modifiedtime = (datetime.datetime.utcfromtimestamp(int(modifiedtime)).strftime('%Y-%m-%d %H:%M:%S'))
         
         thumb = media_to_html(filename, files_found, report_folder)
         

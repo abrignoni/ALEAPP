@@ -65,13 +65,13 @@ def get_map_activities(files_found, report_folder, seeker, wrap_text, time_offse
                 for row_p in positions:
                     if row_p[0]:
                         if i == 0:
-                            startTime = datetime.datetime.fromtimestamp(row_p[0] / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                            startTime = datetime.datetime.utcfromtimestamp(row_p[0] / 1000).strftime('%Y-%m-%d %H:%M:%S')
                             startOffset = row_p[5]
                         # last point
                         if i == usageentries_p - 1:
-                            endTime = datetime.datetime.fromtimestamp(row_p[0] / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                            endTime = datetime.datetime.utcfromtimestamp(row_p[0] / 1000).strftime('%Y-%m-%d %H:%M:%S')
                             endOffset = row_p[5]
-                        time_now = datetime.datetime.fromtimestamp(row_p[0] / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                        time_now = datetime.datetime.utcfromtimestamp(row_p[0] / 1000).strftime('%Y-%m-%d %H:%M:%S')
                         i += 1
                     if row_p[1]:
                         distance = row_p[1]
