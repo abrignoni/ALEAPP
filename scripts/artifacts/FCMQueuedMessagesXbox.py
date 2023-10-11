@@ -68,7 +68,7 @@ def process_payload(payload):
     return processed
 
 
-def get_fcm_xbox(files_found, report_folder, seeker, wrap_text):
+def get_fcm_xbox(files_found, report_folder, seeker, wrap_text, time_offset):
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     message_headers = ["FCM Key", "FCM Timestamp", "Conversation ID", "Message Timestamp", "Sender", "Text", "Content"]
     message_rows = []

@@ -32,7 +32,7 @@ Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms
 __contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
 
-def get_fcm_instagram(files_found, report_folder, seeker, wrap_text):
+def get_fcm_instagram(files_found, report_folder, seeker, wrap_text, time_offset):
     # we only need the input data dirs not every matching file
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
 

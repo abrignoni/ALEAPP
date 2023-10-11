@@ -10,7 +10,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly, logfunc, logdevinfo, checkabx, abxread
 
 
-def get_protonVPN(files_found, report_folder, seeker, wrap_text):
+def get_protonVPN(files_found, report_folder, seeker, wrap_text, time_offset):
 
 	for file_found in files_found:
 		file_found = str(file_found)

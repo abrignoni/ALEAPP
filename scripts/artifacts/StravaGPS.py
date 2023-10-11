@@ -27,7 +27,7 @@ def suppress_fitdecode_warnings(message, category, filename, lineno, file=None, 
 warnings.showwarning = suppress_fitdecode_warnings
 
 
-def get_gps(files_found, report_folder, seeker, wrap_text):
+def get_gps(files_found, report_folder, seeker, wrap_text, time_offset):
     logfunc("Processing data for Strava FIT Files")
     use_network = check_internet_connection()
     if use_network:

@@ -5,7 +5,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, logdevinfo, is_platform_windows
 
 
-def get_usagestatsVersion(files_found, report_folder, seeker, wrap_text):
+def get_usagestatsVersion(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     file_found = str(files_found[0])
 

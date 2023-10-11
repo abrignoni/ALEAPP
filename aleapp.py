@@ -28,6 +28,10 @@ def validate_args(args):
     if not os.path.exists(args.output_path):
         raise argparse.ArgumentError(None, 'OUTPUT folder does not exist! Run the program again.')
 
+    try:
+        timezone = pytz.timezone(args.timezone)
+    except pytz.UnknownTimeZoneError:
+      raise argparse.ArgumentError(None, 'Unknown timezone! Run the program again.')
 
 def main():
     parser = argparse.ArgumentParser(description='ALEAPP: iOS Logs, Events, and Protobuf Parser.')
@@ -39,6 +43,7 @@ def main():
     parser.add_argument('-o', '--output_path', required=False, action="store",
                         help='Path to base output folder (this must exist)')
     parser.add_argument('-i', '--input_path', required=False, action="store", help='Path to input file/folder')
+    parser.add_argument('-tz', '--timezone', required=False, action="store", default='UTC', type=str, help="Timezone name (e.g., 'America/New_York')")
     parser.add_argument('-w', '--wrap_text', required=False, action="store_false", default=True,
                         help='Do not wrap text for output of data files')
     parser.add_argument('-p', '--artifact_paths', required=False, action="store_true",
@@ -76,8 +81,9 @@ def main():
     extracttype = args.t
     wrap_text = args.wrap_text
     output_path = os.path.abspath(args.output_path)
-
-    # ios file system extractions contain paths > 260 char, which causes problems
+    time_offset = args.timezone
+    
+    # Android file system extractions contain paths > 260 char, which causes problems
     # This fixes the problem by prefixing \\?\ on each windows path.
     if is_platform_windows():
         if input_path[1] == ':' and extracttype =='fs': input_path = '\\\\?\\' + input_path.replace('/', '\\')
@@ -90,12 +96,12 @@ def main():
     except NameError:
         casedata = {}
 
-    crunch_artifacts(list(loader.plugins), extracttype, input_path, out_params, 1, wrap_text, loader, casedata)
+    crunch_artifacts(list(loader.plugins), extracttype, input_path, out_params, 1, wrap_text, loader, casedata, time_offset)
 
 
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, ratio, wrap_text,
-        loader: plugin_loader.PluginLoader, casedata):
+        loader: plugin_loader.PluginLoader, casedata, time_offset):
     start = process_time()
     start_wall = perf_counter()
  
@@ -138,6 +144,7 @@ def crunch_artifacts(
     log = open(os.path.join(out_params.report_folder_base, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
     nl = '\n' #literal in order to have new lines in fstrings that create text files
     log.write(f'Extraction/Path selected: {input_path}<br><br>')
+    log.write(f'Timezone selected: {time_offset}<br><br>')
     
     categories_searched = 0
     
@@ -170,7 +177,7 @@ def crunch_artifacts(
                     logfunc('Error was {}'.format(str(ex)))
                     continue  # cannot do work
             try:
-                plugin.method(files_found, category_folder, seeker, wrap_text)
+                plugin.method(files_found, category_folder, seeker, wrap_text, time_offset)
             except Exception as ex:
                 logfunc('Reading {} artifact had errors!'.format(plugin.name))
                 logfunc('Error was {}'.format(str(ex)))

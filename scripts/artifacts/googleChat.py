@@ -14,7 +14,7 @@ import blackboxprotobuf
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_googleChat(files_found, report_folder, seeker, wrap_text):
+def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_found = str(file_found)  

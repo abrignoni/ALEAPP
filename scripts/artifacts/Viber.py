@@ -4,7 +4,7 @@ from hashlib import sha256
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_Viber(files_found, report_folder, seeker, wrap_text):
+def get_Viber(files_found, report_folder, seeker, wrap_text, time_offset):
 
     source_file_messages = ''
     source_file_data = ''

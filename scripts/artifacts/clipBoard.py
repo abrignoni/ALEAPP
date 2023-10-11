@@ -27,7 +27,7 @@ def triage_text(file_found):
     
     return str(output.rstrip())
 
-def get_clipBoard(files_found, report_folder, seeker, wrap_text):
+def get_clipBoard(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     for file_found in files_found:
         if file_found.endswith('.DS_Store'):

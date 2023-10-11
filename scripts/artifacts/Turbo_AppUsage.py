@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
-def get_Turbo_AppUsage(files_found, report_folder, seeker, wrap_text):
+def get_Turbo_AppUsage(files_found, report_folder, seeker, wrap_text, time_offset):
     
     data_list = []
     splits = []

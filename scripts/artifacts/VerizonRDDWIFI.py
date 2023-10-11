@@ -12,7 +12,7 @@ import json
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db
 
-def get_rdd_wifi(files_found, report_folder, seeker, wrap_text):
+def get_rdd_wifi(files_found, report_folder, seeker, wrap_text, time_offset):
 
     source_file = ''
     for file_found in files_found:
