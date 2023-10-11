@@ -70,9 +70,9 @@ def get_garminFB(files_found, report_folder, seeker, wrap_text, time_offset):
                         if k == "last_refresh" or k == "data_access_expiration_time" or k == "expires_at":
                             #check if the timestamp is in milliseconds
                             if len(str(v)) == 13:
-                                v = datetime.datetime.fromtimestamp(v / 1000.0)
+                                v = datetime.datetime.utcfromtimestamp(v / 1000.0)
                             else:
-                                v = datetime.datetime.fromtimestamp(v)
+                                v = datetime.datetime.utcfromtimestamp(v)
                         data_list.append((k, v))
                 elif key == "com.facebook.ProfileManager.CachedProfile":
                     profile = json.loads(value)

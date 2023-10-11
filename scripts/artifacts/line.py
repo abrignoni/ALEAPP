@@ -102,7 +102,7 @@ def get_line(files_found, report_folder, seeker, wrap_text, time_offset):
                 attachment = None
             elif 'content' in row[6]:
                 attachment = None
-            created_time = datetime.datetime.fromtimestamp(int(row[4])).strftime('%Y-%m-%d %H:%M:%S')
+            created_time = datetime.datetime.utcfromtimestamp(int(row[4])).strftime('%Y-%m-%d %H:%M:%S')
             data_list.append((created_time, row[2], to_id, row[7], thread_id, row[3], attachment))
             
         report.write_artifact_data_table(data_headers, data_list, file_found)
@@ -161,8 +161,8 @@ def get_line(files_found, report_folder, seeker, wrap_text, time_offset):
         data_headers = ('Start Time', 'End Time', 'To ID', 'From ID', 'Direction', 'Call Type') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
-            start_time = datetime.datetime.fromtimestamp(int(row[1])).strftime('%Y-%m-%d %H:%M:%S')
-            end_time = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+            start_time = datetime.datetime.utcfromtimestamp(int(row[1])).strftime('%Y-%m-%d %H:%M:%S')
+            end_time = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
             data_list.append((start_time, end_time, row[3], row[4], row[0], row[5]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)

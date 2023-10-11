@@ -45,8 +45,8 @@ def get_textnow(files_found, report_folder, seeker, wrap_text, time_offset):
                 phone_number_to = row[0]
             else:
                 phone_number_from = row[0]
-            starttime = datetime.datetime.fromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
-            endtime = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+            starttime = datetime.datetime.utcfromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
+            endtime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
             data_list.append((starttime, endtime, phone_number_from, phone_number_to, row[1]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
@@ -113,7 +113,7 @@ def get_textnow(files_found, report_folder, seeker, wrap_text, time_offset):
         data_headers = ('Send Timestamp','Message ID','From ID', 'To ID', 'Direction', 'Message', 'Read',  'Attachment') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
-            sendtime = datetime.datetime.fromtimestamp(int(row[5])).strftime('%Y-%m-%d %H:%M:%S')
+            sendtime = datetime.datetime.utcfromtimestamp(int(row[5])).strftime('%Y-%m-%d %H:%M:%S')
 
             data_list.append((sendtime, row[7], row[0], row[1], row[2], row[3], row[4],  row[6]))
             

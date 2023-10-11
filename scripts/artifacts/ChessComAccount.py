@@ -35,7 +35,7 @@ def get_ChessComAccount(files_found, report_folder, seeker, wrap_text, time_offs
         value = item.text
         if key in ["pref_username", "pref_email", "pref_member_since"]:
             if key == "pref_member_since":
-                value = datetime.datetime.fromtimestamp(int(value)).isoformat(sep=" ", timespec="seconds")
+                value = datetime.datetime.utcfromtimestamp(int(value)).isoformat(sep=" ", timespec="seconds")
             data_list.append([key, value])
 
     # Reporting

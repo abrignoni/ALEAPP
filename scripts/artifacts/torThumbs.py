@@ -14,7 +14,7 @@ def get_torThumbs(files_found, report_folder, seeker, wrap_text, time_offset):
         
         data_file_real_path = file_found
         modifiedtime = os.path.getmtime(file_found)
-        modifiedtime = (datetime.datetime.fromtimestamp(int(modifiedtime)).strftime('%Y-%m-%d %H:%M:%S'))
+        modifiedtime = (datetime.datetime.utcfromtimestamp(int(modifiedtime)).strftime('%Y-%m-%d %H:%M:%S'))
         
         filename = os.path.basename(file_found)
         location = os.path.dirname(file_found)

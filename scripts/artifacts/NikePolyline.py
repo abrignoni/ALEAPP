@@ -62,10 +62,10 @@ def get_nike_polyline(files_found, report_folder, seeker, wrap_text, time_offset
             place_lon = []
             start_time_utc = row[1]
             # convert ms to date
-            start_time_utc = datetime.datetime.fromtimestamp(start_time_utc / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
+            start_time_utc = datetime.datetime.utcfromtimestamp(start_time_utc / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
             end_time_utc = row[2]
             # convert ms to date
-            end_time_utc = datetime.datetime.fromtimestamp(end_time_utc / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
+            end_time_utc = datetime.datetime.utcfromtimestamp(end_time_utc / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
             duration = row[3]
             # convert ms to minutes
             duration = duration / 60000

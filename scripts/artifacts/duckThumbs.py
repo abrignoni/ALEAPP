@@ -15,7 +15,7 @@ def get_duckThumbs(files_found, report_folder, seeker, wrap_text, time_offset):
         utctime = int(Path(file_found).stem)
         filepath = str(Path(file_found).parents[1])
         
-        timestamp = (datetime.datetime.fromtimestamp(utctime/1000).strftime('%Y-%m-%d %H:%M:%S'))
+        timestamp = (datetime.datetime.utcfromtimestamp(utctime/1000).strftime('%Y-%m-%d %H:%M:%S'))
                 
         thumb = media_to_html(filename, files_found, report_folder)
         
