@@ -1,3 +1,18 @@
+__artifacts_v2__ = {
+    "Cast": {
+        "name": "Cast",
+        "description": "Parses Cast device information",
+        "author": "@deagler4n6",
+        "version": "0.0.2",
+        "date": "2021-01-11",
+        "requirements": "none",
+        "category": "Cast",
+        "notes": "2023-10-12 - Updated by @KevinPagano3",
+        "paths": ('*/com.google.android.gms/databases/cast.db*'),
+        "function": "get_Cast"
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -6,50 +21,59 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_
 
 def get_Cast(files_found, report_folder, seeker, wrap_text, time_offset):
     
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
-    cursor = db.cursor()
-    cursor.execute('''
-    SELECT
-        case last_published_timestamp_millis
-            when 0 then ''
-            else datetime(last_published_timestamp_millis/1000, 'unixepoch')
-        end as "Last Published Timestamp",
-        device_id,
-        capabilities,
-        device_version,
-        friendly_name,
-        model_name,
-        receiver_metrics_id,
-        service_instance_name,
-        service_address,
-        service_port,
-        supported_criteria,
-        rcn_enabled_status,
-        hotspot_bssid,
-        cloud_devcie_id,
-        case last_discovered_timestamp_millis
-            when 0 then ''
-            else datetime(last_discovered_timestamp_millis/1000, 'unixepoch')
-        end as "Last Discovered Timestamp",
-        case last_discovered_by_ble_timestamp_millis
-            when 0 then ''
-            else datetime(last_discovered_by_ble_timestamp_millis/1000, 'unixepoch')
-        end as "Last Discovered By BLE Timestamp"
-    from DeviceInfo
-    ''')
+    data_list = []
+    
+    for file_found in files_found:
+        file_found = str(file_found)
+        
+        if file_found.endswith('cast.db'):
+            db = open_sqlite_db_readonly(file_found)
+            cursor = db.cursor()
+            cursor.execute('''
+            SELECT
+            case last_published_timestamp_millis
+                when 0 then ''
+                else datetime(last_published_timestamp_millis/1000, 'unixepoch')
+            end as "Last Published Timestamp",
+            device_id,
+            capabilities,
+            device_version,
+            friendly_name,
+            model_name,
+            receiver_metrics_id,
+            service_instance_name,
+            service_address,
+            service_port,
+            supported_criteria,
+            rcn_enabled_status,
+            hotspot_bssid,
+            cloud_devcie_id,
+            case last_discovered_timestamp_millis
+                when 0 then ''
+                else datetime(last_discovered_timestamp_millis/1000, 'unixepoch')
+            end as "Last Discovered Timestamp",
+            case last_discovered_by_ble_timestamp_millis
+                when 0 then ''
+                else datetime(last_discovered_by_ble_timestamp_millis/1000, 'unixepoch')
+            end as "Last Discovered By BLE Timestamp"
+            from DeviceInfo
+            ''')
 
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+            if usageentries > 0:
+                for row in all_rows:
+                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],file_found))
+            db.close()
+        else:
+            continue # Skip all other files
+    
+    if data_list:
         report = ArtifactHtmlReport('Cast')
         report.start_artifact_report(report_folder, 'Cast')
         report.add_script()
-        data_headers = ('Last Published Timestamp','Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID','Last Discovered Timestamp','Last Discovered By BLE Timestamp') 
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15]))
-
+        data_headers = ('Last Published Timestamp','Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID','Last Discovered Timestamp','Last Discovered By BLE Timestamp','Source') 
+        
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
@@ -60,12 +84,3 @@ def get_Cast(files_found, report_folder, seeker, wrap_text, time_offset):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Cast data available')
-    
-    db.close()
-
-__artifacts__ = {
-        "Cast": (
-                "Cast",
-                ('*/com.google.android.gms/databases/cast.db'),
-                get_Cast)
-}
