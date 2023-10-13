@@ -1,3 +1,18 @@
+__artifacts_v2__ = {
+    "wellbeing": {
+        "name": "Digital Wellbeing",
+        "description": "Parses Digital Wellbeing",
+        "author": "@AlexisBrignoni",
+        "version": "0.0.1",
+        "date": "2020-02-2",
+        "requirements": "none",
+        "category": "Digital Wellbeing",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
+        "function": "get_wellbeing"
+    }
+}
+
 import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
@@ -104,12 +119,3 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Digital Wellbeing - URL Events data available')
-    
-    
-        
-__artifacts__ = {
-        "wellbeing": (
-                "Digital Wellbeing",
-                ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
-                get_wellbeing)
-}
