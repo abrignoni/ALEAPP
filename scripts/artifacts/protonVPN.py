@@ -43,7 +43,7 @@ def get_protonVPN(files_found, report_folder, seeker, wrap_text, time_offset):
 						logdevinfo(f'Country: {elem.text}')
 
 					if (elem.attrib.get('name')) == 'ipAddressCheckTimestamp':
-						timestamp =  datetime.datetime.fromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
+						timestamp =  datetime.datetime.utcfromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
 						logdevinfo(f'Last IP Check Time : {timestamp}')
 		
 			if data_list:

@@ -58,8 +58,8 @@ def get_calllogs(files_found, report_folder, seeker, wrap_text, time_offset):
                     callerId = row[0]                                   
                 else:
                     calleeId = row[0]
-                starttime = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
-                endtime = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+                starttime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+                endtime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
                 data_list.append((callerId, calleeId, starttime, endtime, row[3], row[4]))
 
             report.write_artifact_data_table(data_headers, data_list, file_found)

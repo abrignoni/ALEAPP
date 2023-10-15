@@ -68,7 +68,7 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text, time_off
                 
                 for x in data['1']:
     
-                    convo_timestamp = str(datetime.fromtimestamp(x['timestamp1']/1000)) + '<br>'
+                    convo_timestamp = str(datetime.utcfromtimestamp(x['timestamp1']/1000)) + '<br>'
                     convo_transcript = x['convo_text'] + '<br><br>'
                     conversation += convo_timestamp + convo_transcript
                     

@@ -45,7 +45,7 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text, time
             if splits[0] == 'Timestamp':
                 key = 'Timestamp'
                 timestamp_value = splits[1].strip()
-                timestamp_value = datetime.datetime.fromtimestamp(int(timestamp_value)).strftime('%Y-%m-%d %H:%M:%S')
+                timestamp_value = datetime.datetime.utcfromtimestamp(int(timestamp_value)).strftime('%Y-%m-%d %H:%M:%S')
                 
             if splits[0] == 'LinkKey':
                 key = 'LinkKey'
@@ -57,7 +57,7 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text, time
         report = ArtifactHtmlReport('Bluetooth Connections')
         report.start_artifact_report(report_folder, f'Bluetooth Connections')
         report.add_script()
-        data_headers = ('First Connected Timestamp','Device Name','MAC Address','Link Key')
+        data_headers = ('Last Connected Timestamp','Device Name','MAC Address','Link Key')
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         

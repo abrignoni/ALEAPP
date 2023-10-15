@@ -298,7 +298,7 @@ def get_AVG(files_found, report_folder, seeker, wrap_text, time_offset):
                 if append == '':
                     if basename(files) in metaDataDict:
                         origFilePath = metaDataDict[basename(files)]["Original File Path"]
-                        encryptedDate = datetime.datetime.fromtimestamp(int(metaDataDict[basename(files)]["Encrypted Date"]) / 1000)
+                        encryptedDate = datetime.datetime.utcfromtimestamp(int(metaDataDict[basename(files)]["Encrypted Date"]) / 1000)
                         fileSize = metaDataDict[basename(files)]["File Size"]
                     else:
                         origFilePath, encryptedDate, fileSize = "No Data"

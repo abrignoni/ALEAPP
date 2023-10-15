@@ -163,11 +163,11 @@ def get_appops(files_found, report_folder, seeker, wrap_text, time_offset):
                         pu = subelem3.attrib.get('pu')
                         id = subelem3.attrib.get('id')
                         if timesr:
-                            timestampr = (datetime.datetime.fromtimestamp(int(timesr)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            timestampr = (datetime.datetime.utcfromtimestamp(int(timesr)/1000).strftime('%Y-%m-%d %H:%M:%S'))
                         else:
                             timestampr = ''
                         if timest:	
-                            timestampt = (datetime.datetime.fromtimestamp(int(timest)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            timestampt = (datetime.datetime.utcfromtimestamp(int(timest)/1000).strftime('%Y-%m-%d %H:%M:%S'))
                         else:
                             timestampt = ''
                         if not pp:
@@ -218,27 +218,27 @@ def get_appops(files_found, report_folder, seeker, wrap_text, time_offset):
                         
                         d = subelem2.attrib.get('d')
                         if times_tp:
-                            timestamp_tp = (datetime.datetime.fromtimestamp(int(times_tp)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            timestamp_tp = (datetime.datetime.utcfromtimestamp(int(times_tp)/1000).strftime('%Y-%m-%d %H:%M:%S'))
                         else:
                             timestamp_tp = ''
                         if times_tc:
-                            timestamp_tc = (datetime.datetime.fromtimestamp(int(times_tc)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            timestamp_tc = (datetime.datetime.utcfromtimestamp(int(times_tc)/1000).strftime('%Y-%m-%d %H:%M:%S'))
                         else:
                             timestamp_tc = ''
                         if times_tb:
-                            timestamp_tb = (datetime.datetime.fromtimestamp(int(times_tb)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            timestamp_tb = (datetime.datetime.utcfromtimestamp(int(times_tb)/1000).strftime('%Y-%m-%d %H:%M:%S'))
                         else:
                             timestamp_tb = ''
                         if times_tf:
-                            timestamp_tf = (datetime.datetime.fromtimestamp(int(times_tf)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            timestamp_tf = (datetime.datetime.utcfromtimestamp(int(times_tf)/1000).strftime('%Y-%m-%d %H:%M:%S'))
                         else:
                             timestamp_tf = '' 
                         if times_tfs:
-                            timestamp_tfs = (datetime.datetime.fromtimestamp(int(times_tfs)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            timestamp_tfs = (datetime.datetime.utcfromtimestamp(int(times_tfs)/1000).strftime('%Y-%m-%d %H:%M:%S'))
                         else:
                             timestamp_tfs = ''
                         if times_tt:
-                            timestamp_tt = (datetime.datetime.fromtimestamp(int(times_tt)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                            timestamp_tt = (datetime.datetime.utcfromtimestamp(int(times_tt)/1000).strftime('%Y-%m-%d %H:%M:%S'))
                         else:
                             timestamp_tt = ''                
                         if not pp:

@@ -87,8 +87,8 @@ def get_skype(files_found, report_folder, seeker, wrap_text, time_offset):
                         to_id = row[1]
                     else:
                         to_id = row[0]
-                starttime = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
-                endtime = datetime.datetime.fromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
+                starttime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+                endtime = datetime.datetime.utcfromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
                 data_list.append((starttime, endtime, row[5], to_id, row[4]))
                 
             report.write_artifact_data_table(data_headers, data_list, file_found)
@@ -149,7 +149,7 @@ def get_skype(files_found, report_folder, seeker, wrap_text, time_offset):
                         to_id = row[1]
                     else:
                         to_id = row[0]
-                sendtime = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+                sendtime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
 
                 data_list.append((sendtime, thread_id,  row[3], row[5], row[6], to_id, row[4]))
                 

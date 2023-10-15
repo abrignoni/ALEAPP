@@ -30,7 +30,7 @@ def get_cachelocation(files_found, report_folder, seeker, wrap_text, time_offset
                 timestamp = readtime/1000
                 i = i + 1
                 
-                starttime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                starttime = datetime.datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
                 data_list.append((accuracy, confidence, latitude, longitude, starttime))
             cacheFile.close()
 

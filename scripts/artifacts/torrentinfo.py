@@ -7,7 +7,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows 
 
 def timestampcalc(timevalue):
-    timestamp = (datetime.datetime.fromtimestamp(int(timevalue)).strftime('%Y-%m-%d %H:%M:%S'))
+    timestamp = (datetime.datetime.utcfromtimestamp(int(timevalue)).strftime('%Y-%m-%d %H:%M:%S'))
     return timestamp
 
 def get_torrentinfo(files_found, report_folder, seeker, wrap_text, time_offset):

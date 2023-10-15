@@ -30,7 +30,7 @@ def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text, time_offset
                         for subelem3 in subelem2:
                             test = subelem3.attrib.get('t', 0)
                             if int(test) > 0:
-                                timestamp = (datetime.datetime.fromtimestamp(int(subelem3.attrib['t'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                                timestamp = (datetime.datetime.utcfromtimestamp(int(subelem3.attrib['t'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
                             else:
                                 timestamp = ''
                             data_list.append((timestamp, pkg))

@@ -16,20 +16,20 @@ def get_persistentProp(files_found, report_folder, seeker, wrap_text, time_offse
                 clean = line.strip()
                 if clean.startswith('persist.sys.boot.reason.historyDreboot'):
                     parts = clean.split(',')
-                    utctimestamp = (datetime.datetime.fromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
+                    utctimestamp = (datetime.datetime.utcfromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
                     description = parts[0]
                     data_list.append((utctimestamp, description))
                     
                 if clean.startswith('reboot,factory_reset,'):
                     parts = clean.split(',')
-                    utctimestamp = (datetime.datetime.fromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
+                    utctimestamp = (datetime.datetime.utcfromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
                     description = parts[0] + ' ' + parts[1]
                     data_list.append((utctimestamp, description))
                     
                 if clean.startswith('reboot'):
                     parts = clean.split(',')
                     if len(parts) == 2:
-                        utctimestamp = (datetime.datetime.fromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
+                        utctimestamp = (datetime.datetime.utcfromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
                         description = parts[0]
                         data_list.append((utctimestamp, description))
                             

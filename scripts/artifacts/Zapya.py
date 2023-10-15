@@ -32,7 +32,7 @@ def get_Zapya(files_found, report_folder, seeker, wrap_text, time_offset):
                 direction = 'Incoming'
                 from_id = row[0]
             
-            createtime = datetime.datetime.fromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')            
+            createtime = datetime.datetime.utcfromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')            
             data_list.append((row[0], row[1], direction, from_id, to_id, createtime, row[4], row[5]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)

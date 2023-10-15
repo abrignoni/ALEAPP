@@ -40,14 +40,14 @@ def get_sleep_api(files_found, report_folder, seeker, wrap_text, time_offset):
             start_time = i['dailySleepDTO']['sleepStartTimestampGMT']
             if start_time is not None:
                 # Convert start time to hours
-                start_time = datetime.datetime.fromtimestamp(start_time/1000).strftime('%H:%M:%S')
+                start_time = datetime.datetime.utcfromtimestamp(start_time/1000).strftime('%H:%M:%S')
             else:
                 start_time = 'N/A'
             # Get end time
             end_time = i['dailySleepDTO']['sleepEndTimestampGMT']
             if end_time is not None:
                 # Convert end time to hours
-                end_time = datetime.datetime.fromtimestamp(end_time/1000).strftime('%H:%M:%S')
+                end_time = datetime.datetime.utcfromtimestamp(end_time/1000).strftime('%H:%M:%S')
             else:
                 end_time = 'N/A'
             # Get deep sleep time
