@@ -20,4 +20,5 @@ fitdecode==0.10.0
 bencoding
 geopy==2.3.0
 xlsxwriter==3.1.1
+pytz
 
