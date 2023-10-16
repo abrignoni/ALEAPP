@@ -19,37 +19,70 @@ def get_googleMapsSearches(files_found, report_folder, seeker, wrap_text, time_o
         longitude = ''
         for x, y in values.items():
             if x == '1':
-                for things in y:
-                    timeofsearch = things['2']
-                    place = things.get('4','')
+                if isinstance(y, list):
+                    for things in y:
+                        timeofsearch = things['2']
+                        place = things.get('4','')
+                        if place != '':
+                            if things['4'].get('5', '') != '':
+                                latitude = (things['4']['5']['3'])
+                                longitude = (things['4']['5']['4'])
+                            elif things['4'].get('6','') != '':	
+                                latitude = (things['4']['6']['1']['3'])
+                                longitude = (things['4']['6']['1']['2'])
+                            else:
+                                latitude = ''
+                                longitude = ''
+                                
+                        url = things.get('11', 'No URL')
+                        timeofsearch = datetime.fromtimestamp(timeofsearch/1000000, tz=timezone.utc)
+                        timeofsearch = convert_utc_human_to_timezone(timeofsearch, time_offset)
+                        if isinstance(place, str):
+                            pass
+                        else:
+                            place = (place['1'].decode())
+                        
+                        if isinstance(url, str):
+                            pass
+                        else:
+                            url = url.decode()
+                        
+                        data_list.append((timeofsearch,place,latitude,longitude,url))
+                        latitude = ''
+                        longitude = ''
+                elif isinstance(y, dict):
+                    timeofsearch = y['2']
+                    place = y.get('4','')
                     if place != '':
-                        if things['4'].get('5', '') != '':
-                            latitude = (things['4']['5']['3'])
-                            longitude = (things['4']['5']['4'])
+                        if y['4'].get('5', '') != '':
+                            latitude = (y['4']['5']['3'])
+                            longitude = (y['4']['5']['4'])
                         elif things['4'].get('6','') != '':	
-                            latitude = (things['4']['6']['1']['3'])
-                            longitude = (things['4']['6']['1']['2'])
+                            latitude = (y['4']['6']['1']['3'])
+                            longitude = (y['4']['6']['1']['2'])
                         else:
                             latitude = ''
                             longitude = ''
                             
-                    url = things.get('11', 'No URL')
+                    url = y.get('11', 'No URL')
                     timeofsearch = datetime.fromtimestamp(timeofsearch/1000000, tz=timezone.utc)
                     timeofsearch = convert_utc_human_to_timezone(timeofsearch, time_offset)
                     if isinstance(place, str):
                         pass
                     else:
                         place = (place['1'].decode())
-                    
+                        
                     if isinstance(url, str):
                         pass
                     else:
                         url = url.decode()
-                    
+                        
                     data_list.append((timeofsearch,place,latitude,longitude,url))
                     latitude = ''
                     longitude = ''
-                    
+                        
+                        
+                        
         if len(data_list) > 0:
             report = ArtifactHtmlReport('Google Maps Searches')
             report.start_artifact_report(report_folder, f'Google Maps Searches - {counter}')
