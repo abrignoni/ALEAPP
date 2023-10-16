@@ -9,6 +9,7 @@ import sys
 import simplekml
 import magic
 import shutil
+import pytz
 from pathlib import Path
 
 from bs4 import BeautifulSoup
@@ -36,6 +37,37 @@ class OutputParameters:
 
         os.makedirs(os.path.join(self.report_folder_base, 'Script Logs'))
         os.makedirs(self.temp_folder)
+
+def convert_time_obj_to_utc(ts):
+    timestamp = ts.replace(tzinfo=timezone.utc)
+    return timestamp
+
+def convert_utc_human_to_timezone(utc_time, time_offset): 
+    #fetch the timezone information
+    timezone = pytz.timezone(time_offset)
+    
+    #convert utc to timezone
+    timezone_time = utc_time.astimezone(timezone)
+    
+    #return the converted value
+    return timezone_time
+
+def timestampsconv(webkittime):
+    unix_timestamp = webkittime + 978307200
+    finaltime = datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
+    return(finaltime)
+
+def convert_ts_human_to_utc(ts): #This is for timestamp in human form
+    if '.' in ts:
+        ts = ts.split('.')[0]
+        
+    dt = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S') #Make it a datetime object
+    timestamp = dt.replace(tzinfo=timezone.utc) #Make it UTC
+    return timestamp
+
+def convert_ts_int_to_utc(ts): #This int timestamp to human format & utc
+    timestamp = datetime.fromtimestamp(ts, tz=timezone.utc)
+    return timestamp
 
 
 def is_platform_windows():
@@ -739,3 +771,4 @@ def check_internet_connection():
     except:
         logfunc("Internet connection is not available.")
         return False
+    
