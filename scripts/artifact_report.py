@@ -4,7 +4,6 @@ from scripts.html_parts import *
 from scripts.ilapfuncs import is_platform_windows
 from scripts.version_info import aleapp_version
 
-
 class ArtifactHtmlReport:
 
     def __init__(self, artifact_name, artifact_category=''):
@@ -12,7 +11,7 @@ class ArtifactHtmlReport:
         self.report_file_path = ''
         self.script_code = ''
         self.artifact_name = artifact_name
-        self.artifact_category = artifact_category  # unused
+        self.artifact_category = artifact_category # unused
 
     def __del__(self):
         if self.report_file:
@@ -24,12 +23,12 @@ class ArtifactHtmlReport:
         self.report_file.write(page_header.format(f'ALEAPP - {self.artifact_name} report'))
         self.report_file.write(body_start.format(f'ALEAPP {aleapp_version}'))
         self.report_file.write(body_sidebar_setup)
-        self.report_file.write(body_sidebar_dynamic_data_placeholder)  # placeholder for sidebar data
+        self.report_file.write(body_sidebar_dynamic_data_placeholder) # placeholder for sidebar data
         self.report_file.write(body_sidebar_trailer)
         self.report_file.write(body_main_header)
         self.report_file.write(body_main_data_title.format(f'{self.artifact_name} report', artifact_description))
-        self.report_file.write(body_spinner)  # Spinner till data finishes loading
-        # self.report_file.write(body_infinite_loading_bar) # Not working!
+        self.report_file.write(body_spinner) # Spinner till data finishes loading
+        #self.report_file.write(body_infinite_loading_bar) # Not working!
 
     def add_script(self, script=''):
         '''Adds a default script or the script supplied'''
@@ -38,9 +37,20 @@ class ArtifactHtmlReport:
         else:
             self.script_code += default_responsive_table_script + nav_bar_script_footer
 
-    def write_artifact_data_table(self, data_headers, data_list, source_path,
-                                  write_total=True, write_location=True, html_escape=True, cols_repeated_at_bottom=True,
-                                  table_responsive=True, table_style='', table_id='dtBasicExample', html_no_escape=[]):
+    def write_artifact_data_table(
+        self,
+        data_headers,
+        data_list,
+        source_path,
+        write_total=True,
+        write_location=True,
+        html_escape=True,
+        cols_repeated_at_bottom=True,
+        table_responsive=True,
+        table_style='',
+        table_id='dtBasicExample',
+        html_no_escape=[]
+    ):
         ''' Writes info about data, then writes the table to html file
             Parameters
             ----------
@@ -63,7 +73,7 @@ class ArtifactHtmlReport:
             table_style    : Specify table style like "width: 100%;"
 
             table_id       : Specify an identifier string, which will be referenced in javascript
-            
+
             html_no_escape  : if html_escape=True, list of columns not to escape
         '''
         if (not self.report_file):
