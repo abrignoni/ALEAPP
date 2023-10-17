@@ -17,8 +17,9 @@ import os
 import sqlite3
 import textwrap
 
+from datetime import datetime, timezone
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, kmlgen, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, kmlgen, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -75,7 +76,9 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_activity.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24],row[25],row[26],row[27],file_found))
+                    log_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+                    time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[1]),time_offset)
+                    data_list_activity.append((log_date,time_create,row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24],row[25],row[26],row[27],file_found))
             db.close() 
 
         if file_found.endswith('device_database'):
@@ -95,7 +98,8 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_devices.append((row[0],row[1],row[2],row[3],row[4],file_found))
+                    last_sync = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+                    data_list_devices.append((last_sync,row[1],row[2],row[3],row[4],file_found))
             db.close()
             
         if file_found.endswith('exercise_db'):
@@ -127,11 +131,12 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
                     all_rows_exercise = cursor.fetchall()
                     usageentries_all = len(all_rows_exercise)
                     if usageentries_all > 0:
-                        data_list_current =[]
+                        data_list_current = []
                         data_headers = ('Timestamp','Label','Latitude','Longitude','Accuracy','Altitude','Speed','Pace','Session_ID','Source')
                         for row_exercise in all_rows_exercise:
-                            data_list_exercises.append((row_exercise[0],row_exercise[1],row_exercise[2],row_exercise[3],row_exercise[4],row_exercise[5],row_exercise[6],row_exercise[7],row_exercise[8],file_found))
-                            data_list_current.append((row_exercise[0],row_exercise[1],row_exercise[2],row_exercise[3],row_exercise[4],row_exercise[5],row_exercise[6],row_exercise[7],row_exercise[8],file_found))
+                            timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(row_exercise[0]),time_offset)
+                            data_list_exercises.append((timestamp,row_exercise[1],row_exercise[2],row_exercise[3],row_exercise[4],row_exercise[5],row_exercise[6],row_exercise[7],row_exercise[8],file_found))
+                            data_list_current.append((timestamp,row_exercise[1],row_exercise[2],row_exercise[3],row_exercise[4],row_exercise[5],row_exercise[6],row_exercise[7],row_exercise[8],file_found))
                         
                         kmlactivity = f'Fitbit Map - Session ID {sessionID}'
                         kmlgen(report_folder, kmlactivity, data_list_current, data_headers)
@@ -153,7 +158,8 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_heart.append((row[0],row[1],row[2],file_found))
+                    date_time = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+                    data_list_heart.append((date_time,row[1],row[2],file_found))
             db.close()
             
         if file_found.endswith('sleep'):
@@ -172,7 +178,8 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_sleep_detail.append((row[0],row[1],row[2],row[3],file_found))
+                    date_time = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+                    data_list_sleep_detail.append((date_time,row[1],row[2],row[3],file_found))
             
             cursor = db.cursor()
             cursor.execute('''
@@ -195,7 +202,9 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_sleep_summary.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],file_found))
+                    date_of_sleep = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+                    start_time = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[1]),time_offset)
+                    data_list_sleep_summary.append((date_of_sleep,start_time,row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],file_found))
             db.close()
                
         if file_found.endswith('social_db'):
@@ -243,7 +252,10 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_user.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],file_found))
+                    last_updated = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+                    joined_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[9]),time_offset)
+                    dob_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[10]),time_offset)
+                    data_list_user.append((last_updated,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],joined_date,dob_date,row[11],row[12],row[13],row[14],file_found))
             db.close()
     
         if file_found.endswith('mobile_track_db'):
@@ -263,7 +275,10 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_steps.append((row[0],row[1],row[2],row[3],row[4],file_found))
+                    timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+                    time_created = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[3]),time_offset)
+                    time_updated = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[4]),time_offset)
+                    data_list_steps.append((timestamp,row[1],row[2],time_created,time_updated,file_found))
             db.close()
     
         else:
