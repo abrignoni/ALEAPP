@@ -111,7 +111,14 @@ def get_icon_name(category, artifact):
         elif artifact.find('TOP SITES') >= 0:               icon = 'list'
         elif artifact.find('VISITS') >= 0:                  icon = 'globe'
         elif artifact.find('WEB HISTORY') >= 0:             icon = 'globe'
-    elif category == 'FITBIT':            icon = 'watch'
+    elif category == 'FITBIT':
+        if artifact.find('ACTIVITY') >= 0:      icon = 'activity'
+        elif artifact.find('HEART') >= 0:        icon = 'heart'
+        elif artifact.find('SLEEP') >= 0:         icon = 'moon'
+        elif artifact.find('USER') >= 0:      icon = 'user'
+        elif artifact.find('FRIENDS') >= 0:   icon = 'users'
+        elif artifact.find('STEPS') >= 0:     icon = 'activity'
+        else: icon = 'watch'
     elif category == 'GARMIN':      
         if artifact.find('DEVICES') >= 0: icon = 'watch'
         elif artifact.find('NOTIFICATIONS') >= 0: icon = 'bell'
