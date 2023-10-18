@@ -1,20 +1,25 @@
+# common standard imports
 import codecs
 import csv
 from datetime import *
 import os
 import pathlib
 import re
+import shutil
 import sqlite3
 import sys
-import simplekml
-import magic
-import shutil
-import pytz
+from functools import lru_cache
 from pathlib import Path
 
+# common third party imports
+import magic
+import pytz
+import simplekml
 from bs4 import BeautifulSoup
-from functools import lru_cache
+
+# LEAPP version unique imports
 from geopy.geocoders import Nominatim
+
 
 os.path.basename = lru_cache(maxsize=None)(os.path.basename)
 
@@ -69,7 +74,6 @@ def convert_ts_int_to_utc(ts): #This int timestamp to human format & utc
     timestamp = datetime.fromtimestamp(ts, tz=timezone.utc)
     return timestamp
 
-
 def is_platform_windows():
     '''Returns True if running on Windows'''
     return os.name == 'nt'
@@ -81,13 +85,11 @@ def sanitize_file_path(filename, replacement_char='_'):
     '''
     return re.sub(r'[*?:"<>|\'\r\n]', replacement_char, filename)
 
-
 def sanitize_file_name(filename, replacement_char='_'):
     '''
     Removes illegal characters (for windows) from the string passed.
     '''
     return re.sub(r'[\\/*?:"<>|\'\r\n]', replacement_char, filename)
-
 
 def get_next_unused_name(path):
     '''Checks if path exists, if it does, finds an unused name by appending -xx
@@ -109,17 +111,16 @@ def get_next_unused_name(path):
         num += 1
     return os.path.join(folder, new_name)
 
-
 def open_sqlite_db_readonly(path):
     '''Opens an sqlite db in read-only mode, so original db (and -wal/journal are intact)'''
     if is_platform_windows():
-        if path.startswith('\\\\?\\UNC\\'):  # UNC long path
+        if path.startswith('\\\\?\\UNC\\'): # UNC long path
             path = "%5C%5C%3F%5C" + path[4:]
-        elif path.startswith('\\\\?\\'):  # normal long path
+        elif path.startswith('\\\\?\\'):    # normal long path
             path = "%5C%5C%3F%5C" + path[4:]
-        elif path.startswith('\\\\'):  # UNC path
+        elif path.startswith('\\\\'):       # UNC path
             path = "%5C%5C%3F%5C\\UNC" + path[1:]
-        else:  # normal path
+        else:                               # normal path
             path = "%5C%5C%3F%5C" + path
     return sqlite3.connect(f"file:{path}?mode=ro", uri=True)
 
@@ -128,7 +129,7 @@ def does_column_exist_in_db(db, table_name, col_name):
     '''Checks if a specific col exists'''
     col_name = col_name.lower()
     try:
-        db.row_factory = sqlite3.Row  # For fetching columns by name
+        db.row_factory = sqlite3.Row # For fetching columns by name
         query = f"pragma table_info('{table_name}');"
         cursor = db.cursor()
         cursor.execute(query)
@@ -140,7 +141,6 @@ def does_column_exist_in_db(db, table_name, col_name):
         print(f"Query error, query={query} Error={str(ex)}")
         pass
     return False
-
 
 def does_table_exist(db, table_name):
     '''Checks if a table with specified name exists in an sqlite db'''
@@ -165,7 +165,6 @@ class GuiWindow:
         if GuiWindow.progress_bar_handle:
             GuiWindow.progress_bar_handle.UpdateBar(n)
 
-
 def logfunc(message=""):
     with open(OutputParameters.screen_output_file_path, 'a', encoding='utf8') as a:
         print(message)
@@ -173,7 +172,6 @@ def logfunc(message=""):
 
     if GuiWindow.window_handle:
         GuiWindow.window_handle.refresh()
-
 
 def logdevinfo(message=""):
     with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
@@ -267,24 +265,26 @@ def tsv(report_folder, data_headers, data_list, tsvname, source_file=None):
 def timeline(report_folder, tlactivity, data_list, data_headers):
     report_folder = report_folder.rstrip('/')
     report_folder = report_folder.rstrip('\\')
-    report_folder_base, _ = os.path.split(report_folder)
+    report_folder_base, tail = os.path.split(report_folder)
     tl_report_folder = os.path.join(report_folder_base, '_Timeline')
 
-    tldb = os.path.join(tl_report_folder, 'tl.db')
     if os.path.isdir(tl_report_folder):
+        tldb = os.path.join(tl_report_folder, 'tl.db')
         db = sqlite3.connect(tldb)
         cursor = db.cursor()
         cursor.execute('''PRAGMA synchronous = EXTRA''')
         cursor.execute('''PRAGMA journal_mode = WAL''')
+        db.commit()
     else:
         os.makedirs(tl_report_folder)
         # create database
-        db = sqlite3.connect(tldb, isolation_level='exclusive')
+        tldb = os.path.join(tl_report_folder, 'tl.db')
+        db = sqlite3.connect(tldb, isolation_level = 'exclusive')
         cursor = db.cursor()
         cursor.execute(
             """
-        CREATE TABLE data(key TEXT, activity TEXT, datalist TEXT)
-        """
+            CREATE TABLE data(key TEXT, activity TEXT, datalist TEXT)
+            """
         )
         db.commit()
 
@@ -355,13 +355,13 @@ def media_to_html(media_path, files_found, report_folder):
         mimetype = magic.from_file(match, mime=True)
 
         if 'video' in mimetype:
-            thumb = f'<video width="320" height="240" controls="controls"><source src="{source}" type="video/mp4">Your browser does not support the video tag.</video>'
+            thumb = f'<video width="320" height="240" controls="controls"><source src="{source}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
         elif 'image' in mimetype:
             thumb = f'<a href="{source}" target="_blank"><img src="{source}"width="300"></img></a>'
         elif 'audio' in mimetype:
             thumb = f'<audio controls><source src="{source}" type="audio/ogg"><source src="{source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
         else:
-            thumb = f'<a href="{source}" target="_blank"> Link to {mimetype} </>'
+            thumb = f'<a href="{source}" target="_blank"> Link to {filename} file</>'
     return thumb
 
 
