@@ -17,7 +17,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -63,7 +63,13 @@ def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_master.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],file_found))
+                    last_mod_date = row[0]
+                    if last_mod_date is None:
+                        pass
+                    else:
+                        last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),time_offset)
+                
+                    data_list_master.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],file_found))
             db.close()
             
         # Search History
@@ -72,11 +78,11 @@ def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset
             cursor = db.cursor()
             cursor.execute('''
             select
-                searched_term,
                 case timestamp
                     when 0 then ''
                     else datetime(timestamp/1000,'unixepoch')
-                end as timestamp
+                end as timestamp,
+                searched_term
             from search_history_content
             ''')
 
@@ -84,7 +90,12 @@ def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_search.append((row[0],row[1],file_found))
+                    timestamp = row[0]
+                    if timestamp is None:
+                        pass
+                    else:
+                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                    data_list_search.append((timestamp,row[1],file_found))
             db.close()
             
         else:
@@ -114,7 +125,7 @@ def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset
         report = ArtifactHtmlReport('File by Google - Search History')
         report.start_artifact_report(report_folder, 'Files By Google - Search History')
         report.add_script()
-        data_headers = ('Search Term','Timestamp') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        data_headers = ('Timestamp','Search Term','Source') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         
         report.write_artifact_data_table(data_headers, data_list_search, file_found)
         report.end_artifact_report()

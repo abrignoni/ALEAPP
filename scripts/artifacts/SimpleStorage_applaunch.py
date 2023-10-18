@@ -19,7 +19,7 @@ import textwrap
 
 from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -28,7 +28,7 @@ def get_SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text, t
     for file_found in files_found:
         file_name = str(file_found)
         
-        if file_name.endswith('SimpleStorage'): # skip -journal and other files
+        if file_name.endswith('SimpleStorage'):
           
             db = open_sqlite_db_readonly(file_name)
             cursor = db.cursor()
@@ -37,14 +37,14 @@ def get_SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text, t
             datetime(EchoAppLaunchMetricsEvents.timestampMillis/1000,'unixepoch') AS "Time App Launched",
             EchoAppLaunchMetricsEvents.packageName AS "App",
             CASE
-            WHEN EchoAppLaunchMetricsEvents.launchLocationId=1 THEN "Home Screen"
-            WHEN EchoAppLaunchMetricsEvents.launchLocationId=2 THEN "Suggested Apps (Home Screen)"
-            WHEN EchoAppLaunchMetricsEvents.launchLocationId=4 THEN "App Drawer"
-            WHEN EchoAppLaunchMetricsEvents.launchLocationId=7 THEN "Suggested Apps (App Drawer)"
-            WHEN EchoAppLaunchMetricsEvents.launchLocationId=8 THEN "Search (Top of App Drawer/GSB)"
-            WHEN EchoAppLaunchMetricsEvents.launchLocationId=12 THEN "Recent Apps/Multi-Tasking Menu"
-            WHEN EchoAppLaunchMetricsEvents.launchLocationId=1000 THEN "Notification"
-            ELSE EchoAppLaunchMetricsEvents.launchLocationId
+                WHEN EchoAppLaunchMetricsEvents.launchLocationId=1 THEN "Home Screen"
+                WHEN EchoAppLaunchMetricsEvents.launchLocationId=2 THEN "Suggested Apps (Home Screen)"
+                WHEN EchoAppLaunchMetricsEvents.launchLocationId=4 THEN "App Drawer"
+                WHEN EchoAppLaunchMetricsEvents.launchLocationId=7 THEN "Suggested Apps (App Drawer)"
+                WHEN EchoAppLaunchMetricsEvents.launchLocationId=8 THEN "Search (Top of App Drawer/GSB)"
+                WHEN EchoAppLaunchMetricsEvents.launchLocationId=12 THEN "Recent Apps/Multi-Tasking Menu"
+                WHEN EchoAppLaunchMetricsEvents.launchLocationId=1000 THEN "Notification"
+                ELSE EchoAppLaunchMetricsEvents.launchLocationId
             END AS "Launched From"
             FROM EchoAppLaunchMetricsEvents
             ''')
@@ -53,7 +53,12 @@ def get_SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text, t
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list.append((row[0],row[1],row[2], file_found))
+                    time_launched = row[0]
+                    if time_launched is None:
+                        pass
+                    else:
+                        time_launched = convert_utc_human_to_timezone(convert_ts_human_to_utc(time_launched),time_offset)
+                    data_list.append((time_launched,row[1],row[2], file_found))
             db.close()
         
         else:
@@ -77,5 +82,3 @@ def get_SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text, t
         
     else:
         logfunc('SimpleStorage - App Launch data available')
-
-

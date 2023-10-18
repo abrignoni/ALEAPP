@@ -17,7 +17,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_Cast(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -63,7 +63,25 @@ def get_Cast(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],file_found))
+                    last_published = row[0]
+                    if last_published is None:
+                        pass
+                    else:
+                        last_published = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_published),time_offset)
+                    
+                    last_discovered = row[14]
+                    if last_discovered is None:
+                        pass
+                    else:
+                        last_discovered = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_discovered),time_offset)
+                    
+                    last_discovered_ble = row[15]
+                    if last_discovered_ble is None:
+                        pass
+                    else:
+                        last_discovered_ble = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_discovered_ble),time_offset)
+                
+                    data_list.append((last_published,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],last_discovered,last_discovered_ble,file_found))
             db.close()
         else:
             continue # Skip all other files
