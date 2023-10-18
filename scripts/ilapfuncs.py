@@ -1,6 +1,6 @@
 import codecs
 import csv
-import datetime
+from datetime import *
 import os
 import pathlib
 import re
