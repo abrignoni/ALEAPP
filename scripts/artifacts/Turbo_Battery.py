@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "Turbo_Battery": {
         "name": "Turbo_Battery",
-        "description": "Parses provider calendars and events",
+        "description": "Parses battery percentage for device and bluetooth connected devices",
         "author": "@KevinPagano3",
         "version": "0.0.1",
         "date": "2021-06-29",
@@ -18,7 +18,7 @@ import textwrap
 
 from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -39,22 +39,22 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset
             cursor = db.cursor()
             cursor.execute('''
             select
-                case timestamp_millis
-                    when 0 then ''
-                    else datetime(timestamp_millis/1000,'unixepoch')
-                End as D_T,
-                battery_level,
-                case charge_type
-                    when 0 then ''
-                    when 1 then 'Charging Rapidly'
-                    when 2 then 'Charging Slowly'
-                    when 3 then 'Charging Wirelessly'
-                End as C_Type,
-                case battery_saver
-                    when 2 then ''
-                    when 1 then 'Enabled'
-                End as B_Saver,
-                timezone
+            case timestamp_millis
+                when 0 then ''
+                else datetime(timestamp_millis/1000,'unixepoch')
+            End as D_T,
+            battery_level,
+            case charge_type
+                when 0 then ''
+                when 1 then 'Charging Rapidly'
+                when 2 then 'Charging Slowly'
+                when 3 then 'Charging Wirelessly'
+            End as C_Type,
+            case battery_saver
+                when 2 then ''
+                when 1 then 'Enabled'
+            End as B_Saver,
+            timezone
             from battery_event
             ''')
 
@@ -62,7 +62,12 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_battery.append((row[0],row[1],row[2],row[3],row[4],file_found))
+                    timestamp = row[0]
+                    if timestamp is None:
+                        pass
+                    else:
+                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                    data_list_battery.append((timestamp,row[1],row[2],row[3],row[4],file_found))
             
             db.close()
 
@@ -88,7 +93,12 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_bluetooth.append((row[0],row[1],row[2],row[3],row[4],row[5],file_found))
+                    timestamp = row[0]
+                    if timestamp is None:
+                        pass
+                    else:
+                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                    data_list_bluetooth.append((timestamp,row[1],row[2],row[3],row[4],row[5],file_found))
             db.close()
     
         else:

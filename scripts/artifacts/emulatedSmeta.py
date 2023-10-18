@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "EmulatedSmeta": {
         "name": "Emulated Storage Metadata",
-        "description": "Parses Cast device information",
+        "description": "Parses emulated storage metadata from external.db",
         "author": "@AlexisBrignoni",
         "version": "0.0.2",
         "date": "2020-10-19",
@@ -16,7 +16,7 @@ __artifacts_v2__ = {
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text, time_offset):
 
@@ -79,7 +79,30 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text, time_offset
                     else:
                         xmp = row[15]
                     
-                    data_list_downloads.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], xmp, file_found))
+                    if keytime is None:
+                        pass
+                    else:
+                        keytime = convert_utc_human_to_timezone(convert_ts_human_to_utc(keytime),time_offset)
+                        
+                    date_added = row[0]
+                    if date_added is None:
+                        pass
+                    else:
+                        date_added = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_added),time_offset)
+                    
+                    date_modified = row[1]
+                    if date_modified is None:
+                        pass
+                    else:
+                        date_modified = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_modified),time_offset)
+                        
+                    date_taken = row[2] 
+                    if date_taken is None:
+                        pass
+                    else:
+                        date_taken = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_taken),time_offset)
+                    
+                    data_list_downloads.append((keytime, date_added, date_modified, date_taken, row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], xmp, file_found))
             
             # Images
             cursor.execute('''
@@ -123,7 +146,31 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text, time_offset
                         keytime = row[0]
                     else:
                         keytime = row[1]
-                    data_list_images.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], file_found))
+                        
+                    if keytime is None:
+                        pass
+                    else:
+                        keytime = convert_utc_human_to_timezone(convert_ts_human_to_utc(keytime),time_offset)
+                        
+                    date_added = row[0]
+                    if date_added is None:
+                        pass
+                    else:
+                        date_added = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_added),time_offset)
+                    
+                    date_modified = row[1]
+                    if date_modified is None:
+                        pass
+                    else:
+                        date_modified = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_modified),time_offset)
+                        
+                    date_taken = row[2] 
+                    if date_taken is None:
+                        pass
+                    else:
+                        date_taken = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_taken),time_offset)
+                    
+                    data_list_images.append((keytime, date_added, date_modified, date_taken, row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], file_found))
 
             # Files (newer version)
             cursor.execute('''
@@ -170,7 +217,31 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text, time_offset
                         keytime = row[0]
                     else:
                         keytime = row[1]
-                    data_list_files.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], file_found))
+                        
+                    if keytime is None:
+                        pass
+                    else:
+                        keytime = convert_utc_human_to_timezone(convert_ts_human_to_utc(keytime),time_offset)
+                        
+                    date_added = row[0]
+                    if date_added is None:
+                        pass
+                    else:
+                        date_added = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_added),time_offset)
+                    
+                    date_modified = row[1]
+                    if date_modified is None:
+                        pass
+                    else:
+                        date_modified = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_modified),time_offset)
+                        
+                    date_taken = row[2] 
+                    if date_taken is None:
+                        pass
+                    else:
+                        date_taken = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_taken),time_offset)
+                    
+                    data_list_files.append((keytime, date_added, date_modified, date_taken, row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], file_found))
 
             # Videos
             cursor.execute('''
@@ -214,7 +285,31 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text, time_offset
                         keytime = row[0]
                     else:
                         keytime = row[1]
-                    data_list_videos.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], file_found))
+                        
+                    if keytime is None:
+                        pass
+                    else:
+                        keytime = convert_utc_human_to_timezone(convert_ts_human_to_utc(keytime),time_offset)
+                        
+                    date_added = row[0]
+                    if date_added is None:
+                        pass
+                    else:
+                        date_added = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_added),time_offset)
+                    
+                    date_modified = row[1]
+                    if date_modified is None:
+                        pass
+                    else:
+                        date_modified = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_modified),time_offset)
+                        
+                    date_taken = row[2] 
+                    if date_taken is None:
+                        pass
+                    else:
+                        date_taken = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_taken),time_offset)
+                    
+                    data_list_videos.append((keytime, date_added, date_modified, date_taken, row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], file_found))
 
             # Audio
             cursor.execute('''
@@ -252,7 +347,31 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text, time_offset
                         keytime = row[0]
                     else:
                         keytime = row[1]
-                    data_list_audio.append((keytime, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], file_found))
+                        
+                    if keytime is None:
+                        pass
+                    else:
+                        keytime = convert_utc_human_to_timezone(convert_ts_human_to_utc(keytime),time_offset)
+                        
+                    date_added = row[0]
+                    if date_added is None:
+                        pass
+                    else:
+                        date_added = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_added),time_offset)
+                    
+                    date_modified = row[1]
+                    if date_modified is None:
+                        pass
+                    else:
+                        date_modified = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_modified),time_offset)
+                        
+                    date_taken = row[2] 
+                    if date_taken is None:
+                        pass
+                    else:
+                        date_taken = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_taken),time_offset)
+                    
+                    data_list_audio.append((keytime, date_added, date_modified, date_taken, row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], file_found))
 
             db.close()
             
@@ -285,9 +404,26 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text, time_offset
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
             if usageentries > 0:
-                #parent = ''
                 for row in all_rows:
-                    data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], file_found))
+                    date_added = row[0]
+                    if date_added is None:
+                        pass
+                    else:
+                        date_added = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_added),time_offset)
+                    
+                    date_modified = row[1]
+                    if date_modified is None:
+                        pass
+                    else:
+                        date_modified = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_modified),time_offset)
+                        
+                    date_taken = row[2] 
+                    if date_taken is None:
+                        pass
+                    else:
+                        date_taken = convert_utc_human_to_timezone(convert_ts_human_to_utc(date_taken),time_offset)
+                
+                    data_list.append((date_added, date_modified, date_taken, row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], file_found))
 
             db.close()                
                 

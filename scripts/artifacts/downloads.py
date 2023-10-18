@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Downloads",
         "description": "Parses native downloads database",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
+        "version": "0.0.2",
         "date": "2023-01-09",
         "requirements": "none",
         "category": "Downloads",
@@ -16,7 +16,7 @@ __artifacts_v2__ = {
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_downloads(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -57,8 +57,14 @@ def get_downloads(files_found, report_folder, seeker, wrap_text, time_offset):
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
             if usageentries > 0:
-                for row in all_rows:               
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],file_found))
+                for row in all_rows:
+                    last_mod_date = row[0]
+                    if last_mod_date is None:
+                        pass
+                    else:
+                        last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),time_offset)
+                
+                    data_list.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],file_found))
             db.close()
                     
         else:

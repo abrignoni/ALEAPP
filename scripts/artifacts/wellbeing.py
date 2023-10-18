@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "wellbeing": {
         "name": "Digital Wellbeing",
-        "description": "Parses Digital Wellbeing",
+        "description": "Parses Digital Wellbeing events",
         "author": "@AlexisBrignoni",
         "version": "0.0.1",
         "date": "2020-02-2",
@@ -16,7 +16,7 @@ __artifacts_v2__ = {
 import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
 
@@ -31,7 +31,7 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
             cursor = db.cursor()
             cursor.execute('''
             SELECT 
-            events._id, 
+            events._id,
             datetime(events.timestamp/1000, 'UNIXEPOCH') as timestamps, 
             packages.package_name,
             case
@@ -54,7 +54,13 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list.append((row[1], row[2], row[3], file_found))
+                    event_ts = row[1]
+                    if event_ts is None:
+                        pass
+                    else:
+                        event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),time_offset)
+                
+                    data_list.append((event_ts, row[2], row[3], file_found))
                     
             cursor = db.cursor()
             cursor.execute('''
@@ -79,8 +85,12 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_url.append((row[0], row[1], row[2], row[3], row[4], row[5], file_found))
-              
+                    event_ts = row[0]
+                    if event_ts is None:
+                        pass
+                    else:
+                        event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),time_offset)
+                    data_list_url.append((event_ts, row[1], row[2], row[3], row[4], row[5], file_found))
             db.close()
             
         else:

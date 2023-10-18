@@ -19,7 +19,7 @@ import blackboxprotobuf
 from datetime import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_calendar(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -63,8 +63,20 @@ def get_calendar(files_found, report_folder, seeker, wrap_text, time_offset):
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
             if usageentries > 0:
-                for row in all_rows:            
-                    data_list_events.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10], calendarDB))
+                for row in all_rows:
+                    event_start = row[0]
+                    if event_start is None:
+                        pass
+                    else:
+                        event_start = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_start),time_offset)
+
+                    event_end = row[1]
+                    if event_end is None:
+                        pass
+                    else:
+                        event_end = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_end),time_offset)
+                
+                    data_list_events.append((event_start,event_end,row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10], calendarDB))
                     
             # Get provider calendars
             cursor = db.cursor()
@@ -98,7 +110,13 @@ def get_calendar(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_calendars.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11], calendarDB))       
+                    cal_sync = row[0]
+                    if cal_sync is None:
+                        pass
+                    else:
+                        cal_sync = convert_utc_human_to_timezone(convert_ts_human_to_utc(cal_sync),time_offset)
+                    
+                    data_list_calendars.append((cal_sync,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11], calendarDB))       
                 
         if file_found.endswith('cal_v2a'):
             g_calendarDB = file_found
@@ -107,7 +125,6 @@ def get_calendar(files_found, report_folder, seeker, wrap_text, time_offset):
         else:
             continue # Skip all other files
         
-    
     if data_list_events:
         description = 'Calendar - Events'
         report = ArtifactHtmlReport('Calendar - Events')
