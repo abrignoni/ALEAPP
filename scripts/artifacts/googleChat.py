@@ -15,7 +15,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
 def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
-    
+    indetifier = 0
     for file_found in files_found:
         file_found = str(file_found)  
         if not os.path.basename(file_found) == 'dynamite.db':
@@ -25,7 +25,7 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
             #break
         #else:
             #continue # Skip all other files
-        
+        identifier = indetifier + 1
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -91,21 +91,21 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
                         pass
                     
         if usageentries > 0:
-            report = ArtifactHtmlReport('Google Chat - Messages')
-            report.start_artifact_report(report_folder, 'Google Chat - Messages')
+            report = ArtifactHtmlReport(f'Google Chat - Messages {identifier}')
+            report.start_artifact_report(report_folder, f'Google Chat - Messages {identifier}')
             report.add_script()
             data_headers = ('Message Timestamp (UTC)','Group Name','Sender','Message','Meeting Code', 'Meeting URL','Meeting Sender','Meeting Sender Profile Pic URL','Filename','File Type','Width','Height')
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Google Chat - Messages'
+            tsvname = f'Google Chat - Messages {identifier}'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Google Chat - Messages'
+            tlactivity = f'Google Chat - Messages {identifier}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Google Chat - Messages data available')
+            logfunc(f'No Google Chat - Messages data available {identifier}')
 
         cursor.execute('''
         SELECT
@@ -122,8 +122,8 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport('Google Chat - Group Information')
-            report.start_artifact_report(report_folder, 'Google Chat - Group Information')
+            report = ArtifactHtmlReport(f'Google Chat - Group Information {identifier}')
+            report.start_artifact_report(report_folder, f'Google Chat - Group Information {identifier}')
             report.add_script()
             data_headers = ('Group Created Time (UTC)','Group Name','Group Creator','Time Group Last Viewed (UTC)') 
             data_list = []
@@ -133,13 +133,13 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Google Chat - Group Information'
+            tsvname = f'Google Chat - Group Information {identifier}'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Google Chat - Group Information'
+            tlactivity = f'Google Chat - Group Information {identifier}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Google Chat - Group Information data available')
+            logfunc(f'No Google Chat - Group Information data available {identifier}')
             
         cursor.execute('''
         select
@@ -155,8 +155,8 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport('Google Chat - Drafts')
-            report.start_artifact_report(report_folder, 'Google Chat - Drafts')
+            report = ArtifactHtmlReport(f'Google Chat - Drafts {identifier}')
+            report.start_artifact_report(report_folder, f'Google Chat - Drafts {identifier}')
             report.add_script()
             data_headers = ('Group ID','Topic ID','Message','Group Name','Group Type') 
             data_list = []
@@ -166,11 +166,11 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Google Chat - Drafts'
+            tsvname = f'Google Chat - Drafts {identifier}'
             tsv(report_folder, data_headers, data_list, tsvname)
             
         else:
-            logfunc('No Google Chat - Drafts data available')
+            logfunc(f'No Google Chat - Drafts data available {identifier}')
             
         cursor.execute('''
         select
@@ -186,8 +186,8 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
-            report = ArtifactHtmlReport('Google Chat - Users')
-            report.start_artifact_report(report_folder, 'Google Chat - Users')
+            report = ArtifactHtmlReport(f'Google Chat - Users {identifier}')
+            report.start_artifact_report(report_folder, f'Google Chat - Users {identifier}')
             report.add_script()
             data_headers = ('Last Updated Time (UTC)','User ID','Name','Email','Avatar URL','Dasher Customer ID') 
             data_list = []
@@ -197,13 +197,13 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text, time_offset):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Google Chat - Users'
+            tsvname = f'Google Chat - Users {identifier}'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Google Chat - Users'
+            tlactivity = f'Google Chat - Users {identifier}'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Google Chat - Users data available')
+            logfunc(f'No Google Chat - Users data available {identifier}')
                 
         db.close()
 
