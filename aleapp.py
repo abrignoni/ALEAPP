@@ -34,7 +34,7 @@ def validate_args(args):
       raise argparse.ArgumentError(None, 'Unknown timezone! Run the program again.')
 
 def main():
-    parser = argparse.ArgumentParser(description='ALEAPP: iOS Logs, Events, and Protobuf Parser.')
+    parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
     parser.add_argument('-t', choices=['fs', 'tar', 'zip', 'gz'], required=False, action="store",
                         help=("Specify the input type. "
                               "'fs' for a folder containing extracted files with normal paths and names, "
@@ -150,21 +150,23 @@ def crunch_artifacts(
     
     # Search for the files per the arguments
     for plugin in plugins:
-        artifact_pretty_name = plugin.name
         if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
             search_regexes = plugin.search
         else:
             search_regexes = [plugin.search]
         files_found = []
+        log.write(f'<b>For {plugin.name} parser</b>')
         for artifact_search_regex in search_regexes:
             found = seeker.search(artifact_search_regex)
             if not found:
-                log.write(f'No files found for {plugin.name} -> {artifact_search_regex}<br><br>')
+                log.write(f'<ul><li>No file found for regex <i>{artifact_search_regex}</i></li></ul>')
             else:
+                log.write(f'<ul><li>{len(found)} {"files" if len(found) > 1 else "file"} for regex <i>{artifact_search_regex}</i> located at:')
                 for pathh in found:
                     if pathh.startswith('\\\\?\\'):
                         pathh = pathh[4:]
-                    log.write(f'Files for {artifact_search_regex} located at {pathh}<br><br>')
+                    log.write(f'<ul><li>{pathh}</li></ul>')
+                log.write(f'</li></ul>')
                 files_found.extend(found)
         if files_found:
             logfunc('{} [{}] artifact started'.format(plugin.name, plugin.module_name))
