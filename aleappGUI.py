@@ -1,5 +1,4 @@
 import json
-import pathlib
 import typing
 import aleapp
 import PySimpleGUI as sg
@@ -7,7 +6,6 @@ import webbrowser
 import plugin_loader
 from scripts.ilapfuncs import *
 from scripts.version_info import aleapp_version
-from time import process_time, gmtime, strftime
 from scripts.search_files import *
 
 MODULE_START_INDEX = 1000
@@ -53,7 +51,7 @@ def ValidateInput(values, window):
 
 # initialize CheckBox control with module name   
 def CheckList(mtxt, lkey, mdstring, disable=False):
-    if mdstring == 'photosMetadata' or mdstring == 'journalStrings' or mdstring == 'walStrings': #items in the if are modules that take a long time to run. Deselects them by default.
+    if mdstring == 'walStrings': #items in the if are modules that take a long time to run. Deselects them by default.
         dstate = False
     else:
         dstate = True
@@ -120,6 +118,7 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
 # Create the Window
 window = sg.Window(f'ALEAPP version {aleapp_version}', layout)
 GuiWindow.progress_bar_handle = window['PROGRESSBAR']
+profile_filename = None
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
@@ -171,7 +170,7 @@ while True:
                         profile_load_error = "File was not a valid profile file: incorrect LEAPP or version"
                     else:
                         ticked = set(profile.get("plugins", []))
-                        ticked.add("lastbuild")  # always
+                        ticked.add("usagestatsVersion")  # always
                         for x in range(MODULE_START_INDEX, module_end_index):
                             if window[x].metadata in ticked:
                                 window[x].update(True)
@@ -184,6 +183,7 @@ while True:
                 sg.popup(profile_load_error)
             else:
                 sg.popup(f"Loaded profile: {destination_path}")
+                profile_filename = destination_path
     
     if event == 'LOAD CASE DATA':
         destination_path = sg.popup_get_file(
@@ -218,21 +218,21 @@ while True:
             input_path = values[0]
             output_folder = values[1]
 
-            # ios file system extractions contain paths > 260 char, which causes problems
+            # Android file system extractions contain paths > 260 char, which causes problems
             # This fixes the problem by prefixing \\?\ on each windows path.
             if is_platform_windows():
                 if input_path[1] == ':' and extracttype =='fs': input_path = '\\\\?\\' + input_path.replace('/', '\\')
                 if output_folder[1] == ':': output_folder = '\\\\?\\' + output_folder.replace('/', '\\')
 
             # re-create modules list based on user selection
-            # search_list = { 'lastBuild' : tosearch['lastBuild'] } # hardcode lastBuild as first item
-            search_list = [loader['usagestatsVersion']] # hardcode lastBuild as first item
+            # search_list = { 'usagestatsVersion' : tosearch['usagestatsVersion'] } # hardcode usagestatsVersion as first item
+            search_list = [loader['usagestatsVersion']] # hardcode usagestatsVersion as first item
 
             s_items = 0
             for x in range(MODULE_START_INDEX, module_end_index):
                 if window.FindElement(x).Get():
                     key = window[x].metadata
-                    if key in loader and key != 'lastbuild':
+                    if key in loader and key != 'usagestatsVersion':
                         search_list.append(loader[key])
                     s_items = s_items + 1 # for progress bar
                 
@@ -255,7 +255,7 @@ while True:
                 casedata = {}
             
             crunch_successful = aleapp.crunch_artifacts(
-                search_list, extracttype, input_path, out_params, len(loader)/s_items, wrap_text, loader, casedata, time_offset)
+                search_list, extracttype, input_path, out_params, len(loader)/s_items, wrap_text, loader, casedata, time_offset, profile_filename)
             if crunch_successful:
                 report_path = os.path.join(out_params.report_folder_base, 'index.html')
                 
