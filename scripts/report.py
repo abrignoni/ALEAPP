@@ -214,7 +214,7 @@ icon_mappings = \
     },
     'DEVICE INFO': {
         'BUILD INFO': 'terminal',
-        'IOS SYSTEM VERSION': 'git-commit',
+        'ANDROID SYSTEM VERSION': 'git-commit',
         'PARTNER SETTINGS': 'settings',
         'SETTINGS_SECURE_': 'settings',
         'default': 'info',
@@ -496,10 +496,6 @@ icon_mappings = \
         'ATTACHMENTS': 'paperclip',
         'CONTACTS': 'user',
     },
-    'IOS ATXDATASTORE': 'database',
-    'IOS BUILD': 'git-commit',
-    'IOS BUILD (ITUNES BACKUP)': 'git-commit',
-    'IOS SCREENS': 'maximize',
     'KEYBOARD': {
         'KEYBOARD APPLICATION USAGE': 'type',
         'KEYBOARD DYNAMIC LEXICON': 'type',
