@@ -13,7 +13,7 @@ from scripts.version_info import aleapp_version
 from time import process_time, gmtime, strftime, perf_counter
 
 def validate_args(args):
-    if args.artifact_paths or args.create_profile:
+    if args.artifact_paths or args.create_profile_casedata:
         return  # Skip further validation if --artifact_paths is used
 
     # Ensure other arguments are provided
@@ -29,6 +29,9 @@ def validate_args(args):
 
     if not os.path.exists(args.output_path):
         raise argparse.ArgumentError(None, 'OUTPUT folder does not exist! Run the program again.')
+
+    if args.load_case_data and not os.path.exists(args.load_case_data):
+        raise argparse.ArgumentError(None, 'LEAPP Case Data file not found! Run the program again.')
 
     if args.load_profile and not os.path.exists(args.load_profile):
         raise argparse.ArgumentError(None, 'ALEAPP Profile file not found! Run the program again.')
@@ -49,8 +52,7 @@ def create_profile(available_plugins, path):
     parsers_in_profile = {}
     
     user_choice = ''
-    print('-' * 50)
-    print('Welcome to the ALEAPP Profile file creation\n')
+    print('--- ALEAPP Profile file creation ---\n')
     instructions = 'You can type:\n'
     instructions += '   - \'a\' to add or remove parsers in the profile file\n'
     instructions += '   - \'l\' to display the list of all available parsers with their number\n'
@@ -105,13 +107,33 @@ def create_profile(available_plugins, path):
                 with open(filename, "wt", encoding="utf-8") as profile_file:
                     json.dump({"leapp": "aleapp", "format_version": 1, "plugins": parsers}, profile_file)
                 print('\nProfile saved:', filename)
+                print()
             else:
                 print('No parser added. The profile file was not created.\n')
+                print()
             return
         else:
             print('Please enter a valid choice!!!\n')
             user_choice = ''
-
+  
+def create_casedata(path):
+    case_data_values = {}
+    print('--- LEAPP Case Data file creation ---\n')
+    print('Enter the following information:')
+    case_data_values['Case Number'] = input("Case Number: ")
+    case_data_values['Agency'] = input("Agency: ")
+    case_data_values['Examiner'] = input("Examiner : ")
+    print()
+    case_data_filename = ''
+    while not case_data_filename:
+        case_data_filename = input('Enter the name of the Case Data file: ')
+    case_data_filename += '.lcasedata'
+    filename = os.path.join(path, case_data_filename)
+    with open(filename, "wt", encoding="utf-8") as case_data_file:
+        json.dump({"leapp": "case_data", "case_data_values": case_data_values}, case_data_file)
+    print('\nCase Data file saved:', filename)
+    print()
+    return
 
 def main():
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
@@ -126,9 +148,10 @@ def main():
     parser.add_argument('-tz', '--timezone', required=False, action="store", default='UTC', type=str, help="Timezone name (e.g., 'America/New_York')")
     parser.add_argument('-w', '--wrap_text', required=False, action="store_false", default=True,
                         help='Do not wrap text for output of data files')
-    parser.add_argument('-l', '--load_profile', required=False, action="store", help="Path to ALEAPP Profile file (.alprofile).")
-    parser.add_argument('-c', '--create_profile', required=False, action="store",
-                        help=("Generate an ALEAPP Profile file (.alprofile) into the specified path. "
+    parser.add_argument('-m', '--load_profile', required=False, action="store", help="Path to ALEAPP Profile file (.alprofile).")
+    parser.add_argument('-d', '--load_case_data', required=False, action="store", help="Path to LEAPP Case Data file (.lcasedata).")
+    parser.add_argument('-c', '--create_profile_casedata', required=False, action="store",
+                        help=("Generate an ALEAPP Profile file (.alprofile) or LEAPP Case Data file (.lcasedata) into the specified path. "
                               "This argument is meant to be used alone, without any other arguments."))
     parser.add_argument('-p', '--artifact_paths', required=False, action="store_true",
                         help=("Generate a text file list of artifact paths. "
@@ -137,13 +160,14 @@ def main():
     loader = plugin_loader.PluginLoader()
     available_plugins = list(loader.plugins)
     profile_filename = None
+    casedata = {}
+
     # Move usagestatsVersion plugin to first position
     usagestatsVersion_index = next((i for i, selected_plugin in enumerate(available_plugins) 
                   if selected_plugin.name == 'usagestatsVersion'), -1)
     if usagestatsVersion_index != -1:
         available_plugins.insert(0, available_plugins.pop(usagestatsVersion_index))
 
-    print(f"Info: {len(available_plugins)} plugins loaded.")
     selected_plugins = available_plugins.copy()
 
     args = parser.parse_args()
@@ -169,14 +193,59 @@ def main():
         print('Artifact path list generation completed')
         return
 
-    if args.create_profile:
-        if os.path.isdir(args.create_profile):
-            create_profile(selected_plugins, args.create_profile)
-            return
+    if args.create_profile_casedata:
+        if os.path.isdir(args.create_profile_casedata):
+            create_choice = ''
+            print('-' * 55)
+            print('Welcome to ALEAP Profile or Case Data file creation\n')
+            instructions = 'You can type:\n'
+            instructions += '   - \'1\' to create an ALEAPP Profile file (.alprofile)\n'
+            instructions += '   - \'2\' to create a LEAPP Case Data file (.lcasedata)\n'
+            instructions += '   - \'q\' to quit\n'
+            while not create_choice:
+                print(instructions)
+                create_choice = input('Please enter your choice: ').lower()
+                print()
+                if create_choice == '1':
+                    create_profile(selected_plugins, args.create_profile_casedata)
+                    create_choice = ''
+                elif create_choice == '2':
+                    create_casedata(args.create_profile_casedata)
+                    create_choice = ''
+                elif create_choice == 'q':
+                    return
+                else:
+                    print('Please enter a valid choice!!!\n')
+                    create_choice = ''
         else:
             print('OUTPUT folder for storing ALEAPP Profile file does not exist!\nRun the program again.')
             return
 
+    if args.load_case_data:
+        case_data_filename = args.load_case_data
+        case_data_load_error = None
+        with open(case_data_filename, "rt", encoding="utf-8") as case_data_file:
+            try:
+                case_data = json.load(case_data_file)
+            except json.JSONDecodeError as json_ex:
+                case_data_load_error = f"File was not a valid case data file: {json_ex}"
+                print(case_data_load_error)
+                return
+
+        if not case_data_load_error:
+            if isinstance(case_data, dict):
+                if case_data.get("leapp") != "case_data":
+                    case_data_load_error = "File was not a valid case data file"
+                    print(case_data_load_error)
+                    return
+                else:
+                    print(f'Case Data loaded: {case_data_filename}')
+                    casedata = case_data.get('case_data_values', {})
+            else:
+                case_data_load_error = "File was not a valid case data file: invalid format"
+                print(case_data_load_error)
+                return
+    
     if args.load_profile:
         profile_filename = args.load_profile
         profile_load_error = None
@@ -195,6 +264,7 @@ def main():
                     print(profile_load_error)
                     return
                 else:
+                    print(f'Profile loaded: {profile_filename}')
                     profile_plugins = set(profile.get("plugins", []))
                     selected_plugins = [selected_plugin for selected_plugin in available_plugins 
                                         if selected_plugin.name in profile_plugins or selected_plugin.name == 'usagestatsVersion']
@@ -216,11 +286,7 @@ def main():
         if output_path[1] == ':': output_path = '\\\\?\\' + output_path.replace('/', '\\')
 
     out_params = OutputParameters(output_path)
-
-    try:
-        casedata
-    except NameError:
-        casedata = {}
+    print(f"Info: {len(available_plugins)} plugins loaded.")
 
     crunch_artifacts(selected_plugins, extracttype, input_path, out_params, 1, wrap_text, loader, casedata, time_offset, profile_filename)
 
@@ -270,7 +336,6 @@ def crunch_artifacts(
     logfunc('\n--------------------------------------------------------------------------------------')
 
     log = open(os.path.join(out_params.report_folder_base, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
-    nl = '\n' #literal in order to have new lines in fstrings that create text files
     log.write(f'Extraction/Path selected: {input_path}<br><br>')
     log.write(f'Timezone selected: {time_offset}<br><br>')
     

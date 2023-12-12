@@ -10,32 +10,115 @@ from scripts.search_files import *
 
 MODULE_START_INDEX = 1000
 
+def add_case_data(casedata):
+    case_data_font = ("Helvetica", 12)
+    case_data_layout = [
+        [sg.Text('Add Case Data', font=("Helvetica", 18))],
+        [sg.Frame(layout=[
+            [sg.Input(size=(80,1), key='Case Number', default_text=casedata.get('Case Number', ''))]], title='Case Number')],
+        [sg.Frame(layout=[
+            [sg.Input(size=(80,1), key='Agency', default_text=casedata.get('Agency', ''))]], title='Agency')],
+        [sg.Frame(layout=[
+            [sg.Input(size=(80,1), key='Examiner', default_text=casedata.get('Examiner', ''))]], title='Examiner')],
+        [sg.Text('')],
+        [sg.Button('Load Case Data File', font=normal_font, key='LOADCASEDATA'),
+         sg.Button('Save Case Data File', font=normal_font, key='SAVECASEDATA'),
+         sg.Text(' | ', font=("Helvetica", 14)),
+         sg.Button('Clear', font=normal_font, key='CLEAR'),
+         sg.Button('Close', font=normal_font)]
+        ]
+    
+    case_data_window = sg.Window('Add Case Data', case_data_layout, font=case_data_font)
+
+    while True:
+        case_data_event, case_data_values = case_data_window.read()
+
+        if case_data_event in (None, 'Close'):
+            case_data_window.close()
+            return case_data_values
+
+        if case_data_event == 'CLEAR':
+            case_data_window['Case Number'].update('')
+            case_data_window['Agency'].update('')
+            case_data_window['Examiner'].update('')
+            continue
+
+        if case_data_event == 'SAVECASEDATA':
+            destination_path = sg.popup_get_file(
+                "Save case data file", save_as=True,
+                file_types=(('LEAPP Case Data (*.lcasedata)', '*.lcasedata'),),
+                default_extension='.icasedata', no_window=True, keep_on_top=True)
+
+            if destination_path:
+                with open(destination_path, "wt", encoding="utf-8") as case_data_out:
+                    json.dump({"leapp": "case_data", "case_data_values": case_data_values}, case_data_out)
+                sg.Popup(f"Case Data saved: {destination_path}", title="Save Case Data")
+                case_data_window.close()    
+            else:
+                continue
+            
+            return case_data_values
+
+        if case_data_event == 'LOADCASEDATA':
+            destination_path = sg.popup_get_file(
+                "Load case data", save_as=False,
+                file_types=(('LEAPP Case Data (*.lcasedata)', '*.lcasedata'), ('All Files', '*')),
+                default_extension='.lcasedata', no_window=True)
+            
+            if destination_path and os.path.exists(destination_path):
+                case_data_load_error = None
+                with open(destination_path, "rt", encoding="utf-8") as case_data_in:
+                    try:
+                        case_data = json.load(case_data_in)
+                    except json.JSONDecodeError as json_ex:
+                        case_data_load_error = f"File was not a valid case data file: {json_ex}"
+                        
+                if not case_data_load_error:
+                    if isinstance(case_data, dict):
+                        if case_data.get("leapp") != "case_data":
+                            case_data_load_error = "File was not a valid case data file"
+                        else:
+                            casedata = case_data.get('case_data_values', {})
+                            for key, value in casedata.items():
+                                case_data_window[key].update(value)
+                    else:
+                        case_data_load_error = "File was not a valid case data file: invalid format"                
+                
+                if case_data_load_error:
+                    sg.popup(case_data_load_error)
+                    continue
+                else:
+                    sg.popup(f"Loaded Case Data: {destination_path}", title="Load Case Data")
+                    continue            
+            else:
+                continue
+
 def ValidateInput(values, window):
     '''Returns tuple (success, extraction_type)'''
     global module_end_index
 
-    i_path = values[0] # input file/folder
-    o_path = values[1] # output folder
+    i_path = values['INPUTPATH'] # input file/folder
+    o_path = values['OUTPUTPATH'] # output folder
     ext_type = ''
 
     if len(i_path) == 0:
-        sg.PopupError('No INPUT file or folder selected!')
+        sg.PopupError('No INPUT file or folder selected!', title="Error")
         return False, ext_type
     elif not os.path.exists(i_path):
-        sg.PopupError('INPUT file/folder does not exist!')
+        sg.PopupError('INPUT file/folder does not exist!', title="Error")
         return False, ext_type
     elif os.path.isdir(i_path):
         ext_type = 'fs'
     else: # must be an existing file then
         if not i_path.lower().endswith('.tar') and not i_path.lower().endswith('.zip') and not i_path.lower().endswith('.gz'):
-            sg.PopupError('Input file is not a supported archive! ', i_path)
+            sg.PopupError('Input file is not a supported archive! ', i_path, title="Error")
             return False, ext_type
         else:
             ext_type = Path(i_path).suffix[1:].lower() 
     
     # check output now
     if len(o_path) == 0 : # output folder
-        sg.PopupError('No OUTPUT folder selected!')
+        sg.PopupError('No OUTPUT folder selected!', title="Error")
         return False, ext_type
 
     one_element_is_selected = False
@@ -44,7 +127,7 @@ def ValidateInput(values, window):
             one_element_is_selected = True
             break
     if not one_element_is_selected:
-        sg.PopupError('No module selected for processing!')
+        sg.PopupError('No module selected for processing!', title="Error")
         return False, ext_type
 
     return True, ext_type
@@ -85,14 +168,16 @@ tzvalues = ['Africa/Abidjan', 'Africa/Accra', 'Africa/Addis_Ababa', 'Africa/Algi
 layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helvetica", 22))],
             [sg.Text('https://github.com/abrignoni/ALEAPP', font=("Helvetica", 14))],
             [sg.Frame(layout=[
-                    [sg.Input(size=(97,1)), 
+                    [sg.Input(size=(97,1), key='INPUTPATH'), 
                      sg.FileBrowse(font=normal_font, button_text='Browse File', key='INPUTFILEBROWSE'),
                      sg.FolderBrowse(font=normal_font, button_text='Browse Folder', target=(sg.ThisRow, -2), key='INPUTFOLDERBROWSE')
                     ]
                 ],
                 title='Select the file (tar/zip/gz) or directory of the target Android full file system extraction for parsing:')],
             [sg.Frame(layout=[
-                    [sg.Input(size=(112,1)), sg.FolderBrowse(font=normal_font, button_text='Browse Folder')]
+                    [sg.Input(size=(112,1), key='OUTPUTPATH'), 
+                     sg.FolderBrowse(font=normal_font, button_text='Browse Folder')
+                    ]
                 ], 
                     title='Select Output Folder:')],
             [sg.Text('Available Modules')],
@@ -106,12 +191,12 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
              #     file_types=(('ALEAPP Profile (*.alprofile)', '*.alprofile'), ('All Files', '*')),
              #     default_extension='.alprofile')
             sg.Text('  |', font=("Helvetica", 14)),
-            sg.Button('Load Case Data', key='LOAD CASE DATA'),
+            sg.Button('Add Case Data', key='ADD CASE DATA'),
             sg.Text('  |', font=("Helvetica", 14)),
                     sg.Text('Timezone Offset (Not Implemented Yet):', font=("Helvetica", 14)),
                     sg.Combo(list(tzvalues), size=(20,15), key='timezone',readonly=True)
             ],
-            [sg.Column(mlist, size=(300,310), scrollable=True),  sg.Output(size=(85,20))] ,
+            [sg.Column(mlist, size=(300,310), scrollable=True), sg.Output(size=(85,20))],
             [sg.ProgressBar(max_value=GuiWindow.progress_bar_total, orientation='h', size=(86, 7), key='PROGRESSBAR', bar_color=('DarkGreen', 'White'))],
             [sg.Submit('Process', font=normal_font), sg.Button('Close', font=normal_font)] ]
             
@@ -119,6 +204,7 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
 window = sg.Window(f'ALEAPP version {aleapp_version}', layout)
 GuiWindow.progress_bar_handle = window['PROGRESSBAR']
 profile_filename = None
+casedata = {}
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
@@ -130,10 +216,12 @@ while True:
         # mark all modules
         for x in range(MODULE_START_INDEX, module_end_index):
             window[x].Update(True)
+
     if event == "DESELECT ALL":  
          # none modules
         for x in range(MODULE_START_INDEX, module_end_index):
             window[x].Update(False if window[x].metadata != 'usagestatsVersion' else True)  # usagestatsVersion.py is REQUIRED
+
     if event == "SAVE PROFILE":
         destination_path = sg.popup_get_file(
             "Save a profile", save_as=True,
@@ -148,7 +236,7 @@ while True:
                     ticked.append(key)
             with open(destination_path, "wt", encoding="utf-8") as profile_out:
                 json.dump({"leapp": "aleapp", "format_version": 1, "plugins": ticked}, profile_out)
-            sg.Popup(f"Profile saved: {destination_path}")
+            sg.Popup(f"Profile saved: {destination_path}", title="Save a profile")
 
     if event == "LOAD PROFILE":
         destination_path = sg.popup_get_file(
@@ -182,41 +270,19 @@ while True:
             if profile_load_error:
                 sg.popup(profile_load_error)
             else:
-                sg.popup(f"Loaded profile: {destination_path}")
+                sg.popup(f"Loaded profile: {destination_path}", title="Load a profile")
                 profile_filename = destination_path
     
-    if event == 'LOAD CASE DATA':
-        destination_path = sg.popup_get_file(
-            "Load a case data", save_as=False,
-            file_types=(('ALEAPP Profile (*.alprofile)', '*.alprofile'), ('All Files', '*')),
-            default_extension='.alprofile', no_window=True)
-        
-        if destination_path and os.path.exists(destination_path):
-            profile_load_error = None
-            with open(destination_path, "rt", encoding="utf-8") as profile_in:
-                try:
-                    profile = json.load(profile_in)
-                except json.JSONDecodeError as json_ex:
-                    profile_load_error = f"File was not a valid profile file: {json_ex}"
-                    
-            if not profile_load_error:
-                if isinstance(profile, dict):
-                    casedata = profile
-                else:
-                    profile_load_error = "File was not a valid profile file: invalid format"
-            
-            if profile_load_error:
-                sg.popup(profile_load_error)
-            else:
-                sg.popup(f"Loaded Case Data: {destination_path}")
-    
+    if event == "ADD CASE DATA":
+        casedata = add_case_data(casedata)
+
     if event == 'Process':
         #check is selections made properly; if not we will return to input form without exiting app altogether
         is_valid, extracttype = ValidateInput(values, window)
         if is_valid:
             GuiWindow.window_handle = window
-            input_path = values[0]
-            output_folder = values[1]
+            input_path = values['INPUTPATH']
+            output_folder = values['OUTPUTPATH']
 
             # Android file system extractions contain paths > 260 char, which causes problems
             # This fixes the problem by prefixing \\?\ on each windows path.
@@ -249,11 +315,6 @@ while True:
             if time_offset == '':
                 time_offset = 'UTC'
             
-            try:
-                casedata
-            except NameError:
-                casedata = {}
-            
             crunch_successful = aleapp.crunch_artifacts(
                 search_list, extracttype, input_path, out_params, len(loader)/s_items, wrap_text, loader, casedata, time_offset, profile_filename)
             if crunch_successful:
@@ -270,6 +331,6 @@ while True:
                 log_path = out_params.screen_output_file_path
                 if log_path.startswith('\\\\?\\'): # windows
                     log_path = log_path[4:]
-                sg.Popup('Processing failed    :( ', f'See log for error details..\nLog file located at {log_path}')
+                sg.Popup('Processing failed    :( ', f'See log for error details..\nLog file located at {log_path}', title="Error")
             break
 window.close()
