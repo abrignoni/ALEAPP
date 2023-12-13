@@ -3,11 +3,11 @@ __artifacts_v2__ = {
         "name": "Fitbit",
         "description": "Parses Fitbit activities",
         "author": "@AlexisBrignoni",
-        "version": "0.0.3",
+        "version": "0.0.4",
         "date": "2021-04-23",
         "requirements": "none",
         "category": "Fitbit",
-        "notes": "Updated 2023-10-17 by @KevinPagano3, combining all parsers into one",
+        "notes": "Updated 2023-12-12 by @segumarc, wrong file_found was wrote in the 'located at' field in the html report",
         "paths": ('*/com.fitbit.FitbitMobile/databases/activity_db*','*/com.fitbit.FitbitMobile/databases/device_database*','*/com.fitbit.FitbitMobile/databases/exercise_db*','*/com.fitbit.FitbitMobile/databases/heart_rate_db*','*/com.fitbit.FitbitMobile/databases/sleep*','*/com.fitbit.FitbitMobile/databases/social_db*','*/com.fitbit.FitbitMobile/databases/mobile_track_db*'),
         "function": "get_fitbit"
     }
@@ -37,6 +37,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         file_found = str(file_found)
         
         if file_found.endswith('activity_db'):
+            file_found_activity = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -82,6 +83,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             db.close() 
 
         if file_found.endswith('device_database'):
+            file_found_device = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -103,6 +105,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             db.close()
             
         if file_found.endswith('exercise_db'):
+            file_found_exercise = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -145,6 +148,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             db.close()
             
         if file_found.endswith('heart_rate_db'):
+            file_found_heart = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -163,6 +167,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             db.close()
             
         if file_found.endswith('sleep'):
+            file_found_sleep = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -208,6 +213,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             db.close()
                
         if file_found.endswith('social_db'):
+            file_found_social = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -259,6 +265,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
             db.close()
     
         if file_found.endswith('mobile_track_db'):
+            file_found_mobile = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -289,7 +296,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report.start_artifact_report(report_folder, 'Fitbit Activity')
         report.add_script()
         data_headers = ('Timestamp','Time Created','Name','Log Type','Active Duration','SPEED','Pace','Elevation Gain','Avg Heart Rate','Distance','Distance Unit','Duration', 'Duration in Minutes','Steps','Details Type','Calories','Manual Calories Populated','Source Name','Source Type','Has GPS','Swim Lengths','Pool Length','Pool Length Unit','Very Active Minutes','Moderately Active Minutes','Fat Burn Heart Rate Zone','Cardio Heart Rate Zone','Peak Heart Rate Zone','Source') 
-        report.write_artifact_data_table(data_headers, data_list_activity, file_found)
+        report.write_artifact_data_table(data_headers, data_list_activity, file_found_activity)
         report.end_artifact_report()
         
         tsvname = f'Fitbit Activity'
@@ -306,7 +313,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report.add_script()
         data_headers = ('Last Synced Timestamp','Device Name','Bluetooth MAC Address','Battery Percentage','Device Type','Source') 
         
-        report.write_artifact_data_table(data_headers, data_list_devices, file_found)
+        report.write_artifact_data_table(data_headers, data_list_devices, file_found_device)
         report.end_artifact_report()
         
         tsvname = f'Fitbit Device Info'
@@ -323,7 +330,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report.add_script()
         data_headers = ('Timestamp','Label','Latitude','Longitude','Accuracy','Altitude','Speed','Pace','Session_ID','Source')
         
-        report.write_artifact_data_table(data_headers, data_list_exercises, file_found)
+        report.write_artifact_data_table(data_headers, data_list_exercises, file_found_exercise)
         report.end_artifact_report()
         
         tsvname = f'Fitbit Exercise'
@@ -340,7 +347,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report.add_script()
         data_headers = ('Timestamp','Avg. Heart Rate','Resting Heart Rate','Source')
         
-        report.write_artifact_data_table(data_headers, data_list_heart, file_found)
+        report.write_artifact_data_table(data_headers, data_list_heart, file_found_heart)
         report.end_artifact_report()
         
         tsvname = f'Fitbit Heart Rate Summary'
@@ -357,7 +364,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report.add_script()
         data_headers = ('Timestamp','Seconds','Level','Log ID','Source') 
 
-        report.write_artifact_data_table(data_headers, data_list_sleep_detail, file_found)
+        report.write_artifact_data_table(data_headers, data_list_sleep_detail, file_found_sleep)
         report.end_artifact_report()
         
         tsvname = f'Fitbit Sleep Detail'
@@ -374,7 +381,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report.add_script()
         data_headers = ('Timestamp','Start Time','Sync Status','Duration in Milliseconds','Duration in Minutes', 'Minutes After Wakeup', 'Minutes Asleep', 'Minutes Awake', 'Minutes to Fall Asleep', 'Log ID', 'Source') 
         
-        report.write_artifact_data_table(data_headers, data_list_sleep_summary, file_found)
+        report.write_artifact_data_table(data_headers, data_list_sleep_summary, file_found_sleep)
         report.end_artifact_report()
         
         tsvname = f'Fitbit Sleep Summary'
@@ -388,7 +395,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report.add_script()
         data_headers = ('Owning UserID','Encoded ID','Display Name','Avatar URL','Friend','Child','Source') 
 
-        report.write_artifact_data_table(data_headers, data_list_friends, file_found)
+        report.write_artifact_data_table(data_headers, data_list_friends, file_found_social)
         report.end_artifact_report()
         
         tsvname = f'Fitbit Friends'
@@ -403,7 +410,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report.add_script()
         data_headers = ('Last Updated','Display Name','Full Name','About Me','Avatar URL', 'Cover Photo URL', 'City', 'State', 'Country', 'Joined Date','Date of Birth','Height','Weight','Gender','Coach','Source') 
         
-        report.write_artifact_data_table(data_headers, data_list_user, file_found)
+        report.write_artifact_data_table(data_headers, data_list_user, file_found_social)
         report.end_artifact_report()
         
         tsvname = f'Fitbit User Profile'
@@ -421,7 +428,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report.add_script()
         data_headers = ('Timestamp','Steps Count','Mets Count','Time Created','Time Updated') 
         
-        report.write_artifact_data_table(data_headers, data_list_steps, file_found)
+        report.write_artifact_data_table(data_headers, data_list_steps, file_found_mobile)
         report.end_artifact_report()
         
         tsvname = f'Fitbit Steps'
