@@ -3,11 +3,11 @@ __artifacts_v2__ = {
         "name": "Google Maps GMM",
         "description": "Parse Google Maps GMM db files",
         "author": "@AlexisBrignoni",  
-        "version": "0.0.2",  
+        "version": "0.0.3",  
         "date": "2022-12-30",  
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "Updated 2023-12-05 by @segumarc, added support for Label Places from GMM_MyPlaces.db and restructuring the existing gmm_storage",
+        "notes": "Updated 2023-12-12 by @segumarc, wrong file_found was wrote in the 'located at' field in the html report",
         "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db','*/com.google.android.apps.maps/databases/gmm_storage.db'),
         "function": "get_googleMapsGmm"
     }
@@ -30,6 +30,7 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text, time_offset
         file_found = str(file_found)
         if file_found.endswith('gmm_storage.db'):
             db = open_sqlite_db_readonly(file_found)
+            file_found_storage = file_found
             cursor = db.cursor()
             cursor.execute('''
             select 
@@ -82,6 +83,7 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text, time_offset
 
         if file_found.endswith('gmm_myplaces.db'):
             db = open_sqlite_db_readonly(file_found)
+            file_found_myplaces = file_found
             cursor = db.cursor()
             cursor.execute('''
             select 
@@ -93,8 +95,8 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text, time_offset
             timestamp         
             from sync_item 
             ''')
-            #datetime(timestamp/1000,'unixepoch')    
             all_rows = cursor.fetchall()
+
             for row in all_rows:
                 id = row[0]
                 keystring = row[1]
@@ -126,7 +128,7 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text, time_offset
         report.start_artifact_report(report_folder, 'Google Search History Maps')
         report.add_script()
         data_headers = ('Directions', 'Latitude', 'Longitude', 'To Latitude', 'To Longitude', 'Row ID', 'Type')
-        report.write_artifact_data_table(data_headers, data_list_storage, file_found, html_escape=False)
+        report.write_artifact_data_table(data_headers, data_list_storage, file_found_storage, html_escape=False)
         report.end_artifact_report()
 
         tsvname = f'Google Search History Maps'
@@ -139,7 +141,7 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text, time_offset
         report.start_artifact_report(report_folder, 'Google Maps Label Places')
         report.add_script()
         data_headers = ('Timestamp','Label', 'Latitude', 'Longitude', 'Address', 'URL')
-        report.write_artifact_data_table(data_headers, data_list_myplaces, file_found, html_escape=False)
+        report.write_artifact_data_table(data_headers, data_list_myplaces, file_found_myplaces, html_escape=False)
         report.end_artifact_report()
        
         tsvname = f'Google Maps Label Places'
