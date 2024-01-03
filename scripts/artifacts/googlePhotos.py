@@ -3,8 +3,8 @@ import io
 import json
 import os
 import shutil
-import magic
 
+from scripts.filetype import guess_extension
 from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly, media_to_html
@@ -317,8 +317,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                     
                     for match in files_found:
                         if fileNameKey in match:
-                            mimetype = magic.from_file(match, mime = True)
-                            ext = (mimetype.split('/')[1])
+                            ext = guess_extension(match)
                             newname = os.path.join(report_folder, f'{fileNameKey}.{ext}')
                             shutil.copy2(match, newname)
                     
@@ -374,8 +373,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                     
                     for match in files_found:
                         if fileNameKey in match:
-                            mimetype = magic.from_file(match, mime = True)
-                            ext = (mimetype.split('/')[1])
+                            ext = guess_extension(match)
                             newname = os.path.join(report_folder, f'{fileNameKey}.{ext}')
                             shutil.copy2(match, newname)
                             
