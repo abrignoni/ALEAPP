@@ -1,11 +1,9 @@
 import sys
-import filetype 
-import magic
 import shutil
 import os
 import xml.etree.ElementTree as ET
 import base64
-import filetype
+import scripts.filetype as filetype
 import datetime
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad

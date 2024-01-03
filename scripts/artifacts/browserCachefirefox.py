@@ -2,11 +2,11 @@ import datetime
 import email
 import os
 import struct
-import magic
 import gzip
 import shutil
 from io import BytesIO
 
+from scripts.filetype import guess_mime, guess_extension
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, media_to_html, is_platform_windows
 
@@ -36,10 +36,10 @@ def get_browserCachefirefox(files_found, report_folder, seeker, wrap_text, time_
             except:
                 url = ''
             
-            mime = magic.from_file(file_found, mime=True)
-            ext = (mime.split('/')[1])
+            mime = guess_mime(file_found)
+            ext = guess_extension(file_found)
             
-            sfilename = filename + '.' + ext
+            sfilename = filename + '.' + ext if ext else filename
             spath = os.path.join(report_folder,sfilename)
             shutil.copy2(file_found, spath)
             
@@ -48,10 +48,10 @@ def get_browserCachefirefox(files_found, report_folder, seeker, wrap_text, time_
                     with gzip.open(f'{spath}', 'rb') as f_in:
                         file_content = f_in.read()
                         
-                        mime = magic.from_buffer(file_content, mime=True)
-                        extin = (mime.split('/')[1])
+                        mime = guess_mime(file_content)
+                        extin = guess_extension(file_content)
                         #logfunc(f'Gzip mime: {mime} for {spath}')
-                        sfilename = filename + '.' + extin
+                        sfilename = filename + '.' + extin if extin else filename
                         spath = os.path.join(report_folder,sfilename)
                         
                     with open(f'{spath}', 'wb') as f_out:

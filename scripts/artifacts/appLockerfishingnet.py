@@ -1,8 +1,7 @@
 import sys
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
-import filetype 
-import magic
+import scripts.filetype as filetype
 import shutil
 from os.path import isfile, join, basename, dirname, getsize, abspath
 from pathlib import Path
@@ -34,7 +33,7 @@ def get_appLockerfishingnet(files_found, report_folder, seeker, wrap_text, time_
             continue
         
         if filesize > 0:
-            mimetype = magic.from_file(file_found, mime = True)
+            mimetype = filetype.guess_mime(file_found)
             
             ext = filetype.guess(file_found)
             if ext is None:

@@ -2,7 +2,6 @@ bcrypt==3.2.0
 beautifulsoup4==4.8.2
 bencoding
 blackboxprotobuf
-filetype==1.0.8
 fitdecode==0.10.0
 folium==0.14.0
 geopy==2.3.0
@@ -12,10 +11,6 @@ polyline==2.0.0
 protobuf==3.10.0
 PyCryptodome
 PySimpleGUI==4.16.0
-python-magic==0.4.24; platform_system == "Linux"
-python-magic-bin==0.4.14; platform_system == "Windows"
-python-magic-bin; platform_system == "Darwin" and platform_machine == "x86_64"
-python-magic; platform_system == "Darwin" and platform_machine == "arm64"
 pytz
 simplekml
 wheel

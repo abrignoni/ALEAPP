@@ -9,7 +9,7 @@ from Crypto.Hash import SHA1
 from binascii import unhexlify
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
-import filetype
+import scripts.filetype as filetype
 from itertools import permutations
 from pathlib import Path
 import json
