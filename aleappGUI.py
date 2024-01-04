@@ -70,8 +70,8 @@ def add_case_data(casedata):
                 with open(destination_path, "rt", encoding="utf-8") as case_data_in:
                     try:
                         case_data = json.load(case_data_in)
-                    except json.JSONDecodeError as json_ex:
-                        case_data_load_error = f"File was not a valid case data file: {json_ex}"
+                    except:
+                        case_data_load_error = "File was not a valid case data file: invalid format"
                         
                 if not case_data_load_error:
                     if isinstance(case_data, dict):
@@ -82,7 +82,7 @@ def add_case_data(casedata):
                             for key, value in casedata.items():
                                 case_data_window[key].update(value)
                     else:
-                        case_data_load_error = "File was not a valid case data file: invalid format"                
+                        case_data_load_error = "File was not a valid case data file: invalid format"
                 
                 if case_data_load_error:
                     sg.popup(case_data_load_error)
@@ -123,7 +123,7 @@ def ValidateInput(values, window):
 
     one_element_is_selected = False
     for x in range(1000, module_end_index):
-        if window.FindElement(x).Get():
+        if window[x].Get():
             one_element_is_selected = True
             break
     if not one_element_is_selected:
@@ -196,7 +196,7 @@ layout = [  [sg.Text('Android Logs, Events, And Protobuf Parser', font=("Helveti
                     sg.Text('Timezone Offset (Not Implemented Yet):', font=("Helvetica", 14)),
                     sg.Combo(list(tzvalues), size=(20,15), key='timezone',readonly=True)
             ],
-            [sg.Column(mlist, size=(300,310), scrollable=True), sg.Output(size=(85,20))],
+            [sg.Column(mlist, size=(300,310), scrollable=True), sg.Output(size=(85,29))],
             [sg.ProgressBar(max_value=GuiWindow.progress_bar_total, orientation='h', size=(86, 7), key='PROGRESSBAR', bar_color=('DarkGreen', 'White'))],
             [sg.Submit('Process', font=normal_font), sg.Button('Close', font=normal_font)] ]
             
@@ -231,7 +231,7 @@ while True:
         if destination_path:
             ticked = []
             for x in range(MODULE_START_INDEX, module_end_index):
-                if window.FindElement(x).Get():
+                if window[x].Get():
                     key = window[x].metadata
                     ticked.append(key)
             with open(destination_path, "wt", encoding="utf-8") as profile_out:
@@ -249,8 +249,8 @@ while True:
             with open(destination_path, "rt", encoding="utf-8") as profile_in:
                 try:
                     profile = json.load(profile_in)
-                except json.JSONDecodeError as json_ex:
-                    profile_load_error = f"File was not a valid profile file: {json_ex}"
+                except:
+                    profile_load_error = "File was not a valid profile file: invalid format"
 
             if not profile_load_error:
                 if isinstance(profile, dict):
@@ -296,7 +296,7 @@ while True:
 
             s_items = 0
             for x in range(MODULE_START_INDEX, module_end_index):
-                if window.FindElement(x).Get():
+                if window[x].Get():
                     key = window[x].metadata
                     if key in loader and key != 'usagestatsVersion':
                         search_list.append(loader[key])

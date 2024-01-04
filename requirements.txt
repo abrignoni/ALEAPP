@@ -10,7 +10,7 @@ pillow
 polyline==2.0.0
 protobuf==3.10.0
 PyCryptodome
-PySimpleGUI==4.16.0
+PySimpleGUI
 pytz
 simplekml
 wheel
