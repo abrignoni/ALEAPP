@@ -74,10 +74,17 @@ def convert_ts_int_to_utc(ts): #This int timestamp to human format & utc
     timestamp = datetime.fromtimestamp(ts, tz=timezone.utc)
     return timestamp
 
+def is_platform_linux():
+    '''Returns True if running on Linux'''
+    return sys.platform == 'linux'
+
+def is_platform_macos():
+    '''Returns True if running on macOS'''
+    return sys.platform == 'darwin'
+
 def is_platform_windows():
     '''Returns True if running on Windows'''
-    return os.name == 'nt'
-
+    return sys.platform == 'win32'
 
 def sanitize_file_path(filename, replacement_char='_'):
     '''
