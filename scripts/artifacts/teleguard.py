@@ -41,7 +41,7 @@ def get_teleguard(files_found, report_folder, seeker, wrap_text, time_offset):
                             for key, values in mediafiles.items():
                                 #print(key,values)
                                 thumb = thumb + media_to_html(key, files_found, report_folder)
-                                thumb = thumb + f'<br>{values}</br>'
+                                thumb = thumb + f'<br>{values}</br><b></br>'
                         else:
                             thumb = ''
                     else:
