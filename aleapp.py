@@ -197,7 +197,7 @@ def main():
         if os.path.isdir(args.create_profile_casedata):
             create_choice = ''
             print('-' * 55)
-            print('Welcome to ALEAP Profile or Case Data file creation\n')
+            print('Welcome to ALEAPP Profile or Case Data file creation\n')
             instructions = 'You can type:\n'
             instructions += '   - \'1\' to create an ALEAPP Profile file (.alprofile)\n'
             instructions += '   - \'2\' to create a LEAPP Case Data file (.lcasedata)\n'
