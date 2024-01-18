@@ -524,6 +524,12 @@ icon_mappings = \
         '_mode': 'search',
     },
     'LIBRE TORRENT': 'download',
+    'LIFE360': {
+        'LIFE360 - CHAT MESSAGES': 'message-circle',
+        'LIFE360 - DEVICE BATTERY': 'battery',
+        'LIFE360 - LOCATIONS': 'map-pin',
+        'LIFE360 - PLACES': 'map-pin',
+    },
     'LINE': {
         'LINE - CONTACTS': 'user',
         'LINE - MESSAGES': 'message-square',
