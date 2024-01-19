@@ -81,7 +81,11 @@ def get_Life360(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    data_list_messaging.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],messaging_db))
+                    time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+                    loc_time = ''
+                    if not row[13] is None:
+                        loc_time = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[13]),time_offset)
+                    data_list_messaging.append((time_create,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],loc_time,messaging_db))
             db.close()
         
         # Places        
@@ -131,6 +135,8 @@ def get_Life360(files_found, report_folder, seeker, wrap_text, time_offset):
                     json_load = json.loads(row[1])
                 
                     json_timestamp = str(datetime.fromtimestamp(json_load['locationData'].get('time','')/1000,tz=timezone.utc))[:-6]
+                    time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(json_timestamp),time_offset)
+                    
                     json_lat = json_load['locationData'].get('latitude','')
                     json_long = json_load['locationData'].get('longitude','')
                     json_speed = json_load['locationData'].get('speed','')
@@ -151,8 +157,8 @@ def get_Life360(files_found, report_folder, seeker, wrap_text, time_offset):
                         json_bssid = json_load['metaData']['wifiData']['connectedAccessPoint'].get('bssid','')
                         json_ssid = json_load['metaData']['wifiData']['connectedAccessPoint'].get('ssid','').replace('\"','')
                     
-                    data_list_geo.append((json_timestamp,json_lat,json_long,json_alt,json_speed,json_course,json_bearing,json_vert,json_hor,json_lmode,json_bssid,json_ssid,row[2],geo_db))
-                    data_list_battery.append((json_timestamp,json_battery,json_charging,geo_db))
+                    data_list_geo.append((time_create,json_lat,json_long,json_alt,json_speed,json_course,json_bearing,json_vert,json_hor,json_lmode,json_bssid,json_ssid,row[2],geo_db))
+                    data_list_battery.append((time_create,json_battery,json_charging,geo_db))
             db.close()
         
         else:
