@@ -7,12 +7,15 @@ from datetime import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, media_to_html
 
-def get_gmailEmails(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_gmailEmails(files_found, report_folder, seeker, wrap_text):
     
     bigTopDataDB = ''
     source_bigTop = ''
     downloaderDB = ''
     source_downloader = ''
+    
+    bigTopDataDB_found = []
+    source_bigTop_found = []
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -26,11 +29,15 @@ def get_gmailEmails(files_found, report_folder, seeker, wrap_text, time_offset):
         if os.path.basename(file_found).startswith('bigTopDataDB'):
             bigTopDataDB = str(file_found)
             source_bigTop = file_found.replace(seeker.directory, '')
+            bigTopDataDB_found.append(bigTopDataDB)
+            source_bigTop_found.append(source_bigTop)
         if os.path.basename(file_found).startswith('downloader.db'):
             downloaderDB = str(file_found)
             source_downloader = file_found.replace(seeker.directory, '')
         
-    if bigTopDataDB != '':
+    for i in range(len(bigTopDataDB_found)):
+        bigTopDataDB = bigTopDataDB_found[i]
+        source_bigTop = source_bigTop_found[i]
         db = open_sqlite_db_readonly(bigTopDataDB)
         cursor = db.cursor()
         cursor.execute('''
