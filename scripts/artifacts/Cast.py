@@ -90,7 +90,7 @@ def get_Cast(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Cast')
         report.start_artifact_report(report_folder, 'Cast')
         report.add_script()
-        data_headers = ('Last Published Timestamp','Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID','Last Discovered Timestamp','Last Discovered By BLE Timestamp','Source') 
+        data_headers = ('Last Published Timestamp','Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID','Last Discovered Timestamp','Last Discovered By BLE Timestamp','Source File') 
         
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()

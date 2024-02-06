@@ -121,11 +121,9 @@ icon_mappings = \
         'default': 'bluetooth',
     },
     'BUMBLE': {
-        'BUMBLE - ACCOUNT DETAILS': 'user',
-        'BUMBLE - MESSAGES': 'message-circle',
-        'USER SETTINGS': 'user',
-        'CHAT MESSAGES': 'message-circle',
-        'MATCHES': 'smile',
+        'BUMBLE - CHAT MESSAGES': 'message-circle',
+        'BUMBLE - USER SETTINGS': 'user',
+        'BUMBLE - MATCHES': 'smile',
     },
     'BURNER': {
         'NUMBER INFORMATION': 'user',

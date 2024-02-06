@@ -75,7 +75,7 @@ def get_downloads(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Native Downloads')
         report.start_artifact_report(report_folder, 'Native Downloads', description)
         report.add_script()
-        data_headers = ('Modified/Downloaded Timestamp','Title','Description','Provider URI','Save Location','Mime Type','App Provider Package','Current Bytes','Total Bytes','Status','Error Message','ETAG','Visible in Downloads UI','Deleted','Source')
+        data_headers = ('Modified/Downloaded Timestamp','Title','Description','Provider URI','Save Location','Mime Type','App Provider Package','Current Bytes','Total Bytes','Status','Error Message','ETAG','Visible in Downloads UI','Deleted','Source File')
         report.write_artifact_data_table(data_headers, data_list, file_found,html_escape=False)
         report.end_artifact_report()
         
