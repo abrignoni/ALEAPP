@@ -76,6 +76,6 @@ def get_chromeOfflinePages(files_found, report_folder, seeker, wrap_text, time_o
 __artifacts__ = {
         "ChromeOfflinePages": (
                 "Chromium",
-                ('*/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '*/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*'),
+                ('*/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '*/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*', '*/app_webview/Default/Offline Pages/metadata/OfflinePages.db*'),
                 get_chromeOfflinePages)
 }
