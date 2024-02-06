@@ -166,7 +166,7 @@ def get_Cello(files_found, report_folder, seeker, wrap_text, time_offset):
         report.start_artifact_report(report_folder, f'Cello - {account_name}')
         report.add_script()
         data_headers = ('Created Date','File Name','Modified Date','Shared with User Date','Modified by User Date','Viewed by User Date','Mime Type', \
-                        'Offline','Quota Size','Folder','User is Owner','Deleted','Source')
+                        'Offline','Quota Size','Folder','User is Owner','Deleted','Source File')
 
         report.write_artifact_data_table(data_headers, data_list, cello_db, html_escape=False)
         report.end_artifact_report()

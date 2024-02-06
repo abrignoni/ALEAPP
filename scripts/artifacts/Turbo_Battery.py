@@ -121,7 +121,6 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset
     else:
         logfunc('No Turbo - Phone Battery data available')
     
-    
     if data_list_bluetooth:
         report = ArtifactHtmlReport('Turbo - Bluetooth Device Info')
         report.start_artifact_report(report_folder, 'Turbo - Bluetooth Device Info')

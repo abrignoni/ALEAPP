@@ -1,8 +1,16 @@
-# Module Description: Parses Bumble chats, matches and user details
-# Author: @KevinPagano3
-# Date: 2022-11-07
-# Artifact version: 0.0.1
-# Requirements: none
+__artifacts_v2__ = {
+    "Bumble": {
+        "name": "Bumble",
+        "description": "Parses Bumble chats, matches and user details",
+        "author": "@KevinPagano3",
+        "version": "0.0.1",
+        "date": "2022-11-07",
+        "requirements": "none",
+        "category": "Bumble",
+        "paths": ('*/com.bumble.app/databases/ChatComDatabase*','*/com.bumble.app/files/c2V0dGluZ3M='),
+        "function": "get_bumble"
+    }
+}
 
 import sqlite3
 import os
@@ -12,7 +20,7 @@ import blackboxprotobuf
 
 from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_bumble(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -584,11 +592,12 @@ def get_bumble(files_found, report_folder, seeker, wrap_text, time_offset):
         data_headers = ('Created Timestamp','Modified Timestamp','Sender ID','Sender Name','Recipient ID','Recipient Name','Message Text','Message URL','Message Type','Message Direction','Conversation ID','Message ID') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
-        
+            time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+            time_mod = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[1]),time_offset)
             if row[7] == 'Outgoing':
-                data_list.append((row[0],row[1],row[2],str(user_name + ' (local user)'),row[3],row[10],row[4],row[5],row[6],row[7],row[8],row[9]))
+                data_list.append((time_create,time_mod,row[2],str(user_name + ' (local user)'),row[3],row[10],row[4],row[5],row[6],row[7],row[8],row[9]))
             else:
-                data_list.append((row[0],row[1],row[2],row[10],row[3],str(user_name + ' (local user)'),row[4],row[5],row[6],row[7],row[8],row[9]))
+                data_list.append((time_create,time_mod,row[2],row[10],row[3],str(user_name + ' (local user)'),row[4],row[5],row[6],row[7],row[8],row[9]))
 
         report.write_artifact_data_table(data_headers, data_list, source_file_chat_db)
         report.end_artifact_report()
@@ -638,9 +647,3 @@ def get_bumble(files_found, report_folder, seeker, wrap_text, time_offset):
     
     db.close()
 
-__artifacts__ = {
-        "bumble": (
-                "Bumble",
-                ('*/com.bumble.app/databases/ChatComDatabase*','*/com.bumble.app/files/c2V0dGluZ3M='),
-                get_bumble)
-}

@@ -100,7 +100,7 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Digital Wellbeing - Events')
         report.start_artifact_report(report_folder, 'Events')
         report.add_script()
-        data_headers = ('Timestamp', 'Package ID', 'Event Type', 'Source')
+        data_headers = ('Timestamp', 'Package ID', 'Event Type', 'Source File')
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
@@ -117,7 +117,7 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Digital Wellbeing - URL Events')
         report.start_artifact_report(report_folder, 'Digital Wellbeing - URL Events')
         report.add_script()
-        data_headers = ('Timestamp', 'Event ID', 'Package ID', 'Package Name', 'Website', 'Event', 'Source')
+        data_headers = ('Timestamp', 'Event ID', 'Package ID', 'Package Name', 'Website', 'Event', 'Source File')
         
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()

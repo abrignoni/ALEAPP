@@ -295,7 +295,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Fitbit Activity')
         report.start_artifact_report(report_folder, 'Fitbit Activity')
         report.add_script()
-        data_headers = ('Timestamp','Time Created','Name','Log Type','Active Duration','SPEED','Pace','Elevation Gain','Avg Heart Rate','Distance','Distance Unit','Duration', 'Duration in Minutes','Steps','Details Type','Calories','Manual Calories Populated','Source Name','Source Type','Has GPS','Swim Lengths','Pool Length','Pool Length Unit','Very Active Minutes','Moderately Active Minutes','Fat Burn Heart Rate Zone','Cardio Heart Rate Zone','Peak Heart Rate Zone','Source') 
+        data_headers = ('Timestamp','Time Created','Name','Log Type','Active Duration','SPEED','Pace','Elevation Gain','Avg Heart Rate','Distance','Distance Unit','Duration', 'Duration in Minutes','Steps','Details Type','Calories','Manual Calories Populated','Source Name','Source Type','Has GPS','Swim Lengths','Pool Length','Pool Length Unit','Very Active Minutes','Moderately Active Minutes','Fat Burn Heart Rate Zone','Cardio Heart Rate Zone','Peak Heart Rate Zone','Source File') 
         report.write_artifact_data_table(data_headers, data_list_activity, file_found_activity)
         report.end_artifact_report()
         
@@ -311,7 +311,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Fitbit Device Info')
         report.start_artifact_report(report_folder, 'Fitbit Device Info')
         report.add_script()
-        data_headers = ('Last Synced Timestamp','Device Name','Bluetooth MAC Address','Battery Percentage','Device Type','Source') 
+        data_headers = ('Last Synced Timestamp','Device Name','Bluetooth MAC Address','Battery Percentage','Device Type','Source File') 
         
         report.write_artifact_data_table(data_headers, data_list_devices, file_found_device)
         report.end_artifact_report()
@@ -328,7 +328,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Fitbit Exercise')
         report.start_artifact_report(report_folder, 'Fitbit Exercise')
         report.add_script()
-        data_headers = ('Timestamp','Label','Latitude','Longitude','Accuracy','Altitude','Speed','Pace','Session_ID','Source')
+        data_headers = ('Timestamp','Label','Latitude','Longitude','Accuracy','Altitude','Speed','Pace','Session_ID','Source File')
         
         report.write_artifact_data_table(data_headers, data_list_exercises, file_found_exercise)
         report.end_artifact_report()
@@ -345,7 +345,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Fitbit Heart Rate Summary')
         report.start_artifact_report(report_folder, 'Fitbit Heart Rate Summary')
         report.add_script()
-        data_headers = ('Timestamp','Avg. Heart Rate','Resting Heart Rate','Source')
+        data_headers = ('Timestamp','Avg. Heart Rate','Resting Heart Rate','Source File')
         
         report.write_artifact_data_table(data_headers, data_list_heart, file_found_heart)
         report.end_artifact_report()
@@ -362,7 +362,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Fitbit Sleep Detail')
         report.start_artifact_report(report_folder, 'Fitbit Sleep Detail')
         report.add_script()
-        data_headers = ('Timestamp','Seconds','Level','Log ID','Source') 
+        data_headers = ('Timestamp','Seconds','Level','Log ID','Source File') 
 
         report.write_artifact_data_table(data_headers, data_list_sleep_detail, file_found_sleep)
         report.end_artifact_report()
@@ -379,7 +379,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Fitbit Sleep Summary')
         report.start_artifact_report(report_folder, 'Fitbit Sleep Summary')
         report.add_script()
-        data_headers = ('Timestamp','Start Time','Sync Status','Duration in Milliseconds','Duration in Minutes', 'Minutes After Wakeup', 'Minutes Asleep', 'Minutes Awake', 'Minutes to Fall Asleep', 'Log ID', 'Source') 
+        data_headers = ('Timestamp','Start Time','Sync Status','Duration in Milliseconds','Duration in Minutes', 'Minutes After Wakeup', 'Minutes Asleep', 'Minutes Awake', 'Minutes to Fall Asleep', 'Log ID', 'Source File') 
         
         report.write_artifact_data_table(data_headers, data_list_sleep_summary, file_found_sleep)
         report.end_artifact_report()
@@ -393,7 +393,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Fitbit Friends')
         report.start_artifact_report(report_folder, 'Fitbit Friends')
         report.add_script()
-        data_headers = ('Owning UserID','Encoded ID','Display Name','Avatar URL','Friend','Child','Source') 
+        data_headers = ('Owning UserID','Encoded ID','Display Name','Avatar URL','Friend','Child','Source File') 
 
         report.write_artifact_data_table(data_headers, data_list_friends, file_found_social)
         report.end_artifact_report()
@@ -408,7 +408,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Fitbit User Profile')
         report.start_artifact_report(report_folder, 'Fitbit User Profile')
         report.add_script()
-        data_headers = ('Last Updated','Display Name','Full Name','About Me','Avatar URL', 'Cover Photo URL', 'City', 'State', 'Country', 'Joined Date','Date of Birth','Height','Weight','Gender','Coach','Source') 
+        data_headers = ('Last Updated','Display Name','Full Name','About Me','Avatar URL', 'Cover Photo URL', 'City', 'State', 'Country', 'Joined Date','Date of Birth','Height','Weight','Gender','Coach','Source File') 
         
         report.write_artifact_data_table(data_headers, data_list_user, file_found_social)
         report.end_artifact_report()
@@ -426,7 +426,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('Fitbit Steps')
         report.start_artifact_report(report_folder, 'Fitbit Steps')
         report.add_script()
-        data_headers = ('Timestamp','Steps Count','Mets Count','Time Created','Time Updated') 
+        data_headers = ('Timestamp','Steps Count','Mets Count','Time Created','Time Updated','Source File') 
         
         report.write_artifact_data_table(data_headers, data_list_steps, file_found_mobile)
         report.end_artifact_report()

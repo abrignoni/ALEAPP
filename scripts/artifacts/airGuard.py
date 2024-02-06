@@ -136,8 +136,8 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('AirGuard AirTag Tracker')
         report.start_artifact_report(report_folder, 'AirGuard AirTag Tracker')
         report.add_script()
-        data_headers = ('Last Time Device Seen','Time (Local)','Device MAC Address','Latitude','Longitude','Signal Strength (RSSI)','Device Type','First Time Device Seen','Last Time User Notified','Source') 
-        data_headers_kml = ('Timestamp','Time (Local)','Device MAC Address','Latitude','Longitude','Signal Strength (RSSI)','Device Type','First Time Device Seen','Last Time User Notified','Source') 
+        data_headers = ('Last Time Device Seen','Time (Local)','Device MAC Address','Latitude','Longitude','Signal Strength (RSSI)','Device Type','First Time Device Seen','Last Time User Notified','Source File')
+        data_headers_kml = ('Timestamp','Time (Local)','Device MAC Address','Latitude','Longitude','Signal Strength (RSSI)','Device Type','First Time Device Seen','Last Time User Notified','Source File')
         
         report.write_artifact_data_table(data_headers, data_list_tracker, file_found)
         report.end_artifact_report()
@@ -158,8 +158,8 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text, time_offset):
         report = ArtifactHtmlReport('AirGuard AirTag Scans')
         report.start_artifact_report(report_folder, 'AirGuard AirTag Scans')
         report.add_script()
-        data_headers = ('Start Scan Timestamp','End Scan Timestamp','Duration (Seconds)','Devices Found','Manual Scan?','Scan Mode','Source') 
-        data_headers_kml = ('Timestamp','End Scan Timestamp','Duration (Seconds)','Devices Found','Manual Scan?','Scan Mode','Source') 
+        data_headers = ('Start Scan Timestamp','End Scan Timestamp','Duration (Seconds)','Devices Found','Manual Scan?','Scan Mode','Source File') 
+        data_headers_kml = ('Timestamp','End Scan Timestamp','Duration (Seconds)','Devices Found','Manual Scan?','Scan Mode','Source File') 
 
         report.write_artifact_data_table(data_headers, data_list_scans, file_found)
         report.end_artifact_report()

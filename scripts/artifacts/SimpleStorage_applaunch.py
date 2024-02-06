@@ -69,7 +69,7 @@ def get_SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text, t
         report = ArtifactHtmlReport('SimpleStorage - App Launch')
         report.start_artifact_report(report_folder, 'SimpleStorage - App Launch')
         report.add_script()
-        data_headers = ('App Launched Timestamp','App Name','Launched From', 'Source')
+        data_headers = ('App Launched Timestamp','App Name','Launched From', 'Source File')
         
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
