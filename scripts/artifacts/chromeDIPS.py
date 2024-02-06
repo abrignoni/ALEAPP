@@ -184,6 +184,6 @@ def get_chromeDIPS(files_found, report_folder, seeker, wrap_text, time_offset):
 __artifacts__ = {
         "ChromeDIPS": (
                 "Chromium",
-                ('*/app_chrome/Default/DIPS*','*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*'),
+                ('*/app_chrome/Default/DIPS*','*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*','*/app_webview/Default/DIPS*'),
                 get_chromeDIPS)
 }
