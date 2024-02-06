@@ -18,12 +18,24 @@ def get_googleLastTrip(files_found, report_folder, seeker, wrap_text, time_offse
             #print(x, y)
             if x == '2':
                 for data in y.items():
-                    latyour = (data[1]['1']['1']['1']['1']['3']['3']) #lat your location
-                    longyour = (data[1]['1']['1']['1']['1']['3']['4']) #long your location
-                    startloc = (data[1]['1']['1']['1']['1']['4'].decode()) #your location text
-                    latdest = (data[1]['1']['1-1']['1']['1']['3']['3']) # dest lat long
-                    longdest = (data[1]['1']['1-1']['1']['1']['3']['4']) # dest long
-                    destination = (data[1]['1']['1-1']['1']['1']['4'].decode()) #dest addresss
+                    startinfo = data[1]['1']['1']['1']['1']
+                    latyour = (startinfo['3']['3']) #lat your location
+                    longyour = (startinfo['3']['4']) #long your location
+                    startloc = ''
+                    if '4' in startinfo:
+                        startloc = (startinfo['4'].decode()) #your location name
+                    if '1' in startinfo:
+                        startloc = (startinfo['1'].decode()) #your location address
+                    
+                    destinfo = data[1]['1']['1-1']['1']['1'];
+                    latdest = (destinfo['3']['3']) # dest lat long
+                    longdest = (destinfo['3']['4']) # dest long
+                    destination=''
+                    if '4' in destinfo:
+                        destination = (data[1]['1']['1-1']['1']['1']['4'].decode()) #dest name
+                    if '1' in destinfo:
+                        destination = (data[1]['1']['1-1']['1']['1']['1'].decode()) #dest addresss
+                    
                     destdata = (data[1]['1']['12'].decode()) #dest URL with lat longs
                     #ic(data[1]['1']['2'][1]) #list has possible 2 turn by turns [0] &[1]
                     pass
