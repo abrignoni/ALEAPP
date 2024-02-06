@@ -119,6 +119,6 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text, time_offs
 __artifacts__ = {
         "ChromeLoginData": (
                 "Chromium",
-                ('*/app_chrome/Default/Login Data*', '*/app_sbrowser/Default/Login Data*', '*/app_opera/Login Data*'),
+                ('*/app_chrome/Default/Login Data*', '*/app_sbrowser/Default/Login Data*', '*/app_opera/Login Data*', '*/app_webview/Default/Login Data*'),
                 get_chromeLoginData)
 }
