@@ -152,7 +152,10 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text, time_offset):
                     except:
                         pass
                     if (type(datos)) is dict:
-                        data_list_clean.append((fecha, origfile, datos['collapse_key'], datos['m'], datos['s'], datos['u']))
+                        if 'collapse_key' in datos:
+                            data_list_clean.append((fecha, origfile, datos['collapse_key'], datos['m'], datos['s'], datos['u']))
+                        elif 'c' in datos:
+                            data_list_clean.append((fecha, origfile, datos['c'], datos['m'], datos['s'], datos['u']))
                         
                 if data_list_clean:
                     report = ArtifactHtmlReport(f"Firebase Cloud Messaging Queued Messages Clean: {package}")
