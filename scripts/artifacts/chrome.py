@@ -16,6 +16,12 @@ def get_browser_name(file_name):
         return 'Opera'
     elif 'android.chrome' in file_name.lower():
         return 'Chrome'
+    elif 'app_webview' in file_name:
+        try:
+            result = re.search('.*/(.*)/app_webview/Default.*', file_name)
+            return result.group(1)
+        except:
+            return 'Unknown'
     else:
         return 'Unknown'
 
@@ -351,6 +357,6 @@ def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
 __artifacts__ = {
         "Chrome": (
                 "Chromium",
-                ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*'),
+                ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
                 get_chrome)
 }

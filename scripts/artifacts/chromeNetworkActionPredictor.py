@@ -2,19 +2,7 @@ import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
-
-def get_browser_name(file_name):
-
-    if 'brave' in file_name.lower():
-        return 'Brave'
-    elif 'microsoft' in file_name.lower():
-        return 'Edge'
-    elif 'opera' in file_name.lower():
-        return 'Opera'
-    elif 'android.chrome' in file_name.lower():
-        return 'Chrome'
-    else:
-        return 'Unknown'
+from chrome import get_browser_name
 
 def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_text, time_offset):
 
@@ -68,6 +56,6 @@ def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_te
 __artifacts__ = {
         "ChromeNetworkActionPredictor": (
                 "Chromium",
-                ('*/app_Chrome/Default/Network Action Predictor*','*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predicator*'),
+                ('*/app_Chrome/Default/Network Action Predictor*','*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predicator*','*/app_webview/Default/Network Action Predictor*'),
                 get_chromeNetworkActionPredictor)
 }
