@@ -351,6 +351,6 @@ def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
 __artifacts__ = {
         "Chrome": (
                 "Chromium",
-                ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*'),
+                ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
                 get_chrome)
 }
