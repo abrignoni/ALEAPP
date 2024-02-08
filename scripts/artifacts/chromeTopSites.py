@@ -3,7 +3,8 @@ import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
-from chrome import get_browser_name
+from scripts.artifacts.chrome import get_browser_name
+
 def get_chromeTopSites(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
