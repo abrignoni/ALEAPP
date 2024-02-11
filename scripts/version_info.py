@@ -18,5 +18,6 @@ aleapp_contributors = [
     [ 'LoicForensics', '', '', ''],
     [ 'Fabian Nunes', 'https://www.linkedin.com/in/fabian-nunes/', '', 'https://github.com/fabian-nunes'],
     ['Evangelos Dragonas', 'https://atropos4n6.com/','@theAtropos4n6','https://github.com/theAtropos4n6'],
-    ['James Habben', 'https://4n6ir.com/','@JamesHabben','https://github.com/JamesHabben']
+    ['James Habben', 'https://4n6ir.com/','@JamesHabben','https://github.com/JamesHabben'],
+    ['Matt Beers', 'https://www.linkedin.com/in/mattbeersii','','https://github.com/dabeersboys']
 ]
