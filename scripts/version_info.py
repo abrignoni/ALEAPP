@@ -20,5 +20,6 @@ aleapp_contributors = [
     ['Evangelos Dragonas', 'https://atropos4n6.com/','@theAtropos4n6','https://github.com/theAtropos4n6'],
     ['James Habben', 'https://4n6ir.com/','@JamesHabben','https://github.com/JamesHabben'],
     ['Matt Beers', 'https://www.linkedin.com/in/mattbeersii','','https://github.com/dabeersboys'],
-    ['Heather Charpentier', 'https://www.linkedin.com/in/heather-charpentier-bb28b031/','','https://github.com/charpy4n6']
+    ['Heather Charpentier', 'https://www.linkedin.com/in/heather-charpentier-bb28b031/','','https://github.com/charpy4n6'],
+    ['Panos Nakoutis', '', '@4n6equals10','']
 ]
