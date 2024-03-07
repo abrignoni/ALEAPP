@@ -146,6 +146,18 @@ icon_mappings = \
     'CELLULAR WIRELESS': 'bar-chart',
     'CHASE RETURNS': 'paperclip',
     'CHATS': 'message-circle',
+    'CHATGPT': {
+       'CONVERSATIONS METADATA': 'info',
+       'CONVERSATIONS': 'message-circle',
+       'USER': 'user',
+       'ACCOUNT USER STATE': 'activity',
+       'ACCOUNT STATUS': 'activity',
+       'CUSTOM INSTRUCTIONS' : 'sliders',
+       'USER SETTINGS' : 'settings',
+       'MEDIA UPLOADS' : 'image',
+       'USER ANALYTICS' : 'activity',
+       '_mode': 'search',
+    },
     'CHROMIUM': {
         'AUTOFILL': 'edit-3',
         'BOOKMARKS': 'bookmark',
