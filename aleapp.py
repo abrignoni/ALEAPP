@@ -288,11 +288,11 @@ def main():
     out_params = OutputParameters(output_path)
     print(f"Info: {len(available_plugins)} plugins loaded.")
 
-    crunch_artifacts(selected_plugins, extracttype, input_path, out_params, 1, wrap_text, loader, casedata, time_offset, profile_filename)
+    crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, time_offset, profile_filename)
 
 
 def crunch_artifacts(
-        plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, ratio, wrap_text,
+        plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
         loader: plugin_loader.PluginLoader, casedata, time_offset, profile_filename):
     start = process_time()
     start_wall = perf_counter()
@@ -339,7 +339,7 @@ def crunch_artifacts(
     log.write(f'Extraction/Path selected: {input_path}<br><br>')
     log.write(f'Timezone selected: {time_offset}<br><br>')
     
-    categories_searched = 0
+    parsed_modules = 0
     
     # Search for the files per the arguments
     for plugin in plugins:
@@ -347,6 +347,8 @@ def crunch_artifacts(
             search_regexes = plugin.search
         else:
             search_regexes = [plugin.search]
+        parsed_modules += 1
+        GuiWindow.SetProgressBar(parsed_modules, len(plugins))
         files_found = []
         log.write(f'<b>For {plugin.name} parser</b>')
         for artifact_search_regex in search_regexes:
@@ -362,6 +364,7 @@ def crunch_artifacts(
                 log.write(f'</li></ul>')
                 files_found.extend(found)
         if files_found:
+            logfunc()
             logfunc('{} [{}] artifact started'.format(plugin.name, plugin.module_name))
             category_folder = os.path.join(out_params.report_folder_base, plugin.category)
             if not os.path.exists(category_folder):
@@ -382,8 +385,6 @@ def crunch_artifacts(
             logfunc('{} [{}] artifact completed'.format(plugin.name, plugin.module_name))
             logfunc('')
 
-        categories_searched += 1
-        GuiWindow.SetProgressBar(categories_searched * ratio)
     log.close()
 
     logfunc('')
