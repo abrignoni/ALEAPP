@@ -1,4 +1,4 @@
-aleapp_version = '3.1.10'
+aleapp_version = '3.1.11'
 
 # Contributors List
 # Format = [ Name, Blog-url, Twitter-handle, Github-url]
@@ -21,5 +21,6 @@ aleapp_contributors = [
     ['James Habben', 'https://4n6ir.com/','@JamesHabben','https://github.com/JamesHabben'],
     ['Matt Beers', 'https://www.linkedin.com/in/mattbeersii','','https://github.com/dabeersboys'],
     ['Heather Charpentier', 'https://www.linkedin.com/in/heather-charpentier-bb28b031/','','https://github.com/charpy4n6'],
-    ['Panos Nakoutis', '', '@4n6equals10','']
+    ['Panos Nakoutis', '', '@4n6equals10',''],
+    ['Johann Polewczyk', 'https://www.linkedin.com/in/johann-polewczyk-6a905425/', '@johannplw', 'https://github.com/Johann-PLW'],
 ]
