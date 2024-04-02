@@ -26,7 +26,7 @@ def get_kleinanzeigenrecentsearchescaches(files_found, report_folder, seeker, wr
                 number_search_terms = sum(1 for entry in json_data if 'searchTerm' in entry)
                 for entry in json_data:
                     updated_at = datetime.datetime.utcfromtimestamp(entry['termSearchTimestamp'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
-                    data.append((entry['searchTerm'], entry['category']['localizedName'], ))
+                    data.append((entry['searchTerm'], entry['category']['localizedName'], updated_at))
 
                 if(len(data)>0):
                     report = ArtifactHtmlReport('kleinanzeigen.de - recent search caches')
