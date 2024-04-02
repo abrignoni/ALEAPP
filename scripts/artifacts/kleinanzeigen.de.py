@@ -1,0 +1,118 @@
+# kleinanzeigen.de App
+# Author:  Bruno Fischer (@BrunoFischerGermany)
+# Version: 1.0.0
+# https://play.google.com/store/apps/details?id=com.ebay.kleinanzeigen
+# kleinanzeigen.de App Version Tested: 15.23.0 from 2024-03-08
+# Requirements:  xmltodict, json, datetime
+#
+#   Description: The kleinanzeigen.de app is one of the largest classified ad portals in Germany. There are probably messages between app users.
+#
+
+import xmltodict
+import json
+import datetime
+
+from scripts.artifact_report import ArtifactHtmlReport
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db, media_to_html
+
+def get_kleinanzeigenrecentsearchescaches(files_found, report_folder, seeker, wrap_text, time_offset):
+    for file_found in files_found:
+        #logfunc(f"{file_found}")
+        if('RECENT_SEARCHES_CACHE' in file_found):
+            logfunc("kleinanzeigen.de - recent searches cache found")
+            with open(file_found, encoding='utf-8') as fd:
+                json_data = json.load(fd)
+                data = []
+                number_search_terms = sum(1 for entry in json_data if 'searchTerm' in entry)
+                for entry in json_data:
+                    updated_at = datetime.datetime.utcfromtimestamp(entry['termSearchTimestamp'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                    data.append((entry['searchTerm'], entry['category']['localizedName'], ))
+
+                if(len(data)>0):
+                    report = ArtifactHtmlReport('kleinanzeigen.de - recent search caches')
+                    report.start_artifact_report(report_folder,'kleinanzeigen.de - retent search caches')
+                    report.add_script()
+                    data_headers = ('Search Term', 'Category', 'Search Timestamp')
+                    data_list = []
+                    for row in data:
+                        data_list.append((row[0], row[1], row[2]))
+                    report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+                    report.end_artifact_report()
+
+                    tsvname = "kleinanzeigen.de - Recent Search Cache Data"
+                    tsv(report_folder, data_headers, data_list,tsvname)
+
+                else:
+                    logfunc("No kleinanzeigen.de - Recent Search Cache data found")
+
+def get_kleinanzeigenaccount(files_found, report_folder, seeker, wrap_text, time_offset):
+   for file_found in files_found:
+
+       if('com.ebay.kleinanzeigen_preferences.xml' in file_found):
+            keys_to_check = [
+                'USERPROFILE_NAME_KEY',  # Account Profile Name
+                'USERPROFILE_INITIALS',  # Account Profile Initials
+                'LAST_EMAIL_USED',  # Account Last used Email Address
+                'AUTH_USER_EMAIL',  # Account Authenticated User Email Address
+                'USERPROFILE_PHONE_NUMBER_KEY',  # Account Phone Number'
+                'USERPROFILE_ACCOUNT_TYPE_KEY',  # Account Type maybe PRIVATE
+                'USERPROFILE_USER_SINCE_DATE_KEY',  # Account Since - Timestamp - ISO 8601 Format
+                'USERPROFILE_LOCATION_LONGITUDE_KEY',  # Saved Location Longitude
+                'USERPROFILE_LOCATION_LATITUDE_KEY'  # Saved Location Latitude
+            ]
+            logfunc("kleinanzeigen.de - Account data found")
+            with open(file_found, encoding='utf-8') as fd:
+                xml_dict = xmltodict.parse(fd.read())
+                string_dict = xml_dict.get('map', {}).get('string', [])
+                data = []
+                for key in keys_to_check:
+                    value = ""
+                    for item in string_dict:
+                        if item.get('@name') == key:
+                            value = item.get('#text', '')
+                            break
+                    data.append(value)
+
+                if(len(data)>0):
+                    report = ArtifactHtmlReport('kleinanzeigen.de - account details')
+                    report.start_artifact_report(report_folder,'kleinanzeigen.de - account details')
+                    report.add_script()
+                    data_headers = ('Account Profile Name', 'Account Profile Initials', 'Account Last Used Email Address', 'Account Authenticated Email Address', 'Account Phone Number', 'Account Type', 'Account Registered since', 'Saved Location Longitude', 'Saved Location Latitude')
+                    data_list = []
+                    data_list.append((data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]))
+                    report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+                    report.end_artifact_report()
+
+                    tsvname = "kleinanzeigen.de - Account Data"
+                    tsv(report_folder, data_headers, data_list,tsvname)
+
+                else:
+                    logfunc("No kleinanzeigen.de - Account data found")
+
+
+__artifacts_v2__ = {
+    "get_kleinanzeigenaccount": {
+        "name": "kleinanzeigen.de App - Account Details",
+        "description": "Extracts Account Details",
+        "author": "@BrunoFischerGermany",
+        "version": "0.1",
+        "date": "2024-04-02",
+        "requirements": "none",
+        "category": "kleinanzeigen.de App",
+        "notes": "",
+        "paths": ('*/com.ebay.kleinanzeigen/shared_prefs/com.ebay.kleinanzeigen_preferences.xml'),
+        "function": "get_kleinanzeigenaccount"
+    },
+    "get_kleinanzeigenrecentsearchescaches": {
+        "name": "kleinanzeigen.de App - Recent Searches Cache",
+        "description": "Extracts Recent Searches Cache",
+        "author": "@BrunoFischerGermany",
+        "version": "0.1",
+        "date": "2024-04-02",
+        "requirements": "none",
+        "category": "kleinanzeigen.de App",
+        "notes": "",
+        "paths": ('*/com.ebay.kleinanzeigen/files/RECENT_SEARCHES_CACHE'),
+        "function": "get_kleinanzeigenrecentsearchescaches"
+    }
+}
