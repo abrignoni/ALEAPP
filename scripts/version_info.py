@@ -23,4 +23,5 @@ aleapp_contributors = [
     ['Heather Charpentier', 'https://www.linkedin.com/in/heather-charpentier-bb28b031/','','https://github.com/charpy4n6'],
     ['Panos Nakoutis', '', '@4n6equals10',''],
     ['Johann Polewczyk', 'https://www.linkedin.com/in/johann-polewczyk-6a905425/', '@johannplw', 'https://github.com/Johann-PLW'],
+    ['Bruno Ficher', 'https://german4n6.blogspot.com/', '', 'https://github.com/BrunoFischerGermany']
 ]
