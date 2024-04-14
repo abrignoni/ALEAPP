@@ -369,3 +369,11 @@ class ArtifactHtmlReport:
     # Function to add a empty element with the data to be added later (roundabout way to add data to the chat)
     def add_chat_invisble(self, id, text):
         self.report_file.write(f'<div id="{id}" hidden>{text}</div>')
+
+    def add_chat_window(self, head, body):
+        self.report_file.write('<div id="chatmaster">')
+        self.report_file.write('<div class="chathead">')
+        self.report_file.write(f'{head}')
+        self.report_file.write('</div>')
+        self.report_file.write(f'{body}')
+        self.report_file.write('</div>')
