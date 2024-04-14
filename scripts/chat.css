@@ -111,3 +111,75 @@
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
 }
+
+#chatmaster {
+	display: block;
+	width: 55vw;
+	padding: 20px;
+	background-color: #eee;
+	margin: 0 auto 0 auto;
+	font-family: Verdana;
+	overflow: hidden;
+}
+
+.chatline {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+}
+.chatme {
+	padding: 10px;
+	float: right;
+	background-color: #a1e214;
+	border-radius: 15px 15px 0px 15px;
+	max-width: 80%;
+}
+
+.chatline p {
+	width: 100%;
+	float: right;
+	text-align: right;
+	margin-top: 5px;
+	font-size: 70%;
+	}
+
+
+.chatyou {
+	padding: 10px;
+	float: left;
+	background-color: #fcfcfc;
+	border-radius: 15px 15px 15px 0px;
+	margin-left: 50px;
+	max-width: 80%;
+}
+
+.chatyou_date {
+	text-align: left !important;
+	margin-right: -50px;
+	width: auto;
+	}
+
+.chatname {
+	position: absolute;
+	display: flex;
+	background-color: #ccc;
+	padding: 20px;
+	bottom: 30px;
+	left: -20px;
+	margin: 20px;
+	width: 25px;
+	height: 25px;
+	font-weight: bold;
+	text-transform: uppercase;
+	justify-content: center;
+    align-items: center;
+	border-radius: 50%;
+}
+.chathead {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	font-weight:bold;
+	text-align:left;
+	padding-bottom: 10px;
+}
