@@ -523,6 +523,14 @@ icon_mappings = \
         'KIK - PROFILE PIC': 'image',
         'default': 'file-text'
     },
+    'KLEINANZEIGEN.DE APP': {
+        'KLEINANZEIGEN.DE - ACCOUNT DETAILS': 'user',
+        'KLEINANZEIGEN.DE - NON RESETTABLE RECENT SEARCHES CACHE': 'search',
+        'KLEINANZEIGEN.DE - RECENT SEARCHES CACHE': 'search',
+        'KLEINANZEIGEN.DE - MESSAGEBOX': 'message-square',
+        'default': 'search',
+        '_mode': 'search',
+    },
     'KNOWLEDGEC': {
         'KNOWLEDGEC BATTERY LEVEL': 'battery',
         'KNOWLEDGEC DEVICE LOCKED': 'lock',
