@@ -52,7 +52,7 @@ def get_vlcthumbsADB(files_found, report_folder, seeker, wrap_text, time_offset)
         report = ArtifactHtmlReport('VLC Media Lib')
         report.start_artifact_report(report_folder, 'VLC Media Lib', description)
         report.add_script()
-        data_headers = ('Modified Timestamp','Thumbnail','Filename','Location' )
+        data_headers = ('Modified Timestamp','Thumbnail','Filename','Location')
         report.write_artifact_data_table(data_headers, data_list_m, filepath, html_escape=False)
         report.end_artifact_report()
         
