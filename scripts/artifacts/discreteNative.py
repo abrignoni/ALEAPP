@@ -59,7 +59,7 @@ def get_discreteNative(files_found, report_folder, seeker, wrap_text, time_offse
                                 if ndattrib is None:
                                     ndattrib = ''
                                 else:
-                                    ndattrib = round(int(ndattrib) / 60, 1)
+                                    ndattrib = round(int(ndattrib) / 1000, 1)
                         data_list.append((timestampcalc(ntattrib), ptagattrib, atagattrib, oplist(otagattrib), ndattrib, filename ))
                     
     if data_list:
