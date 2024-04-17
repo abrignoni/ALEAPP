@@ -4,7 +4,8 @@
 # https://play.google.com/store/apps/details?id=com.ebay.kleinanzeigen
 # kleinanzeigen.de App Version Tested: 15.16.0 from 2023-12-017
 # kleinanzeigen.de App Version Tested: 15.23.0 from 2024-03-08
-# kleinanzeigen.de App Version Tested: 15.23.0 from 2024-03-28
+# kleinanzeigen.de App Version Tested: 15.26.0 from 2024-03-28
+# kleinanzeigen.de App Version Tested: 15.27.0 from 2024-04-04
 # Requirements:  xmltodict, json, datetime
 #
 #   Description: The kleinanzeigen.de app is one of the largest classified ad portals in Germany. There are probably messages between app users.
@@ -181,13 +182,18 @@ def get_kleinanzeigenmessagebox(files_found, report_folder, seeker, wrap_text, t
                         if "attachments" in message and len(message['attachments']) > 0:
                             body += 'This message has attachments.<br/>'
                             body += '<span style="font-size: small; font-style: italic;">'
-                            attachment = message["attachments"][0]
-                            if len(attachment['mimeType']) > 0:
-                                body += '<br/>'
-                                body += f'attachment-mimetype: {attachment["mimeType"]}'
-                            if len(attachment['url']) > 0:
-                                body += '<br/>'
-                                body += f'attachment-url: <a href="{attachment["url"]}" target=_blank>{attachment["url"]}</a>'
+                            for attachment in message["attachments"]:
+                                zaehler = 0
+                                if len(attachment['mimeType']) > 0:
+                                    body += '<br/>'
+                                    body += f'attachment-mimetype: {attachment["mimeType"]}'
+                                    zaehler += 1
+                                if len(attachment['url']) > 0:
+                                    body += '<br/>'
+                                    body += f'attachment-url: <a href="{attachment["url"]}" target=_blank>{attachment["url"]}</a>'
+                                    zaehler += 1
+                                if zaehler > 0:
+                                    body += '<br/>'
                             body += '</span>'
                         if "warning" in message and message['warning'] and len(message['warning']['links']) > 0 and len(
                                 message['warning']['message']) > 0:
