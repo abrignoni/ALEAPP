@@ -6,7 +6,7 @@ __artifacts_v2__ = {
     "HealthMateAccounts": {
         "name": "Health Mate - Accounts",
         "description": "Health Mate Accounts",
-        "author": "Marco Neumann {kalinko@be-binary.de})",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
         "version": "0.0.1",
         "date": "2024-04-20",
         "requirements": "none",
@@ -18,7 +18,7 @@ __artifacts_v2__ = {
         "HealthMateTrackings": {
         "name": "Health Mate - Trackings",
         "description": "Health Mate Trackings",
-        "author": "Marco Neumann {kalinko@be-binary.de})",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
         "version": "0.0.1",
         "date": "2024-04-20",
         "requirements": "none",
@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "HealthMateLocations": {
         "name": "Health Mate - Locations",
         "description": "Health Mate Locations",
-        "author": "Marco Neumann {kalinko@be-binary.de})",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
         "version": "0.0.1",
         "date": "2024-04-20",
         "requirements": "none",
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
         "HealthMateMessages": {
         "name": "Health Mate - Messages",
         "description": "Health Mate Messages",
-        "author": "Marco Neumann {kalinko@be-binary.de})",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
         "version": "0.0.1",
         "date": "2024-04-20",
         "requirements": "none",
@@ -54,7 +54,7 @@ __artifacts_v2__ = {
         "HealthMateContacts": {
         "name": "Health Mate - Contacts",
         "description": "Health Mate Contacts",
-        "author": "Marco Neumann {kalinko@be-binary.de})",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
         "version": "0.0.1",
         "date": "2024-04-20",
         "requirements": "none",
@@ -67,14 +67,27 @@ __artifacts_v2__ = {
         "HealthMateMeasurements": {
         "name": "Health Mate - Measurements",
         "description": "Health Mate Measurements",
-        "author": "Marco Neumann {kalinko@be-binary.de})",
-        "version": "0.0.1",
-        "date": "2024-04-20",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "version": "0.0.2",
+        "date": "2024-04-21",
+        "requirements": "none",
+        "category": "Withings Health Mate",
+        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html",
+        "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
+        "function": "get_healthmate_measurements"
+    }
+        ,
+        "HealthMateDevices": {
+        "name": "Health Mate - Devices",
+        "description": "Health Mate Devices",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "version": "0.0.2",
+        "date": "2024-04-21",
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
-        "function": "get_healthmate_measurements"
+        "function": "get_healthmate_devices"
     }
 }
 
@@ -106,7 +119,7 @@ def get_healthmate_accounts(files_found, report_folder, seeker, wrap_text, time_
         report = ArtifactHtmlReport('Withings Healthmate - Accounts')
         report.start_artifact_report(report_folder, 'Withings Healthmate - Accounts', description)
         report.add_script()
-        data_headers = ('User ID', 'Last Name', 'First Name', 'Short Name', 'Gender', 'Pronoun', 'Birthdate', 'Fat Method', 'E-mail', 'Creation Date', 'Last Modified Date', 'Body Model')
+        data_headers = ('User ID', 'Last Name', 'First Name', 'Short Name', 'Gender', 'Pronoun', 'Birthdate', 'Fat Method', 'E-mail', 'Creation Timestamp', 'Last Modified Timestamp', 'Body Model')
         data_list = []
         for row in all_rows:
             id = row[0]
@@ -237,7 +250,7 @@ def get_healthmate_locations(files_found, report_folder, seeker, wrap_text, time
         report = ArtifactHtmlReport('Withings Healthmate - Locations')
         report.start_artifact_report(report_folder, 'Withings Healthmate - Locations', description)
         report.add_script()
-        data_headers = ('ID', 'User ID', 'Date', 'Speed', 'Horizontal Accuracy', 'Altitude', 'Vertical Accuracy', 'Latitude', 'Longitude')
+        data_headers = ('ID', 'User ID', 'Timestamp', 'Speed', 'Horizontal Accuracy', 'Altitude', 'Vertical Accuracy', 'Latitude', 'Longitude')
         data_list = []
         for row in all_rows:
             id = row[0]
@@ -288,8 +301,9 @@ def get_healthmate_messages(files_found, report_folder, seeker, wrap_text, time_
         report = ArtifactHtmlReport('Withings Healthmate - Messages')
         report.start_artifact_report(report_folder, 'Withings Healthmate - Messages', description)
         report.add_script()
-        data_headers = ('Message ID', 'Sender ID', 'Receiver ID', 'Date', 'Message', 'Type')
+        data_headers = ('Message ID', 'Sender ID', 'Receiver ID', 'Timestamp', 'Message', 'Type')
         data_list = []
+        #message_list = []
         for row in all_rows:
             id = row[0]
             senderid = row[1]
@@ -303,7 +317,9 @@ def get_healthmate_messages(files_found, report_folder, seeker, wrap_text, time_
 
         tableID = 'healthmate_messages'
 
+        
         report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
+        #report.add_chat()
         report.end_artifact_report()
 
         tsvname = f'Withings HealthMate - Messages'
@@ -337,7 +353,7 @@ def get_healthmate_contacts(files_found, report_folder, seeker, wrap_text, time_
         report = ArtifactHtmlReport('Withings Healthmate - Contacts')
         report.start_artifact_report(report_folder, 'Withings Healthmate - Contacts', description)
         report.add_script()
-        data_headers = ('ID', 'Date', 'User ID', 'Score', 'First Name', 'Last Name', 'Image URL', 'Modified')
+        data_headers = ('ID', 'Date', 'User ID', 'Score', 'First Name', 'Last Name', 'Image URL', 'Modified Timestamp')
         data_list = []
         for row in all_rows:
             id = row[0]
@@ -347,7 +363,7 @@ def get_healthmate_contacts(files_found, report_folder, seeker, wrap_text, time_
             firstname = row[4]
             lastname = row[5]
             imageurl = row[6]
-            modified = row[7]
+            modified = datetime.datetime.fromtimestamp(row[7]/1000).strftime('%Y-%m-%d %H:%M:%S')
             
 
             data_list.append((id, date, userid, score, firstname, lastname, imageurl, modified))
@@ -383,38 +399,109 @@ def get_healthmate_measurements(files_found, report_folder, seeker, wrap_text, t
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
-        logfunc(f"Found {usageentries}  Withings Healthmate - Contacts")
-        description = "Existing Contacts data in Health Mate App from Withings. This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html."
-        report = ArtifactHtmlReport('Withings Healthmate - Contacts')
-        report.start_artifact_report(report_folder, 'Withings Healthmate - Contacts', description)
+        logfunc(f"Found {usageentries}  Withings Healthmate - Measurements")
+        description = "Existing Measurements data in Health Mate App from Withings. This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html."
+        report = ArtifactHtmlReport('Withings Healthmate - Measurements')
+        report.start_artifact_report(report_folder, 'Withings Healthmate - Measurements', description)
         report.add_script()
-        data_headers = ('ID', 'Date', 'User ID', 'Score', 'First Name', 'Last Name', 'Image URL', 'Modified')
+        data_headers = ('ID', 'Category ID', 'Category', 'Timestamp', 'User ID', 'Duration', 'Steps', 'Distance', 'Ascent', 'Descent', 'Heartrate', 'SPO2', 'SPO2 Quality', 'Swim Laps', 'Swim Movements', 'Core Temperature')
         data_list = []
         for row in all_rows:
             id = row[0]
-            date = row[1]
-            userid = row[2]
-            score = row[3]
-            firstname = row[4]
-            lastname = row[5]
-            imageurl = row[6]
-            modified = row[7]
+            category_id = row[24]
+            match category_id:
+                case -22:
+                    category = 'Core Temperature'
+                case -19:
+                    category = 'SPO2'
+                case -16:
+                    category = 'Heart Rate'
+                case 16:
+                    category = 'Steps'
+                case _:
+                    category = 'Unknown Category ID'
+            timestamp = datetime.datetime.fromtimestamp(row[4]/1000).strftime('%Y-%m-%d %H:%M:%S')
+            userid = row[1]
+            duration = row[5]
+            steps = row[11]
+            distance = row[12]
+            ascent = row[13]
+            descent = row[14]
+            heartrate =row[18]
+            spo2 = row[32]
+            spo2_quality = row[33]
+            swim_laps = row[23]
+            swim_movements = row[22]
+            temperature = row[42]
             
 
-            data_list.append((id, date, userid, score, firstname, lastname, imageurl, modified))
+            data_list.append((id, category_id, category, timestamp, userid, duration, steps, distance, ascent, descent, heartrate, spo2, spo2_quality, swim_laps, swim_movements, temperature))
 
-        tableID = 'healthmate_contacts'
+        tableID = 'healthmate_measurements'
 
         report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
         report.end_artifact_report()
 
-        tsvname = f'Withings HealthMate - Contacts'
+        tsvname = f'Withings HealthMate - Measurements'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Withings HealthMate - Contacts'
+        tlactivity = f'Withings HealthMate - Measurements'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
-        logfunc('No Withings HealthMate Contacts data found!')
+        logfunc('No Withings HealthMate Measurements data found!')
+
+    db.close()
+
+def get_healthmate_devices(files_found, report_folder, seeker, wrap_text, time_offset):
+    logfunc("Processing data for Withings Healthmate App - Devices")
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    
+    file_found = str(files_found[0])
+    db = open_sqlite_db_readonly(file_found)
+    cursor = db.cursor()
+    cursor.execute('''
+    Select *
+    from devices;
+    ''')
+
+    all_rows = cursor.fetchall()
+    usageentries = len(all_rows)
+    if usageentries > 0:
+        logfunc(f"Found {usageentries}  Withings Healthmate - Devices")
+        description = "Existing Devices data in Health Mate App from Withings. This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html."
+        report = ArtifactHtmlReport('Withings Healthmate - Devices')
+        report.start_artifact_report(report_folder, 'Withings Healthmate - Devices', description)
+        report.add_script()
+        data_headers = ('ID', 'User ID', 'Association Timestamp', 'Last Used Timestamp', 'Modified Timestamp', 'MAC', 'Firmware', 'Latitude', 'Longitude', 'Device Type', 'Device Model')
+        data_list = []
+        for row in all_rows:
+            id = row[0]
+            userid = row[1]
+            assdate = datetime.datetime.fromtimestamp(row[2]/1000).strftime('%Y-%m-%d %H:%M:%S')
+            lastdate = datetime.datetime.fromtimestamp(row[3]/1000).strftime('%Y-%m-%d %H:%M:%S')
+            moddate = datetime.datetime.fromtimestamp(row[4]/1000).strftime('%Y-%m-%d %H:%M:%S')
+            mac = row[5]
+            firmware = row[6]
+            lat = row[8]
+            lon = row[9]  
+            dev_type = row[14]  
+            dev_modell = row[15]      
+
+            data_list.append((id, userid, assdate, lastdate, moddate, mac, firmware, lat, lon, dev_type, dev_modell))
+
+        tableID = 'healthmate_devices'
+
+        report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
+        report.end_artifact_report()
+
+        tsvname = f'Withings HealthMate - Devices'
+        tsv(report_folder, data_headers, data_list, tsvname)
+
+        tlactivity = f'Withings HealthMate - Devices'
+        timeline(report_folder, tlactivity, data_list, data_headers)
+
+    else:
+        logfunc('No Withings HealthMate Devices data found!')
 
     db.close()
