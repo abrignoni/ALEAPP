@@ -81,7 +81,7 @@ __artifacts_v2__ = {
         "name": "Health Mate - Devices",
         "description": "Health Mate Devices",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.2",
+        "version": "0.0.1",
         "date": "2024-04-21",
         "requirements": "none",
         "category": "Withings Health Mate",
