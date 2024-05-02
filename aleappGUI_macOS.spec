@@ -41,7 +41,7 @@ exe = EXE(
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
-    codesign_identity='42F9AD88C52A9888352AB869F1E6EC207A29D308',
+    codesign_identity=None,
     entitlements_file=None,
 )
 coll = COLLECT(
@@ -56,7 +56,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='aleappGUI.app',
-    icon='../icon.icns',
+    icon=None,
     bundle_identifier='4n6.brigs.ALEAPP',
-    version='3.2.1',
+    version='3.2.2',
 )

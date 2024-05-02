@@ -44,6 +44,6 @@ exe = EXE(
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
-    codesign_identity='42F9AD88C52A9888352AB869F1E6EC207A29D308',
+    codesign_identity=None,
     entitlements_file=None,
 )
