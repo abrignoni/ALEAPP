@@ -1,7 +1,18 @@
+# Withings Health Mate App (com.withings.wiscale2)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# Version: 0.0.2
+# 
+# Tested with the following versions:
+# 2020-10-09: Android 6, App: 5.1.4
+# 2024-04-20: Android 13, App: 6.3.1
+
+# Requirements:  datetime
+
+
+
+
 __artifacts_v2__ = {
-    # Tested with the following versions:
-    # 2020-10-09: Android 6, App: 5.1.4
-    # 2024-04-20: Android 13, App: 6.3.1
+
     
     "HealthMateAccounts": {
         "name": "Health Mate - Accounts",
