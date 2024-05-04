@@ -26,7 +26,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "function": "get_healthmate_accounts"
     },
-        "HealthMateTrackings": {
+    "HealthMateTrackings": {
         "name": "Health Mate - Trackings",
         "description": "Health Mate Trackings",
         "author": "Marco Neumann {kalinko@be-binary.de}",
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*','*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "function": "get_healthmate_trackings"
     },
-        "HealthMateLocations": {
+    "HealthMateLocations": {
         "name": "Health Mate - Locations",
         "description": "Health Mate Locations",
         "author": "Marco Neumann {kalinko@be-binary.de}",
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*'),
         "function": "get_healthmate_locations"
     },
-        "HealthMateMessages": {
+    "HealthMateMessages": {
         "name": "Health Mate - Messages",
         "description": "Health Mate Messages",
         "author": "Marco Neumann {kalinko@be-binary.de}",
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "function": "get_healthmate_messages"
     },
-        "HealthMateContacts": {
+    "HealthMateContacts": {
         "name": "Health Mate - Contacts",
         "description": "Health Mate Contacts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
@@ -73,9 +73,8 @@ __artifacts_v2__ = {
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*'),
         "function": "get_healthmate_contacts"
-    }
-    ,
-        "HealthMateMeasurements": {
+    },
+    "HealthMateMeasurements": {
         "name": "Health Mate - Measurements",
         "description": "Health Mate Measurements",
         "author": "Marco Neumann {kalinko@be-binary.de}",
@@ -86,9 +85,8 @@ __artifacts_v2__ = {
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "function": "get_healthmate_measurements"
-    }
-        ,
-        "HealthMateDevices": {
+    },
+    "HealthMateDevices": {
         "name": "Health Mate - Devices",
         "description": "Health Mate Devices",
         "author": "Marco Neumann {kalinko@be-binary.de}",
@@ -111,7 +109,7 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
 def get_healthmate_accounts(files_found, report_folder, seeker, wrap_text, time_offset):
-    logfunc("Processing data for Withings Healthmate App - Accounts")
+    logfunc("Processing data for Withings Health Mate App - Accounts")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     file_found = str(files_found[0])
@@ -125,10 +123,10 @@ def get_healthmate_accounts(files_found, report_folder, seeker, wrap_text, time_
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
-        logfunc(f"Found {usageentries}  Withings Healthmate - Accounts")
+        logfunc(f"Found {usageentries}  Withings Health Mate - Accounts")
         description = f"Existing account in Health Mate App from Withings.\n This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html"
-        report = ArtifactHtmlReport('Withings Healthmate - Accounts')
-        report.start_artifact_report(report_folder, 'Withings Healthmate - Accounts', description)
+        report = ArtifactHtmlReport('Withings Health Mate - Accounts')
+        report.start_artifact_report(report_folder, 'Withings Health Mate - Accounts', description)
         report.add_script()
         data_headers = ('User ID', 'Last Name', 'First Name', 'Short Name', 'Gender', 'Pronoun', 'Birthdate', 'Fat Method', 'E-mail', 'Creation Timestamp', 'Last Modified Timestamp', 'Body Model')
         data_list = []
@@ -153,20 +151,20 @@ def get_healthmate_accounts(files_found, report_folder, seeker, wrap_text, time_
         report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
         report.end_artifact_report()
 
-        tsvname = f'Withings HealthMate - Accounts'
+        tsvname = f'Withings Health Mate - Accounts'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Withings HealthMate - Accounts'
+        tlactivity = f'Withings Health Mate - Accounts'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
-        logfunc('No Withings HealthMate Account data found!')
+        logfunc('No Withings Health Mate Account data found!')
 
     db.close()
 
 
 def get_healthmate_trackings(files_found, report_folder, seeker, wrap_text, time_offset):
-    logfunc("Processing data for Withings Healthmate App - Trackings")
+    logfunc("Processing data for Withings Health Mate App - Trackings")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     # get activity categories from database Whithings-WiScale
@@ -202,8 +200,8 @@ def get_healthmate_trackings(files_found, report_folder, seeker, wrap_text, time
     if usageentries > 0:
         logfunc(f"Found {usageentries}  Withings Health Mate - Trackings")
         description = f"Automatically and manually tracked Activities by Withings Devices connected to Health Mate App.\n This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-2.html"
-        report = ArtifactHtmlReport('Withings Healthmate - Trackings')
-        report.start_artifact_report(report_folder, 'Withings Healthmate - Trackings', description)
+        report = ArtifactHtmlReport('Withings Health Mate - Trackings')
+        report.start_artifact_report(report_folder, 'Withings Health Mate - Trackings', description)
         report.add_script()
         data_headers = ('ID', 'wsId', 'UserID', 'Start Time','End Time', 'Modified Time','Activity Category ID','Activity Category Name','Tracking Data')
         data_list = []
@@ -230,19 +228,19 @@ def get_healthmate_trackings(files_found, report_folder, seeker, wrap_text, time
         report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
         report.end_artifact_report()
 
-        tsvname = f'Withings HealthMate - Trackings'
+        tsvname = f'Withings Health Mate - Trackings'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Withings HealthMate - Trackings'
+        tlactivity = f'Withings Health Mate - Trackings'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
-        logfunc('No Withings HealthMate Trackings data found!')
+        logfunc('No Withings Health Mate Trackings data found!')
 
     db.close()
 
 def get_healthmate_locations(files_found, report_folder, seeker, wrap_text, time_offset):
-    logfunc("Processing data for Withings Healthmate App - Locations")
+    logfunc("Processing data for Withings Health Mate App - Locations")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     file_found = str(files_found[0])
@@ -256,10 +254,10 @@ def get_healthmate_locations(files_found, report_folder, seeker, wrap_text, time
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
-        logfunc(f"Found {usageentries}  Withings Healthmate - Locations")
+        logfunc(f"Found {usageentries}  Withings Health Mate - Locations")
         description = "Existing Location data in Health Mate App from Withings. This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html."
-        report = ArtifactHtmlReport('Withings Healthmate - Locations')
-        report.start_artifact_report(report_folder, 'Withings Healthmate - Locations', description)
+        report = ArtifactHtmlReport('Withings Health Mate - Locations')
+        report.start_artifact_report(report_folder, 'Withings Health Mate - Locations', description)
         report.add_script()
         data_headers = ('ID', 'User ID', 'Timestamp', 'Speed', 'Horizontal Accuracy', 'Altitude', 'Vertical Accuracy', 'Latitude', 'Longitude')
         data_list = []
@@ -281,19 +279,19 @@ def get_healthmate_locations(files_found, report_folder, seeker, wrap_text, time
         report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
         report.end_artifact_report()
 
-        tsvname = f'Withings HealthMate - Locations'
+        tsvname = f'Withings Health Mate - Locations'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Withings HealthMate - Locations'
+        tlactivity = f'Withings Health Mate - Locations'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
-        logfunc('No Withings HealthMate Location data found!')
+        logfunc('No Withings Health Mate Location data found!')
 
     db.close()
 
 def get_healthmate_messages(files_found, report_folder, seeker, wrap_text, time_offset):
-    logfunc("Processing data for Withings Healthmate App - Messages")
+    logfunc("Processing data for Withings Health Mate App - Messages")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     file_found = str(files_found[0])
@@ -307,10 +305,10 @@ def get_healthmate_messages(files_found, report_folder, seeker, wrap_text, time_
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
-        logfunc(f"Found {usageentries}  Withings Healthmate - Messages")
+        logfunc(f"Found {usageentries}  Withings Health Mate - Messages")
         description = "Existing Message data in Health Mate App from Withings. This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html"
-        report = ArtifactHtmlReport('Withings Healthmate - Messages')
-        report.start_artifact_report(report_folder, 'Withings Healthmate - Messages', description)
+        report = ArtifactHtmlReport('Withings Health Mate - Messages')
+        report.start_artifact_report(report_folder, 'Withings Health Mate - Messages', description)
         report.add_script()
         data_headers = ('Message ID', 'Sender ID', 'Receiver ID', 'Timestamp', 'Message', 'Type')
         data_list = []
@@ -333,19 +331,19 @@ def get_healthmate_messages(files_found, report_folder, seeker, wrap_text, time_
         #report.add_chat()
         report.end_artifact_report()
 
-        tsvname = f'Withings HealthMate - Messages'
+        tsvname = f'Withings Health Mate - Messages'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Withings HealthMate - Messages'
+        tlactivity = f'Withings Health Mate - Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
-        logfunc('No Withings HealthMate Message data found!')
+        logfunc('No Withings Health Mate Message data found!')
 
     db.close()
 
 def get_healthmate_contacts(files_found, report_folder, seeker, wrap_text, time_offset):
-    logfunc("Processing data for Withings Healthmate App - Contacts")
+    logfunc("Processing data for Withings Health Mate App - Contacts")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     file_found = str(files_found[0])
@@ -359,10 +357,10 @@ def get_healthmate_contacts(files_found, report_folder, seeker, wrap_text, time_
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
-        logfunc(f"Found {usageentries}  Withings Healthmate - Contacts")
+        logfunc(f"Found {usageentries}  Withings Health Mate - Contacts")
         description = "Existing Contacts data in Health Mate App from Withings. This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html."
-        report = ArtifactHtmlReport('Withings Healthmate - Contacts')
-        report.start_artifact_report(report_folder, 'Withings Healthmate - Contacts', description)
+        report = ArtifactHtmlReport('Withings Health Mate - Contacts')
+        report.start_artifact_report(report_folder, 'Withings Health Mate - Contacts', description)
         report.add_script()
         data_headers = ('ID', 'Date', 'User ID', 'Score', 'First Name', 'Last Name', 'Image URL', 'Modified Timestamp')
         data_list = []
@@ -384,19 +382,19 @@ def get_healthmate_contacts(files_found, report_folder, seeker, wrap_text, time_
         report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
         report.end_artifact_report()
 
-        tsvname = f'Withings HealthMate - Contacts'
+        tsvname = f'Withings Health Mate - Contacts'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Withings HealthMate - Contacts'
+        tlactivity = f'Withings Health Mate - Contacts'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
-        logfunc('No Withings HealthMate Contacts data found!')
+        logfunc('No Withings Health Mate Contacts data found!')
 
     db.close()
 
 def get_healthmate_measurements(files_found, report_folder, seeker, wrap_text, time_offset):
-    logfunc("Processing data for Withings Healthmate App - Measurements")
+    logfunc("Processing data for Withings Health Mate App - Measurements")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     file_found = str(files_found[0])
@@ -410,10 +408,10 @@ def get_healthmate_measurements(files_found, report_folder, seeker, wrap_text, t
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
-        logfunc(f"Found {usageentries}  Withings Healthmate - Measurements")
+        logfunc(f"Found {usageentries}  Withings Health Mate - Measurements")
         description = "Existing Measurements data in Health Mate App from Withings. This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html."
         report = ArtifactHtmlReport('Withings Healthmate - Measurements')
-        report.start_artifact_report(report_folder, 'Withings Healthmate - Measurements', description)
+        report.start_artifact_report(report_folder, 'Withings Health Mate - Measurements', description)
         report.add_script()
         data_headers = ('ID', 'Category ID', 'Category', 'Timestamp', 'User ID', 'Duration', 'Steps', 'Distance', 'Ascent', 'Descent', 'Heartrate', 'SPO2', 'SPO2 Quality', 'Swim Laps', 'Swim Movements', 'Core Temperature')
         data_list = []
@@ -453,19 +451,19 @@ def get_healthmate_measurements(files_found, report_folder, seeker, wrap_text, t
         report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
         report.end_artifact_report()
 
-        tsvname = f'Withings HealthMate - Measurements'
+        tsvname = f'Withings Health Mate - Measurements'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Withings HealthMate - Measurements'
+        tlactivity = f'Withings Health Mate - Measurements'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
-        logfunc('No Withings HealthMate Measurements data found!')
+        logfunc('No Withings Health Mate Measurements data found!')
 
     db.close()
 
 def get_healthmate_devices(files_found, report_folder, seeker, wrap_text, time_offset):
-    logfunc("Processing data for Withings Healthmate App - Devices")
+    logfunc("Processing data for Withings Health Mate App - Devices")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     file_found = str(files_found[0])
@@ -479,10 +477,10 @@ def get_healthmate_devices(files_found, report_folder, seeker, wrap_text, time_o
     all_rows = cursor.fetchall()
     usageentries = len(all_rows)
     if usageentries > 0:
-        logfunc(f"Found {usageentries}  Withings Healthmate - Devices")
+        logfunc(f"Found {usageentries}  Withings Health Mate - Devices")
         description = "Existing Devices data in Health Mate App from Withings. This decoding is based on the blog post https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html."
-        report = ArtifactHtmlReport('Withings Healthmate - Devices')
-        report.start_artifact_report(report_folder, 'Withings Healthmate - Devices', description)
+        report = ArtifactHtmlReport('Withings Health Mate - Devices')
+        report.start_artifact_report(report_folder, 'Withings Health Mate - Devices', description)
         report.add_script()
         data_headers = ('ID', 'User ID', 'Association Timestamp', 'Last Used Timestamp', 'Modified Timestamp', 'MAC', 'Firmware', 'Latitude', 'Longitude', 'Device Type', 'Device Model')
         data_list = []
@@ -506,13 +504,13 @@ def get_healthmate_devices(files_found, report_folder, seeker, wrap_text, time_o
         report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
         report.end_artifact_report()
 
-        tsvname = f'Withings HealthMate - Devices'
+        tsvname = f'Withings Health Mate - Devices'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Withings HealthMate - Devices'
+        tlactivity = f'Withings Health Mate - Devices'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
-        logfunc('No Withings HealthMate Devices data found!')
+        logfunc('No Withings Health Mate Devices data found!')
 
     db.close()

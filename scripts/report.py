@@ -506,6 +506,10 @@ icon_mappings = \
         'ATTACHMENTS': 'paperclip',
         'CONTACTS': 'user',
     },
+    'K-9 MAIL': {
+        'K-9 MAIL - ACCOUNTS': 'at-sign',
+        'default': 'mail'
+    },
     'KEYBOARD': {
         'KEYBOARD APPLICATION USAGE': 'type',
         'KEYBOARD DYNAMIC LEXICON': 'type',
@@ -829,6 +833,14 @@ icon_mappings = \
         'WHATSAPP - GROUP DETAILS': 'users',
         'default': 'user',
         '_mode': 'search',
+    }, 
+    'WITHINGS HEALTH MATE' : {
+        'WITHINGS HEALTH MATE - ACCOUNTS': 'user',
+        'WITHINGS HEALTH MATE - CONTACTS': 'users',
+        'WITHINGS HEALTH MATE - DEVICES': 'watch',
+        'WITHINGS HEALTH MATE - LOCATIONS': 'map-pin',
+        'WITHINGS HEALTH MATE - TRACKINGS': 'activity',
+        'WITHINGS HEALTH MATE - MEASUREMENTS': 'activity',
     },
     'WHATSAPP EXPORTED CHAT': 'message-circle',
     'WIFI CONNECTIONS': 'wifi',
