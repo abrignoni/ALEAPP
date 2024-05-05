@@ -5,7 +5,7 @@
 # Tested with the following versions:
 # 2024-05-04: Android 13, App: 6.802
 
-# Requirements:  datetime, json
+# Requirements:  datetime, json, base64
 
 
 
@@ -19,9 +19,9 @@ __artifacts_v2__ = {
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "version": "0.0.1",
         "date": "2024-05-04",
-        "requirements": "none",
+        "requirements": "datetime, json, base64",
         "category": "K-9 Mail",
-        "notes": "Get Account informations and E-Mails feom K-9 Mail App",
+        "notes": "Get Account informations and E-Mails feom K-9 Mail App. Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html",
         "paths": ('*/com.fsck.k9/databases/*'),
         "function": "get_k9mail_data"
     }
@@ -29,6 +29,8 @@ __artifacts_v2__ = {
 
 import datetime
 import json
+import base64
+import quopri
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -61,7 +63,7 @@ def get_k9mail_data(files_found, report_folder, seeker, wrap_text, time_offset):
             if len(accountUUIDS):
                 logfunc(f"Found {len(accountUUIDS)}  K-9 Mail - Accounts")
 
-                description = f"Existing accounts in the K-9 Mail App."
+                description = f"Existing accounts in the K-9 Mail App. Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html"
                 report = ArtifactHtmlReport('K-9 Mail - Accounts')
                 report.start_artifact_report(report_folder, 'K-9 Mail - Accounts', description)
                 report.add_script()
@@ -134,20 +136,22 @@ def get_k9mail_data(files_found, report_folder, seeker, wrap_text, time_offset):
                 db = open_sqlite_db_readonly(file_found)
                 cursor = db.cursor()
                 cursor.execute('''
-                    SELECT deleted, subject, date, sender_list, to_list, cc_list, bcc_list, reply_to_list, attachment_count, internal_date, preview, read, flagged, answered, forwarded,  name 
-                    FROM messages
-                    JOIN folders ON folders.id =  messages.folder_id
+                    SELECT deleted, subject, date, sender_list, to_list, cc_list, bcc_list, reply_to_list, attachment_count, internal_date, preview, read, flagged, answered, forwarded,  name, root, header, (SELECT encoding FROM message_parts M_INNER WHERE M_INNER.root = M_OUTER.ROOT AND seq = 1) AS encoding, (SELECT data FROM message_parts M_INNER WHERE M_INNER.root = M_OUTER.ROOT AND seq = 1) AS data, data_location  
+                    FROM message_parts M_OUTER  
+                    JOIN messages ON messages.message_part_id = M_OUTER.root  
+                    JOIN folders ON folders.id =  messages.folder_id  
+                    WHERE seq = 0
                 ''')
                 data_rows = cursor.fetchall()
                 
                 if len(data_rows):
                     logfunc(f"Found {len(data_rows)}  K-9 Mail - Messages for account {account}")
 
-                    description = f"Existing E-Mails for the Account {account} in the K-9 Mail App."
+                    description = f"Existing E-Mails for the Account {account} in the K-9 Mail App. Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html"
                     report = ArtifactHtmlReport(f'K-9 Mail - Mails for Account {account}')
                     report.start_artifact_report(report_folder, f'K-9 Mail - Mails for Account {account}', description)
                     report.add_script()
-                    data_headers = ('Date Sent', 'Folder', 'Subject', 'Message Preview', 'From', 'To', 'CC', 'BCC', 'Reply To', '# of Attachments', 'Date Received', 'Deleted', 'Read', 'Flagged', 'Answered', 'Forwarded')
+                    data_headers = ('Date Sent', 'Folder', 'Subject', 'Message Preview', 'From', 'To', 'CC', 'BCC', 'Reply To', '# of Attachments', 'Content', 'Date Received', 'Deleted', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Header')
                     data_list = []
                     for row in data_rows:
                         date_sent = datetime.datetime.fromtimestamp(int(row[2])/1000).strftime('%Y-%m-%d %H:%M:%S')
@@ -166,8 +170,15 @@ def get_k9mail_data(files_found, report_folder, seeker, wrap_text, time_offset):
                         answered_flag = 'Yes' if row[13] == 1 else 'No'
                         forwarded_flag = 'Yes' if row[14] == 1 else 'No'
                         deleted_flag = 'Yes' if row[0] == 1 else 'No'
+                        header = row[17].decode('UTF-8')
+                        content = ''
+                        # Decocding is needed
+                        if row[18] == 'base64':
+                            content = base64.b64decode(row[19]).decode('UTF-8')
+                        elif row[19]:
+                            content = row[19]
 
-                        data_list.append((date_sent, folder, subject, message_preview, sender, to, cc, bcc, reply_to, attachment_count, date_received, deleted_flag, read_flag, flagged_flag, answered_flag, forwarded_flag))
+                        data_list.append((date_sent, folder, subject, message_preview, sender, to, cc, bcc, reply_to, attachment_count, content, date_received, deleted_flag, read_flag, flagged_flag, answered_flag, forwarded_flag, header))
 
                     tableID = 'k9mail_messages_' + UUID
 
@@ -183,6 +194,3 @@ def get_k9mail_data(files_found, report_folder, seeker, wrap_text, time_offset):
                     logfunc(f"No messages found for K-9 Mail Account {account}.")
 
                 db.close()
-
-def get_k9mail_mail_content():
-    pass
