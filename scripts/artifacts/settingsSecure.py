@@ -45,14 +45,14 @@ def process_ssecure(file_path, uid, report_folder):
         val = setting.get('value')
         if nme == 'bluetooth_name':
             data_list.append((nme, val))
-            logdevinfo(f"Bluetooth name: {val}")
+            logdevinfo(f"<b>Bluetooth name: </b>{val}")
         elif nme == 'mock_location':
             data_list.append((nme, val))
         elif nme == 'android_id':
             data_list.append((nme, val))
         elif nme == 'bluetooth_address':
             data_list.append((nme, val))
-            logdevinfo(f"Bluetooth address: {val}")
+            logdevinfo(f"<b>Bluetooth address: </b>{val}")
      
     if len(data_list) > 0:
         report = ArtifactHtmlReport('Settings Secure')

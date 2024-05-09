@@ -17,7 +17,7 @@ def get_last_boot_time(files_found, report_folder, seeker, wrap_text, time_offse
 
         last_boot_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modTimesinceEpoc))
                      
-        logdevinfo(f"Last Boot Timestamp: {last_boot_time}")
+        logdevinfo(f"<b>Last Boot Timestamp: </b>{last_boot_time}")
         data_list.append((last_boot_time, file_name))
                      
         if data_list:
