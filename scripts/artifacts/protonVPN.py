@@ -9,7 +9,6 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly, logfunc, logdevinfo, checkabx, abxread
 
-
 def get_protonVPN(files_found, report_folder, seeker, wrap_text, time_offset):
 
 	for file_found in files_found:
@@ -34,17 +33,17 @@ def get_protonVPN(files_found, report_folder, seeker, wrap_text, time_offset):
 						data_list.append((elem.attrib.get('name'), elem.attrib.get('value')))
 
 					if (elem.attrib.get('name')) == 'ipAddress':
-						logdevinfo(f'IP Address: {elem.text}')
+						logdevinfo(f'<b>IP Address: </b>{elem.text}')
 
 					if (elem.attrib.get('name')) == 'lastKnownIsp':
-						logdevinfo(f'ISP: {elem.text}')
+						logdevinfo(f'<b>ISP: </b>{elem.text}')
 
 					if (elem.attrib.get('name')) == 'lastKnownCountry':
-						logdevinfo(f'Country: {elem.text}')
+						logdevinfo(f'<b>Country: </b>{elem.text}')
 
 					if (elem.attrib.get('name')) == 'ipAddressCheckTimestamp':
 						timestamp =  datetime.datetime.utcfromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
-						logdevinfo(f'Last IP Check Time : {timestamp}')
+						logdevinfo(f'<b>Last IP Check Time: </b>{timestamp}')
 		
 			if data_list:
 				report = ArtifactHtmlReport('ProtonVPN Device Info.xml')

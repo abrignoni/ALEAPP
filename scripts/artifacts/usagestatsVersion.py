@@ -4,7 +4,6 @@ import scripts.artifacts.artGlobals
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, logdevinfo, is_platform_windows
 
-
 def get_usagestatsVersion(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     file_found = str(files_found[0])
@@ -15,28 +14,28 @@ def get_usagestatsVersion(files_found, report_folder, seeker, wrap_text, time_of
             totalvalues = len(splits)
             if totalvalues == 3:
                 logfunc(f"Android version {str(splits[0])}")
-                logdevinfo(f"Android version per Usagestats: {splits[0]}")
+                logdevinfo(f"<b>Android version per Usagestats: </b>{splits[0]}")
                 scripts.artifacts.artGlobals.versionf = splits[0]
                 data_list.append(('Android Version', splits[0]))
                 
-                logdevinfo(f"Codename per Usagestats: {splits[1]}")
+                logdevinfo(f"<b>Codename per Usagestats: </b>{splits[1]}")
                 data_list.append(('Codename', splits[1]))
                 
-                logdevinfo(f"Build version per Usagestats: {splits[2]}")
+                logdevinfo(f"<b>Build version per Usagestats: </b>{splits[2]}")
                 data_list.append(('Build version', splits[2]))
             if totalvalues == 5:
                 logfunc(f"Android version {str(splits[0])}")
                 scripts.artifacts.artGlobals.versionf = splits[0]
-                logdevinfo(f"Android version per Usagestats: {splits[0]}")
+                logdevinfo(f"<b>Android version per Usagestats: </b>{splits[0]}")
                 data_list.append(('Android Version', splits[0]))
                 
-                logdevinfo(f"Codename per Usagestats: {splits[1]}")
+                logdevinfo(f"<b>Codename per Usagestats: </b>{splits[1]}")
                 data_list.append(('Codename', splits[1]))
                 
-                logdevinfo(f"Country Specific Code per Usagestats: {splits[3]}")
+                logdevinfo(f"<b>Country Specific Code per Usagestats: </b>{splits[3]}")
                 data_list.append(('Country Specific Code', splits[3]))
                 
-                logdevinfo(f"Build version per Usagestats: {splits[2]}")
+                logdevinfo(f"<b>Build version per Usagestats: </b>{splits[2]}")
                 data_list.append(('Build Version', splits[2]))
 
     if len(data_list) > 0:
@@ -52,7 +51,6 @@ def get_usagestatsVersion(files_found, report_folder, seeker, wrap_text, time_of
         
     else:
         logfunc(f'No OS Version file available')
-
 
 __artifacts__ = {
     "usagestatsVersion": (

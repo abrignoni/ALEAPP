@@ -17,7 +17,7 @@ def get_factory_reset(files_found, report_folder, seeker, wrap_text, time_offset
 
         reset_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modTimesinceEpoc))
                      
-        logdevinfo(f"Factory Reset Timestamp: {reset_time}")
+        logdevinfo(f"<b>Factory Reset Timestamp: </b>{reset_time}")
         data_list.append((reset_time, file_name))
                      
         if data_list:
