@@ -280,7 +280,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "kleinanzeigen.de App",
         "notes": "",
-        "paths": ('*com.ebay.kleinanzeigen\databases\messageBoxDatabase.db*'),
+        "paths": ('*com.ebay.kleinanzeigen/databases/messageBoxDatabase.db*'),
         "function": "get_kleinanzeigenmessagebox"
     }
 }
