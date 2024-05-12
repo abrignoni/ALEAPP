@@ -32,7 +32,7 @@ def get_wifiHotspot(files_found, report_folder, seeker, wrap_text, time_offset):
                         #print(elem.attrib)
                         data = elem.attrib
                         name = data.get('name', '')
-                        if name == 'SSID':
+                        if name == 'SSID' or name == 'WifiSsid':
                             ssid = elem.text
                         elif name == 'SecurityType':
                             security_type = data.get('value', '')
