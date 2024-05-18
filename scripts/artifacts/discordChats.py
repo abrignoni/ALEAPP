@@ -89,6 +89,6 @@ def get_discordChats(files_found, report_folder, seeker, wrap_text, time_offset)
 __artifacts__ = {
         "discordChats": (
                 "Discord Chats",
-                ('*/data/com.discord/files/kv-storage/*/a'),
+                ('*/data/com.discord/files/kv-storage/*/a*'),
                 get_discordChats)
 }
