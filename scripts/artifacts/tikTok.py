@@ -36,7 +36,7 @@ def get_tikTok(files_found, report_folder, seeker, wrap_text, time_offset):
             end
         local_info
         from db_im_xx.SIMPLE_USER, msg
-        where UID = sender order by created_time
+        where UID = sender and json_valid(content) = 1 order by created_time
         ''')
 
     all_rows = cursor.fetchall()
