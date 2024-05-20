@@ -606,6 +606,7 @@ icon_mappings = \
     'MOBILE CONTAINER MANAGER': 'save',
     'MOBILE INSTALLATION LOGS': 'clipboard',
     'MOBILE SOFTWARE UPDATE': 'refresh-cw',
+    'MS AUTHENTICATOR': 'users',
     'MY FILES': {
         'MY FILES DB - CACHE MEDIA': 'image',
         '_mode': 'search',
@@ -711,6 +712,8 @@ icon_mappings = \
     'SCRIPT LOGS': 'archive',
     'SECRET CALCULATOR PHOTO ALBUM': 'image',
     'SETTINGS SERVICES': 'battery-charging',
+    'SETTINGS SERVICES - BATTERY USAGE V9 - BATTERY STATES': 'battery-charging',
+    'SETTINGS SERVICES - BATTERY USAGE V9 - APP BATTERY USAGE EVENTS': 'bar-chart-2',
     'SIM INFO': 'info',
     'SKOUT': {
         'SKOUT MESSAGES': 'message-circle',
