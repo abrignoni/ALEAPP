@@ -177,6 +177,3 @@ __artifacts__ = {
     "likee_databases": ("LIKEE", ("*/video.like/databases/*.db"), get_likee_db),
 }
 
-
-"""if file_name.startswith('New_vlog_'):
-            likee_vlog_db = str(file_found)"""
