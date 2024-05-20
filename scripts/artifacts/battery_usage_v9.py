@@ -1,9 +1,10 @@
 # Android Settings Services -  Battery Usages v9 (com.android.settings)
 # Author:  Marco Neumann (kalinko@be-binary.de)
-# Version: 0.0.1
+# Version: 0.0.2
 # 
 # Tested with the following versions/devices:
 # 2024-05-19: Android 14 - Fairphone3 and Fairphone 4
+
 
 # Requirements: re, blackboxprotobuf
 
