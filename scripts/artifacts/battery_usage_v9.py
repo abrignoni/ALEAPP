@@ -1,11 +1,12 @@
 # Android Settings Services -  Battery Usages v9 (com.android.settings)
 # Author:  Marco Neumann (kalinko@be-binary.de)
-# Version: 0.0.1
+# Version: 0.0.2
 # 
 # Tested with the following versions/devices:
 # 2024-05-19: Android 14 - Fairphone3 and Fairphone 4
 
-# Requirements: -
+
+# Requirements: re, blackboxprotobuf
 
 __artifacts_v2__ = {
 
@@ -37,6 +38,8 @@ __artifacts_v2__ = {
 }
 
 import re
+import blackboxprotobuf
+import base64
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
@@ -59,6 +62,7 @@ def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text, time_off
                     DATETIME(timestamp/1000, 'unixepoch') AS timestamp, 
                     consumerType,
                     isFullChargeCycleStart, 
+                    batteryInformation,
                     batteryInformationDebug
                     
                 FROM BatteryState
@@ -70,9 +74,47 @@ def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text, time_off
                 
                 for row in all_rows:
                     # we need to parse the column batteryInformationDebug - a lot of data is in here
+                    battery_info_proto, types = blackboxprotobuf.decode_message(base64.b64decode(row[5]))
+                    app_label = battery_info_proto['7']
+                    is_hidden = battery_info_proto['2']
+                    boot_timestamp = battery_info_proto['3'] / 1000
+                    timezone = battery_info_proto['4']
+                    total_power = 'NOVALUE'
+                    consume_power = 'NOVALUE'
+                    foreground = battery_info_proto['14'] / 1000
+                    foreground_service = battery_info_proto['20'] / 1000
+                    background = battery_info_proto['15'] / 1000
+                    battery_level = battery_info_proto['1']['1']
+                    match int(battery_info_proto['1']['2']):
+                             case 2:
+                                 battery_status= 'Charging'
+                             case 3:
+                                 battery_status = 'Discharging'
+                             case 5:
+                                 battery_status = 'Fully charged'
+                             case _:
+                                 battery_status = 'Unknown'
+                    match int(battery_info_proto['1']['3']):
+                        case 1:
+                            battery_health= 'Unknown'
+                        case 2:
+                            battery_health= 'Good'
+                        case 3:
+                            battery_health = 'Overheat'
+                        case 4:
+                            battery_health = 'Dead'
+                        case 5:
+                            battery_health = 'Over Voltage'
+                        case 6:
+                            battery_health = 'Unspecified Failure'
+                        case 7:
+                            battery_health = 'Cold'
+                        case _:
+                            battery_health = 'None'
+                    drain_type = battery_info_proto['13']
                     battery_debug = {}
-                    if row[5]:
-                        lines = re.split('\\n', row[5])
+                    if row[6]:
+                        lines = re.split('\\n', row[6])
 
                         for line in lines:
                             try:
@@ -81,84 +123,13 @@ def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text, time_off
                             except:
                                 continue
                     try:
-                        app_label = battery_debug['app_label']
-                    except:
-                        app_label = 'None'
-                    try:
-                        is_hidden = battery_debug['is_hidden']
-                    except:
-                        is_hidden = 'False'
-                    try:
-                        boot_timestamp = int(battery_debug['boot_timestamp']) / 1000
-                    except:
-                        boot_timestamp = 'None'
-                    try:
-                        timezone = battery_debug['zone_id']
-                    except:
-                        timezone = 'None'
-                    try:
                         total_power = battery_debug['total_power']
                     except:
-                        total_power = 'None'
+                        pass                    
                     try:
                         consume_power = battery_debug['consume_power']
                     except:
-                        consume_power = 'None'
-                    try:
-                        foreground = int(battery_debug['foreground_usage_time_in_ms']) / 1000
-                    except:
-                        foreground = 'None'
-                    try:
-                        foreground_service = int(battery_debug['foreground_service_usage_time_in_ms']) / 1000
-                    except:
-                        foreground_service = 'None'
-                    try:
-                        background = int(battery_debug['background_usage_time_in_ms']) / 1000
-                    except:
-                        background = 'None'
-                    try:
-                        battery_level = battery_debug['battery_level']
-                    except:
-                        battery_level = 'None'
-                    try:
-                        battery_status = battery_debug['battery_status']
-                        match int(battery_status):
-                            case 2:
-                                battery_status= 'Charging'
-                            case 3:
-                                battery_status = 'Discharging'
-                            case 5:
-                                battery_status = 'Fully charged'
-                            case _:
-                                battery_status = 'Unknown'
-                    except:
-                        battery_status = 'None'
-                    try:
-                        battery_health = battery_debug['battery_health']
-                        match int(battery_health):
-                            case 1:
-                                battery_health= 'Unknown'
-                            case 2:
-                                battery_health= 'Good'
-                            case 3:
-                                battery_health = 'Overheat'
-                            case 4:
-                                battery_health = 'Dead'
-                            case 5:
-                                battery_health = 'Over Voltage'
-                            case 6:
-                                battery_health = 'Unspecified Failure'
-                            case 7:
-                                battery_health = 'Cold'
-                            case _:
-                                battery_health = 'None'
-                    except:
-                        battery_health = 'None'
-                    try:
-                        drain_type = battery_debug['drain_type']
-                    except:
-                        drain_type = 'None'
-
+                        pass
 
                     data_list.append((row[2], app_label, row[1], is_hidden, boot_timestamp, timezone, total_power, consume_power, foreground, foreground_service, background, battery_level, battery_status, battery_health, drain_type, file_found))
                         
