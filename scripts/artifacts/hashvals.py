@@ -37,3 +37,4 @@ def write_hashes(files_found, report_folder, seeker, wrap_text, time_offset):
 
 
 __artifacts__ = {"File Hashes": ("File Hashes", ("*/*"), write_hashes)}
+
