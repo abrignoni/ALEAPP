@@ -2,6 +2,7 @@
 import codecs
 import csv
 from datetime import *
+import json
 import os
 import re
 import shutil
@@ -312,8 +313,13 @@ def timeline(report_folder, tlactivity, data_list, data_headers):
         db.commit()
 
     for idx in range(len(data_list)):
-        modifiedList = list(map(lambda x, y: x + ': ' + str(y), data_headers, data_list[idx]))
-        cursor.executemany("INSERT INTO data VALUES(?,?,?)", [(str(data_list[idx][0]), tlactivity, str(modifiedList))])
+        data_json = []
+        for entry in data_list:
+            data_json.append(dict(zip(entry, data_headers)))
+
+        data_str = json.dumps(data_json)
+        cursor.executemany("INSERT INTO data VALUES(?,?,?)",
+                           [(str(data_list[idx][0]), tlactivity, data_str)])
 
     db.commit()
     db.close()
