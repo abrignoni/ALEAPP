@@ -312,14 +312,14 @@ def timeline(report_folder, tlactivity, data_list, data_headers):
         )
         db.commit()
 
-    for idx in range(len(data_list)):
-        data_json = []
-        for entry in data_list:
-            data_json.append(dict(zip(entry, data_headers)))
+    for entry in data_list:
+        entry = [str(field) for field in entry]
+        
+        data_dict = dict(zip(data_headers, entry))
 
-        data_str = json.dumps(data_json)
-        cursor.executemany("INSERT INTO data VALUES(?,?,?)",
-                           [(str(data_list[idx][0]), tlactivity, data_str)])
+        data_str = json.dumps(data_dict)
+        cursor.executemany(
+            "INSERT INTO data VALUES(?,?,?)", [(str(entry[0]), tlactivity, data_str)])
 
     db.commit()
     db.close()

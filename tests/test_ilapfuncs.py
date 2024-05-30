@@ -1,17 +1,23 @@
-from unittest.mock import Mock, patch
+import os
+import shutil
+import sqlite3
 
 from scripts import ilapfuncs
 
 
-@patch('sqlite3')
-def test_timeline(mock_sqlite3):
-    mock_cursor = Mock()
-    mock_connect = Mock()
-    mock_connect.cursor.return_value = mock_cursor
-    mock_sqlite3.connect.return_value = mock_connect
-
+def test_timeline():
     data_list = [('row1_value1', 'row1_value2'), ('row2_value1', 'row2_value2')]
     data_headers = ['col1', 'col2']
-    ilapfuncs.timeline('test_data/test', 'mock-activity', data_list, data_headers)
+    ilapfuncs.timeline('test_data/test/', 'mock-activity', data_list, data_headers)
 
-    mock_cursor.assert_called()
+    assert os.path.exists('test_data/_Timeline/tl.db')
+
+    conn = sqlite3.connect('test_data/_Timeline/tl.db')
+    cursor = conn.cursor()
+    result = cursor.execute("SELECT * from data").fetchall()
+    assert result[0] == (
+        'row1_value1', 'mock-activity', '{"col1": "row1_value1", "col2": "row1_value2"}')
+    assert result[1] == (
+        'row2_value1', 'mock-activity', '{"col1": "row2_value1", "col2": "row2_value2"}')
+
+    shutil.rmtree('test_data/')
