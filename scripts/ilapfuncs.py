@@ -318,8 +318,12 @@ def timeline(report_folder, tlactivity, data_list, data_headers):
             data_json.append(dict(zip(entry, data_headers)))
 
         data_str = json.dumps(data_json)
+<<<<<<< HEAD
         cursor.executemany("INSERT INTO data VALUES(?,?,?)",
                            [(str(data_list[idx][0]), tlactivity, data_str)])
+=======
+        cursor.executemany("INSERT INTO data VALUES(?,?,?)", [(str(data_list[idx][0]), tlactivity, data_str)])
+>>>>>>> fbe5907 (fixed behaviour)
 
     db.commit()
     db.close()
