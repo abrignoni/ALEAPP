@@ -1,7 +1,4 @@
-
 __artifacts_v2__ = {
-
-    
     "Samsung Honeyboard Clipboard Historty": {
         "name": "Samsung Honeyboard - Clipboard History",
         "description": "Parses the text clipboard History.",
