@@ -66,6 +66,12 @@ icon_mappings = \
         'SIMPLESTORAGE': 'loader',
         'default': 'user'
     },
+    'ANDROID NOTIFICATION HISTORY': {
+        'STATUS': 'toggle-left',
+        'NOTIFICATIONS': 'bell',
+        'SNOOZED NOTIFICATIONS': 'bell-off',
+        '_mode': 'search',
+    },
     'APP CONDUIT': 'activity',
     'APP INTERACTION': 'bar-chart-2',
     'APP PERMISSIONS': 'key',
