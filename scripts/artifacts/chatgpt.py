@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "chatgpt": {
         "name": "ChatGPT",
-        "description": "Get user's ChatGPT conversations, settings and media files. This parser is based on a research project",
+        "description": "Get user's ChatGPT conversations, settings and media files. This parser is based on a research project. Parser is validated up to the app's 1.2024.177 version",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
-        "version": "0.0.1",
-        "date": "2024-02-01",
+        "version": "1.0.2",
+        "date": "2024-07-09",
         "requirements": "",
         "category": "ChatGPT",
         "paths": (
@@ -40,7 +40,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
     for file_found in files_found:
         file_found = str(file_found)
         file_name = os.path.basename(file_found)
-        if file_name.endswith('.db'):
+        if file_name.endswith('_conversations.db'):
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             #Conversations Metadata
@@ -67,9 +67,9 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                 report = ArtifactHtmlReport(f"ChatGPT - Conversations Metadata - Account: {file_name[:-17]}") # webpage title
                 #multiple accounts.db may exist. counter keeps track of their number
                 if counter == 1:
-                    report.start_artifact_report(report_folder, f"ChatGPT - Conversations Metadata", description) # html + artifact title
+                    report.start_artifact_report(report_folder, f"Conversations Metadata", description) # html + artifact title
                 else:
-                    report.start_artifact_report(report_folder, f"ChatGPT - Conversations Metadata {counter}", description) # html + artifact title
+                    report.start_artifact_report(report_folder, f"Conversations Metadata {counter}", description) # html + artifact title
                 report.add_script()
                 #data_headers = ('Conversation ID','Remote ID','Title','Creation Date','Modification Date','Custom Instructions', 'Model') 
                 data_headers = ('Creation Date','Modification Date','Title','Custom Instructions', 'Model','ID','Conversation ID','Remote ID') 
@@ -143,9 +143,9 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                 description = f'User:{file_name[:-17]} conversations with ChatGPT'
                 report = ArtifactHtmlReport(f"ChatGPT - Conversations - Account: {file_name[:-17]}")
                 if counter == 1:
-                    report.start_artifact_report(report_folder, f"ChatGPT - Conversations", description)
+                    report.start_artifact_report(report_folder, f"Conversations", description)
                 else:
-                    report.start_artifact_report(report_folder, f"ChatGPT - Conversations {counter}", description)
+                    report.start_artifact_report(report_folder, f"Conversations {counter}", description)
                 report.add_script()
                 data_headers = ('Date','Message ID','Conversation ID','Title','Role','Content','Role Name','Attachments','Model','Complete','Blocked','Flagged','Interrupted','User System Message','Voice Message') 
                 data_list = []
@@ -196,7 +196,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                     if len(data_list) > 0:
                         description = f'User preferences'
                         report = ArtifactHtmlReport('ChatGPT - User')
-                        report.start_artifact_report(report_folder, f'ChatGPT - User', description)
+                        report.start_artifact_report(report_folder, f'User', description)
                         report.add_script()
                         data_headers = ('User-ID', 'Email','Name','Account Creation Time','Picture')
                         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
@@ -238,7 +238,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                     if len(data_list) > 0:
                         description = f'ChatGPT account status prefs'
                         report = ArtifactHtmlReport('ChatGPT - Account Status')
-                        report.start_artifact_report(report_folder, f'ChatGPT - Account Status', description)
+                        report.start_artifact_report(report_folder, f'Account Status', description)
                         report.add_script()
                         data_headers = ('Account','Account-ID', 'Account-User-ID','Subscription Plan','Plan Type','Subscription Purchase Origin','Subscription Will Renew','Structure','Is Deactivated')
                         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
@@ -289,7 +289,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                     if len(data_list) > 0:
                         description = f'Account user state preferences'
                         report = ArtifactHtmlReport('ChatGPT - Account User State')
-                        report.start_artifact_report(report_folder, f'ChatGPT - Account User State', description)
+                        report.start_artifact_report(report_folder, f'Account User State', description)
                         report.add_script()
                         data_headers = ('Is Active Account','Account-ID', 'User-ID','Account-User-ID','Email','Name','Account Creation Time','Subscription Plan','Plan Type','Subscription Purchase Origin','Subscription Will Renew','Plan Expiration Date','Structure','Is Deactivated','Picture')
                         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
@@ -321,7 +321,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                     if len(data_list) > 0:
                         description = f'User provided custom instructions to ChatGPT'
                         report = ArtifactHtmlReport('ChatGPT - Custom Instructions')
-                        report.start_artifact_report(report_folder, f'ChatGPT - Custom Instructions', description)
+                        report.start_artifact_report(report_folder, f'Custom Instructions', description)
                         report.add_script()
                         data_headers = ('Are Enabled','About User Message', 'About Model Message')
                         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
@@ -354,7 +354,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                     if len(data_list) > 0:
                         description = f'User settings'
                         report = ArtifactHtmlReport('ChatGPT - User Settings')
-                        report.start_artifact_report(report_folder, f'ChatGPT - User Settings', description)
+                        report.start_artifact_report(report_folder, f'User Settings', description)
                         report.add_script()
                         data_headers = ('Chat History Disabled','Seen Custom Instructions Intro', 'Seen Voice Intro','Seen Voice Selection')
                         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
@@ -394,7 +394,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
             if len(data_list) > 0:
                 description = f'User settings'
                 report = ArtifactHtmlReport('ChatGPT - User Analytics')
-                report.start_artifact_report(report_folder, f'ChatGPT - User Analytics', description)
+                report.start_artifact_report(report_folder, f'User Analytics', description)
                 report.add_script()
                 data_headers = ('User-ID','Anonymous-ID', 'Email','Device-ID','Workspace-ID','Account Has Plus','Plan Type','Has Active Subscription','App Version')
                 report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
@@ -424,7 +424,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                 if len(data_list) > 0:
                     description = 'ChatGPT - Media Uploads'
                     report = ArtifactHtmlReport('ChatGPT - Media Uploads')
-                    report.start_artifact_report(report_folder, 'ChatGPT - Media Uploads', description)
+                    report.start_artifact_report(report_folder, 'Media Uploads', description)
                     report.add_script()
                     data_headers = ('Thumbnail','Filename','Location' )
                     report.write_artifact_data_table(data_headers, data_list, filepath, html_escape=False)
