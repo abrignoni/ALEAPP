@@ -6,6 +6,12 @@ import typing
 import plugin_loader
 import scripts.report as report
 import traceback
+import tarfile
+import fnmatch
+import zipfile
+
+
+
 
 from scripts.search_files import *
 from scripts.ilapfuncs import *
@@ -287,15 +293,22 @@ def main():
 
     selected_plugins = plugins_parsed_first + selected_plugins
     
+
+   
+    
     crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, time_offset, profile_filename)
 
+
+        
+    
 
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
         loader: plugin_loader.PluginLoader, casedata, time_offset, profile_filename):
     start = process_time()
     start_wall = perf_counter()
- 
+    artifact_found = []
+    parsed_modules = 0
     logfunc('Processing started. Please wait. This may take a few minutes...')
 
     logfunc('\n--------------------------------------------------------------------------------------')
@@ -304,18 +317,50 @@ def crunch_artifacts(
     logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
     logfunc('By: Yogesh Khatri   | @SwiftForensics | swiftforensics.com\n')
     logdevinfo()
-    
+    search_regexes = []
+    found_regexes = []
+    for plugin in plugins:
+        
+        if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
+            search_regexes.extend(plugin.search)
+        else:
+            search_regexes.extend([plugin.search])
+        #parsed_modules += 1
+        GuiWindow.SetProgressBar(parsed_modules, len(plugins))
+        #log.write(f'<b>For {plugin.name} module</b>')
+
+    database_extensions = search_regexes  # Add more extensions if necessary
     seeker = None
     try:
         if extracttype == 'fs':
             seeker = FileSeekerDir(input_path)
 
         elif extracttype in ('tar', 'gz'):
+            print('hi')
+            
             seeker = FileSeekerTar(input_path, out_params.temp_folder)
+            with tarfile.open(input_path, 'r') as tar:
+                for member in tar.getmembers():
+                    for pattern in search_regexes:
+                        if fnmatch.fnmatch(member.name, pattern):
 
+                            print(member.name)
+                            tar.extract(member, path=out_params.temp_folder)
+                            artifact_found.append(member.name)
+                            found_regexes.append(pattern)
+                            break
+            
         elif extracttype == 'zip':
             seeker = FileSeekerZip(input_path, out_params.temp_folder)
-
+            with zipfile.ZipFile(input_path, 'r') as zip:
+                for member in zip.infolist():
+                    print(member)
+                    for pattern in search_regexes:
+                        if fnmatch.fnmatch(member.filename, pattern):
+                            zip.extract(member, path=out_params.temp_folder)
+                            artifact_found.append(member.filename)
+                            found_regexes.append(pattern)
+                            break
         else:
             logfunc('Error on argument -o (input type)')
             return False
@@ -338,33 +383,51 @@ def crunch_artifacts(
     log = open(os.path.join(out_params.report_folder_base, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
     log.write(f'Extraction/Path selected: {input_path}<br><br>')
     log.write(f'Timezone selected: {time_offset}<br><br>')
-    
-    parsed_modules = 0
 
-    # Search for the files per the arguments
+    #artifacts = list(zip(artifact_found,found_regexes))
+    #artifacts = list(set([i for i in artifacts]))
+    print('artifacts')
+    #print(len(artifacts))
+    #print(artifacts)
+
+    #with open('artifact_found.txt', 'r') as f:
+     #   artifact_found = [line.rstrip('\n') for line in f]
+    
+   
+
+    files_found = []
+    artifact_found= list(set(artifact_found))
+   
+    found_regexes= list(set(found_regexes))
+
+    print(len(plugins))
+    print(len(search_regexes))
+
     for plugin in plugins:
-        if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
-            search_regexes = plugin.search
-        else:
-            search_regexes = [plugin.search]
-        parsed_modules += 1
-        GuiWindow.SetProgressBar(parsed_modules, len(plugins))
-        files_found = []
-        log.write(f'<b>For {plugin.name} module</b>')
-        for artifact_search_regex in search_regexes:
-            found = seeker.search(artifact_search_regex)
-            if not found:
-                log.write(f'<ul><li>No file found for regex <i>{artifact_search_regex}</i></li></ul>')
+            files_found = []
+            regex = []
+
+            if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
+                regex.extend(plugin.search)
             else:
-                log.write(f'<ul><li>{len(found)} {"files" if len(found) > 1 else "file"} for regex <i>{artifact_search_regex}</i> located at:')
-                for pathh in found:
-                    if pathh.startswith('\\\\?\\'):
-                        pathh = pathh[4:]
-                    log.write(f'<ul><li>{pathh}</li></ul>')
-                log.write(f'</li></ul>')
-                files_found.extend(found)
-        if files_found:
-            logfunc()
+                regex.append(plugin.search)
+
+            print('regex') 
+            print(regex)
+
+            for files in artifact_found:
+                for pattern in regex:
+                    if fnmatch.fnmatch(files, pattern):
+                        print(os.path.dirname(pattern))
+                        files = files.replace('/', '\\')
+                        temp = os.path.join(out_params.temp_folder, files)
+                        files_found.append(os.path.abspath(temp))
+                        break  # Found a match, no need to check further patterns
+
+            if not files_found:
+                logfunc('No files found for plugin {} [{}]'.format(plugin.name, plugin.module_name))
+                continue  # skip to the next plugin
+
             logfunc('{} [{}] artifact started'.format(plugin.name, plugin.module_name))
             category_folder = os.path.join(out_params.report_folder_base, plugin.category)
             if not os.path.exists(category_folder):
@@ -374,16 +437,17 @@ def crunch_artifacts(
                     logfunc('Error creating {} report directory at path {}'.format(plugin.name, category_folder))
                     logfunc('Error was {}'.format(str(ex)))
                     continue  # cannot do work
+
             try:
                 plugin.method(files_found, category_folder, seeker, wrap_text, time_offset)
             except Exception as ex:
                 logfunc('Reading {} artifact had errors!'.format(plugin.name))
                 logfunc('Error was {}'.format(str(ex)))
                 logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
-                continue  # nope
+                continue  # skip to the next plugin
 
             logfunc('{} [{}] artifact completed'.format(plugin.name, plugin.module_name))
-
+                    
     log.close()
 
     logfunc('')
