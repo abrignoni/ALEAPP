@@ -29,4 +29,5 @@ exe = EXE(pyz,
 		  hide_console='hide-early',
 		  disable_windowed_traceback=False,
           upx_exclude=[],
+          version='aleappGUI-file_version_info.txt',
           runtime_tmpdir=None )
