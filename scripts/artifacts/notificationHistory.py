@@ -45,7 +45,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text, time_
             for setting in root.findall(".//setting"):
                 if setting.attrib.get('name') == 'notification_history_enabled':
                     value = setting.attrib.get('value')
-                    value = "Disabled" if value == "0" else "Enabled"
+                    value = "Enabled" if value == "1" else "Disabled" if value == "0" else "Unknown"
                     data_list.append((value, user))
                 else:
                     pass # setting not available
