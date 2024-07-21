@@ -9,6 +9,7 @@ import traceback
 import tarfile
 import fnmatch
 import zipfile
+import shutil
 
 
 
@@ -325,26 +326,31 @@ def crunch_artifacts(
             search_regexes.extend(plugin.search)
         else:
             search_regexes.extend([plugin.search])
-        #parsed_modules += 1
-        GuiWindow.SetProgressBar(parsed_modules, len(plugins))
-        #log.write(f'<b>For {plugin.name} module</b>')
 
-    database_extensions = search_regexes  # Add more extensions if necessary
     seeker = None
     try:
         if extracttype == 'fs':
             seeker = FileSeekerDir(input_path)
-
+            for root, dirs, files in os.walk(input_path):
+                for file_name in files:
+                    file_path = os.path.join(root, file_name)
+                    # Check each file against the regex patterns
+                    for pattern in search_regexes:
+                        if fnmatch.fnmatch(file_path, pattern):
+                            
+                            artifact_found.append(file_path)
+                            found_regexes.append(pattern)
+                            
+                           
+           
         elif extracttype in ('tar', 'gz'):
-            print('hi')
+            
             
             seeker = FileSeekerTar(input_path, out_params.temp_folder)
             with tarfile.open(input_path, 'r') as tar:
                 for member in tar.getmembers():
                     for pattern in search_regexes:
                         if fnmatch.fnmatch(member.name, pattern):
-
-                            print(member.name)
                             tar.extract(member, path=out_params.temp_folder)
                             artifact_found.append(member.name)
                             found_regexes.append(pattern)
@@ -354,7 +360,6 @@ def crunch_artifacts(
             seeker = FileSeekerZip(input_path, out_params.temp_folder)
             with zipfile.ZipFile(input_path, 'r') as zip:
                 for member in zip.infolist():
-                    print(member)
                     for pattern in search_regexes:
                         if fnmatch.fnmatch(member.filename, pattern):
                             zip.extract(member, path=out_params.temp_folder)
@@ -384,69 +389,72 @@ def crunch_artifacts(
     log.write(f'Extraction/Path selected: {input_path}<br><br>')
     log.write(f'Timezone selected: {time_offset}<br><br>')
 
-    #artifacts = list(zip(artifact_found,found_regexes))
-    #artifacts = list(set([i for i in artifacts]))
-    print('artifacts')
-    #print(len(artifacts))
-    #print(artifacts)
-
-    #with open('artifact_found.txt', 'r') as f:
-     #   artifact_found = [line.rstrip('\n') for line in f]
-    
-   
 
     files_found = []
     artifact_found= list(set(artifact_found))
    
     found_regexes= list(set(found_regexes))
 
-    print(len(plugins))
-    print(len(search_regexes))
-
+    parsed_modules = 0
     for plugin in plugins:
-            files_found = []
-            regex = []
+                files_found = []
+                regex = []
 
-            if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
-                regex.extend(plugin.search)
-            else:
-                regex.append(plugin.search)
+                if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
+                    regex.extend(plugin.search)
+                else:
+                    regex.extend([plugin.search])
+            
+                parsed_modules += 1
 
-            print('regex') 
-            print(regex)
+                GuiWindow.SetProgressBar(parsed_modules, len(plugins))
+                log.write(f'<b>For {plugin.name} module</b>')
+                for files in artifact_found:
+                
+                        for pattern in regex:    
+                        
+                            if fnmatch.fnmatch(files, pattern):
+                                files = files.replace('/', '\\')
+                                if extracttype == 'fs':
+                                    temp = files
+                                else:    
+                                    temp = os.path.join(out_params.temp_folder, files)
+                               
+                                files_found.append(os.path.abspath(temp))
+                                #print(os.path.abspath(temp))
+                log.write(f'<ul><li>{len(files_found)} {"files" if len(files_found) > 1 else "file"} for regex <i>{regex}</i> located at:')
+                for path in files_found:
+                    if path.startswith('\\\\?\\'):
+                        path = path[4:]
+                    log.write(f'<ul><li>{path}</li></ul>')
+                log.write(f'</li></ul>')
+                                
 
-            for files in artifact_found:
-                for pattern in regex:
-                    if fnmatch.fnmatch(files, pattern):
-                        print(os.path.dirname(pattern))
-                        files = files.replace('/', '\\')
-                        temp = os.path.join(out_params.temp_folder, files)
-                        files_found.append(os.path.abspath(temp))
-                        break  # Found a match, no need to check further patterns
+                if not files_found:
+                    #logfunc('No files found for plugin {} [{}]'.format(plugin.name, plugin.module_name))
+                    log.write(f'<ul><li>No file found for regex <i>{plugin.name}</i></li></ul>')
+                    continue  # skip to the next plugin
 
-            if not files_found:
-                logfunc('No files found for plugin {} [{}]'.format(plugin.name, plugin.module_name))
-                continue  # skip to the next plugin
+                logfunc('{} [{}] artifact started'.format(plugin.name, plugin.module_name))
+                category_folder = os.path.join(out_params.report_folder_base, plugin.category)
+                if not os.path.exists(category_folder):
+                    try:
+                        os.mkdir(category_folder)
+                    except (FileExistsError, FileNotFoundError) as ex:
+                        logfunc('Error creating {} report directory at path {}'.format(plugin.name, category_folder))
+                        logfunc('Error was {}'.format(str(ex)))
+                        continue  # cannot do work
 
-            logfunc('{} [{}] artifact started'.format(plugin.name, plugin.module_name))
-            category_folder = os.path.join(out_params.report_folder_base, plugin.category)
-            if not os.path.exists(category_folder):
                 try:
-                    os.mkdir(category_folder)
-                except (FileExistsError, FileNotFoundError) as ex:
-                    logfunc('Error creating {} report directory at path {}'.format(plugin.name, category_folder))
+                    
+                    plugin.method(files_found, category_folder, seeker, wrap_text, time_offset)
+                except Exception as ex:
+                    logfunc('Reading {} artifact had errors!'.format(plugin.name))
                     logfunc('Error was {}'.format(str(ex)))
-                    continue  # cannot do work
+                    logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
+                    continue  # skip to the next plugin
 
-            try:
-                plugin.method(files_found, category_folder, seeker, wrap_text, time_offset)
-            except Exception as ex:
-                logfunc('Reading {} artifact had errors!'.format(plugin.name))
-                logfunc('Error was {}'.format(str(ex)))
-                logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
-                continue  # skip to the next plugin
-
-            logfunc('{} [{}] artifact completed'.format(plugin.name, plugin.module_name))
+                logfunc('{} [{}] artifact completed'.format(plugin.name, plugin.module_name))
                     
     log.close()
 
