@@ -707,6 +707,7 @@ icon_mappings = \
         'HOURLY': 'thermometer',
         '_mode': 'search',
     },
+    'SAMSUNG BROWSER': 'globe',
     'SAMSUNG_CMH': 'disc',
     'SCREENTIME': 'monitor',
     'SCRIPT LOGS': 'archive',
