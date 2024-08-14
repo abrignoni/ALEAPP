@@ -97,7 +97,7 @@ def is_platform_windows():
     return sys.platform == 'win32'
 
 def sanitize_file_path(filename, replacement_char='_'):
-    '''
+    r'''
     Removes illegal characters (for windows) from the string passed. Does not replace \ or /
     '''
     return re.sub(r'[*?:"<>|\'\r\n]', replacement_char, filename)
