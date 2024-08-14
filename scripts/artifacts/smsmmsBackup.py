@@ -82,7 +82,7 @@ def get_sms_mms_from_backup(files_found, report_folder, seeker, wrap_text, time_
                         'Body', 'Message Type', 'Message Box')
         data_list = []
         for mms in mms_messages:
-            mbox = mms.get('m_box')
+            mbox = mms.get('msg_box')
             if mbox == 0:
                 mbox = 'All messages'
             elif mbox == 1:
