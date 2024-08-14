@@ -1,5 +1,6 @@
 import bcrypt
 import xml.etree.ElementTree as ET
+import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.artifacts.mewe import APP_NAME
@@ -10,9 +11,9 @@ APP_NAME = 'Snapchat'
 # Last actions taken in the application and who did them
 FEED_QUERY = '''
     SELECT
+        DATETIME(lastInteractionTimestamp/1000, 'unixepoch', 'localtime'),
         key,
         displayInteractionType,
-        DATETIME(lastInteractionTimestamp/1000, 'unixepoch', 'localtime'),
         DATETIME(lastReadTimestamp/1000, 'unixepoch', 'localtime'),
         lastReader,
         DATETIME(lastWriteTimestamp/1000, 'unixepoch', 'localtime'),
@@ -31,15 +32,15 @@ FEED_QUERY = '''
 #      field indicates when the user was created
 FRIEND_QUERY = '''
     SELECT 
+        case addedTimestamp
+			when 0 then ''
+			else datetime(addedTimestamp/1000, 'unixepoch', 'localtime')
+		end,
         username,
         userId,
         displayName,
         phone,
-        birthday,
-        case addedTimestamp
-			when 0 then ''
-			else datetime(addedTimestamp/1000, 'unixepoch', 'localtime')
-		end
+        birthday
     FROM Friend
     WHERE addedTimestamp IS NOT NULL;
 '''
@@ -85,10 +86,10 @@ MEO_QUERY = '''
 
 SNAP_MEDIA_QUERY = '''
     SELECT
+        DATETIME(create_time/1000, 'unixepoch', 'localtime'),
         memories_snap._id,
         media_id,
         memories_entry_id,
-        DATETIME(create_time/1000, 'unixepoch', 'localtime'),
         time_zone_id,
         format,
         width,
@@ -154,7 +155,7 @@ def _perform_query(cursor, query):
         return 0, None
 
 
-def _make_reports(title, data_headers, data_list, report_folder, db_file_name):
+def _make_reports(title, data_headers, data_list, report_folder, db_file_name, tl_bool):
     report = ArtifactHtmlReport(title)
     report.start_artifact_report(report_folder, title)
     report.add_script()
@@ -162,37 +163,40 @@ def _make_reports(title, data_headers, data_list, report_folder, db_file_name):
     report.end_artifact_report()
 
     tsv(report_folder, data_headers, data_list, title, db_file_name)
-
-    timeline(report_folder, title, data_list, data_headers)
-
+    if tl_bool == True:
+        timeline(report_folder, title, data_list, data_headers)
 
 def _parse_feeds(feeds_count, rows, report_folder, db_file_name):
     logfunc(f'{feeds_count} feeds found')
 
     data_headers = (
-        'Key', 'Display Interaction Type', 'Last Interaction Timestamp',
+        'Last Interaction Timestamp','Key', 'Display Interaction Type',
         'Last Read Timestamp', 'Last Reader', 'Last Write Timestamp',
         'Last Writer', 'Last Write Type'
     )
     data_list = [(
         row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]
     ) for row in rows]
+    
+    tl_bool = True
 
-    _make_reports(f'{APP_NAME} - Feeds', data_headers, data_list, report_folder, db_file_name)
+    _make_reports(f'{APP_NAME} - Feeds', data_headers, data_list, report_folder, db_file_name, tl_bool)
 
 
 def _parse_friends(friends_count, rows, report_folder, db_file_name):
     logfunc(f'{friends_count} friends found')
 
     data_headers = (
-        'Username', 'User ID', 'Display Name', 'Phone Nr',
-        'Birthday', 'Added Timestamp'
+        'Added Timestamp', 'Username', 'User ID', 'Display Name', 'Phone Nr',
+        'Birthday'
     )
     data_list = [(
         row[0], row[1], row[2], row[3], row[4], row[5]
     ) for row in rows]
+    
+    tl_bool = True
 
-    _make_reports(f'{APP_NAME} - Friends', data_headers, data_list, report_folder, db_file_name)
+    _make_reports(f'{APP_NAME} - Friends', data_headers, data_list, report_folder, db_file_name, tl_bool)
 
 
 def _parse_messages(messages_count, rows, report_folder, db_file_name):
@@ -207,7 +211,9 @@ def _parse_messages(messages_count, rows, report_folder, db_file_name):
         _get_text_from_blob(row[6], 0x2c, 0x28, row[5])
     ) for row in rows]
 
-    _make_reports(f'{APP_NAME} - Messages', data_headers, data_list, report_folder, db_file_name)
+    tl_bool = True
+
+    _make_reports(f'{APP_NAME} - Messages', data_headers, data_list, report_folder, db_file_name, tl_bool)
 
 
 def _parse_memories_entry(memories_count, rows, report_folder, db_file_name):
@@ -221,7 +227,9 @@ def _parse_memories_entry(memories_count, rows, report_folder, db_file_name):
         row[3], _get_text_from_blob(row[4], 0x20, 0x1c)
     ) for row in rows]
 
-    _make_reports(f'{APP_NAME} - Memories', data_headers, data_list, report_folder, db_file_name)
+    tl_bool = True
+
+    _make_reports(f'{APP_NAME} - Memories', data_headers, data_list, report_folder, db_file_name, tl_bool)
 
 
 def _parse_meo(meo_count, rows, report_folder, db_file_name):
@@ -236,15 +244,17 @@ def _parse_meo(meo_count, rows, report_folder, db_file_name):
     data_list = [(
         row[0], row[1], _decrypt_meo_code(row[1]), row[2], row[3]
     ) for row in rows]
+    
+    tl_bool = False
 
-    _make_reports(f'{APP_NAME} - MEO (My Eyes Only)', data_headers, data_list, report_folder, db_file_name)
+    _make_reports(f'{APP_NAME} - MEO (My Eyes Only)', data_headers, data_list, report_folder, db_file_name, tl_bool)
 
 
 def _parse_snap_media(snap_media_count, rows, report_folder, db_file_name):
     logfunc(f'{snap_media_count} Snap Media found')
 
     data_headers = (
-        'ID', 'Media ID', 'Memories Entry ID', 'Create Time', 'Time Zone ID', 'Format',
+        'Create Time', 'ID', 'Media ID', 'Memories Entry ID', 'Time Zone ID', 'Format',
         'Width', 'Heigth', 'Duration', 'Has Overlay', 'Overlay Size', 'Overlay Info',
         'Front Facing', 'Size', 'Has Location Info', 'Latitude', 'Longitude',
         'Snap User Agent', 'Thumbnail Size', 'Thumbnail Info'
@@ -254,8 +264,10 @@ def _parse_snap_media(snap_media_count, rows, report_folder, db_file_name):
         row[8], row[9], row[10], row[11], row[12], row[13], row[14],
         row[15], row[16], row[17], row[18], row[19]
     ) for row in rows]
+    
+    tl_bool = True
 
-    _make_reports(f'{APP_NAME} - Snap Media', data_headers, data_list, report_folder, db_file_name)
+    _make_reports(f'{APP_NAME} - Snap Media', data_headers, data_list, report_folder, db_file_name, tl_bool)
 
 
 def _parse_main_db(db_file, db_file_name, report_folder):
@@ -316,6 +328,7 @@ def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
     tree = ET.parse(xml_file)
     data_headers = ('Key', 'Value')
     data_list = []
+    unix_stamps = ['INSTALL_ON_DEVICE_TIMESTAMP','LONG_CLIENT_ID_DEVICE_TIMESTAMP','FIRST_LOGGED_IN_ON_DEVICE_TIMESTAMP']
 
     root = tree.getroot()
     for node in root:
@@ -325,12 +338,19 @@ def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
         except:
             value = node.text
             
+        if node.attrib['name'] in unix_stamps:
+            value = datetime.datetime.utcfromtimestamp(int(value)/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
+        else:
+            pass
+        
         data_list.append((node.attrib['name'], value))
 
-    _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name)
+    tl_bool = False
+    
+    _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name, tl_bool)
 
 
-def get_snapchat(files_found, report_folder, seeker, wrap_text):
+def get_snapchat(files_found, report_folder, seeker, wrap_text, time_offset):
     db_file = None
     db_file_name = None
     xml_file = None
@@ -386,6 +406,6 @@ def get_snapchat(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "snapchat": (
                 "Snapchat",
-                ('*/data/com.snapchat.android/databases/*.db', '*/data/com.snapchat.android/shared_prefs/*.xml'),
+                ('*/com.snapchat.android/databases/*.db', '*/com.snapchat.android/shared_prefs/*.xml'),
                 get_snapchat)
 }

@@ -3,14 +3,9 @@
 block_cipher = None
 
 a = Analysis(['aleapp.py'],
-             pathex=[],
+             pathex=['.\\scripts\\artifacts'],
              binaries=[],
-            datas=[('.\\scripts\\logo.jpg', '.\\scripts'),
-                    ('.\\scripts\\dashboard.css', '.\\scripts'),
-                    ('.\\scripts\\dark-mode.css', '.\\scripts'),
-                    ('.\\scripts\\dark-mode-switch.js', '.\\scripts'),
-                    ('.\\scripts\\feather.min.js', '.\\scripts'),
-                    ('.\\scripts\\MDB-Free_4.13.0', '.\\scripts\\MDB-Free_4.13.0')],
+             datas=[('.\\scripts', '.\\scripts')],
              hiddenimports=['simplekml'],
              hookspath=['.\\'],
              runtime_hooks=[],
@@ -34,4 +29,5 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
+          version='aleapp-file_version_info.txt',
           console=True )

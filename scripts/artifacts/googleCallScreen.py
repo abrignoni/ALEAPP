@@ -9,7 +9,10 @@ from datetime import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
+def get_googleCallScreen(files_found, report_folder, seeker, wrap_text, time_offset):
+    
+    is_windows = is_platform_windows()
+    slash = '\\' if is_windows else '/'
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -45,6 +48,11 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
                     'name': '',
                     'type': 'message'}}
         
+        if report_folder[-1] == slash: 
+            folder_name = os.path.basename(report_folder[:-1])
+        else:
+            folder_name = os.path.basename(report_folder)
+        
         if usageentries > 0:
             for row in all_rows:
             
@@ -60,20 +68,14 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
                 
                 for x in data['1']:
     
-                    convo_timestamp = str(datetime.fromtimestamp(x['timestamp1']/1000)) + '<br>'
+                    convo_timestamp = str(datetime.utcfromtimestamp(x['timestamp1']/1000)) + '<br>'
                     convo_transcript = x['convo_text'] + '<br><br>'
                     conversation += convo_timestamp + convo_transcript
                     
                 for match in files_found:
-                    if recording_filename in match:
+                    if str(recording_filename) in match:
                         shutil.copy2(match, report_folder)
-                        audio_file_path = os.path.abspath(match)
-                        audio_clip = ''' 
-                            <audio controls>
-                                <source src={} type="audio/wav">
-                                <p>Your browser does not support HTML5 audio elements.</p>
-                            </audio> 
-                            '''.format(audio_file_path)
+                        audio_clip = f'<audio controls><source src="{folder_name}/{recording_filename}"></audio>'
                                 
                 data_list.append((lm_ts,recording_path,conversation,audio_clip))
         
@@ -100,6 +102,6 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "GoogleCallScreen": (
                 "Google Call Screen",
-                ('**/com.google.android.dialer/databases/callscreen_transcripts*','**/com.google.android.dialer/files/callscreenrecordings/*.*'),
+                ('*/com.google.android.dialer/databases/callscreen_transcripts*','*/com.google.android.dialer/files/callscreenrecordings/*.*'),
                 get_googleCallScreen)
 }

@@ -4,7 +4,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_browserlocation(files_found, report_folder, seeker, wrap_text):
+def get_browserlocation(files_found, report_folder, seeker, wrap_text, time_offset):
 
     source_file = ''
 
@@ -36,7 +36,7 @@ def get_browserlocation(files_found, report_folder, seeker, wrap_text):
             data_headers = ('timestamp','latitude', 'longitude', 'accuracy') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
-                timestamp = datetime.datetime.fromtimestamp(int(row[0])).strftime('%Y-%m-%d %H:%M:%S') 
+                timestamp = datetime.datetime.utcfromtimestamp(int(row[0])).strftime('%Y-%m-%d %H:%M:%S') 
                 data_list.append((timestamp, row[1], row[2], row[3]))
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
@@ -53,7 +53,7 @@ def get_browserlocation(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Browser Location": (
                 "GEO Location",
-                ('**/com.android.browser/app_geolocation/CachedGeoposition.db'),
+                ('*/com.android.browser/app_geolocation/CachedGeoposition.db'),
                 get_browserlocation)
 }
     

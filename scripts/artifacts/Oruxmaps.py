@@ -4,7 +4,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
+def get_Oruxmaps(files_found, report_folder, seeker, wrap_text, time_offset):
     file_found = str(files_found[0])
     source_file = file_found.replace(seeker.directory, '')
     db = open_sqlite_db_readonly(file_found)
@@ -24,7 +24,7 @@ def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
                         
         for row in all_rows:
             
-            timestamp = datetime.datetime.fromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.datetime.utcfromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
             data_list.append((row[0], row[1], row[2], timestamp, row[4]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
@@ -54,7 +54,7 @@ def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
         data_list = []
                         
         for row in all_rows:
-            timestamp = datetime.datetime.fromtimestamp(int(row[7])).strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.datetime.utcfromtimestamp(int(row[7])).strftime('%Y-%m-%d %H:%M:%S')
             data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], timestamp))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)

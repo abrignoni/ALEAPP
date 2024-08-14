@@ -21,7 +21,7 @@ class keyboard_event:
         self.start_date = start_date
         self.end_date = end_date
 
-def get_gmailActive(files_found, report_folder, seeker, wrap_text):
+def get_gmailActive(files_found, report_folder, seeker, wrap_text, time_offset):
     #logfunc("If you can read this, the module is working!")
     #logfunc(files_found)
     activeAccount = ''
@@ -37,7 +37,7 @@ def get_gmailActive(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Gmail - Active')
         report.start_artifact_report(report_folder, 'Gmail - Active')
         report.add_script()
-        data_headers = ('Active Gmail Address',) # final , needed for table formatting
+        data_headers = ('Active Gmail Address','') # final , needed for table formatting
         data_list = []
         data_list.append((activeAccount, ''))# We only expect one active account
         report.write_artifact_data_table(data_headers, data_list, file_found)
@@ -51,6 +51,6 @@ def get_gmailActive(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "GmailActive": (
                 "Gmail",
-                ('**/com.google.android.gm/shared_prefs/Gmail.xml'),
+                ('*/com.google.android.gm/shared_prefs/Gmail.xml'),
                 get_gmailActive)
 }

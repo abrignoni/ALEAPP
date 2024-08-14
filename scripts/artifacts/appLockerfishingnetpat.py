@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
-def get_appLockerfishingnetpat(files_found, report_folder, seeker, wrap_text):
+def get_appLockerfishingnetpat(files_found, report_folder, seeker, wrap_text, time_offset):
     
     standardKey = '526e7934384e693861506a59436e5549'
     standardIV = '526e7934384e693861506a59436e5549'
@@ -42,6 +42,6 @@ def get_appLockerfishingnetpat(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "App Locker Pat": (
                 "Encrypting Media Apps",
-                ('*/data/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml'),
+                ('*/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml'),
                 get_appLockerfishingnetpat)
 }

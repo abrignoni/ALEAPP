@@ -4,7 +4,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_DocList(files_found, report_folder, seeker, wrap_text):
+def get_DocList(files_found, report_folder, seeker, wrap_text, time_offset):
     
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)
@@ -66,6 +66,6 @@ def get_DocList(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "DocList'": (
                 "Google Drive",
-                ('*/data/data/com.google.android.apps.docs/databases/DocList.db*'),
+                ('*/com.google.android.apps.docs/databases/DocList.db*'),
                 get_DocList)
 }

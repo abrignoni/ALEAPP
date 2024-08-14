@@ -16,10 +16,16 @@ def get_browser_name(file_name):
         return 'Opera'
     elif 'android.chrome' in file_name.lower():
         return 'Chrome'
+    elif 'app_webview' in file_name:
+        try:
+            result = re.search('.*/(.*)/app_webview/Default.*', file_name)
+            return result.group(1)
+        except:
+            return 'Unknown'
     else:
         return 'Unknown'
 
-def get_chrome(files_found, report_folder, seeker, wrap_text):
+def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -271,7 +277,10 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
             WHEN "41" THEN "Browser Shutdown"
             WHEN "50" THEN "Browser Crashed"
         END,
-        opened, 
+        CASE opened
+            WHEN 0 THEN ''
+            WHEN 1 THEN 'Yes'
+        END, 
         received_bytes, 
         total_bytes
         FROM downloads
@@ -348,6 +357,6 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Chrome": (
                 "Chromium",
-                ('*/data/data/*/app_chrome/Default/History*', '*/data/data/*/app_sbrowser/Default/History*', '*/data/data/*/app_opera/History*'),
+                ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
                 get_chrome)
 }

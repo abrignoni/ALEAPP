@@ -7,7 +7,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows 
 from scripts.parse3 import ParseProto
 
-def get_vaulty_info(files_found, report_folder, seeker, wrap_text):
+def get_vaulty_info(files_found, report_folder, seeker, wrap_text, time_offset):
 
     title = "Vaulty - Info"
 
@@ -88,6 +88,6 @@ def get_vaulty_info(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
     "vaulty_info": (
         "Vaulty",
-        ('*/data/data/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml'),
+        ('*/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml'),
         get_vaulty_info)
 }

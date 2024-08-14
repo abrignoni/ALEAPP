@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, abxread, checkabx
 
-def get_recentactivity(files_found, report_folder, seeker, wrap_text):
+def get_recentactivity(files_found, report_folder, seeker, wrap_text, time_offset):
 
     slash = '\\' if is_platform_windows() else '/' 
 
@@ -211,6 +211,6 @@ def process_recentactivity(folder, uid, report_folder):
 __artifacts__ = {
         "recentactivity": (
                 "Recent Activity",
-                ('*/data/system_ce/*'),
+                ('*/system_ce/*'),
                 get_recentactivity)
 }

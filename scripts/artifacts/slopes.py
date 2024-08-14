@@ -4,9 +4,9 @@ import textwrap
 
 from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_slopes(files_found, report_folder, seeker, wrap_text):
+def get_slopes(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -150,6 +150,6 @@ def get_slopes(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "slopes": (
                 "Slopes",
-                ('*/data/com.consumedbycode.slopes/databases/slopes.db*'),
+                ('*/com.consumedbycode.slopes/databases/slopes.db*'),
                 get_slopes)
 }

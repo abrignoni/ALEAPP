@@ -19,7 +19,7 @@ def decrypt(cell: str):
     return plain_text
 
 
-def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
+def get_mega_transfers(files_found, report_folder, seeker, wrap_text, time_offset):
     
     db_filename = str(files_found[0])
 
@@ -73,7 +73,7 @@ def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
 
     for r in results:
         decrypted = list(map(lambda x: decrypt(x), r))
-        timestamp = datetime.datetime.fromtimestamp(int(decrypted[0]) / 1000)
+        timestamp = datetime.datetime.utcfromtimestamp(int(decrypted[0]) / 1000)
         decrypted[0] = f"{timestamp}" 
         decrypted[4] = direction[decrypted[4]]
         decrypted[5] = state[decrypted[5]]
@@ -95,6 +95,6 @@ def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "mega_transfers": (
                 "Mega",
-                ('*/data/data/mega.privacy.android.app/databases/megapreferences'),
+                ('*/mega.privacy.android.app/databases/megapreferences'),
                 get_mega_transfers)
 }

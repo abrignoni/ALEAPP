@@ -5,7 +5,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_tikTok(files_found, report_folder, seeker, wrap_text):
+def get_tikTok(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     data_list1 = []
     
@@ -36,7 +36,7 @@ def get_tikTok(files_found, report_folder, seeker, wrap_text):
             end
         local_info
         from db_im_xx.SIMPLE_USER, msg
-        where UID = sender order by created_time
+        where UID = sender and json_valid(content) = 1 order by created_time
         ''')
 
     all_rows = cursor.fetchall()

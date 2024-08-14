@@ -4,7 +4,7 @@ import csv
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
-def get_BashHistory(files_found, report_folder, seeker, wrap_text):
+def get_BashHistory(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     file_found = str(files_found[0])
     counter = 1
@@ -30,6 +30,6 @@ def get_BashHistory(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Bash History": (
                 "Bash History",
-                ('**/.bash_history'),
+                ('*/.bash_history'),
                 get_BashHistory)
 }

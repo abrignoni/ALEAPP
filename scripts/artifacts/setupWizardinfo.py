@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
-def get_setupWizardinfo(files_found, report_folder, seeker, wrap_text):
+def get_setupWizardinfo(files_found, report_folder, seeker, wrap_text, time_offset):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -40,6 +40,6 @@ def get_setupWizardinfo(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "setupWizardinfo": (
                 "Wipe & Setup",
-                ('*/data/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml'),
+                ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml'),
                 get_setupWizardinfo)
 }

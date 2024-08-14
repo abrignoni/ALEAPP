@@ -4,7 +4,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_shareit(files_found, report_folder, seeker, wrap_text):
+def get_shareit(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -38,7 +38,7 @@ def get_shareit(files_found, report_folder, seeker, wrap_text):
         data_headers = ('direction','from_id', 'to_id', 'device_name', 'description', 'timestamp', 'file_path') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
-            timestamp = datetime.datetime.fromtimestamp(int(row[5])).strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.datetime.utcfromtimestamp(int(row[5])).strftime('%Y-%m-%d %H:%M:%S')
             data_list.append((row[0], row[1], row[2], row[3], row[4], timestamp, row[6]))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)

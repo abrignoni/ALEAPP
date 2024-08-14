@@ -5,7 +5,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows 
 from scripts.parse3 import ParseProto
 
-def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text):
+def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text, time_offset):
     file_found = str(files_found[0])
     content = ParseProto(file_found)
     
@@ -26,7 +26,7 @@ def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text):
 
 __artifacts__ = {
         "wellbeingaccount": (
-                "Wellbeing",
+                "Digital Wellbeing",
                 ('*/com.google.android.apps.wellbeing/files/AccountData.pb'),
                 get_wellbeingaccount)
 }

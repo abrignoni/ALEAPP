@@ -3,8 +3,10 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_swellbeing(files_found, report_folder, seeker, wrap_text):
+def get_swellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
 
+    data_list = []
+    
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('dwbCommon.db'):
@@ -39,36 +41,35 @@ def get_swellbeing(files_found, report_folder, seeker, wrap_text):
         END as eventTypeDescription
         FROM usageEvents
         INNER JOIN foundPackages ON usageEvents.pkgId=foundPackages.pkgId
-        
         ''')
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Samsung Wellbeing events')
-            report.start_artifact_report(report_folder, 'Events')
-            report.add_script()
-            data_headers = ('Timestamp','Event ID','Package Name','Event Type','Event Type Description')
-            data_list = []
+        if usageentries > 0: 
             for row in all_rows:
-                data_list.append((row[0], row[1], row[2], row[3], row[4]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'samsung wellbeing - events'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Samsung Wellbeing - Events'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Samsung Wellbeing event data available')
-        
+                data_list.append((row[0], row[1], row[2], row[3], row[4], file_found))
         db.close()
+        
+    if data_list:
+        report = ArtifactHtmlReport('Samsung Digital Wellbeing - Events')
+        report.start_artifact_report(report_folder, 'Samsung Digital Wellbeing - Events')
+        report.add_script()
+        data_headers = ('Timestamp','Event ID','Package Name','Event Type','Event Type Description','Source File')
+        
+        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.end_artifact_report()
+        
+        tsvname = f'Samsung Digital Wellbeing - Events'
+        tsv(report_folder, data_headers, data_list, tsvname)
+        
+        tlactivity = f'Samsung Digital Wellbeing - Events'
+        timeline(report_folder, tlactivity, data_list, data_headers)
+    else:
+        logfunc('No Samsung Digital Wellbeing - Events data available')
 
 __artifacts__ = {
         "swellbeing": (
-                "Wellbeing",
+                "Digital Wellbeing",
                 ('*/com.samsung.android.forest/databases/dwbCommon.db*'),
                 get_swellbeing)
 }

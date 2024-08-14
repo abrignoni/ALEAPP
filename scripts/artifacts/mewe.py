@@ -8,7 +8,7 @@ DB_NAME = 'app_database'
 SGSESSION_FILE = 'SGSession.xml'
 CHAT_MESSAGES_QUERY = '''
     SELECT
-        DATETIME(createdAt, 'unixepoch', 'localtime'),
+        DATETIME(createdAt, 'unixepoch'),
         threadId,
         groupId,
         ownerId,
@@ -31,7 +31,6 @@ CHAT_MESSAGES_QUERY = '''
     JOIN CHAT_THREAD ON threadId = CHAT_THREAD.id
 '''
 
-
 def _perform_query(cursor, query):
     try:
         cursor.execute(query)
@@ -41,7 +40,7 @@ def _perform_query(cursor, query):
         return 0, None
 
 
-def _make_reports(title, data_headers, data_list, report_folder, db_file_name):
+def _make_reports(title, data_headers, data_list, report_folder, db_file_name, tl_bool):
     report = ArtifactHtmlReport(title)
     report.start_artifact_report(report_folder, title)
     report.add_script()
@@ -50,7 +49,8 @@ def _make_reports(title, data_headers, data_list, report_folder, db_file_name):
 
     tsv(report_folder, data_headers, data_list, title, db_file_name)
 
-    timeline(report_folder, title, data_list, data_headers)
+    if tl_bool == True:
+        timeline(report_folder, title, data_list, data_headers)
 
 
 def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
@@ -74,7 +74,9 @@ def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
             
         data_list.append((node.attrib['name'], value))
 
-    _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name)
+    tl_bool = False
+    
+    _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name, tl_bool)
 
 
 def _parse_chat_messages(messages_count, rows, report_folder, db_file_name):
@@ -90,7 +92,9 @@ def _parse_chat_messages(messages_count, rows, report_folder, db_file_name):
         row[6], row[7], row[8] if row[8] else '', row[9]
     ) for row in rows]
 
-    _make_reports(f'{APP_NAME} - Chat', data_headers, data_list, report_folder, db_file_name)
+    tl_bool = True
+
+    _make_reports(f'{APP_NAME} - Chat', data_headers, data_list, report_folder, db_file_name, tl_bool)
 
 
 def _parse_app_database(db_file, db_file_name, report_folder):
@@ -107,7 +111,7 @@ def _parse_app_database(db_file, db_file_name, report_folder):
     db.close()
 
 
-def get_mewe(files_found, report_folder, seeker, wrap_text):
+def get_mewe(files_found, report_folder, seeker, wrap_text, time_offset):
     db_file = None
     db_file_name = None
     xml_file = None

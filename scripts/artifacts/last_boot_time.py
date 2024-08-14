@@ -3,7 +3,7 @@ import time
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, logdevinfo
 
-def get_last_boot_time(files_found, report_folder, seeker, wrap_text):
+def get_last_boot_time(files_found, report_folder, seeker, wrap_text, time_offset):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -17,7 +17,7 @@ def get_last_boot_time(files_found, report_folder, seeker, wrap_text):
 
         last_boot_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modTimesinceEpoc))
                      
-        logdevinfo(f"Last Boot Timestamp: {last_boot_time}")
+        logdevinfo(f"<b>Last Boot Timestamp: </b>{last_boot_time}")
         data_list.append((last_boot_time, file_name))
                      
         if data_list:
@@ -40,6 +40,6 @@ def get_last_boot_time(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "last_boot_time": (
                 "Power Events",
-                ('*/data/misc/bootstat/last_boot_time_utc'),
+                ('*/misc/bootstat/last_boot_time_utc'),
                 get_last_boot_time)
 }

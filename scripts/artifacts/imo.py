@@ -5,7 +5,7 @@ import json
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_imo(files_found, report_folder, seeker, wrap_text):
+def get_imo(files_found, report_folder, seeker, wrap_text, time_offset):
 
     source_file_account = ''
     source_file_friends = ''
@@ -76,6 +76,7 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
         for row in all_rows:
             from_id = ''
             to_id = ''
+            attachmentPath = ''
             if row[4] == "Incoming":
                 from_id = row[0]
             else:
@@ -91,7 +92,7 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
                 else:
                     attachmentPath = attachmentLocalPath
                                 
-            timestamp = datetime.datetime.fromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.datetime.utcfromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
             data_list.append((timestamp, from_id, to_id, row[2],  row[4], row[5], attachmentPath))
 
         report.write_artifact_data_table(data_headers, data_list, imo_friends_db)
@@ -111,7 +112,7 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Imo": (
                 "IMO",
-                ('**/com.imo.android.imous/databases/*.db*'),
+                ('*/com.imo.android.imous/databases/*.db*'),
                 get_imo)
 }
     

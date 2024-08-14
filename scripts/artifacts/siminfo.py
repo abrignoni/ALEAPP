@@ -7,7 +7,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, logdevinfo, is_platform_windows, open_sqlite_db_readonly
 
-def get_siminfo(files_found, report_folder, seeker, wrap_text):
+def get_siminfo(files_found, report_folder, seeker, wrap_text, time_offset):
 
     slash = '\\' if is_platform_windows() else '/' 
     # Filter for path xxx/yyy/system_ce/0
@@ -77,8 +77,8 @@ def process_siminfo(folder, uid, report_folder):
                 row4 = row[4]
                 row5 = row[5]
             data_list.append((row[0], row1, row[2], row[3], row4, row5, row[6]))
-            logdevinfo(f"SIM Number & IMSI: {row[0]} - {row1}")
-            logdevinfo(f"SIM Display Name: {row[2]}")
+            logdevinfo(f"<b>SIM Number & IMSI: </b>{row[0]} - {row1}")
+            logdevinfo(f"<b>SIM Display Name: </b>{row[2]}")
         report.write_artifact_data_table(data_headers, data_list, folder)
         report.end_artifact_report()
         

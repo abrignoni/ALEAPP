@@ -20,7 +20,7 @@ def protobuf_parse_not_completed(data):
     task = pb[0].get('2',{}).get('2','').decode()
     task_details = b2s(pb[0].get('2',{}).get('3',''))
     # duetime = pb[0].get('9',{}).get('1',{}).get('6',{}).get('1','')
-    # duetime = datetime.fromtimestamp(duetime).strftime('%Y-%m-%d %H:%M:%S') # TypeError: an integer is required (got type str)
+    # duetime = datetime.utcfromtimestamp(duetime).strftime('%Y-%m-%d %H:%M:%S') # TypeError: an integer is required (got type str)
     timezone = b2s(pb[0].get('9',{}).get('1',{}).get('4',''))
     return task, task_details, created, completed, modified, timezone
 
@@ -32,11 +32,11 @@ def protobuf_parse_completed(data):
     created = datetime.utcfromtimestamp(pb[0].get('11',{}).get('1','')).strftime('%Y-%m-%d %H:%M:%S')
     modified = datetime.utcfromtimestamp(pb[0].get('3',{}).get('1','')).strftime('%Y-%m-%d %H:%M:%S')
     # duetime = pb[0].get('9',{}).get('1',{}).get('6',{}).get('1','')
-    # duetime = datetime.fromtimestamp(duetime).strftime('%Y-%m-%d %H:%M:%S') # TypeError: an integer is required (got type str)
+    # duetime = datetime.utcfromtimestamp(duetime).strftime('%Y-%m-%d %H:%M:%S') # TypeError: an integer is required (got type str)
     timezone = b2s(pb[0].get('9',{}).get('1',{}).get('4',''))
     return task, task_details, created, completed, modified, timezone
 
-def get_googleTasks(files_found, report_folder, seeker, wrap_text):
+def get_googleTasks(files_found, report_folder, seeker, wrap_text, time_offset):
     for file_found in files_found:
         file_found = str(file_found)
 

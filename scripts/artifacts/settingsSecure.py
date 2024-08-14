@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, logdevinfo, is_platform_windows, abxread, checkabx
 
-def get_settingsSecure(files_found, report_folder, seeker, wrap_text):
+def get_settingsSecure(files_found, report_folder, seeker, wrap_text, time_offset):
 
     slash = '\\' if is_platform_windows() else '/' 
     # Filter for path xxx/yyy/system_ce/0
@@ -45,14 +45,14 @@ def process_ssecure(file_path, uid, report_folder):
         val = setting.get('value')
         if nme == 'bluetooth_name':
             data_list.append((nme, val))
-            logdevinfo(f"Bluetooth name: {val}")
+            logdevinfo(f"<b>Bluetooth name: </b>{val}")
         elif nme == 'mock_location':
             data_list.append((nme, val))
         elif nme == 'android_id':
             data_list.append((nme, val))
         elif nme == 'bluetooth_address':
             data_list.append((nme, val))
-            logdevinfo(f"Bluetooth address: {val}")
+            logdevinfo(f"<b>Bluetooth address: </b>{val}")
      
     if len(data_list) > 0:
         report = ArtifactHtmlReport('Settings Secure')

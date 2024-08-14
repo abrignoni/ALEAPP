@@ -3,7 +3,7 @@ import csv
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
-def get_adb_hosts(files_found, report_folder, seeker, wrap_text):
+def get_adb_hosts(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     file_found = str(files_found[0])
     
@@ -28,6 +28,6 @@ def get_adb_hosts(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "adb hosts": (
                 "Adb Hosts",
-                ('*/data/misc/adb/adb_keys'),
+                ('*/misc/adb/adb_keys'),
                 get_adb_hosts)
 }

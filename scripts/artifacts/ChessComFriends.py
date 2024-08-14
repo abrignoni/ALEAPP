@@ -4,7 +4,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
 
-def get_ChessComFriends(files_found, report_folder, seeker, wrap_text):
+def get_ChessComFriends(files_found, report_folder, seeker, wrap_text, time_offset):
     
     title = "Chess.com Friends"
 
@@ -34,7 +34,7 @@ def get_ChessComFriends(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChessComFriends": (
                 "Chess.com",
-                ('*/data/data/com.chess/databases/chess-database*'),
+                ('*/com.chess/databases/chess-database*'),
                 get_ChessComFriends)
 }
 

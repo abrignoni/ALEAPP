@@ -7,14 +7,14 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly, is_platform_windows, media_to_html
 
 
-def get_torThumbs(files_found, report_folder, seeker, wrap_text):
+def get_torThumbs(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
         
         data_file_real_path = file_found
         modifiedtime = os.path.getmtime(file_found)
-        modifiedtime = (datetime.datetime.fromtimestamp(int(modifiedtime)).strftime('%Y-%m-%d %H:%M:%S'))
+        modifiedtime = (datetime.datetime.utcfromtimestamp(int(modifiedtime)).strftime('%Y-%m-%d %H:%M:%S'))
         
         filename = os.path.basename(file_found)
         location = os.path.dirname(file_found)

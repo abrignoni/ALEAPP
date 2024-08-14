@@ -1,9 +1,13 @@
+# Update 2023-05-01 from @KevinPagano3 (https://startme.stark4n6.com)
+# Added support for parsing gboard_clipboard.db database
+
 import blackboxprotobuf
 import os
+import shutil
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist, media_to_html
 
 class keyboard_event:
     def __init__(self, id, app, text, textbox_name, textbox_id, event_date, start_date='', end_date=''):
@@ -16,7 +20,7 @@ class keyboard_event:
         self.start_date = start_date
         self.end_date = end_date
 
-def get_gboardCache(files_found, report_folder, seeker, wrap_text):
+def get_gboardCache(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -30,7 +34,71 @@ def get_gboardCache(files_found, report_folder, seeker, wrap_text):
         elif file_found.endswith('trainingcache2.db') or file_found.endswith('trainingcache3.db'):
             read_trainingcache2(file_found, report_folder, seeker)
         elif file_found.endswith('trainingcachev3.db'):
-                read_trainingcachev3_sessions(file_found, report_folder, seeker)
+            read_trainingcachev3_sessions(file_found, report_folder, seeker)
+        elif file_found.endswith('gboard_clipboard.db'):
+            read_gboard_clipboard(file_found, files_found, report_folder, seeker)
+            
+        else:
+            continue
+            
+def read_gboard_clipboard(file_found, files_found, report_folder, seeker):
+    db = open_sqlite_db_readonly(file_found)
+    cursor = db.cursor()
+    cursor.execute('''
+    select
+    datetime(timestamp/1000,'unixepoch'),
+    text,
+    html_text,
+    uri,
+    case item_type
+        when 0 then ''
+        when 1 then 'Pinned'
+        else item_type
+    end as "Item Type",
+    case entity_type
+        when 0 then ''
+        when 1 then 'Link'
+        else entity_type
+    end as "Entity Type",
+    _id,
+    replace(uri, rtrim(uri, replace(uri, '/', '')), '')
+    from clips''')
+    
+    all_rows = cursor.fetchall()
+    usageentries = len(all_rows)
+    data_list = []
+    thumb = ''
+    if usageentries > 0:
+        for row in all_rows:
+            fileNameKey = str(row[7])
+            if fileNameKey != '':
+                for match in files_found:
+                    if fileNameKey in match:
+                        thumb = media_to_html(match, files_found, report_folder)
+            else:
+                thumb = ''
+            data_list.append((row[0],row[1],row[2],row[3],thumb,row[4],row[5],row[6]))
+        
+        report = ArtifactHtmlReport('Gboard - Clipboard')
+        report.start_artifact_report(report_folder, 'Gboard - Clipboard')
+        report.add_script()
+        data_headers = ('Timestamp','Text','HTML Text','URI','Image','Item Type','Entity Type','ID')
+        
+        report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Image'])
+        report.end_artifact_report()
+        
+        tsvname = 'Gboard - Clipboard'
+        tsv(report_folder, data_headers, data_list, tsvname, file_found)
+        
+        tlactivity = 'Gboard - Clipboard'
+        timeline(report_folder, tlactivity, data_list, data_headers)
+        
+    else:
+        logfunc('No Gboard - Clipboard data available')
+    
+    db.close()
+            
+    
 
 def read_trainingcache2(file_found, report_folder, seeker):
     db = open_sqlite_db_readonly(file_found)
@@ -100,10 +168,10 @@ def read_trainingcache2(file_found, report_folder, seeker):
         report.start_artifact_report(report_folder, f'{file_name}', description)
         report.add_script()
 
-        data_headers = ('Id','Text','App','Input Name','Input ID','Event Timestamp')
+        data_headers = ('Event Timestamp','ID','Text','App','Input Name','Input ID')
         data_list = []
         for ke in keyboard_events:
-            data_list.append((ke.id, ke.text, ke.app, ke.textbox_name, ke.textbox_id, ke.event_date))
+            data_list.append((ke.event_date, ke.id, ke.text, ke.app, ke.textbox_name, ke.textbox_id))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
@@ -117,7 +185,6 @@ def read_trainingcache2(file_found, report_folder, seeker):
         logfunc(f'No Gboard data available in {file_name}')
     
     db.close()
-
 
 def read_trainingcachev2(file_found, report_folder, seeker):
     db = open_sqlite_db_readonly(file_found)
@@ -187,10 +254,10 @@ def read_trainingcachev2(file_found, report_folder, seeker):
         report.start_artifact_report(report_folder, f'{file_name}', description)
         report.add_script()
 
-        data_headers = ('Id','Text','App','Input Name','Input ID','Event Timestamp')
+        data_headers = ('Event Timestamp','ID','Text','App','Input Name','Input ID')
         data_list = []
         for ke in keyboard_events:
-            data_list.append((ke.id, ke.text, ke.app, ke.textbox_name, ke.textbox_id, ke.event_date))
+            data_list.append((ke.event_date, ke.id, ke.text, ke.app, ke.textbox_name, ke.textbox_id))
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
@@ -208,18 +275,18 @@ def read_trainingcachev2(file_found, report_folder, seeker):
 
 def read_trainingcachev3_sessions(file_found, report_folder, seeker):
 
-    title = "Gboard Sessions"
+    title = "Gboard - Sessions"
 
     # Connect to database
-    conn = sqlite3.connect(file_found)
+    conn = open_sqlite_db_readonly(file_found)
     cursor = conn.cursor()
 
     # Sessions
     sql = """
         SELECT
-            session._session_id AS Session,
             datetime(session._session_id / 1000, 'unixepoch') AS Start,
             datetime(session._timestamp_ / 1000, 'unixepoch') AS Finish,
+            session._session_id AS Session,
             session.package_name AS Application 
         FROM 
             session
@@ -228,7 +295,7 @@ def read_trainingcachev3_sessions(file_found, report_folder, seeker):
     results = cursor.fetchall()
 
     if results:
-        data_headers = ("Session ID", "Start", "Finish", "Application")
+        data_headers = ("Start", "Finish", "Session ID", "Application")
         data_list = results
 
         description = "GBoard Sessions"
@@ -239,6 +306,8 @@ def read_trainingcachev3_sessions(file_found, report_folder, seeker):
         report.end_artifact_report()
 
         tsv(report_folder, data_headers, data_list, title)
+        
+        timeline(report_folder, title, data_list, data_headers)
 
     # Close
     conn.close()
@@ -246,6 +315,6 @@ def read_trainingcachev3_sessions(file_found, report_folder, seeker):
 __artifacts__ = {
         "GboardCache": (
                 "Gboard Keyboard",
-                ('**/com.google.android.inputmethod.latin/databases/trainingcache*.db'),
+                ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db','*/com.google.android.inputmethod.latin/databases/gboard_clipboard.db*','*/com.google.android.inputmethod.latin/files/clipboard_image/*'),
                 get_gboardCache)
 }

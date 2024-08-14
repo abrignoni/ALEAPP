@@ -1,18 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
-
 block_cipher = None
-
 a = Analysis(['aleappGUI.py'],
              pathex=['.\\scripts\\artifacts'],
              binaries=[],
-             datas=[('.\\scripts\\logo.jpg', '.\\scripts'),
-                    ('.\\scripts\\dashboard.css', '.\\scripts'),
-                    ('.\\scripts\\dark-mode.css', '.\\scripts'),
-                    ('.\\scripts\\dark-mode-switch.js', '.\\scripts'),
-                    ('.\\scripts\\feather.min.js', '.\\scripts'),
-                    ('.\\scripts\\MDB-Free_4.13.0', '.\\scripts\\MDB-Free_4.13.0'),
-                    ('.\\scripts\\artifacts', '\\scripts\\artifacts')],
-
+             datas=[('.\\scripts', '.\\scripts')],
              hiddenimports=[],
              hookspath=['.\\'],
              runtime_hooks=[],
@@ -34,6 +25,9 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False,
+          console=True,
+		  hide_console='hide-early',
+		  disable_windowed_traceback=False,
           upx_exclude=[],
+          version='aleappGUI-file_version_info.txt',
           runtime_tmpdir=None )

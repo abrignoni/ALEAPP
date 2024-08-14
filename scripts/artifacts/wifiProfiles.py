@@ -7,7 +7,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
-def get_wifiProfiles(files_found, report_folder, seeker, wrap_text):
+def get_wifiProfiles(files_found, report_folder, seeker, wrap_text, time_offset):
 
     #Create sqlite databases
     db = sqlite3.connect(os.path.join(report_folder, 'WiFiConfig.db'))
@@ -85,7 +85,7 @@ def get_wifiProfiles(files_found, report_folder, seeker, wrap_text):
                             semCreationTimeUTC = elem.attrib['value']
 
                             if int(semCreationTime) > 0:
-                                semCreationTime = datetime.datetime.fromtimestamp(int(semCreationTime) / 1000)
+                                semCreationTime = datetime.datetime.utcfromtimestamp(int(semCreationTime) / 1000)
                             hit = 1
                         
 
@@ -93,7 +93,7 @@ def get_wifiProfiles(files_found, report_folder, seeker, wrap_text):
                             semUpdateTime = elem.attrib['value']
                             semUpdateTimeUTC = elem.attrib['value']
                             if int(semUpdateTime) > 0:
-                                semUpdateTime = datetime.datetime.fromtimestamp(int(semUpdateTime) / 1000)
+                                semUpdateTime = datetime.datetime.utcfromtimestamp(int(semUpdateTime) / 1000)
                             hit = 1
                         
 
@@ -101,7 +101,7 @@ def get_wifiProfiles(files_found, report_folder, seeker, wrap_text):
                             LastConnectedTime = elem.attrib['value']
                             LastConnectedTimeUTC = elem.attrib['value']
                             if int(LastConnectedTime) > 0:
-                                LastConnectedTime = datetime.datetime.fromtimestamp(int(LastConnectedTime) / 1000)
+                                LastConnectedTime = datetime.datetime.utcfromtimestamp(int(LastConnectedTime) / 1000)
                             hit = 1
                         
 

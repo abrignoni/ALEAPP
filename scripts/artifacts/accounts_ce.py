@@ -7,7 +7,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
 
-def get_accounts_ce(files_found, report_folder, seeker, wrap_text):
+def get_accounts_ce(files_found, report_folder, seeker, wrap_text, time_offset):
 
     slash = '\\' if is_platform_windows() else '/' 
 
@@ -62,6 +62,6 @@ def process_accounts_ce(folder, uid, report_folder):
 __artifacts__ = {
         "Accounts_ce": (
                 "Accounts_ce",
-                ('*/data/system_ce/*/accounts_ce.db'),
+                ('*/system_ce/*/accounts_ce.db'),
                 get_accounts_ce)
 }

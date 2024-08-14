@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, abxread, checkabx
 
-def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
+def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text, time_offset):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -30,7 +30,7 @@ def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
                         for subelem3 in subelem2:
                             test = subelem3.attrib.get('t', 0)
                             if int(test) > 0:
-                                timestamp = (datetime.datetime.fromtimestamp(int(subelem3.attrib['t'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                                timestamp = (datetime.datetime.utcfromtimestamp(int(subelem3.attrib['t'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
                             else:
                                 timestamp = ''
                             data_list.append((timestamp, pkg))
@@ -53,6 +53,6 @@ def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "appopSetupWiz": (
                 "Wipe & Setup",
-                ('*/data/system/appops.xml'),
+                ('*/system/appops.xml'),
                 get_appopSetupWiz)
 }

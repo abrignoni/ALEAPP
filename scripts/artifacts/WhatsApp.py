@@ -5,7 +5,7 @@ import xmltodict
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db, media_to_html
 
-def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
+def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
 
     separator = '/'
     source_file_msg = ''
@@ -144,7 +144,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             SELECT 
             datetime(messages.timestamp/1000,'unixepoch') AS message_timestamp, 
             case messages.received_timestamp
-                WHEN 0 THEN 'N/A'
+                WHEN 0 THEN ''
                 ELSE datetime(messages.received_timestamp/1000,'unixepoch')
             end as received_timestamp,
             messages.key_remote_jid AS id, 
@@ -212,9 +212,13 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
         try:
             cursor.execute('''
             SELECT
-            datetime(message.timestamp/1000,'unixepoch') AS "Message Time",
             CASE
-            WHEN datetime(message.received_timestamp/1000,'unixepoch')="1970-01-01 00:00:00" THEN "N/A"
+			WHEN message.timestamp = 0 then ''
+			ELSE
+			datetime(message.timestamp/1000,'unixepoch')
+			END AS "Message Time",
+            CASE
+            WHEN message.received_timestamp = 0 then ''
             ELSE
             datetime(message.received_timestamp/1000,'unixepoch')
             END AS "Time Message Received",
@@ -295,9 +299,13 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
         try:
             cursor.execute('''
             SELECT
-            datetime(message.timestamp/1000,'unixepoch') AS "Message Time",
             CASE
-            WHEN datetime(message.received_timestamp/1000,'unixepoch')="1970-01-01 00:00:00" THEN "N/A"
+			WHEN message.timestamp = 0 then ''
+			ELSE
+			datetime(message.timestamp/1000,'unixepoch')
+			END AS "Message Time",
+            CASE
+            WHEN message.received_timestamp = 0 then ''
             ELSE
             datetime(message.received_timestamp/1000,'unixepoch')
             END AS "Time Message Received",
@@ -312,7 +320,6 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             ELSE "" 
             END AS "Sending Party JID",
             CASE
-
             WHEN message.from_me=0 THEN "Incoming"
             WHEN message.from_me=1 THEN "Outgoing"
             END AS "Message Direction",
@@ -380,9 +387,6 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No WhatsApp - Group Messages found')
         
-        
-        
-            
         try:
             cursor.execute('''
             SELECT
@@ -455,14 +459,12 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
                     tsvname = "WhatsApp - User Profile"
                     tsv(report_folder, data_headers, data_list,tsvname)
 
-                    tlactivity = "WhatsApp - User Profile"
-                    timeline(report_folder, tlactivity, data_list, data_headers)
                 else:
                     logfunc("No WhatsApp - Profile data found")
 
 __artifacts__ = {
     "WhatsApp": (
         "WhatsApp",
-        ('*/com.whatsapp/databases/*.db*','**/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml','*/WhatsApp Images/*.*','*/WhatsApp Video/*.*'),
+        ('*/com.whatsapp/databases/*.db*','*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml','*/WhatsApp Images/*.*','*/WhatsApp Video/*.*'),
         get_WhatsApp)
 }

@@ -3,7 +3,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, does_column_exist_in_db
 
-def get_installedappsVending(files_found, report_folder, seeker, wrap_text):
+def get_installedappsVending(files_found, report_folder, seeker, wrap_text, time_offset):
 
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)
@@ -64,6 +64,6 @@ def get_installedappsVending(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "InstalledappsVending": (
                 "Installed Apps",
-                ('*/data/data/com.android.vending/databases/localappstate.db'),
+                ('*/com.android.vending/databases/localappstate.db'),
                 get_installedappsVending)
 }

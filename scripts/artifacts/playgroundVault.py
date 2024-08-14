@@ -1,11 +1,9 @@
 import sys
-import filetype 
-import magic
 import shutil
 import os
 import xml.etree.ElementTree as ET
 import base64
-import filetype
+import scripts.filetype as filetype
 import datetime
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
@@ -15,7 +13,7 @@ from pathlib import Path
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, media_to_html
 
-def get_playgroundVault(files_found, report_folder, seeker, wrap_text):
+def get_playgroundVault(files_found, report_folder, seeker, wrap_text, time_offset):
     
     data_list = []
     
@@ -74,10 +72,10 @@ def get_playgroundVault(files_found, report_folder, seeker, wrap_text):
                 
                 if 'EIF' in filename:
                     utctime = filename.split('EIF')
-                    enctimestamp = datetime.datetime.fromtimestamp(int(utctime[1]) / 1000)
+                    enctimestamp = datetime.datetime.utcfromtimestamp(int(utctime[1]) / 1000)
                 elif 'EVF' in filename:
                     utctime = filename.split('EVF')
-                    enctimestamp = datetime.datetime.fromtimestamp(int(utctime[1]) / 1000)
+                    enctimestamp = datetime.datetime.utcfromtimestamp(int(utctime[1]) / 1000)
                 else:
                     enctimestamp = ''
                     

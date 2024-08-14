@@ -4,7 +4,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_Xender(files_found, report_folder, seeker, wrap_text):
+def get_Xender(files_found, report_folder, seeker, wrap_text, time_offset):
 
     source_file = ''
 
@@ -73,7 +73,7 @@ def get_Xender(files_found, report_folder, seeker, wrap_text):
                 direction = 'Incoming'
                 from_id = row[6]
                 
-            createtime = datetime.datetime.fromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S') 
+            createtime = datetime.datetime.utcfromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S') 
                         
             data_list.append((row[0], row[1], row[2], createtime, direction, to_id, from_id, row[5], row[6], row[7], row[8], row[9]))
             

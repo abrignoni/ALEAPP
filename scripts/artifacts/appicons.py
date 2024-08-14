@@ -16,7 +16,7 @@ class App:
         self.main_icon = None
         self.icons = {} # { Component: ('Label', icon), .. }
 
-def get_appicons(files_found, report_folder, seeker, wrap_text):
+def get_appicons(files_found, report_folder, seeker, wrap_text, time_offset):
     sessions = []
     for file_found in files_found:
         file_found = str(file_found)
@@ -100,6 +100,6 @@ def get_appicons(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "App Icons": (
                 "Installed Apps",
-                ('*/data/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
+                ('*/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
                 get_appicons)
 }

@@ -5,20 +5,9 @@ import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name
 
-def get_browser_name(file_name):
+from scripts.artifacts.chrome import get_browser_name
 
-    if 'brave' in file_name.lower():
-        return 'Brave'
-    elif 'microsoft' in file_name.lower():
-        return 'Edge'
-    elif 'opera' in file_name.lower():
-        return 'Opera'
-    elif 'android.chrome' in file_name.lower():
-        return 'Chrome'
-    else:
-        return 'Unknown'
-
-def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
+def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -41,11 +30,11 @@ def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
                         for keyb, valueb in value.items():
                             if keyb == 'children':
                                 if len(valueb) > 0:
-                                    url = valueb[0]['url']
-                                    dateadd = valueb[0]['date_added']
+                                    url = valueb[0].get('url','')
+                                    dateadd = valueb[0].get('date_added','')
                                     dateaddconv = datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=int(dateadd))
-                                    name = valueb[0]['name']
-                                    typed = valueb[0]['type']
+                                    name = valueb[0].get('name','')
+                                    typed = valueb[0].get('type','')
                                     flag = 1
                             if keyb == 'name' and flag == 1:
                                 flag = 0
@@ -74,6 +63,6 @@ def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChromeBookmarks": (
                 "Chromium",
-                ('*/data/data/*/app_chrome/Default/Bookmarks*', '*/data/data/*/app_sbrowser/Default/Bookmarks*', '*/data/data/*/app_opera/Bookmarks*'),
+                ('*/app_chrome/Default/Bookmarks*', '*/app_sbrowser/Default/Bookmarks*', '*/app_opera/Bookmarks*', '*/app_webview/Default/Bookmarks*'),
                 get_chromeBookmarks)
 }

@@ -1,16 +1,16 @@
 import os
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, convert_local_to_utc
 
-def get_errp(files_found, report_folder, seeker, wrap_text):
+def get_errp(files_found, report_folder, seeker, wrap_text, time_offset):
 
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('eRR.p'):
             continue # Skip all other files
         
-        data_list =[]
-        timestamp = status = info_one = info_two = ''
+        data_list = []
+        timestamp = event = code = details = ''
         with open(file_found, 'r') as f:
             for line in f:
                 line = line.strip()
@@ -22,19 +22,39 @@ def get_errp(files_found, report_folder, seeker, wrap_text):
                     pass
                 else:	
                     line = line.split('|')
-                    timestamp = line[0]
-                    status = line[1]
-                    info_one = line[2]
-                    info_two = line[3]
-                    data_list.append((timestamp, status, info_one, info_two))
-                    timestamp = status = info_one = info_two = ''
+                    if(len(line) == 1):
+                        timestamp = line[0].strip()
+                        timestamp_utc = str(convert_local_to_utc(timestamp))
+                        event = ''
+                        code = ''
+                        details = ''
+                    elif(len(line) == 2):
+                        timestamp = line[0].strip()
+                        timestamp_utc = str(convert_local_to_utc(timestamp))
+                        event = line[1].strip()
+                        code = ''
+                        details = ''                  
+                    elif(len(line) == 3):
+                        timestamp = line[0].strip()
+                        timestamp_utc = str(convert_local_to_utc(timestamp))
+                        event = line[1].strip()                
+                        code = line[2].strip()
+                        details = ''
+                    elif(len(line) == 4):
+                        timestamp = line[0].strip()
+                        timestamp_utc = str(convert_local_to_utc(timestamp))
+                        event = line[1].strip()
+                        code = line[2].strip()
+                        details = line[3].strip()
+                    
+                    data_list.append((timestamp_utc,timestamp,event,code,details))
+                    timestamp = event = code = details = ''
                             
-                        
         if data_list:
             report = ArtifactHtmlReport('Samsung eRR.p')
             report.start_artifact_report(report_folder, 'Samsung eRR.p')
             report.add_script()
-            data_headers = ('Timestamp', 'Status', 'Info Field', 'Info Field')
+            data_headers = ('Timestamp','Timestamp (Local)','Event','Code','Details')
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
@@ -49,6 +69,6 @@ def get_errp(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Errp": (
                 "Wipe & Setup",
-                ('*/data/system/users/service/eRR.p'),
+                ('*/system/users/service/eRR.p'),
                 get_errp)
 }

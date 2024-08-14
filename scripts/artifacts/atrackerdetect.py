@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
-def get_atrackerdetect(files_found, report_folder, seeker, wrap_text):
+def get_atrackerdetect(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list=[]
     for file_found in files_found:
         file_found = str(file_found)
@@ -40,6 +40,6 @@ def get_atrackerdetect(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "atrackerdetect": (
                 "AirTags",
-                ('*/data/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml'),
+                ('*/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml'),
                 get_atrackerdetect)
 }

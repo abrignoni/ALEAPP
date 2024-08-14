@@ -14,7 +14,7 @@ def convertGeo(s):
     else:
         return (s)
 
-def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
+def get_googlemapaudio(files_found, report_folder, seeker, wrap_text, time_offset):
 
     files_found = list(filter(lambda x: "sbin" not in x, files_found))
 
@@ -36,7 +36,7 @@ def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
 
             # Timestamp
             timestamp = Path(file_found).name.split("_")[1]
-            timestamp_datetime = datetime.fromtimestamp(int(timestamp) / 1000)
+            timestamp_datetime = datetime.utcfromtimestamp(int(timestamp) / 1000)
             timestamp_str = timestamp_datetime.isoformat(timespec="seconds", sep=" ")
             
             # Audio
@@ -70,6 +70,6 @@ def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Googlemapaudio": (
                 "Google Maps Voice Guidance",
-                ('*/data/data/com.google.android.apps.maps/app_tts-cache/*_*'),
+                ('*/com.google.android.apps.maps/app_tts-cache/*_*'),
                 get_googlemapaudio)
 }

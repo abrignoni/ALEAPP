@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline
 
-def get_wifiHotspot(files_found, report_folder, seeker, wrap_text):
+def get_wifiHotspot(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
@@ -32,7 +32,7 @@ def get_wifiHotspot(files_found, report_folder, seeker, wrap_text):
                         #print(elem.attrib)
                         data = elem.attrib
                         name = data.get('name', '')
-                        if name == 'SSID':
+                        if name == 'SSID' or name == 'WifiSsid':
                             ssid = elem.text
                         elif name == 'SecurityType':
                             security_type = data.get('value', '')

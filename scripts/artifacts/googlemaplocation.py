@@ -11,7 +11,7 @@ def convertGeo(s):
     else:
         return (s)
 
-def get_googlemaplocation(files_found, report_folder, seeker, wrap_text):
+def get_googlemaplocation(files_found, report_folder, seeker, wrap_text, time_offset):
 
     source_file = ''
 
@@ -44,7 +44,7 @@ def get_googlemaplocation(files_found, report_folder, seeker, wrap_text):
             data_headers = ('timestamp','destination_latitude', 'destination_longitude', 'destination_title','destination_address', 'source_latitude', 'source_longitude') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
-                timestamp = datetime.datetime.fromtimestamp(int(row[0])).strftime('%Y-%m-%d %H:%M:%S') 
+                timestamp = datetime.datetime.utcfromtimestamp(int(row[0])).strftime('%Y-%m-%d %H:%M:%S') 
                 data_list.append((timestamp, convertGeo(str(row[1])), convertGeo(str(row[2])), row[3], row[4], convertGeo(str(row[5])), convertGeo(str(row[6]))))
 
             report.write_artifact_data_table(data_headers, data_list, file_found)

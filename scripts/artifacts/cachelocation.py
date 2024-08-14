@@ -6,7 +6,7 @@ import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_cachelocation(files_found, report_folder, seeker, wrap_text):
+def get_cachelocation(files_found, report_folder, seeker, wrap_text, time_offset):
 
     source_file = ''
     
@@ -30,7 +30,7 @@ def get_cachelocation(files_found, report_folder, seeker, wrap_text):
                 timestamp = readtime/1000
                 i = i + 1
                 
-                starttime = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                starttime = datetime.datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
                 data_list.append((accuracy, confidence, latitude, longitude, starttime))
             cacheFile.close()
 

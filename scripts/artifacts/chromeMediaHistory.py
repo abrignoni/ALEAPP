@@ -2,21 +2,9 @@ import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
+from scripts.artifacts.chrome import get_browser_name
 
-def get_browser_name(file_name):
-
-    if 'brave' in file_name.lower():
-        return 'Brave'
-    elif 'microsoft' in file_name.lower():
-        return 'Edge'
-    elif 'opera' in file_name.lower():
-        return 'Opera'
-    elif 'android.chrome' in file_name.lower():
-        return 'Chrome'
-    else:
-        return 'Unknown'
-
-def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
+def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text, time_offset):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -152,6 +140,6 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChromeMediaHistory": (
                 "Chromium",
-                ('*/data/data/*/app_chrome/Default/Media History*','*/data/data/*/app_sbrowser/Default/Media History*', '*/data/data/*/app_opera/Media History*'),
+                ('*/app_chrome/Default/Media History*','*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*','*/app_webview/Default/Media History*'),
                 get_chromeMediaHistory)
 }

@@ -9,7 +9,7 @@ from Crypto.Hash import SHA1
 from binascii import unhexlify
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
-import filetype
+import scripts.filetype as filetype
 from itertools import permutations
 from pathlib import Path
 import json
@@ -69,7 +69,7 @@ def decryptData(encryptedInput, masterKey):
     return(decryptedData)        
 
 ### Main
-def get_AVG(files_found, report_folder, seeker, wrap_text):
+def get_AVG(files_found, report_folder, seeker, wrap_text, time_offset):
     
     ### Known variables to be used
     pinDict = {}
@@ -298,7 +298,7 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
                 if append == '':
                     if basename(files) in metaDataDict:
                         origFilePath = metaDataDict[basename(files)]["Original File Path"]
-                        encryptedDate = datetime.datetime.fromtimestamp(int(metaDataDict[basename(files)]["Encrypted Date"]) / 1000)
+                        encryptedDate = datetime.datetime.utcfromtimestamp(int(metaDataDict[basename(files)]["Encrypted Date"]) / 1000)
                         fileSize = metaDataDict[basename(files)]["File Size"]
                     else:
                         origFilePath, encryptedDate, fileSize = "No Data"
@@ -322,6 +322,6 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "AVG": (
                 "Encrypting Media Apps",
-                ('*/data/data/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
+                ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
                 get_AVG)
 }

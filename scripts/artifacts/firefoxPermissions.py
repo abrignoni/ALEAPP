@@ -5,7 +5,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_firefoxPermissions(files_found, report_folder, seeker, wrap_text):
+def get_firefoxPermissions(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -58,6 +58,6 @@ def get_firefoxPermissions(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "FirefoxPermissions": (
                 "Firefox",
-                ('*/data/data/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*'),
+                ('*/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*'),
                 get_firefoxPermissions)
 }

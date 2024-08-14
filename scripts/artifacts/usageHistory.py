@@ -5,7 +5,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly
 
 
-def get_usageHistory(files_found, report_folder, seeker, wrap_text):
+def get_usageHistory(files_found, report_folder, seeker, wrap_text, time_offset):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -25,7 +25,7 @@ def get_usageHistory(files_found, report_folder, seeker, wrap_text):
             time = subelem.attrib['lrt']
             if time != ' ':
                 time = int(time)
-                time = datetime.datetime.fromtimestamp(time/1000)
+                time = datetime.datetime.utcfromtimestamp(time/1000)
             data_list.append((time, pkg, subitem))
 
     if len(data_list) > 0:

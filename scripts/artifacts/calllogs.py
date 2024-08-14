@@ -5,7 +5,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist
 
-def get_calllogs(files_found, report_folder, seeker, wrap_text):
+def get_calllogs(files_found, report_folder, seeker, wrap_text, time_offset):
 
     source_file = ''
     for file_found in files_found:
@@ -58,8 +58,8 @@ def get_calllogs(files_found, report_folder, seeker, wrap_text):
                     callerId = row[0]                                   
                 else:
                     calleeId = row[0]
-                starttime = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
-                endtime = datetime.datetime.fromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+                starttime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+                endtime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
                 data_list.append((callerId, calleeId, starttime, endtime, row[3], row[4]))
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
@@ -73,16 +73,14 @@ def get_calllogs(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Call Logs found')
-            
 
         db.close()
     
     return
 
-# 'calllogs':('Call Logs', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
 __artifacts__ = {
     "Call Logs":(
         "Call Logs",
-        ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*'),
+        ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
         get_calllogs)
 }

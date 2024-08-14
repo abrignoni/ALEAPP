@@ -3,7 +3,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
-def get_persistentProp(files_found, report_folder, seeker, wrap_text):
+def get_persistentProp(files_found, report_folder, seeker, wrap_text, time_offset):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -16,20 +16,20 @@ def get_persistentProp(files_found, report_folder, seeker, wrap_text):
                 clean = line.strip()
                 if clean.startswith('persist.sys.boot.reason.historyDreboot'):
                     parts = clean.split(',')
-                    utctimestamp = (datetime.datetime.fromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
+                    utctimestamp = (datetime.datetime.utcfromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
                     description = parts[0]
                     data_list.append((utctimestamp, description))
                     
                 if clean.startswith('reboot,factory_reset,'):
                     parts = clean.split(',')
-                    utctimestamp = (datetime.datetime.fromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
+                    utctimestamp = (datetime.datetime.utcfromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
                     description = parts[0] + ' ' + parts[1]
                     data_list.append((utctimestamp, description))
                     
                 if clean.startswith('reboot'):
                     parts = clean.split(',')
                     if len(parts) == 2:
-                        utctimestamp = (datetime.datetime.fromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
+                        utctimestamp = (datetime.datetime.utcfromtimestamp(int(parts[-1])).strftime('%Y-%m-%d %H:%M:%S'))
                         description = parts[0]
                         data_list.append((utctimestamp, description))
                             
@@ -52,6 +52,6 @@ def get_persistentProp(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "persistentProp": (
                 "Wipe & Setup",
-                ('*/data/property/persistent_properties'),
+                ('*/property/persistent_properties'),
                 get_persistentProp)
 }

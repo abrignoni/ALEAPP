@@ -4,7 +4,7 @@ import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
-def get_powerOffReset(files_found, report_folder, seeker, wrap_text):
+def get_powerOffReset(files_found, report_folder, seeker, wrap_text, time_offset):
     
     data_list = []
     pattern = 'REASON:'
@@ -60,6 +60,6 @@ def get_powerOffReset(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "powerOffReset": (
                 "Power Events",
-                ('*/data/log/power_off_reset_reason.txt','*/data/log/power_off_reset_reason_backup.txt'),
+                ('*/log/power_off_reset_reason.txt','*/log/power_off_reset_reason_backup.txt'),
                 get_powerOffReset)
 }

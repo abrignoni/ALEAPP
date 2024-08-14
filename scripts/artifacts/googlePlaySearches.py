@@ -4,9 +4,13 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_googlePlaySearches(files_found, report_folder, seeker, wrap_text):
+def get_googlePlaySearches(files_found, report_folder, seeker, wrap_text, time_offset):
     
-    file_found = str(files_found[0])
+    for file_found in files_found:
+        file_found = str(file_found)
+        if file_found.endswith('suggestions.db'):
+            break # Skip all other files
+        
     db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()
     cursor.execute('''
@@ -44,6 +48,6 @@ def get_googlePlaySearches(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "GooglePlaySearches": (
                 "Google Play",
-                ('*/data/data/com.android.vending/databases/suggestions.db*'),
+                ('*/com.android.vending/databases/suggestions.db*'),
                 get_googlePlaySearches)
 }

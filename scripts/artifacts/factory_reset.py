@@ -3,7 +3,7 @@ import time
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, logdevinfo
 
-def get_factory_reset(files_found, report_folder, seeker, wrap_text):
+def get_factory_reset(files_found, report_folder, seeker, wrap_text, time_offset):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -17,7 +17,7 @@ def get_factory_reset(files_found, report_folder, seeker, wrap_text):
 
         reset_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modTimesinceEpoc))
                      
-        logdevinfo(f"Factory Reset Timestamp: {reset_time}")
+        logdevinfo(f"<b>Factory Reset Timestamp: </b>{reset_time}")
         data_list.append((reset_time, file_name))
                      
         if data_list:
@@ -40,6 +40,6 @@ def get_factory_reset(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Factory_reset": (
                 "Wipe & Setup",
-                ('*/data/misc/bootstat/factory_reset'),
+                ('*/misc/bootstat/factory_reset'),
                 get_factory_reset)
 }

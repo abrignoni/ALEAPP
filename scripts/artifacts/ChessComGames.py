@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
 
-def get_ChessComGames(files_found, report_folder, seeker, wrap_text):
+def get_ChessComGames(files_found, report_folder, seeker, wrap_text, time_offset):
     
     title = "Chess.com Games"
 
@@ -46,7 +46,7 @@ def get_ChessComGames(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChessComGames": (
                 "Chess.com",
-                ('*/data/data/com.chess/databases/chess-database*', '*/data/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
+                ('*/com.chess/databases/chess-database*', '*/data/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
                 get_ChessComGames)
 }
 

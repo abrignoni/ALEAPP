@@ -4,7 +4,7 @@ import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
-def get_shutdown_checkpoints(files_found, report_folder, seeker, wrap_text):
+def get_shutdown_checkpoints(files_found, report_folder, seeker, wrap_text, time_offset):
     
     data_list = []
     pattern = 'Shutdown request from '
@@ -53,6 +53,6 @@ def get_shutdown_checkpoints(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "shutdown_checkpoints": (
                 "Power Events",
-                ('*/data/system/shutdown-checkpoints/*'),
+                ('*/system/shutdown-checkpoints/checkpoints-*'),
                 get_shutdown_checkpoints)
 }

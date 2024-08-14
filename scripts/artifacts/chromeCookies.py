@@ -4,19 +4,7 @@ import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
-
-def get_browser_name(file_name):
-
-    if 'brave' in file_name.lower():
-        return 'Brave'
-    elif 'microsoft' in file_name.lower():
-        return 'Edge'
-    elif 'opera' in file_name.lower():
-        return 'Opera'
-    elif 'android.chrome' in file_name.lower():
-        return 'Chrome'
-    else:
-        return 'Unknown'
+from scripts.artifacts.chrome import get_browser_name
 
 def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
     
@@ -102,6 +90,6 @@ def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChromeCookies": (
                 "Chromium",
-                ('*/data/data/*/app_chrome/Default/Cookies*', '*/data/data/*/app_sbrowser/Default/Cookies*', '*/data/data/*/app_opera/Cookies*'),
+                ('*/app_chrome/Default/Cookies*', '*/app_sbrowser/Default/Cookies*', '*/app_opera/Cookies*', '*/app_webview/Default/Cookies*'),
                 get_chromeCookies)
 }

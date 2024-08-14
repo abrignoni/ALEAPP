@@ -7,19 +7,7 @@ from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
-
-def get_browser_name(file_name):
-
-    if 'brave' in file_name.lower():
-        return 'Brave'
-    elif 'microsoft' in file_name.lower():
-        return 'Edge'
-    elif 'opera' in file_name.lower():
-        return 'Opera'
-    elif 'android.chrome' in file_name.lower():
-        return 'Chrome'
-    else:
-        return 'Unknown'
+from scripts.artifacts.chrome import get_browser_name
 
 def decrypt(ciphertxt, key=b"peanuts"):
     if re.match(rb"^v1[01]",ciphertxt): 
@@ -54,7 +42,7 @@ def get_valid_date(d1, d2):
     else:
         return d2
 
-def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
+def get_chromeLoginData(files_found, report_folder, seeker, wrap_text, time_offset):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -119,6 +107,6 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "ChromeLoginData": (
                 "Chromium",
-                ('*/data/data/*/app_chrome/Default/Login Data*', '*/data/data/*/app_sbrowser/Default/Login Data*', '*/data/data/*/app_opera/Login Data*'),
+                ('*/app_chrome/Default/Login Data*', '*/app_sbrowser/Default/Login Data*', '*/app_opera/Login Data*', '*/app_webview/Default/Login Data*'),
                 get_chromeLoginData)
 }
