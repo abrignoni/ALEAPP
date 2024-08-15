@@ -746,6 +746,7 @@ icon_mappings = \
     },
     'SMS & IMESSAGE': 'message-square',
     'SMS & MMS': 'message-square',
+    'SMS & MMS FROM BACKUP.AB': 'message-square',
     'SNAPCHAT': 'bell',
     'SNAPCHAT ARCHIVE': 'camera',
     'SNAPCHAT RETURNS': 'camera',
