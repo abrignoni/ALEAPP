@@ -66,6 +66,12 @@ icon_mappings = \
         'SIMPLESTORAGE': 'loader',
         'default': 'user'
     },
+    'ANDROID NOTIFICATION HISTORY': {
+        'STATUS': 'toggle-left',
+        'NOTIFICATIONS': 'bell',
+        'SNOOZED NOTIFICATIONS': 'bell-off',
+        '_mode': 'search',
+    },
     'APP CONDUIT': 'activity',
     'APP INTERACTION': 'bar-chart-2',
     'APP PERMISSIONS': 'key',
@@ -146,6 +152,18 @@ icon_mappings = \
     'CELLULAR WIRELESS': 'bar-chart',
     'CHASE RETURNS': 'paperclip',
     'CHATS': 'message-circle',
+    'CHATGPT': {
+       'CONVERSATIONS METADATA': 'info',
+       'CONVERSATIONS': 'message-circle',
+       'USER': 'user',
+       'ACCOUNT USER STATE': 'activity',
+       'ACCOUNT STATUS': 'activity',
+       'CUSTOM INSTRUCTIONS' : 'sliders',
+       'USER SETTINGS' : 'settings',
+       'MEDIA UPLOADS' : 'image',
+       'USER ANALYTICS' : 'activity',
+       '_mode': 'search',
+    },
     'CHROMIUM': {
         'AUTOFILL': 'edit-3',
         'BOOKMARKS': 'bookmark',
@@ -494,6 +512,10 @@ icon_mappings = \
         'ATTACHMENTS': 'paperclip',
         'CONTACTS': 'user',
     },
+    'K-9 MAIL': {
+        'K-9 MAIL - ACCOUNTS': 'at-sign',
+        'default': 'mail'
+    },
     'KEYBOARD': {
         'KEYBOARD APPLICATION USAGE': 'type',
         'KEYBOARD DYNAMIC LEXICON': 'type',
@@ -510,6 +532,14 @@ icon_mappings = \
     'KIK RETURNS': {
         'KIK - PROFILE PIC': 'image',
         'default': 'file-text'
+    },
+    'KLEINANZEIGEN.DE APP': {
+        'KLEINANZEIGEN.DE - ACCOUNT DETAILS': 'user',
+        'KLEINANZEIGEN.DE - NON RESETTABLE RECENT SEARCHES CACHE': 'search',
+        'KLEINANZEIGEN.DE - RECENT SEARCHES CACHE': 'search',
+        'KLEINANZEIGEN.DE - MESSAGEBOX': 'message-square',
+        'default': 'search',
+        '_mode': 'search',
     },
     'KNOWLEDGEC': {
         'KNOWLEDGEC BATTERY LEVEL': 'battery',
@@ -582,6 +612,7 @@ icon_mappings = \
     'MOBILE CONTAINER MANAGER': 'save',
     'MOBILE INSTALLATION LOGS': 'clipboard',
     'MOBILE SOFTWARE UPDATE': 'refresh-cw',
+    'MS AUTHENTICATOR': 'users',
     'MY FILES': {
         'MY FILES DB - CACHE MEDIA': 'image',
         '_mode': 'search',
@@ -682,11 +713,14 @@ icon_mappings = \
         'HOURLY': 'thermometer',
         '_mode': 'search',
     },
+    'SAMSUNG BROWSER': 'globe',
     'SAMSUNG_CMH': 'disc',
     'SCREENTIME': 'monitor',
     'SCRIPT LOGS': 'archive',
     'SECRET CALCULATOR PHOTO ALBUM': 'image',
     'SETTINGS SERVICES': 'battery-charging',
+    'SETTINGS SERVICES - BATTERY USAGE V9 - BATTERY STATES': 'battery-charging',
+    'SETTINGS SERVICES - BATTERY USAGE V9 - APP BATTERY USAGE EVENTS': 'bar-chart-2',
     'SIM INFO': 'info',
     'SKOUT': {
         'SKOUT MESSAGES': 'message-circle',
@@ -712,6 +746,7 @@ icon_mappings = \
     },
     'SMS & IMESSAGE': 'message-square',
     'SMS & MMS': 'message-square',
+    'SMS & MMS FROM BACKUP.AB': 'message-square',
     'SNAPCHAT': 'bell',
     'SNAPCHAT ARCHIVE': 'camera',
     'SNAPCHAT RETURNS': 'camera',
@@ -809,6 +844,14 @@ icon_mappings = \
         'WHATSAPP - GROUP DETAILS': 'users',
         'default': 'user',
         '_mode': 'search',
+    }, 
+    'WITHINGS HEALTH MATE' : {
+        'WITHINGS HEALTH MATE - ACCOUNTS': 'user',
+        'WITHINGS HEALTH MATE - CONTACTS': 'users',
+        'WITHINGS HEALTH MATE - DEVICES': 'watch',
+        'WITHINGS HEALTH MATE - LOCATIONS': 'map-pin',
+        'WITHINGS HEALTH MATE - TRACKINGS': 'activity',
+        'WITHINGS HEALTH MATE - MEASUREMENTS': 'activity',
     },
     'WHATSAPP EXPORTED CHAT': 'message-circle',
     'WIFI CONNECTIONS': 'wifi',

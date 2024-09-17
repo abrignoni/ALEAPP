@@ -68,6 +68,7 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text, time_offset):
         for package, rows in package_tables.items():
             report = ArtifactHtmlReport(f"Firebase Cloud Messaging Queued Messages Dump: {package}")
             report_name = f"FCM-Dump-{package}"
+            scripts.ilapfuncs.logfunc(report_name)
             report.start_artifact_report(report_folder, report_name)
             report.add_script()
             data_headers = ["Timestamp", "Originating File", "Record ID", "Key", "Value"]
@@ -124,7 +125,7 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text, time_offset):
                         try:
                             datos = json.loads(datos)
                         except:
-                            logfunc('Error reading json data')
+                            scripts.ilapfuncs.logfunc('Error reading json data')
                         if (type(datos)) is dict:
                             data_list_clean.append((fecha, origfile, datos['text'], datos['title']))
                         

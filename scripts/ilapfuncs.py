@@ -2,8 +2,8 @@
 import codecs
 import csv
 from datetime import *
+import json
 import os
-import pathlib
 import re
 import shutil
 import sqlite3
@@ -42,6 +42,16 @@ class OutputParameters:
 
         os.makedirs(os.path.join(self.report_folder_base, 'Script Logs'))
         os.makedirs(self.temp_folder)
+        
+def convert_local_to_utc(local_timestamp_str):
+    # Parse the timestamp string with timezone offset, ex. 2023-10-27 18:18:29-0400
+    local_timestamp = datetime.strptime(local_timestamp_str, "%Y-%m-%d %H:%M:%S%z")
+    
+    # Convert to UTC timestamp
+    utc_timestamp = local_timestamp.astimezone(timezone.utc)
+    
+    # Return the UTC timestamp
+    return utc_timestamp
 
 def convert_time_obj_to_utc(ts):
     timestamp = ts.replace(tzinfo=timezone.utc)
@@ -87,7 +97,7 @@ def is_platform_windows():
     return sys.platform == 'win32'
 
 def sanitize_file_path(filename, replacement_char='_'):
-    '''
+    r'''
     Removes illegal characters (for windows) from the string passed. Does not replace \ or /
     '''
     return re.sub(r'[*?:"<>|\'\r\n]', replacement_char, filename)
@@ -145,7 +155,7 @@ def does_column_exist_in_db(db, table_name, col_name):
             if row['name'].lower() == col_name:
                 return True
     except sqlite3.Error as ex:
-        print(f"Query error, query={query} Error={str(ex)}")
+        logfunc(f"Query error, query={query} Error={str(ex)}")
         pass
     return False
 
@@ -156,7 +166,7 @@ def does_table_exist(db, table_name):
         cursor = db.execute(query)
         for row in cursor:
             return True
-    except sqlite3Error as ex:
+    except sqlite3.Error as ex:
         logfunc(f"Query error, query={query} Error={str(ex)}")
     return False
 
@@ -164,21 +174,28 @@ def does_table_exist(db, table_name):
 class GuiWindow:
     '''This only exists to hold window handle if script is run from GUI'''
     window_handle = None  # static variable
-    progress_bar_total = 0
-    progress_bar_handle = None
 
     @staticmethod
-    def SetProgressBar(n):
-        if GuiWindow.progress_bar_handle:
-            GuiWindow.progress_bar_handle.UpdateBar(n)
+    def SetProgressBar(n, total):
+        if GuiWindow.window_handle:
+            progress_bar = GuiWindow.window_handle.nametowidget('!progressbar')
+            progress_bar.config(value=n)
+
 
 def logfunc(message=""):
+    def redirect_logs(string):
+        log_text.insert('end', string)
+        log_text.see('end')
+        log_text.update()
+
+    if GuiWindow.window_handle:
+        log_text = GuiWindow.window_handle.nametowidget('logs_frame.log_text')
+        sys.stdout.write = redirect_logs
+
     with open(OutputParameters.screen_output_file_path, 'a', encoding='utf8') as a:
         print(message)
         a.write(message + '<br>' + OutputParameters.nl)
 
-    if GuiWindow.window_handle:
-        GuiWindow.window_handle.refresh()
 
 def logdevinfo(message=""):
     with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
@@ -295,9 +312,14 @@ def timeline(report_folder, tlactivity, data_list, data_headers):
         )
         db.commit()
 
-    for idx in range(len(data_list)):
-        modifiedList = list(map(lambda x, y: x + ': ' + str(y), data_headers, data_list[idx]))
-        cursor.executemany("INSERT INTO data VALUES(?,?,?)", [(str(data_list[idx][0]), tlactivity, str(modifiedList))])
+    for entry in data_list:
+        entry = [str(field) for field in entry]
+        
+        data_dict = dict(zip(data_headers, entry))
+
+        data_str = json.dumps(data_dict)
+        cursor.executemany(
+            "INSERT INTO data VALUES(?,?,?)", [(str(entry[0]), tlactivity, data_str)])
 
     db.commit()
     db.close()

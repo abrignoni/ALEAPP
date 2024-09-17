@@ -46,7 +46,7 @@ class PluginLoader:
                 artifact.get('category'), artifact.get('paths'), artifact.get('function')) if version == 2 else artifact
                 func = getattr(mod, func_name) if version == 2 and isinstance(func_name, str) else func_name
                 if name in self._plugins:
-                    raise KeyError("Duplicate plugin")
+                    raise KeyError(f"Duplicate plugin {name}")
                 self._plugins[name] = PluginSpec(name, py_file.stem, category, search, func)
 
 

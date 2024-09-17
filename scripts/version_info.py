@@ -1,4 +1,4 @@
-aleapp_version = '3.1.10'
+aleapp_version = '3.2.3'
 
 # Contributors List
 # Format = [ Name, Blog-url, Twitter-handle, Github-url]
@@ -20,5 +20,10 @@ aleapp_contributors = [
     ['Evangelos Dragonas', 'https://atropos4n6.com/','@theAtropos4n6','https://github.com/theAtropos4n6'],
     ['James Habben', 'https://4n6ir.com/','@JamesHabben','https://github.com/JamesHabben'],
     ['Matt Beers', 'https://www.linkedin.com/in/mattbeersii','','https://github.com/dabeersboys'],
-    ['Heather Charpentier', 'https://www.linkedin.com/in/heather-charpentier-bb28b031/','','https://github.com/charpy4n6']
+    ['Heather Charpentier', 'https://www.linkedin.com/in/heather-charpentier-bb28b031/','','https://github.com/charpy4n6'],
+    ['Panos Nakoutis', '', '@4n6equals10',''],
+    ['Johann Polewczyk', 'https://www.linkedin.com/in/johann-polewczyk-6a905425/', '@johannplw', 'https://github.com/Johann-PLW'],
+    ['Bruno Ficher', 'https://german4n6.blogspot.com/', '', 'https://github.com/BrunoFischerGermany'],
+    ['Marco Neumann', 'https://bebinary4n6.blogspot.com/', '@kalinko4n6', 'https://github.com/kalink0'],
+    ['Marc Seguin', 'https://segumarc.com', '@segumarc', 'https://github.com/segumarc']
 ]
