@@ -19,7 +19,7 @@ def get_waze(files_found, report_folder, seeker, wrap_text, time_offset):
     round(PLACES.latitude*.000001,6),
     round(PLACES.longitude*.000001,6)
     from PLACES
-    join RECENTS on PLACES.id = RECENTS.id
+    join RECENTS on PLACES.id = RECENTS.place_id
     ''')
     
     all_rows = cursor.fetchall()
