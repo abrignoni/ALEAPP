@@ -56,7 +56,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='aleappGUI.app',
-    icon=None,
+    icon='scripts/icon.icns',
     bundle_identifier='4n6.brigs.ALEAPP',
-    version='3.2.2',
+    version='3.2.4',
 )
