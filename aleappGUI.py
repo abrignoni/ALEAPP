@@ -20,6 +20,7 @@ def pickModules():
     loader = plugin_loader.PluginLoader()
 
     for plugin in sorted(loader.plugins, key=lambda p: p.category.upper()):
+        # Modules that are required are not added to the dictionary
         if plugin.module_name == 'usagestatsVersion':
             continue
         #items that take a long time to run are deselected by default.
@@ -462,9 +463,11 @@ ttk.Separator(button_frame, orient='vertical').grid(row=0, column=4, padx=10, st
 case_data_button = ttk.Button(button_frame, text='Case Data', command=case_data)
 case_data_button.grid(row=0, column=5, padx=5)
 ttk.Separator(button_frame, orient='vertical').grid(row=0, column=6, padx=10, sticky='ns')
-ttk.Label(
-    button_frame, text='Timezone Offset\n(Not Implemented): '
-    ).grid(row=0, column=7)
+if is_platform_macos():
+    timezone_text = 'Timezone Offset\n(Not Implemented): '
+else:
+    timezone_text = 'Timezone Offset (Not Implemented): '
+ttk.Label(button_frame, text=timezone_text).grid(row=0, column=7)
 timezone_offset = ttk.Combobox(
     button_frame, textvariable=timezone_set, values=tzvalues, height=20, state='readonly')
 timezone_offset.master.option_add( '*TCombobox*Listbox.background', theme_inputcolor)
