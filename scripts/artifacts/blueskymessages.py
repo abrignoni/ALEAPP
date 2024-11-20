@@ -17,7 +17,7 @@ import json
 import sqlite3
 from pathlib import Path 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc,tsv, is_platform_windows,open_sqlite_db_readonly,convert_ts_human_to_utc,timeline
+from scripts.ilapfuncs import logfunc,tsv, is_platform_windows,open_sqlite_db_readonly,convert_ts_human_to_utc,timeline,utf8_in_extended_ascii
 
 def get_blueskymessages(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -61,7 +61,7 @@ def get_blueskymessages(files_found, report_folder, seeker, wrap_text, time_offs
                         actors_data_list.append((actortuple))
         else:
             try:
-                with open(file_found, 'r') as file:
+                with open(file_found, 'r',encoding='utf-8') as file:
                     data = json.load(file)
                     value = data.get('actors')
                     if value is not None:
@@ -94,6 +94,7 @@ def get_blueskymessages(files_found, report_folder, seeker, wrap_text, time_offs
                             did = (data['did'])
                             handle = (data['handle'])
                             displayname =(data['displayName'])
+                            displayname = utf8_in_extended_ascii(displayname)[1]
                             avatar = (data['avatar'])
                             viewer = (data['viewer'])
                             labels = (data['labels'])
@@ -102,6 +103,7 @@ def get_blueskymessages(files_found, report_folder, seeker, wrap_text, time_offs
                             createdat = createdat[:-1]
                             createdat = convert_ts_human_to_utc(createdat)
                             description = (data['description'])
+                            description = utf8_in_extended_ascii(description)[1]
                             email = ''
                             source = file_found
                             actortuple = tuple((createdat,did,handle,displayname,avatar,viewer,labels,description,email,source))
@@ -119,7 +121,7 @@ def get_blueskymessages(files_found, report_folder, seeker, wrap_text, time_offs
             pass #Do nothing
         else:
             try:
-                with open(file_found, 'r') as file:
+                with open(file_found, 'r', encoding='utf-8') as file:
                     data = json.load(file)
                     messages = data.get('messages')
                     if messages is not None:
@@ -132,6 +134,7 @@ def get_blueskymessages(files_found, report_folder, seeker, wrap_text, time_offs
                                 senderid = (message['sender']['did'])
                                 messageid = (message['id'])
                                 textmessage = (message['text'])
+                                textmessage = utf8_in_extended_ascii(textmessage)[1]
                                 messageusername = ''
                                 actorurl = ''
                                 source = file_found
