@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
-        "paths": ('*/xyz.blueskyweb.app/cache/http-cache/*.*','*/http-cache/*.*'),
+        "paths": ('*/xyz.blueskyweb.app/cache/http-cache/*.*'),
         "function": "get_blueskyposts"
     }
 }
