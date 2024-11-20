@@ -17,7 +17,7 @@ import json
 import sqlite3
 from pathlib import Path 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, is_platform_windows,open_sqlite_db_readonly,convert_ts_human_to_utc,tsv
+from scripts.ilapfuncs import logfunc, timeline, is_platform_windows,open_sqlite_db_readonly,convert_ts_human_to_utc,tsv,utf8_in_extended_ascii
 
 def get_blueskyposts(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -29,7 +29,7 @@ def get_blueskyposts(files_found, report_folder, seeker, wrap_text, time_offset)
         file_found = str(file_found)
 
         try:
-            with open(file_found, 'r') as file:
+            with open(file_found, 'r',encoding='utf-8') as file:
                 data = json.load(file)
                 value = data.get('feed')
                 if value is not None:
