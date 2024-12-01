@@ -40,6 +40,43 @@ page_header = \
     </head>
     <body>
 """
+
+page_header_offline = \
+"""<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>{0}</title>
+        <!-- Dark mode -->
+        <link rel="stylesheet" href="_elements/dark-mode.css">
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/bootstrap.min.css">
+        <!-- Material Design Bootstrap - TOGGLE THIS FOR ALTERNATE DESIGN!-->
+        <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/mdb.min.css">
+        <!-- Highlight.js -->
+        <link rel="stylesheet" href="_elements/highlight.min.css">
+        <script src="_elements/highlight.min.js"></script>
+        <!-- Cal-Heatmap -->
+        <script src="_elements/d3.v7.min.js"></script>
+        <script src="_elements/cal-heatmap.min.js"></script>
+        <link rel="stylesheet" href="_elements/cal-heatmap.css">
+        <script src="_elements/popper.min.js"></script>
+        <script src="_elements/Tooltip.min.js"></script>
+        <!-- Your custom styles (optional) -->
+        <link rel="stylesheet" href="_elements/dashboard.css">
+        <link rel="stylesheet" href="_elements/chat.css">
+        <!-- MDBootstrap Datatables  -->
+        <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/addons/datatables.min.css" rel="stylesheet">
+        <link href="_elements/timeline/css/timeline.min.css" rel="stylesheet" />
+
+        <!-- Icons -->
+        <!--script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script-->
+        <script src="_elements/feather.min.js"></script>
+    </head>
+    <body>
+"""
 # body_part_1 includes fixed navbar at top and starting tags for rest of page
 # Variables = {version_info}
 body_start = \
