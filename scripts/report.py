@@ -1036,35 +1036,40 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     # Create index.html's page content
     create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type, image_input_path, nav_list_data, casedata)
     elements_folder = os.path.join(reportfolderbase, '_elements')
-    os.mkdir(elements_folder)
+    #os.mkdir(elements_folder)
     __location__ = os.path.dirname(os.path.abspath(__file__))
-    
-    shutil.copy2(os.path.join(__location__,"logo.jpg"), elements_folder)
-    shutil.copy2(os.path.join(__location__,"dashboard.css"), elements_folder)
-    shutil.copy2(os.path.join(__location__,"feather.min.js"), elements_folder)
-    shutil.copy2(os.path.join(__location__,"dark-mode.css"), elements_folder)
-    shutil.copy2(os.path.join(__location__,"dark-mode-switch.js"), elements_folder)
-    shutil.copytree(os.path.join(__location__,"MDB-Free_4.13.0"), os.path.join(elements_folder, 'MDB-Free_4.13.0'))
-    # Chart.js
-    shutil.copy2(os.path.join(__location__,"chart.umd.min.js"), elements_folder)
-    # Moment
-    shutil.copy2(os.path.join(__location__,"moment.min.js"), elements_folder)
-    # D3
-    shutil.copy2(os.path.join(__location__,"d3.v7.min.js"), elements_folder)
-    # Popper
-    shutil.copy2(os.path.join(__location__,"popper.min.js"), elements_folder)
-    # Cal-Heatmap
-    shutil.copy2(os.path.join(__location__,"cal-heatmap.css"), elements_folder)
-    shutil.copy2(os.path.join(__location__,"cal-heatmap.min.js"), elements_folder)
-    shutil.copy2(os.path.join(__location__,"Tooltip.min.js"), elements_folder)
-    # Highlight.js
-    shutil.copy2(os.path.join(__location__,"highlight.min.css"), elements_folder)
-    shutil.copy2(os.path.join(__location__,"highlight.min.js"), elements_folder)
-    # Garmin Custom JS
-    shutil.copy2(os.path.join(__location__,"garmin-functions.js"), elements_folder)
-    shutil.copytree(os.path.join(__location__,"timeline"), os.path.join(elements_folder, 'timeline'))
-    shutil.copy2(os.path.join(__location__,"chat.css"), elements_folder)
-    shutil.copy2(os.path.join(__location__,"chat.js"), elements_folder)
+
+    try:
+        shutil.copytree(os.path.join(__location__, "_elements"), elements_folder)
+        # shutil.copy2(os.path.join(__location__,"logo.jpg"), elements_folder)
+        # shutil.copy2(os.path.join(__location__,"dashboard.css"), elements_folder)
+        # shutil.copy2(os.path.join(__location__,"feather.min.js"), elements_folder)
+        # shutil.copy2(os.path.join(__location__,"dark-mode.css"), elements_folder)
+        # shutil.copy2(os.path.join(__location__,"dark-mode-switch.js"), elements_folder)
+        # shutil.copytree(os.path.join(__location__,"MDB-Free_4.13.0"), os.path.join(elements_folder, 'MDB-Free_4.13.0'))
+        # Chart.js
+        # shutil.copy2(os.path.join(__location__,"chart.umd.min.js"), elements_folder)
+        # Moment
+        # shutil.copy2(os.path.join(__location__,"moment.min.js"), elements_folder)
+        # D3
+        # shutil.copy2(os.path.join(__location__,"d3.v7.min.js"), elements_folder)
+        # Popper
+        # shutil.copy2(os.path.join(__location__,"popper.min.js"), elements_folder)
+        # Cal-Heatmap
+        # shutil.copy2(os.path.join(__location__,"cal-heatmap.css"), elements_folder)
+        # shutil.copy2(os.path.join(__location__,"cal-heatmap.min.js"), elements_folder)
+        # shutil.copy2(os.path.join(__location__,"Tooltip.min.js"), elements_folder)
+        # Highlight.js
+        # shutil.copy2(os.path.join(__location__,"highlight.min.css"), elements_folder)
+        # shutil.copy2(os.path.join(__location__,"highlight.min.js"), elements_folder)
+        # Garmin Custom JS
+        # shutil.copy2(os.path.join(__location__,"garmin-functions.js"), elements_folder)
+        # shutil.copytree(os.path.join(__location__,"timeline"), os.path.join(elements_folder, 'timeline'))
+        # shutil.copy2(os.path.join(__location__,"chat.css"), elements_folder)
+        # shutil.copy2(os.path.join(__location__,"chat.js"), elements_folder)
+    except shutil.Error:
+        print("shutil reported an error. Maybe due to recursive directory copying.")
+
 
 def get_file_content(path):
     f = open(path, 'r', encoding='utf8')
