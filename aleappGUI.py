@@ -184,7 +184,7 @@ def process(casedata):
 
         crunch_successful = aleapp.crunch_artifacts(
             selected_modules, extracttype, input_path, out_params, wrap_text, loader, 
-            casedata, time_offset, profile_filename, report_state=report_status)
+            casedata, time_offset, profile_filename)
 
         if crunch_successful:
             report_path = os.path.join(out_params.report_folder_base, 'index.html')
@@ -454,21 +454,21 @@ button_frame = ttk.Frame(modules_frame)
 button_frame.grid(row=0, column=0, pady=4, sticky='we')
 
 all_button = ttk.Button(button_frame, text='Select All', command=select_all)
-all_button.grid(row=0, column=0, padx=4)
+all_button.grid(row=0, column=0, padx=5)
 none_button = ttk.Button(button_frame, text='Deselect All', command=deselect_all)
-none_button.grid(row=0, column=1, padx=4)
+none_button.grid(row=0, column=1, padx=5)
 load_button = ttk.Button(button_frame, text='Load Profile', command=load_profile)
-load_button.grid(row=0, column=2, padx=4)
+load_button.grid(row=0, column=2, padx=5)
 save_button = ttk.Button(button_frame, text='Save Profile', command=save_profile)
-save_button.grid(row=0, column=3, padx=4)
+save_button.grid(row=0, column=3, padx=5)
 ttk.Separator(button_frame, orient='vertical').grid(row=0, column=4, padx=7, sticky='ns')
 case_data_button = ttk.Button(button_frame, text='Case Data', command=case_data)
-case_data_button.grid(row=0, column=5, padx=4)
+case_data_button.grid(row=0, column=5, padx=5)
 ttk.Separator(button_frame, orient='vertical').grid(row=0, column=6, padx=7, sticky='ns')
-#if is_platform_macos():
-timezone_text = 'Timezone Offset\n(Not Implemented): '
-#else:
-#    timezone_text = 'Timezone Offset (Not Implemented): '
+if is_platform_macos():
+    timezone_text = 'Timezone Offset\n(Not Implemented): '
+else:
+    timezone_text = 'Timezone Offset (Not Implemented): '
 ttk.Label(button_frame, text=timezone_text).grid(row=0, column=7)
 timezone_offset = ttk.Combobox(
     button_frame, textvariable=timezone_set, values=tzvalues, height=20, state='readonly')
@@ -476,18 +476,6 @@ timezone_offset.master.option_add( '*TCombobox*Listbox.background', theme_inputc
 timezone_offset.master.option_add( '*TCombobox*Listbox.foreground', theme_fgcolor)
 timezone_offset.master.option_add( '*TCombobox*Listbox.selectBackground', theme_button)
 timezone_offset.grid(row=0, column=8)
-
-ttk.Separator(button_frame, orient='vertical').grid(row=0, column=9, padx=7, sticky='ns')
-ttk.Label(
-    button_frame, text='Report Status\n(Quicker offline review): '
-    ).grid(row=0, column=11)
-report_state = ttk.Combobox(
-    button_frame, textvariable=report_status_var, values=['Online', 'Offline'], height=20, state='readonly', width=7)
-report_state.master.option_add( '*TCombobox*Listbox.background', theme_inputcolor)
-report_state.master.option_add( '*TCombobox*Listbox.foreground', theme_fgcolor)
-report_state.master.option_add( '*TCombobox*Listbox.selectBackground', theme_button)
-report_state.current(0)
-report_state.grid(row=0, column=12)
 
 #### List of modules
 mlist_frame = ttk.LabelFrame(modules_frame, text=' Available Modules: ', name='f_list')

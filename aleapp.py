@@ -11,7 +11,7 @@ from scripts.search_files import *
 from scripts.ilapfuncs import *
 from scripts.version_info import aleapp_version
 from time import process_time, gmtime, strftime, perf_counter
-import scripts.artifacts.artGlobals as aG
+
 
 def validate_args(args):
     if args.artifact_paths or args.create_profile_casedata:
@@ -143,8 +143,6 @@ def main():
                         help='Path to base output folder (this must exist)')
     parser.add_argument('-i', '--input_path', required=False, action="store", help='Path to input file/folder')
     parser.add_argument('-tz', '--timezone', required=False, action="store", default='UTC', type=str, help="Timezone name (e.g., 'America/New_York')")
-    parser.add_argument('-r', '--report_state', required=False, action="store", default='Online', type=str,
-                        help="Report State (e.g., 'Online' or 'Offline' - Offline does not attempt to connect to internet, so is quicker to review offline.)")
     parser.add_argument('-w', '--wrap_text', required=False, action="store_false", default=True,
                         help='Do not wrap text for output of data files')
     parser.add_argument('-m', '--load_profile', required=False, action="store", help="Path to ALEAPP Profile file (.alprofile).")
@@ -279,7 +277,6 @@ def main():
     wrap_text = args.wrap_text
     output_path = os.path.abspath(args.output_path)
     time_offset = args.timezone
-    report_status = args.report_state
 
     # Android file system extractions contain paths > 260 char, which causes problems
     # This fixes the problem by prefixing \\?\ on each windows path.
@@ -291,12 +288,12 @@ def main():
 
     selected_plugins = plugins_parsed_first + selected_plugins
     
-    crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, time_offset, profile_filename, report_state=report_status)
+    crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, time_offset, profile_filename)
 
 
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
-        loader: plugin_loader.PluginLoader, casedata, time_offset, profile_filename, report_state=''):
+        loader: plugin_loader.PluginLoader, casedata, time_offset, profile_filename):
     start = process_time()
     start_wall = perf_counter()
  
@@ -330,14 +327,6 @@ def crunch_artifacts(
         logfunc(temp_file.getvalue())
         temp_file.close()
         return False
-
-    # Acknowledge whether report should be online or offline
-    try:
-        if report_state == 'Offline':
-            aG.report_state = 'Offline'
-            print("Report will be output in Offline Mode")
-    except:
-        print("Report defaulting to Online Mode")
 
     # Now ready to run
     logfunc(f'Info: {len(loader) - 1} modules loaded.') # excluding usagestatsVersion

@@ -7,7 +7,6 @@ from collections import OrderedDict
 from scripts.html_parts import *
 from scripts.ilapfuncs import logfunc
 from scripts.version_info import aleapp_version, aleapp_contributors
-import scripts.artifacts.artGlobals as aG
 
 # Icon Mappings Dictionary
 # The icon_mappings dictionary is organized by category and is used to map categories and artifacts to icons.
@@ -1127,13 +1126,8 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     body_description = 'ALEAPP is an open source project that aims to parse every known Android artifact for the purpose of forensic analysis.'
     active_nav_list_data = mark_item_active(nav_list_data, filename) + nav_bar_script
 
-    report_state = aG.report_state
-
     f = open(os.path.join(reportfolderbase, filename), 'w', encoding='utf8')
-    if report_state == 'Offline':
-        f.write(page_header_offline.format(page_title))
-    else:
-        f.write(page_header.format(page_title))
+    f.write(page_header.format(page_title))
     f.write(body_start.format(f"ALEAPP {aleapp_version}"))
     f.write(body_sidebar_setup + active_nav_list_data + body_sidebar_trailer)
     f.write(body_main_header + body_main_data_title.format(body_heading, body_description))
