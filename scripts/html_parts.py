@@ -11,6 +11,10 @@ page_header = \
         <title>{0}</title>
         <!-- Dark mode -->
         <link rel="stylesheet" href="_elements/dark-mode.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="_elements/all.css">
+        <!-- Google Fonts Roboto -->
+        <link rel="stylesheet" href="_elements/Roboto.css">
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/bootstrap.min.css">
         <!-- Material Design Bootstrap - TOGGLE THIS FOR ALTERNATE DESIGN!-->

@@ -1,0 +1,185 @@
+#chat .form-outline .form-control~.form-notch div {
+    pointer-events: none;
+    border: 1px solid;
+    border-color: #eee;
+    box-sizing: border-box;
+    background: transparent;
+}
+
+#chat .form-outline .form-control~.form-notch .form-notch-leading {
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-right: none;
+    border-radius: .65rem 0 0 .65rem;
+}
+
+#chat .form-outline .form-control~.form-notch .form-notch-middle {
+    flex: 0 0 auto;
+    max-width: calc(100% - 1rem);
+    height: 100%;
+    border-right: none;
+    border-left: none;
+}
+
+#chat .form-outline .form-control~.form-notch .form-notch-trailing {
+    flex-grow: 1;
+    height: 100%;
+    border-left: none;
+    border-radius: 0 .65rem .65rem 0;
+}
+
+#chat .form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-top: 0.125rem solid #3c3c3c;
+    border-bottom: 0.125rem solid #3c3c3c;
+    border-left: 0.125rem solid #3c3c3c;
+}
+
+#chat .form-outline .form-control:focus~.form-notch .form-notch-leading,
+#chat .form-outline .form-control.active~.form-notch .form-notch-leading {
+    border-right: none;
+    transition: all 0.2s linear;
+}
+
+#chat .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-bottom: 0.125rem solid;
+    border-color: #3c3c3c;
+}
+
+#chat .form-outline .form-control:focus~.form-notch .form-notch-middle,
+#chat .form-outline .form-control.active~.form-notch .form-notch-middle {
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    transition: all 0.2s linear;
+}
+
+#chat .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-top: 0.125rem solid #3c3c3c;
+    border-bottom: 0.125rem solid #3c3c3c;
+    border-right: 0.125rem solid #3c3c3c;
+}
+
+#chat .form-outline .form-control:focus~.form-notch .form-notch-trailing,
+#chat .form-outline .form-control.active~.form-notch .form-notch-trailing {
+    border-left: none;
+    transition: all 0.2s linear;
+}
+
+#chat .form-outline .form-control:focus~.form-label {
+    color: #3c3c3c;
+}
+
+#chat .form-outline .form-control~.form-label {
+    color: #bfbfbf;
+}
+
+.hour {
+    margin: 0;
+    float: right;
+    font-size: 13px;
+    color: #a5a5a5
+}
+
+.card-body {
+    overflow-y: scroll;
+    height: 500px;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+
+}
+
+.sender {
+    border-radius: 15px;
+    background-color: rgba(57, 192, 237,.2);
+}
+
+.receiver {
+    border-radius: 15px;
+    background-color: #fbfbfb;
+}
+
+#chat {
+    border-radius: 15px;
+}
+
+.card-header {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+#chatmaster {
+	display: block;
+	width: 55vw;
+	padding: 20px;
+	background-color: #eee;
+	margin: 0 auto 0 auto;
+	font-family: Verdana;
+	overflow: hidden;
+}
+
+.chatline {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+}
+.chatme {
+	padding: 10px;
+	float: right;
+	background-color: #a1e214;
+	border-radius: 15px 15px 0px 15px;
+	max-width: 80%;
+}
+
+.chatline p {
+	width: 100%;
+	float: right;
+	text-align: right;
+	margin-top: 5px;
+	font-size: 70%;
+	}
+
+
+.chatyou {
+	padding: 10px;
+	float: left;
+	background-color: #fcfcfc;
+	border-radius: 15px 15px 15px 0px;
+	margin-left: 50px;
+	max-width: 80%;
+}
+
+.chatyou_date {
+	text-align: left !important;
+	margin-right: -50px;
+	width: auto;
+	}
+
+.chatname {
+	position: absolute;
+	display: flex;
+	background-color: #ccc;
+	padding: 20px;
+	bottom: 30px;
+	left: -20px;
+	margin: 20px;
+	width: 25px;
+	height: 25px;
+	font-weight: bold;
+	text-transform: uppercase;
+	justify-content: center;
+    align-items: center;
+	border-radius: 50%;
+}
+.chathead {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	font-weight:bold;
+	text-align:left;
+	padding-bottom: 10px;
+}
