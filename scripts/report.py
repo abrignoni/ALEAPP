@@ -298,7 +298,7 @@ icon_mappings = \
         '_mode': 'search',
     },
     'FITBIT': 'watch',
-    'GALLERY TRASH': 'image',
+    'GALLERY3D': 'image',
     'GARMIN': {
         'DEVICES': 'watch',
         'NOTIFICATIONS': 'bell',
@@ -623,6 +623,11 @@ icon_mappings = \
     'MS AUTHENTICATOR': 'users',
     'MY FILES': {
         'MY FILES DB - CACHE MEDIA': 'image',
+        'MY FILES DB - DOWNLOAD HISTORY': 'download',
+        'MY FILES DB - OPERATION HISTORY': 'file',
+        'MY FILES DB - RECENT FILES': 'folder',
+        'MY FILES DB - STORED FILES': 'folder',
+        'MY FILES - TRASH FOLDER': 'trash',
         '_mode': 'search',
     },
     'NETFLIX ARCHIVE': {
