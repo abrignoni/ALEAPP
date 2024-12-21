@@ -4,6 +4,7 @@ from scripts.html_parts import *
 from scripts.ilapfuncs import is_platform_windows
 from scripts.version_info import aleapp_version
 
+
 class ArtifactHtmlReport:
 
     def __init__(self, artifact_name, artifact_category=''):

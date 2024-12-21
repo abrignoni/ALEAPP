@@ -174,6 +174,7 @@ def process(casedata):
         out_params = OutputParameters(output_folder)
         wrap_text = True
         time_offset = timezone_set.get()
+        report_status = report_status_var.get()
         if time_offset == '':
             time_offset = 'UTC'
         
@@ -353,6 +354,7 @@ casedata = {'Case Number': tk.StringVar(),
             'Examiner': tk.StringVar(), 
             }
 timezone_set = tk.StringVar()
+report_status_var = tk.StringVar()
 pickModules()
 
 ## Theme properties
@@ -459,10 +461,10 @@ load_button = ttk.Button(button_frame, text='Load Profile', command=load_profile
 load_button.grid(row=0, column=2, padx=5)
 save_button = ttk.Button(button_frame, text='Save Profile', command=save_profile)
 save_button.grid(row=0, column=3, padx=5)
-ttk.Separator(button_frame, orient='vertical').grid(row=0, column=4, padx=10, sticky='ns')
+ttk.Separator(button_frame, orient='vertical').grid(row=0, column=4, padx=7, sticky='ns')
 case_data_button = ttk.Button(button_frame, text='Case Data', command=case_data)
 case_data_button.grid(row=0, column=5, padx=5)
-ttk.Separator(button_frame, orient='vertical').grid(row=0, column=6, padx=10, sticky='ns')
+ttk.Separator(button_frame, orient='vertical').grid(row=0, column=6, padx=7, sticky='ns')
 if is_platform_macos():
     timezone_text = 'Timezone Offset\n(Not Implemented): '
 else:
