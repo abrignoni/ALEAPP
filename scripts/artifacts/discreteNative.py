@@ -1,5 +1,6 @@
 import os
 import datetime
+import pathlib
 import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, abxread, checkabx, logdevinfo
@@ -25,6 +26,7 @@ def get_discreteNative(files_found, report_folder, seeker, wrap_text, time_offse
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
+        filename = str(pathlib.Path(file_found).name)
         
         if os.path.isfile(file_found):
             #check if file is abx
@@ -57,14 +59,14 @@ def get_discreteNative(files_found, report_folder, seeker, wrap_text, time_offse
                                 if ndattrib is None:
                                     ndattrib = ''
                                 else:
-                                    ndattrib = round(int(ndattrib) / 60, 1)
-                        data_list.append((timestampcalc(ntattrib), ptagattrib, atagattrib, oplist(otagattrib), ndattrib))
+                                    ndattrib = round(int(ndattrib) / 1000, 1)
+                        data_list.append((timestampcalc(ntattrib), ptagattrib, atagattrib, oplist(otagattrib), ndattrib, filename ))
                     
     if data_list:
         report = ArtifactHtmlReport('Privacy Dashboard')
         report.start_artifact_report(report_folder, 'Privacy Dashboard')
         report.add_script()
-        data_headers = ('Timestamp', 'Bundle', 'Module', 'Operation', 'Usage in Seconds')
+        data_headers = ('Timestamp', 'Bundle', 'Module', 'Operation', 'Usage in Seconds', 'Source Filename')
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         

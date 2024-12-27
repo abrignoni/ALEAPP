@@ -8,7 +8,7 @@ def get_calllog(files_found, report_folder, seeker, wrap_text, time_offset):
     data_list = []
     
     for file_found in files_found:
-        file_found = str(files_found)
+        file_found = str(file_found)
         
         if file_found.endswith('calllog.db'):
             db = open_sqlite_db_readonly(file_found)
@@ -70,7 +70,7 @@ def get_calllog(files_found, report_folder, seeker, wrap_text, time_offset):
                     else:
                         call_type_html = call_type
 
-                    data_list.append((row[0], row[1], row[2], call_type_html, str(row[4]), row[5], row[6], row[7], row[8], row[9], str(row[10],file_found)))
+                    data_list.append((row[0], row[1], row[2], call_type_html, str(row[4]), row[5], row[6], row[7], row[8], row[9], str(row[10]), file_found))
             db.close()
             
     if data_list:
@@ -93,6 +93,6 @@ def get_calllog(files_found, report_folder, seeker, wrap_text, time_offset):
 __artifacts__ = {
         "Call logs ": (
                 "Call Logs",
-                ('*/com.android.providers.contacts/databases/calllog.db*'),
+                ('*/com.android.providers.contacts/databases/calllog.db*','*/com.samsung.android.providers.contacts/databases/calllog.db*'),
                 get_calllog)
 }
