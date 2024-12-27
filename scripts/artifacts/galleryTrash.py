@@ -1,4 +1,3 @@
-import sqlite3
 import json
 import datetime
 import textwrap
@@ -6,6 +5,23 @@ import os
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, media_to_html
+
+
+__artifacts_v2__ = {
+    "Gallery Trash": {
+        "name": "Gallery Trash",
+        "description": "Parses Trash within Gallery3D database and folder.",
+        "author": "@abrignoni",
+        "version": "1.0",
+        "date": "2023-04-25",
+        "requirements": "none",
+        "category": "Gallery3D",
+        "notes": "This script was updated by @PensiveHike to update artifacts introduction from v1 to v2.",
+        "paths": ('*/data/com.sec.android.gallery3d/databases/local.db*','*/data/com.sec.android.gallery3d/files/.Trash/**'),
+        "function": "get_galleryTrash"
+    }
+}
+
 
 def get_galleryTrash(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -67,9 +83,9 @@ def get_galleryTrash(files_found, report_folder, seeker, wrap_text, time_offset)
             else:
                 logfunc('No Gallery Trash Files data available')
 
-__artifacts__ = {
-        "Gallery Trash": (
-                "Gallery Trash",
-                ('*/data/com.sec.android.gallery3d/databases/local.db*','*/data/com.sec.android.gallery3d/files/.Trash/**'),
-                get_galleryTrash)
-}
+#__artifacts__ = {
+#        "Gallery Trash": (
+#                "Gallery Trash",
+#                ('*/data/com.sec.android.gallery3d/databases/local.db*','*/data/com.sec.android.gallery3d/files/.Trash/**'),
+#                get_galleryTrash)
+#}

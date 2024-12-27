@@ -12,6 +12,7 @@ from scripts.ilapfuncs import *
 from scripts.version_info import aleapp_version
 from time import process_time, gmtime, strftime, perf_counter
 
+
 def validate_args(args):
     if args.artifact_paths or args.create_profile_casedata:
         return  # Skip further validation if --artifact_paths is used
