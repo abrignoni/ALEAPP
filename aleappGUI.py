@@ -5,6 +5,7 @@ import json
 import aleapp
 import webbrowser
 
+from PIL import Image, ImageTk
 from tkinter import ttk, filedialog as tk_filedialog, messagebox as tk_msgbox
 from scripts.version_info import aleapp_version
 from scripts.search_files import *
@@ -147,6 +148,10 @@ def open_report(report_path):
     '''Open report and Quit after processing completed'''
     webbrowser.open_new_tab('file://' + report_path)
     main_window.quit()
+
+
+def open_website(url):
+    webbrowser.open_new_tab(url)
 
 
 def process(casedata):
@@ -340,10 +345,10 @@ def case_data():
 ## Main window creation
 main_window = tk.Tk()
 window_width = 902
-window_height = 625
+window_height = 620
 
 ## Variables
-icon = os.path.join(os.path.dirname(__file__), 'scripts', 'icon.png')
+icon = os.path.join(os.path.dirname(__file__), 'assets', 'icon.png')
 loader: typing.Optional[plugin_loader.PluginLoader] = None
 mlist = {}
 profile_filename = None
@@ -356,9 +361,9 @@ timezone_set = tk.StringVar()
 pickModules()
 
 ## Theme properties
-theme_bgcolor = '#92aa9d'
+theme_bgcolor = '#586A60'
 theme_inputcolor = '#fcfff6'
-theme_fgcolor = '#000000'
+theme_fgcolor = '#d0dbbd'
 theme_button = '#d0dbbd'
 
 if is_platform_macos():
@@ -396,7 +401,7 @@ style.configure('TButton')
 style.map('TButton', 
           background=[('active', 'black'), ('!disabled', theme_button)], 
           foreground=[('active', theme_button), ('!disabled', 'black')])
-style.configure('TEntry', fieldbackground=theme_inputcolor, highlightthickness=0)
+style.configure('TEntry', fieldbackground=theme_inputcolor, foreground='#000000', highlightthickness=0)
 style.configure(
     'TCombobox', selectforeground=theme_fgcolor, 
     selectbackground=theme_button, arrowcolor=theme_fgcolor)
@@ -409,17 +414,15 @@ style.configure('TProgressbar', thickness=4, background='DarkGreen')
 ## Main Window Layout
 ### Top part of the window
 title_frame = ttk.Frame(main_window)
-title_frame.grid(padx=14, pady=6, sticky='w')
-title_label = ttk.Label(
-    title_frame, 
-    text='Android Logs, Events, And Protobuf Parser', 
-    font=('Helvetica 22'))
-title_label.pack(pady=4)
-github_label = ttk.Label(
-    title_frame, 
-    text='https://github.com/abrignoni/ALEAPP', 
-    font=('Helvetica 14'))
-github_label.pack(anchor='w')
+title_frame.grid(padx=14, pady=4, sticky='we')
+title_frame.grid_columnconfigure(0, weight=1)
+ileapp_logo = ImageTk.PhotoImage(file="assets/ALEAPP_logo.png")
+ileapp_logo_label = ttk.Label(title_frame, image=ileapp_logo)
+ileapp_logo_label.grid(row=0, column=0, sticky='w')
+leapps_logo = ImageTk.PhotoImage(Image.open("assets/leapps_a_logo.png").resize((110, 51)))
+leapps_logo_label = ttk.Label(title_frame, image=leapps_logo, cursor="target")
+leapps_logo_label.grid(row=0, column=1, sticky='w')
+leapps_logo_label.bind("<Button-1>", lambda e: open_website("https://leapps.org"))
 
 ### Input output selection
 input_frame = ttk.LabelFrame(
@@ -447,7 +450,7 @@ modules_frame = ttk.Frame(main_window, name='f_modules')
 modules_frame.grid(padx=14, pady=4, sticky='we')
 modules_frame.grid_columnconfigure(0, weight=1)
 
-#### Buttons & Timezone
+#### Buttons
 button_frame = ttk.Frame(modules_frame)
 button_frame.grid(row=0, column=0, pady=4, sticky='we')
 
@@ -462,18 +465,6 @@ save_button.grid(row=0, column=3, padx=5)
 ttk.Separator(button_frame, orient='vertical').grid(row=0, column=4, padx=10, sticky='ns')
 case_data_button = ttk.Button(button_frame, text='Case Data', command=case_data)
 case_data_button.grid(row=0, column=5, padx=5)
-ttk.Separator(button_frame, orient='vertical').grid(row=0, column=6, padx=10, sticky='ns')
-if is_platform_macos():
-    timezone_text = 'Timezone Offset\n(Not Implemented): '
-else:
-    timezone_text = 'Timezone Offset (Not Implemented): '
-ttk.Label(button_frame, text=timezone_text).grid(row=0, column=7)
-timezone_offset = ttk.Combobox(
-    button_frame, textvariable=timezone_set, values=tzvalues, height=20, state='readonly')
-timezone_offset.master.option_add( '*TCombobox*Listbox.background', theme_inputcolor)
-timezone_offset.master.option_add( '*TCombobox*Listbox.foreground', theme_fgcolor)
-timezone_offset.master.option_add( '*TCombobox*Listbox.selectBackground', theme_button)
-timezone_offset.grid(row=0, column=8)
 
 #### List of modules
 mlist_frame = ttk.LabelFrame(modules_frame, text=' Available Modules: ', name='f_list')
@@ -503,11 +494,20 @@ bottom_frame = ttk.Frame(main_window)
 bottom_frame.grid(padx=16, pady=6, sticky='we')
 bottom_frame.grid_columnconfigure(2, weight=1)
 process_button = ttk.Button(bottom_frame, text='Process', command=lambda: process(casedata))
-process_button.grid(row=0, column=0, padx=5)
+process_button.grid(row=0, column=0, rowspan=2, padx=5)
 close_button = ttk.Button(bottom_frame, text='Close', command=main_window.quit)
-close_button.grid(row=0, column=1, padx=5)
+close_button.grid(row=0, column=1, rowspan=2, padx=5)
 selected_modules_label = ttk.Label(bottom_frame, text='Number of selected modules: ')
 selected_modules_label.grid(row=0, column=2, padx=5, sticky='e')
+auto_unselected_modules_text = '(Modules making some time to run were automatically unselected)'
+if is_platform_macos():
+    auto_unselected_modules_label = ttk.Label(
+        bottom_frame,
+        text=auto_unselected_modules_text,
+        font=('Helvetica 10'))
+else:
+    auto_unselected_modules_label = ttk.Label(bottom_frame, text=auto_unselected_modules_text)
+auto_unselected_modules_label.grid(row=1, column=2, padx=5, sticky='e')
 get_selected_modules()
 
 #### Logs
