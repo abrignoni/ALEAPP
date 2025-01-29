@@ -111,7 +111,7 @@ def scroll(event):
     '''Continue to scroll the list with mouse wheel when cursor hover a checkbutton'''
     parent = main_window.nametowidget(event.widget.winfo_parent())
     parent.event_generate('<MouseWheel>', delta=event.delta, when='now')
- 
+
 
 def ValidateInput():
     '''Returns tuple (success, extraction_type)'''
@@ -154,9 +154,17 @@ def open_website(url):
     webbrowser.open_new_tab(url)
 
 
+def resource_path(filename):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, 'assets', filename)
+
 def process(casedata):
     '''Execute selected modules and create reports'''
-    #check if selections made properly; if not we will return to input form without exiting app altogether
+    # check if selections made properly; if not we will return to input form without exiting app altogether
     is_valid, extracttype = ValidateInput()
 
     if is_valid:
@@ -181,10 +189,10 @@ def process(casedata):
         time_offset = timezone_set.get()
         if time_offset == '':
             time_offset = 'UTC'
-        
+
         logtext_frame.grid(row=1, column=0, rowspan=3, padx=14, pady=4, sticky='nswe')
         bottom_frame.grid_remove()
-        progress_bar.grid(padx=16, pady=6, sticky='we')
+        progress_bar.grid(padx=16, sticky='we')
 
         crunch_successful = aleapp.crunch_artifacts(
             selected_modules, extracttype, input_path, out_params, wrap_text, loader, 
@@ -228,18 +236,17 @@ def select_output():
     output_entry.insert(0, output_filename)
 
 
-# GUI layout
-## Case Data
 def case_data():
+    # GUI layout
+    ## Case Data
     '''Add Case Data window'''
     global casedata
-    
+
     def clear():
         '''Remove the contents of all fields'''
         case_number_entry.delete(0, 'end')
         case_agency_entry.delete(0, 'end')
         case_examiner_entry.delete(0, 'end')
-    
 
     def save_case():
         '''Save case data in a Case Data file'''
@@ -288,7 +295,6 @@ def case_data():
                 tk_msgbox.showinfo(
                     title='Load Case Data', message=f'Loaded Case Data: {destination_path}', parent=case_window)
 
-
     ### Case Data Window creation
     case_window = tk.Toplevel(main_window)
     case_window_width = 560
@@ -333,7 +339,7 @@ def case_data():
     load_case_button.grid(row=0, column=0, padx=5)
     save_case_button = ttk.Button(modules_btn_frame, text='Save Case Data File', command=save_case)
     save_case_button.grid(row=0, column=1, padx=5)
-    ttk.Separator(modules_btn_frame,orient='vertical').grid(row=0, column=2, padx=20, sticky='ns')
+    ttk.Separator(modules_btn_frame, orient='vertical').grid(row=0, column=2, padx=20, sticky='ns')
     clear_case_button = ttk.Button(modules_btn_frame, text='Clear', command=clear)
     clear_case_button.grid(row=0, column=3, padx=5)
     close_case_button = ttk.Button(modules_btn_frame, text='Close', command=case_window.destroy)
@@ -348,7 +354,7 @@ window_width = 902
 window_height = 620
 
 ## Variables
-icon = os.path.join(os.path.dirname(__file__), 'assets', 'icon.png')
+icon = resource_path('icon.png')
 loader: typing.Optional[plugin_loader.PluginLoader] = None
 mlist = {}
 profile_filename = None
@@ -416,10 +422,10 @@ style.configure('TProgressbar', thickness=4, background='DarkGreen')
 title_frame = ttk.Frame(main_window)
 title_frame.grid(padx=14, pady=4, sticky='we')
 title_frame.grid_columnconfigure(0, weight=1)
-ileapp_logo = ImageTk.PhotoImage(file="assets/ALEAPP_logo.png")
+ileapp_logo = ImageTk.PhotoImage(file=resource_path("ALEAPP_logo.png"))
 ileapp_logo_label = ttk.Label(title_frame, image=ileapp_logo)
 ileapp_logo_label.grid(row=0, column=0, sticky='w')
-leapps_logo = ImageTk.PhotoImage(Image.open("assets/leapps_a_logo.png").resize((110, 51)))
+leapps_logo = ImageTk.PhotoImage(Image.open(resource_path("leapps_a_logo.png")).resize((110, 51)))
 leapps_logo_label = ttk.Label(title_frame, image=leapps_logo, cursor="target")
 leapps_logo_label.grid(row=0, column=1, sticky='w')
 leapps_logo_label.bind("<Button-1>", lambda e: open_website("https://leapps.org"))
@@ -516,12 +522,22 @@ logtext_frame.grid_columnconfigure(0, weight=1)
 vlog = ttk.Scrollbar(logtext_frame, orient='vertical')
 vlog.grid(row=0, column=1, pady=10, sticky='ns')
 log_text = tk.Text(
-    logtext_frame, name='log_text', bg=theme_inputcolor, fg=theme_fgcolor, 
+    logtext_frame, name='log_text', bg=theme_button, fg='#000000',
     highlightthickness=1, yscrollcommand=vlog.set, height=log_text_height)
 log_text.grid(row=0, column=0, padx=4, pady=10, sticky='we')
 vlog.config(command=log_text.yview)
 
 ### Progress bar
 progress_bar = ttk.Progressbar(main_window, orient='horizontal')
+
+### Push main window on top
+def OnFocusIn(event):
+    if type(event.widget).__name__ == 'Tk':
+        event.widget.attributes('-topmost', False)
+
+main_window.attributes('-topmost', True)
+main_window.focus_force()
+main_window.bind('<FocusIn>', OnFocusIn)
+
 
 main_window.mainloop()
