@@ -25,5 +25,6 @@ aleapp_contributors = [
     ['Johann Polewczyk', 'https://www.linkedin.com/in/johann-polewczyk-6a905425/', '@johannplw', 'https://github.com/Johann-PLW'],
     ['Bruno Ficher', 'https://german4n6.blogspot.com/', '', 'https://github.com/BrunoFischerGermany'],
     ['Marco Neumann', 'https://bebinary4n6.blogspot.com/', '@kalinko4n6', 'https://github.com/kalink0'],
-    ['Marc Seguin', 'https://segumarc.com', '@segumarc', 'https://github.com/segumarc']
+    ['Marc Seguin', 'https://segumarc.com', '@segumarc', 'https://github.com/segumarc'],
+    ['Chris Bate', 'https://www.linkedin.com/in/chris-b-3781a85a/', '', 'https://github.com/PensiveHike']
 ]

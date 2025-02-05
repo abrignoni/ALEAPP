@@ -1,5 +1,5 @@
 # Variables in page_header = {title}
-# 
+#
 page_header = \
 """<!DOCTYPE html>
 <html lang="en">
@@ -11,9 +11,9 @@ page_header = \
         <!-- Dark mode -->
         <link rel="stylesheet" href="_elements/dark-mode.css">
         <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+        <link rel="stylesheet" href="_elements/all-min.css">
         <!-- Google Fonts Roboto -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+        <link rel="stylesheet" href="_elements/Roboto.css">
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/bootstrap.min.css">
         <!-- Material Design Bootstrap - TOGGLE THIS FOR ALTERNATE DESIGN!-->
