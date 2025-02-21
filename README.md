@@ -1,10 +1,10 @@
-<img src="https://github.com/abrignoni/ALEAPP/blob/main/assets/ALEAPP_logo.png" width="268" height="51">
+![ALEAPP](scripts/ALEAPP_banner.png)
 
 # Android Logs Events And Protobuf Parser
 
-If you want to contribute hit me up on twitter: https://twitter.com/AlexisBrignoni  
+If you want to contribute hit me up on twitter: https://twitter.com/AlexisBrignoni
 
-Details in blog post here: https://abrignoni.blogspot.com/2020/02/aleapp-android-logs-events-and-protobuf.html  
+Details in blog post here: https://abrignoni.blogspot.com/2020/02/aleapp-android-logs-events-and-protobuf.html
 
 ## Requirements
 
@@ -12,12 +12,12 @@ Details in blog post here: https://abrignoni.blogspot.com/2020/02/aleapp-android
 
 ### Dependencies
 
-Dependencies for your python environment are listed in `requirements.txt`. Install them using the below command. Ensure 
-the `py` part is correct for your environment, eg `py`, `python`, or `python3`, etc. 
+Dependencies for your python environment are listed in `requirements.txt`. Install them using the below command. Ensure
+the `py` part is correct for your environment, eg `py`, `python`, or `python3`, etc.
 
-`py -m pip install -r requirements.txt`  
-or  
- `pip3 install -r requirements.txt`
+`py -m pip install -r requirements.txt`
+or
+`pip3 install -r requirements.txt`
 
 To run on **Linux**, you will also need to install `tkinter` separately like so:
 
@@ -50,7 +50,7 @@ $ python aleapp.py -t <zip | tar | fs | gz> -i <path_to_extraction> -o <path_for
 ### GUI
 
 ```
-$ python aleappGUI.py 
+$ python aleappGUI.py
 ```
 
 ### Help
@@ -109,10 +109,10 @@ __artifacts_v2__ = {
 
 The functions referenced as entry points in the `__artifacts__` dictionary must take the following arguments:
 
-* An iterable of the files found which are to be processed (as strings)
-* The path of ALEAPP's output folder(as a string)
-* The seeker (of type FileSeekerBase) which found the files
-* A Boolean value indicating whether or not the plugin is expected to wrap text
+- An iterable of the files found which are to be processed (as strings)
+- The path of ALEAPP's output folder(as a string)
+- The seeker (of type FileSeekerBase) which found the files
+- A Boolean value indicating whether or not the plugin is expected to wrap text
 
 For example:
 
@@ -121,8 +121,8 @@ def get_cool_data1(files_found, report_folder, seeker, wrap_text):
     pass  # do processing here
 ```
 
-Plugins are generally expected to provide output in ALEAPP's HTML output format, TSV, and optionally submit records to 
-the timeline. Functions for generating this output can be found in the `artifact_report` and `ilapfuncs` modules. 
+Plugins are generally expected to provide output in ALEAPP's HTML output format, TSV, and optionally submit records to
+the timeline. Functions for generating this output can be found in the `artifact_report` and `ilapfuncs` modules.
 At a high level, an example might resemble:
 
 ```python
@@ -151,9 +151,9 @@ def get_cool_data1(files_found, report_folder, seeker, wrap_text):
      (datetime.datetime.now(), "Cool data col 1, value 1", "Cool data col 1, value 2", "Cool data col 1, value 3"),
      (datetime.datetime.now(), "Cool data col 2, value 1", "Cool data col 2, value 2", "Cool data col 2, value 3"),
     ]
-    
+
     headers = ["Timestamp", "Data 1", "Data 2", "Data 3"]
-    
+
     # HTML output:
     report = ArtifactHtmlReport("Cool stuff")
     report_name = "Cool DFIR Data"
@@ -161,10 +161,10 @@ def get_cool_data1(files_found, report_folder, seeker, wrap_text):
     report.add_script()
     report.write_artifact_data_table(headers, rows, files_found[0])  # assuming only the first file was processed
     report.end_artifact_report()
-    
+
     # TSV output:
     scripts.ilapfuncs.tsv(report_folder, headers, rows, report_name, files_found[0])  # assuming first file only
-    
+
     # Timeline:
     scripts.ilapfuncs.timeline(report_folder, report_name, rows, headers)
 
