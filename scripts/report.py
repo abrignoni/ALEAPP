@@ -1039,7 +1039,8 @@ def generate_report(reportfolderbase, time_in_secs, time_HMS, extraction_type, i
     os.mkdir(elements_folder)
     __location__ = os.path.dirname(os.path.abspath(__file__))
     
-    shutil.copy2(os.path.join(__location__,"logo.jpg"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"logo.png"), elements_folder)
+    shutil.copy2(os.path.join(__location__,"ALEAPP_banner.png"), elements_folder)
     shutil.copy2(os.path.join(__location__,"dashboard.css"), elements_folder)
     shutil.copy2(os.path.join(__location__,"feather.min.js"), elements_folder)
     shutil.copy2(os.path.join(__location__,"dark-mode.css"), elements_folder)

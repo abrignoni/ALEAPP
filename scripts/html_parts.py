@@ -136,7 +136,8 @@ body_main_header = \
 body_main_data_title = \
 """
                 <div class="justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="display-5">{0}</h1>
+                    <img src="_elements/ALEAPP_banner.png" alt="iLEAPP banner">
+                    <h3 class="display-5">{0}</h1>
                     <h6 class="animated fadeIn mb-3">{1}</h6>
                 </div>
 """
@@ -212,10 +213,10 @@ thank_you_note = \
                     <div class="card bg-white mb-3" style="max-width: 500px; margin:auto">
                         <div class="row no-gutters">
                             <center><div class="col-md-4">
-                                <img src="_elements/logo.jpg" class="card-img" alt="DFIR">
+                                <img src="_elements/logo.png" class="card-img" alt="DFIR">
                             </div>
                             <div class="col-md-8">
-                            <div class="card-body">
+                            <div class="card-body" style="height: 200px;">
                                 <h5 class="card-title">Thank you for using ALEAPP</h5>
                                 <p class="card-text">
                                     Support open source and report any bugs!
