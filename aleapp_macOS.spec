@@ -5,7 +5,7 @@ a = Analysis(
     ['aleapp.py'],
     pathex=['scripts/artifacts'],
     binaries=[],
-    datas=[('scripts/', 'scripts')],
+    datas=[('scripts', 'scripts')],
     hiddenimports=[
         'bcrypt',
         'bencoding',

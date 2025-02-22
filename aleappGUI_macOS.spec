@@ -5,7 +5,7 @@ a = Analysis(
     ['aleappGUI.py'],
     pathex=['scripts/artifacts'],
     binaries=[],
-    datas=[('scripts/', 'scripts')],
+    datas=[('scripts', 'scripts'), ('assets', 'assets')],
     hiddenimports=[
         'bcrypt',
         'bencoding',
@@ -56,7 +56,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='aleappGUI.app',
-    icon='scripts/icon.icns',
+    icon='assets/icon.icns',
     bundle_identifier='4n6.brigs.ALEAPP',
     version='3.3.0',
 )
