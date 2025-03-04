@@ -1,7 +1,7 @@
 import html
 import os
+import sys
 from scripts.html_parts import *
-from scripts.ilapfuncs import is_platform_windows
 from scripts.version_info import aleapp_version
 
 class ArtifactHtmlReport:
@@ -28,7 +28,6 @@ class ArtifactHtmlReport:
         self.report_file.write(body_main_header)
         self.report_file.write(body_main_data_title.format(f'{self.artifact_name} report', artifact_description))
         self.report_file.write(body_spinner) # Spinner till data finishes loading
-        #self.report_file.write(body_infinite_loading_bar) # Not working!
 
     def add_script(self, script=''):
         '''Adds a default script or the script supplied'''
@@ -83,7 +82,7 @@ class ArtifactHtmlReport:
         if write_total:
             self.write_minor_header(f'Total number of entries: {num_entries}', 'h6')
         if write_location:
-            if is_platform_windows():
+            if sys.platform == 'win32':
                 source_path = source_path.replace('/', '\\')
             if source_path.startswith('\\\\?\\'):
                 source_path = source_path[4:]
@@ -113,9 +112,8 @@ class ArtifactHtmlReport:
                          row)) + '</tr>')
         else:
             for row in data_list:
-                self.report_file.write(
-                    '<tr>' + ''.join(('<td>{}</td>'.format(str(x) if x != None else '') for x in row)) + '</tr>')
-
+                self.report_file.write('<tr>' + ''.join( ('<td>{}</td>'.format(str(x) if x not in [None, 'N/A'] else '') for x in row) ) + '</tr>')
+        
         self.report_file.write('</tbody>')
         if cols_repeated_at_bottom:
             self.report_file.write('<tfoot><tr>' + ''.join(
@@ -164,15 +162,6 @@ class ArtifactHtmlReport:
             self.report_file.write(
                 f'<img src="{param}" alt="{param1}" title="{param2}" id="chartImage" class="img-fluid mx-auto d-block"/>')
 
-    # Add HTML Element to artifact
-    def add_html_to_artifact(self, param, param1):
-        # break line
-        self.report_file.write('<br/><hr>')
-        # Heading
-        self.report_file.write(f'<h3 class="h3 text-center mb-3">{param1}</h3>')
-        # Image centered
-        self.report_file.write(f'{param}')
-
     # Add Map Element to artifact
     def add_map(self, param):
         self.report_file.write(f'{param}')
@@ -217,12 +206,6 @@ class ArtifactHtmlReport:
             self.report_file.write('<script>hljs.highlightAll();</script>')
 
         # Function to create invisible elment to store data
-
-    # Add invisible data to artifact
-    def add_invisible_data(self, param, param1):
-        self.report_file.write(f'<div id="{param}" style="display:none" hidden>{param1}</div>')
-
-        # Function to create date input fields to filter data by date defined in the columns
 
     # Function to create a filter for the datatable
     def filter_by_date(self, id, col1):

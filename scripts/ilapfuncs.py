@@ -1,13 +1,15 @@
 # common standard imports
 import codecs
-import csv
 from datetime import *
-import json
 import os
 import re
 import shutil
-import sqlite3
 import sys
+import inspect
+import csv
+import json
+import sqlite3
+
 from functools import lru_cache
 from pathlib import Path
 
@@ -23,25 +25,31 @@ from geopy.geocoders import Nominatim
 
 os.path.basename = lru_cache(maxsize=None)(os.path.basename)
 
+identifiers = {}
+icons = {}
+
 class OutputParameters:
     '''Defines the parameters that are common for '''
     # static parameters
     nl = '\n'
     screen_output_file_path = ''
 
-    def __init__(self, output_folder):
+    def __init__(self, output_folder, custom_folder_name=None):
         now = datetime.now()
         currenttime = str(now.strftime('%Y-%m-%d_%A_%H%M%S'))
-        self.report_folder_base = os.path.join(output_folder,
-                                               'ALEAPP_Reports_' + currenttime)  # aleapp , aleappGUI, ileap_artifacts, report.py
-        self.temp_folder = os.path.join(self.report_folder_base, 'temp')
+        if custom_folder_name:
+            folder_name = custom_folder_name
+        else:
+            folder_name = 'ALEAPP_Reports_' + currenttime
+        self.report_folder_base = os.path.join(output_folder, folder_name)
+        self.data_folder = os.path.join(self.report_folder_base, 'data')
         OutputParameters.screen_output_file_path = os.path.join(self.report_folder_base, 'Script Logs',
                                                                 'Screen Output.html')
         OutputParameters.screen_output_file_path_devinfo = os.path.join(self.report_folder_base, 'Script Logs',
                                                                         'DeviceInfo.html')
 
         os.makedirs(os.path.join(self.report_folder_base, 'Script Logs'))
-        os.makedirs(self.temp_folder)
+        os.makedirs(self.data_folder)
         
 def convert_local_to_utc(local_timestamp_str):
     # Parse the timestamp string with timezone offset, ex. 2023-10-27 18:18:29-0400
@@ -258,6 +266,60 @@ def logfunc(message=""):
 def logdevinfo(message=""):
     with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
         b.write(message + '<br>' + OutputParameters.nl)
+
+def write_device_info():
+    with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
+        for category, values in identifiers.items():
+            b.write('<b>--- <u>' + category + ' </u>---</b><br>' + OutputParameters.nl)
+            b.write('<ul>' + OutputParameters.nl)
+            for label, data in values.items():
+                if isinstance(data, list):
+                    # Handle multiple values
+                    b.write('<li><b>' + label + ':</b><ul>' + OutputParameters.nl)
+                    for item in data:
+                        b.write(f'<li>{item["value"]} <span title="{item["source_file"]}" style="cursor:help"><i>(Source: {item["artifact"]})</i></span></li>' + OutputParameters.nl)
+                    b.write('</ul></li>' + OutputParameters.nl)
+                else:
+                    # Handle single value
+                    b.write(f'<li><b>{label}:</b> {data["value"]} <span title="{data["source_file"]}" style="cursor:help"><i>(Source: {data["artifact"]})</i></span></li>' + OutputParameters.nl)
+            b.write('</ul>' + OutputParameters.nl)
+
+def device_info(category, label, value, source_file=""):
+    """
+    Stores device information in the identifiers dictionary
+    Args:
+        category (str): The category of the information (e.g., "Device Info", "User Info")
+        label (str): The label/description to use as the key
+        value (str): The actual value to store
+    """
+    # Get the calling module's name more robustly
+    try:
+        frame = inspect.stack()[1]
+        func_name = frame.function
+    except:
+        func_name = 'unknown'
+    
+    values = identifiers.get(category, {})
+    
+    # Create value object with both the value and source module
+    value_obj = {
+        'value': value,
+        'source_file': source_file,
+        'artifact': func_name
+    }
+    
+    if label in values:
+        # If the label exists, check if it's already a list
+        if isinstance(values[label], list):
+            values[label].append(value_obj)
+        else:
+            # Convert existing single value to list with both values
+            values[label] = [values[label], value_obj]
+    else:
+        # New label, store single value
+        values[label] = value_obj
+        
+    identifiers[category] = values
 
 
 """ def deviceinfoin(ordes, kas, vas, sources): # unused function
