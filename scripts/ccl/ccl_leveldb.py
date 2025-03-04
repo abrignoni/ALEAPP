@@ -31,7 +31,7 @@ import enum
 from collections import namedtuple
 from types import MappingProxyType
 
-import scripts.ccl_simplesnappy as ccl_simplesnappy
+from scripts.ccl import ccl_simplesnappy
 
 __version__ = "0.4"
 __description__ = "A module for reading LevelDB databases"

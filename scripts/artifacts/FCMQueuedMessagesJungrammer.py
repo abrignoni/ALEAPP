@@ -23,7 +23,7 @@ SOFTWARE.
 import pathlib
 import datetime
 import dataclasses
-from scripts.ccl_android_fcm_queued_messages import FcmRecord, FcmIterator
+from scripts.ccl.ccl_android_fcm_queued_messages import FcmRecord, FcmIterator
 from scripts.artifact_report import ArtifactHtmlReport
 import scripts.ilapfuncs
 

@@ -31,7 +31,7 @@ import urllib.parse
 from html.parser import HTMLParser
 import html.entities
 import xml.etree.ElementTree as etree
-from scripts.ccl_android_fcm_queued_messages import FcmIterator
+from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.artifact_report import ArtifactHtmlReport
 import scripts.ilapfuncs
 
