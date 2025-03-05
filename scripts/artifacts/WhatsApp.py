@@ -14,7 +14,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
     whatsapp_wa_db = ''
     
     for file_found in files_found:
-        
+
         file_name = str(file_found)
         if file_name.endswith('msgstore.db'):
            whatsapp_msgstore_db = str(file_found)
