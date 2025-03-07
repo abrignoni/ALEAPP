@@ -17,7 +17,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist_in_db, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_airGuard(files_found, report_folder, seeker, wrap_text, time_offset):
     
@@ -29,7 +29,7 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text, time_offset):
         
         if file_found.endswith('attd_db'):
             db = open_sqlite_db_readonly(file_found)
-            location_table_exists = does_table_exist(db, 'location')
+            location_table_exists = does_table_exist_in_db(file_found, 'location')
             cursor = db.cursor()
             if location_table_exists:
                 cursor.execute('''

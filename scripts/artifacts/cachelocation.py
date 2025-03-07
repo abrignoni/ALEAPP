@@ -13,7 +13,7 @@ def get_cachelocation(files_found, report_folder, seeker, wrap_text, time_offset
     for file_found in files_found:
         
         file_name = str(file_found)
-        source_file = file_found.replace(seeker.directory, '')
+        source_file = file_found.replace(seeker.data_folder, '')
  
         data_list = []
  

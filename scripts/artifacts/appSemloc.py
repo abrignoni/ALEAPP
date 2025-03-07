@@ -18,7 +18,7 @@ import pathlib
 import json
 import blackboxprotobuf
 from datetime import *
-import scripts.ccl_leveldb
+from scripts.ccl import ccl_leveldb
 
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -29,7 +29,7 @@ def get_appSemloc(files_found, report_folder, seeker, wrap_text, timezone_offset
     data_list = []
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     for in_db_dir in in_dirs:
-        leveldb_records = scripts.ccl_leveldb.RawLevelDb(in_db_dir)
+        leveldb_records = ccl_leveldb.RawLevelDb(in_db_dir)
         
         for record in leveldb_records.iterate_records_raw():
             #print(record.seq, record.user_key, record.value)

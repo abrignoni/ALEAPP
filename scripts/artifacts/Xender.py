@@ -12,7 +12,7 @@ def get_Xender(files_found, report_folder, seeker, wrap_text, time_offset):
         file_found = str(file_found)
         
         if file_found.endswith('-db'):
-            source_file = file_found.replace(seeker.directory, '')
+            source_file = file_found.replace(seeker.data_folder, '')
             break
         
     db = open_sqlite_db_readonly(file_found)

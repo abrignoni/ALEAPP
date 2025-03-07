@@ -33,7 +33,7 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset
         file_found = str(file_found)
         if file_found.lower().endswith('turbo.db'):
             turbo_db = str(file_found)
-            source_file_turbo = file_found.replace(seeker.directory, '')
+            source_file_turbo = file_found.replace(seeker.data_folder, '')
            
             db = open_sqlite_db_readonly(turbo_db)
             cursor = db.cursor()
@@ -73,7 +73,7 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset
 
         if file_found.lower().endswith('bluetooth.db'):
             bluetooth_db = str(file_found)
-            source_file_bluetooth = file_found.replace(seeker.directory, '')
+            source_file_bluetooth = file_found.replace(seeker.data_folder, '')
            
             db = open_sqlite_db_readonly(bluetooth_db)
             cursor = db.cursor()

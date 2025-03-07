@@ -28,12 +28,12 @@ def get_gmailEmails(files_found, report_folder, seeker, wrap_text, time_offset):
             continue
         if os.path.basename(file_found).startswith('bigTopDataDB'):
             bigTopDataDB = str(file_found)
-            source_bigTop = file_found.replace(seeker.directory, '')
+            source_bigTop = file_found.replace(seeker.data_folder, '')
             bigTopDataDB_found.append(bigTopDataDB)
             source_bigTop_found.append(source_bigTop)
         if os.path.basename(file_found).startswith('downloader.db'):
             downloaderDB = str(file_found)
-            source_downloader = file_found.replace(seeker.directory, '')
+            source_downloader = file_found.replace(seeker.data_folder, '')
         
     for i in range(len(bigTopDataDB_found)):
         bigTopDataDB = bigTopDataDB_found[i]

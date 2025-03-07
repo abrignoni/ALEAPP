@@ -11,9 +11,9 @@ page_header = \
         <!-- Dark mode -->
         <link rel="stylesheet" href="_elements/dark-mode.css">
         <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+        <link rel="stylesheet" href="_elements/all.css">
         <!-- Google Fonts Roboto -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+        <link rel="stylesheet" href="_elements/Roboto.css">
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/bootstrap.min.css">
         <!-- Material Design Bootstrap - TOGGLE THIS FOR ALTERNATE DESIGN!-->
@@ -46,7 +46,7 @@ body_start = \
 """
     <!-- Start your project here-->
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">{0}</a>
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="index.html">{0}</a>
         <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" id="darkSwitch" />
             <label class="custom-control-label mr-2" for="darkSwitch" style="color:white">Dark Switch</label>
