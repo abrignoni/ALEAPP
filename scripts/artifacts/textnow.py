@@ -13,7 +13,7 @@ def get_textnow(files_found, report_folder, seeker, wrap_text, time_offset):
         file_name = str(file_found)
         if file_name.endswith('textnow_data.db'):
            textnow_db = str(file_found)
-           source_file_msg = file_found.replace(seeker.directory, '')
+           source_file_msg = file_found.replace(seeker.data_folder, '')
 
     db = open_sqlite_db_readonly(textnow_db)
     cursor = db.cursor()

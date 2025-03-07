@@ -21,7 +21,7 @@ from scripts.ccl import ccl_leveldb
 from datetime import datetime, timedelta
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, kmlgen, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 def get_sharedProto(files_found, report_folder, seeker, wrap_text, time_offset):
     

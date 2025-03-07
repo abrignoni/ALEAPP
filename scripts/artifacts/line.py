@@ -16,11 +16,11 @@ def get_line(files_found, report_folder, seeker, wrap_text, time_offset):
         file_name = str(file_found)
         if file_name.lower().endswith('naver_line'):
            line_msg_db = str(file_found)
-           source_file_msg = file_found.replace(seeker.directory, '')
+           source_file_msg = file_found.replace(seeker.data_folder, '')
 
         if file_name.lower().endswith('call_history'):
            line_call_db = str(file_found)
-           source_file_call = file_found.replace(seeker.directory, '')
+           source_file_call = file_found.replace(seeker.data_folder, '')
 
     db = open_sqlite_db_readonly(line_msg_db)
     cursor = db.cursor()

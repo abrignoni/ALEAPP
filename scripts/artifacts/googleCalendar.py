@@ -31,7 +31,7 @@ def get_calendar(files_found, report_folder, seeker, wrap_text, time_offset):
 
         if file_found.endswith('calendar.db'):
             calendarDB = file_found
-            source_calendarDB = file_found.replace(seeker.directory, '')
+            source_calendarDB = file_found.replace(seeker.data_folder, '')
             
             db = open_sqlite_db_readonly(calendarDB)
     
@@ -120,7 +120,7 @@ def get_calendar(files_found, report_folder, seeker, wrap_text, time_offset):
                 
         if file_found.endswith('cal_v2a'):
             g_calendarDB = file_found
-            source_g_calendarDB = file_found.replace(seeker.directory, '')
+            source_g_calendarDB = file_found.replace(seeker.data_folder, '')
 
         else:
             continue # Skip all other files

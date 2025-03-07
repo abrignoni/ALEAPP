@@ -47,12 +47,12 @@ def get_bumble(files_found, report_folder, seeker, wrap_text, time_offset):
         file_name = os.path.basename(file_found)
         if file_name == 'ChatComDatabase': # skip -journal and other files
             chat_db = file_found
-            source_file_chat_db = file_found.replace(seeker.directory, '')
+            source_file_chat_db = file_found.replace(seeker.data_folder, '')
             continue
 
         elif file_name.endswith('='):
             settings_file = file_found
-            source_file_settings = file_found.replace(seeker.directory, '')
+            source_file_settings = file_found.replace(seeker.data_folder, '')
             continue
     
     if settings_file != '':

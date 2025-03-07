@@ -15,15 +15,15 @@ def get_Viber(files_found, report_folder, seeker, wrap_text, time_offset):
         
         if file_found.endswith('_messages'):
            viber_messages_db = str(file_found)
-           source_file_messages = file_found.replace(seeker.directory, '')
+           source_file_messages = file_found.replace(seeker.data_folder, '')
 
         if file_found.endswith('_data'):
            viber_data_db = str(file_found)
-           source_file_data = file_found.replace(seeker.directory, '')
+           source_file_data = file_found.replace(seeker.data_folder, '')
 
         if file_found.endswith('viber_prefs'):
             viber_prefs_db = str(file_found)
-            viber_prefs_data = file_found.replace(seeker.directory, '') 
+            viber_prefs_data = file_found.replace(seeker.data_folder, '') 
 
     db = open_sqlite_db_readonly(viber_data_db)
     cursor = db.cursor()
