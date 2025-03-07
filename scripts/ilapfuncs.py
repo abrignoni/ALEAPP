@@ -347,6 +347,19 @@ def get_next_unused_name(path):
         num += 1
     return os.path.join(folder, new_name)
 
+def get_txt_file_content(file_path):
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            file_content = file.readlines()
+            return file_content
+    except FileNotFoundError:
+        logfunc(f"Error: File not found at {file_path}")
+    except PermissionError:
+        logfunc(f"Error: Permission denied when trying to read {file_path}")
+    except Exception as e:
+        logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
+    return []
+
 def get_sqlite_db_path(path):
     if is_platform_windows():
         if str(path).startswith('\\\\?\\UNC\\'): # UNC long path
