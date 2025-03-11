@@ -7,7 +7,7 @@ import scripts.artifacts.artGlobals
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, logdevinfo, tsv, timeline, is_platform_windows
 
-def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
     data_list = []
     file_found = str(files_found[0])
     

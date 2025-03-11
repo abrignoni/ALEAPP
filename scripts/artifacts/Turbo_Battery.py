@@ -20,7 +20,7 @@ from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text):
     
     source_file_bluetooth = ''
     source_file_turbo = ''
@@ -66,7 +66,7 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset
                     if timestamp is None:
                         pass
                     else:
-                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),'UTC')
                     data_list_battery.append((timestamp,row[1],row[2],row[3],row[4],file_found))
             
             db.close()
@@ -97,7 +97,7 @@ def get_Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset
                     if timestamp is None:
                         pass
                     else:
-                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),'UTC')
                     data_list_bluetooth.append((timestamp,row[1],row[2],row[3],row[4],row[5],file_found))
             db.close()
     

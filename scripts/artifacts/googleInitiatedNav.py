@@ -3,7 +3,7 @@ from datetime import *
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, convert_utc_human_to_timezone, kmlgen, timeline
 
-def get_googleInitiatedNav(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_googleInitiatedNav(files_found, report_folder, seeker, wrap_text):
     data_list = []
     for file_found in files_found:
         with open(file_found, 'rb') as f:
@@ -16,7 +16,7 @@ def get_googleInitiatedNav(files_found, report_folder, seeker, wrap_text, time_o
         if isinstance(values, dict):
             timestamp = values['1']['2']
             timestamp = datetime.fromtimestamp(timestamp/1000000, tz=timezone.utc)
-            timestamp = convert_utc_human_to_timezone(timestamp, time_offset)
+            timestamp = convert_utc_human_to_timezone(timestamp, 'UTC')
             intendeddest = values['1']['4']['1'].decode()
             
             data_list.append((timestamp, intendeddest))
@@ -24,7 +24,7 @@ def get_googleInitiatedNav(files_found, report_folder, seeker, wrap_text, time_o
             for data in values['1']:
                 timestamp = data['2']
                 timestamp = datetime.fromtimestamp(timestamp/1000000, tz=timezone.utc)
-                timestamp = convert_utc_human_to_timezone(timestamp, time_offset)
+                timestamp = convert_utc_human_to_timezone(timestamp, 'UTC')
                 intendeddest = data['4']['1'].decode()
                 
                 data_list.append((timestamp, intendeddest))

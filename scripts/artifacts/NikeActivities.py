@@ -10,7 +10,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_nike_activities(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_nike_activities(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Garmin Activities")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     file_found = str(files_found[0])

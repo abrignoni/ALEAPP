@@ -75,7 +75,7 @@ def get_user(file_found):
     return user
 
 
-def get_smyfiles_OpHistory(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_smyfiles_OpHistory(files_found, report_folder, seeker, wrap_text):
     html_source = ''
     Androidversion = aG.versionf
 

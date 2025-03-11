@@ -69,7 +69,7 @@ def decryptData(encryptedInput, masterKey):
     return(decryptedData)        
 
 ### Main
-def get_AVG(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_AVG(files_found, report_folder, seeker, wrap_text):
     
     ### Known variables to be used
     pinDict = {}

@@ -106,7 +106,7 @@ def parse_session_data(values, file_name, file_last_mod_date, report_folder):
 
     return Session(file_name, file_last_mod_date, session_type, session_from, session_queries, mp3_path)
 
-def get_quicksearch(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_quicksearch(files_found, report_folder, seeker, wrap_text):
     sessions = []
     base_folder = ''
     for file_found in files_found:

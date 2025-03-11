@@ -7,7 +7,7 @@ from datetime import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen
 
-def get_discordChats(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_discordChats(files_found, report_folder, seeker, wrap_text):
     
     # build a table mapping all non-printable characters to None
     NOPRINT_TRANS_TABLE = {

@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, abxread, checkabx
 
-def get_appops(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_appops(files_found, report_folder, seeker, wrap_text):
 
     permission_op = {
     "0":"COARSE_LOCATION",

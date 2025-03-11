@@ -44,7 +44,7 @@ import base64
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text):
     
     data_headers = []
     data_list = []
@@ -157,7 +157,7 @@ def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text, time_off
         logfunc('No Settings Services - Battery Usage v9 - Battery States data available')
 
 
-def get_app_usage_events(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_app_usage_events(files_found, report_folder, seeker, wrap_text):
     
     data_headers = []
     data_list = []

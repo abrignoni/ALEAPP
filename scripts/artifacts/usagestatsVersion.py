@@ -19,7 +19,7 @@ import scripts.artifacts.artGlobals
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_txt_file_content, device_info, logfunc
 
 @artifact_processor
-def usagestatsVersion(files_found, report_folder, seeker, wrap_text, time_offset):
+def usagestatsVersion(files_found, report_folder, seeker, wrap_text):
     source_path = get_file_path(files_found, "version")
     data_list = []
 

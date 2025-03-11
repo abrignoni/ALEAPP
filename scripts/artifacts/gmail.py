@@ -21,7 +21,7 @@ class keyboard_event:
         self.start_date = start_date
         self.end_date = end_date
 
-def get_gmailActive(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_gmailActive(files_found, report_folder, seeker, wrap_text):
     #logfunc("If you can read this, the module is working!")
     #logfunc(files_found)
     activeAccount = ''

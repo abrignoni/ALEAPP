@@ -4,7 +4,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
 
-def get_pSettings(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_pSettings(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
     

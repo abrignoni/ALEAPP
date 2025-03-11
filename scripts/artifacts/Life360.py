@@ -26,7 +26,7 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/'
 
-def get_Life360(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_Life360(files_found, report_folder, seeker, wrap_text):
     
     data_list_messaging = []
     data_list_places = []
@@ -81,10 +81,10 @@ def get_Life360(files_found, report_folder, seeker, wrap_text, time_offset):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
+                    time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
                     loc_time = ''
                     if not row[13] is None:
-                        loc_time = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[13]),time_offset)
+                        loc_time = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[13]),'UTC')
                     data_list_messaging.append((time_create,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],loc_time,messaging_db))
             db.close()
         
@@ -135,7 +135,7 @@ def get_Life360(files_found, report_folder, seeker, wrap_text, time_offset):
                     json_load = json.loads(row[1])
                 
                     json_timestamp = str(datetime.fromtimestamp(json_load['locationData'].get('time','')/1000,tz=timezone.utc))[:-6]
-                    time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(json_timestamp),time_offset)
+                    time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(json_timestamp),'UTC')
                     
                     json_lat = json_load['locationData'].get('latitude','')
                     json_long = json_load['locationData'].get('longitude','')

@@ -205,9 +205,6 @@ def process(casedata):
         casedata = {key: value.get() for key, value in casedata.items()}
         out_params = OutputParameters(output_folder)
         wrap_text = True
-        time_offset = timezone_set.get()
-        if time_offset == '':
-            time_offset = 'UTC'
 
         logtext_frame.grid(row=1, column=0, rowspan=3, padx=14, pady=4, sticky='nswe')
         bottom_frame.grid_remove()
@@ -217,7 +214,7 @@ def process(casedata):
 
         crunch_successful = aleapp.crunch_artifacts(
             selected_modules, extracttype, input_path, out_params, wrap_text, loader, 
-            casedata, time_offset, profile_filename)
+            casedata, profile_filename)
         
         lava_finalize_output(out_params.report_folder_base)
 
@@ -387,7 +384,6 @@ casedata = {'Case Number': tk.StringVar(),
             'Agency': tk.StringVar(),
             'Examiner': tk.StringVar(),
             }
-timezone_set = tk.StringVar()
 modules_filter_var = tk.StringVar()
 modules_filter_var.trace_add("write", filter_modules)  # Trigger filtering on input change
 pickModules()

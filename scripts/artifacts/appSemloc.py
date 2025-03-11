@@ -24,7 +24,7 @@ from scripts.ccl import ccl_leveldb
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, timeline, kmlgen 
 
-def get_appSemloc(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_appSemloc(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
     in_dirs = set(pathlib.Path(x).parent for x in files_found)

@@ -218,7 +218,7 @@ def file_decryption(files_found, dict_of_file_info, dict_of_pin_dicts, report_fo
 
 
 # MAIN #
-def get_NQVault(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_NQVault(files_found, report_folder, seeker, wrap_text):
     data_list = []
     list_of_enc_pins = []
     dict_of_file_info = {}
