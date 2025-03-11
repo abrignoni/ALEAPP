@@ -25,7 +25,7 @@ def get_browser_name(file_name):
     else:
         return 'Unknown'
 
-def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_chrome(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)

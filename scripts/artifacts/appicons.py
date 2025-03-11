@@ -29,7 +29,7 @@ class App:
         self.icons = {} # { Component: ('Label', icon, last_update), .. }
 
 @artifact_processor
-def appIcons(files_found, report_folder, seeker, wrap_text, time_offset):
+def appIcons(files_found, report_folder, seeker, wrap_text):
     artifact_info = inspect.stack()[0]
     source_path = get_file_path(files_found, "app_icons.db", "mirror")
     data_list = []

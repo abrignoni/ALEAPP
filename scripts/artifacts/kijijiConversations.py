@@ -32,7 +32,7 @@ conversations_query = \
     ORDER BY sortByDate ASC;
 '''
 
-def get_kijijiConversations(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_kijijiConversations(files_found, report_folder, seeker, wrap_text):
     file_found = str(files_found[0])
     logfunc(f'Database file {file_found} is being interrogated...')
     db = open_sqlite_db_readonly(file_found)

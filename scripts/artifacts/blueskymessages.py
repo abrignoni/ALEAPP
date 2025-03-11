@@ -19,7 +19,7 @@ from pathlib import Path
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc,tsv, is_platform_windows,open_sqlite_db_readonly,convert_ts_human_to_utc,timeline,utf8_in_extended_ascii
 
-def get_blueskymessages(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_blueskymessages(files_found, report_folder, seeker, wrap_text):
     
     actors_data_list = []
     messages_data_list = []

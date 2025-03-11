@@ -234,7 +234,7 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
         <html>
             <head>
                 <meta http-equiv="refresh" content="0; url=_HTML/index.html" />
-                <title>iLEAPP Report</title>
+                <title>ALEAPP Report</title>
             </head>
         </html>
         """
@@ -314,6 +314,3 @@ def mark_item_active(data, itemname):
     else:
         ret = data[0: pos] + " active" + data[pos:]
         return ret
-    
-    
-    

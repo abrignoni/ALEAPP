@@ -39,11 +39,6 @@ def validate_args(args):
     if args.load_profile and not os.path.exists(args.load_profile):
         raise argparse.ArgumentError(None, 'ALEAPP Profile file not found! Run the program again.')
 
-    try:
-        timezone = pytz.timezone(args.timezone)
-    except pytz.UnknownTimeZoneError:
-      raise argparse.ArgumentError(None, 'Unknown timezone! Run the program again.')
-        
 
 def create_profile(plugins, path):
     available_modules = [(module_data.category, module_data.name) for module_data in plugins]
@@ -144,7 +139,6 @@ def main():
     parser.add_argument('-o', '--output_path', required=False, action="store",
                         help='Path to base output folder (this must exist)')
     parser.add_argument('-i', '--input_path', required=False, action="store", help='Path to input file/folder')
-    parser.add_argument('-tz', '--timezone', required=False, action="store", default='UTC', type=str, help="Timezone name (e.g., 'America/New_York')")
     parser.add_argument('-w', '--wrap_text', required=False, action="store_false", default=True,
                         help='Do not wrap text for output of data files')
     parser.add_argument('-m', '--load_profile', required=False, action="store", help="Path to ALEAPP Profile file (.alprofile).")
@@ -284,7 +278,6 @@ def main():
     extracttype = args.t
     wrap_text = args.wrap_text
     output_path = os.path.abspath(args.output_path)
-    time_offset = args.timezone
     custom_output_folder = args.custom_output_folder
 
     # Android file system extractions contain paths > 260 char, which causes problems
@@ -299,13 +292,13 @@ def main():
     
     initialize_lava(input_path, out_params.report_folder_base, extracttype)
 
-    crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, time_offset, profile_filename)
+    crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, profile_filename)
 
     lava_finalize_output(out_params.report_folder_base)
 
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
-        loader: plugin_loader.PluginLoader, casedata, time_offset, profile_filename):
+        loader: plugin_loader.PluginLoader, casedata, profile_filename):
     start = process_time()
     start_wall = perf_counter()
  
@@ -350,7 +343,6 @@ def crunch_artifacts(
 
     log = open(os.path.join(out_params.report_folder_base, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
     log.write(f'Extraction/Path selected: {input_path}<br><br>')
-    log.write(f'Timezone selected: {time_offset}<br><br>')
     
     parsed_modules = 0
 
@@ -388,7 +380,7 @@ def crunch_artifacts(
                     logfunc('Error was {}'.format(str(ex)))
                     continue  # cannot do work
             try:
-                plugin.method(files_found, category_folder, seeker, wrap_text, time_offset)
+                plugin.method(files_found, category_folder, seeker, wrap_text)
             except Exception as ex:
                 logfunc('Reading {} artifact had errors!'.format(plugin.name))
                 logfunc('Error was {}'.format(str(ex)))

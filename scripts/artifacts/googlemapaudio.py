@@ -14,7 +14,7 @@ def convertGeo(s):
     else:
         return (s)
 
-def get_googlemapaudio(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
 
     files_found = list(filter(lambda x: "sbin" not in x, files_found))
 

@@ -59,7 +59,7 @@ def modded_media_to_html(input):
     return thumb
 
 
-def get_smyfiles_trash(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_smyfiles_trash(files_found, report_folder, seeker, wrap_text):
     if files_found:
         separator = ".!%#@$"
         data_list = []

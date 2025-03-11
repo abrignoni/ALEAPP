@@ -4,7 +4,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, media_to_html
 
-def get_smyfilescache(files_found, report_folder, seeker, text_wrap, time_offset):
+def get_smyfilescache(files_found, report_folder, seeker, text_wrap):
     
     is_windows = is_platform_windows()
     splitter = '\\' if is_windows else '/'

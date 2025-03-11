@@ -55,11 +55,23 @@ def initialize_lava(input_path, output_path, input_type):
                         module_name TEXT, 
                         artifact_name TEXT, 
                         name TEXT, 
-                        media_updated_at INTEGER,
                         FOREIGN KEY (media_item_id) REFERENCES _lava_media_items(id))''')
+    cursor.execute('''CREATE VIEW _lava_media_info AS 
+                        SELECT 
+                            lmr.id as 'media_ref_id', 
+                            lmr.media_item_id, 
+                            lmr.module_name, 
+                            lmr.artifact_name, 
+                            lmr.name, 
+                            lmi.source_path, 
+                            lmi.extraction_path, 
+                            lmi.type, 
+                            lmi.metadata, 
+                            lmi.created_at, 
+                            lmi.updated_at 
+                        FROM _lava_media_references as lmr 
+                        LEFT JOIN _lava_media_items as lmi ON lmr.media_item_id = lmi.id''')
     
-    #return lava_data, lava_db
-
 def lava_process_artifact(category, module_name, artifact_name, data, record_count=None, data_views=None):
     global lava_data
     
@@ -232,31 +244,18 @@ def lava_insert_sqlite_media_references(media_references):
     global lava_db
     cursor = lava_db.cursor()
     cursor.execute(f'''INSERT INTO _lava_media_references 
-                ("id", "media_item_id", "module_name", "artifact_name", "name", "media_updated_at") 
+                ("id", "media_item_id", "module_name", "artifact_name", "name")
                 VALUES ("{media_references.id}", "{media_references.media_item_id}", 
                 "{media_references.module_name}", "{media_references.artifact_name}", 
-                "{media_references.name}", "{media_references.media_updated_at}")''')
+                "{media_references.name}")''')
     lava_db.commit()
 
 def lava_get_full_media_info(media_ref_id):
     global lava_db
     cursor = lava_db.cursor()
     query = f'''
-    SELECT 
-        lmr.id as 'media_ref_id', 
-        lmr.media_item_id, 
-        lmr.module_name, 
-        lmr.artifact_name, 
-        lmr.name,
-        lmr.media_updated_at, 
-        lmi.source_path, 
-        lmi.extraction_path, 
-        lmi.type, 
-        lmi.metadata, 
-        lmi.created_at, 
-        lmi.updated_at
-    FROM _lava_media_references as lmr
-    LEFT JOIN _lava_media_items as lmi ON lmr.media_item_id = lmi.id
+    SELECT *
+    FROM _lava_media_info
     WHERE media_ref_id = '{media_ref_id}'
     '''
     return cursor.execute(query).fetchone()

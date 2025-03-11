@@ -19,7 +19,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text):
     
     data_list_master = []
     data_list_search = []
@@ -67,7 +67,7 @@ def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset
                     if last_mod_date is None:
                         pass
                     else:
-                        last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),time_offset)
+                        last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),'UTC')
                 
                     data_list_master.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],file_found))
             db.close()
@@ -94,7 +94,7 @@ def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset
                     if timestamp is None:
                         pass
                     else:
-                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),'UTC')
                     data_list_search.append((timestamp,row[1],file_found))
             db.close()
             

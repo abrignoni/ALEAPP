@@ -21,7 +21,7 @@ from datetime import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_calendar(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_calendar(files_found, report_folder, seeker, wrap_text):
     
     data_list_events = []
     data_list_calendars = []
@@ -68,13 +68,13 @@ def get_calendar(files_found, report_folder, seeker, wrap_text, time_offset):
                     if event_start is None:
                         pass
                     else:
-                        event_start = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_start),time_offset)
+                        event_start = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_start),'UTC')
 
                     event_end = row[1]
                     if event_end is None:
                         pass
                     else:
-                        event_end = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_end),time_offset)
+                        event_end = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_end),'UTC')
                 
                     data_list_events.append((event_start,event_end,row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10], calendarDB))
                     
@@ -114,7 +114,7 @@ def get_calendar(files_found, report_folder, seeker, wrap_text, time_offset):
                     if cal_sync is None:
                         pass
                     else:
-                        cal_sync = convert_utc_human_to_timezone(convert_ts_human_to_utc(cal_sync),time_offset)
+                        cal_sync = convert_utc_human_to_timezone(convert_ts_human_to_utc(cal_sync),'UTC')
                     
                     data_list_calendars.append((cal_sync,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11], calendarDB))       
                 

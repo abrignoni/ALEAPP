@@ -5,7 +5,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist_in_db
 
-def get_calllogs(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_calllogs(files_found, report_folder, seeker, wrap_text):
 
     source_file = ''
     for file_found in files_found:

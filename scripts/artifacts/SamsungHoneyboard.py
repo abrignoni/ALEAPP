@@ -32,7 +32,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, media_to_html, convert_utc_human_to_timezone
 
 
-def get_Honeyboard_Clipboard(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_Honeyboard_Clipboard(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Samsung Honeyboard - Clipboard History")
  
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
@@ -52,7 +52,7 @@ def get_Honeyboard_Clipboard(files_found, report_folder, seeker, wrap_text, time
                 text = row[3]
                 caller_app_uid = row[4]
                 timestamp = datetime.fromtimestamp(timestamp/1000, tz=timezone.utc)
-                timestamp = convert_utc_human_to_timezone(timestamp, time_offset)
+                timestamp = convert_utc_human_to_timezone(timestamp, 'UTC')
                 data_list.append((timestamp,id,type,text,caller_app_uid))
         
         if len(data_list):
@@ -78,7 +78,7 @@ def get_Honeyboard_Clipboard(files_found, report_folder, seeker, wrap_text, time
 
         db.close()
 
-def get_honeyboard_screenshot(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_honeyboard_screenshot(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Samsung Honeyboard - Clipboard Screenshot")
     data_list = []
 

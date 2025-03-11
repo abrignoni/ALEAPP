@@ -350,7 +350,7 @@ def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
     _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name, tl_bool)
 
 
-def get_snapchat(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_snapchat(files_found, report_folder, seeker, wrap_text):
     db_file = None
     db_file_name = None
     xml_file = None

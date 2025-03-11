@@ -53,7 +53,7 @@ def read_messages_from_backup(file_found):
             logfunc('Not the right format!')
     return []
 
-def get_sms_mms_from_backup(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_sms_mms_from_backup(files_found, report_folder, seeker, wrap_text):
     sms_messages = []
     mms_messages = []
 

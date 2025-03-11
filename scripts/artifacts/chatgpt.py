@@ -35,7 +35,7 @@ def is_image(file_path):
     except IOError:
         return False
 
-def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_chatgpt(files_found, report_folder, seeker, wrap_text):
     counter=1
     for file_found in files_found:
         file_found = str(file_found)
@@ -81,8 +81,8 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                     cdatetime_obj_no_microseconds = cdatetime_obj.replace(microsecond=0)
                     mdatetime_obj = datetime.fromisoformat(mdate_without_z).replace(tzinfo=timezone.utc)
                     mdatetime_obj_no_microseconds = mdatetime_obj.replace(microsecond=0)
-                    conv_cdate = convert_utc_human_to_timezone(cdatetime_obj_no_microseconds, time_offset)
-                    conv_mdate = convert_utc_human_to_timezone(mdatetime_obj_no_microseconds, time_offset)
+                    conv_cdate = convert_utc_human_to_timezone(cdatetime_obj_no_microseconds, 'UTC')
+                    conv_mdate = convert_utc_human_to_timezone(mdatetime_obj_no_microseconds, 'UTC')
                     data_list.append((conv_cdate,conv_mdate,row[5],row[6],row[7],row[0],row[1],row[2]))
 
                 report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
@@ -154,7 +154,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                     if row[5] is not None and row[5].endswith("Z"):
                         date_without_z = row[5].rstrip('Z')
                         datetime_obj = datetime.fromisoformat(date_without_z).replace(tzinfo=timezone.utc)
-                        message_date = convert_utc_human_to_timezone(datetime_obj, time_offset)
+                        message_date = convert_utc_human_to_timezone(datetime_obj, 'UTC')
                         data_list.append((message_date,row[0],row[1],row[2],row[3],row[4],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14]))
                     else:
                         data_list.append((row[5],row[0],row[1],row[2],row[3],row[4],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14]))
@@ -188,7 +188,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                             picture = userinfo.get('picture', '')
                             created_timestamp = int(userinfo.get('created', 0))
                             created = datetime.fromtimestamp(created_timestamp, tz=timezone.utc)
-                            createdts = convert_utc_human_to_timezone(created, time_offset)
+                            createdts = convert_utc_human_to_timezone(created, 'UTC')
                             data_list.append((id,email,name,createdts,picture))
                         except:
                             logfunc(f'Error parsing ChatGPT - error occured when parsing {file_name} protobuf')
@@ -270,7 +270,7 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text, time_offset):
                                 email = user.get('email', '')
                                 name = user.get('name', '')
                                 created = datetime.fromtimestamp(int(user.get('created', 0)), tz=timezone.utc)
-                                createdts = convert_utc_human_to_timezone(created, time_offset)
+                                createdts = convert_utc_human_to_timezone(created, 'UTC')
 
                                 subscription = account.get('subscription', {})
                                 subscription_plan = subscription.get('plan', '')

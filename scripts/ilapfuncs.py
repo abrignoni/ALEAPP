@@ -1,18 +1,17 @@
 # common standard imports
 import codecs
-from datetime import *
+import csv
+import hashlib
+import inspect
+import json
+import math
 import os
 import re
 import shutil
-import sys
-import math
-import inspect
-import hashlib
-import csv
-import xml
-import json
 import sqlite3
+import sys
 
+from datetime import *
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote
@@ -21,22 +20,53 @@ import scripts.artifact_report as artifact_report
 # common third party imports
 import pytz
 import simplekml
-from bs4 import BeautifulSoup
 from scripts.filetype import guess_mime, guess_extension
 from functools import wraps
 
 # LEAPP version unique imports
-import binascii
-import math
-from PIL import Image
 from geopy.geocoders import Nominatim
 
-from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_get_media_item, lava_insert_sqlite_media_item, lava_insert_sqlite_media_references, lava_get_media_references, lava_get_full_media_info
+from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_get_media_item, \
+    lava_insert_sqlite_media_item, lava_insert_sqlite_media_references, lava_get_media_references, \
+    lava_get_full_media_info
 
 os.path.basename = lru_cache(maxsize=None)(os.path.basename)
 
 identifiers = {}
 icons = {}
+
+class OutputParameters:
+    '''Defines the parameters that are common for '''
+    # static parameters
+    nl = '\n'
+    screen_output_file_path = ''
+
+    def __init__(self, output_folder, custom_folder_name=None):
+        now = datetime.now()
+        currenttime = str(now.strftime('%Y-%m-%d_%A_%H%M%S'))
+        if custom_folder_name:
+            folder_name = custom_folder_name
+        else:
+            folder_name = 'ALEAPP_Reports_' + currenttime
+        self.report_folder_base = os.path.join(output_folder, folder_name)
+        self.data_folder = os.path.join(self.report_folder_base, 'data')
+        OutputParameters.screen_output_file_path = os.path.join(
+            self.report_folder_base, 'Script Logs', 'Screen Output.html')
+        OutputParameters.screen_output_file_path_devinfo = os.path.join(
+            self.report_folder_base, 'Script Logs', 'DeviceInfo.html')
+
+        os.makedirs(os.path.join(self.report_folder_base, 'Script Logs'))
+        os.makedirs(self.data_folder)
+        
+class GuiWindow:
+    '''This only exists to hold window handle if script is run from GUI'''
+    window_handle = None  # static variable
+
+    @staticmethod
+    def SetProgressBar(n, total):
+        if GuiWindow.window_handle:
+            progress_bar = GuiWindow.window_handle.nametowidget('!progressbar')
+            progress_bar.config(value=n)
 
 class MediaItem():
     def __init__(self, id):
@@ -64,7 +94,6 @@ class MediaReferences():
         self.module_name = ""
         self.artifact_name = ""
         self.name = ""
-        self.media_updated_at = 0
     
     def set_values(self, media_ref_info):
         self.id = media_ref_info[0]
@@ -72,20 +101,22 @@ class MediaReferences():
         self.module_name = media_ref_info[2]
         self.artifact_name = media_ref_info[3]
         self.name = media_ref_info[4]
-        self.media_updated_at = media_ref_info[5]
 
-def get_file_path(files_found, filename, skip=False):
-    """Returns the path of the searched filename if exists or returns None"""
-    try:
-        for file_found in files_found:
-            if skip:
-                if skip in file_found:
-                    continue
-            if file_found.endswith(filename):
-                return file_found
-    except Exception as e:
-        logfunc(f"Error: {str(e)}")
-    return None        
+
+def logfunc(message=""):
+    def redirect_logs(string):
+        log_text.insert('end', string)
+        log_text.see('end')
+        log_text.update()
+
+    if GuiWindow.window_handle:
+        log_text = GuiWindow.window_handle.nametowidget('logs_frame.log_text')
+        sys.stdout.write = redirect_logs
+
+    with open(OutputParameters.screen_output_file_path, 'a', encoding='utf8') as a:
+        print(message)
+        a.write(message + '<br>' + OutputParameters.nl)
+
 
 def strip_tuple_from_headers(data_headers):
     return [header[0] if isinstance(header, tuple) else header for header in data_headers]
@@ -100,6 +131,117 @@ def check_output_types(type, output_types):
         return True
     else:
         return False
+
+def get_media_references_id(media_id, artifact_info, name):
+    artifact_name = artifact_info.function
+    return hashlib.sha1(f"{media_id}-{artifact_name}-{name}".encode()).hexdigest()
+
+def set_media_references(media_ref_id, media_id, artifact_info, name):
+    module_name = Path(artifact_info.filename).stem
+    artifact_name = artifact_info.function
+    media_references = MediaReferences(media_ref_id)
+    media_references.set_values((
+        media_ref_id, media_id, module_name, artifact_name, name
+    ))
+    lava_insert_sqlite_media_references(media_references)
+
+def check_in_media(seeker, file_path, artifact_info, name="", already_extracted=False, converted_file_path=False):
+    if already_extracted:
+        file_info_key = file_path
+    else:
+        file_info_key = seeker.search(file_path, return_on_first_hit=True)
+    file_info = seeker.file_infos.get(file_info_key) if file_info_key else None
+    if file_info:
+        if converted_file_path:
+            extraction_path = Path(converted_file_path)
+        else:
+            extraction_path = Path(file_info_key)
+        if extraction_path.is_file():
+            media_id = hashlib.sha1(f"{extraction_path}".encode()).hexdigest()
+            lava_media_item = lava_get_media_item(media_id)
+            if lava_media_item:
+                return media_id
+            else:
+                media_item = MediaItem(media_id)
+                media_item.source_path = file_info.source_path
+                media_item.extraction_path = extraction_path
+                media_item.mimetype = guess_mime(extraction_path)
+                media_item.metadata = "not implemented yet"
+                media_item.created_at = file_info.creation_date
+                media_item.updated_at = file_info.modification_date
+                lava_insert_sqlite_media_item(media_item)
+                media_ref_id = get_media_references_id(media_id, artifact_info, name)
+                set_media_references(media_ref_id, media_id, artifact_info, name)
+            return media_id
+        else:
+            logfunc(f"{extraction_path} was not found")
+            return None            
+    else:
+        logfunc(f'No matching file found for "{file_path}"')
+        return None
+
+def check_in_embedded_media(seeker, source_file, data, artifact_info, name="", media_updated_at=0):
+    file_info = seeker.file_infos.get(source_file)
+    if data and file_info:
+        media_id = hashlib.sha1(data).hexdigest()
+        media_ref_id = get_media_references_id(media_id, artifact_info, name)
+        lava_media_ref = lava_get_media_references(media_ref_id)
+        if lava_media_ref:
+            return media_ref_id
+        lava_media_item = lava_get_media_item(media_id)
+        if not lava_media_item:
+            media_item = MediaItem(media_id)
+            media_item.mimetype = guess_mime(data)
+            media_item.source_path = file_info.source_path
+            media_item.metadata = "not implemented yet"
+            media_item.created_at = 0
+            media_item.updated_at = 0
+            target_folder_name = f"{Path(source_file).stem}_embedded_media"
+            target_path = Path(source_file).parent.joinpath(target_folder_name)
+            media_extension = guess_extension(data)
+            media_item.extraction_path = Path(target_path).joinpath(f"{media_id}.{media_extension}")
+            try:
+                target_path.mkdir(parents=True, exist_ok=True)
+                with open(media_item.extraction_path, "wb") as file:
+                    file.write(data)
+            except Exception as ex:
+                logfunc(f'Could not copy embedded media into {target_path} ' + str(ex))
+            lava_insert_sqlite_media_item(media_item)
+        set_media_references(media_ref_id, media_id, artifact_info, name)
+        return media_ref_id
+    else:
+        return None
+
+def html_media_tag(media_path, mimetype, style, title=''):
+    def relative_paths(source):
+        splitter = '\\' if is_platform_windows() else '/'
+        first_split = source.split(splitter)
+        for x in first_split:
+            if 'data' in x:
+                index = first_split.index(x)
+                last_split = source.split(first_split[index - 1])
+                return '..' + last_split[1].replace('\\', '/')
+            elif '_HTML' in x:
+                index = first_split.index(x)
+                last_split = source.split(first_split[index])
+                return '.' + last_split[1].replace('\\', '/')
+        return source
+
+    filename = Path(media_path).name
+    media_path = quote(relative_paths(media_path))
+
+    if mimetype == None:
+        mimetype = ''
+    if 'video' in mimetype:
+        thumb = f'<video width="320" height="240" controls="controls"><source src="{media_path}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
+    elif 'image' in mimetype:
+        image_style = style if style else "max-height:300px; max-width:400px;"
+        thumb = f'<a href="{media_path}" target="_blank"><img title="{title}"  src="{media_path}" style="{image_style}"></img></a>'
+    elif 'audio' in mimetype:
+        thumb = f'<audio controls><source src="{media_path}" type="audio/ogg"><source src="{media_path}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
+    else:
+        thumb = f'<a href="{media_path}" target="_blank"> Link to {filename} file</>'
+    return thumb
 
 def get_data_list_with_media(media_header_idx, data_list, media_style):
     ''' 
@@ -123,10 +265,10 @@ def get_data_list_with_media(media_header_idx, data_list, media_style):
                 if isinstance(media_ref_id, list):
                     for item in media_ref_id:
                         media_item = lava_get_full_media_info(item)
-                        html_code += html_media_tag(media_item[7], media_item[8], style, media_item[4])
+                        html_code += html_media_tag(media_item[6], media_item[7], style, media_item[4])
                 else:
                     media_item = lava_get_full_media_info(media_ref_id)
-                    html_code = html_media_tag(media_item[7], media_item[8], style, media_item[4])
+                    html_code = html_media_tag(media_item[6], media_item[7], style, media_item[4])
                 html_data[idx] = html_code
             else:
                 html_data[idx] = ''
@@ -136,10 +278,9 @@ def get_data_list_with_media(media_header_idx, data_list, media_style):
         txt_data_list.append(tuple(txt_data))
     return html_data_list, txt_data_list
 
-
 def artifact_processor(func):
     @wraps(func)
-    def wrapper(files_found, report_folder, seeker, wrap_text, timezone_offset):
+    def wrapper(files_found, report_folder, seeker, wrap_text):
         module_name = func.__module__.split('.')[-1]
         func_name = func.__name__
 
@@ -155,7 +296,7 @@ def artifact_processor(func):
 
         output_types = artifact_info.get('output_types', ['html', 'tsv', 'timeline', 'lava', 'kml'])
 
-        data_headers, data_list, source_path = func(files_found, report_folder, seeker, wrap_text, timezone_offset)
+        data_headers, data_list, source_path = func(files_found, report_folder, seeker, wrap_text)
         
         if not source_path:
             logfunc(f"No file found")
@@ -206,84 +347,6 @@ def artifact_processor(func):
         return data_headers, data_list, source_path
     return wrapper
 
-class OutputParameters:
-    '''Defines the parameters that are common for '''
-    # static parameters
-    nl = '\n'
-    screen_output_file_path = ''
-
-    def __init__(self, output_folder, custom_folder_name=None):
-        now = datetime.now()
-        currenttime = str(now.strftime('%Y-%m-%d_%A_%H%M%S'))
-        if custom_folder_name:
-            folder_name = custom_folder_name
-        else:
-            folder_name = 'ALEAPP_Reports_' + currenttime
-        self.report_folder_base = os.path.join(output_folder, folder_name)
-        self.data_folder = os.path.join(self.report_folder_base, 'data')
-        OutputParameters.screen_output_file_path = os.path.join(self.report_folder_base, 'Script Logs',
-                                                                'Screen Output.html')
-        OutputParameters.screen_output_file_path_devinfo = os.path.join(self.report_folder_base, 'Script Logs',
-                                                                        'DeviceInfo.html')
-
-        os.makedirs(os.path.join(self.report_folder_base, 'Script Logs'))
-        os.makedirs(self.data_folder)
-        
-### New timestamp conversion functions
-def convert_unix_ts_in_seconds(ts):
-    digits = int(math.log10(ts))+1
-    if digits > 10:
-        extra_digits = digits - 10
-        ts = ts // 10**extra_digits
-    return int(ts)
-
-def convert_unix_ts_to_utc(ts):
-    if ts:
-        ts = convert_unix_ts_in_seconds(ts)
-        return datetime.fromtimestamp(ts, tz=timezone.utc)
-    else:
-        return ts
-
-def convert_local_to_utc(local_timestamp_str):
-    # Parse the timestamp string with timezone offset, ex. 2023-10-27 18:18:29-0400
-    local_timestamp = datetime.strptime(local_timestamp_str, "%Y-%m-%d %H:%M:%S%z")
-    
-    # Convert to UTC timestamp
-    utc_timestamp = local_timestamp.astimezone(timezone.utc)
-    
-    # Return the UTC timestamp
-    return utc_timestamp
-
-def convert_time_obj_to_utc(ts):
-    timestamp = ts.replace(tzinfo=timezone.utc)
-    return timestamp
-
-def convert_utc_human_to_timezone(utc_time, time_offset): 
-    #fetch the timezone information
-    timezone = pytz.timezone(time_offset)
-    
-    #convert utc to timezone
-    timezone_time = utc_time.astimezone(timezone)
-    
-    #return the converted value
-    return timezone_time
-
-def timestampsconv(webkittime):
-    unix_timestamp = webkittime + 978307200
-    finaltime = datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
-    return(finaltime)
-
-def convert_ts_human_to_utc(ts): #This is for timestamp in human form
-    if '.' in ts:
-        ts = ts.split('.')[0]
-        
-    dt = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S') #Make it a datetime object
-    timestamp = dt.replace(tzinfo=timezone.utc) #Make it UTC
-    return timestamp
-
-def convert_ts_int_to_utc(ts): #This int timestamp to human format & utc
-    timestamp = datetime.fromtimestamp(ts, tz=timezone.utc)
-    return timestamp
 
 def is_platform_linux():
     '''Returns True if running on Linux'''
@@ -296,64 +359,6 @@ def is_platform_macos():
 def is_platform_windows():
     '''Returns True if running on Windows'''
     return sys.platform == 'win32'
-
-def utf8_in_extended_ascii(input_string, *, raise_on_unexpected=False):
-    """Returns a tuple of bool (whether mis-encoded utf-8 is present) and str (the converted string)"""
-    output = []  # individual characters, join at the end
-    is_in_multibyte = False  # True if we're currently inside a utf-8 multibyte character
-    multibytes_expected = 0
-    multibyte_buffer = []
-    mis_encoded_utf8_present = False
-    
-    def handle_bad_data(index, character):
-        if not raise_on_unexpected: # not raising, so we dump the buffer into output and append this character
-            output.extend(multibyte_buffer)
-            multibyte_buffer.clear()
-            output.append(character)
-            nonlocal is_in_multibyte
-            is_in_multibyte = False
-            nonlocal multibytes_expected
-            multibytes_expected = 0
-        else:
-            raise ValueError(f"Expected multibyte continuation at index: {index}")
-            
-    for idx, c in enumerate(input_string):
-        code_point = ord(c)
-        if code_point <= 0x7f or code_point > 0xf4:  # ASCII Range data or higher than you get for mis-encoded utf-8:
-            if not is_in_multibyte:
-                output.append(c)  # not in a multibyte, valid ascii-range data, so we append
-            else:
-                handle_bad_data(idx, c)
-        else:  # potentially utf-8
-            if (code_point & 0xc0) == 0x80:  # continuation byte
-                if is_in_multibyte:
-                    multibyte_buffer.append(c)
-                else:
-                    handle_bad_data(idx, c)
-            else:  # start-byte
-                if not is_in_multibyte:
-                    assert multibytes_expected == 0
-                    assert len(multibyte_buffer) == 0
-                    while (code_point & 0x80) != 0:
-                        multibytes_expected += 1
-                        code_point <<= 1
-                    multibyte_buffer.append(c)
-                    is_in_multibyte = True
-                else:
-                    handle_bad_data(idx, c)
-                    
-        if is_in_multibyte and len(multibyte_buffer) == multibytes_expected:  # output utf-8 character if complete
-            utf_8_character = bytes(ord(x) for x in multibyte_buffer).decode("utf-8")
-            output.append(utf_8_character)
-            multibyte_buffer.clear()
-            is_in_multibyte = False
-            multibytes_expected = 0
-            mis_encoded_utf8_present = True
-        
-    if multibyte_buffer:  # if we have left-over data
-        handle_bad_data(len(input_string), "")
-    
-    return mis_encoded_utf8_present, "".join(output)
 
 def sanitize_file_path(filename, replacement_char='_'):
     r'''
@@ -387,6 +392,20 @@ def get_next_unused_name(path):
         num += 1
     return os.path.join(folder, new_name)
 
+
+def get_file_path(files_found, filename, skip=False):
+    """Returns the path of the searched filename if exists or returns None"""
+    try:
+        for file_found in files_found:
+            if skip:
+                if skip in file_found:
+                    continue
+            if file_found.endswith(filename):
+                return file_found
+    except Exception as e:
+        logfunc(f"Error: {str(e)}")
+    return None        
+
 def get_txt_file_content(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as file:
@@ -413,7 +432,6 @@ def get_sqlite_db_path(path):
     else:
         return path
 
-
 def open_sqlite_db_readonly(path):
     '''Opens a sqlite db in read-only mode, so original db (and -wal/journal are intact)'''
     try:
@@ -425,7 +443,6 @@ def open_sqlite_db_readonly(path):
         logfunc(f"Error with {path}:")
         logfunc(f" - {str(e)}")
     return None
-    # return sqlite3.connect(f"file:{path}?mode=ro", uri=True)
 
 def attach_sqlite_db_readonly(path, db_name):
     '''Return the query to attach a sqlite db in read-only mode.
@@ -483,90 +500,19 @@ def does_table_exist_in_db(path, table_name):
             logfunc(f"Query error, query={query} Error={str(ex)}")
     return False
 
+def does_view_exist(path, table_name):
+    '''Checks if a table with specified name exists in an sqlite db'''
+    db = open_sqlite_db_readonly(path)
+    if db:
+        try:
+            query = f"SELECT name FROM sqlite_master WHERE type='view' AND name='{table_name}'"
+            cursor = db.execute(query)
+            for row in cursor:
+                return True
+        except sqlite3.Error as ex:
+            logfunc(f"Query error, query={query} Error={str(ex)}")
+    return False
 
-class GuiWindow:
-    '''This only exists to hold window handle if script is run from GUI'''
-    window_handle = None  # static variable
-
-    @staticmethod
-    def SetProgressBar(n, total):
-        if GuiWindow.window_handle:
-            progress_bar = GuiWindow.window_handle.nametowidget('!progressbar')
-            progress_bar.config(value=n)
-
-
-def logfunc(message=""):
-    def redirect_logs(string):
-        log_text.insert('end', string)
-        log_text.see('end')
-        log_text.update()
-
-    if GuiWindow.window_handle:
-        log_text = GuiWindow.window_handle.nametowidget('logs_frame.log_text')
-        sys.stdout.write = redirect_logs
-
-    with open(OutputParameters.screen_output_file_path, 'a', encoding='utf8') as a:
-        print(message)
-        a.write(message + '<br>' + OutputParameters.nl)
-
-
-def logdevinfo(message=""):
-    with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
-        b.write(message + '<br>' + OutputParameters.nl)
-
-def write_device_info():
-    with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
-        for category, values in identifiers.items():
-            b.write('<b>--- <u>' + category + ' </u>---</b><br>' + OutputParameters.nl)
-            b.write('<ul>' + OutputParameters.nl)
-            for label, data in values.items():
-                if isinstance(data, list):
-                    # Handle multiple values
-                    b.write('<li><b>' + label + ':</b><ul>' + OutputParameters.nl)
-                    for item in data:
-                        b.write(f'<li>{item["value"]} <span title="{item["source_file"]}" style="cursor:help"><i>(Source: {item["artifact"]})</i></span></li>' + OutputParameters.nl)
-                    b.write('</ul></li>' + OutputParameters.nl)
-                else:
-                    # Handle single value
-                    b.write(f'<li><b>{label}:</b> {data["value"]} <span title="{data["source_file"]}" style="cursor:help"><i>(Source: {data["artifact"]})</i></span></li>' + OutputParameters.nl)
-            b.write('</ul>' + OutputParameters.nl)
-
-def device_info(category, label, value, source_file=""):
-    """
-    Stores device information in the identifiers dictionary
-    Args:
-        category (str): The category of the information (e.g., "Device Info", "User Info")
-        label (str): The label/description to use as the key
-        value (str): The actual value to store
-    """
-    # Get the calling module's name more robustly
-    try:
-        frame = inspect.stack()[1]
-        func_name = frame.function
-    except:
-        func_name = 'unknown'
-    
-    values = identifiers.get(category, {})
-    
-    # Create value object with both the value and source module
-    value_obj = {
-        'value': value,
-        'source_file': source_file,
-        'artifact': func_name
-    }
-    
-    if label in values:
-        # If the label exists, check if it's already a list
-        if isinstance(values[label], list):
-            values[label].append(value_obj)
-        else:
-            # Convert existing single value to list with both values
-            values[label] = [values[label], value_obj]
-    else:
-        # New label, store single value
-        values[label] = value_obj
-        
-    identifiers[category] = values
 
 def tsv(report_folder, data_headers, data_list, tsvname, source_file=None):
     report_folder = report_folder.rstrip('/')
@@ -742,120 +688,197 @@ def media_to_html(media_path, files_found, report_folder):
             thumb = f'<a href="{source}" target="_blank"> Link to {filename} file</>'
     return thumb
 
-def html_media_tag(media_path, mimetype, style, title=''):
-    def relative_paths(source):
-        splitter = '\\' if is_platform_windows() else '/'
-        first_split = source.split(splitter)
-        for x in first_split:
-            if 'data' in x:
-                index = first_split.index(x)
-                last_split = source.split(first_split[index - 1])
-                return '..' + last_split[1].replace('\\', '/')
-            elif '_HTML' in x:
-                index = first_split.index(x)
-                last_split = source.split(first_split[index])
-                return '.' + last_split[1].replace('\\', '/')
-        return source
 
-    filename = Path(media_path).name
-    media_path = quote(relative_paths(media_path))
-
-    if mimetype == None:
-        mimetype = ''
-    if 'video' in mimetype:
-        thumb = f'<video width="320" height="240" controls="controls"><source src="{media_path}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
-    elif 'image' in mimetype:
-        image_style = style if style else "max-height:300px; max-width:400px;"
-        thumb = f'<a href="{media_path}" target="_blank"><img title="{title}"  src="{media_path}" style="{image_style}"></img></a>'
-    elif 'audio' in mimetype:
-        thumb = f'<audio controls><source src="{media_path}" type="audio/ogg"><source src="{media_path}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
-    else:
-        thumb = f'<a href="{media_path}" target="_blank"> Link to {filename} file</>'
-    return thumb
-
-# Deprecated function
-def set_media_references(media_item, artifact_info, title):
-    module_name = Path(artifact_info.filename).stem
-    artifact_name = artifact_info.function
-    media_id = media_item.id
-    media_ref = hashlib.sha1(f"{media_id}-{module_name}-{artifact_name}".encode()).hexdigest()
-    lava_insert_sqlite_media_references(media_ref, media_id, module_name, artifact_name, media_item.created_at, title)
-
-def check_in_media(seeker, file_path, artifact_info, title="", already_extracted=False, converted_file_path=False):
-    if already_extracted:
-        file_info_key = file_path
-    else:
-        file_info_key = seeker.search(file_path, return_on_first_hit=True)
-    file_info = seeker.file_infos.get(file_info_key) if file_info_key else None
-    if file_info:
-        media_item = MediaItem()
-        if converted_file_path:
-            extraction_path = Path(converted_file_path)
+"""
+Copyright 2021, CCL Forensics
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+def utf8_in_extended_ascii(input_string, *, raise_on_unexpected=False):
+    """Returns a tuple of bool (whether mis-encoded utf-8 is present) and str (the converted string)"""
+    output = []  # individual characters, join at the end
+    is_in_multibyte = False  # True if we're currently inside a utf-8 multibyte character
+    multibytes_expected = 0
+    multibyte_buffer = []
+    mis_encoded_utf8_present = False
+    
+    def handle_bad_data(index, character):
+        if not raise_on_unexpected: # not raising, so we dump the buffer into output and append this character
+            output.extend(multibyte_buffer)
+            multibyte_buffer.clear()
+            output.append(character)
+            nonlocal is_in_multibyte
+            is_in_multibyte = False
+            nonlocal multibytes_expected
+            multibytes_expected = 0
         else:
-            extraction_path = Path(file_info_key)
-        media_id = hashlib.sha1(f"{extraction_path}".encode()).hexdigest()
-        get_media_item = lava_get_media_item(media_id)
-        if get_media_item:
-            media_item.set_values(get_media_item)
-        else:
-            if extraction_path.is_file():
-                media_item.set_values((
-                    media_id,
-                    file_info.source_path,
-                    extraction_path,
-                    guess_mime(extraction_path),
-                    "not implemented yet",
-                    file_info.creation_date,
-                    file_info.modification_date
-                ))
-                lava_insert_sqlite_media_item(media_item)
-                set_media_references(media_item, artifact_info, title)  # deprecated
+            raise ValueError(f"Expected multibyte continuation at index: {index}")
+            
+    for idx, c in enumerate(input_string):
+        code_point = ord(c)
+        if code_point <= 0x7f or code_point > 0xf4:  # ASCII Range data or higher than you get for mis-encoded utf-8:
+            if not is_in_multibyte:
+                output.append(c)  # not in a multibyte, valid ascii-range data, so we append
             else:
-                logfunc(f"{extraction_path} was not found")
-                return None            
-        return media_item
-    else:
-        logfunc(f'No matching file found for "{file_path}"')
-        return None
+                handle_bad_data(idx, c)
+        else:  # potentially utf-8
+            if (code_point & 0xc0) == 0x80:  # continuation byte
+                if is_in_multibyte:
+                    multibyte_buffer.append(c)
+                else:
+                    handle_bad_data(idx, c)
+            else:  # start-byte
+                if not is_in_multibyte:
+                    assert multibytes_expected == 0
+                    assert len(multibyte_buffer) == 0
+                    while (code_point & 0x80) != 0:
+                        multibytes_expected += 1
+                        code_point <<= 1
+                    multibyte_buffer.append(c)
+                    is_in_multibyte = True
+                else:
+                    handle_bad_data(idx, c)
+                    
+        if is_in_multibyte and len(multibyte_buffer) == multibytes_expected:  # output utf-8 character if complete
+            utf_8_character = bytes(ord(x) for x in multibyte_buffer).decode("utf-8")
+            output.append(utf_8_character)
+            multibyte_buffer.clear()
+            is_in_multibyte = False
+            multibytes_expected = 0
+            mis_encoded_utf8_present = True
+        
+    if multibyte_buffer:  # if we have left-over data
+        handle_bad_data(len(input_string), "")
+    
+    return mis_encoded_utf8_present, "".join(output)
 
-def check_in_embedded_media(seeker, source_file, data, artifact_info, name="", media_updated_at=0):
-    file_info = seeker.file_infos.get(source_file)
-    if data and file_info:
-        module_name = Path(artifact_info.filename).stem
-        artifact_name = artifact_info.function
-        media_id = hashlib.sha1(data).hexdigest()
-        media_item = MediaItem(media_id)
-        lava_media_item = lava_get_media_item(media_id)
-        media_ref_id = hashlib.sha1(f"{media_id}-{artifact_name}-{name}-{media_updated_at}".encode()).hexdigest()
-        media_references = MediaReferences(media_ref_id)
-        lava_media_ref = lava_get_media_references(media_ref_id)
-        if lava_media_ref:
-            media_references.set_values(lava_media_ref)
-            return media_references.id
-        if not lava_media_item:
-            media_item.mimetype = guess_mime(data)
-            media_item.source_path = file_info.source_path
-            media_item.metadata = "not implemented yet"
-            media_item.created_at = 0
-            media_item.updated_at = 0
-            target_folder_name = f"{Path(source_file).stem}_embedded_media"
-            target_path = Path(source_file).parent.joinpath(target_folder_name)
-            media_extension = guess_extension(data)
-            media_item.extraction_path = Path(target_path).joinpath(f"{media_id}.{media_extension}")
-            try:
-                target_path.mkdir(parents=True, exist_ok=True)
-                with open(media_item.extraction_path, "wb") as file:
-                    file.write(data)
-            except Exception as ex:
-                logfunc(f'Could not copy embedded media into {target_path} ' + str(ex))
-            lava_insert_sqlite_media_item(media_item)
-        media_references.set_values((
-            media_ref_id, media_id, module_name, artifact_name, name, media_updated_at
-        ))
-        lava_insert_sqlite_media_references(media_references)
-        return media_references.id
+def logdevinfo(message=""):
+    with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
+        b.write(message + '<br>' + OutputParameters.nl)
+
+def write_device_info():
+    with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
+        for category, values in identifiers.items():
+            b.write('<b>--- <u>' + category + ' </u>---</b><br>' + OutputParameters.nl)
+            b.write('<ul>' + OutputParameters.nl)
+            for label, data in values.items():
+                if isinstance(data, list):
+                    # Handle multiple values
+                    b.write('<li><b>' + label + ':</b><ul>' + OutputParameters.nl)
+                    for item in data:
+                        b.write(f'<li>{item["value"]} <span title="{item["source_file"]}" style="cursor:help"><i>(Source: {item["artifact"]})</i></span></li>' + OutputParameters.nl)
+                    b.write('</ul></li>' + OutputParameters.nl)
+                else:
+                    # Handle single value
+                    b.write(f'<li><b>{label}:</b> {data["value"]} <span title="{data["source_file"]}" style="cursor:help"><i>(Source: {data["artifact"]})</i></span></li>' + OutputParameters.nl)
+            b.write('</ul>' + OutputParameters.nl)
+
+def device_info(category, label, value, source_file=""):
+    """
+    Stores device information in the identifiers dictionary
+    Args:
+        category (str): The category of the information (e.g., "Device Info", "User Info")
+        label (str): The label/description to use as the key
+        value (str): The actual value to store
+    """
+    # Get the calling module's name more robustly
+    try:
+        frame = inspect.stack()[1]
+        func_name = frame.function
+    except:
+        func_name = 'unknown'
+    
+    values = identifiers.get(category, {})
+    
+    # Create value object with both the value and source module
+    value_obj = {
+        'value': value,
+        'source_file': source_file,
+        'artifact': func_name
+    }
+    
+    if label in values:
+        # If the label exists, check if it's already a list
+        if isinstance(values[label], list):
+            values[label].append(value_obj)
+        else:
+            # Convert existing single value to list with both values
+            values[label] = [values[label], value_obj]
     else:
-        return None
+        # New label, store single value
+        values[label] = value_obj
+        
+    identifiers[category] = values
+
+### New timestamp conversion functions
+def convert_unix_ts_in_seconds(ts):
+    digits = int(math.log10(ts))+1
+    if digits > 10:
+        extra_digits = digits - 10
+        ts = ts // 10**extra_digits
+    return int(ts)
+
+def convert_unix_ts_to_utc(ts):
+    if ts:
+        ts = convert_unix_ts_in_seconds(ts)
+        return datetime.fromtimestamp(ts, tz=timezone.utc)
+    else:
+        return ts
+
+def convert_local_to_utc(local_timestamp_str):
+    # Parse the timestamp string with timezone offset, ex. 2023-10-27 18:18:29-0400
+    local_timestamp = datetime.strptime(local_timestamp_str, "%Y-%m-%d %H:%M:%S%z")
+    
+    # Convert to UTC timestamp
+    utc_timestamp = local_timestamp.astimezone(timezone.utc)
+    
+    # Return the UTC timestamp
+    return utc_timestamp
+
+def convert_time_obj_to_utc(ts):
+    timestamp = ts.replace(tzinfo=timezone.utc)
+    return timestamp
+
+def convert_utc_human_to_timezone(utc_time, time_offset): 
+    #fetch the timezone information
+    timezone = pytz.timezone(time_offset)
+    
+    #convert utc to timezone
+    timezone_time = utc_time.astimezone(timezone)
+    
+    #return the converted value
+    return timezone_time
+
+def timestampsconv(webkittime):
+    unix_timestamp = webkittime + 978307200
+    finaltime = datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
+    return(finaltime)
+
+def convert_ts_human_to_utc(ts): #This is for timestamp in human form
+    if '.' in ts:
+        ts = ts.split('.')[0]
+        
+    dt = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S') #Make it a datetime object
+    timestamp = dt.replace(tzinfo=timezone.utc) #Make it UTC
+    return timestamp
+
+def convert_ts_int_to_utc(ts): #This int timestamp to human format & utc
+    timestamp = datetime.fromtimestamp(ts, tz=timezone.utc)
+    return timestamp
+
 
 def abxread(in_path,
             multi_root):  # multi_root should be False under most circumstances. File with no root tags set the multi_root argument to True.

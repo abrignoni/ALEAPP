@@ -9,7 +9,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_adidas_user(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_adidas_user(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Adidas User")
     files_found = [x for x in files_found if not x.endswith('-journal')]
     file_found = str(files_found[0])

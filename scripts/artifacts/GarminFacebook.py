@@ -23,7 +23,7 @@ def remove_whitespace_from_xml_first_line(xml_file):
         f.writelines(lines)
 
 
-def get_garminFB(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_garminFB(files_found, report_folder, seeker, wrap_text):
     # Dictionary to store the user information
     user_info = {}
     token = ""

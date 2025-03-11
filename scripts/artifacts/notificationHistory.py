@@ -26,7 +26,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, abxread, checkabx,convert_ts_int_to_utc,convert_utc_human_to_timezone
 
 
-def get_notificationHistory(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
     data_pb_list = []
     for file_found in files_found:
         file_found = str(file_found)
@@ -81,7 +81,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text, time_
                         for notification in elem:
                             if notification.tag == 'notification':
                                 notification_ts = int(notification.attrib.get('time'))
-                                snooze_time = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(notification_ts/1000.0)),time_offset)
+                                snooze_time = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(notification_ts/1000.0)),'UTC')
                                 notification_key = notification.attrib.get('key')
                                 data_list.append((f'{snooze_time}', notification_key))
                     else:
@@ -148,7 +148,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text, time_
                         channel_name_index = values['channel_name_index']
                         conversation_id = values['conversation_id']
                         conversation_id_index = values['conversation_id_index']
-                        posted_time = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(notification.posted_time_ms/1000.0)),time_offset) if notification.HasField('posted_time_ms') else None
+                        posted_time = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(notification.posted_time_ms/1000.0)),'UTC') if notification.HasField('posted_time_ms') else None
                         title = notification.title if notification.HasField('title') else None
                         text = notification.text if notification.HasField('text') else None
                         image_type = values['image_type']
@@ -158,7 +158,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text, time_
                         image_data_length = values['image_data_length']
                         image_data_offset = values['image_data_offset']
                         image_uri = values['image_uri']
-                        file_creation = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(file_name)/1000.0),time_offset)
+                        file_creation = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(file_name)/1000.0),'UTC')
                         data_pb_list.append((f'{posted_time}',title,text,package_name,user_id,uid,package_index,channel_name,channel_name_index,channel_id,channel_id_index,conversation_id,conversation_id_index,major_version,image_type,image_bitmap_filename,image_resource_id,image_resource_id_package,image_data_length,image_data_offset,image_uri,file_name,f'{file_creation}'))
             except Exception as e:
                 logfunc(f'Error while opening notification pb files. The error message was:" {e}"')

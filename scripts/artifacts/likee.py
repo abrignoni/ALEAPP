@@ -27,7 +27,7 @@ def remove_control_chars(s):
     return control_char_re.sub("", s)
 
 
-def get_likee(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_likee(files_found, report_folder, seeker, wrap_text):
     src_likee_location = ""
     data_list = []
 
@@ -69,7 +69,7 @@ def get_likee(files_found, report_folder, seeker, wrap_text, time_offset):
         report.end_artifact_report()
 
 
-def get_likee_db(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_likee_db(files_found, report_folder, seeker, wrap_text):
 
     src_likee_pub = ""
     src_likee_msg = ""

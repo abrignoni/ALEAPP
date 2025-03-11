@@ -10,7 +10,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv
 
 
-def get_presisted(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_presisted(files_found, report_folder, seeker, wrap_text):
     # Dictionary to store the user information
     user_info = {}
     # Attributes to be extracted from the xml file

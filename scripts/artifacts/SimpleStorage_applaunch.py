@@ -21,7 +21,7 @@ from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
     
@@ -57,7 +57,7 @@ def get_SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text, t
                     if time_launched is None:
                         pass
                     else:
-                        time_launched = convert_utc_human_to_timezone(convert_ts_human_to_utc(time_launched),time_offset)
+                        time_launched = convert_utc_human_to_timezone(convert_ts_human_to_utc(time_launched),'UTC')
                     data_list.append((time_launched,row[1],row[2], file_found))
             db.close()
         

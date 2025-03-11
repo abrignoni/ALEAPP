@@ -21,7 +21,7 @@ def remove_whitespace_from_xml_first_line(xml_file):
         f.writelines(lines)
 
 
-def get_run_user(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_run_user(files_found, report_folder, seeker, wrap_text):
     # Dictionary to store the user information
     user_info = {}
     # Attributes to be extracted from the xml file

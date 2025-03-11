@@ -32,7 +32,7 @@ def ReadUnixTimeMs(unix_time_ms): # Unix timestamp is time epoch beginning 1970/
             logfunc("ReadUnixTimeMs() Failed to convert timestamp from value " + str(unix_time_ms) + " Error was: " + str(ex))
     return ''
 
-def get_package_info(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_package_info(files_found, report_folder, seeker, wrap_text):
     packages = []
     for file_found in files_found:
         file_found = str(file_found)

@@ -10,7 +10,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv
 
 
-def get_act_api(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_act_api(files_found, report_folder, seeker, wrap_text):
 
     logfunc("Processing data for Garmin Activity API")
     report = ArtifactHtmlReport('Activity API')

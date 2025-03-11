@@ -7,7 +7,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, logdevinfo, is_platform_windows, open_sqlite_db_readonly
 
-def get_siminfo(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_siminfo(files_found, report_folder, seeker, wrap_text):
 
     slash = '\\' if is_platform_windows() else '/' 
     # Filter for path xxx/yyy/system_ce/0

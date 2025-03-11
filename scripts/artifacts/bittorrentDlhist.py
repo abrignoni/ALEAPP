@@ -10,7 +10,7 @@ def timestampcalc(timevalue):
     timestamp = (datetime.datetime.utcfromtimestamp(int(timevalue)/1000).strftime('%Y-%m-%d %H:%M:%S'))
     return timestamp
 
-def get_bittorrentDlhist(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_bittorrentDlhist(files_found, report_folder, seeker, wrap_text):
 
     data_list = []
     for file_found in files_found:

@@ -8,7 +8,7 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
 
-def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
         if not os.path.basename(file_found) == 'keep.db': # skip -journal and other files
