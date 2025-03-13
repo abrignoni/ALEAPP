@@ -158,10 +158,12 @@ def check_in_media(seeker, file_path, artifact_info, name="", already_extracted=
             extraction_path = Path(file_info_key)
         if extraction_path.is_file():
             media_id = hashlib.sha1(f"{extraction_path}".encode()).hexdigest()
+            media_ref_id = get_media_references_id(media_id, artifact_info, name)
+            lava_media_ref = lava_get_media_references(media_ref_id)
+            if lava_media_ref:
+                return media_ref_id
             lava_media_item = lava_get_media_item(media_id)
-            if lava_media_item:
-                return media_id
-            else:
+            if not lava_media_item:
                 media_item = MediaItem(media_id)
                 media_item.source_path = file_info.source_path
                 media_item.extraction_path = extraction_path
@@ -170,17 +172,16 @@ def check_in_media(seeker, file_path, artifact_info, name="", already_extracted=
                 media_item.created_at = file_info.creation_date
                 media_item.updated_at = file_info.modification_date
                 lava_insert_sqlite_media_item(media_item)
-                media_ref_id = get_media_references_id(media_id, artifact_info, name)
-                set_media_references(media_ref_id, media_id, artifact_info, name)
-            return media_id
+            set_media_references(media_ref_id, media_id, artifact_info, name)
+            return media_ref_id
         else:
-            logfunc(f"{extraction_path} was not found")
+            logfunc(f"{extraction_path} is not a file")
             return None            
     else:
         logfunc(f'No matching file found for "{file_path}"')
         return None
 
-def check_in_embedded_media(seeker, source_file, data, artifact_info, name="", media_updated_at=0):
+def check_in_embedded_media(seeker, source_file, data, artifact_info, name=""):
     file_info = seeker.file_infos.get(source_file)
     if data and file_info:
         media_id = hashlib.sha1(data).hexdigest()
@@ -192,13 +193,13 @@ def check_in_embedded_media(seeker, source_file, data, artifact_info, name="", m
         if not lava_media_item:
             media_item = MediaItem(media_id)
             media_item.mimetype = guess_mime(data)
-            media_item.source_path = file_info.source_path
+            media_extension = guess_extension(data)
             media_item.metadata = "not implemented yet"
             media_item.created_at = 0
             media_item.updated_at = 0
             target_folder_name = f"{Path(source_file).stem}_embedded_media"
             target_path = Path(source_file).parent.joinpath(target_folder_name)
-            media_extension = guess_extension(data)
+            media_item.source_path = file_info.source_path
             media_item.extraction_path = Path(target_path).joinpath(f"{media_id}.{media_extension}")
             try:
                 target_path.mkdir(parents=True, exist_ok=True)
@@ -500,7 +501,7 @@ def does_table_exist_in_db(path, table_name):
             logfunc(f"Query error, query={query} Error={str(ex)}")
     return False
 
-def does_view_exist(path, table_name):
+def does_view_exist_in_db(path, table_name):
     '''Checks if a table with specified name exists in an sqlite db'''
     db = open_sqlite_db_readonly(path)
     if db:
