@@ -11,13 +11,14 @@ __artifacts_v2__ = {
         "paths": ('*/system_de/*/accounts_de.db*'),
         "output_types": "standard",
         "artifact_icon": "user"
-    },
+    }
 }
 
 
 from scripts.ilapfuncs import artifact_processor, \
     get_file_path_list_checking_uid, get_results_with_extra_sourcepath_if_needed, \
     convert_unix_ts_to_utc, convert_ts_human_to_utc
+
 
 @artifact_processor
 def accounts_de(files_found, report_folder, seeker, wrap_text):
@@ -51,4 +52,3 @@ def accounts_de(files_found, report_folder, seeker, wrap_text):
         data_list.append(record)
 
     return data_headers, data_list, source_path
-
