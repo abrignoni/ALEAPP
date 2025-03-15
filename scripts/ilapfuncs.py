@@ -489,14 +489,14 @@ def get_sqlite_db_records(path, query, attach_query=None):
             logfunc(f" - {str(e)}")
     return []
 
-def get_uid_sqlite_db_records(path_list, query, data_headers):
+def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
     multiple_source_files = len(path_list) > 1
     source_path = ""
     data_list = []
     if multiple_source_files:
-        data_headers = list(data_headers)
-        data_headers.append('Source Path')
-        data_headers = tuple(data_headers)
+        data_headers_list = list(data_headers)
+        data_headers_list.append('Source Path')
+        data_headers = tuple(data_headers_list)
         source_path = 'file path in the report below'
     elif path_list:
         source_path = path_list[0]
@@ -876,6 +876,15 @@ def convert_unix_ts_to_utc(ts):
     if ts:
         ts = convert_unix_ts_in_seconds(ts)
         return datetime.fromtimestamp(ts, tz=timezone.utc)
+    else:
+        return ts
+
+def convert_human_ts_to_utc(ts): #This is for timestamp in human form
+    if ts:
+        if '.' in ts:
+            ts = ts.split('.')[0]
+        dt = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S') #Make it a datetime object
+        return dt.replace(tzinfo=timezone.utc) #Make it UTC
     else:
         return ts
 

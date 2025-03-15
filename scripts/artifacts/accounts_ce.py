@@ -1,14 +1,14 @@
 __artifacts_v2__ = {
     "accounts_ce": {
         "name": "Accounts_ce",
-        "description": "",
+        "description": "Application accounts used on the device",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-03-02",
         "last_update_date": "2025-03-14",
         "requirements": "none",
         "category": "Accounts",
         "notes": "",
-        "paths": ('*/system_ce/*/accounts_ce.db'),
+        "paths": ('*/system_ce/*/accounts_ce.db*'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "user"
     },
@@ -27,8 +27,10 @@ __artifacts_v2__ = {
     }
 }
 
+
 from scripts.ilapfuncs import artifact_processor, \
-    get_file_path_list_checking_uid, get_uid_sqlite_db_records
+    get_file_path_list_checking_uid, get_results_with_extra_sourcepath_if_needed
+
 
 @artifact_processor
 def accounts_ce(files_found, report_folder, seeker, wrap_text):
@@ -47,7 +49,7 @@ def accounts_ce(files_found, report_folder, seeker, wrap_text):
 
     data_headers = ('Account Type', 'Account Name', 'Password')
 
-    data_headers, data_list, source_path = get_uid_sqlite_db_records(source_path_list, query, data_headers)
+    data_headers, data_list, source_path = get_results_with_extra_sourcepath_if_needed(source_path_list, query, data_headers)
 
     return data_headers, data_list, source_path
 
