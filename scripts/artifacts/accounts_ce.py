@@ -73,6 +73,6 @@ def accounts_ce_authtokens(files_found, report_folder, seeker, wrap_text):
 
     data_headers = ('Account Type', 'Account Name', 'Authtoken Type', 'Authtoken')
 
-    data_headers, data_list, source_path = get_uid_sqlite_db_records(source_path_list, query, data_headers)
+    data_headers, data_list, source_path = get_results_with_extra_sourcepath_if_needed(source_path_list, query, data_headers)
 
     return data_headers, data_list, source_path
