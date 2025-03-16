@@ -429,8 +429,7 @@ def get_file_path_list_checking_uid(files_found, filename, position , skip=False
 def get_txt_file_content(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-            file_content = file.readlines()
-            return file_content
+            return file.readlines()
     except FileNotFoundError:
         logfunc(f"Error: File not found at {file_path}")
     except PermissionError:
@@ -438,6 +437,18 @@ def get_txt_file_content(file_path):
     except Exception as e:
         logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
     return []
+
+def get_binary_file_content(file_path):
+    try:
+        with open(file_path, "rb") as file:
+            return file.read()
+    except FileNotFoundError:
+        logfunc(f"Error: File not found at {file_path}")
+    except PermissionError:
+        logfunc(f"Error: Permission denied when trying to read {file_path}")
+    except Exception as e:
+        logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
+    return bytes()
 
 def get_sqlite_db_path(path):
     if is_platform_windows():
