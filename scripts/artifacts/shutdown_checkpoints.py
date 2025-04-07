@@ -26,7 +26,7 @@ def get_shutdown_checkpoints(files_found, report_folder, seeker, wrap_text, time
                     epoch = int(entry_epoch[1].replace(')',''))
                     shutdown_timestamp = datetime.datetime.utcfromtimestamp(epoch/1000).strftime('%Y-%m-%d %H:%M:%S')
                     
-                    data_list.append((shutdown_timestamp, request, line))
+                    data_list.append((shutdown_timestamp, request, line, file_found))
                 
                 else:
                     continue
@@ -36,7 +36,7 @@ def get_shutdown_checkpoints(files_found, report_folder, seeker, wrap_text, time
         report = ArtifactHtmlReport('Shutdown Checkpoints')
         report.start_artifact_report(report_folder, 'Shutdown Checkpoints')
         report.add_script()
-        data_headers = ('Timestamp','Requestor','Entry')
+        data_headers = ('Timestamp','Requestor','Entry','Source File')
 
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
