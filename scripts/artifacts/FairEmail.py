@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "FairCode FairEmail App",
         "notes": "",
-        "paths": ('*/eu.faircode.email/databases/fairemail'),
+        "paths": ('*/eu.faircode.email/databases/fairemail*'),
         "function": "get_fairemail_accounts"
     },
         "FairEmailContacts": {
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "FairCode FairEmail App",
         "notes": "",
-        "paths": ('*/eu.faircode.email/databases/fairemail'),
+        "paths": ('*/eu.faircode.email/databases/fairemail*'),
         "function": "get_fairemail_contacts"
     }
 }
