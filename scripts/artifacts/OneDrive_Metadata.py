@@ -8,8 +8,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Cloud Storage",
         "notes": "",
-        "paths": ('*/*/data/data/com.microsoft.skydrive/files/QTMetadata.db*',),
-        "function": "get_onedrive"
+        "paths": ('*/com.microsoft.skydrive/files/QTMetadata.db*'),
+        "function": "get_onedrive",
+        "artifact_icon": "cloud"
     }
 }
 
@@ -125,8 +126,7 @@ def get_onedrive(files_found, report_folder, seeker, wrap_text, time_offset):
         report.add_script()
         data_headers = (
             'Item Date', 'ID', 'Extension', 'File or Folder Name', 'Owner Name',
-            'Sha1 Hash', 'Parent ID', 'Stream Location', 'Preview'
-        )
+            'Sha1 Hash', 'Parent ID', 'Stream Location', 'Preview')
         report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
         report.end_artifact_report()
 
