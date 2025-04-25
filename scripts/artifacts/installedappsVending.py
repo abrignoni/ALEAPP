@@ -4,7 +4,7 @@ from pathlib import Path
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, does_column_exist_in_db
 
-def get_installedappsVending(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_installedappsVending(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_name = str(file_found)
@@ -16,7 +16,7 @@ def get_installedappsVending(files_found, report_folder, seeker, wrap_text, time
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             
-            if does_column_exist_in_db(db, 'appstate','install_reason') == True:
+            if does_column_exist_in_db(file_found, 'appstate','install_reason') == True:
                 install_reason_query = '''install_reason'''
             else:
                 install_reason_query = "'' as install_reason"

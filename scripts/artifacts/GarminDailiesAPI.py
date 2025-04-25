@@ -11,7 +11,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv
 
 
-def get_dailies_api(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_dailies_api(files_found, report_folder, seeker, wrap_text):
     fields = ['calendarDate', 'totalKilocalories', 'activeKilocalories', 'bmrKilocalories', 'wellnessActiveKilocalories', 'burnedKilocalories', 'consumedKilocalories', 'remainingKilocalories',
                 'totalSteps', 'totalDistanceMeters', 'wellnessDistanceMeters', 'highlyActiveSeconds', 'activeSeconds', 'moderateIntensityMinutes', 'floorsAscendedInMeters', 'floorsDescendedInMeters',
                 'floorsAscendedInMeters', 'floorsDescendedInMeters', 'minHeartRate', 'maxHeartRate', 'restingHeartRate', 'lastSevenDaysAvgRestingHeartRate', 'averageStressLevel', 'maxStressLevel',

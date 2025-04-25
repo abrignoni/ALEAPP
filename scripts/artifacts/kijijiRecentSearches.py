@@ -15,7 +15,7 @@
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, open_sqlite_db_readonly, does_table_exist
+from scripts.ilapfuncs import logfunc, tsv, open_sqlite_db_readonly, does_table_exist_in_db
 
 recent_searches_query = \
 '''
@@ -41,12 +41,12 @@ recent_searches_query = \
     ORDER BY TIME ASC;
 '''
 
-def get_kijijiRecentSearches(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_kijijiRecentSearches(files_found, report_folder, seeker, wrap_text):
     file_found = str(files_found[0])
     logfunc(f'Database file {file_found} is being interrogated...')
     db = open_sqlite_db_readonly(file_found)
     db.row_factory = sqlite3.Row # For fetching columns by name
-    tabCheck = does_table_exist(db, 'recent_searches')
+    tabCheck = does_table_exist_in_db(file_found, 'recent_searches')
     if tabCheck == False:
         logfunc('The recent_searches table was not found in the database!')
         return False

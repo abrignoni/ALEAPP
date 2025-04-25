@@ -11,7 +11,7 @@ def convertGeo(s):
     else:
         return (s)
 
-def get_googlemaplocation(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_googlemaplocation(files_found, report_folder, seeker, wrap_text):
 
     source_file = ''
 
@@ -19,10 +19,10 @@ def get_googlemaplocation(files_found, report_folder, seeker, wrap_text, time_of
         file_found = str(file_found)
         
         if 'journal' in file_found:
-            source_file = file_found.replace(seeker.directory, '')
+            source_file = file_found.replace(seeker.data_folder, '')
             continue
   
-        source_file = file_found.replace(seeker.directory, '')
+        source_file = file_found.replace(seeker.data_folder, '')
         
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()

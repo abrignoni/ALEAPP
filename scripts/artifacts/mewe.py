@@ -111,7 +111,7 @@ def _parse_app_database(db_file, db_file_name, report_folder):
     db.close()
 
 
-def get_mewe(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_mewe(files_found, report_folder, seeker, wrap_text):
     db_file = None
     db_file_name = None
     xml_file = None
@@ -123,12 +123,12 @@ def get_mewe(files_found, report_folder, seeker, wrap_text, time_offset):
     for ff in files_found:
         if ff.endswith(DB_NAME) and not app_database_processed:
             db_file = ff
-            db_file_name = ff.replace(seeker.directory, '')
+            db_file_name = ff.replace(seeker.data_folder, '')
             _parse_app_database(db_file, db_file_name, report_folder)
             app_database_processed = True
         if ff.endswith(SGSESSION_FILE) and not sgsession_processed:
             xml_file = ff
-            xml_file_name = ff.replace(seeker.directory, '')
+            xml_file_name = ff.replace(seeker.data_folder, '')
             _parse_xml(xml_file, xml_file_name, report_folder, SGSESSION_FILE, 'SGSession')
             sgsession_processed = True
             

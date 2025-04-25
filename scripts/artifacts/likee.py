@@ -27,7 +27,7 @@ def remove_control_chars(s):
     return control_char_re.sub("", s)
 
 
-def get_likee(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_likee(files_found, report_folder, seeker, wrap_text):
     src_likee_location = ""
     data_list = []
 
@@ -40,7 +40,7 @@ def get_likee(files_found, report_folder, seeker, wrap_text, time_offset):
         final = level2 + "/" + level1
         if file_name.endswith("_location.kv"):
             src_likee_location = str(file_found)
-            src_likee_location = file_found.replace(seeker.directory, "")
+            src_likee_location = file_found.replace(seeker.data_folder, "")
             with open(outputpath, "w") as w:
                 f = open(file_found, "r", errors="ignore")
                 Lines = f.readlines()
@@ -69,7 +69,7 @@ def get_likee(files_found, report_folder, seeker, wrap_text, time_offset):
         report.end_artifact_report()
 
 
-def get_likee_db(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_likee_db(files_found, report_folder, seeker, wrap_text):
 
     src_likee_pub = ""
     src_likee_msg = ""
@@ -83,12 +83,12 @@ def get_likee_db(files_found, report_folder, seeker, wrap_text, time_offset):
         ustring = "like_pub.db"
         if ustring in file_name:
             likee_pub_db = str(file_found)
-            src_likee_pub = file_found.replace(seeker.directory, "")
+            src_likee_pub = file_found.replace(seeker.data_folder, "")
 
         mstring = "message_u"
         if mstring in file_name:
             likee_msg_db = str(file_found)
-            src_likee_msg = file_found.replace(seeker.directory, "")
+            src_likee_msg = file_found.replace(seeker.data_folder, "")
             db2_data_list.append(str(file_found))
 
     db = open_sqlite_db_readonly(likee_pub_db)

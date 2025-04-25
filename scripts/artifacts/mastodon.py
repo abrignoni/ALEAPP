@@ -15,7 +15,7 @@ from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_mastodon(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_mastodon(files_found, report_folder, seeker, wrap_text):
     
     account_db = ''
     account_json = ''
@@ -27,15 +27,15 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text, time_offset):
         
         if file_name.lower().endswith('.db'):
            accout_db = str(file_found)
-           source_file_account_db = file_found.replace(seeker.directory, '')
+           source_file_account_db = file_found.replace(seeker.data_folder, '')
 
         if file_name.lower().endswith('accounts.json'):
            account_json = str(file_found)
-           source_file_account_json = file_found.replace(seeker.directory, '')
+           source_file_account_json = file_found.replace(seeker.data_folder, '')
            
         if file_name.lower().endswith('.json') and file_name.lower().startswith('instance'):
            instance_json = str(file_found)
-           source_file_instance_json = file_found.replace(seeker.directory, '')
+           source_file_instance_json = file_found.replace(seeker.data_folder, '')
            
     db = open_sqlite_db_readonly(accout_db)
     cursor = db.cursor()

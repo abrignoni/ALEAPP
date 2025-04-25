@@ -22,7 +22,7 @@ SOFTWARE.
 
 import json
 import pathlib
-from scripts.ccl_android_fcm_queued_messages import FcmIterator
+from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.artifact_report import ArtifactHtmlReport
 import scripts.ilapfuncs
 
@@ -32,7 +32,7 @@ Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms
 __contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
 
-def get_fcm_instagram(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_fcm_instagram(files_found, report_folder, seeker, wrap_text):
     # we only need the input data dirs not every matching file
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
 

@@ -4,7 +4,7 @@ import sqlite3
 
 from html import escape
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist, does_column_exist_in_db
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist_in_db, does_column_exist_in_db
 
 # Reference for flag values for mms:
 # ---------------------------------- 
@@ -82,7 +82,7 @@ def AppendSmsRowToDataList(data_list, row, wrap_text):
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
 
-def get_sms_mms(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_sms_mms(files_found, report_folder, seeker, wrap_text):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -107,8 +107,8 @@ def get_sms_mms(files_found, report_folder, seeker, wrap_text, time_offset):
             return
         
 def read_sms_messages(db, report_folder, file_found, seeker, wrap_text):
-    samsung_spam_sms_table_exists = does_table_exist(db, 'spam_sms')
-    lg_electronics_device_data = does_column_exist_in_db(db, 'sms', 'lgeSiid')
+    samsung_spam_sms_table_exists = does_table_exist_in_db(file_found, 'spam_sms')
+    lg_electronics_device_data = does_column_exist_in_db(file_found, 'sms', 'lgeSiid')
     cursor = db.cursor()
 
     if not lg_electronics_device_data:
@@ -140,7 +140,7 @@ def read_sms_messages(db, report_folder, file_found, seeker, wrap_text):
         report.end_artifact_report()
         
         tsvname = f'sms messages'
-        tsv(report_folder, data_headers, data_list, tsvname, file_found.replace(seeker.directory, ''))
+        tsv(report_folder, data_headers, data_list, tsvname, file_found.replace(seeker.data_folder, ''))
         
         tlactivity = f'SMS Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)
@@ -269,7 +269,7 @@ def read_mms_messages(db, report_folder, file_found, seeker):
         report.end_artifact_report()
         
         tsvname = f'mms messages'
-        tsv(report_folder, data_headers, data_list, tsvname, file_found.replace(seeker.directory, ''))
+        tsv(report_folder, data_headers, data_list, tsvname, file_found.replace(seeker.data_folder, ''))
         
         tlactivity = f'MMS Messages'
         timeline(report_folder, tlactivity, data_list, data_headers)

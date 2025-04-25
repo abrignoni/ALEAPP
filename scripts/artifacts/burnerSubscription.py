@@ -18,7 +18,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_burnerSubscription(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_burnerSubscription(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
     

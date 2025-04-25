@@ -27,7 +27,7 @@ import base64
 import blackboxprotobuf
 import gzip
 
-from scripts.ccl_android_fcm_queued_messages import FcmIterator
+from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.artifact_report import ArtifactHtmlReport
 import scripts.ilapfuncs
 
@@ -43,7 +43,7 @@ class SupportsContains(typing.Protocol):
         ...
 
 
-def get_fcm_dump(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
     # we only need the input data dirs not every matching file
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     package_tables = {}

@@ -3,7 +3,7 @@ from datetime import *
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, convert_utc_human_to_timezone, kmlgen, timeline
 
-def get_googleMapsSearches(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_googleMapsSearches(files_found, report_folder, seeker, wrap_text):
     data_list = []
     
     typess = {'1': {'type': 'message', 'message_typedef': {'2': {'type': 'int', 'name': ''}, '4': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}, '2': {'type': 'bytes', 'name': ''}, '3': {'type': 'bytes', 'name': ''}, '4': {'type': 'bytes', 'name': ''}, '5': {'type': 'message', 'message_typedef': {'3': {'type': 'double', 'name': ''}, '4': {'type': 'double', 'name': ''}}, 'name': ''}, '10': {'type': 'int', 'name': ''}, '11': {'type': 'bytes', 'name': ''}, '12': {'type': 'int', 'name': ''}, '13': {'type': 'int', 'name': ''}, '14': {'type': 'int', 'name': ''}, '17': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}, '3': {'type': 'bytes', 'name': ''}, '4': {'type': 'message', 'message_typedef': {'3': {'type': 'fixed64', 'name': ''}, '4': {'type': 'fixed64', 'name': ''}}, 'name': ''}, '5': {'type': 'bytes', 'name': ''}, '6': {'type': 'bytes', 'name': ''}, '8': {'type': 'fixed32', 'name': ''}, '9': {'type': 'int', 'name': ''}, '10': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}, '2': {'type': 'bytes', 'name': ''}}, 'name': ''}, '11': {'type': 'int', 'name': ''}, '13': {'type': 'message', 'message_typedef': {'4': {'type': 'bytes', 'name': ''}, '5': {'type': 'message', 'message_typedef': {'3': {'type': 'int', 'name': ''}, '4': {'type': 'int', 'name': ''}, '5': {'type': 'int', 'name': ''}, '6': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}, '14': {'type': 'bytes', 'name': ''}, '16': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {}, 'name': ''}}, 'name': ''}, '21': {'type': 'bytes', 'name': ''}, '24': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}, '4': {'type': 'bytes', 'name': ''}, '5': {'type': 'bytes', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '6': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'double', 'name': ''}, '2': {'type': 'double', 'name': ''}, '3': {'type': 'double', 'name': ''}}, 'name': ''}, '3': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}, '4': {'type': 'fixed32', 'name': ''}}, 'name': ''}, '16': {'type': 'int', 'name': ''}}, 'name': ''}, '9': {'type': 'int', 'name': ''}, '1': {'type': 'bytes', 'name': ''}, '11': {'type': 'bytes', 'name': ''}}, 'name': ''}, '2': {'type': 'bytes', 'name': ''}}
@@ -36,7 +36,7 @@ def get_googleMapsSearches(files_found, report_folder, seeker, wrap_text, time_o
                                 
                         url = things.get('11', 'No URL')
                         timeofsearch = datetime.fromtimestamp(timeofsearch/1000000, tz=timezone.utc)
-                        timeofsearch = convert_utc_human_to_timezone(timeofsearch, time_offset)
+                        timeofsearch = convert_utc_human_to_timezone(timeofsearch, 'UTC')
                         if isinstance(place, str):
                             pass
                         else:
@@ -66,7 +66,7 @@ def get_googleMapsSearches(files_found, report_folder, seeker, wrap_text, time_o
                             
                     url = y.get('11', 'No URL')
                     timeofsearch = datetime.fromtimestamp(timeofsearch/1000000, tz=timezone.utc)
-                    timeofsearch = convert_utc_human_to_timezone(timeofsearch, time_offset)
+                    timeofsearch = convert_utc_human_to_timezone(timeofsearch, 'UTC')
                     if isinstance(place, str):
                         pass
                     else:

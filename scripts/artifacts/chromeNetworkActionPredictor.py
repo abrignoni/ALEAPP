@@ -4,7 +4,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
 
-def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_text):
 
     for file_found in files_found:
         file_found = str(file_found)

@@ -3,13 +3,13 @@
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_packageGplinks(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
     data_list =[]
     
     for file_found in files_found:
         if 'sbin' not in file_found:
             file_found = str(file_found)
-            source_file = file_found.replace(seeker.directory, '')
+            source_file = file_found.replace(seeker.data_folder, '')
     
     with open(file_found) as data:
         values = data.readlines()

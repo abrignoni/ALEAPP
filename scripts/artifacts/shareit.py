@@ -4,7 +4,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_shareit(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_shareit(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -12,7 +12,7 @@ def get_shareit(files_found, report_folder, seeker, wrap_text, time_offset):
         if file_found.endswith('history.db'):
             break
 
-    source_file = file_found.replace(seeker.directory, '')
+    source_file = file_found.replace(seeker.data_folder, '')
 
     db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()

@@ -15,7 +15,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, get_raw_fields, check_raw_fields, check_internet_connection
 
 
-def get_map_activities(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_map_activities(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Map My Walk Activities")
     use_network = check_internet_connection()
     if use_network:

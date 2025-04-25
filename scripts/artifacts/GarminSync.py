@@ -8,7 +8,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_garmin_sync(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_garmin_sync(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Garmin Sync")
     file_found = str(files_found[0])
     db = open_sqlite_db_readonly(file_found)

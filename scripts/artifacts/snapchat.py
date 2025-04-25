@@ -4,7 +4,7 @@ import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.artifacts.mewe import APP_NAME
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, does_table_exist
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 APP_NAME = 'Snapchat'
 
@@ -350,7 +350,7 @@ def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
     _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name, tl_bool)
 
 
-def get_snapchat(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_snapchat(files_found, report_folder, seeker, wrap_text):
     db_file = None
     db_file_name = None
     xml_file = None
@@ -372,27 +372,27 @@ def get_snapchat(files_found, report_folder, seeker, wrap_text, time_offset):
         ###
         if (ff.endswith('main.db') or ff.endswith('tcspahn.db')) and not main_processed:
             db_file = ff
-            db_file_name = ff.replace(seeker.directory, '')
+            db_file_name = ff.replace(seeker.data_folder, '')
             _parse_main_db(db_file, db_file_name, report_folder)
             main_processed = True
         elif ff.endswith('memories.db') and not memories_processed:
             db_file = ff
-            db_file_name = ff.replace(seeker.directory, '')
+            db_file_name = ff.replace(seeker.data_folder, '')
             _parse_memories_db(db_file, db_file_name, report_folder)
             memories_processed = True
         elif ff.endswith('identity_persistent_store.xml') and not identity_persistent_processed:
             xml_file = ff
-            xml_file_name = ff.replace(seeker.directory, '')
+            xml_file_name = ff.replace(seeker.data_folder, '')
             _parse_xml(xml_file, xml_file_name, report_folder, 'identity_persistent_store.xml', 'Identity Persistent')
             identity_persistent_processed = True
         elif ff.endswith('LoginSignupStore.xml') and not login_signup_store_processed:
             xml_file = ff
-            xml_file_name = ff.replace(seeker.directory, '')
+            xml_file_name = ff.replace(seeker.data_folder, '')
             _parse_xml(xml_file, xml_file_name, report_folder, 'LoginSignupStore.xml', 'Login Signup')
             login_signup_store_processed = True
         elif ff.endswith('user_session_shared_pref.xml') and not user_session_processed:
             xml_file = ff
-            xml_file_name = ff.replace(seeker.directory, '')
+            xml_file_name = ff.replace(seeker.data_folder, '')
             _parse_xml(xml_file, xml_file_name, report_folder, 'user_session_shared_pref.xml', 'User Session Shared')
             user_session_processed = True
 

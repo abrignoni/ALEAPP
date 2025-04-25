@@ -2,10 +2,10 @@
 
 block_cipher = None
 
-a = Analysis(['aleapp.py'],
-             pathex=['.\\scripts\\artifacts'],
+a = Analysis(['..\\..\\aleapp.py'],
+             pathex=['..\\scripts\\artifacts'],
              binaries=[],
-             datas=[('.\\scripts', '.\\scripts')],
+             datas=[('..\\', '.\\scripts')],
              hiddenimports=['simplekml'],
              hookspath=['.\\'],
              runtime_hooks=[],

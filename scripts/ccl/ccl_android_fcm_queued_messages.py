@@ -27,8 +27,8 @@ import os
 import datetime
 import typing
 import dataclasses
-import scripts.ccl_leveldb as ccl_leveldb
-import scripts.ccl_protobuff as ccl_protobuff
+from scripts.ccl import ccl_leveldb
+from scripts.ccl import ccl_protobuff
 
 
 __version__ = "1.0"

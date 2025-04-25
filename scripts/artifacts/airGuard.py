@@ -17,9 +17,9 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist_in_db, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_airGuard(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_airGuard(files_found, report_folder, seeker, wrap_text):
     
     data_list_scans = []
     data_list_tracker = []
@@ -29,7 +29,7 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text, time_offset):
         
         if file_found.endswith('attd_db'):
             db = open_sqlite_db_readonly(file_found)
-            location_table_exists = does_table_exist(db, 'location')
+            location_table_exists = does_table_exist_in_db(file_found, 'location')
             cursor = db.cursor()
             if location_table_exists:
                 cursor.execute('''
@@ -73,25 +73,25 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text, time_offset):
                     if last_time_dev_seen is None or last_time_dev_seen == 'None':
                         pass
                     else:
-                        last_time_dev_seen = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_time_dev_seen),time_offset)
+                        last_time_dev_seen = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_time_dev_seen),'UTC')
                     
                     time_local = str(row[1]).replace("T", " ")
                     if time_local is None or time_local == 'None':
                         pass
                     else:
-                        time_local = convert_utc_human_to_timezone(convert_ts_human_to_utc(time_local),time_offset)
+                        time_local = convert_utc_human_to_timezone(convert_ts_human_to_utc(time_local),'UTC')
                     
                     first_time_dev_seen = str(row[7]).replace("T", " ")
                     if first_time_dev_seen is None or first_time_dev_seen == 'None':
                         pass
                     else:
-                        first_time_dev_seen = convert_utc_human_to_timezone(convert_ts_human_to_utc(first_time_dev_seen),time_offset)
+                        first_time_dev_seen = convert_utc_human_to_timezone(convert_ts_human_to_utc(first_time_dev_seen),'UTC')
                         
                     last_time_user_notified = str(row[8]).replace("T", " ")
                     if last_time_user_notified is None or last_time_user_notified == 'None':
                         pass
                     else:
-                        last_time_user_notified = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_time_user_notified),time_offset)
+                        last_time_user_notified = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_time_user_notified),'UTC')
 
                     data_list_tracker.append((last_time_dev_seen,time_local,row[2],row[3],row[4],row[5],row[6],first_time_dev_seen,last_time_user_notified,file_found))
             
@@ -118,13 +118,13 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text, time_offset):
                     if start_scan_ts is None or start_scan_ts == 'None':
                         pass
                     else:
-                        start_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(start_scan_ts),time_offset)
+                        start_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(start_scan_ts),'UTC')
                     
                     end_scan_ts = str(row[1]).replace("T", " ")
                     if end_scan_ts is None or end_scan_ts == 'None':
                         pass
                     else:
-                        end_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(end_scan_ts),time_offset)
+                        end_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(end_scan_ts),'UTC')
                     
                     data_list_scans.append((start_scan_ts,end_scan_ts,row[2],row[3],row[4],row[5],file_found))
             db.close()

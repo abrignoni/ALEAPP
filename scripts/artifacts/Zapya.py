@@ -4,9 +4,9 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_Zapya(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_Zapya(files_found, report_folder, seeker, wrap_text):
     file_found = str(files_found[0])
-    source_file = file_found.replace(seeker.directory, '')
+    source_file = file_found.replace(seeker.data_folder, '')
     db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()
     cursor.execute('''

@@ -1,33 +1,40 @@
-import csv
-
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
-
-def get_adb_hosts(files_found, report_folder, seeker, wrap_text, time_offset):
-    data_list = []
-    file_found = str(files_found[0])
-    
-    with open(file_found, 'r') as f:
-        user_and_host_list = [line.split(" ")[1].rstrip('\n').split('@', 1) for line in f]
-        data_list = user_and_host_list
-    
-    if len(data_list) > 0:
-        report = ArtifactHtmlReport('ADB Hosts')
-        report.start_artifact_report(report_folder, f'ADB Hosts')
-        report.add_script()
-        data_headers = ('Username', 'Hostname')
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'ADB Hosts'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-    else:
-        logfunc(f'No ADB Hosts file available')
-
-__artifacts__ = {
-        "adb hosts": (
-                "Adb Hosts",
-                ('*/misc/adb/adb_keys'),
-                get_adb_hosts)
+__artifacts_v2__ = {
+    "adb_hosts": {
+        "name": "ADB Hosts",
+        "description": "Authentication keys used in the Android Debug Bridge (ADB) protocol \
+            to secure communication between a device and a computer.",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2020-11-21",
+        "last_update_date": "2025-03-15",
+        "requirements": "none",
+        "category": "Device Information",
+        "notes": "",
+        "paths": ('*/misc/adb/adb_keys'),
+        "output_types": ["html", "lava", "tsv"],
+        "artifact_icon": "terminal"
+    }
 }
+
+
+from scripts.ilapfuncs import artifact_processor, \
+    get_file_path, get_txt_file_content, device_info
+
+
+@artifact_processor
+def adb_hosts(files_found, report_folder, seeker, wrap_text):
+    source_path = get_file_path(files_found, "adb_keys")
+    data_list = []
+    
+    file = get_txt_file_content(source_path)
+    for line in file:
+        try:
+            adb_host = line.split(" ")[1].rstrip('\n')
+            if 'unknown' not in adb_host:
+                device_info("ADB Hosts", "Hosts", adb_host, source_path)
+            data_list.append(adb_host.split('@', 1))
+        except:
+            pass
+    
+    data_headers = ('Username', 'Hostname')
+
+    return data_headers, data_list, source_path

@@ -1,9 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
 block_cipher = None
-a = Analysis(['aleappGUI.py'],
-             pathex=['.\\scripts\\artifacts'],
+a = Analysis(['..\\..\\aleappGUI.py'],
+             pathex=['..\\scripts\\artifacts'],
              binaries=[],
-             datas=[('.\\scripts', '.\\scripts'), ('.\\assets', '.\\assets')],
+             datas=[('..\\', '.\\scripts'), ('..\\..\\assets', '.\\assets')],
              hiddenimports=[],
              hookspath=['.\\'],
              runtime_hooks=[],

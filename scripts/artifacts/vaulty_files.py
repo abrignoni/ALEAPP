@@ -4,7 +4,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows 
 from scripts.parse3 import ParseProto
 
-def get_vaulty_files(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_vaulty_files(files_found, report_folder, seeker, wrap_text):
 
     title = "Vaulty - Files"
 

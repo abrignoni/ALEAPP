@@ -5,7 +5,7 @@ import xmltodict
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db, media_to_html
 
-def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 
     separator = '/'
     source_file_msg = ''
@@ -18,11 +18,11 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
         file_name = str(file_found)
         if file_name.endswith('msgstore.db'):
            whatsapp_msgstore_db = str(file_found)
-           source_file_msg = file_found.replace(seeker.directory, '')
+           source_file_msg = file_found.replace(seeker.data_folder, '')
 
         if file_name.endswith('wa.db'):
            whatsapp_wa_db = str(file_found)
-           source_file_wa = file_found.replace(seeker.directory, '')
+           source_file_wa = file_found.replace(seeker.data_folder, '')
 
     db = open_sqlite_db_readonly(whatsapp_wa_db)
     cursor = db.cursor()
@@ -136,8 +136,8 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
         
     else:
         logfunc('No WhatsApp - Call Logs found')
-
-    if does_column_exist_in_db(db, 'messages', 'data'):
+        
+    if does_column_exist_in_db(whatsapp_msgstore_db, 'messages', 'data'):
         
         try:
             cursor.execute('''

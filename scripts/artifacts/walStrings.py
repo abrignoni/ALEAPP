@@ -12,7 +12,7 @@ not_control_char_re = re.compile(f'[^{control_chars}]' + '{4,}')
 printable_chars_for_re = string.printable.replace('\\', '\\\\').replace('[', '\\[').replace(']', '\\]')
 ascii_chars_re = re.compile(f'[{printable_chars_for_re}]' + '{4,}')
 
-def get_walStrings(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_walStrings(files_found, report_folder, seeker, wrap_text):
     x = 1
     data_list = []
     for file_found in files_found:

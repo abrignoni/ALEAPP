@@ -92,7 +92,7 @@ def get_user_database(files_found, user_id):
         logfunc("User ID is not a UUID - decoding not supported!")
         pass
 
-def get_wire_profile(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_wire_profile(files_found, report_folder, seeker, wrap_text):
     #get the user id and the database of the user
     user_id = get_user_id(files_found)
     user_database = get_user_database(files_found, user_id)
@@ -161,7 +161,7 @@ def get_wire_profile(files_found, report_folder, seeker, wrap_text, time_offset)
     else:
         logfunc("No profile data located!")
 
-def get_wire_contacts(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_wire_contacts(files_found, report_folder, seeker, wrap_text):
     #get the user id and the database of the user
     user_id = get_user_id(files_found)
     user_database = get_user_database(files_found, user_id)
@@ -219,7 +219,7 @@ def get_wire_contacts(files_found, report_folder, seeker, wrap_text, time_offset
     else:
         logfunc("No contacts data located!")
         
-def get_wire_messages(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_wire_messages(files_found, report_folder, seeker, wrap_text):
     #get the user id and the database of the user
     user_id = get_user_id(files_found)
     user_database = get_user_database(files_found, user_id)

@@ -18,7 +18,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_wellbeing(files_found, report_folder, seeker, wrap_text):
 
     data_list = []
     data_list_url = []
@@ -58,7 +58,7 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
                     if event_ts is None:
                         pass
                     else:
-                        event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),time_offset)
+                        event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),'UTC')
                 
                     data_list.append((event_ts, row[2], row[3], file_found))
                     
@@ -89,7 +89,7 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text, time_offset):
                     if event_ts is None:
                         pass
                     else:
-                        event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),time_offset)
+                        event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),'UTC')
                     data_list_url.append((event_ts, row[1], row[2], row[3], row[4], row[5], file_found))
             db.close()
             

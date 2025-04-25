@@ -7,7 +7,7 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
 
-def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
     
     slash = '\\' if is_platform_windows() else '/'
     
@@ -35,7 +35,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text, time_of
             typeof =''
         
         if file_found.endswith('threads_db2-uid'):
-            source_file = file_found.replace(seeker.directory, '')
+            source_file = file_found.replace(seeker.data_folder, '')
             userid = ''
             data_list = []
             with open(file_found, 'r') as dat:
@@ -61,7 +61,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text, time_of
             continue
         
         if file_found.find('msys_database_') >= 0:
-            source_file = file_found.replace(seeker.directory, '')
+            source_file = file_found.replace(seeker.data_folder, '')
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -204,7 +204,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text, time_of
             continue
 
         if (file_found.startswith('ssus.') and file_found.endswith('threads_db2')) or file_found.endswith('threads_db2'):
-            source_file = file_found.replace(seeker.directory, '')
+            source_file = file_found.replace(seeker.data_folder, '')
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             try:

@@ -16,7 +16,7 @@ from datetime import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import tsv
 
-def get_TripEvents(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_TripEvents(files_found, report_folder, seeker, wrap_text):
     data_list_events = []  
     data_list_waypoints = []  
     trips_dict = {}  

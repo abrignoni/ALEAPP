@@ -6,7 +6,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly, is_platform_windows, media_to_html, logfunc
 
 
-def get_vlcthumbsADB(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_vlcthumbsADB(files_found, report_folder, seeker, wrap_text):
     data_list_t = []
     data_list_m = []
     for file_found in files_found:

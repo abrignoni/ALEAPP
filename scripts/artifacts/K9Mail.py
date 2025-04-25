@@ -38,7 +38,7 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
 
-def get_k9mail_data(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_k9mail_data(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for K-9 Mail - Accounts")
  
     accountUUIDS = []

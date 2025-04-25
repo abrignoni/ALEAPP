@@ -4,7 +4,7 @@ from os.path import isfile, isdir, join, basename, dirname, getsize, abspath, ge
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, media_to_html, timeline
 
-def get_imagemngCache(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_imagemngCache(files_found, report_folder, seeker, wrap_text):
     data_list = []
     
     for file_found in files_found:

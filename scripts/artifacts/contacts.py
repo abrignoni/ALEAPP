@@ -5,7 +5,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db
 
-def get_contacts(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_contacts(files_found, report_folder, seeker, wrap_text):
 
     source_file = ''
     data_list = []
@@ -17,12 +17,12 @@ def get_contacts(files_found, report_folder, seeker, wrap_text, time_offset):
            not os.path.basename(file_name) == 'contacts.db': # skip -journal and other files
             continue
 
-        source_file = file_found.replace(seeker.directory, '')
+        source_file = file_found.replace(seeker.data_folder, '')
 
         db = open_sqlite_db_readonly(file_name)
         cursor = db.cursor()
         try:
-            if does_column_exist_in_db(db, 'contacts', 'name_raw_contact_id'):
+            if does_column_exist_in_db(file_name, 'contacts', 'name_raw_contact_id'):
                 cursor.execute('''
                     SELECT mimetype, data1, name_raw_contact.display_name AS display_name
                       FROM raw_contacts JOIN contacts ON (raw_contacts.contact_id=contacts._id)

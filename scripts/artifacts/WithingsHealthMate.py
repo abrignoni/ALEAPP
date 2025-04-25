@@ -108,7 +108,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_healthmate_accounts(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_healthmate_accounts(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Withings Health Mate App - Accounts")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
@@ -163,7 +163,7 @@ def get_healthmate_accounts(files_found, report_folder, seeker, wrap_text, time_
     db.close()
 
 
-def get_healthmate_trackings(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_healthmate_trackings(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Withings Health Mate App - Trackings")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
@@ -239,7 +239,7 @@ def get_healthmate_trackings(files_found, report_folder, seeker, wrap_text, time
 
     db.close()
 
-def get_healthmate_locations(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_healthmate_locations(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Withings Health Mate App - Locations")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
@@ -290,7 +290,7 @@ def get_healthmate_locations(files_found, report_folder, seeker, wrap_text, time
 
     db.close()
 
-def get_healthmate_messages(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_healthmate_messages(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Withings Health Mate App - Messages")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
@@ -342,7 +342,7 @@ def get_healthmate_messages(files_found, report_folder, seeker, wrap_text, time_
 
     db.close()
 
-def get_healthmate_contacts(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_healthmate_contacts(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Withings Health Mate App - Contacts")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
@@ -393,7 +393,7 @@ def get_healthmate_contacts(files_found, report_folder, seeker, wrap_text, time_
 
     db.close()
 
-def get_healthmate_measurements(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_healthmate_measurements(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Withings Health Mate App - Measurements")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
@@ -462,7 +462,7 @@ def get_healthmate_measurements(files_found, report_folder, seeker, wrap_text, t
 
     db.close()
 
-def get_healthmate_devices(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_healthmate_devices(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Withings Health Mate App - Devices")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
