@@ -1,7 +1,7 @@
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(3, 3, 0, 0),
-    prodvers=(3, 3, 0, 0),
+    filevers=(3, 3, 1, 0),
+    prodvers=(3, 3, 1, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -16,12 +16,12 @@ VSVersionInfo(
         '040904b0',
         [StringStruct('CompanyName', 'Alexis Brignoni'),
         StringStruct('FileDescription', 'ALEAPP GUI'),
-        StringStruct('FileVersion', '3.3.0'),
+        StringStruct('FileVersion', '3.3.1'),
         StringStruct('InternalName', 'ALEAPP'),
         StringStruct('LegalCopyright', 'Result of a collaborative effort in the DFIR community.'),
         StringStruct('OriginalFilename', 'AleappGUI.exe'),
         StringStruct('ProductName', 'ALEAPP'),
-        StringStruct('ProductVersion', '3.3.0')])
+        StringStruct('ProductVersion', '3.3.1')])
       ]), 
     VarFileInfo([VarStruct('Translation', [1033, 1200])])
   ]

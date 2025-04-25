@@ -890,12 +890,12 @@ def convert_unix_ts_to_utc(ts):
     else:
         return ts
 
-def convert_human_ts_to_utc(ts): #This is for timestamp in human form
+def convert_human_ts_to_utc(ts):  #This is for timestamp in human form
     if ts:
         if '.' in ts:
             ts = ts.split('.')[0]
-        dt = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S') #Make it a datetime object
-        return dt.replace(tzinfo=timezone.utc) #Make it UTC
+        dt = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')  #Make it a datetime object
+        return dt.replace(tzinfo=timezone.utc)  #Make it UTC
     else:
         return ts
 
