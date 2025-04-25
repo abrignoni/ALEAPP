@@ -407,11 +407,29 @@ def get_file_path(files_found, filename, skip=False):
         logfunc(f"Error: {str(e)}")
     return None        
 
+def get_file_path_list_checking_uid(files_found, filename, position , skip=False):
+    """Returns a list containing the paths of the searched filename after checking
+    if the path component is an int at the specified position"""
+    files_found_list = []
+    try:
+        for file_found in files_found:
+            if skip and skip in file_found:
+                continue
+            if file_found.endswith(filename):
+                try:
+                    int(Path(file_found).parts[position])
+                    files_found_list.append(file_found)
+                except ValueError:
+                    pass
+        return files_found_list
+    except Exception as e:
+        logfunc(f"Error: {str(e)}")
+    return files_found_list        
+
 def get_txt_file_content(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-            file_content = file.readlines()
-            return file_content
+            return file.readlines()
     except FileNotFoundError:
         logfunc(f"Error: File not found at {file_path}")
     except PermissionError:
@@ -419,6 +437,18 @@ def get_txt_file_content(file_path):
     except Exception as e:
         logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
     return []
+
+def get_binary_file_content(file_path):
+    try:
+        with open(file_path, "rb") as file:
+            return file.read()
+    except FileNotFoundError:
+        logfunc(f"Error: File not found at {file_path}")
+    except PermissionError:
+        logfunc(f"Error: Permission denied when trying to read {file_path}")
+    except Exception as e:
+        logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
+    return bytes()
 
 def get_sqlite_db_path(path):
     if is_platform_windows():
@@ -469,6 +499,27 @@ def get_sqlite_db_records(path, query, attach_query=None):
             logfunc(f"Error with {path}:")
             logfunc(f" - {str(e)}")
     return []
+
+def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
+    multiple_source_files = len(path_list) > 1
+    source_path = ""
+    data_list = []
+    if multiple_source_files:
+        data_headers_list = list(data_headers)
+        data_headers_list.append('Source Path')
+        data_headers = tuple(data_headers_list)
+        source_path = 'file path in the report below'
+    elif path_list:
+        source_path = path_list[0]
+    for file in path_list:
+        db_records = get_sqlite_db_records(file, query)
+        for record in db_records:
+            if multiple_source_files:
+                modifiable_record = list(record)
+                modifiable_record.append(file)
+                record = tuple(modifiable_record)
+            data_list.append(record)
+    return data_headers, data_list, source_path
 
 def does_column_exist_in_db(path, table_name, col_name):
     '''Checks if a specific col exists'''
@@ -836,6 +887,15 @@ def convert_unix_ts_to_utc(ts):
     if ts:
         ts = convert_unix_ts_in_seconds(ts)
         return datetime.fromtimestamp(ts, tz=timezone.utc)
+    else:
+        return ts
+
+def convert_human_ts_to_utc(ts):  #This is for timestamp in human form
+    if ts:
+        if '.' in ts:
+            ts = ts.split('.')[0]
+        dt = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')  #Make it a datetime object
+        return dt.replace(tzinfo=timezone.utc)  #Make it UTC
     else:
         return ts
 

@@ -15,8 +15,11 @@ __artifacts_v2__ = {
 }
 
 
-import scripts.artifacts.artGlobals 
-from scripts.ilapfuncs import artifact_processor, get_file_path, get_txt_file_content, device_info, logfunc
+import scripts.artifacts.artGlobals
+from scripts.ilapfuncs import artifact_processor, \
+    get_file_path, get_txt_file_content, \
+    logfunc, device_info
+
 
 @artifact_processor
 def usagestatsVersion(files_found, report_folder, seeker, wrap_text):
