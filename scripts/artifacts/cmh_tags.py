@@ -66,7 +66,7 @@ def get_cmh_tags(files_found, report_folder, seeker, wrap_text):
         data_headers = ('file id', 'File name', 'Full Path', 'date added', 'date modified', 'latitude', 'longitude', 'date taken', 'bucket display name', 'tags', 'color', 'action', 'URL', 'vendor', 'is edited', 'mime_type', 'hash value', 'Tag name', 'Tag data', 'OCR tag','OCR tag date added', 'version', 'usertag id', 'usertag data', 'usertag timestamp')
         data_list = []
         for row in all_rows:
-            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21]))
+            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24]))
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
