@@ -54,6 +54,7 @@ def get_cmh_tags(files_found, report_folder, seeker, wrap_text):
     LEFT JOIN tag_map tm ON f._id = tm.fk_file_id
     LEFT JOIN tags t ON tm.fk_tag_id = t.tags_id
     LEFT JOIN ocr_tag ot ON f._id = ot.fk_file_id
+    LEFT JOIN usertag ut ON f._id = ut.fk_sec_media_id
     ORDER BY f._id;
     ''')
     all_rows = cursor.fetchall()
