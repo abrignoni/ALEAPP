@@ -46,7 +46,7 @@ def get_cmh_tags(files_found, report_folder, seeker, wrap_text):
         COALESCE(t.tag_data, '') AS tag_data,
         ot.image_ocr_tag,
         DATETIME(ot.tag_added_date/1000, 'unixepoch') AS ocr_tag_added_date,
-        ot.version
+        ot.version,
         ut.user_tag_id,
         ut.user_tag_data,
         DATETIME(ut.timestamp/1000, 'unixepoch') as usertag_timestamp
