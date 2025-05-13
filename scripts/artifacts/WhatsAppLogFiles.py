@@ -44,7 +44,7 @@ class WAIndex:
         phone_number = jid.split('@')[0]
         suf = phone_number[-4:]  # Extract the last 4 digits
         self.index[suf].add(jid)  # Add JID to the set for this suffix
-        logfunc(f"Loaded into index: {jid}")
+        #logfunc(f"Loaded into index: {jid}")
 
     def search_by_sufix(self, jid_input):
         """
@@ -158,7 +158,7 @@ class WALogLine:
             elif "true" in line:
                 self.wa_token.description = "Enter conversation"
 
-        logfunc(f"Cellphone: {cellphone_result}")
+        #logfunc(f"Cellphone: {cellphone_result}")
 
         # Return the processed data as a list for reporting
         return [
@@ -188,7 +188,7 @@ class WALogLine:
 enter_exit_conversation_token = WAToken("conversation/window-focus-changed", "")
 
 
-def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text):
     """
     Process WhatsApp log files, extract relevant events, and generate forensic reports.
 
@@ -197,7 +197,6 @@ def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text, time_off
         report_folder (str): Directory to store the generated reports.
         seeker (object): Object for accessing file system (from forensic framework).
         wrap_text (bool): Whether to wrap text in the report.
-        time_offset (int): Time offset for timestamp adjustments.
 
     Returns:
         None
@@ -231,9 +230,9 @@ def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text, time_off
                     index = load_contacts(cursor)  # Load contacts into the index
                     if not index.index:
                         logfunc('No WhatsApp - Contacts found')
-                    else:
-                        logfunc("Index loaded:")
-                        index.print_index()
+                    #else:
+                        #logfunc("Index loaded:")
+                        #index.print_index()
             except sqlite3.Error as e:
                 logfunc(f"Error accessing database {file_name}: {str(e)}")
                 continue
@@ -291,7 +290,7 @@ def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text, time_off
         tsvname = 'WhatsApp Logs - Detailed'
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
-        logfunc('No relevant data found in the analyzed logs.')
+        logfunc('No relevant data found in the analyzed logs. No report was generated.')
 
 
 # Artifact definition for integration with a forensic framework
