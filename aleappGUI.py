@@ -117,7 +117,8 @@ def save_profile():
     '''Save selected modules in a profile file'''
     destination_path = tk_filedialog.asksaveasfilename(parent=main_window, 
                                                        title='Save a profile', 
-                                                       filetypes=(('ALEAPP Profile', '*.alprofile'),))
+                                                       filetypes=(('ALEAPP Profile', '*.alprofile'),),
+                                                       defaultextension='.alprofile')
 
     if destination_path:
         selected_modules = get_selected_modules()
