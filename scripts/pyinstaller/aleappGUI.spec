@@ -1,11 +1,25 @@
 # -*- mode: python ; coding: utf-8 -*-
-
 block_cipher = None
 a = Analysis(['..\\..\\aleappGUI.py'],
              pathex=['..\\scripts\\artifacts'],
              binaries=[],
              datas=[('..\\', '.\\scripts'), ('..\\..\\assets', '.\\assets')],
-             hiddenimports=[],
+             hiddenimports=[
+                'bcrypt',
+                'bencoding',
+                'blackboxprotobuf',
+                'bs4',
+                'Crypto.Cipher.AES',
+                'Crypto.Util.Padding',
+                'fitdecode',
+                'folium',
+                'html.parser',
+                'PIL.Image',
+                'polyline',
+                'simplekml',
+                'xlsxwriter',
+                'xmltodict'
+             ],
              hookspath=['.\\'],
              runtime_hooks=[],
              excludes=[],
