@@ -1,7 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-
 a = Analysis(['..\\..\\aleapp.py'],
              pathex=['..\\scripts\\artifacts'],
              binaries=[],
