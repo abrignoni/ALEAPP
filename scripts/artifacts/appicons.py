@@ -99,10 +99,12 @@ def appIcons(files_found, report_folder, seeker, wrap_text):
         main_icon = ''
         other_icons = []
         if app.icon:
-            main_icon = check_in_embedded_media(seeker, source_path, app.icon[1], artifact_info, app.icon[0], app.icon[2])
+            # main_icon = check_in_embedded_media(artifact_info, report_folder, seeker, source_path, app.icon[1], app.icon[0], app.icon[2])
+            main_icon = check_in_embedded_media(artifact_info, report_folder, seeker, source_path, app.icon[1], app.icon[0])
         for k, v in app.icons.items():
             if v[1]: # sometimes icon is NULL in db
-                other_icon = check_in_embedded_media(seeker, source_path, v[1], artifact_info, v[0], v[2])
+                # other_icon = check_in_embedded_media(artifact_info, report_folder, seeker, source_path, v[1], v[0], v[2])
+                other_icon = check_in_embedded_media(artifact_info, report_folder, seeker, source_path, v[1], v[0])
                 other_icons.append(other_icon)
         data_list.append((escape(app.name), escape(app.package), main_icon, other_icons ))
 
