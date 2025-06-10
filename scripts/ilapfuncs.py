@@ -94,6 +94,7 @@ class MediaReferences():
         self.module_name = ""
         self.artifact_name = ""
         self.name = ""
+        self.media_path = ""
     
     def set_values(self, media_ref_info):
         self.id = media_ref_info[0]
@@ -101,6 +102,7 @@ class MediaReferences():
         self.module_name = media_ref_info[2]
         self.artifact_name = media_ref_info[3]
         self.name = media_ref_info[4]
+        self.media_path = media_ref_info[5]
 
 
 def logfunc(message=""):
@@ -121,8 +123,13 @@ def logfunc(message=""):
 def strip_tuple_from_headers(data_headers):
     return [header[0] if isinstance(header, tuple) else header for header in data_headers]
 
-def get_media_header_position(data_headers):
-    return [i for i, header in enumerate(data_headers) if isinstance(header, tuple) and header[1] == 'media']
+def get_media_header_info(data_headers):
+    media_header_info = {}
+    for index, header in enumerate(data_headers):
+        if isinstance(header, tuple) and header[1] == 'media':
+            style = header[2] if len(header) == 3 else ''
+            media_header_info[index] = style
+    return media_header_info
 
 def check_output_types(type, output_types):
     if type in output_types or type == output_types or 'all' in output_types or 'all' == output_types:
@@ -136,43 +143,43 @@ def get_media_references_id(media_id, artifact_info, name):
     artifact_name = artifact_info.function
     return hashlib.sha1(f"{media_id}-{artifact_name}-{name}".encode()).hexdigest()
 
-def set_media_references(media_ref_id, media_id, artifact_info, name):
+def set_media_references(media_ref_id, media_id, artifact_info, name, media_path):
     module_name = Path(artifact_info.filename).stem
     artifact_name = artifact_info.function
     media_references = MediaReferences(media_ref_id)
     media_references.set_values((
-        media_ref_id, media_id, module_name, artifact_name, name
+        media_ref_id, media_id, module_name, artifact_name, name, media_path
     ))
     lava_insert_sqlite_media_references(media_references)
 
-def check_in_media(seeker, file_path, artifact_info, name="", already_extracted=False, converted_file_path=False):
-    if already_extracted:
-        file_info_key = file_path
-    else:
-        file_info_key = seeker.search(file_path, return_on_first_hit=True)
-    file_info = seeker.file_infos.get(file_info_key) if file_info_key else None
+def check_in_media(artifact_info, report_folder, seeker, files_found, file_path, name="", converted_file_path=False):
+    extraction_path = next(
+        (path for path in files_found if Path(path).match(file_path)), None)
+    file_info = seeker.file_infos.get(extraction_path)
     if file_info:
-        if converted_file_path:
-            extraction_path = Path(converted_file_path)
-        else:
-            extraction_path = Path(file_info_key)
+        extraction_path = converted_file_path if converted_file_path else Path(extraction_path)
         if extraction_path.is_file():
-            media_id = hashlib.sha1(f"{extraction_path}".encode()).hexdigest()
+            media_id = hashlib.sha1(f"{file_info.source_path}".encode()).hexdigest()
             media_ref_id = get_media_references_id(media_id, artifact_info, name)
             lava_media_ref = lava_get_media_references(media_ref_id)
             if lava_media_ref:
                 return media_ref_id
+            media_path = Path(report_folder).joinpath(media_ref_id).with_suffix(extraction_path.suffix)
+            try:
+                media_path.hardlink_to(extraction_path)
+            except OSError:
+                shutil.copy2(extraction_path, media_path)
             lava_media_item = lava_get_media_item(media_id)
             if not lava_media_item:
                 media_item = MediaItem(media_id)
                 media_item.source_path = file_info.source_path
-                media_item.extraction_path = extraction_path
+                media_item.extraction_path = f"./{Path(report_folder).stem}/{media_ref_id}{extraction_path.suffix}"
                 media_item.mimetype = guess_mime(extraction_path)
                 media_item.metadata = "not implemented yet"
                 media_item.created_at = file_info.creation_date
                 media_item.updated_at = file_info.modification_date
                 lava_insert_sqlite_media_item(media_item)
-            set_media_references(media_ref_id, media_id, artifact_info, name)
+            set_media_references(media_ref_id, media_id, artifact_info, name, media_path)
             return media_ref_id
         else:
             logfunc(f"{extraction_path} is not a file")
@@ -181,34 +188,32 @@ def check_in_media(seeker, file_path, artifact_info, name="", already_extracted=
         logfunc(f'No matching file found for "{file_path}"')
         return None
 
-def check_in_embedded_media(seeker, source_file, data, artifact_info, name=""):
+def check_in_embedded_media(artifact_info, report_folder, seeker, source_file, data, name="", updated_at=0):
     file_info = seeker.file_infos.get(source_file)
-    if data and file_info:
+    source_path = file_info.source_path if file_info else source_file
+    if data:
         media_id = hashlib.sha1(data).hexdigest()
         media_ref_id = get_media_references_id(media_id, artifact_info, name)
         lava_media_ref = lava_get_media_references(media_ref_id)
         if lava_media_ref:
             return media_ref_id
+        media_path = Path(report_folder).joinpath(media_ref_id).with_suffix(f".{guess_extension(data)}")
         lava_media_item = lava_get_media_item(media_id)
         if not lava_media_item:
             media_item = MediaItem(media_id)
+            media_item.source_path = source_path
+            media_item.extraction_path = media_path
             media_item.mimetype = guess_mime(data)
-            media_extension = guess_extension(data)
             media_item.metadata = "not implemented yet"
             media_item.created_at = 0
-            media_item.updated_at = 0
-            target_folder_name = f"{Path(source_file).stem}_embedded_media"
-            target_path = Path(source_file).parent.joinpath(target_folder_name)
-            media_item.source_path = file_info.source_path
-            media_item.extraction_path = Path(target_path).joinpath(f"{media_id}.{media_extension}")
+            media_item.updated_at = updated_at
             try:
-                target_path.mkdir(parents=True, exist_ok=True)
                 with open(media_item.extraction_path, "wb") as file:
                     file.write(data)
             except Exception as ex:
-                logfunc(f'Could not copy embedded media into {target_path} ' + str(ex))
+                logfunc(f'Could not copy embedded media into {media_item.extraction_path} ' + str(ex))
             lava_insert_sqlite_media_item(media_item)
-        set_media_references(media_ref_id, media_id, artifact_info, name)
+        set_media_references(media_ref_id, media_id, artifact_info, name, media_path)
         return media_ref_id
     else:
         return None
@@ -244,38 +249,39 @@ def html_media_tag(media_path, mimetype, style, title=''):
         thumb = f'<a href="{media_path}" target="_blank"> Link to {filename} file</>'
     return thumb
 
-def get_data_list_with_media(media_header_idx, data_list, media_style):
+def get_data_list_with_media(media_header_info, data_list):
     ''' 
-    For columns with media item:
-      - Generate a new data list with HTML code
-      - Remove them in a new data list for TSV, KML and Timeline exports  
+    For columns with media item, generate:
+      - A data list with HTML code for HTML output
+      - A data list with extraaction path of media items for TSV, KML and Timeline exports  
     '''
     html_data_list = []
     txt_data_list = []
     for data in data_list:
         html_data = list(data)
-        media_style_idx = 0
-        for idx in media_header_idx:
+        txt_data = list(data)
+        for idx, style in media_header_info.items():
             if html_data[idx]:
-                try:
-                    style = media_style[media_style_idx] if isinstance(media_style, tuple) else media_style
-                except:
-                    style = media_style
                 media_ref_id = html_data[idx]
-                html_code = ''
                 if isinstance(media_ref_id, list):
+                    html_code = ''
+                    path_list = []
                     for item in media_ref_id:
                         media_item = lava_get_full_media_info(item)
-                        html_code += html_media_tag(media_item[6], media_item[7], style, media_item[4])
+                        html_code += html_media_tag(
+                            media_item['media_path'], media_item['type'], style, media_item['name'])
+                        path_list.append(media_item[6])
+                    txt_code = ' | '.join(path_list)
                 else:
                     media_item = lava_get_full_media_info(media_ref_id)
-                    html_code = html_media_tag(media_item[6], media_item[7], style, media_item[4])
+                    html_code = html_media_tag(media_item['media_path'], media_item['type'], style, media_item['name'])
+                    txt_code = media_item[6]
                 html_data[idx] = html_code
+                txt_data[idx] = txt_code
             else:
                 html_data[idx] = ''
-            media_style_idx += 1
+                txt_data[idx] = ''
         html_data_list.append(tuple(html_data))
-        txt_data = [i for media_idx, i in enumerate(data) if media_idx not in media_header_idx]
         txt_data_list.append(tuple(txt_data))
     return html_data_list, txt_data_list
 
@@ -293,7 +299,7 @@ def artifact_processor(func):
         description = artifact_info.get('description', '')
         icon = artifact_info.get('artifact_icon', '')
         html_columns = artifact_info.get('html_columns', [])
-        media_style = artifact_info.get('media_style', '')
+        path_regex = artifact_info.get('paths', '')
 
         output_types = artifact_info.get('output_types', ['html', 'tsv', 'timeline', 'lava', 'kml'])
 
@@ -314,12 +320,10 @@ def artifact_processor(func):
             stripped_headers = strip_tuple_from_headers(data_headers)
 
             # Check if headers contains a 'media' type
-            media_header_idx = get_media_header_position(data_headers)
-            if media_header_idx:
-                html_columns.extend([data_headers[idx][0] for idx in media_header_idx])
-                html_data_list, txt_data_list = get_data_list_with_media(media_header_idx, data_list, media_style)
-
-            txt_headers = [i for media_idx, i in enumerate(stripped_headers) if media_idx not in media_header_idx] if media_header_idx else stripped_headers
+            media_header_info = get_media_header_info(data_headers)
+            if media_header_info:
+                html_columns.extend([data_headers[idx][0] for idx in media_header_info])
+                html_data_list, txt_data_list = get_data_list_with_media(media_header_info, data_list)
 
             if check_output_types('html', output_types):
                 report = artifact_report.ArtifactHtmlReport(artifact_name)
@@ -329,21 +333,21 @@ def artifact_processor(func):
                 report.end_artifact_report()
 
             if check_output_types('tsv', output_types):
-                tsv(report_folder, txt_headers, txt_data_list if media_header_idx else data_list, artifact_name)
+                tsv(report_folder, stripped_headers, txt_data_list if media_header_info else data_list, artifact_name)
             
             if check_output_types('timeline', output_types):
-                timeline(report_folder, artifact_name, txt_data_list if media_header_idx else data_list, txt_headers)
+                timeline(report_folder, artifact_name, txt_data_list if media_header_info else data_list, stripped_headers)
 
             if check_output_types('lava', output_types):
                 table_name, object_columns, column_map = lava_process_artifact(category, module_name, artifact_name, data_headers, len(data_list), data_views=artifact_info.get("data_views"))
                 lava_insert_sqlite_data(table_name, data_list, object_columns, data_headers, column_map)
 
             if check_output_types('kml', output_types):
-                kmlgen(report_folder, artifact_name, txt_data_list if media_header_idx else data_list, txt_headers)
+                kmlgen(report_folder, artifact_name, txt_data_list if media_header_info else data_list, stripped_headers)
 
         else:
             if output_types != 'none':
-                logfunc(f"No {artifact_name} data available")
+                logfunc(f"No data found for {artifact_name}")
         
         return data_headers, data_list, source_path
     return wrapper

@@ -54,7 +54,8 @@ def initialize_lava(input_path, output_path, input_type):
                         media_item_id TEXT, 
                         module_name TEXT, 
                         artifact_name TEXT, 
-                        name TEXT, 
+                        name TEXT,
+                        media_path TEXT,
                         FOREIGN KEY (media_item_id) REFERENCES _lava_media_items(id))''')
     cursor.execute('''CREATE VIEW _lava_media_info AS 
                         SELECT 
@@ -63,6 +64,7 @@ def initialize_lava(input_path, output_path, input_type):
                             lmr.module_name, 
                             lmr.artifact_name, 
                             lmr.name, 
+                            lmr.media_path,
                             lmi.source_path, 
                             lmi.extraction_path, 
                             lmi.type, 
@@ -72,13 +74,13 @@ def initialize_lava(input_path, output_path, input_type):
                         FROM _lava_media_references as lmr 
                         LEFT JOIN _lava_media_items as lmi ON lmr.media_item_id = lmi.id''')
     
-def lava_process_artifact(category, module_name, artifact_name, data, record_count=None, data_views=None):
+def lava_process_artifact(category, module_name, artifact_name, data, record_count=None, data_views=None, create_table=True):
     global lava_data
     
     if category not in lava_data["artifacts"]:
         lava_data["artifacts"][category] = []
     
-    sanitized_table_name, column_map, object_columns = lava_create_sqlite_table(artifact_name, data)
+    sanitized_table_name, column_map, object_columns = lava_create_sqlite_table(artifact_name, data, create_table)
 
     artifact = {
         "name": artifact_name,
@@ -135,14 +137,10 @@ def lava_add_module(module_name, module_status, file_count=None):
         module["file_count"] = file_count
     lava_data["modules"].append(module)
 
-def lava_create_sqlite_table(table_name, data):
+def lava_create_sqlite_table(table_name, data, create_table=True):
     global lava_db
     
-    if not data:
-        return None, None, None
-
     sanitized_table_name = sanitize_sql_name(table_name)
-    cursor = lava_db.cursor()
 
     columns = []
     column_map = {}
@@ -150,7 +148,7 @@ def lava_create_sqlite_table(table_name, data):
 
     for item in data:
         if isinstance(item, tuple):
-            original_name, data_type = item
+            original_name, data_type = item[:2]  # Only take the first two elements as media item can have more
             sanitized_name = sanitize_sql_name(original_name)
             sql_type = get_sql_type(data_type)
             columns.append(f"{sanitized_name} {sql_type}")
@@ -162,9 +160,11 @@ def lava_create_sqlite_table(table_name, data):
 
         column_map[sanitized_name] = original_name
 
-    columns_sql = ', '.join(columns)
-    cursor.execute(f"CREATE TABLE IF NOT EXISTS {sanitized_table_name} ({columns_sql})")
-    lava_db.commit()
+    if create_table:
+        columns_sql = ', '.join(columns)
+        cursor = lava_db.cursor()
+        cursor.execute(f"CREATE TABLE IF NOT EXISTS {sanitized_table_name} ({columns_sql})")
+        lava_db.commit()
 
     return sanitized_table_name, column_map, object_columns
 
@@ -187,10 +187,7 @@ def lava_insert_sqlite_data(table_name, data, object_columns, headers, column_ma
     rows_to_insert = []
     for row in data:
         processed_row = []
-        for i, column in enumerate(headers):
-            original_column = column[0] if isinstance(column, tuple) else column
-            sanitized_column = sanitize_sql_name(original_column)
-            value = row[i]
+        for sanitized_column, value in zip(sanitized_columns, row):
             if isinstance(value, dict) or isinstance(value, list):
                 value = json.dumps(value)
             if sanitized_column in object_columns and object_columns[sanitized_column] == 'datetime':
@@ -209,6 +206,13 @@ def lava_insert_sqlite_data(table_name, data, object_columns, headers, column_ma
     
     # Execute the insert
     cursor.executemany(query, rows_to_insert)
+    lava_db.commit()
+
+def lava_create_view(table_name, artifact_query):
+    global lava_db
+    cursor = lava_db.cursor()
+    query = f"""CREATE VIEW IF NOT EXISTS {sanitize_sql_name(table_name)} AS {artifact_query}"""
+    cursor.execute(query)
     lava_db.commit()
 
 def lava_get_media_item(media_id):
@@ -244,14 +248,15 @@ def lava_insert_sqlite_media_references(media_references):
     global lava_db
     cursor = lava_db.cursor()
     cursor.execute(f'''INSERT INTO _lava_media_references 
-                ("id", "media_item_id", "module_name", "artifact_name", "name")
+                ("id", "media_item_id", "module_name", "artifact_name", "name", "media_path")
                 VALUES ("{media_references.id}", "{media_references.media_item_id}", 
                 "{media_references.module_name}", "{media_references.artifact_name}", 
-                "{media_references.name}")''')
+                "{media_references.name}", "{media_references.media_path}")''')
     lava_db.commit()
 
 def lava_get_full_media_info(media_ref_id):
     global lava_db
+    lava_db.row_factory = sqlite3.Row
     cursor = lava_db.cursor()
     query = f'''
     SELECT *
