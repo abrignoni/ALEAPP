@@ -1,4 +1,4 @@
-![ALEAPP](scripts/ALEAPP_banner.png)
+![ALEAPP](assets/ALEAPP_logo.png)
 
 # Android Logs Events And Protobuf Parser
 
