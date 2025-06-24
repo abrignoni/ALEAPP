@@ -27,5 +27,6 @@ aleapp_contributors = [
     ['Marco Neumann', 'https://bebinary4n6.blogspot.com/', '@kalinko4n6', 'https://github.com/kalink0'],
     ['Marc Seguin', 'https://segumarc.com', '@segumarc', 'https://github.com/segumarc'],
     ['Anthony Reince', 'https://www.linkedin.com/in/anthony-reince-a60115239/','',''],
-    ['Damien Attoe', 'https://digital4n6withdamien.blogspot.com/','@AttoeDamien','https://github.com/SpyderForensics']
+    ['Damien Attoe', 'https://digital4n6withdamien.blogspot.com/','@AttoeDamien','https://github.com/SpyderForensics'],
+    ['Anna Kirpichnikova', 'https://www.linkedin.com/in/anna-kirpichnikova-a4819a10b/','','https://github.com/As-arsenicum-33']
 ]
