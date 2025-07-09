@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "ChatGPT",
         "notes": "",
-        "paths": ('*/*conversations.db'),
+        "paths": ('*/com.openai.chatgpt/databases/*conversations.db*'),
         "output_types": "standard",
         "function": "get_chatpgt2",
         "artifact_icon": "loader",
