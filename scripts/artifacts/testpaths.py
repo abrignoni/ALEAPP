@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Verification",
         "notes": "",
-        "paths": ('*/system_ce/*/usagestats/version'),
+        "paths": None,
         "output_types": "standard",
         "artifact_icon": "arrow-right-circle"
     },
@@ -21,21 +21,22 @@ __artifacts_v2__ = {
         "requirements": "Paths Validation must be executed first",
         "category": "Verification",
         "notes": "",
-        "paths": ('*/system_ce/*/usagestats/version'),
+        "paths": None,
         "output_types": "standard",
         "artifact_icon": "arrow-left-circle"
     }
 }
 
 
-from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.ilapfuncs import artifact_processor, logfunc, get_file_path
 from scripts.verification_paths import paths 
 
 
 @artifact_processor
 def testpaths(files_found, report_folder, seeker, wrap_text):
     data_list = []
-    source_path = files_found[0]
+    source_path = get_file_path(files_found, '_lava_artifacts.db')
+
     
     logfunc(f'Targeted Paths: {str(len(paths))}')
     
@@ -74,7 +75,8 @@ def testpaths(files_found, report_folder, seeker, wrap_text):
 @artifact_processor
 def notfoundpaths(files_found, report_folder, seeker, wrap_text):
     data_list = []
-    source_path = files_found[0]
+    source_path = get_file_path(files_found, '_lava_artifacts.db')
+
     
     logfunc(f'Targeted Paths: {str(len(paths))}')
     
