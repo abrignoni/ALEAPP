@@ -74,13 +74,19 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
                 
                 creationdate = message['content'].get('created_date')
                 if creationdate is not None:
-                    cdt = datetime.strptime(creationdate, "%Y-%m-%dT%H:%M:%S.%fZ")
+                    try:
+                        cdt = datetime.strptime(creationdate, "%Y-%m-%dT%H:%M:%S.%fZ")
+                    except:
+                        cdt = datetime.strptime(creationdate, "%Y-%m-%dT%H:%M:%S:%fZ")
                     cdt = cdt.replace(tzinfo=timezone.utc)
                 else:
                     cdt = creationdate
                     
                 modificatondate = message['content']['modification_date']
-                mdt = datetime.strptime(modificatondate, "%Y-%m-%dT%H:%M:%S.%fZ")
+                try:
+                    mdt = datetime.strptime(modificatondate, "%Y-%m-%dT%H:%M:%S.%fZ")
+                except:
+                    mdt = datetime.strptime(modificatondate, "%Y-%m-%dT%H:%M:%S:%fZ")
                 mdt = mdt.replace(tzinfo=timezone.utc)
                 
                 chunkdata = message['content']['content'].get('content')
