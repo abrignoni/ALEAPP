@@ -9,6 +9,7 @@ __artifacts_v2__ = {
         "category": "ChatGPT",
         "notes": "",
         "paths": ('*/data/data/com.openai.chatgpt/databases/*conversations.db*'),
+        "html_columns": ['Content'],
         "output_types": "standard",
         "function": "get_chatpgt2",
         "artifact_icon": "loader",
