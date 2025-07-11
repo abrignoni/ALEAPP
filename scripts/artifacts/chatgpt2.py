@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "ChatGPT",
         "notes": "",
-        "paths": ('*/com.openai.chatgpt/databases/*conversations.db*'),
+        "paths": ('*/data/data/com.openai.chatgpt/databases/*conversations.db*'),
         "output_types": "standard",
         "function": "get_chatpgt2",
         "artifact_icon": "loader",
@@ -32,6 +32,7 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
         file_found = str(file_found)
         
         if file_found.endswith('conversations.db'):
+            source = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -99,4 +100,4 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
                 
     data_headers = (('Modified Time', 'datetime'), ('Creation Time', 'datetime'), 'Content', 'Content References')
     
-    return data_headers, data_list, file_found
+    return data_headers, data_list, source
