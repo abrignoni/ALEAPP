@@ -32,16 +32,19 @@ Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms
 com.microsoft.office.outlook"""
 __contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
+from scripts.ilapfuncs import logfunc
+
 
 def get_fcm_outlook(files_found, report_folder, seeker, wrap_text):
     # we only need the input data dirs not every matching file
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     rows = []
+    failures = 0
     for in_db_path in in_dirs:
         with FcmIterator(in_db_path) as record_iterator:
             for rec in record_iterator:
                 if rec.package == "com.microsoft.office.outlook":
-                    if rec.key_values["type"] == "OutlookPushNotification":
+                    if rec.key_values.get("type") == "OutlookPushNotification":
                         hx_message = json.loads(rec.key_values["HxMessage"])
                         for notification in hx_message["NewMailNotifications"]:
                             rows.append([
@@ -54,9 +57,10 @@ def get_fcm_outlook(files_found, report_folder, seeker, wrap_text):
                                 notification["Preview"]
                             ])
                     else:
-                        print(rec.key_values)
-                        raise ValueError(f"Unknown type {rec.key_values['type']}")
+                        failures += 1
 
+    if failures > 0:
+        logfunc(f'{failures} records could not be parsed')
     if rows:
         report = ArtifactHtmlReport("Outlook Notifications (Firebase Cloud Messaging Queued Messages)")
         report_name = "FCM-Outlook Notifications"
