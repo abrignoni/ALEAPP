@@ -115,6 +115,8 @@ def extract_speedtest_reports(files_found, report_folder, seeker, wrap_text):
     report.write_artifact_data_table(wifi_scan_headers, wifi_scan_results, file_path)
     report.end_artifact_report()
 
-    tsv(report_folder, headers, result, report_name, file_path)
+    tsv(report_folder, headers, reports, "Speedtest Extended Reports (Location Data)", file_path)
+    tsv(report_folder, wifi_scan_headers, wifi_scan_results, "Speedtest Extended Reports (Wi-Fi Data)", file_path)
 
-    timeline(report_folder, report_name, result, headers)
+    timeline(report_folder, "Speedtest Extended Reports (Location Data)", reports, headers)
+    timeline(report_folder, "Speedtest Extended Reports (Wi-Fi Data)", wifi_scan_results, wifi_scan_headers)
