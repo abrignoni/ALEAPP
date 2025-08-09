@@ -44,5 +44,5 @@ def shutdown_checkpoints(files_found, report_folder, seeker, wrap_text):
                 else:
                     continue
 
-    data_headers = ('Timestamp','Requestor','Entry','Source File')
+    data_headers = (('Timestamp','datetime'),'Requestor','Entry','Source File')
     return data_headers, data_list, 'See source file(s) below:' 

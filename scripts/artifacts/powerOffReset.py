@@ -51,5 +51,5 @@ def powerOffReset(files_found, report_folder, seeker, wrap_text):
                 else:
                     continue
 
-    data_headers = ('Timestamp (Local)','Timezone Offset','Action','Reason','Source File')
+    data_headers = (('Timestamp (Local)','datetime'),'Timezone Offset','Action','Reason','Source File')
     return data_headers, data_list, 'See source file(s) below:'
