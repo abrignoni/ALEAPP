@@ -1,26 +1,23 @@
 __artifacts_v2__ = {
-    "Cast": {
-        "name": "Cast",
-        "description": "Parses Cast device information",
-        "author": "@deagler4n6",
-        "version": "0.0.2",
-        "date": "2021-01-11",
+    "googleCast": {
+        "name": "Google Cast",
+        "description": "Parses Google Cast device information",
+        "author": "@deagler4n6 & @stark4n6",
+        "creation_date": "2021-01-11",
+        "last_update_date": "2025-08-09",
         "requirements": "none",
         "category": "Cast",
-        "notes": "2023-10-12 - Updated by @KevinPagano3",
+        "notes": "",
         "paths": ('*/com.google.android.gms/databases/cast.db*'),
-        "function": "get_Cast"
+        "output_types": "standard",
+        "artifact_icon": "cast",
     }
 }
 
-import sqlite3
-import textwrap
+from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
-
-def get_Cast(files_found, report_folder, seeker, wrap_text):
-    
+@artifact_processor
+def googleCast(files_found, report_folder, seeker, wrap_text):
     data_list = []
     
     for file_found in files_found:
@@ -86,19 +83,5 @@ def get_Cast(files_found, report_folder, seeker, wrap_text):
         else:
             continue # Skip all other files
     
-    if data_list:
-        report = ArtifactHtmlReport('Cast')
-        report.start_artifact_report(report_folder, 'Cast')
-        report.add_script()
-        data_headers = ('Last Published Timestamp','Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID','Last Discovered Timestamp','Last Discovered By BLE Timestamp','Source File') 
-        
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Cast'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Cast'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No Cast data available')
+    data_headers = (('Last Published Timestamp','datetime'),'Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID',('Last Discovered Timestamp','datetime'),('Last Discovered By BLE Timestamp','datetime'),'Source File') 
+    return data_headers, data_list, 'See source file(s) below:'

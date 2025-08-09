@@ -36,5 +36,5 @@ def last_boot_time(files_found, report_folder, seeker, wrap_text):
         logdevinfo(f"<b>Last Boot Timestamp: </b>{last_boot_time}")
         data_list.append((last_boot_time, file_name))
 
-    data_headers = ('Timestamp', 'File Name')
+    data_headers = (('Timestamp','datetime'), 'File Name')
     return data_headers, data_list, file_found
