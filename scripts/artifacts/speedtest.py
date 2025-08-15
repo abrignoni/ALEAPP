@@ -9,12 +9,13 @@ __artifacts_v2__ = {
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db',),
-        "function": "extract_speedtest_test_results"
+        "function": "extract_speedtest_test_results",
+        "artifact_icon": "loader"
     },
 
-    "speedtest_reports": {
-        "name": "Speedtest Reports",
-        "description": "Extracts Speedtest logging reports which contain more information, like Wi-Fi scan data",
+    "speedtest_reports_location": {
+        "name": "Speedtest Reports - Location",
+        "description": "Extracts location data from Speedtest usage reports",
         "author": "its5Q",
         "version": "0.1",
         "date": "2025-07-28",
@@ -22,48 +23,60 @@ __artifacts_v2__ = {
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
-        "function": "extract_speedtest_reports"
+        "function": "extract_speedtest_reports_location",
+        "artifact_icon": "map-pin"
+    },
+
+    "speedtest_reports_wifi": {
+        "name": "Speedtest Reports - Wi-Fi data",
+        "description": "Extracts Wi-Fi scan data from Speedtest usage reports",
+        "author": "its5Q",
+        "version": "0.1",
+        "date": "2025-07-28",
+        "requirements": "none",
+        "category": "Speedtest",
+        "notes": "",
+        "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
+        "function": "extract_speedtest_reports_wifi",
+        "artifact_icon": "wifi"
     },
 }
 
 from datetime import datetime, timezone, timedelta
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import open_sqlite_db_readonly, does_column_exist_in_db, tsv, timeline, logfunc
+from scripts.ilapfuncs import open_sqlite_db_readonly, logfunc, artifact_processor, convert_unix_ts_to_utc
 import json
 
+@artifact_processor
 def extract_speedtest_test_results(files_found, report_folder, seeker, wrap_text):
     file_path = files_found[0]
-    headers = ['Timestamp', 'Connection type', 'SSID', 'User Latitude', 'User Longitude', 'External IP', 'Internal IP', 'Download speed (Kbps)', 'Upload speed (Kbps)']
+    headers = [('Timestamp', 'datetime'), 'Connection type', 'SSID', 'User Latitude', 'User Longitude', 'External IP', 'Internal IP', 'Download speed (Kbps)', 'Upload speed (Kbps)']
 
     db = open_sqlite_db_readonly(file_path)
     cur = db.cursor()
 
     try:
-        cur.execute('SELECT datetime(date, \'unixepoch\'), connectionType, ssid, userLatitude, userLongitude, externalIp, internalIp, downloadKbps, uploadKbps FROM UnivSpeedTestResult')
+        cur.execute('SELECT date, connectionType, ssid, userLatitude, userLongitude, externalIp, internalIp, downloadKbps, uploadKbps FROM UnivSpeedTestResult')
         result = cur.fetchall()
     except Exception as ex:
         logfunc('Error retrieving Speedtest test results: ', ex)
 
-    if result:
-        report = ArtifactHtmlReport("Speedtest Test Results")
-        report_name = "Speedtest Test Results"
-        report.start_artifact_report(report_folder, report_name)
-        report.add_script()
-        report.write_artifact_data_table(headers, result, file_path)
-        report.end_artifact_report()
+    timestamped_result = []
+    for row in result:
+        row = list(row)
+        try:
+            row[0] = convert_unix_ts_to_utc(row[0])
+        except Exception:
+            logfunc('Error converting timestamp for Speedtest test result: ', ex)
+        timestamped_result.append(row)
 
-        tsv(report_folder, headers, result, report_name, file_path)
+    return headers, timestamped_result, file_path
 
-        timeline(report_folder, report_name, result, headers)
-
-
-def extract_speedtest_reports(files_found, report_folder, seeker, wrap_text):
+@artifact_processor
+def extract_speedtest_reports_location(files_found, report_folder, seeker, wrap_text):
     file_path = files_found[0]
-    headers = ['Timestamp', 'Latitude', 'Longitude', 'Altitude', 'Accuracy (meters)']
-    wifi_scan_headers = ['Timestamp', 'BSSID', 'SSID', 'Signal Strength']
+    headers = [('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Accuracy (meters)']
 
     reports = []
-    wifi_scan_results = []
 
     db = open_sqlite_db_readonly(file_path)
     cur = db.cursor()
@@ -79,7 +92,6 @@ def extract_speedtest_reports(files_found, report_folder, seeker, wrap_text):
             try:
                 j = json.loads(row[0])
                 location_data = j.get('start', {}).get('location', {})
-                wifi_scan_data = j.get('start', {}).get('extended', {}).get('wifi', {}).get('scanResults', [])
                 report_timestamp = datetime.fromisoformat(j.get('start', {}).get('timestamp', '1970-01-01T00:00:00Z'))
                 if location_data:
                     latitude = location_data.get('latitude', None)
@@ -88,6 +100,31 @@ def extract_speedtest_reports(files_found, report_folder, seeker, wrap_text):
                     accuracy = location_data.get('accuracy', None)
 
                     reports.append((report_timestamp, latitude, longitude, altitude, accuracy))
+            except Exception as ex:
+                logfunc('Error retrieving Speedtest reports: ', ex)
+
+    return headers, reports, file_path
+
+@artifact_processor
+def extract_speedtest_reports_wifi(files_found, report_folder, seeker, wrap_text):
+    file_path = files_found[0]
+    headers = [('Timestamp', 'datetime'), 'BSSID', 'SSID', 'Signal Strength']
+    results = []
+
+    db = open_sqlite_db_readonly(file_path)
+    cur = db.cursor()
+
+    try:
+        cur.execute('SELECT DATA FROM REPORT')
+        result = cur.fetchall()
+    except Exception as ex:
+        logfunc('Error retrieving Speedtest reports: ', ex)
+
+    if result:
+        for row in result:
+            try:
+                j = json.loads(row[0])
+                wifi_scan_data = j.get('start', {}).get('extended', {}).get('wifi', {}).get('scanResults', [])
                 
                 elapsedRealtimeNanos = j.get('start', {}).get('time', {}).get('elapsedRealtimeNanos', 0)
                 timestamp = j.get('start', {}).get('time', {}).get('timestamp', 0)
@@ -102,21 +139,9 @@ def extract_speedtest_reports(files_found, report_folder, seeker, wrap_text):
                     except Exception as ex:
                         logfunc('Error retrieving Speedtest Wi-Fi scan data: ', ex)
 
-                    wifi_scan_results.append((timestamp, bssid, ssid, level))
+                    results.append((timestamp, bssid, ssid, level))
 
             except Exception as ex:
                 logfunc('Error retrieving Speedtest reports: ', ex)
 
-    report = ArtifactHtmlReport("Speedtest Extended Reports")
-    report_name = "Speedtest Extended Reports"
-    report.start_artifact_report(report_folder, report_name)
-    report.add_script()
-    report.write_artifact_data_table(headers, reports, file_path)
-    report.write_artifact_data_table(wifi_scan_headers, wifi_scan_results, file_path)
-    report.end_artifact_report()
-
-    tsv(report_folder, headers, reports, "Speedtest Extended Reports (Location Data)", file_path)
-    tsv(report_folder, wifi_scan_headers, wifi_scan_results, "Speedtest Extended Reports (Wi-Fi Data)", file_path)
-
-    timeline(report_folder, "Speedtest Extended Reports (Location Data)", reports, headers)
-    timeline(report_folder, "Speedtest Extended Reports (Wi-Fi Data)", wifi_scan_results, wifi_scan_headers)
+    return headers, results, file_path
