@@ -28,7 +28,7 @@ def usagestatsVersion(files_found, report_folder, seeker, wrap_text):
 
     text_file = get_txt_file_content(source_path)
     for line in text_file:
-        splits = line.split(';')
+        splits = line.strip().split(';')
         totalvalues = len(splits)
         if totalvalues >= 3:
             device_info("Usagestats", "Android version", splits[0])
