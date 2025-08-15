@@ -49,7 +49,7 @@ import json
 @artifact_processor
 def extract_speedtest_test_results(files_found, report_folder, seeker, wrap_text):
     file_path = files_found[0]
-    headers = [('Timestamp', 'datetime'), 'Connection type', 'SSID', 'User Latitude', 'User Longitude', 'External IP', 'Internal IP', 'Download speed (Kbps)', 'Upload speed (Kbps)']
+    headers = [('Timestamp', 'datetime'), 'Connection type', 'SSID', 'Latitude', 'Longitude', 'External IP', 'Internal IP', 'Download speed (Kbps)', 'Upload speed (Kbps)']
 
     db = open_sqlite_db_readonly(file_path)
     cur = db.cursor()
