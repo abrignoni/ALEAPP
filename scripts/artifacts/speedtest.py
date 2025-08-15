@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db',),
-        "function": "extract_speedtest_test_results",
         "artifact_icon": "loader"
     },
 
@@ -23,7 +22,6 @@ __artifacts_v2__ = {
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
-        "function": "extract_speedtest_reports_location",
         "artifact_icon": "map-pin"
     },
 
@@ -37,7 +35,6 @@ __artifacts_v2__ = {
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
-        "function": "extract_speedtest_reports_wifi",
         "artifact_icon": "wifi"
     },
 }
@@ -47,7 +44,7 @@ from scripts.ilapfuncs import open_sqlite_db_readonly, logfunc, artifact_process
 import json
 
 @artifact_processor
-def extract_speedtest_test_results(files_found, report_folder, seeker, wrap_text):
+def speedtest_tests(files_found, report_folder, seeker, wrap_text):
     file_path = files_found[0]
     headers = [('Timestamp', 'datetime'), 'Connection type', 'SSID', 'Latitude', 'Longitude', 'External IP', 'Internal IP', 'Download speed (Kbps)', 'Upload speed (Kbps)']
 
@@ -72,7 +69,7 @@ def extract_speedtest_test_results(files_found, report_folder, seeker, wrap_text
     return headers, timestamped_result, file_path
 
 @artifact_processor
-def extract_speedtest_reports_location(files_found, report_folder, seeker, wrap_text):
+def speedtest_reports_location(files_found, report_folder, seeker, wrap_text):
     file_path = files_found[0]
     headers = [('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Accuracy (meters)']
 
@@ -92,7 +89,7 @@ def extract_speedtest_reports_location(files_found, report_folder, seeker, wrap_
             try:
                 j = json.loads(row[0])
                 location_data = j.get('start', {}).get('location', {})
-                report_timestamp = datetime.fromisoformat(j.get('start', {}).get('timestamp', '1970-01-01T00:00:00Z'))
+                report_timestamp = datetime.fromisoformat(j.get('start', {}).get('timestamp', '1970-01-01T00:00:00Z')).astimezone(timezone.utc)
                 if location_data:
                     latitude = location_data.get('latitude', None)
                     longitude = location_data.get('longitude', None)
@@ -106,7 +103,7 @@ def extract_speedtest_reports_location(files_found, report_folder, seeker, wrap_
     return headers, reports, file_path
 
 @artifact_processor
-def extract_speedtest_reports_wifi(files_found, report_folder, seeker, wrap_text):
+def speedtest_reports_wifi(files_found, report_folder, seeker, wrap_text):
     file_path = files_found[0]
     headers = [('Timestamp', 'datetime'), 'BSSID', 'SSID', 'Signal Strength']
     results = []
@@ -128,7 +125,7 @@ def extract_speedtest_reports_wifi(files_found, report_folder, seeker, wrap_text
                 
                 elapsedRealtimeNanos = j.get('start', {}).get('time', {}).get('elapsedRealtimeNanos', 0)
                 timestamp = j.get('start', {}).get('time', {}).get('timestamp', 0)
-                boot_time = datetime.fromisoformat(timestamp) - timedelta(microseconds=elapsedRealtimeNanos/1000) if timestamp and elapsedRealtimeNanos else None
+                boot_time = datetime.fromisoformat(timestamp).astimezone(timezone.utc) - timedelta(microseconds=elapsedRealtimeNanos/1000) if timestamp and elapsedRealtimeNanos else None
 
                 for scan_result in wifi_scan_data:
                     try:
