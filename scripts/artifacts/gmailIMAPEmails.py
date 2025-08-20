@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/com.google.android.gm/databases/EmailProvider.*','*/data/com.google.android.gm/files/body/0/*/*.*'), # TODO: Is hardcoding 0 OK? Possibility of more mailboxes maybe?
         "output_types": "standard",
-        "html_columns": ["Message"],
+        "html_columns": ["Body(HTML)"],
         "artifact_icon": "inbox",
     },
 }
@@ -86,5 +86,5 @@ def gmailIMAPEmails(files_found, report_folder, seeker, wrap_text):
 
             data_list.append((row[0], row[1], row[2], tBody, hBody, row[3], row[4], row[5], row[6], row[7], emailProviderDB))
 
-    data_headers = (('Timestamp','datetime'),'_id','Snippet', 'Body (TXT)', 'Body (HTML)', 'Recipient','Reply To','Subject Line','Mailed By','Signed by', 'Source File')
+    data_headers = (('Timestamp','datetime'),'_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Recipient','Reply To','Subject Line','Mailed By','Signed by', 'Source File')
     return data_headers, data_list, 'See source file(s) below:'
