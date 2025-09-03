@@ -26,6 +26,20 @@ __artifacts_v2__ = {
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "phone",
         "function": "googlevoice_calls",
+    },
+    "googlevoice_voicemails": {
+        "name": "Google Voice - Voicemails",
+        "description": "Parses Google Voice Voicemails",
+        "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
+        "creation_date": "2025-09-03",
+        "last_update_date": "2025-09-03",
+        "requirements": "blackboxprotobuf",
+        "category": "Google Voice",
+        "notes": "Tested on version 2025.07.20.788599304 (September 3rd, 2025)",
+        "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db'),
+        "output_types": ["html", "tsv", "lava"],
+        "artifact_icon": "voicemail",
+        "function": "googlevoice_voicemails",
     }
 }
 
@@ -103,11 +117,9 @@ def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
 
     return data_headers, data_list, source_path
 
-
-
 @artifact_processor
 def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
-    data_headers = ('Account Number', 'Timestamp','Direction',"Caller",'Recipient','Call Status','Voicemail Left','Duration','Read Status','Audio Recording') 
+    data_headers = ('Account Number', 'Timestamp','Direction','Caller','Recipient','Call Status','Voicemail Left','Duration','Read Status','Audio Recording') 
     data_list = []
     source_path = ""
 
@@ -210,4 +222,82 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
 
     return data_headers, data_list, source_path
 
+@artifact_processor
+def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
+    data_headers = ('Account Number', 'Timestamp', 'Caller','Recipient','Duration','Read Status','Audio File') 
+    data_list = []
+    source_path = ""
 
+    # get a list of accounts
+    accounts = []
+    for file in files_found:
+        if os.path.basename(file).endswith("LegacyMsgDbInstance.db"):
+            parts = file.split(os.sep)
+            user_index = parts.index("accounts") + 1
+            accounts.append(int(parts[user_index]))
+    
+    # get the voicemail data
+    source_path_found = False
+    for i in range(len(accounts)):
+        for file in files_found:
+            if os.path.basename(file) == 'LegacyMsgDbInstance.db':
+
+                parts = file.split(os.sep)
+                user_index = parts.index("accounts") + 1
+
+                # get the path of the first account's db
+                if source_path_found == False:
+                    source_path = file
+                    source_path_found = True
+
+                if accounts[i] == int(parts[user_index]):
+                    account_number = accounts[i]
+                    db = open_sqlite_db_readonly(file)
+                    cursor = db.cursor()
+                    if does_table_exist_in_db(file, 'message_t'):
+                        cursor.execute('''
+                        SELECT 
+                        message_blob 
+                        FROM 
+                        message_t
+                        ''')
+                all_rows = cursor.fetchall()
+                usageentries = len(all_rows)
+                if usageentries > 0:
+                    for row in all_rows:
+                        pb = row[0]
+                        message = blackboxprotobuf.decode_message(pb)
+
+                        # check if the entry is a voicemail 
+                        # 13 = 3 for a voicemail is received
+                        if message[0]['13'] == 3:
+
+                            # Timestamp
+                            timestamp = message[0]['2'] / 1000 # convert to seconds
+                            timestamp = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(timestamp)) # convert to UTC time
+                            
+                            # Caller
+                            from_num = str(message[0]['4']['1'].decode('utf-8'))
+                            
+                            # Recipient
+                            to_num = message[0]['3'].decode('utf-8') # GV number
+                            
+                            # Duration
+                            duration = message[0]['9']
+                            duration = struct.unpack('f', struct.pack('I', duration))[0] # convert int32 value to a float
+                            duration = time.strftime("%H:%M:%S", time.gmtime(duration)) # convert seconds to Hours:Minutes:Seconds
+
+                            # Read Status
+                            if message[0]['6'] == 0:
+                                read_status = "Unread"
+                            elif message[0]['6'] == 1:
+                                read_status = "Read"
+
+                            # Audio File
+                            # show file which can be found at /data/data/com.google.android.apps.googlevoice/cache/audio
+                            audio = "/data/data/com.google.android.apps.googlevoice/cache/audio/" + message[0]['1'].decode('utf-8') + ".mp3"
+                            
+                            if timestamp:
+                                data_list.append((account_number,timestamp,from_num,to_num,duration,read_status,audio))
+
+    return data_headers, data_list, source_path
