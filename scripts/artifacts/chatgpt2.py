@@ -3,8 +3,9 @@ __artifacts_v2__ = {
         "name": "ChatGPT",
         "description": "Android ChatGPT conversations",
         "author": "Alexis Brignoni",
-        "version": "0.0.1",
-        "date": "2025-07-08",
+        "version": "0.0.2",
+        "creation_date": "2025-07-08",
+        "last_updated_date": "2025-09-09",
         "requirements": "none",
         "category": "ChatGPT",
         "notes": "",
@@ -80,9 +81,10 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
 
             # Print one result as a check
             for message_id, message in list(reconstructed_messages.items()):
-
-                creationdate = message['content'].get('created_date')
-                if creationdate is not None:
+                cdt = ''
+                mdt = ''
+                creationdate = message['content'].get('created_date','')
+                if creationdate:
                     try:
                         cdt = datetime.strptime(creationdate, "%Y-%m-%dT%H:%M:%S.%fZ")
                     except:
@@ -91,8 +93,8 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
                 else:
                     cdt = creationdate
 
-                modificationdate = message['content'].get('modification_date')
-                if modificationdate is not None:
+                modificationdate = message['content'].get('modification_date','')
+                if modificationdate:
                     try:
                         mdt = datetime.strptime(modificationdate, "%Y-%m-%dT%H:%M:%S.%fZ")
                     except:
@@ -109,8 +111,8 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
                 conversation_id = message['content'].get('conversation_id')
                 conversation_title = conversations.get(conversation_id, 'Unknown Conversation')
 
-                data_list.append((mdt, cdt, conversation_title, chunkdata, references))
+                data_list.append((mdt, cdt, conversation_title, chunkdata, references, message_id, conversation_id))
 
-    data_headers = (('Modified Time', 'datetime'), ('Creation Time', 'datetime'), 'Conversation Title', 'Content', 'Content References')
+    data_headers = (('Modified Time', 'datetime'), ('Creation Time', 'datetime'), 'Conversation Title', 'Content', 'Content References','Message ID','Conversation ID')
 
     return data_headers, data_list, source
