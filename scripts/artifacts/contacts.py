@@ -1,11 +1,26 @@
+__artifacts_v2__ = {
+    "contacts": {
+        "name": "Contacts",
+        "description": "Contacts from the device",
+        "author": "Mark McKinnon",
+        "creation_date": "2021-03-11",
+        "last_updated_date": "2025-09-09",
+        "requirements": "none",
+        "category": "Contacts",
+        "notes": "",
+        "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*', '*/com.samsung.android.providers.contacts/databases/contact*'),
+        "output_types": ["html","tsv","lava"],
+        "artifact_icon": "users",
+    }
+}
+
 import os
-import sqlite3
 import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, does_column_exist_in_db
 
-def get_contacts(files_found, report_folder, seeker, wrap_text):
+@artifact_processor
+def contacts(files_found, report_folder, seeker, wrap_text):
 
     source_file = ''
     data_list = []
@@ -59,25 +74,5 @@ def get_contacts(files_found, report_folder, seeker, wrap_text):
             
         db.close()
     
-    if data_list:
-        report = ArtifactHtmlReport('Contacts')
-        report.start_artifact_report(report_folder, 'Contacts')
-        report.add_script()
-        data_headers = ('Mimetype','Data 1', 'Display Name', 'Phone Number', 'Email Address', 'Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Contacts'
-        tsv(report_folder, data_headers, data_list, tsvname, source_file)
-        
-    else:
-        logfunc('No Contacts found')
-
-# 'contacts':('Contacts', ('**/com.android.providers.contacts/databases/contact*', '**/com.sec.android.provider.logsprovider/databases/logs.db*')),
-__artifacts__ = {
-    "Contacts": (
-        "Contacts",
-        ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*', '*/com.samsung.android.providers.contacts/databases/contact*'),
-        get_contacts)
-}
+    data_headers = ('Mimetype','Data 1', 'Display Name', 'Phone Number', 'Email Address', 'Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+    return data_headers, data_list, 'See source file(s) below'
