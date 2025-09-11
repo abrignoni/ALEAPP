@@ -1,6 +1,6 @@
 # Missing Header Translations
 
-This document shows headers extracted from the iLEAPP modules that are missing translations in one or more language files within the LAVA repository. 
+This document shows headers extracted from the LEAPP modules that are missing translations in one or more language files within the LAVA repository. 
 
 ## Overview
 Headers should have translations in all supported languages. This document helps identify gaps in translation coverage. Headers are listed only if they are missing one or more translations.
