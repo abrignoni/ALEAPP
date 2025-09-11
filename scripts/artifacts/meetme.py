@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Chats",
         "notes": "",
-        "paths": ('*\data\com.myyearbook.m\databases\chats.db*'),
+        "paths": ('*/data/com.myyearbook.m/databases/chats.db*'),
         "function": "get_meetmechats"
     }
 }
