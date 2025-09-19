@@ -10,6 +10,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 |----------------|
 | DuckDuckGo |
 | LinkedIn |
+| SimpleStorage_applaunch |
 | airtagAndroid |
 | appicons |
 | frosting |
@@ -64,7 +65,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | PumaUsers |
 | RunkeeperActivities |
 | SamsungHoneyboard |
-| SimpleStorage_applaunch |
 | Todoist |
 | Turbo_Battery |
 | Twitter |
