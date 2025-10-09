@@ -37,7 +37,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
-def Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset):
+def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
     source_file_turbo = ''
     turbo_db = ''
     data_list = []
@@ -89,7 +89,7 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text, time_offset):
     return data_headers, data_list, source_file_turbo
                
 @artifact_processor
-def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text, time_offset):     
+def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):     
     source_file_bluetooth = ''
     turbo_db = ''
     data_list = []
