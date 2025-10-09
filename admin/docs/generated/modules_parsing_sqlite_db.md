@@ -66,7 +66,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | RunkeeperActivities |
 | SamsungHoneyboard |
 | Todoist |
-| Turbo_Battery |
 | Twitter |
 | VerizonRDDAnalytics |
 | VerizonRDDWIFI |
@@ -105,6 +104,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chromeTopSites |
 | cmh |
 | contacts |
+| deviceHealthServices_Battery |
 | discordChats |
 | dmss |
 | downloads |
