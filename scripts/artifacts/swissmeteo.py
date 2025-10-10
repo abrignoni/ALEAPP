@@ -1,7 +1,20 @@
 __artifacts_v2__ = {
     "swissmeteo_plz": {
-        "name": "Swissmeteo",
+        "name": "Swissmeteo - Interaction with places",
         "description": "parse the interaction with meteo of particular places",
+        "author": "jerome.arn@vd.ch",
+        "creation_date": "2025-09-25",
+        "last_update_date": "2025-09-25",
+        "requirements": "none",
+        "category": "Meteo",
+        "notes": "",
+        "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
+        "output_types": "standard",
+        "artifact_icon": "flag"
+    },
+    "plz_interaction": {
+        "name": "Swissmeteo - App opening with geolocation",
+        "description": "parse The app opening with potential geolocation when open",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2025-09-25",
         "last_update_date": "2025-09-25",
@@ -47,7 +60,6 @@ def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
         for record in db_records:
             local_data = get_location_infos(cursor, record[1])
             if len(local_data) > 0:
-                print(local_data[0])
                 link = lv03_to_osm(local_data[0][1], local_data[0][2])
                 data_list.append((record[0], record[1][:4], local_data[0][4], local_data[0][3], link))
             else:
@@ -57,6 +69,37 @@ def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
 
     else:
         logfunc('No Swissmeteo')
+
+@artifact_processor
+def plz_interaction(files_found, report_folder, seeker, wrap_text):
+    source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
+    data_list = []
+
+    for file_found in files_found:
+        file_found = str(file_found)
+
+    if files_found[0].endswith('favorites_prediction_db.sqlite'):
+        query = '''
+        SELECT 
+            datetime(timestamp/1000, 'unixepoch', 'localtime') AS created_date,
+            lat,
+            lon
+        FROM app_open
+        ORDER BY created_date DESC
+        '''
+
+        data_headers = ('Opened timestamp', 'Latitude', 'Longitude', "Map link")
+        db_records = get_sqlite_db_records(files_found[0], query)
+        for record in db_records:
+            data_list.append((record[0], record[1], record[2], coordinate_to_osm(record[1], record[2])))
+
+        return data_headers, data_list, source_path
+
+    else:
+        logfunc('No plz_interaction')
+
+def coordinate_to_osm(lat, lon): 
+    return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=18"
 
 def lv03_to_osm(E, N): 
     x, y = (E-600000)/1e6, (N-200000)/1e6; 
