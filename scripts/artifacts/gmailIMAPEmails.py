@@ -88,7 +88,7 @@ def gmailIMAPEmails(files_found, report_folder, seeker, wrap_text):
             try:
                 row[0] = convert_unix_ts_to_utc(row[0])
             except Exception as ex:
-                logfunc('Error Timestamp conversion: ', ex)
+                logfunc(f'Error Timestamp conversion: {ex}')
 
             # BODY Files - Full message is found elsewhere */data/com.google.android.gm/files/body/[ParentFolder]/[_idFolder]
             # TXT Body
