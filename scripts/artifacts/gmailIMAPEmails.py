@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "last_update_date": "2025-10-11", 
         "requirements": "none",
         "category": "Email",
-        "notes": "", #TODO: Update
+        "notes": "", 
         "paths": ('*/data/com.google.android.gm/databases/EmailProvider.*','*/data/com.google.android.gm/files/body/0/*/*.*','*/data/com.google.android.gm/databases/*.db_att/*','*/data/com.google.android.gm/cache/*.attachment'), 
         "output_types": "standard",
         "html_columns": ["Body(HTML)"],
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
         "last_update_date": "2025-10-11", 
         "requirements": "none",
         "category": "Email",
-        "notes": "", #TODO: Update
+        "notes": "", 
         "paths": ('*/data/com.google.android.gm/databases/EmailProvider.*'), 
         "output_types": "standard",
         "artifact_icon": "user", 
@@ -38,11 +38,9 @@ from scripts.ilapfuncs import open_sqlite_db_readonly, artifact_processor, conve
 
 @artifact_processor
 def gmailIMAPEmails(files_found, report_folder, seeker, wrap_text):
-    emailProviderDB = ''
-    source_emailProvider = ''
-    
+    emailProviderDB = ''    
     emailProviderDB_found = []
-    source_emailProvider_found = []
+
     data_list = []
 
     bodyTxt_list = []
@@ -108,7 +106,6 @@ def gmailIMAPEmails(files_found, report_folder, seeker, wrap_text):
                         hBody = f.read()
             
             # ATTACHMENTS - Files can be stored in two different locations depending if they are sent or received.            
-            AttachmentNames = []
             AttachmentPaths = []
             if (row[9] == 1):
                 cursor_attach = db.cursor()
@@ -143,8 +140,8 @@ def gmailIMAPEmails(files_found, report_folder, seeker, wrap_text):
                             fileName = os.path.basename(filePath).replace(":", "_")
                             
                             for sAttach in attachSent_list:
-                                    if ((os.path.basename(sAttach)) == fileName):
-                                        AttachmentPaths.append([row_a[2], media_to_html(sAttach, files_found, report_folder)])
+                                if ((os.path.basename(sAttach)) == fileName):
+                                    AttachmentPaths.append([row_a[2], media_to_html(sAttach, files_found, report_folder)])
                            
             data_list.append((row[0], row[1], row[2], tBody, hBody, row[3], row[4], row[5], row[6], row[7], row[8], row[9], AttachmentPaths, row[11], emailProviderDB))
 
