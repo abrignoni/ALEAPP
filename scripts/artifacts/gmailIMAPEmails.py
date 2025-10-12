@@ -36,7 +36,7 @@ import urllib.parse
 from scripts.ilapfuncs import open_sqlite_db_readonly, artifact_processor, convert_unix_ts_to_utc, logfunc, media_to_html
 
 @artifact_processor
-def gmailIMAPEmails(files_found, report_folder, seeker, wrap_text):
+def gmailIMAPEmails(files_found, report_folder, _seeker, _wrap_text):
     emailProviderDB = ''    
     emailProviderDB_found = []
 
@@ -148,7 +148,7 @@ def gmailIMAPEmails(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, 'See source file(s) below:'
     
 @artifact_processor
-def gmailIMAPAccounts(files_found, report_folder, seeker, wrap_text):
+def gmailIMAPAccounts(files_found, _report_folder, _seeker, _wrap_text):
     emailProviderDB = '' 
     emailProviderDB_found = []
 
