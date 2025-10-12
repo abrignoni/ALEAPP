@@ -32,7 +32,6 @@ __artifacts_v2__ = {
 
 import os
 import urllib.parse
-from datetime import datetime
 
 from scripts.ilapfuncs import open_sqlite_db_readonly, artifact_processor, convert_unix_ts_to_utc, logfunc, media_to_html
 
@@ -87,7 +86,7 @@ def gmailIMAPEmails(files_found, report_folder, seeker, wrap_text):
             row = list(row)
             try:
                 row[0] = convert_unix_ts_to_utc(row[0])
-            except Exception as ex:
+            except (TypeError, ValueError, OverflowError, OSError) as ex:
                 logfunc(f'Error Timestamp conversion: {ex}')
 
             # BODY Files - Full message is found elsewhere */data/com.google.android.gm/files/body/[ParentFolder]/[_idFolder]
