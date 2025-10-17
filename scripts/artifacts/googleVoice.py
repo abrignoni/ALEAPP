@@ -224,7 +224,7 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
 
 @artifact_processor
 def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
-    data_headers = ('Account Number', 'Timestamp', 'Caller','Recipient','Duration','Read Status','Audio File') 
+    data_headers = ('Account Number', 'Timestamp', 'Caller','Recipient','Duration','Read Status','Transcript','Audio File') 
     data_list = []
     source_path = ""
 
@@ -293,11 +293,23 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
                             elif message[0]['6'] == 1:
                                 read_status = "Read"
 
+                            # Transcript
+                            # 7[2] holds the transcript of the voicemail broken into word and special character segments
+                            try:
+                                transcript = ""
+                                num_words = len(message[0]['7']['2'])
+                                for j in range(num_words):
+                                    word = message[0]['7']['2'][j]['1'].decode('utf-8')
+                                    if word != "":
+                                        transcript += word + " "
+                            except KeyError:
+                                transcript = "Transcript Not Available"
+
                             # Audio File
                             # show file which can be found at /data/data/com.google.android.apps.googlevoice/cache/audio
                             audio = "/data/data/com.google.android.apps.googlevoice/cache/audio/" + message[0]['1'].decode('utf-8') + ".mp3"
                             
                             if timestamp:
-                                data_list.append((account_number,timestamp,from_num,to_num,duration,read_status,audio))
+                                data_list.append((account_number,timestamp,from_num,to_num,duration,read_status,transcript,audio))
 
     return data_headers, data_list, source_path
