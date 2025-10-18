@@ -246,6 +246,11 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
             WHEN "16" THEN "Dangerous, But User Opened"
             WHEN "17" THEN "Prompt For Scanning"
             WHEN "18" THEN "Blocked - Unsupported Type"
+            WHEN "19" THEN "Dangerous - Account Compromise"
+            WHEN "20" THEN "Deep Scan Failed"
+            WHEN "21" THEN "Encrypted - Prompt User for Password for Local Scanning"
+            WHEN "22" THEN "Encrypted - Pending Detailed Verdict after Local Scanning"
+            WHEN "23" THEN "Blocked - Scan Failed"
         END,
         CASE interrupt_reason
             WHEN "0" THEN ""
@@ -259,6 +264,8 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
             WHEN "11" THEN "Blocked"
             WHEN "12" THEN "Security Check Failed"
             WHEN "13" THEN "Resume Error"
+            WHEN "14" THEN "File Hash Mismatch"
+            WHEN "15" THEN "File Same as Source"
             WHEN "20" THEN "Network Error"
             WHEN "21" THEN "Operation Timed Out"
             WHEN "22" THEN "Connection Lost"
