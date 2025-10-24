@@ -111,7 +111,7 @@ def get_calendar(files_found, report_folder, seeker, wrap_text):
             if usageentries > 0:
                 for row in all_rows:
                     cal_sync = row[0]
-                    if cal_sync is None:
+                    if cal_sync is "":
                         pass
                     else:
                         cal_sync = convert_utc_human_to_timezone(convert_ts_human_to_utc(cal_sync),'UTC')
