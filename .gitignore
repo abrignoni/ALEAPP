@@ -1,0 +1,102 @@
+# Compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+myenv/
+
+# Installers
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Logs
+*.log
+pip-log.txt
+pytestdebug.log
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing
+.coverage
+.coverage.*
+*.cover
+*.py,cover
+htmlcov/
+.tox/
+.nox/
+.cache
+nosetests.xml
+coverage.xml
+.hypothesis/
+.pytest_cache/
+
+# IDEs
+.vscode/
+.idea/
+.spyderproject
+.spyproject
+.ropeproject
+
+# OS
+*.DS_Store
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Project specific
+?LEAPP_Reports_*
+path_list.txt
+coordinates.db
+
+# Documentation
+docs/_build/
+/site
+target/
+
+# Misc
+*.sage.py
+celerybeat-schedule
+__pypackages__/
+.mypy_cache/
+.pyre/
+.pytype/
+
+# Version control
+.history
+
+# Other tools
+*.pot
+*.mo
+*.manifest
+pip-wheel-metadata/
+share/python-wheels/
+wheels/
+local_settings.py
+instance/
+.webassets-cache
+.scrapy
+.ipynb_checkpoints
+.python-version
+
