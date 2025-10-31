@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "swissmeteo_plz": {
+    "plz_interaction": {
         "name": "Swissmeteo - Interaction with places",
         "description": "parse the interaction with meteo of particular places",
         "author": "jerome.arn@vd.ch",
@@ -8,11 +8,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Meteo",
         "notes": "",
-        "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
+        "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
         "output_types": "standard",
         "artifact_icon": "flag"
     },
-    "plz_interaction": {
+    "swissmeteo_plz": {
         "name": "Swissmeteo - App opening with geolocation",
         "description": "parse The app opening with potential geolocation when open",
         "author": "jerome.arn@vd.ch",
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Meteo",
         "notes": "",
-        "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
+        "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
         "output_types": "standard",
         "artifact_icon": "flag"
     }
@@ -33,7 +33,7 @@ from scripts.ilapfuncs import artifact_processor, get_file_path, \
 from scripts.artifact_report import ArtifactHtmlReport
 
 @artifact_processor
-def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
+def plz_interaction(files_found, report_folder, seeker, wrap_text):
     source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
     data_list = []
 
@@ -71,7 +71,7 @@ def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
         logfunc('No Swissmeteo')
 
 @artifact_processor
-def plz_interaction(files_found, report_folder, seeker, wrap_text):
+def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
     source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
     data_list = []
 
@@ -102,9 +102,17 @@ def coordinate_to_osm(lat, lon):
     return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=18"
 
 def lv03_to_osm(E, N): 
+    # based on https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/master/scripts/py/wgs84_ch1903.py
     x, y = (E-600000)/1e6, (N-200000)/1e6; 
-    lat = 16.9023892+3.238272*y-0.270978*x**2-0.002528*y**2-0.0447*x**2*y-0.0140*y**3; 
-    lon = 2.6779094+4.728982*x+0.791484*x*y+0.1306*x*y**2-0.0436*x**3; 
+    lat = (16.9023892 + (3.238272 * x)) + \
+            - (0.270978 * pow(y, 2)) + \
+            - (0.002528 * pow(x, 2)) + \
+            - (0.0447 * pow(y, 2) * x) + \
+            - (0.0140 * pow(x, 3))
+    lon = (2.6779094 + (4.728982 * y) + \
+                + (0.791484 * y * x) + \
+                + (0.1306 * y * pow(x, 2))) + \
+                - (0.0436 * pow(y, 3))
     lat, lon = lat*100/36, lon*100/36; 
     return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=18"
 
