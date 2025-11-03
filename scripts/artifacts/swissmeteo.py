@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "plz_interaction": {
         "name": "Swissmeteo - Interaction with places",
-        "description": "parse the interaction with meteo of particular places",
+        "description": "Parse the interaction with meteo prevision of particular places",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2025-09-25",
-        "last_update_date": "2025-09-25",
+        "last_update_date": "2025-10-03",
         "requirements": "none",
         "category": "Meteo",
         "notes": "",
@@ -14,10 +14,10 @@ __artifacts_v2__ = {
     },
     "swissmeteo_plz": {
         "name": "Swissmeteo - App opening with geolocation",
-        "description": "parse The app opening with potential geolocation when open",
+        "description": "Parse the app opening time and location",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2025-09-25",
-        "last_update_date": "2025-09-25",
+        "last_update_date": "2025-11-03",
         "requirements": "none",
         "category": "Meteo",
         "notes": "",
@@ -26,7 +26,6 @@ __artifacts_v2__ = {
         "artifact_icon": "flag"
     }
 }
-
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, \
     get_sqlite_db_records, logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -44,9 +43,10 @@ def plz_interaction(files_found, report_folder, seeker, wrap_text):
         query = '''
         SELECT 
             datetime(timestamp/1000, 'unixepoch', 'localtime') AS created_date,
-            plz
+            plz,
+            lat,
+            lon
         FROM plz_interaction
-        ORDER BY created_date DESC
         '''
 
         data_headers = ('Consulted timestamp', 'Post code', "Location name", "Altitude", "Map link")
@@ -60,7 +60,10 @@ def plz_interaction(files_found, report_folder, seeker, wrap_text):
         for record in db_records:
             local_data = get_location_infos(cursor, record[1])
             if len(local_data) > 0:
-                link = lv03_to_osm(local_data[0][1], local_data[0][2])
+                if not (record[2] and record[3]):
+                    link = lv03_to_osm(local_data[0][1], local_data[0][2])
+                else:
+                    link = coordinate_to_osm(record[2], record[3])
                 data_list.append((record[0], record[1][:4], local_data[0][4], local_data[0][3], link))
             else:
                 data_list.append(record + ('', '', ''))
@@ -85,7 +88,6 @@ def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
             lat,
             lon
         FROM app_open
-        ORDER BY created_date DESC
         '''
 
         data_headers = ('Opened timestamp', 'Latitude', 'Longitude', "Map link")
@@ -99,7 +101,7 @@ def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
         logfunc('No plz_interaction')
 
 def coordinate_to_osm(lat, lon): 
-    return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=18"
+    return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=15"
 
 def lv03_to_osm(E, N): 
     # based on https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/master/scripts/py/wgs84_ch1903.py
@@ -114,7 +116,7 @@ def lv03_to_osm(E, N):
                 + (0.1306 * y * pow(x, 2))) + \
                 - (0.0436 * pow(y, 3))
     lat, lon = lat*100/36, lon*100/36; 
-    return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=18"
+    return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=15"
 
 def get_location_infos(cursor, NPA):
     query = '''
