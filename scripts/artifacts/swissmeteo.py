@@ -49,7 +49,7 @@ def plz_interaction(files_found, report_folder, seeker, wrap_text):
         FROM plz_interaction
         '''
 
-        data_headers = ('Consulted timestamp', 'Post code', "Location name", "Altitude", "Map link")
+        data_headers = ('Consulted timestamp', "Meteo of the city", "Meteo of the city (link)", "Consultation Location")
         db_records = get_sqlite_db_records(files_found[0], query)
 
         local_data = []
@@ -59,12 +59,14 @@ def plz_interaction(files_found, report_folder, seeker, wrap_text):
 
         for record in db_records:
             local_data = get_location_infos(cursor, record[1])
+            # test for 1111 postal code case
             if len(local_data) > 0:
+                meteo_link = lv03_to_osm(local_data[0][1], local_data[0][2])
                 if not (record[2] and record[3]):
-                    link = lv03_to_osm(local_data[0][1], local_data[0][2])
+                    cons_link = ''
                 else:
-                    link = coordinate_to_osm(record[2], record[3])
-                data_list.append((record[0], record[1][:4], local_data[0][4], local_data[0][3], link))
+                    cons_link = coordinate_to_osm(record[2], record[3])
+                data_list.append((record[0], local_data[0][4], meteo_link, cons_link))
             else:
                 data_list.append(record + ('', '', ''))
 
@@ -105,7 +107,7 @@ def coordinate_to_osm(lat, lon):
 
 def lv03_to_osm(E, N): 
     # based on https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/master/scripts/py/wgs84_ch1903.py
-    x, y = (E-600000)/1e6, (N-200000)/1e6; 
+    y, x = (E-600000)/1e6, (N-200000)/1e6; 
     lat = (16.9023892 + (3.238272 * x)) + \
             - (0.270978 * pow(y, 2)) + \
             - (0.002528 * pow(x, 2)) + \
