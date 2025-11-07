@@ -187,6 +187,7 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
                         # 13 = 0 for a missed or declined call
                         # 13 = 1 for an answered call
                         # 13 = 2 for an outgoing call
+                        # 22 has a value if a call was missed or declined
                         # 13 = 3 for a missed or declined call with
                         # The Google Voice welcome voicemail does not call the phone but leaves a voicemail
                         if message[0]['13'] == 0 or message[0]['13'] == 1 or message[0]['13'] == 2 or ('22' in message[0]) or (message[0]['13'] == 3 and "welcome_voicemail" not in message[0]['1'].decode('utf-8')):
