@@ -139,7 +139,7 @@ def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
 
 @artifact_processor
 def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
-    data_headers = ('Account Number', ('Timestamp', 'datetime'), 'Direction', 'Caller', 'Recipient', 'Call Status', 'Voicemail Left', 'Duration', ('Call Recording', 'media'))
+    data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Direction', 'Caller', 'Recipient', 'Call Status', 'Voicemail Left', 'Duration', ('Call Recording', 'media'))
     data_list = []
     source_path = ""
 
@@ -243,16 +243,16 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
                                         recording = check_in_media(artifact_info, report_folder, seeker, files_found, audio_file)
                                         break
                                 
-                                data_list.append((account_number,timestamp,direction,from_num,to_num,call_status,voicemail,duration,recording))
+                                data_list.append((timestamp,account_number,direction,from_num,to_num,call_status,voicemail,duration,recording))
 
                             else:
-                                data_list.append((account_number,timestamp,direction,from_num,to_num,call_status,voicemail,duration,recording))
+                                data_list.append((timestamp,account_number,direction,from_num,to_num,call_status,voicemail,duration,recording))
 
     return data_headers, data_list, source_path
 
 @artifact_processor
 def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
-    data_headers = ('Account Number', ('Timestamp', 'datetime'), 'Caller', 'Recipient', 'Duration', 'Read Status', 'Transcript', ('Audio File', 'media'))
+    data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Caller', 'Recipient', 'Duration', 'Read Status', 'Transcript', ('Audio File', 'media'))
     data_list = []
     source_path = ""
 
@@ -347,13 +347,13 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
                                     break
 
                             if timestamp:
-                                data_list.append((account_number,timestamp,from_num,to_num,duration,read_status,transcript,audio))
+                                data_list.append((timestamp,account_number,from_num,to_num,duration,read_status,transcript,audio))
 
     return data_headers, data_list, source_path
 
 @artifact_processor
 def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
-    data_headers = ('Account Number', ('Timestamp', 'datetime'), 'Conversation ID', 'Direction', 'Sender', 'Recipient(s)', 'Read Status', 'Message', ('Image', 'media'))
+    data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Conversation ID', 'Direction', 'Sender', 'Recipient(s)', 'Read Status', 'Message', ('Image', 'media'))
     data_list = []
     source_path = ""
 
@@ -444,15 +444,15 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                                     # filename: message_id + "-14" + extension
                                     if "Photo MMS images" in image and message_id in image and "-14" in image:
                                         thumb = check_in_media(artifact_info, report_folder, seeker, files_found, image)
-                                        data_list.append((account_number,timestamp,conversation_id,direction,from_num,to_nums,read_status,message_content,thumb))
+                                        data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,thumb))
                                         break
 
                                 # if no image file is cached for the message
                                 if thumb == "":
-                                    data_list.append((account_number,timestamp,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
+                                    data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
 
                             else:
-                                data_list.append((account_number,timestamp,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
+                                data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
 
                         # conversation_id starts with "g" for group chat messages
                         elif row[1].startswith("g"):
@@ -513,14 +513,14 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                                     # filename: message_id + "-14" + extension
                                     if "Photo MMS images" in image and message_id in image and "-14" in image:
                                         thumb = check_in_media(artifact_info, report_folder, seeker, files_found, image)
-                                        data_list.append((account_number,timestamp,conversation_id,direction,from_num,to_nums,read_status,message_content,thumb))
+                                        data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,thumb))
                                         break
                                 
                                 # if no image file is cached for the message
                                 if thumb == "":
-                                    data_list.append((account_number,timestamp,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
+                                    data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
 
                             else:
-                                data_list.append((account_number,timestamp,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
+                                data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
 
     return data_headers, data_list, source_path
