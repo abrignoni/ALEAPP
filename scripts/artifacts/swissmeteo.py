@@ -10,6 +10,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
         "output_types": "standard",
+        "html_columns": ['Meteo of the city (link)', 'Consultation Location'],
         "artifact_icon": "flag"
     },
     "swissmeteo_plz": {
@@ -23,13 +24,13 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
         "output_types": "standard",
+        "html_columns": ['Map link'],
         "artifact_icon": "flag"
     }
 }
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, \
-    get_sqlite_db_records, logfunc, tsv, timeline, open_sqlite_db_readonly
-from scripts.artifact_report import ArtifactHtmlReport
+    get_sqlite_db_records, logfunc, open_sqlite_db_readonly
 
 @artifact_processor
 def plz_interaction(files_found, report_folder, seeker, wrap_text):
@@ -68,10 +69,9 @@ def plz_interaction(files_found, report_folder, seeker, wrap_text):
                     cons_link = coordinate_to_osm(record[2], record[3])
                 data_list.append((record[0], local_data[0][4], meteo_link, cons_link))
             else:
-                data_list.append(record + ('', '', ''))
+                data_list.append(record)
 
         return data_headers, data_list, source_path
-
     else:
         logfunc('No Swissmeteo')
 
@@ -98,7 +98,6 @@ def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
             data_list.append((record[0], record[1], record[2], coordinate_to_osm(record[1], record[2])))
 
         return data_headers, data_list, source_path
-
     else:
         logfunc('No plz_interaction')
 
