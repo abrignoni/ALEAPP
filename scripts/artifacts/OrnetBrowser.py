@@ -74,7 +74,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
-        "paths": ('*/com.ornetbrowser.mobile.android/databases/kdownloader.db*'),
+        "paths": ('*/com.ornet.torbrowser/databases/kdownloader.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "download"
     },
