@@ -226,8 +226,8 @@ def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
             except ValueError:
                 continue
 
-        data_list.append((message_id, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, content, sent, received, stored, seen, attachments, infrastructure))
+        data_list.append((received, sent, stored, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, content, seen, attachments, infrastructure))
 
-    data_headers = ('Message ID', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Content', 'Sent', 'Received', 'Stored', 'Seen', 'Attachments', 'Infrastructure')
+    data_headers = ('Received', 'Sent', 'Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Content', 'Seen', 'Attachments', 'Infrastructure')
 
     return data_headers, data_list, main_db
