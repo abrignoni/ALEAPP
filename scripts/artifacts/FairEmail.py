@@ -193,7 +193,7 @@ def get_fair_mail_messages(files_found, _report_folder, _seeker, _wrap_text):
         name_bcc = row[10]
         return_path = row[11]
         subject = row[12]
-        sent = convert_unix_ts_to_utc(row[13] or 0/1000) if row[13] is not None else None
+        sent = convert_unix_ts_to_utc(row[13]/1000) if row[13] is not None else None
         received = convert_unix_ts_to_utc(row[14]/1000)
         stored = convert_unix_ts_to_utc(row[15]/1000)
         seen = row[16]
