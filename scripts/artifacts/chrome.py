@@ -1,10 +1,10 @@
 import os
-import sqlite3
 import textwrap
 import urllib.parse
+import re
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly, does_column_exist_in_db
+from scripts.ilapfuncs import logfunc, tsv, timeline, get_next_unused_name, open_sqlite_db_readonly, does_column_exist_in_db
 
 def get_browser_name(file_name):
 
@@ -20,7 +20,7 @@ def get_browser_name(file_name):
         try:
             result = re.search('.*/(.*)/app_webview/Default.*', file_name)
             return result.group(1)
-        except:
+        except Exception:
             return 'Unknown'
     else:
         return 'Unknown'
