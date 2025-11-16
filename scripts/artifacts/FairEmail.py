@@ -5,7 +5,7 @@
 # Tested with the following versions:
 # 2024-04-20: Android 14, App: 1.2178
 
-# Requirements:  
+# Requirements: os, bs4
 
 
 
@@ -49,7 +49,7 @@ __artifacts_v2__ = {
         "version": "0.0.1",
         "creation_date": "2025-11-16",
         "last_update_date": "2025-11-16",
-        "requirements": "none",
+        "requirements": "os",
         "category": "FairCode FairEmail App",
         "notes": "",
         "paths": ('*/eu.faircode.email/databases/fairemail*', '*/eu.faircode.email/files/attachments/*', '*/eu.faircode.email/files/messages/*'),
@@ -58,7 +58,10 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+import os
+from bs4 import BeautifulSoup
+
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, get_txt_file_content
 
 
 @artifact_processor
@@ -124,23 +127,32 @@ def get_fair_mail_contacts(files_found, _report_folder, _seeker, _wrap_text):
         username = row[7]
 
         data_list.append((contact_id, name, email, times_contacted, firstcontacteddate, lastcontacteddate, account_name, username))
-        
+     
     data_headers = ('Contact ID', 'Contact Display Name', 'E-Mail Address', 'Times Contacted', 'First Contacted', 'Last Contacted', 'Used Account Name', 'Used Account Username')
 
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def get_fair_mail_messages(files_found, _report_folder, _seeker, _wrap_text):
+def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
     
-    # Get the different files found and store them in corressponindg lists to work with them
+    # Get the different files found and store their pathes in corresponding lists to work with them
     main_db = ''
+    attachments = []
+    messages = []
 
     for file_found in files_found:
         file_found = str(file_found)
-    
+
         if file_found.endswith('fairemail'):
             main_db = file_found
 
+        if 'attachments' in os.path.dirname(file_found):
+            attachments.append(file_found)
+        
+        if 'messages' in os.path.dirname(file_found):
+            messages.append(file_found)
+
+        
 
     query = ('''
         SELECT m.id [Message ID],
@@ -176,10 +188,13 @@ def get_fair_mail_messages(files_found, _report_folder, _seeker, _wrap_text):
     db_records = get_sqlite_db_records(main_db, query)
 
 
+
+
     data_list = []
 
 
     for row in db_records:
+        content = ''
         message_id = row[0]
         account = row[1]
         folder = row[2]
@@ -197,11 +212,22 @@ def get_fair_mail_messages(files_found, _report_folder, _seeker, _wrap_text):
         received = convert_unix_ts_to_utc(row[14]/1000)
         stored = convert_unix_ts_to_utc(row[15]/1000)
         seen = row[16]
+        # check if the mail has attachments, if yes - add them
         attachments = row[17]
         infrastructure = row[18]
+        for path in messages:
+            try:
+                if int(os.path.basename(path)) == message_id:
+                    content = get_txt_file_content(path)
+                    content = "".join(content)
+                    soup = BeautifulSoup(content, 'html.parser')
+                    content = soup.get_text(separator="\n")
+                    
+            except ValueError:
+                continue
 
-        data_list.append((message_id, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, sent, received, stored, seen, attachments, infrastructure))
+        data_list.append((message_id, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, content, sent, received, stored, seen, attachments, infrastructure))
 
-    data_headers = ('Message ID', 'Mail Account User', 'Mail Folder Name', 'Sender Address', 'Sender Name', 'Receiver Address', 'Receiver Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Sent', 'Received', 'Stored', 'Seen', 'Attachments', 'Infrastructure')
+    data_headers = ('Message ID', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Content', 'Sent', 'Received', 'Stored', 'Seen', 'Attachments', 'Infrastructure')
 
     return data_headers, data_list, main_db
