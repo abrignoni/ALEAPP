@@ -1,6 +1,5 @@
 # FairCode FairEmail App (eu.faircode.email)
 # Author:  Marco Neumann (kalinko@be-binary.de)
-# Version: 0.0.1
 # 
 # Tested with the following versions:
 # 2024-04-20: Android 14, App: 1.2178
@@ -61,7 +60,7 @@ __artifacts_v2__ = {
 import os
 from bs4 import BeautifulSoup
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, get_txt_file_content
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, get_txt_file_content, media_to_html
 
 
 @artifact_processor
@@ -213,7 +212,14 @@ def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
         stored = convert_unix_ts_to_utc(row[15]/1000)
         seen = row[16]
         # check if the mail has attachments, if yes - add them
-        attachments = row[17]
+
+        if row[17] == 0:
+            attachment = 0
+        else:
+            attachment = []
+            for att_path in attachments:
+                if str(message_id) in os.path.basename(att_path):
+                    attachment.append(media_to_html(att_path, attachments, report_folder))
         infrastructure = row[18]
         for path in messages:
             try:
@@ -226,7 +232,7 @@ def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
             except ValueError:
                 continue
 
-        data_list.append((received, sent, stored, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, content, seen, attachments, infrastructure))
+        data_list.append((received, sent, stored, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, content, seen, attachment, infrastructure))
 
     data_headers = ('Received', 'Sent', 'Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Content', 'Seen', 'Attachments', 'Infrastructure')
 
