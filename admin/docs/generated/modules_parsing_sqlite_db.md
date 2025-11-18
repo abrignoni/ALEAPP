@@ -9,6 +9,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | Source Modules |
 |----------------|
 | DuckDuckGo |
+| FairEmail |
 | LinkedIn |
 | SimpleStorage_applaunch |
 | airtagAndroid |
@@ -33,7 +34,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | ChessWithFriends |
 | DocList |
 | FacebookMessenger |
-| FairEmail |
 | FilesByGoogle |
 | GarminActivities |
 | GarminChart |
