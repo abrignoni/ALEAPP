@@ -24,6 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/eu.faircode.email/databases/fairemail*'),
         "output_types": ["standard"],
+        "html_columns": ["Signature"],
         "artifact_icon": "inbox"
     },
     "get_fair_mail_contacts": {
@@ -93,9 +94,9 @@ def get_fair_mail_accounts(files_found, _report_folder, _seeker, _wrap_text):
         creationdate = convert_unix_ts_to_utc(row[10]/1000)
         lastconnecteddate = convert_unix_ts_to_utc(row[11]/1000)
 
-        data_list.append((account_id, name, email, display_name, signature, server, port, username, password, account_name, creationdate, lastconnecteddate))
+        data_list.append(( creationdate, lastconnecteddate, account_id, name, email, display_name, signature, server, port, username, password, account_name))
 
-    data_headers = ('Account ID', 'Name', 'E-Mail Address', 'Display Name', 'Signature', 'IMAP Server', 'IMAP Port', 'Username', 'Password', 'Account Name', 'Created Date', 'Last Connected Date')
+    data_headers = ( 'Creation Date', 'Last Connected Date', 'Account ID', 'Name', 'E-Mail Address', 'Display Name', 'Signature', 'IMAP Server', 'IMAP Port', 'Username', 'Password', 'Account Name')
 
     return data_headers, data_list, files_found[0]
 
@@ -125,9 +126,9 @@ def get_fair_mail_contacts(files_found, _report_folder, _seeker, _wrap_text):
         account_name = row[6]
         username = row[7]
 
-        data_list.append((contact_id, name, email, times_contacted, firstcontacteddate, lastcontacteddate, account_name, username))
+        data_list.append((firstcontacteddate, lastcontacteddate, contact_id, name, email, times_contacted, account_name, username))
      
-    data_headers = ('Contact ID', 'Contact Display Name', 'E-Mail Address', 'Times Contacted', 'First Contacted', 'Last Contacted', 'Used Account Name', 'Used Account Username')
+    data_headers = ('First Contacted', 'Last Contacted', 'Contact ID', 'Contact Display Name', 'E-Mail Address', 'Times Contacted', 'Used Account Name', 'Used Account Username')
 
     return data_headers, data_list, files_found[0]
 
@@ -238,6 +239,6 @@ def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
 
         data_list.append((received, sent, stored, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, preview, content, seen, attachment, infrastructure))
 
-    data_headers = ('Received', 'Sent', 'Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Preview', 'Content', 'Seen', 'Attachments', 'Infrastructure')
+    data_headers = ('Date Received', 'Date Sent', 'Date Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Preview', 'Content', 'Seen', 'Attachments', 'Infrastructure')
 
     return data_headers, data_list, main_db
