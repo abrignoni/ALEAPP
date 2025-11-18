@@ -4,7 +4,7 @@
 # Tested with the following versions:
 # 2024-04-20: Android 14, App: 1.2178
 
-# Requirements: os, bs4
+# Requirements: os
 
 
 
@@ -53,14 +53,15 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/eu.faircode.email/databases/fairemail*', '*/eu.faircode.email/files/attachments/*', '*/eu.faircode.email/files/messages/*'),
         "output_types": ["standard"],
+        "html_columns": ["Content", "Attachments"],
         "artifact_icon": "mail"
     }
 }
 
 import os
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, get_txt_file_content, media_to_html
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, media_to_html
 
 
 @artifact_processor
@@ -172,7 +173,9 @@ def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
         stored [Timestamp Stored], 
         seen [Read?],
         attachments [# of Attachements], 
-        infrastructure [Backend Infrastructure]
+        infrastructure [Backend Infrastructure],
+		GROUP_CONCAT(attachment.id, ',') [Attachmernt IDs],
+		m.preview
         FROM message m
         LEFT JOIN json_each("from") jefrom
         LEFT JOIN json_each("to") jeto
@@ -182,6 +185,9 @@ def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
         ON account.id = m.account
 		INNER JOIN folder
 		ON folder.id = m.folder
+		LEFT JOIN attachment
+		ON attachment.message = m.id
+		GROUP BY m.id
     ''')
 
     db_records = get_sqlite_db_records(main_db, query)
@@ -207,33 +213,32 @@ def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
         name_bcc = row[10]
         return_path = row[11]
         subject = row[12]
+        preview = row[20]
         sent = convert_unix_ts_to_utc(row[13]/1000) if row[13] is not None else None
         received = convert_unix_ts_to_utc(row[14]/1000)
         stored = convert_unix_ts_to_utc(row[15]/1000)
         seen = row[16]
         # check if the mail has attachments, if yes - add them
-
-        if row[17] == 0:
+        # Also inline Attachemts are linked
+        if row[19] is None:
             attachment = 0
         else:
             attachment = []
             for att_path in attachments:
-                if str(message_id) in os.path.basename(att_path):
-                    attachment.append(media_to_html(att_path, attachments, report_folder))
+                for att_id in row[19].split(','):
+                    if str(att_id) in os.path.basename(att_path):
+                        attachment.append(media_to_html(os.path.basename(att_path), attachments, report_folder))
         infrastructure = row[18]
         for path in messages:
             try:
                 if int(os.path.basename(path)) == message_id:
-                    content = get_txt_file_content(path)
-                    content = "".join(content)
-                    soup = BeautifulSoup(content, 'html.parser')
-                    content = soup.get_text(separator="\n")
+                    content = media_to_html(str(message_id), messages, report_folder)
                     
             except ValueError:
                 continue
 
-        data_list.append((received, sent, stored, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, content, seen, attachment, infrastructure))
+        data_list.append((received, sent, stored, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, preview, content, seen, attachment, infrastructure))
 
-    data_headers = ('Received', 'Sent', 'Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Content', 'Seen', 'Attachments', 'Infrastructure')
+    data_headers = ('Received', 'Sent', 'Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Preview', 'Content', 'Seen', 'Attachments', 'Infrastructure')
 
     return data_headers, data_list, main_db
