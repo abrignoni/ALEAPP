@@ -1,13 +1,9 @@
-import sqlite3
-import io
-import json
 import os
 import shutil
 
 from scripts.filetype import guess_extension
-from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly, \
+from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, open_sqlite_db_readonly, \
      media_to_html, does_column_exist_in_db, does_table_exist_in_db
 
 def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
@@ -33,7 +29,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
             
             # check for folder_name, media_store_id and trash_timestamp columns, the older versions does not have it
             no_columns = ['folder_name', 'media_store_id']
-            no_columns_str = '';
+            no_columns_str = ''
             for column_name in no_columns:
                 if does_column_exist_in_db(file_found, 'local_media', column_name) == True:
                     no_columns_str += f"{column_name}, " 
@@ -81,7 +77,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
                     report.write_artifact_data_table(data_headers, data_list, file_found)
                     report.end_artifact_report()
                     
-                    tsvname = f'Google Photos' + report_title + '- Local Media'
+                    tsvname = 'Google Photos' + report_title + '- Local Media'
                     tsv(report_folder, data_headers, data_list, tsvname, file_found)
                     
                     tlactivity = f'Google Photos' + report_title + '- Local Media'
