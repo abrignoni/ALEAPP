@@ -59,7 +59,6 @@ __artifacts_v2__ = {
 }
 
 import os
-#from bs4 import BeautifulSoup
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, media_to_html
 
