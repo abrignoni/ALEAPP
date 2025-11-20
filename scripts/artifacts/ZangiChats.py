@@ -29,7 +29,6 @@ __artifacts_v2__ = {
 }
 
 import datetime
-import os
 import inspect
 from pathlib import Path
 from scripts.ilapfuncs import artifact_processor, \
