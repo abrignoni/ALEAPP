@@ -54,7 +54,7 @@ def zangichats(files_found, _report_folder, _seeker, _wrap_text):
     #            ELSE tableUserName || ' ' || tableUserLastName
     #        END AS user
     #    FROM tableUser
-        '''
+    #    '''
 
     chat_query = '''
         SELECT     
