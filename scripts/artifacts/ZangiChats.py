@@ -39,20 +39,21 @@ from scripts.ilapfuncs import artifact_processor, \
 @artifact_processor
 def zangichats(files_found, _report_folder, _seeker, _wrap_text):
     artifact_info = inspect.stack()[0]
+    source_path = ""
     data_list = []
     for file_found in files_found:
         if file_found.endswith(".db") and not file_found.endswith("settings.db"):
             source_path = file_found
             db_name = os.path.basename(file_found)
-            uid = os.path.splitext(db_name)[0]
+            #uid = os.path.splitext(db_name)[0]
 
-    user_query = '''
-        SELECT
-            CASE
-                WHEN tableUserLastName IS NULL OR tableUserLastName = '' THEN tableUserName
-                ELSE tableUserName || ' ' || tableUserLastName
-            END AS user
-        FROM tableUser
+    #user_query = '''
+    #    SELECT
+    #        CASE
+    #            WHEN tableUserLastName IS NULL OR tableUserLastName = '' THEN tableUserName
+    #            ELSE tableUserName || ' ' || tableUserLastName
+    #        END AS user
+    #    FROM tableUser
         '''
 
     chat_query = '''
