@@ -14,7 +14,7 @@ __artifacts_v2__ = {
     
     "get_thunderbird_accounts": {
         "name": "Thunderbird - Accounts",
-        "description": "FairEmail Accounts",
+        "description": "Thunderbird Accounts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "version": "0.0.1",
         "creation_date": "2025-11-18",
@@ -26,6 +26,21 @@ __artifacts_v2__ = {
         "output_types": ["standard"],
         "html_columns": ["Signature"],
         "artifact_icon": "inbox"
+    },
+        "get_thunderbird_messages": {
+        "name": "Thunderbird - Messages",
+        "description": "Thunderbird Messages",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "version": "0.0.1",
+        "creation_date": "2025-11-20",
+        "last_update_date": "2025-11-20",
+        "requirements": "re, json",
+        "category": "Thunderbird App",
+        "notes": "",
+        "paths": ('*/net.thunderbird.android/databases/*.db', '*/net.thunderbird.android/databases/*_att/*'),
+        "output_types": ["standard"],
+        "html_columns": [""],
+        "artifact_icon": "inbox"
     }
 
 }
@@ -34,7 +49,6 @@ import re
 import json
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
-
 
 @artifact_processor
 def get_thunderbird_accounts(files_found, _report_folder, _seeker, _wrap_text):
@@ -93,3 +107,66 @@ def get_thunderbird_accounts(files_found, _report_folder, _seeker, _wrap_text):
 
     return data_headers, data_list, files_found[0]
 
+
+@artifact_processor
+def get_thunderbird_messages(files_found, _report_folder, _seeker, _wrap_text):
+    files_found = [x for x in files_found if x.endswith('db')]
+      
+    query = ('''
+        SELECT
+        me.date [Timestamp Sent],
+        me.date [Timestamp Stored],
+        me.sender_list [Sender],
+        me.to_list [Receiver],
+        me.cc_list [CC],
+        me.bcc_list [BCC],
+        me.subject [Subject],
+        me.preview [Preview],
+        me.attachment_count [# of Attachments],
+        me.read [Read?],
+        me.flagged [flagged?],
+        me.answered [Answered?],
+        me.forwarded [Forwarded?],
+        fo.name [Folder],
+        mfc.c0fulltext [Content]
+        FROM messages me
+        INNER JOIN folders fo
+        ON fo.id = me.folder_id
+        LEFT JOIN messages_fulltext_content mfc
+        ON mfc.docid = me.id
+    ''')
+    
+    data_list = []
+    
+    # TODO: Add info to account per mail
+    # TODO: Find reason for empty rows in result tables
+    # TODO: Add support for attachments
+
+    for file in files_found:
+        db_records = get_sqlite_db_records(str(file), query)
+        
+        
+
+        for row in db_records:
+            sent = convert_unix_ts_to_utc(row[0]/1000) if row[0] is not None else None
+            stored = convert_unix_ts_to_utc(row[1]/1000) if row[1] is not None else None
+            sender = row[2]
+            receiver = row[3]
+            cc = row[4]
+            bcc = row[5]
+            subject = row[6]
+            preview = row[7]
+            attachments = row[8]
+            read = row[9]
+            flagged = row[10]
+            answered = row[11]
+            forwarded = row[12]
+            folder = row[13]
+            content = row[14]
+
+
+            data_list.append((sent, stored, sender, receiver, cc, bcc, subject, preview, attachments, read, flagged, answered, forwarded, folder, content))
+
+    data_headers = ( 'Timestamp Sent', 'Timestamp Stored', 'Sender', 'Receiver', 'CC', 'BCC', 'Subject', 'Preview', 'Attachments', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Folder Name', 'Content')
+
+    return data_headers, data_list, files_found[0]
