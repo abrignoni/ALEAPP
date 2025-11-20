@@ -33,7 +33,7 @@ import os
 import inspect
 from pathlib import Path
 from scripts.ilapfuncs import artifact_processor, \
-    get_file_path, get_sqlite_db_records, \
+    get_sqlite_db_records, \
     check_in_media
 
 @artifact_processor
@@ -45,7 +45,6 @@ def zangichats(files_found, _report_folder, _seeker, _wrap_text):
             source_path = file_found
             db_name = os.path.basename(file_found)
             uid = os.path.splitext(db_name)[0]
-            print(uid)
 
     user_query = '''
         SELECT
@@ -56,7 +55,7 @@ def zangichats(files_found, _report_folder, _seeker, _wrap_text):
         FROM tableUser
         '''
 
-    chat_query = f'''
+    chat_query = '''
         SELECT     
             m."date",
             CASE 
@@ -87,7 +86,7 @@ def zangichats(files_found, _report_folder, _seeker, _wrap_text):
         LEFT JOIN user_profile cn 
             ON m.chatWith = cn.id;
             '''
-    user_id =  get_sqlite_db_records(source_path, user_query)
+    #user_id =  get_sqlite_db_records(source_path, user_query)
     db_records = get_sqlite_db_records(source_path, chat_query)
 
     for record in db_records:
@@ -108,15 +107,6 @@ def zangichats(files_found, _report_folder, _seeker, _wrap_text):
                     media_path = None
             else:
                 media_path = f"files/zangi/Zangi Files/{msgId}.*"
-                """
-                for file in files_found:
-                    if msgId in file and "files/" in file:
-                        parts = media.split("com.beint.zangi/")
-                        if len(parts) > 1:
-                            media_path = parts[1]
-                        else:
-                            media_path = None
-                """
             try:
                 attach_file_name = Path(media_path).name
                 attach_file = check_in_media(artifact_info, _report_folder, _seeker, files_found, media_path, attach_file_name)
