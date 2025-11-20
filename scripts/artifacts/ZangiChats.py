@@ -44,7 +44,7 @@ def zangichats(files_found, _report_folder, _seeker, _wrap_text):
     for file_found in files_found:
         if file_found.endswith(".db") and not file_found.endswith("settings.db"):
             source_path = file_found
-            db_name = os.path.basename(file_found)
+            #db_name = os.path.basename(file_found)
             #uid = os.path.splitext(db_name)[0]
 
     #user_query = '''
