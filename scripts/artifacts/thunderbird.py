@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "requirements": "re, json",
         "category": "Thunderbird App",
         "notes": "",
-        "paths": ('*/net.thunderbird.android/databases/preferences_storage'),
+        "paths": ('*/data/net.thunderbird.android/databases/preferences_storage'),
         "output_types": ["standard"],
         "html_columns": ["Signature"],
         "artifact_icon": "inbox"
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "requirements": "re, json",
         "category": "Thunderbird App",
         "notes": "",
-        "paths": ('*/net.thunderbird.android/databases/*.db', '*/net.thunderbird.android/databases/*_att/*'),
+        "paths": ('*data/net.thunderbird.android/databases/*.db', '*data/net.thunderbird.android/databases/*_att/*'),
         "output_types": ["standard"],
         "html_columns": [""],
         "artifact_icon": "inbox"
@@ -115,7 +115,7 @@ def get_thunderbird_messages(files_found, _report_folder, _seeker, _wrap_text):
     query = ('''
         SELECT
         me.date [Timestamp Sent],
-        me.date [Timestamp Stored],
+        me.internal_date [Timestamp Stored],
         me.sender_list [Sender],
         me.to_list [Receiver],
         me.cc_list [CC],
@@ -130,17 +130,19 @@ def get_thunderbird_messages(files_found, _report_folder, _seeker, _wrap_text):
         fo.name [Folder],
         mfc.c0fulltext [Content]
         FROM messages me
-        INNER JOIN folders fo
+        LEFT JOIN folders fo
         ON fo.id = me.folder_id
         LEFT JOIN messages_fulltext_content mfc
         ON mfc.docid = me.id
+		WHERE me.empty is not 1
     ''')
     
     data_list = []
     
     # TODO: Add info to account per mail
-    # TODO: Find reason for empty rows in result tables
+    # TODO: Analyse "empty messages" in database - why are they there? only message-id has a value
     # TODO: Add support for attachments
+    # TODO: Splitting mail address and shwon name from sender, recp, cc, bcc lists und multi support
 
     for file in files_found:
         db_records = get_sqlite_db_records(str(file), query)
@@ -165,8 +167,8 @@ def get_thunderbird_messages(files_found, _report_folder, _seeker, _wrap_text):
             content = row[14]
 
 
-            data_list.append((sent, stored, sender, receiver, cc, bcc, subject, preview, attachments, read, flagged, answered, forwarded, folder, content))
+            data_list.append((sent, stored, sender, receiver, cc, bcc, subject, preview, content, attachments, read, flagged, answered, forwarded, folder, str(file)))
 
-    data_headers = ( 'Timestamp Sent', 'Timestamp Stored', 'Sender', 'Receiver', 'CC', 'BCC', 'Subject', 'Preview', 'Attachments', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Folder Name', 'Content')
+    data_headers = ( 'Timestamp Sent', 'Timestamp Stored', 'Sender', 'Receiver', 'CC', 'BCC', 'Subject', 'Preview', 'Content', 'Attachments', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Folder Name', 'Source File')
 
-    return data_headers, data_list, files_found[0]
+    return data_headers, data_list, 'See source file(s) below:'
