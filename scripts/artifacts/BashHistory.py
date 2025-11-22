@@ -27,5 +27,5 @@ def bashHistory(files_found, report_folder, seeker, wrap_text):
             data_list.append((counter, row))
             counter += 1
 
-    data_headers = ('Order', 'Command')
+    data_headers = ('Entry Order', 'Command')
     return data_headers, data_list, file_found    
