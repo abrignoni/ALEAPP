@@ -70,6 +70,12 @@ def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
     data_list = []
     source_path = ""
 
+    account_number = ""
+    full_name = ""
+    email_address = ""
+    linked_number = ""
+    voice_number = ""
+
     accounts = []
     for file in files_found:
         if os.path.basename(file).endswith("VoiceAccountCache.db"):
@@ -157,6 +163,7 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
         for file in files_found:
             if os.path.basename(file) == 'LegacyMsgDbInstance.db':
 
+                account_number = ""
                 parts = file.split(os.sep)
                 user_index = parts.index("accounts") + 1
 
@@ -184,29 +191,34 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
                         message = blackboxprotobuf.decode_message(pb)
 
                         # check if the entry is a call (answered, missed, outgoing)
-                        # 13 = 0 for a missed or declined call
+                        # 13 = 0 for a missed or declined call without a voicemail
                         # 13 = 1 for an answered call
                         # 13 = 2 for an outgoing call
                         # 22 has a value if a call was missed or declined
-                        # 13 = 3 for a missed or declined call with
+                        # 13 = 3 for a received voicemail
                         # The Google Voice welcome voicemail does not call the phone but leaves a voicemail
                         if message[0]['13'] == 0 or message[0]['13'] == 1 or message[0]['13'] == 2 or ('22' in message[0]) or (message[0]['13'] == 3 and "welcome_voicemail" not in message[0]['1'].decode('utf-8')):
 
                             # Timestamp
-                            timestamp = message[0]['2'] / 1000 # convert to seconds
-                            timestamp = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(timestamp)) # convert to UTC time
+                            timestamp = ""
+                            if '2' in message[0]:
+                                timestamp = message[0]['2'] / 1000 # convert to seconds
+                                timestamp = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(timestamp)) # convert to UTC time
 
                             # Direction
-                            if message[0]['13'] == 1 or ('22' in message[0]):
+                            direction = ""
+                            from_num = ""
+                            to_num = ""
+                            voicemail = ""
+                            if message[0]['13'] == 0 or message[0]['13'] == 1 or ('22' in message[0]) or message[0]['13'] == 3:
                                 direction = "Incoming"
                                 from_num = str(message[0]['4']['1'].decode('utf-8'))
                                 to_num = message[0]['3'].decode('utf-8') # GV number
 
                                 # Voicemail
-                                # 13 = 3 if a voicemail was left
                                 if message[0]['13'] == 3:
                                     voicemail = "Yes"
-                                else:
+                                elif message[0]['13'] != 1:
                                     voicemail = "No"
 
                             elif message[0]['13'] == 2:
@@ -214,20 +226,19 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
                                 from_num = message[0]['3'].decode('utf-8') # GV number
                                 to_num = message[0]['4']['1'].decode('utf-8')
 
-                                # Voicemail
-                                voicemail = ""
-
                             # Call Status
                             call_status = ""
-                            if '22' in message[0]:
+                            if ('22' in message[0]) or message[0]['13'] == 3 or message[0]['13'] == 0:
                                 call_status = "Missed"
                             elif message[0]['13'] == 1:
                                 call_status = "Answered"
 
                             # Duration
-                            duration = message[0]['9']
-                            duration = struct.unpack('f', struct.pack('I', duration))[0] # convert int32 value to a float
-                            duration = time.strftime("%H:%M:%S", time.gmtime(duration)) # convert seconds to Hours:Minutes:Seconds
+                            duration = ""
+                            if '9' in message[0]:
+                                duration = message[0]['9']
+                                duration = struct.unpack('f', struct.pack('I', duration))[0] # convert int32 value to a float
+                                duration = time.strftime("%H:%M:%S", time.gmtime(duration)) # convert seconds to Hours:Minutes:Seconds
 
                             # Recording
                             # 23 has values if an incoming call was recorded
@@ -270,6 +281,7 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
         for file in files_found:
             if os.path.basename(file) == 'LegacyMsgDbInstance.db':
 
+                account_number = ""
                 parts = file.split(os.sep)
                 user_index = parts.index("accounts") + 1
 
@@ -301,21 +313,30 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
                         if message[0]['13'] == 3:
 
                             # Timestamp
-                            timestamp = message[0]['2'] / 1000 # convert to seconds
-                            timestamp = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(timestamp)) # convert to UTC time
+                            timestamp = ""
+                            if '2' in message[0]:
+                                timestamp = message[0]['2'] / 1000 # convert to seconds
+                                timestamp = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(timestamp)) # convert to UTC time
 
                             # Caller
-                            from_num = str(message[0]['4']['1'].decode('utf-8'))
+                            from_num = ""
+                            if '4' in message[0] and '1' in message[0]['4']:
+                                from_num = str(message[0]['4']['1'].decode('utf-8'))
 
                             # Recipient
-                            to_num = message[0]['3'].decode('utf-8') # GV number
+                            to_num = ""
+                            if '3' in message[0]:
+                                to_num = message[0]['3'].decode('utf-8') # GV number
 
                             # Duration
-                            duration = message[0]['9']
-                            duration = struct.unpack('f', struct.pack('I', duration))[0] # convert int32 value to a float
-                            duration = time.strftime("%H:%M:%S", time.gmtime(duration)) # convert seconds to Hours:Minutes:Seconds
+                            duration = ""
+                            if '9' in message[0]:
+                                duration = message[0]['9']
+                                duration = struct.unpack('f', struct.pack('I', duration))[0] # convert int32 value to a float
+                                duration = time.strftime("%H:%M:%S", time.gmtime(duration)) # convert seconds to Hours:Minutes:Seconds
 
                             # Read Status
+                            read_status = ""
                             if message[0]['6'] == 0:
                                 read_status = "Unread"
                             elif message[0]['6'] == 1:
@@ -337,17 +358,16 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
                                 transcript = "Transcript Not Available"
 
                             # Audio File
+                            audio = ""
                             artifact_info = inspect.stack()[0]
                             message_id = message[0]['1'].decode('utf-8')
-                            audio = ""
                             # get the voicemail audio file
                             for audio_file in files_found:
                                 if "audio" in audio_file and message_id in audio_file:
                                     audio = check_in_media(artifact_info, report_folder, seeker, files_found, audio_file)
                                     break
 
-                            if timestamp:
-                                data_list.append((timestamp,account_number,from_num,to_num,duration,read_status,transcript,audio))
+                            data_list.append((timestamp,account_number,from_num,to_num,duration,read_status,transcript,audio))
 
     return data_headers, data_list, source_path
 
@@ -371,6 +391,7 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
         for file in files_found:
             if os.path.basename(file) == 'LegacyMsgDbInstance.db':
 
+                account_number = ""
                 parts = file.split(os.sep)
                 user_index = parts.index("accounts") + 1
 
@@ -404,16 +425,22 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                             conversation_id = row[1]
 
                             # Timestamp
-                            timestamp = message[0]['2'] / 1000 # convert to seconds
-                            timestamp = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(timestamp)) # convert to UTC time
+                            timestamp = ""
+                            if '2' in message[0]:
+                                timestamp = message[0]['2'] / 1000 # convert to seconds
+                                timestamp = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(timestamp)) # convert to UTC time
 
                             # Direction
                             # 13 = 5 when a message is received
                             # 13 = 6 when a message is sent
+                            direction = ""
+                            from_num = ""
+                            to_num = ""
+                            read_status = ""
                             if message[0]['13'] == 5:
                                 direction = "Incoming"
                                 from_num = message[0]['4']['1'].decode('utf-8')
-                                to_nums = message[0]['3'].decode('utf-8') # GV number
+                                to_num = message[0]['3'].decode('utf-8') # GV number
 
                                 # Read Status
                                 if message[0]['6'] == 0:
@@ -424,13 +451,12 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                             elif message[0]['13'] == 6:
                                 direction = "Outgoing"
                                 from_num = message[0]['3'].decode('utf-8') # GV number
-                                to_nums = message[0]['4']['1'].decode('utf-8')
-
-                                # Read Status
-                                read_status = ""
+                                to_num = message[0]['4']['1'].decode('utf-8')
 
                             # Message
-                            message_content = message[0]['10'].decode('utf-8')
+                            message_content = ""
+                            if '10' in message[0]:
+                                message_content = message[0]['10'].decode('utf-8')
 
                             # Image
                             if "MMS" in message_content:
@@ -444,15 +470,15 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                                     # filename: message_id + "-14" + extension
                                     if "Photo MMS images" in image and message_id in image and "-14" in image:
                                         thumb = check_in_media(artifact_info, report_folder, seeker, files_found, image)
-                                        data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,thumb))
+                                        data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_num,read_status,message_content,thumb))
                                         break
 
                                 # if no image file is cached for the message
                                 if thumb == "":
-                                    data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
+                                    data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_num,read_status,message_content,""))
 
                             else:
-                                data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
+                                data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_num,read_status,message_content,""))
 
                         # conversation_id starts with "g" for group chat messages
                         elif row[1].startswith("g"):
@@ -463,16 +489,22 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                             conversation_id = row[1]
 
                             # Timestamp
-                            timestamp = message[0]['2'] / 1000 # convert to seconds
-                            timestamp = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(timestamp)) # convert to UTC time
+                            timestamp = ""
+                            if '2' in message[0]:
+                                timestamp = message[0]['2'] / 1000 # convert to seconds
+                                timestamp = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(timestamp)) # convert to UTC time
 
                             # Direction
                             # 5 exists in 15 when the message is received
+                            direction = ""
+                            from_num = ""
+                            to_nums_list = []
+                            read_status = ""
                             if '5' in message[0]['15']:
                                 direction = "Incoming"
                                 from_num = message[0]['15']['5'].decode('utf-8')
 
-                                to_nums_list = [] # GV number & other group chat members
+                                # GV number & other group chat members in to_nums_list
                                 to_nums_list.append(message[0]['3'].decode('utf-8')) # GV number
                                 for j in range(len(message[0]['15']['4'])):
                                     if message[0]['15']['4'][j]['1'].decode('utf-8') != from_num:
@@ -489,17 +521,16 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                                 direction = "Outgoing"
                                 from_num = message[0]['3'].decode('utf-8') # GV number
 
-                                to_nums_list = [] # other group chat members
+                                # other group chat members in to_nums_list
                                 for j in range(len(message[0]['15']['4'])):
                                     to_nums_list.append(message[0]['15']['4'][j]['1'].decode('utf-8'))
-
-                                # Read Status
-                                read_status = ""
 
                             to_nums = ', '.join(to_nums_list)
 
                             # Message
-                            message_content = message[0]['15']['1'].decode('utf-8')
+                            message_content = ""
+                            if '15' in message[0] and '1' in message[0]['15']:
+                                message_content = message[0]['15']['1'].decode('utf-8')
 
                             # Image
                             if "MMS" in message_content:
