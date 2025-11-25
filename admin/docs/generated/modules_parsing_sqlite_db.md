@@ -12,6 +12,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | FairEmail |
 | LinkedIn |
 | SimpleStorage_applaunch |
+| ZangiChats |
 | airtagAndroid |
 | appicons |
 | frosting |
