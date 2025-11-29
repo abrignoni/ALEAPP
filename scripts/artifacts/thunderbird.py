@@ -162,9 +162,9 @@ def thunderbird_messages(files_found, _report_folder, _seeker, _wrap_text):
     ''')
     
     data_list = []
-    
+
     # TODO: Add support for attachments
-    # TODO: Splitting mail address and shwon name from sender, recp, cc, bcc lists und multi support
+    # TODO: Add supoort for deleted messages (null values - attachements do exist)
 
     for file in files_found:
         db_records = get_sqlite_db_records(str(file), query)
