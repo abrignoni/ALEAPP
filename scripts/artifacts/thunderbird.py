@@ -36,8 +36,8 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*data/net.thunderbird.android/databases/*', '*data/net.thunderbird.android/databases/*_att/*'),
         "output_types": ["standard"],
-        "html_columns": [""],
-        "artifact_icon": "inbox"
+        "html_columns": ["Content"],
+        "artifact_icon": "mail"
     }
 
 }
