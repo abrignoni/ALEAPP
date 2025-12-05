@@ -139,6 +139,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googlePhotos |
 | googleQuickSearchboxRecent |
 | googleTasks |
+| googleVoice |
 | googlemaplocation |
 | groupMe |
 | hikvision |
