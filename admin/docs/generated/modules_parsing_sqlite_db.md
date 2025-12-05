@@ -23,6 +23,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleFitGMS |
 | googlePlaySearches |
 | knuddels |
+| thunderbird |
 <!-- GET_RECORDS_END -->
 
 ### open_sqlite_db_readonly() Usage
