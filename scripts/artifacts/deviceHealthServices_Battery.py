@@ -37,94 +37,149 @@ from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
+#Ok tambahkan UTC utk timezone dan tambahkan battery saver untuk 0 enable, dan 2 disable
 @artifact_processor
 def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
     source_file_turbo = ''
-    turbo_db = ''
     data_list = []
-        
+    time_offset = 'UTC'  
+
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.lower().endswith('turbo.db'):
-            turbo_db = str(file_found)
-            source_file_turbo = os.path.basename(file_found)
+        if not file_found.lower().endswith('turbo.db'):
+            continue
         
-            db = open_sqlite_db_readonly(turbo_db)
-            cursor = db.cursor()
-            cursor.execute('''
-            select
-            case timestamp_millis
-                when 0 then ''
-                else datetime(timestamp_millis/1000,'unixepoch')
-            End as D_T,
-            battery_level,
-            case charge_type
-                when 0 then ''
-                when 1 then 'Charging Rapidly'
-                when 2 then 'Charging Slowly'
-                when 3 then 'Charging Wirelessly'
-            End as C_Type,
-            case battery_saver
-                when 2 then ''
-                when 1 then 'Enabled'
-            End as B_Saver,
-            timezone
-            from battery_event
-            ''')
+        #BugFix
+        source_file_turbo = os.path.basename(file_found)
+        
+        try:
+            db = open_sqlite_db_readonly(file_found)
+        except Exception as e:
+            # Bisa ganti dengan logfunc jika ada
+            print(f"[!] Failed to open database {file_found}: {e}")
+            continue
+        
+        cursor = db.cursor()
+        cursor.execute('''
+            SELECT
+                CASE timestamp_millis
+                    WHEN 0 THEN ''
+                    ELSE datetime(timestamp_millis/1000, 'unixepoch')
+                END AS D_T,
+                battery_level,
+                CASE charge_type
+                    WHEN 0 THEN ''
+                    WHEN 1 THEN 'Charging Rapidly'
+                    WHEN 2 THEN 'Charging Slowly'
+                    WHEN 3 THEN 'Charging Wirelessly'
+                END AS C_Type,
+                -- CASE battery_saver
+                --     WHEN 2 THEN ''
+                --     WHEN 1 THEN 'Enabled'
+                -- END AS B_Saver,
+                CASE battery_saver
+                    WHEN 0 THEN 'Enabled'
+                    WHEN 2 THEN 'Disabled'  
+                    ELSE battery_saver  
+                END AS B_Saver,
+                timezone
+            FROM battery_event
+        ''')
+        
+        all_rows = cursor.fetchall()
+        db.close()
+        
+        if len(all_rows) == 0:
+            continue
+        
+        for row in all_rows:
+            timestamp = row[0]
+            if timestamp and timestamp != '':
+                timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), time_offset)
+            else:
+                timestamp = ''
+            
+            data_list.append((
+                timestamp,
+                row[1],  
+                row[2],  
+                row[3],  
+                row[4],  
+                source_file_turbo
+            ))
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    timestamp = row[0]
-                    if timestamp is None:
-                        pass
-                    else:
-                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
-                    data_list.append((timestamp,row[1],row[2],row[3],row[4],file_found))
-            
-            db.close()
-            
-    data_headers = (('Timestamp', 'datetime'),'Battery Level','Charge Type','Battery Saver','Timezone','Source')
-        
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'Battery Level',
+        'Charge Type',
+        'Battery Saver',
+        'Timezone',
+        'Source'
+    )
+
     return data_headers, data_list, source_file_turbo
-            
+
 @artifact_processor
 def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):     
     source_file_bluetooth = ''
-    turbo_db = ''
     data_list = []
+    time_offset = 'UTC'
 
-    if file_found.lower().endswith('bluetooth.db'):
-        bluetooth_db = str(file_found)
-        source_file_bluetooth = file_found.replace(seeker.directory, '')
-    
+    for file_found in files_found:
+        file_found = str(file_found)
+
+        # cek file yang benar
+        if not file_found.lower().endswith('bluetooth.db'):
+            continue
+
+        bluetooth_db = file_found
+        source_file_bluetooth = os.path.basename(file_found)
+       
         db = open_sqlite_db_readonly(bluetooth_db)
         cursor = db.cursor()
         cursor.execute('''
         select
-        datetime(timestamp_millis/1000,'unixepoch'),
-        bd_addr,
-        device_identifier,
-        battery_level,
-        volume_level,
-        time_zone
+            datetime(timestamp_millis/1000,'unixepoch'),
+            bd_addr,
+            device_identifier,
+            battery_level,
+            volume_level,
+            time_zone
         from battery_event
-        join device_address on battery_event.device_idx = device_address.device_idx
+        join device_address 
+            on battery_event.device_idx = device_address.device_idx
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            for row in all_rows:
-                timestamp = row[0]
-                if timestamp is None:
-                    pass
-                else:
-                    timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
-                data_list.append((timestamp,row[1],row[2],row[3],row[4],row[5],file_found))
+        
+        for row in all_rows:
+            timestamp = row[0]
+            if timestamp:
+                timestamp = convert_utc_human_to_timezone(
+                    convert_ts_human_to_utc(timestamp),
+                    time_offset
+                )
+            
+            data_list.append((
+                timestamp,
+                row[1],  
+                row[2],  
+                row[3],  
+                row[4],  
+                row[5],  
+                file_found
+            ))
+
         db.close()
         
-    data_headers = (('Timestamp','datetime'),'BT Device MAC Address','BT Device ID','Battery Level','Volume Level','Timezone','Source')
+    data_headers = (
+        ('Timestamp','datetime'),
+        'BT Device MAC Address',
+        'BT Device ID',
+        'Battery Level',
+        'Volume Level',
+        'Timezone',
+        'Source'
+    )
 
     return data_headers, data_list, source_file_bluetooth
