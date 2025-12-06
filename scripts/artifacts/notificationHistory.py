@@ -16,7 +16,6 @@ __artifacts_v2__ = {
     }
 }
 
-
 import xml.etree.ElementTree as ET
 from datetime import *
 import os
@@ -31,6 +30,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
         file_name = os.path.basename(file_found)
+        
         #parsing settings_secure.xml
         if file_name.endswith('settings_secure.xml'):
             data_list = []
@@ -65,8 +65,8 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
             else:
                 logfunc('No Android Notification History - Status data available')
         
-        #parsing notification_policy.xml
-        if file_name.endswith('notification_policy.xml'):
+        # PERBAIKAN 1: Gunakan elif agar logika tidak bocor ke else saat file adalah settings_secure.xml
+        elif file_name.endswith('notification_policy.xml'):
             data_list = []
             if (checkabx(file_found)):
                 multi_root = False
@@ -102,14 +102,23 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 logfunc('No Android Notification History - Snoozed notifications data available')
 
         else:
+            # PERBAIKAN 2: Tambahkan pengecekan keamanan. Jangan parse file XML sebagai Protobuf.
+            if file_name.endswith('.xml'):
+                continue
+
             #iterate through the notification pbs
             try:
                 notification_history = notificationhistory_pb2.NotificationHistoryProto()
                 with open(file_found, 'rb') as f:
                     try:
-                        notification_history.ParseFromString(f.read()) #The error 'Wrong wire type in tag. ' likely happens due to the given .proto map file.  
+                        content = f.read()
+                        if not content: # Skip jika file kosong
+                            continue
+                        notification_history.ParseFromString(content) 
                     except Exception as e:
-                        logfunc(f'Error in the ParseFromString() function. The error message was: {e}')
+                        # Log error tapi jangan hentikan proses keseluruhan, skip file ini saja
+                        logfunc(f'Error in the ParseFromString() function for {file_name}. The error message was: {e}')
+                        continue
 
                     package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)} # one of the protobuf files stores the package name and indexes
 
@@ -158,7 +167,13 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                         image_data_length = values['image_data_length']
                         image_data_offset = values['image_data_offset']
                         image_uri = values['image_uri']
-                        file_creation = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(file_name)/1000.0),'UTC')
+                        
+                        # Handle potensi error konversi nama file ke int (jika nama file bukan angka)
+                        try:
+                            file_creation = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(file_name)/1000.0),'UTC')
+                        except ValueError:
+                            file_creation = ''
+                            
                         data_pb_list.append((f'{posted_time}',title,text,package_name,user_id,uid,package_index,channel_name,channel_name_index,channel_id,channel_id_index,conversation_id,conversation_id_index,major_version,image_type,image_bitmap_filename,image_resource_id,image_resource_id_package,image_data_length,image_data_offset,image_uri,file_name,f'{file_creation}'))
             except Exception as e:
                 logfunc(f'Error while opening notification pb files. The error message was:" {e}"')

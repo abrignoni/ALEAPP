@@ -16,6 +16,8 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
     
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
+        
+        # --- Query 1: Activity History ---
         cursor.execute('''
         select
         datetime(timestamp_usec/1000000, 'unixepoch') as 'Timestamp',
@@ -47,7 +49,7 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('Google Duo - Call History')
             report.start_artifact_report(report_folder, 'Google Duo - Call History')
             report.add_script()
-            data_headers = ('Timestamp','Local User','Remote User','Contact Name','Activity Type','Call Status','Direction') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Timestamp','Local User','Remote User','Contact Name','Activity Type','Call Status','Direction') 
             data_list = []
             for row in all_rows:
                 data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
@@ -63,6 +65,7 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Google Duo - Call History data available')
     
+        # --- Query 2: Contacts ---
         cursor.execute('''
         select
         case system_contact_last_update_millis
@@ -83,7 +86,7 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('Google Duo - Contacts')
             report.start_artifact_report(report_folder, 'Google Duo - Contacts')
             report.add_script()
-            data_headers = ('Last Updated Timestamp','Contact Name','Contact Info','Contact Label','Contact ID') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Last Updated Timestamp','Contact Name','Contact Info','Contact Label','Contact ID')
             data_list = []
             for row in all_rows:
                 data_list.append((row[0],row[1],row[2],row[3],row[4]))
@@ -99,7 +102,28 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Google Duo - Contacts data available')
     
-        cursor.execute('''
+        # --- Query 3: Messages / Notes (FIXED) ---
+        
+        # Check if 'saved_status' column exists in 'messages' table
+        try:
+            cursor.execute("PRAGMA table_info(messages)")
+            columns = [column[1] for column in cursor.fetchall()]
+            has_saved_status = 'saved_status' in columns
+        except Exception:
+            has_saved_status = False
+
+        # Define the 'File Saved' column selection based on availability
+        if has_saved_status:
+            saved_status_query = """
+            case saved_status
+                when 0 then ''
+                when 1 then 'Yes'
+            end as 'File Saved'
+            """
+        else:
+            saved_status_query = "'' as 'File Saved'"
+
+        query_messages = f'''
         select
         case sent_timestamp_millis
             when 0 then ''
@@ -118,12 +142,11 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
         content_uri,
         replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), '') as 'File Name',
         content_size_bytes,
-        case saved_status
-            when 0 then ''
-            when 1 then 'Yes'
-        end as 'File Saved'
+        {saved_status_query}
         from messages
-        ''')
+        '''
+
+        cursor.execute(query_messages)
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
@@ -154,7 +177,7 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             report = ArtifactHtmlReport('Google Duo - Notes')
             report.start_artifact_report(report_folder, 'Google Duo - Notes')
             report.add_script()
-            data_headers = ('Sent Timestamp','Received Timestamp','Viewed Timestamp','Sender','Recipient','Content','Size','File Saved') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Sent Timestamp','Received Timestamp','Viewed Timestamp','Sender','Recipient','Content','Size','File Saved')
 
             report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Content'])
             report.end_artifact_report()
