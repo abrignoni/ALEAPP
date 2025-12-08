@@ -440,31 +440,40 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             logfunc('No WhatsApp - Group Details found')
 
     for file_found in files_found:
-        if('com.whatsapp_preferences_light.xml' in file_found):
+        if('com.whatsapp_preferences_light.xml' in file_found or 'startup_prefs.xml' in file_found):
             with open(file_found, encoding='utf-8') as fd:
                 xml_dict = xmltodict.parse(fd.read())
                 string_dict = xml_dict.get('map','').get('string','')
-                data = []
+                if('com.whatsapp_preferences_light.xml' in file_found):
+                    file_source = []
+                    data = {
+                        'push_name': None,
+                        'my_current_status': None,
+                        'version': None,
+                        'ph': None,
+                        'cc': None,
+                    }
+                file_source.append(file_found)
                 for i in range(len(string_dict)):
-                    if(string_dict[i]['@name'] == 'push_name'):                 # User Profile Name
-                        data.append(string_dict[i]['#text'])
-                    if(string_dict[i]['@name'] == 'my_current_status'):         # User Current Status
-                        data.append(string_dict[i]['#text'])
-                    if(string_dict[i]['@name'] == 'version'):                   # User current whatsapp version
-                        data.append(string_dict[i]['#text'])
-                    if(string_dict[i]['@name'] == 'ph'):                        # User Mobile Number
-                        data.append(string_dict[i]['#text'])
-                    if(string_dict[i]['@name'] == 'cc'):                        # User country code
-                        data.append(string_dict[i]['#text'])
+                    if(string_dict[i]['@name'] == 'push_name' and data['push_name'] is None):                           # User Profile Name
+                        data['push_name'] = string_dict[i]['#text']
+                    if(string_dict[i]['@name'] == 'my_current_status' and data['my_current_status'] is None):           # User Current Status
+                        data['my_current_status'] = string_dict[i]['#text']
+                    if(string_dict[i]['@name'] == 'version' and data['version'] is None):                               # User current whatsapp version
+                        data['version'] = string_dict[i]['#text']
+                    if(string_dict[i]['@name'] == 'ph' and data['ph'] is None):                                         # User Mobile Number
+                        data['ph'] = string_dict[i]['#text']
+                    if(string_dict[i]['@name'] == 'cc' and data['cc'] is None):                                         # User country code
+                        data['cc'] = string_dict[i]['#text']
 
-                if(len(data)>0):
+                if(all(value is not None for value in data.values())):
                     report = ArtifactHtmlReport('WhatsApp - User Profile')
                     report.start_artifact_report(report_folder,'WhatsApp - User Profile')
                     report.add_script()
                     data_headers = ('Version', 'Name', 'User Status', 'Country Code', 'Mobile Number')
                     data_list = []
-                    data_list.append((data[0], data[3], data[2], data[1], data[4]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+                    data_list.append((data['version'], data['push_name'], data['my_current_status'], data['cc'], data['ph']))
+                    report.write_artifact_data_table(data_headers, data_list, ', '.join(file_source), html_escape=False)
                     report.end_artifact_report()
 
                     tsvname = "WhatsApp - User Profile"
