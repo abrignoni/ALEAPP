@@ -31,6 +31,22 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                         #print(b.tag)
                         tagg = b.tag
                         
+                        # Initialize all variables before processing fields
+                        configcombined = ''
+                        ssidcombined = ''
+                        bssidcombined = ''
+                        PreSharedKeycombined = ''
+                        WEPKeyscombined = ''
+                        HiddenSSIDcombined = ''
+                        RandomizedMacAddresscombined = ''
+                        CreatorNamecombined = ''
+                        CreationTimecombined = ''
+                        ConnectChoicecombined = ''
+                        ConnectChoiceTimeStampcombined = ''
+                        HasEverConnectedcombined = ''
+                        IpAssignmentcombined = ''
+                        ProxySettingscombined = ''
+                        
                         for c in b:
                             combined = (c.attrib, c.text)
                             datafieldname = (c.attrib['name']) #field
@@ -109,7 +125,7 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                                 ProxySettingsvalue = f'{datafieldvalue}'
                                 ProxySettingscombined = f'{ProxySettings} - {ProxySettingsvalue}'
                                 
-                    data_list.append((configcombined,ssidcombined,bssidcombined,PreSharedKeycombined, WEPKeyscombined,HiddenSSIDcombined,RandomizedMacAddresscombined,CreatorNamecombined,CreationTimecombined,ConnectChoicecombined,ConnectChoiceTimeStampcombined,HasEverConnectedcombined,IpAssignmentcombined,ProxySettingscombined))                    
+                        data_list.append((configcombined,ssidcombined,bssidcombined,PreSharedKeycombined, WEPKeyscombined,HiddenSSIDcombined,RandomizedMacAddresscombined,CreatorNamecombined,CreationTimecombined,ConnectChoicecombined,ConnectChoiceTimeStampcombined,HasEverConnectedcombined,IpAssignmentcombined,ProxySettingscombined))                    
         
             if data_list:
                 report = ArtifactHtmlReport(f'Wifi Configuration Store Details.xml - {count}')
