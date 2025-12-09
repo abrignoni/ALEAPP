@@ -65,7 +65,6 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
             else:
                 logfunc('No Android Notification History - Status data available')
         
-        # PERBAIKAN 1: Gunakan elif agar logika tidak bocor ke else saat file adalah settings_secure.xml
         elif file_name.endswith('notification_policy.xml'):
             data_list = []
             if (checkabx(file_found)):
@@ -102,7 +101,6 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 logfunc('No Android Notification History - Snoozed notifications data available')
 
         else:
-            # PERBAIKAN 2: Tambahkan pengecekan keamanan. Jangan parse file XML sebagai Protobuf.
             if file_name.endswith('.xml'):
                 continue
 
@@ -112,11 +110,10 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 with open(file_found, 'rb') as f:
                     try:
                         content = f.read()
-                        if not content: # Skip jika file kosong
+                        if not content: # Skip if file is empty
                             continue
                         notification_history.ParseFromString(content) 
                     except Exception as e:
-                        # Log error tapi jangan hentikan proses keseluruhan, skip file ini saja
                         logfunc(f'Error in the ParseFromString() function for {file_name}. The error message was: {e}')
                         continue
 
@@ -168,7 +165,6 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                         image_data_offset = values['image_data_offset']
                         image_uri = values['image_uri']
                         
-                        # Handle potensi error konversi nama file ke int (jika nama file bukan angka)
                         try:
                             file_creation = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(file_name)/1000.0),'UTC')
                         except ValueError:

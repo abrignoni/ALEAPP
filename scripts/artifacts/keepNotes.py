@@ -29,14 +29,10 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
 
-            # --- Cek Keberadaan Tabel ---
-            # Kita cek apakah tabel FTS (text_search...) ada. Jika tidak, kita gunakan tabel list_item.
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='text_search_note_content_content'")
             fts_table = cursor.fetchone()
 
-            # --- Konstruksi Query ---
             if fts_table:
-                # Query Asli (Jika tabel FTS ada)
                 query = '''
                 SELECT 
                     datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
@@ -49,8 +45,6 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
                 INNER JOIN tree_entity ON text_search_note_content_content.docid = tree_entity._id
                 '''
             else:
-                # Query Alternatif (Menggunakan tabel list_item)
-                # Menggunakan GROUP_CONCAT untuk menggabungkan teks jika berupa checklist atau multiline
                 query = '''
                 SELECT 
                     datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",

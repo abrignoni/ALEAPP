@@ -21,15 +21,12 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
 
-        # --- VALIDASI KOLOM DINAMIS ---
-        # Ambil daftar semua kolom yang ada di tabel 'parts'
         try:
             cursor.execute("PRAGMA table_info(parts)")
             columns = [column[1] for column in cursor.fetchall()]
         except Exception:
             columns = []
 
-        # 1. Cek keberadaan kolom 'file_size_bytes'
         if 'file_size_bytes' in columns:
             file_size_query = '''
             CASE
@@ -39,14 +36,11 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         else:
             file_size_query = "'N/A'"
 
-        # 2. Cek keberadaan kolom 'local_cache_path' (FIX UNTUK ERROR BARU)
         if 'local_cache_path' in columns:
             local_cache_query = 'parts.local_cache_path'
         else:
             local_cache_query = "'N/A'"
 
-        # --- KONSTRUKSI QUERY ---
-        # Masukkan logika query dinamis ke dalam f-string
         query = f'''
         SELECT
         datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
