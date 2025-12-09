@@ -35,7 +35,7 @@ import os
 
 from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone, logfunc
 
 @artifact_processor
 def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
@@ -80,7 +80,17 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
                     if timestamp is None:
                         pass
                     else:
-                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                        try:
+                            time_offset = row[4] if len(row) > 4 and row[4] else 'UTC'
+                        except Exception as ex:
+                            logfunc(f'Turbo_Battery: failed to read timezone ({ex}); defaulting to UTC.')
+                            time_offset = 'UTC'
+
+                        try:
+                            timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), time_offset)
+                        except Exception as ex:
+                            logfunc(f'Turbo_Battery: timezone conversion failed ({ex}); falling back to UTC.')
+                            timestamp = convert_ts_human_to_utc(timestamp)
                     data_list.append((timestamp,row[1],row[2],row[3],row[4],file_found))
             
             db.close()
