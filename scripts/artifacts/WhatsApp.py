@@ -1,28 +1,27 @@
 import sqlite3
-import datetime
 import xmltodict
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db, media_to_html
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, does_column_exist_in_db, media_to_html
 
-def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
+def get_WhatsApp(files_found, report_folder, seeker):
 
     separator = '/'
     source_file_msg = ''
     source_file_wa = ''
     whatsapp_msgstore_db = ''
     whatsapp_wa_db = ''
-    
+    file_found = ''
     for file_found in files_found:
 
         file_name = str(file_found)
         if file_name.endswith('msgstore.db'):
-           whatsapp_msgstore_db = str(file_found)
-           source_file_msg = file_found.replace(seeker.data_folder, '')
+            whatsapp_msgstore_db = str(file_found)
+            source_file_msg = file_found.replace(seeker.data_folder, '')
 
         if file_name.endswith('wa.db'):
-           whatsapp_wa_db = str(file_found)
-           source_file_wa = file_found.replace(seeker.data_folder, '')
+            whatsapp_wa_db = str(file_found)
+            source_file_wa = file_found.replace(seeker.data_folder, '')
 
     db = open_sqlite_db_readonly(whatsapp_wa_db)
     cursor = db.cursor()
@@ -52,7 +51,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
-    except:
+    except sqlite3.Error:
         usageentries = 0
         
     if usageentries > 0:
@@ -67,7 +66,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
-        tsvname = f'WhatsApp - Contacts'
+        tsvname = 'WhatsApp - Contacts'
         tsv(report_folder, data_headers, data_list, tsvname, source_file_wa)
 
     else:
@@ -113,7 +112,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
-    except:
+    except sqlite3.Error:
         usageentries = 0
         
     if usageentries > 0:
@@ -128,10 +127,10 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db)
         report.end_artifact_report()
         
-        tsvname = f'WhatsApp - Call Logs'
+        tsvname = 'WhatsApp - Call Logs'
         tsv(report_folder, data_headers, data_list, tsvname, whatsapp_msgstore_db)
 
-        tlactivity = f'WhatsApp - Call Logs'
+        tlactivity = 'WhatsApp - Call Logs'
         timeline(report_folder, tlactivity, data_list, data_headers)
         
     else:
@@ -180,7 +179,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
-        except:
+        except sqlite3.Error:
             usageentries = 0
             
         if usageentries > 0:
@@ -195,10 +194,10 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'WhatsApp - Messages'
+            tsvname = 'WhatsApp - Messages'
             tsv(report_folder, data_headers, data_list, tsvname, source_file_msg)
             
-            tlactivity = f'WhatsApp - Messages'
+            tlactivity = 'WhatsApp - Messages'
             timeline(report_folder, tlactivity, data_list, data_headers)
             
         else:
@@ -262,7 +261,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
-        except:
+        except sqlite3.Error:
             usageentries = 0
             
         if usageentries > 0:
@@ -274,21 +273,21 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             for row in all_rows:
               
                 if row[7] is not None:
-                  mediaident = row[7].split(separator)[-1]
-                  # print(mediaident)
-                  media = media_to_html(mediaident, files_found, report_folder)
+                    mediaident = row[7].split(separator)[-1]
+                    # print(mediaident)
+                    media = media_to_html(mediaident, files_found, report_folder)
                 else:
-                  media = row[7]
+                    media = row[7]
                   
                 data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], media, row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]))
 
             report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db, html_no_escape=['Media'])
             report.end_artifact_report()
             
-            tsvname = f'WhatsApp - One To One Messages'
+            tsvname = 'WhatsApp - One To One Messages'
             tsv(report_folder, data_headers, data_list, tsvname, whatsapp_msgstore_db)
 
-            tlactivity = f'WhatsApp - One To One Messages'
+            tlactivity = 'WhatsApp - One To One Messages'
             timeline(report_folder, tlactivity, data_list, data_headers)
             
         else:
@@ -354,7 +353,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
-        except:
+        except sqlite3.Error:
             usageentries = 0
             
         if usageentries > 0:
@@ -364,22 +363,22 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             data_headers = ('Message Timestamp','Received Timestamp','Conversation Name','Sending Party','Sending Party JID','Message Direction','Message Type','Message','Media','Local Path to Media','Media File Size','Shared Latitude/Starting Latitude (Live Location)','Shared Longitude/Starting Longitude (Live Location)','Duration Live Location Shared (Seconds)','Final Live Latitude','Final Live Longitude','Final Location Timestamp') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
-              if row[8] is not None:
-                mediaident = row[8].split(separator)[-1]
-                # print(mediaident)
-                media = media_to_html(mediaident, files_found, report_folder)
-              else:
-                media = row[8]
+                if row[8] is not None:
+                    mediaident = row[8].split(separator)[-1]
+                    # print(mediaident)
+                    media = media_to_html(mediaident, files_found, report_folder)
+                else:
+                    media = row[8]
 
-              data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], media, row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15]))
+                data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], media, row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15]))
 
             report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db, html_no_escape=['Media'])
             report.end_artifact_report()
             
-            tsvname = f'WhatsApp - Group Messages'
+            tsvname = 'WhatsApp - Group Messages'
             tsv(report_folder, data_headers, data_list, tsvname, whatsapp_msgstore_db)
 
-            tlactivity = f'WhatsApp - Group Messages'
+            tlactivity = 'WhatsApp - Group Messages'
             timeline(report_folder, tlactivity, data_list, data_headers)
             
         else:
@@ -404,7 +403,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
-        except:
+        except sqlite3.Error:
             usageentries = 0
 
         if usageentries > 0:
@@ -430,10 +429,10 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db, whatsapp_wa_db, html_no_escape=['Creator WA Profile Picture'])
             report.end_artifact_report()
 
-            tsvname = f'WhatsApp - Group Details'
+            tsvname = 'WhatsApp - Group Details'
             tsv(report_folder, data_headers, data_list, tsvname, whatsapp_msgstore_db)
 
-            tlactivity = f'WhatsApp - Group Details'
+            tlactivity = 'WhatsApp - Group Details'
             timeline(report_folder, tlactivity, data_list, data_headers)
 
         else:
