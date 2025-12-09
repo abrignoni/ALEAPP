@@ -438,21 +438,20 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 
         else:
             logfunc('No WhatsApp - Group Details found')
-
+    
+    file_source = []
+    data = {
+        'push_name': None,
+        'my_current_status': None,
+        'version': None,
+        'ph': None,
+        'cc': None,
+    }
     for file_found in files_found:
         if('com.whatsapp_preferences_light.xml' in file_found or 'startup_prefs.xml' in file_found):
             with open(file_found, encoding='utf-8') as fd:
                 xml_dict = xmltodict.parse(fd.read())
                 string_dict = xml_dict.get('map','').get('string','')
-                if('com.whatsapp_preferences_light.xml' in file_found):
-                    file_source = []
-                    data = {
-                        'push_name': None,
-                        'my_current_status': None,
-                        'version': None,
-                        'ph': None,
-                        'cc': None,
-                    }
                 file_source.append(file_found)
                 for i in range(len(string_dict)):
                     if(string_dict[i]['@name'] == 'push_name' and data['push_name'] is None):                           # User Profile Name
