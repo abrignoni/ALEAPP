@@ -6,12 +6,11 @@
 # Thanks to Ryan Benson for awareness https://github.com/obsidianforensics/hindsight/pull/146/commits/015ee189c97c0a4e48deb59568dfe4f536ace8aa
 
 import os
-import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, get_next_unused_name, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
 
-def get_chromeDIPS(files_found, report_folder, seeker, wrap_text):
+def get_chromeDIPS(files_found, report_folder):
 
     for file_found in files_found:
         file_found = str(file_found)
