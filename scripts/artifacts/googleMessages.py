@@ -20,7 +20,19 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+        cursor.execute("PRAGMA table_info(parts);")
+        parts_cols = {col[1] for col in cursor.fetchall()}
+
+        has_size = 'file_size_bytes' in parts_cols
+        has_cache = 'local_cache_path' in parts_cols
+        size_expr = 'parts.file_size_bytes' if has_size else "''"
+        cache_expr = 'parts.local_cache_path' if has_cache else (
+            'parts.storage_uri' if 'storage_uri' in parts_cols else (
+                'parts.uri' if 'uri' in parts_cols else "''"
+            )
+        )
+
+        query = f'''
         SELECT
         datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
         parts.content_type AS "Message Type",
@@ -28,17 +40,24 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         participants.display_destination AS "Message Sender",
         parts.text AS "Message",
         CASE
-        WHEN parts.file_size_bytes=-1 THEN "N/A"
-        ELSE parts.file_size_bytes
+        WHEN {size_expr}=-1 THEN "N/A"
+        ELSE {size_expr}
         END AS "Attachment Byte Size",
-        parts.local_cache_path AS "Attachment Location"
+        {cache_expr} AS "Attachment Location"
         FROM
         parts
         JOIN messages ON messages._id=parts.message_id
         JOIN participants ON participants._id=messages.sender_id
         JOIN conversations ON conversations._id=parts.conversation_id
         ORDER BY "Timestamp (UTC)" ASC
-        ''')
+        '''
+
+        try:
+            cursor.execute(query)
+        except sqlite3.OperationalError as e:
+            logfunc(f'Google Messages query failed in {file_found}: {e}')
+            db.close()
+            continue
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
