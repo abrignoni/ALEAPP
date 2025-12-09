@@ -80,7 +80,7 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
                     if timestamp is None:
                         pass
                     else:
-                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), row[4])
                     data_list.append((timestamp,row[1],row[2],row[3],row[4],file_found))
             
             db.close()
@@ -121,7 +121,7 @@ def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):
                 if timestamp is None:
                     pass
                 else:
-                    timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                    timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), row[5])
                 data_list.append((timestamp,row[1],row[2],row[3],row[4],row[5],file_found))
         db.close()
         

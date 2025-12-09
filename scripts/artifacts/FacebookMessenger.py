@@ -233,28 +233,52 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 ''')
                 snippet = 1
             except:
-                cursor.execute('''
-                select
-                case messages.timestamp_ms
-                    when 0 then ''
-                    else datetime(messages.timestamp_ms/1000,'unixepoch')
-                End	as Datestamp,
-                (select json_extract (messages.sender, '$.name')) as "Sender",
-                substr((select json_extract (messages.sender, '$.user_key')),10) as "Sender ID",
-                messages.thread_key,
-                messages.text,
-                (select json_extract (messages.attachments, '$[0].filename')) as AttachmentName,
-                (select json_extract (messages.shares, '$[0].name')) as ShareName,
-                (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
-                (select json_extract (messages.shares, '$[0].href')) as ShareLink,
-                message_reactions.reaction as "Message Reaction",
-                datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
-                messages.msg_id
-                from messages, threads
-                left join message_reactions on message_reactions.msg_id = messages.msg_id
-                where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
-                order by messages.thread_key, datestamp;
-                ''')
+                try:
+                    cursor.execute('''
+                    select
+                    case messages.timestamp_ms
+                        when 0 then ''
+                        else datetime(messages.timestamp_ms/1000,'unixepoch')
+                    End	as Datestamp,
+                    (select json_extract (messages.sender, '$.name')) as "Sender",
+                    substr((select json_extract (messages.sender, '$.user_key')),10) as "Sender ID",
+                    messages.thread_key,
+                    messages.text,
+                    (select json_extract (messages.attachments, '$[0].filename')) as AttachmentName,
+                    (select json_extract (messages.shares, '$[0].name')) as ShareName,
+                    (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
+                    (select json_extract (messages.shares, '$[0].href')) as ShareLink,
+                    message_reactions.reaction as "Message Reaction",
+                    datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
+                    messages.msg_id
+                    from messages, threads
+                    left join message_reactions on message_reactions.msg_id = messages.msg_id
+                    where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
+                    order by messages.thread_key, datestamp;
+                    ''')
+                except:
+                    # Fallback for databases without reaction_timestamp column
+                    cursor.execute('''
+                    select
+                    case messages.timestamp_ms
+                        when 0 then ''
+                        else datetime(messages.timestamp_ms/1000,'unixepoch')
+                    End	as Datestamp,
+                    (select json_extract (messages.sender, '$.name')) as "Sender",
+                    substr((select json_extract (messages.sender, '$.user_key')),10) as "Sender ID",
+                    messages.thread_key,
+                    messages.text,
+                    (select json_extract (messages.attachments, '$[0].filename')) as AttachmentName,
+                    (select json_extract (messages.shares, '$[0].name')) as ShareName,
+                    (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
+                    (select json_extract (messages.shares, '$[0].href')) as ShareLink,
+                    NULL as "Message Reaction",
+                    NULL as "Message Reaction Timestamp",
+                    messages.msg_id
+                    from messages, threads
+                    where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
+                    order by messages.thread_key, datestamp;
+                    ''')
                 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
@@ -323,25 +347,47 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             else:
                 logfunc(f'No Facebook{typeof}- Calls{usernum} - threads_db2 data available')
             
-            cursor.execute('''
-            select
-            substr(user_key,10),
-            first_name,
-            last_name,
-            username,
-            (select json_extract (profile_pic_square, '$[0].url')) as profile_pic_square,
-            case is_messenger_user
-                when 0 then ''
-                else 'Yes'
-            end is_messenger_user,
-            case is_friend
-                when 0 then 'No'
-                when 1 then 'Yes'
-            end is_friend,
-            friendship_status,
-            contact_relationship_status
-            from thread_users
-            ''')
+            try:
+                cursor.execute('''
+                select
+                substr(user_key,10),
+                first_name,
+                last_name,
+                username,
+                (select json_extract (profile_pic_square, '$[0].url')) as profile_pic_square,
+                case is_messenger_user
+                    when 0 then ''
+                    else 'Yes'
+                end is_messenger_user,
+                case is_friend
+                    when 0 then 'No'
+                    when 1 then 'Yes'
+                end is_friend,
+                friendship_status,
+                contact_relationship_status
+                from thread_users
+                ''')
+            except:
+                # Fallback for databases without friendship_status or contact_relationship_status columns
+                cursor.execute('''
+                select
+                substr(user_key,10),
+                first_name,
+                last_name,
+                username,
+                (select json_extract (profile_pic_square, '$[0].url')) as profile_pic_square,
+                case is_messenger_user
+                    when 0 then ''
+                    else 'Yes'
+                end is_messenger_user,
+                case is_friend
+                    when 0 then 'No'
+                    when 1 then 'Yes'
+                end is_friend,
+                NULL as friendship_status,
+                NULL as contact_relationship_status
+                from thread_users
+                ''')
 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)

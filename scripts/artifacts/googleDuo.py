@@ -99,31 +99,57 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Google Duo - Contacts data available')
     
-        cursor.execute('''
-        select
-        case sent_timestamp_millis
-            when 0 then ''
-            else datetime(sent_timestamp_millis/1000,'unixepoch')
-        end as 'Sent Timestamp',
-        case received_timestamp_millis
-            when 0 then ''
-            else datetime(received_timestamp_millis/1000,'unixepoch')
-        end as 'Received Timestamp',
-        case seen_timestamp_millis
-            when 0 then ''
-            else datetime(seen_timestamp_millis/1000,'unixepoch')
-        end as 'Viewed Timestamp',
-        sender_id,
-        recipient_id,
-        content_uri,
-        replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), '') as 'File Name',
-        content_size_bytes,
-        case saved_status
-            when 0 then ''
-            when 1 then 'Yes'
-        end as 'File Saved'
-        from messages
-        ''')
+        try:
+            cursor.execute('''
+            select
+            case sent_timestamp_millis
+                when 0 then ''
+                else datetime(sent_timestamp_millis/1000,'unixepoch')
+            end as 'Sent Timestamp',
+            case received_timestamp_millis
+                when 0 then ''
+                else datetime(received_timestamp_millis/1000,'unixepoch')
+            end as 'Received Timestamp',
+            case seen_timestamp_millis
+                when 0 then ''
+                else datetime(seen_timestamp_millis/1000,'unixepoch')
+            end as 'Viewed Timestamp',
+            sender_id,
+            recipient_id,
+            content_uri,
+            replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), '') as 'File Name',
+            content_size_bytes,
+            case saved_status
+                when 0 then ''
+                when 1 then 'Yes'
+            end as 'File Saved'
+            from messages
+            ''')
+            has_saved_status = True
+        except:
+            # Fallback for databases without saved_status column
+            cursor.execute('''
+            select
+            case sent_timestamp_millis
+                when 0 then ''
+                else datetime(sent_timestamp_millis/1000,'unixepoch')
+            end as 'Sent Timestamp',
+            case received_timestamp_millis
+                when 0 then ''
+                else datetime(received_timestamp_millis/1000,'unixepoch')
+            end as 'Received Timestamp',
+            case seen_timestamp_millis
+                when 0 then ''
+                else datetime(seen_timestamp_millis/1000,'unixepoch')
+            end as 'Viewed Timestamp',
+            sender_id,
+            recipient_id,
+            content_uri,
+            replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), '') as 'File Name',
+            content_size_bytes
+            from messages
+            ''')
+            has_saved_status = False
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
@@ -140,7 +166,7 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
                 content_uri = row[5]
                 content_name = row[6]
                 content_size = row[7]
-                file_saved = row[8]
+                file_saved = row[8] if has_saved_status else ''
                 thumb = ''
                 
                 for match in files_found:
@@ -149,7 +175,7 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
                         data_file_name = os.path.basename(match)
                         thumb = f'<img src="{report_folder}/{data_file_name}" width="300"></img>'
             
-                data_list.append((row[0],row[1],row[2],row[3],row[4],thumb,row[7],row[8]))
+                data_list.append((row[0],row[1],row[2],row[3],row[4],thumb,row[7],file_saved))
             
             report = ArtifactHtmlReport('Google Duo - Notes')
             report.start_artifact_report(report_folder, 'Google Duo - Notes')
