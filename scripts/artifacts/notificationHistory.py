@@ -47,8 +47,8 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                     value = setting.attrib.get('value')
                     value = "Enabled" if value == "1" else "Disabled" if value == "0" else "Unknown"
                     data_list.append((value, user))
-                else:
-                    pass # setting not available
+            else:
+                pass # setting not available
 
             if data_list:
                 description = f'Indicates whether "Notification History" feature is enabled.'
@@ -64,6 +64,8 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 
             else:
                 logfunc('No Android Notification History - Status data available')
+        
+            continue
         
         #parsing notification_policy.xml
         if file_name.endswith('notification_policy.xml'):
@@ -97,9 +99,11 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 
                 tsvname = f'Android Notification History - Snoozed notifications'
                 tsv(report_folder, data_headers, data_list, tsvname)
-                
+            
             else:
                 logfunc('No Android Notification History - Snoozed notifications data available')
+            
+            continue
 
         else:
             #iterate through the notification pbs
@@ -110,6 +114,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                         notification_history.ParseFromString(f.read()) #The error 'Wrong wire type in tag. ' likely happens due to the given .proto map file.  
                     except Exception as e:
                         logfunc(f'Error in the ParseFromString() function. The error message was: {e}')
+                        continue
 
                     package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)} # one of the protobuf files stores the package name and indexes
 
