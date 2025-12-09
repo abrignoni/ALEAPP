@@ -207,8 +207,28 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             source_file = file_found.replace(seeker.data_folder, '')
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
-            try:
-                cursor.execute('''
+            # Detect schema variations for messages and message_reactions tables
+            cursor.execute("PRAGMA table_info(messages)")
+            msg_cols = [r[1] for r in cursor.fetchall()]
+            has_snippet = 'snippet' in msg_cols
+
+            cursor.execute("PRAGMA table_info(message_reactions)")
+            mr_cols = [r[1] for r in cursor.fetchall()]
+
+            if 'reaction_timestamp' in mr_cols:
+                reaction_ts_expr = "datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as \"Message Reaction Timestamp\""
+            elif 'reaction_timestamp_ms' in mr_cols:
+                reaction_ts_expr = "datetime(message_reactions.reaction_timestamp_ms/1000,'unixepoch') as \"Message Reaction Timestamp\""
+            elif 'reaction_creation_timestamp_ms' in mr_cols:
+                reaction_ts_expr = "datetime(message_reactions.reaction_creation_timestamp_ms/1000,'unixepoch') as \"Message Reaction Timestamp\""
+            elif 'reaction_creation_time_ms' in mr_cols:
+                reaction_ts_expr = "datetime(message_reactions.reaction_creation_time_ms/1000,'unixepoch') as \"Message Reaction Timestamp\""
+            else:
+                reaction_ts_expr = "'' as \"Message Reaction Timestamp\""
+
+            # Build the appropriate SELECT depending on whether messages.snippet exists
+            if has_snippet:
+                select_sql = f'''
                 select
                 case messages.timestamp_ms
                     when 0 then ''
@@ -224,16 +244,16 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
                 (select json_extract (messages.shares, '$[0].href')) as ShareLink,
                 message_reactions.reaction as "Message Reaction",
-                datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
+                {reaction_ts_expr},
                 messages.msg_id
                 from messages, threads
                 left join message_reactions on message_reactions.msg_id = messages.msg_id
                 where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
                 order by messages.thread_key, datestamp;
-                ''')
+                '''
                 snippet = 1
-            except:
-                cursor.execute('''
+            else:
+                select_sql = f'''
                 select
                 case messages.timestamp_ms
                     when 0 then ''
@@ -248,13 +268,15 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
                 (select json_extract (messages.shares, '$[0].href')) as ShareLink,
                 message_reactions.reaction as "Message Reaction",
-                datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
+                {reaction_ts_expr},
                 messages.msg_id
                 from messages, threads
                 left join message_reactions on message_reactions.msg_id = messages.msg_id
                 where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
                 order by messages.thread_key, datestamp;
-                ''')
+                '''
+
+            cursor.execute(select_sql)
                 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
@@ -323,7 +345,21 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             else:
                 logfunc(f'No Facebook{typeof}- Calls{usernum} - threads_db2 data available')
             
-            cursor.execute('''
+            # Check thread_users schema for optional columns
+            cursor.execute("PRAGMA table_info(thread_users)")
+            tu_cols = [r[1] for r in cursor.fetchall()]
+
+            if 'friendship_status' in tu_cols:
+                friendship_expr = 'friendship_status'
+            else:
+                friendship_expr = "'' as friendship_status"
+
+            if 'contact_relationship_status' in tu_cols:
+                contact_rel_expr = 'contact_relationship_status'
+            else:
+                contact_rel_expr = "'' as contact_relationship_status"
+
+            select_thread_users = f'''
             select
             substr(user_key,10),
             first_name,
@@ -338,10 +374,12 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 when 0 then 'No'
                 when 1 then 'Yes'
             end is_friend,
-            friendship_status,
-            contact_relationship_status
+            {friendship_expr},
+            {contact_rel_expr}
             from thread_users
-            ''')
+            '''
+
+            cursor.execute(select_thread_users)
 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)

@@ -20,26 +20,40 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+        
+        # Check which optional columns exist
+        cursor.execute("PRAGMA table_info(parts)")
+        columns = [row[1] for row in cursor.fetchall()]
+        has_file_size = 'file_size_bytes' in columns
+        has_cache_path = 'local_cache_path' in columns
+        
+        # Build SELECT clause based on available columns
+        file_size_select = '''CASE
+            WHEN parts.file_size_bytes=-1 THEN "N/A"
+            ELSE parts.file_size_bytes
+            END''' if has_file_size else '"N/A"'
+        
+        cache_path_select = 'parts.local_cache_path' if has_cache_path else '"N/A"'
+        
+        # Build complete query
+        query = f'''
         SELECT
         datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
         parts.content_type AS "Message Type",
         conversations.name AS "Other Participant/Conversation Name",
         participants.display_destination AS "Message Sender",
         parts.text AS "Message",
-        CASE
-        WHEN parts.file_size_bytes=-1 THEN "N/A"
-        ELSE parts.file_size_bytes
-        END AS "Attachment Byte Size",
-        parts.local_cache_path AS "Attachment Location"
+        {file_size_select} AS "Attachment Byte Size",
+        {cache_path_select} AS "Attachment Location"
         FROM
         parts
         JOIN messages ON messages._id=parts.message_id
         JOIN participants ON participants._id=messages.sender_id
         JOIN conversations ON conversations._id=parts.conversation_id
         ORDER BY "Timestamp (UTC)" ASC
-        ''')
-
+        '''
+        
+        cursor.execute(query)
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
