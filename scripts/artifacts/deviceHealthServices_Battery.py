@@ -28,17 +28,12 @@ __artifacts_v2__ = {
         "artifact_icon": "bluetooth"
     }
 }
-
-import sqlite3
-import textwrap
 import os
 
-from packaging import version
-from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
-def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
+def Turbo_Battery(files_found, _report_folder, seeker, _wrap_text):
     source_file_turbo = ''
     turbo_db = ''
     data_list = []
@@ -50,7 +45,7 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
             time_offset = getattr(seeker, 'time_zone', 0)
         if time_offset is None:
             time_offset = 0
-    except Exception:
+    except AttributeError:
         time_offset = 0
         
     for file_found in files_found:
@@ -92,7 +87,7 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
                     else:
                         try:
                             timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), time_offset)
-                        except Exception:
+                        except (ValueError, TypeError):
                             # fallback to UTC human timestamp if timezone conversion fails
                             timestamp = convert_ts_human_to_utc(timestamp)
                     data_list.append((timestamp,row[1],row[2],row[3],row[4],file_found))
@@ -104,7 +99,7 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_file_turbo
             
 @artifact_processor
-def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):     
+def Turbo_Bluetooth(files_found, _report_folder, seeker, _wrap_text):     
     source_file_bluetooth = ''
     bluetooth_db = ''
     data_list = []
@@ -116,7 +111,7 @@ def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):
             time_offset = getattr(seeker, 'time_zone', 0)
         if time_offset is None:
             time_offset = 0
-    except Exception:
+    except AttributeError:
         time_offset = 0
 
     for file_found in files_found:
@@ -149,7 +144,7 @@ def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):
                     else:
                         try:
                             timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), time_offset)
-                        except Exception:
+                        except (ValueError, TypeError):
                             timestamp = convert_ts_human_to_utc(timestamp)
                     data_list.append((timestamp,row[1],row[2],row[3],row[4],row[5],file_found))
             db.close()

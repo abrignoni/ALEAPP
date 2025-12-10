@@ -4,14 +4,12 @@
 # Version: 0.1
 # Requirements:  None
 
-import os
 import sqlite3
-import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_googleMessages(files_found, report_folder, seeker, wrap_text):
+def get_googleMessages(files_found, report_folder, _seeker, _wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -24,7 +22,7 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         try:
             cursor.execute("PRAGMA table_info(parts)")
             columns = [column[1] for column in cursor.fetchall()]
-        except Exception:
+        except sqlite3.OperationalError:
             columns = []
 
         if 'file_size_bytes' in columns:
@@ -62,7 +60,7 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
             cursor.execute(query)
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
-        except Exception as e:
+        except sqlite3.Error as e:
             logfunc(f'Error executing query in Google Messages: {e}')
             usageentries = 0
 
@@ -78,10 +76,10 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Google Messages'
+            tsvname = 'Google Messages'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Google Messages'
+            tlactivity = 'Google Messages'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Google Messages data available')
