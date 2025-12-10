@@ -5,7 +5,7 @@ import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_googleDuo(files_found, report_folder, seeker, wrap_text):
+def get_googleDuo(files_found, report_folder, _seeker, _wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -158,7 +158,7 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
                 viewed_ts = row[2]
                 sender_id = row[3]
                 recipient_id = row[4]
-                content_uri = row[5]
+                # row[5] is content_uri, unused in report logic, removed to fix pylint warning
                 content_name = row[6]
                 content_size = row[7]
                 file_saved = row[8]
@@ -170,7 +170,8 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
                         data_file_name = os.path.basename(match)
                         thumb = f'<img src="{report_folder}/{data_file_name}" width="300"></img>'
             
-                data_list.append((row[0],row[1],row[2],row[3],row[4],thumb,row[7],row[8]))
+                # FIX: Using the variables defined above instead of row[] indices
+                data_list.append((sent_ts, received_ts, viewed_ts, sender_id, recipient_id, thumb, content_size, file_saved))
             
             report = ArtifactHtmlReport('Google Duo - Notes')
             report.start_artifact_report(report_folder, 'Google Duo - Notes')
