@@ -105,7 +105,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 with open(file_found, 'rb') as f:
                     raw_data = f.read()
                     try:
-                        notification_history.ParseFromString(raw_data)
+                        notification_history.ParseFromString(raw_data)  #error in here
                     except Exception as e:
                         logfunc(f"[!] Skipping invalid protobuf in notification history: {file_found}")
                         logfunc(f"    ParseFromString() failed: {e}")
