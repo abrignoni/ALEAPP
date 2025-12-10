@@ -3,11 +3,11 @@ __artifacts_v2__ = {
         "name": "AirGuard",
         "description": "Parses the AirGuard AirTag app",
         "author": "@AlexisBrignoni",
-        "version": "0.0.2",
-        "date": "2022-01-08",
+        "version": "0.0.3 patched",
+        "date": "2025-02-08",
         "requirements": "none",
         "category": "AirTags",
-        "notes": "",
+        "notes": "Patched timestamp format handling",
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*'),
         "function": "get_airGuard"
     }
@@ -18,6 +18,12 @@ import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist_in_db, convert_ts_human_to_utc, convert_utc_human_to_timezone
+
+# --- PATCHED FUNCTION ---
+def fix_date(ts):
+    if ts and len(ts) == 16:  # format YYYY-MM-DD HH:MM
+        ts = ts + ":00"
+    return ts
 
 def get_airGuard(files_found, report_folder, seeker, wrap_text):
     
@@ -69,28 +75,20 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    last_time_dev_seen = str(row[0]).replace("T", " ")
-                    if last_time_dev_seen is None or last_time_dev_seen == 'None':
-                        pass
-                    else:
+                    last_time_dev_seen = fix_date(str(row[0]).replace("T", " "))
+                    if last_time_dev_seen and last_time_dev_seen != 'None':
                         last_time_dev_seen = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_time_dev_seen),'UTC')
                     
-                    time_local = str(row[1]).replace("T", " ")
-                    if time_local is None or time_local == 'None':
-                        pass
-                    else:
+                    time_local = fix_date(str(row[1]).replace("T", " "))
+                    if time_local and time_local != 'None':
                         time_local = convert_utc_human_to_timezone(convert_ts_human_to_utc(time_local),'UTC')
                     
-                    first_time_dev_seen = str(row[7]).replace("T", " ")
-                    if first_time_dev_seen is None or first_time_dev_seen == 'None':
-                        pass
-                    else:
+                    first_time_dev_seen = fix_date(str(row[7]).replace("T", " "))
+                    if first_time_dev_seen and first_time_dev_seen != 'None':
                         first_time_dev_seen = convert_utc_human_to_timezone(convert_ts_human_to_utc(first_time_dev_seen),'UTC')
                         
-                    last_time_user_notified = str(row[8]).replace("T", " ")
-                    if last_time_user_notified is None or last_time_user_notified == 'None':
-                        pass
-                    else:
+                    last_time_user_notified = fix_date(str(row[8]).replace("T", " "))
+                    if last_time_user_notified and last_time_user_notified != 'None':
                         last_time_user_notified = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_time_user_notified),'UTC')
 
                     data_list_tracker.append((last_time_dev_seen,time_local,row[2],row[3],row[4],row[5],row[6],first_time_dev_seen,last_time_user_notified,file_found))
@@ -114,23 +112,19 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                    start_scan_ts = str(row[0]).replace("T", " ")
-                    if start_scan_ts is None or start_scan_ts == 'None':
-                        pass
-                    else:
+                    start_scan_ts = fix_date(str(row[0]).replace("T", " "))
+                    if start_scan_ts and start_scan_ts != 'None':
                         start_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(start_scan_ts),'UTC')
                     
-                    end_scan_ts = str(row[1]).replace("T", " ")
-                    if end_scan_ts is None or end_scan_ts == 'None':
-                        pass
-                    else:
+                    end_scan_ts = fix_date(str(row[1]).replace("T", " "))
+                    if end_scan_ts and end_scan_ts != 'None':
                         end_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(end_scan_ts),'UTC')
                     
                     data_list_scans.append((start_scan_ts,end_scan_ts,row[2],row[3],row[4],row[5],file_found))
             db.close()
   
         else:
-            continue # Skip all other files
+            continue
         
     if data_list_tracker:        
         report = ArtifactHtmlReport('AirGuard AirTag Tracker')
