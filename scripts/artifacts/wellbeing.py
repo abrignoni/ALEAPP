@@ -63,25 +63,30 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text):
                     data_list.append((event_ts, row[2], row[3], file_found))
                     
             cursor = db.cursor()
-            cursor.execute('''
-            SELECT 
-            datetime(component_events.timestamp/1000, "UNIXEPOCH") as timestamp,
-            component_events._id,
-            components.package_id, 
-            packages.package_name, 
-            components.component_name as website,
-            CASE
-            when component_events.type=1 THEN 'ACTIVITY_RESUMED'
-            when component_events.type=2 THEN 'ACTIVITY_PAUSED'
-            else component_events.type
-            END as eventType
-            FROM component_events
-            INNER JOIN components ON component_events.component_id=components._id
-            INNER JOIN packages ON components.package_id=packages._id
-            ORDER BY timestamp
-            ''')
+            try:
+                cursor.execute('''
+                SELECT 
+                datetime(component_events.timestamp/1000, "UNIXEPOCH") as timestamp,
+                component_events._id,
+                components.package_id, 
+                packages.package_name, 
+                components.component_name as website,
+                CASE
+                when component_events.type=1 THEN 'ACTIVITY_RESUMED'
+                when component_events.type=2 THEN 'ACTIVITY_PAUSED'
+                else component_events.type
+                END as eventType
+                FROM component_events
+                INNER JOIN components ON component_events.component_id=components._id
+                INNER JOIN packages ON components.package_id=packages._id
+                ORDER BY timestamp
+                ''')
 
-            all_rows = cursor.fetchall()
+                all_rows = cursor.fetchall()
+            
+            except:
+                all_rows = []
+            
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
