@@ -3,9 +3,9 @@ __artifacts_v2__ = {
         "name": "Android Notification History",
         "description": "Get Android notifications' history, policy and settings. This parser is based on a research project",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
-        "version": "0.0.1",
+        "version": "0.0.2",
         "date": "2024-07-02",
-        "requirements": "",
+        "requirements": "blackboxprotobuf",
         "category": "Android Notification History",
         "paths": (
             '**/system_ce/*/notification_history/history/*',
@@ -22,8 +22,139 @@ from datetime import *
 import os
 import scripts.artifacts.notification_history_pb.notificationhistory_pb2 as notificationhistory_pb2
 
+try:
+    import blackboxprotobuf
+    HAS_BLACKBOXPROTOBUF = True
+except ImportError:
+    HAS_BLACKBOXPROTOBUF = False
+
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, abxread, checkabx,convert_ts_int_to_utc,convert_utc_human_to_timezone
+
+
+def parse_notification_with_blackbox(pb_data, file_name):
+    """
+    Fallback parser using blackboxprotobuf for when the compiled schema fails.
+    Returns a list of notification tuples or empty list if parsing fails.
+    """
+    data_list = []
+    try:
+        message, typedef = blackboxprotobuf.decode_message(pb_data)
+        
+        # Try to extract notifications from the decoded message
+        # The structure may vary, so we try common field numbers
+        notifications = []
+        
+        # Field 3 is typically the notification list based on the proto schema
+        if '3' in message:
+            notif_data = message['3']
+            if isinstance(notif_data, list):
+                notifications = notif_data
+            else:
+                notifications = [notif_data]
+        
+        # Try to get string pool from field 1
+        string_pool = []
+        if '1' in message and isinstance(message['1'], dict):
+            pool_data = message['1']
+            if '2' in pool_data:
+                pool_strings = pool_data['2']
+                if isinstance(pool_strings, list):
+                    string_pool = [s.decode('utf-8') if isinstance(s, bytes) else str(s) for s in pool_strings]
+                else:
+                    string_pool = [pool_strings.decode('utf-8') if isinstance(pool_strings, bytes) else str(pool_strings)]
+        
+        package_map = {i + 1: pkg for i, pkg in enumerate(string_pool)}
+        
+        # Get major version from field 2
+        major_version = message.get('2', None)
+        
+        for notif in notifications:
+            if not isinstance(notif, dict):
+                continue
+                
+            # Extract fields based on proto field numbers
+            package = notif.get('1', b'')
+            if isinstance(package, bytes):
+                package = package.decode('utf-8', errors='ignore')
+            package_index = notif.get('2', 0)
+            
+            # If package is empty, try to get from string pool
+            if not package and package_index:
+                package = package_map.get(package_index, '')
+            
+            channel_name = notif.get('3', b'')
+            if isinstance(channel_name, bytes):
+                channel_name = channel_name.decode('utf-8', errors='ignore')
+            channel_name_index = notif.get('4', 0)
+            
+            channel_id = notif.get('5', b'')
+            if isinstance(channel_id, bytes):
+                channel_id = channel_id.decode('utf-8', errors='ignore')
+            channel_id_index = notif.get('6', 0)
+            
+            uid = notif.get('7', 0)
+            user_id = notif.get('8', 0)
+            posted_time_ms = notif.get('9', 0)
+            
+            title = notif.get('10', b'')
+            if isinstance(title, bytes):
+                title = title.decode('utf-8', errors='ignore')
+            
+            text = notif.get('11', b'')
+            if isinstance(text, bytes):
+                text = text.decode('utf-8', errors='ignore')
+            
+            conversation_id = notif.get('13', b'')
+            if isinstance(conversation_id, bytes):
+                conversation_id = conversation_id.decode('utf-8', errors='ignore')
+            conversation_id_index = notif.get('14', 0)
+            
+            # Handle icon (field 12)
+            icon_data = notif.get('12', {})
+            image_type = icon_data.get('1', None) if isinstance(icon_data, dict) else None
+            image_bitmap_filename = icon_data.get('2', None) if isinstance(icon_data, dict) else None
+            if isinstance(image_bitmap_filename, bytes):
+                image_bitmap_filename = image_bitmap_filename.decode('utf-8', errors='ignore')
+            image_resource_id = icon_data.get('3', None) if isinstance(icon_data, dict) else None
+            image_resource_id_package = icon_data.get('4', None) if isinstance(icon_data, dict) else None
+            if isinstance(image_resource_id_package, bytes):
+                image_resource_id_package = image_resource_id_package.decode('utf-8', errors='ignore')
+            image_data_length = icon_data.get('6', None) if isinstance(icon_data, dict) else None
+            image_data_offset = icon_data.get('7', None) if isinstance(icon_data, dict) else None
+            image_uri = icon_data.get('8', None) if isinstance(icon_data, dict) else None
+            if isinstance(image_uri, bytes):
+                image_uri = image_uri.decode('utf-8', errors='ignore')
+            
+            # Convert timestamp
+            posted_time = None
+            if posted_time_ms:
+                try:
+                    posted_time = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(posted_time_ms/1000.0)),'UTC')
+                except:
+                    pass
+            
+            # Convert file creation time
+            file_creation = None
+            try:
+                file_creation = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(file_name)/1000.0),'UTC')
+            except:
+                pass
+            
+            data_list.append((
+                f'{posted_time}', title, text, package, user_id, uid, package_index,
+                channel_name, channel_name_index, channel_id, channel_id_index,
+                conversation_id, conversation_id_index, major_version,
+                image_type, image_bitmap_filename, image_resource_id,
+                image_resource_id_package, image_data_length, image_data_offset,
+                image_uri, file_name, f'{file_creation}'
+            ))
+    except Exception as e:
+        pass  # Silently fail for blackbox parsing
+    
+    return data_list
+
+
 
 
 def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
@@ -104,20 +235,30 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
         else:
             #iterate through the notification pbs
             try:
-                notification_history = notificationhistory_pb2.NotificationHistoryProto()
+                pb_data = None
                 with open(file_found, 'rb') as f:
-                    try:
-                        notification_history.ParseFromString(f.read()) #The error 'Wrong wire type in tag. ' likely happens due to the given .proto map file.  
-                    except Exception as e:
-                        logfunc(f'Error in the ParseFromString() function. The error message was: {e}')
-
-                    package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)} # one of the protobuf files stores the package name and indexes
-
-                    major_version = notification_history.major_version if notification_history.HasField('major_version') else None # notification format version should be 1
+                    pb_data = f.read()
+                
+                parsed_with_schema = False
+                notification_history = notificationhistory_pb2.NotificationHistoryProto()
+                
+                try:
+                    notification_history.ParseFromString(pb_data)
+                    # Check if we actually got any notifications
+                    if notification_history.notification:
+                        parsed_with_schema = True
+                except Exception as e:
+                    # Schema parsing failed, will try blackboxprotobuf
+                    parsed_with_schema = False
+                
+                if parsed_with_schema:
+                    # Use the compiled schema parser
+                    package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)}
+                    major_version = notification_history.major_version if notification_history.HasField('major_version') else None
+                    
                     for notification in notification_history.notification:
-                        package_name = notification.package if notification.package else package_map.get(notification.package_index, "") #retrieves package from the map if not stored locally
+                        package_name = notification.package if notification.package else package_map.get(notification.package_index, "")
                         
-                        #this block tries to fetch the value of each field from within the parsed protobuf file e.g. variable user_id -> recovers the user_id field from the pb
                         fields = ['uid', 'user_id', 'package_index', 'channel_name', 'channel_id','channel_id_index', 'channel_name_index', 'conversation_id', 'conversation_id_index']
                         defaults = {field: 'Error' for field in fields}
                         values = {}
@@ -126,7 +267,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                                 values[field] = getattr(notification, field)
                             except AttributeError:
                                 values[field] = 'Error'
-                        #extra block that does the same for the notifications with icons
+                        
                         if notification.HasField('icon'):
                             icon_fields = ['image_type', 'image_bitmap_filename', 'image_resource_id', 'image_resource_id_package','image_data_length', 'image_data_offset', 'image_uri']
                             for icon_field in icon_fields:
@@ -138,7 +279,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                             ]
                             for icon_field in icon_fields:
                                 values[icon_field] = None
-                        #here the returned values are assigned to the variables which are reported
+                        
                         uid = values['uid']
                         user_id = values['user_id']
                         package_index = values['package_index']
@@ -160,8 +301,17 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                         image_uri = values['image_uri']
                         file_creation = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(file_name)/1000.0),'UTC')
                         data_pb_list.append((f'{posted_time}',title,text,package_name,user_id,uid,package_index,channel_name,channel_name_index,channel_id,channel_id_index,conversation_id,conversation_id_index,major_version,image_type,image_bitmap_filename,image_resource_id,image_resource_id_package,image_data_length,image_data_offset,image_uri,file_name,f'{file_creation}'))
+                
+                elif HAS_BLACKBOXPROTOBUF and pb_data:
+                    # Fallback to blackboxprotobuf parser
+                    fallback_results = parse_notification_with_blackbox(pb_data, file_name)
+                    if fallback_results:
+                        data_pb_list.extend(fallback_results)
+                    # No log message if blackbox parsing also returns empty - just means no data
+                        
             except Exception as e:
-                logfunc(f'Error while opening notification pb files. The error message was:" {e}"')
+                # Only log if there's a real file error, not parsing errors
+                logfunc(f'Error reading notification pb file {file_name}: {e}')
 
     if len(data_pb_list) > 0:
         description = f'A history of the notifications that landed on the device during the last 24h'
