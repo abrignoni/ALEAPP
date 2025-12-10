@@ -17,7 +17,6 @@ __artifacts_v2__ = {
 }
 
 import xml.etree.ElementTree as ET
-from datetime import *
 import os
 import scripts.artifacts.notification_history_pb.notificationhistory_pb2 as notificationhistory_pb2
 
@@ -27,9 +26,11 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, abxread, checkabx,convert_
 
 def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
     data_pb_list = []
+    file_directory = None
     for file_found in files_found:
         file_found = str(file_found)
         file_name = os.path.basename(file_found)
+        file_directory = os.path.dirname(file_found)
         
         #parsing settings_secure.xml
         if file_name.endswith('settings_secure.xml'):
@@ -51,7 +52,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                     pass # setting not available
 
             if data_list:
-                description = f'Indicates whether "Notification History" feature is enabled.'
+                description = 'Indicates whether "Notification History" feature is enabled.'
                 report = ArtifactHtmlReport('Android Notification History - Status')
                 report.start_artifact_report(report_folder, 'Status',description)
                 report.add_script()
@@ -59,7 +60,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
                 
-                tsvname = f'Android Notification History - Status'
+                tsvname = 'Android Notification History - Status'
                 tsv(report_folder, data_headers, data_list, tsvname)
                 
             else:
@@ -86,7 +87,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                     else:
                         pass #no snoozed notifications found    
             if data_list:
-                description = f'Notifications the user chose to snooze for a specific time interval'
+                description = 'Notifications the user chose to snooze for a specific time interval'
                 report = ArtifactHtmlReport('Android Notification History - Snoozed notifications')
                 report.start_artifact_report(report_folder, 'Snoozed notifications', description) #'Android Notification History - Snoozed notifications')
                 report.add_script()
@@ -94,7 +95,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
                 
-                tsvname = f'Android Notification History - Snoozed notifications'
+                tsvname = 'Android Notification History - Snoozed notifications'
                 tsv(report_folder, data_headers, data_list, tsvname)
                 
             else:
@@ -113,7 +114,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                         if not content: # Skip if file is empty
                             continue
                         notification_history.ParseFromString(content) 
-                    except Exception as e:
+                    except (ValueError, TypeError) as e:
                         logfunc(f'Error in the ParseFromString() function for {file_name}. The error message was: {e}')
                         continue
 
@@ -171,23 +172,23 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                             file_creation = ''
                             
                         data_pb_list.append((f'{posted_time}',title,text,package_name,user_id,uid,package_index,channel_name,channel_name_index,channel_id,channel_id_index,conversation_id,conversation_id_index,major_version,image_type,image_bitmap_filename,image_resource_id,image_resource_id_package,image_data_length,image_data_offset,image_uri,file_name,f'{file_creation}'))
-            except Exception as e:
-                logfunc(f'Error while opening notification pb files. The error message was:" {e}"')
-
+            except (IOError, OSError) as e:
+                logfunc(f'Error reading file {file_found}: {e}')
+    
     if len(data_pb_list) > 0:
-        description = f'A history of the notifications that landed on the device during the last 24h'
+        description = 'A history of the notifications that landed on the device during the last 24h'
         report = ArtifactHtmlReport('Android Notification History - Notifications')
-        report.start_artifact_report(report_folder, f'Notifications', description)
+        report.start_artifact_report(report_folder, 'Notifications', description)
         report.add_script()
         data_headers = ('Posted Time','Title', 'Text','Package Name','User ID','UID','Package Index','Channel Name','Channel Name Index','Channel ID','Channel ID Index','Conversation ID','Conversation ID Index','Major Version','Image Type','Image Bitmap Filename','Image Resource ID','Image Resource ID Package','Image Data Length','Image Data Offset','Image URI','Protobuf File Name','Protobuf File Creation Date')#,'','','','','','','','','','','','','','')
-        file_directory = os.path.dirname(file_found)  
+        report.write_artifact_data_table(data_headers, data_pb_list, file_directory, html_escape=False)
         report.write_artifact_data_table(data_headers, data_pb_list, file_directory, html_escape=False)
         report.end_artifact_report()
         
-        tsvname = f'Android Notification History - Notifications'
+        tsvname = 'Android Notification History - Notifications'
         tsv(report_folder, data_headers, data_pb_list, tsvname)
         
-        tlactivity = f'Android Notification History - Notifications'
+        tlactivity = 'Android Notification History - Notifications'
         timeline(report_folder, tlactivity, data_pb_list, data_headers)
     else:
-        logfunc(f'No Android Notification History - Notifications available')
+        logfunc('No Android Notification History - Notifications available')

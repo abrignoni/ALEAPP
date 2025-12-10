@@ -1,11 +1,9 @@
 import os
 import shutil
 import sqlite3
-import textwrap
-import scripts.artifacts.artGlobals
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 def get_googleDuo(files_found, report_folder, seeker, wrap_text):
     
@@ -57,10 +55,10 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Google Duo - Call History'
+            tsvname = 'Google Duo - Call History'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Google Duo - Call History'
+            tlactivity = 'Google Duo - Call History'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Google Duo - Call History data available')
@@ -94,10 +92,10 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Google Duo - Contacts'
+            tsvname = 'Google Duo - Contacts'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Google Duo - Contacts'
+            tlactivity = 'Google Duo - Contacts'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Google Duo - Contacts data available')
@@ -109,7 +107,7 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             cursor.execute("PRAGMA table_info(messages)")
             columns = [column[1] for column in cursor.fetchall()]
             has_saved_status = 'saved_status' in columns
-        except Exception:
+        except (sqlite3.OperationalError, sqlite3.DatabaseError):
             has_saved_status = False
 
         # Define the 'File Saved' column selection based on availability
@@ -182,10 +180,10 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Content'])
             report.end_artifact_report()
             
-            tsvname = f'Google Duo - Notes'
+            tsvname = 'Google Duo - Notes'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Google Duo - Notes'
+            tlactivity = 'Google Duo - Notes'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Google Duo - Notes data available')
