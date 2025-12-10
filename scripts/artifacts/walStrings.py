@@ -16,6 +16,12 @@ def get_walStrings(files_found, report_folder, seeker, wrap_text):
     x = 1
     data_list = []
     for file_found in files_found:
+
+        # Fix: skip missing WAL files
+        if not os.path.exists(file_found):
+            logfunc(f'WAL file not found, skipping: {file_found}')
+            continue
+
         filesize = Path(file_found).stat().st_size
         if filesize == 0:
             continue
