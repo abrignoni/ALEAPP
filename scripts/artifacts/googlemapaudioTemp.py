@@ -11,33 +11,41 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_
 def get_googlemapaudioTemp(files_found, report_folder, seeker, wrap_text):
 
     data_list = []
-    
+
     for file_found in files_found:
+        file_found = str(file_found)
+
+        # Skip folder
+        if os.path.isdir(file_found):
+            continue
+        
+        # Optional: skip file tanpa ekstensi audio 
+        # (Maps biasanya menghasilkan .wav)
+        if not file_found.lower().endswith(('.wav', '.mp3', '.ogg')):
+            continue
+
+        try:
+            modified_time = os.path.getmtime(file_found)
+        except FileNotFoundError:
+            # File gagal di-copy oleh ALEAPP, skip
+            logfunc(f"Skipped missing file: {file_found}")
+            continue
+
+        file_size = getsize(file_found)
+        if file_size == 0:
+            continue
+
+        # Timestamp
+        utc_modified_date = datetime.utcfromtimestamp(modified_time)
+
+        # Audio HTML embed
+        audio = media_to_html(file_found, files_found, report_folder)
 
         name = Path(file_found).name
-        modified_time = os.path.getmtime(file_found)
-        file_size = getsize(file_found)
-        has_data = file_size > 0
 
-        if  os.path.isdir(file_found) is False:
-            
-            if has_data :
-                
-                # Timestamp
-                utc_modified_date = datetime.utcfromtimestamp(modified_time)
-                
-                # Audio
-                audio = media_to_html(file_found, files_found, report_folder)
-                
-                # Size
-                file_size_kb = f"{round(file_size / 1024, 2)} kb"
-    
-                # Artefacts
-                data_list.append((utc_modified_date,audio,name,file_size))
+        data_list.append((utc_modified_date, audio, name, file_size))
 
-
-    if len(data_list) > 0:
-
+    if data_list:
         source_dir = str(Path(file_found).parent)
 
         report = ArtifactHtmlReport('Google Maps Temp Voice Guidance')
@@ -46,10 +54,9 @@ def get_googlemapaudioTemp(files_found, report_folder, seeker, wrap_text):
         data_headers = ('Timestamp Modified', 'Audio', 'Name', 'File Size')
         report.write_artifact_data_table(data_headers, data_list, source_dir, html_escape=False)
         report.end_artifact_report()
-            
-        tsvname = f'Google Maps Temp Voice Guidance'
-        tsv(report_folder, data_headers, data_list, tsvname, source_dir)
-            
+
+        tsv(report_folder, data_headers, data_list, 'Google Maps Temp Voice Guidance', source_dir)
+
     else:
         logfunc('No Google Maps Temp Voice Guidance found')
             

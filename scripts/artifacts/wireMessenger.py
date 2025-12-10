@@ -67,35 +67,44 @@ def get_user_id(files_found):
 #this function checks the files found for the database matching the user id
 #it also checks that the user id located is in a uuid format  
 def get_user_database(files_found, user_id):
-    #create a regular expression for uuids and compile it
+    # create a regular expression for uuids and compile it
     re_uuid = r'[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
     uuid_match = re.compile(re_uuid)
-    
+
+# safe sqlite detector
+    def is_sqlite3(file_path):
+        try:
+            with open(file_path, "rb") as f:
+                return f.read(16) == b"SQLite format 3\x00"
+        except Exception:
+            return False
+
     if re.match(uuid_match, user_id):
         for file_found in files_found:
-            is_sqlite3 = lambda file_found: open(file_found, 'rb').read(16) == b'SQLite format 3\x00'
             file_found = str(file_found)
             user_id = str(user_id)
-            #check if the file found ends with the uuid user id
+
+            # check if the file found ends with the uuid user id
             if file_found.endswith(user_id):
-                #check if the file found is also a sqlite database and is not a directory
-                if is_sqlite3 and not isdir(file_found):
-                    user_database = file_found
-                    #returns a string of the user database so it can then be queried using sqlite3
-                    return user_database
+                # check if the file found is a sqlite database and not a directory
+                if is_sqlite3(file_found) and not isdir(file_found):
+                    return file_found
                 else:
-                    logfunc("Located a file ending with the User ID, but it is not an SQLite DB - I'll continue looking!")
-                    pass
-            else:
-                continue
+                    logfunc(f"Located a file ending with the User ID, but it is not an SQLite DB: {file_found}")
     else:
         logfunc("User ID is not a UUID - decoding not supported!")
-        pass
+
+    return None
+
 
 def get_wire_profile(files_found, report_folder, seeker, wrap_text):
     #get the user id and the database of the user
     user_id = get_user_id(files_found)
     user_database = get_user_database(files_found, user_id)
+    if not user_database:
+        logfunc("Wire database not found — skipping profile.")
+        return
+
     #create an empty list for the profile data
     profile_data = list()
     
@@ -165,6 +174,10 @@ def get_wire_contacts(files_found, report_folder, seeker, wrap_text):
     #get the user id and the database of the user
     user_id = get_user_id(files_found)
     user_database = get_user_database(files_found, user_id)
+    if not user_database:
+        logfunc("Wire database not found — skipping contacts.")
+        return
+
     #create an empty list for the contacts data
     contacts_data = list()
     
@@ -223,6 +236,9 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
     #get the user id and the database of the user
     user_id = get_user_id(files_found)
     user_database = get_user_database(files_found, user_id)
+    if not user_database:
+        logfunc("Wire database not found — skipping.")
+        return
     #create an empty list for the messages data
     messages_data = list()
     
