@@ -17,19 +17,19 @@ import sqlite3
 import textwrap
 import blackboxprotobuf
 import traceback
-import scripts.ccl_leveldb
+from scripts.ccl import ccl_leveldb
 from datetime import datetime, timedelta
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, kmlgen, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_sharedProto(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_sharedProto(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
 
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     for in_db_dir in in_dirs:
-        leveldb_records = scripts.ccl_leveldb.RawLevelDb(in_db_dir)
+        leveldb_records = ccl_leveldb.RawLevelDb(in_db_dir)
         
         for record in leveldb_records.iterate_records_raw():
             #print(record.seq, record.user_key, record.value)

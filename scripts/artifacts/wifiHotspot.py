@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline
 
-def get_wifiHotspot(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_wifiHotspot(files_found, report_folder, seeker, wrap_text):
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)

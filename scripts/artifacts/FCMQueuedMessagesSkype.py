@@ -31,7 +31,7 @@ import urllib.parse
 from html.parser import HTMLParser
 import html.entities
 import xml.etree.ElementTree as etree
-from scripts.ccl_android_fcm_queued_messages import FcmIterator
+from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.artifact_report import ArtifactHtmlReport
 import scripts.ilapfuncs
 
@@ -201,7 +201,7 @@ def process_content(content: str):
         return html.escape(html.unescape(content), quote=False)
 
 
-def get_fcm_skype(files_found, report_folder, seeker, wrap_text, mode, time_offset):
+def get_fcm_skype(files_found, report_folder, seeker, wrap_text, mode):
     if mode == "s":
         app_name = "Skype"
         app_id = "com.skype.raider"

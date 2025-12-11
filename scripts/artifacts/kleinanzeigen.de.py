@@ -17,9 +17,9 @@ import datetime
 import re
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db, media_to_html
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_kleinanzeigenrecentsearchescache(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_kleinanzeigenrecentsearchescache(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         #logfunc(f"{file_found}")
         if('RECENT_SEARCHES_CACHE' in file_found):
@@ -48,7 +48,7 @@ def get_kleinanzeigenrecentsearchescache(files_found, report_folder, seeker, wra
 
                 else:
                     logfunc("No kleinanzeigen.de - Recent Search Cache data found")
-def get_kleinanzeigennonresettablerecentsearchescache(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_kleinanzeigennonresettablerecentsearchescache(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         #logfunc(f"{file_found}")
         if('NON_RESETTABLE_RECENT_SEARCHES_CACHE' in file_found):
@@ -78,7 +78,7 @@ def get_kleinanzeigennonresettablerecentsearchescache(files_found, report_folder
                 else:
                     logfunc("No kleinanzeigen.de - non resettable recent Search Cache data found")
 
-def get_kleinanzeigenaccount(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_kleinanzeigenaccount(files_found, report_folder, seeker, wrap_text):
    for file_found in files_found:
 
        if('com.ebay.kleinanzeigen_preferences.xml' in file_found):
@@ -122,7 +122,7 @@ def get_kleinanzeigenaccount(files_found, report_folder, seeker, wrap_text, time
 
                 else:
                     logfunc("No kleinanzeigen.de - Account data found")
-def get_kleinanzeigenmessagebox(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_kleinanzeigenmessagebox(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
         if(file_found.endswith('messageBoxDatabase.db')):

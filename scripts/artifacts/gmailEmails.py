@@ -1,39 +1,74 @@
+__artifacts_v2__ = {
+    "gmailEmails": {
+        "name": "Gmail - App Emails",
+        "description": "Parses emails from Gmail",
+        "author": "Alexis Brignoni, Patrick Dalla, @stark4n6",
+        "creation_date": "2023-01-04",
+        "last_update_date": "2025-07-30",
+        "requirements": "none",
+        "category": "Email",
+        "notes": "",
+        "paths": ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*'),
+        "output_types": "standard",
+        "html_columns": ["Message"],
+        "artifact_icon": "inbox",
+    },
+    "gmailLabels": {
+        "name": "Gmail - Label Details",
+        "description": "Parses email label metadata from Gmail",
+        "author": "@stark4n6",
+        "creation_date": "2023-01-04",
+        "last_update_date": "2025-07-31",
+        "requirements": "none",
+        "category": "Email",
+        "notes": "",
+        "paths": ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*'),
+        "output_types": ["html","tsv","lava"],
+        "artifact_icon": "mail",
+    },
+    "gmailDownloadRequests": {
+        "name": "Gmail - Download Requests",
+        "description": "Parses download requests from Gmail",
+        "author": "@stark4n6",
+        "creation_date": "2023-01-04",
+        "last_update_date": "2025-07-30",
+        "requirements": "none",
+        "category": "Email",
+        "notes": "",
+        "paths": ('*/data/com.google.android.gm/databases/downloader.db*'),
+        "output_types": "standard",
+        "artifact_icon": "download",
+    }
+}
+
 import zlib
-import sqlite3
 import blackboxprotobuf
 import os
 from datetime import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, media_to_html
+from scripts.ilapfuncs import open_sqlite_db_readonly, media_to_html, get_sqlite_db_records, artifact_processor
 
-def get_gmailEmails(files_found, report_folder, seeker, wrap_text, time_offset):
-    
+@artifact_processor
+def gmailEmails(files_found, report_folder, seeker, wrap_text):
     bigTopDataDB = ''
     source_bigTop = ''
-    downloaderDB = ''
-    source_downloader = ''
     
     bigTopDataDB_found = []
     source_bigTop_found = []
+    data_list = []
     
     for file_found in files_found:
         file_found = str(file_found)
         
-        if file_found.endswith('-wal'):
-            continue
-        elif file_found.endswith('-shm'):
+        if file_found.endswith(('-wal','-shm')):
             continue
         elif os.path.basename(file_found).startswith('.'):
             continue
         if os.path.basename(file_found).startswith('bigTopDataDB'):
             bigTopDataDB = str(file_found)
-            source_bigTop = file_found.replace(seeker.directory, '')
+            source_bigTop = file_found.replace(seeker.data_folder, '')
             bigTopDataDB_found.append(bigTopDataDB)
             source_bigTop_found.append(source_bigTop)
-        if os.path.basename(file_found).startswith('downloader.db'):
-            downloaderDB = str(file_found)
-            source_downloader = file_found.replace(seeker.directory, '')
         
     for i in range(len(bigTopDataDB_found)):
         bigTopDataDB = bigTopDataDB_found[i]
@@ -49,11 +84,17 @@ def get_gmailEmails(files_found, report_folder, seeker, wrap_text, time_offset):
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         filename = file_found
-        data_list = []
+        proto_col = ''
+        
+        cursor.execute('''PRAGMA table_info(item_messages);''')
+        columns_info = cursor.fetchall()
+        for col_info in columns_info:
+            if col_info[1] == "zipped_message_proto":
+                proto_col = col_info[0]
         
         if usageentries > 0:
             for row in all_rows:
-                id = row[7]
+                id = row[proto_col]
                 if id is not None:
                     data = id
                     arreglo = bytearray(data)
@@ -69,14 +110,6 @@ def get_gmailEmails(files_found, report_folder, seeker, wrap_text, time_offset):
                 attachname = row[15]
                 attachhash = row[16]
                 attachment = ''
-                
-                data = id
-                arreglo = bytearray(data)
-                arreglo = arreglo[1:]
-                decompressed_data = zlib.decompress(arreglo)
-                message,typedef = blackboxprotobuf.decode_message(decompressed_data)
-                
-                timestamp = (datetime.utcfromtimestamp(message['17']/1000))
                 
                 to = (message.get('1', '')).get('2', '') if '1' in message and '2' in message['1'] else '' #receiver
                 if isinstance(to, bytes):
@@ -137,29 +170,38 @@ def get_gmailEmails(files_found, report_folder, seeker, wrap_text, time_offset):
                             if attachpath.endswith(attachname):
                                 attachment = media_to_html(attachpath, files_found, report_folder)
                     
-                data_list.append((timestamp,serverid,messagehtml,attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby))
+                data_list.append((timestamp,serverid,messagehtml,attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,bigTopDataDB))
 
-            description = 'Gmail - App Emails'
-            report = ArtifactHtmlReport('Gmail - App Emails')
-            report.start_artifact_report(report_folder, 'Gmail - App Emails', description)
-            report.add_script()
-            data_headers = ('Timestamp','Email ID','Message','Attachment','Attachment Name','To','To Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by')
-            report.write_artifact_data_table(data_headers, data_list, source_bigTop,html_escape=False)
-            report.end_artifact_report()
-            
-            tsvname = 'Gmail - App Emails'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = 'Gmail - App Emails'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+    data_headers = (('Timestamp','datetime'),'Email ID','Message','Attachment','Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
+    return data_headers, data_list, 'See source file(s) below:'
+
+@artifact_processor      
+def gmailLabels(files_found, report_folder, seeker, wrap_text):
+    bigTopDataDB = ''
+    source_bigTop = ''
+    
+    bigTopDataDB_found = []
+    source_bigTop_found = []
+    data_list = []
+    
+    for file_found in files_found:
+        file_found = str(file_found)
         
-        else:
-            logfunc('No Gmail - App Emails data available')
-            
-        cursor = db.cursor()
-
-        #Get Gmail label details
-        cursor.execute('''
+        if file_found.endswith(('-wal','-shm')):
+            continue
+        elif os.path.basename(file_found).startswith('.'):
+            continue
+        if os.path.basename(file_found).startswith('bigTopDataDB'):
+            bigTopDataDB = str(file_found)
+            source_bigTop = file_found.replace(seeker.data_folder, '')
+            bigTopDataDB_found.append(bigTopDataDB)
+            source_bigTop_found.append(source_bigTop)
+        
+    for i in range(len(bigTopDataDB_found)):
+        bigTopDataDB = bigTopDataDB_found[i]
+        source_bigTop = source_bigTop_found[i]
+        
+        query = '''
         select
         label_server_perm_id,
         unread_count,
@@ -167,37 +209,36 @@ def get_gmailEmails(files_found, report_folder, seeker, wrap_text, time_offset):
         unseen_count
         from label_counts
         order by label_server_perm_id
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            description = 'Gmail mail labels'
-            report = ArtifactHtmlReport('Gmail - Label Details')
-            report.start_artifact_report(report_folder, 'Gmail - Label Details')
-            report.add_script()
-            data_headers = ('Label','Unread Count','Total Count','Unseen Count')
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3]))
-
-            report.write_artifact_data_table(data_headers, data_list, source_bigTop)
-            report.end_artifact_report()
-            
-            tsvname = f'Gmail - Label Details'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-        else:
-            logfunc('No Gmail - Label Details data available' )
-
-        db.close()
+        '''
         
+        db_records = get_sqlite_db_records(bigTopDataDB, query)
+        
+        for record in db_records:
+            data_list.append((record[0],record[1],record[2],record[3],bigTopDataDB))
+    
+    data_headers = ('Label','Unread Count','Total Count','Unseen Count','Source File')
+    return data_headers, data_list, 'See source file(s) below:'
+      
+@artifact_processor        
+def gmailDownloadRequests(files_found, report_folder, seeker, wrap_text):
+    downloaderDB = ''
+    source_downloader = ''
+    data_list = []
+    
+    for file_found in files_found:
+        file_found = str(file_found)
+        
+        if file_found.endswith(('-wal','-shm')):
+            continue
+        elif os.path.basename(file_found).startswith('.'):
+            continue
+        if os.path.basename(file_found).startswith('downloader.db'):
+            downloaderDB = str(file_found)
+            source_downloader = file_found.replace(seeker.data_folder, '')
+    
     if downloaderDB != '':
-        db = open_sqlite_db_readonly(downloaderDB)
-        cursor = db.cursor()
-
         #Get Gmail download requests
-        cursor.execute('''
+        query = '''
         select 
         datetime(request_time_ms/1000,'unixepoch'),
         account_name,
@@ -208,39 +249,12 @@ def get_gmailEmails(files_found, report_folder, seeker, wrap_text, time_offset):
         target_file_size,
         priority
         from download_requests
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            description = 'Gmail download requests'
-            report = ArtifactHtmlReport('Gmail - Download Requests')
-            report.start_artifact_report(report_folder, 'Gmail - Download Requests')
-            report.add_script()
-            data_headers = ('Timestamp Requested','Account Name','Download Type','Message ID','URL','Target File Path','Target File Size','Priority')
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
-
-            report.write_artifact_data_table(data_headers, data_list, source_downloader)
-            report.end_artifact_report()
-            
-            tsvname = f'Gmail - Download Requests'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Gmail - Download Requests'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-            
-        else:
-            logfunc('No Gmail - Download Requests data available')
-            
-        db.close()
-    else:
-        logfunc('No Gmail - Download Requests data available')
+        '''
+        
+        db_records = get_sqlite_db_records(downloaderDB, query)
+        
+        for record in db_records:
+            data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7]))
     
-__artifacts__ = {
-        "Gmail": (
-                "Gmail",
-                ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*','*/data/com.google.android.gm/databases/downloader.db*'),
-                get_gmailEmails)
-}
+    data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Message ID','URL','Target File Path','Target File Size','Priority')
+    return data_headers, data_list, downloaderDB

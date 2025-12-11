@@ -11,7 +11,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv
 
 
-def get_sleep_api(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_sleep_api(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Garmin Sleep API")
     file = str(files_found[0])
     logfunc("Processing file: " + file)

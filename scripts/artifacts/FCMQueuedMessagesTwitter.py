@@ -24,7 +24,7 @@ import sys
 import pathlib
 import datetime
 import json
-from scripts.ccl_android_fcm_queued_messages import FcmRecord, FcmIterator
+from scripts.ccl.ccl_android_fcm_queued_messages import FcmRecord, FcmIterator
 from scripts.artifact_report import ArtifactHtmlReport
 import scripts.ilapfuncs
 
@@ -95,7 +95,7 @@ def process_dm(rec: FcmRecord):
     return conversation_key, other_party, (sender, recipient, timestamp, text, entities, attachment_details)
 
 
-def get_fcm_twitter(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_fcm_twitter(files_found, report_folder, seeker, wrap_text):
     channels = set()
 
     in_dirs = set(pathlib.Path(x).parent for x in files_found)

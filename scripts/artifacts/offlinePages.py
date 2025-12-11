@@ -16,7 +16,7 @@ def convert_utc_int_to_timezone(utc_time, time_offset):
     #return the converted value
     return timezone_time
 
-def get_offlinePages(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_offlinePages(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
     
@@ -24,9 +24,9 @@ def get_offlinePages(files_found, report_folder, seeker, wrap_text, time_offset)
         file_found = str(file_found)
         
         modified_time = os.path.getmtime(file_found)
-        utc_modified_date = datetime.utcfromtimestamp(modified_time, tz=timezone.utc)
+        utc_modified_date = datetime.fromtimestamp(modified_time, tz=timezone.utc)
         
-        timestamp = convert_utc_to_timezone(utc_modified_date, time_offset)
+        timestamp = convert_utc_int_to_timezone(utc_modified_date, 'UTC')
         
 
         with open(file_found,'r', errors='replace') as fp:

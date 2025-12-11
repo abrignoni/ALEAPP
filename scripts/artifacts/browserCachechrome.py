@@ -10,7 +10,7 @@ from scripts.filetype import guess_mime, guess_extension
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, media_to_html, is_platform_windows
 
-def get_browserCachechrome(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_browserCachechrome(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
     
@@ -28,7 +28,11 @@ def get_browserCachechrome(files_found, report_folder, seeker, wrap_text, time_o
                 data = file.read()
                 ab = BytesIO(data)
                 
-                eofloc = data.index(b'\xD8\x41\x0D\x97\x45\x6F\xFA\xF4')
+                try:
+                    eofloc = data.index(b'\xD8\x41\x0D\x97\x45\x6F\xFA\xF4')
+                except ValueError:
+                    logfunc(f'Skipping {file_found}: Expected byte pattern not found')
+                    continue
                 
                 header = ab.read(8)
                 version = ab.read(4)

@@ -1,67 +1,78 @@
-import glob
-import json
-import os
-import shutil
-import sqlite3
+__artifacts_v2__ = {
+    "accounts_ce": {
+        "name": "Accounts_ce",
+        "description": "Application accounts used on the device",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2020-03-02",
+        "last_update_date": "2025-03-14",
+        "requirements": "none",
+        "category": "Accounts",
+        "notes": "",
+        "paths": ('*/system_ce/*/accounts_ce.db*'),
+        "output_types": ["html", "lava", "tsv"],
+        "artifact_icon": "user"
+    },
+    "accounts_ce_authtokens": {
+        "name": "Authentication tokens",
+        "description": "Application accounts that use authentication tokens.",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2020-03-04",
+        "last_update_date": "2025-03-14",
+        "requirements": "none",
+        "category": "Accounts",
+        "notes": "",
+        "paths": ('*/system_ce/*/accounts_ce.db*'),
+        "output_types": ["html", "lava", "tsv"],
+        "artifact_icon": "key"
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
 
-def get_accounts_ce(files_found, report_folder, seeker, wrap_text, time_offset):
+from scripts.ilapfuncs import artifact_processor, \
+    get_file_path_list_checking_uid, get_results_with_extra_sourcepath_if_needed
 
-    slash = '\\' if is_platform_windows() else '/' 
 
-    # Filter for path xxx/yyy/system_ce/0
-    for file_found in files_found:
-        file_found = str(file_found)
-        parts = file_found.split(slash)
-        uid = parts[-2]
-        try:
-            uid_int = int(uid)
-            # Skip sbin/.magisk/mirror/data/system_de/0 , it should be duplicate data??
-            if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
-                continue
-            process_accounts_ce(file_found, uid, report_folder)
-        except ValueError:
-                pass # uid was not a number
+@artifact_processor
+def accounts_ce(files_found, report_folder, seeker, wrap_text):
+    source_path_list = get_file_path_list_checking_uid(files_found, "accounts_ce.db", -2, "mirror")
+    source_path = ""
+    data_list = []
 
-def process_accounts_ce(folder, uid, report_folder):
-    
-    #Query to create report
-    db = open_sqlite_db_readonly(folder)
-    cursor = db.cursor()
-
-    #Query to create report
-    cursor.execute('''
+    query = '''
     SELECT
-        name,
         type,
+        name,
         password
     FROM
     accounts
-    ''')
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Accounts_ce')
-        report.start_artifact_report(report_folder, f'accounts_ce_{uid}')
-        report.add_script()
-        data_headers = ('Name', 'Type', 'Password')
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0], row[1], row[2]))
-        report.write_artifact_data_table(data_headers, data_list, folder)
-        report.end_artifact_report()
-        
-        tsvname = f'accounts ce {uid}'
-        tsv(report_folder, data_headers, data_list, tsvname)
-    else:
-        logfunc(f'No accounts_ce_{uid} data available')
-    db.close()
-    
-__artifacts__ = {
-        "Accounts_ce": (
-                "Accounts_ce",
-                ('*/system_ce/*/accounts_ce.db'),
-                get_accounts_ce)
-}
+    '''
+
+    data_headers = ('Account Type', 'Account Name', 'Password')
+
+    data_headers, data_list, source_path = get_results_with_extra_sourcepath_if_needed(source_path_list, query, data_headers)
+
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def accounts_ce_authtokens(files_found, report_folder, seeker, wrap_text):
+    source_path_list = get_file_path_list_checking_uid(files_found, "accounts_ce.db", -2, "mirror")
+    source_path = ""
+    data_list = []
+
+    query = '''
+    SELECT
+        accounts.type,
+        accounts.name,
+        authtokens.type,
+        authtokens.authtoken
+    FROM accounts, authtokens
+    WHERE
+        accounts._id = authtokens.accounts_id
+    '''
+
+    data_headers = ('Account Type', 'Account Name', 'Authtoken Type', 'Authtoken')
+
+    data_headers, data_list, source_path = get_results_with_extra_sourcepath_if_needed(source_path_list, query, data_headers)
+
+    return data_headers, data_list, source_path

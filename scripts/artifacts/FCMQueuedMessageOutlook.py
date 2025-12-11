@@ -20,11 +20,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+
+
 import json
 import pathlib
-from scripts.ccl_android_fcm_queued_messages import FcmIterator
-from scripts.artifact_report import ArtifactHtmlReport
-import scripts.ilapfuncs
+from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
+
+__artifacts_v2__ = {
+    "fcm_outlook": {
+        "name": "FCM-Outlook Notifications",
+        "description": "Outlook Notifications from FCM",
+        "author": "Alex Caithness & @jfhyla",
+        "version": "0.2.1",
+        "creation_date": "2022-07-28",
+        "last_updated": "2025-07-31",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ("*/fcm_queued_messages.ldb/*"),
+        "output_types": "standard",  # or ["html", "tsv", "timeline", "lava"]
+        "artifact_icon": "database",
+    }
+}
 
 __version__ = "0.2"
 __description__ = """
@@ -32,16 +49,19 @@ Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms
 com.microsoft.office.outlook"""
 __contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 
+from scripts.ilapfuncs import logfunc, artifact_processor
 
-def get_fcm_outlook(files_found, report_folder, seeker, wrap_text, time_offset):
+@artifact_processor
+def fcm_outlook(files_found, report_folder, seeker, wrap_text):
     # we only need the input data dirs not every matching file
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     rows = []
+    failures = 0
     for in_db_path in in_dirs:
         with FcmIterator(in_db_path) as record_iterator:
             for rec in record_iterator:
                 if rec.package == "com.microsoft.office.outlook":
-                    if rec.key_values["type"] == "OutlookPushNotification":
+                    if rec.key_values.get("type") == "OutlookPushNotification":
                         hx_message = json.loads(rec.key_values["HxMessage"])
                         for notification in hx_message["NewMailNotifications"]:
                             rows.append([
@@ -54,29 +74,13 @@ def get_fcm_outlook(files_found, report_folder, seeker, wrap_text, time_offset):
                                 notification["Preview"]
                             ])
                     else:
-                        print(rec.key_values)
-                        raise ValueError(f"Unknown type {rec.key_values['type']}")
+                        failures += 1
 
-    if rows:
-        report = ArtifactHtmlReport("Outlook Notifications (Firebase Cloud Messaging Queued Messages)")
-        report_name = "FCM-Outlook Notifications"
-        report.start_artifact_report(report_folder, report_name)
-        report.add_script()
-        data_headers = ["FCM Timestamp", "Received / Renew Time", "FCM Key", "Tenant / Mailbox GUID", "Sender", "Topic", "Preview"]
-        source_files = " ".join(str(x) for x in in_dirs)
+    if failures > 0:
+        logfunc(f'{failures} records could not be parsed')
 
-        report.write_artifact_data_table(data_headers, rows, source_files)
-        report.end_artifact_report()
-
-        scripts.ilapfuncs.tsv(report_folder, data_headers, rows, report_name, source_files)
-        scripts.ilapfuncs.timeline(report_folder, report_name, rows, data_headers)
-    else:
-        scripts.ilapfuncs.logfunc("No FCM Outlook notifications found")
+    data_headers = ["FCM Timestamp", "Received / Renew Time", "FCM Key", "Tenant / Mailbox GUID", "Sender", "Topic", "Preview"]
+    source_files = " ".join(str(x) for x in in_dirs)
 
 
-__artifacts__ = {
-        "FCM_Outlook": (
-                "Firebase Cloud Messaging",
-                ('*/fcm_queued_messages.ldb/*'),
-                get_fcm_outlook)
-}
+    return data_headers, rows, source_files

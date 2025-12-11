@@ -89,7 +89,6 @@ __pypackages__/
 *.pot
 *.mo
 *.manifest
-*.spec
 pip-wheel-metadata/
 share/python-wheels/
 wheels/

@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
 
-def get_runtimePerms(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
     
     run = 0
     slash = '\\' if is_platform_windows() else '/' 

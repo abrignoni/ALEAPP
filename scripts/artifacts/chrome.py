@@ -1,10 +1,10 @@
 import os
-import sqlite3
 import textwrap
 import urllib.parse
+import re
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly, does_column_exist_in_db
+from scripts.ilapfuncs import logfunc, tsv, timeline, get_next_unused_name, open_sqlite_db_readonly, does_column_exist_in_db
 
 def get_browser_name(file_name):
 
@@ -20,12 +20,12 @@ def get_browser_name(file_name):
         try:
             result = re.search('.*/(.*)/app_webview/Default.*', file_name)
             return result.group(1)
-        except:
+        except Exception:
             return 'Unknown'
     else:
         return 'Unknown'
 
-def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_chrome(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -194,7 +194,7 @@ def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
             
         #Downloads
         # check for last_access_time column, an older version of chrome db (32) does not have it
-        if does_column_exist_in_db(db, 'downloads', 'last_access_time') == True:
+        if does_column_exist_in_db(file_found, 'downloads', 'last_access_time') == True:
             last_access_time_query = '''
             CASE last_access_time 
                 WHEN "0" 
@@ -203,6 +203,12 @@ def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
             END AS "Last Access Time"'''
         else:
             last_access_time_query = "'' as last_access_query"
+
+        # check for tab_url column, the older versions (pre-v65) does not have it
+        if does_column_exist_in_db(file_found, 'downloads', 'tab_url') == True:
+            tab_url_column = "tab_url"
+        else:
+            tab_url_column = "'' as tab_url"
 
         cursor.execute(f'''
         SELECT 
@@ -217,7 +223,7 @@ def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
             ELSE datetime(end_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
         END AS "End Time", 
         {last_access_time_query},
-        tab_url, 
+        {tab_url_column}, 
         target_path, 
         CASE state
             WHEN "0" THEN "In Progress"
@@ -246,6 +252,11 @@ def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
             WHEN "16" THEN "Dangerous, But User Opened"
             WHEN "17" THEN "Prompt For Scanning"
             WHEN "18" THEN "Blocked - Unsupported Type"
+            WHEN "19" THEN "Dangerous - Account Compromise"
+            WHEN "20" THEN "Deep Scan Failed"
+            WHEN "21" THEN "Encrypted - Prompt User for Password for Local Scanning"
+            WHEN "22" THEN "Encrypted - Pending Detailed Verdict after Local Scanning"
+            WHEN "23" THEN "Blocked - Scan Failed"
         END,
         CASE interrupt_reason
             WHEN "0" THEN ""
@@ -259,6 +270,8 @@ def get_chrome(files_found, report_folder, seeker, wrap_text, time_offset):
             WHEN "11" THEN "Blocked"
             WHEN "12" THEN "Security Check Failed"
             WHEN "13" THEN "Resume Error"
+            WHEN "14" THEN "File Hash Mismatch"
+            WHEN "15" THEN "File Same as Source"
             WHEN "20" THEN "Network Error"
             WHEN "21" THEN "Operation Timed Out"
             WHEN "22" THEN "Connection Lost"

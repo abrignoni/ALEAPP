@@ -19,7 +19,7 @@ def decrypt(cell: str):
     return plain_text
 
 
-def get_mega_transfers(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
     
     db_filename = str(files_found[0])
 

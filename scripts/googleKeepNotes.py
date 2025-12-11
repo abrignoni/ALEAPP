@@ -2,7 +2,7 @@ import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, media_to_html, open_sqlite_db_readonly
 
-def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
     logfunc("Starting Google Keep Notes script...")
 
     for file_found in files_found:

@@ -32,7 +32,7 @@ def get_offline_path(files_found, blob_name):
             return file_found
     return ''
 
-def get_Cello(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_Cello(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
     tsv_list = []
@@ -121,31 +121,31 @@ def get_Cello(files_found, report_folder, seeker, wrap_text, time_offset):
                     if created_date in (None, ''):
                         pass
                     else:
-                        created_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(created_date),time_offset)
+                        created_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(created_date),'UTC')
                     
                     modified_date = row[2]
                     if modified_date in (None, ''):
                         pass
                     else:
-                        modified_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(modified_date),time_offset)
+                        modified_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(modified_date),'UTC')
                         
                     shared_with_me_date = row[3]
                     if shared_with_me_date in (None, ''):
                         pass
                     else:
-                        shared_with_me_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(shared_with_me_date),time_offset)
+                        shared_with_me_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(shared_with_me_date),'UTC')
                     
                     modified_by_me_date = row[4]
                     if modified_by_me_date in (None, ''):
                         pass
                     else:
-                        modified_by_me_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(modified_by_me_date),time_offset)
+                        modified_by_me_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(modified_by_me_date),'UTC')
                     
                     viewed_by_me_date = row[5]
                     if viewed_by_me_date in (None, ''):
                         pass
                     else:
-                        viewed_by_me_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(viewed_by_me_date),time_offset)
+                        viewed_by_me_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(viewed_by_me_date),'UTC')
                     
                     data_list.append((created_date,doc_name,modified_date,shared_with_me_date,modified_by_me_date,viewed_by_me_date,row[6],offline_status,row[7],row[8],row[9],row[10],cello_db))
                     tsv_list.append((created_date,row[1],modified_date,shared_with_me_date,modified_by_me_date,viewed_by_me_date,row[6],offline_status,row[7],row[8],row[9],row[10],cello_db))

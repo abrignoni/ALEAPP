@@ -3,9 +3,9 @@ import sqlite3
 import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist_in_db
 
-def get_calllogs(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_calllogs(files_found, report_folder, seeker, wrap_text):
 
     source_file = ''
     for file_found in files_found:
@@ -15,10 +15,10 @@ def get_calllogs(files_found, report_folder, seeker, wrap_text, time_offset):
            not os.path.basename(file_name) == 'contacts.db'  and \
            not os.path.basename(file_name) == 'logs.db': # skip -journal and other files
             continue
-        source_file = file_found.replace(seeker.directory, '')
+        source_file = file_found.replace(seeker.data_folder, '')
 
         db = open_sqlite_db_readonly(file_name)
-        calls_table_exists = does_table_exist(db, 'calls')
+        calls_table_exists = does_table_exist_in_db(file_name, 'calls')
         cursor = db.cursor()
         try:
             if calls_table_exists:

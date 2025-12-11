@@ -1,15 +1,12 @@
-import sqlite3
-import io
-import json
 import os
 import shutil
 
 from scripts.filetype import guess_extension
-from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly, media_to_html
+from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, open_sqlite_db_readonly, \
+     media_to_html, does_column_exist_in_db, does_table_exist_in_db
 
-def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_name = str(file_found)
@@ -30,8 +27,22 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
             
             columns = [i[1] for i in cursor.execute('PRAGMA table_info(local_media)')]
             
+            # check for folder_name, media_store_id and trash_timestamp columns, the older versions does not have it
+            no_columns = ['folder_name', 'media_store_id']
+            no_columns_str = ''
+            for column_name in no_columns:
+                if does_column_exist_in_db(file_found, 'local_media', column_name) == True:
+                    no_columns_str += f"{column_name}, " 
+                else:
+                    no_columns_str += f"'' as {column_name}, "
+
+            if does_column_exist_in_db(file_found, 'local_media', 'trash_timestamp') == True:
+                trash_timestamp_column = "case trash_timestamp when NULL then '' else datetime(trash_timestamp/1000, 'unixepoch') end"
+            else:
+                trash_timestamp_column = "'' as trash_timestamp"
+
             if 'purge_timestamp' not in columns:
-                cursor.execute('''
+                cursor.execute(f'''
                 select
                 datetime(utc_timestamp/1000, 'unixepoch'),
                 filename,
@@ -47,12 +58,8 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                 end,
                 latitude,
                 longitude,
-                folder_name,
-                media_store_id,
-                case trash_timestamp
-                    when NULL then ''
-                    else datetime(trash_timestamp/1000, 'unixepoch')
-                end
+                {no_columns_str} 
+                {trash_timestamp_column}
                 from local_media
                 ''')
             
@@ -70,7 +77,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                     report.write_artifact_data_table(data_headers, data_list, file_found)
                     report.end_artifact_report()
                     
-                    tsvname = f'Google Photos' + report_title + '- Local Media'
+                    tsvname = 'Google Photos' + report_title + '- Local Media'
                     tsv(report_folder, data_headers, data_list, tsvname, file_found)
                     
                     tlactivity = f'Google Photos' + report_title + '- Local Media'
@@ -83,7 +90,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                     logfunc('No Google Photos' + report_title + '- Local Media data available')
             
             else:
-                cursor.execute('''
+                cursor.execute(f'''
                 select
                 datetime(utc_timestamp/1000, 'unixepoch'),
                 filename,
@@ -99,12 +106,8 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                 end,
                 latitude,
                 longitude,
-                folder_name,
-                media_store_id,
-                case trash_timestamp
-                    when NULL then ''
-                    else datetime(trash_timestamp/1000, 'unixepoch')
-                end,
+                {no_columns_str} 
+                {trash_timestamp_column},
                 case purge_timestamp
                     when NULL then ''
                     else datetime(purge_timestamp/1000, 'unixepoch')
@@ -139,9 +142,16 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                     logfunc('No Google Photos' + report_title + '- Local Media data available')
                
             columns2 = [i[1] for i in cursor.execute('PRAGMA table_info(remote_media)')]
+
+            # check for upload_status column, the older versions does not have it
+            if does_column_exist_in_db(file_found, 'remote_media', 'upload_status') == True:
+                remote_media_upload_status_column = "upload_status"
+            else:
+                remote_media_upload_status_column = "'' as upload_status"
+
             
             if 'inferred_latitude' not in columns2:
-                cursor.execute('''
+                cursor.execute(f'''
                 select
                 datetime(utc_timestamp/1000, 'unixepoch'),
                 filename,
@@ -151,7 +161,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                 strftime('%H:%M:%S', duration/1000, 'unixepoch'),
                 latitude,
                 longitude,
-                upload_status
+                {remote_media_upload_status_column}
                 from remote_media
                 ''')
 
@@ -182,7 +192,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                     logfunc('No Google Photos' + report_title + '- Remote Media data available')
                  
             else:
-                cursor.execute('''
+                cursor.execute(f'''
                 select
                 datetime(utc_timestamp/1000, 'unixepoch'),
                 filename,
@@ -194,7 +204,7 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                 longitude,
                 inferred_latitude,
                 inferred_longitude,
-                upload_status
+                {remote_media_upload_status_column}
                 from remote_media
                 ''')
 
@@ -223,71 +233,75 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
                     
                 else:
                     logfunc('No Google Photos' + report_title + '- Remote Media data available')
+
+            # check for shared_media table, the older versions does not have it
+            if does_table_exist_in_db(file_found, 'shared_media') == True:
+                cursor.execute('''
+                select
+                datetime(utc_timestamp/1000, 'unixepoch') as "Timestamp (UTC)",
+                filename,
+                replace(remote_url,'=s0-d',''),
+                size_bytes,
+                datetime(capture_timestamp/1000, 'unixepoch') as "Capture Local Timestamp",
+                timezone_offset/3600000,
+                upload_status
+                from shared_media
+                ''')
+    
+                all_rows = cursor.fetchall()
+                usageentries = len(all_rows)
+                if usageentries > 0:
+                    report = ArtifactHtmlReport('Google Photos' + report_title + '- Shared Media')
+                    report.start_artifact_report(report_folder, 'Google Photos' + report_title + '- Shared Media')
+                    report.add_script()
+                    data_headers = ('Timestamp','File Name','Remote URL','Size','Captured Timestamp (Local)','Timezone Offset','Upload Status %')
+                    data_list = []
+                    for row in all_rows:
+                        data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+    
+                    report.write_artifact_data_table(data_headers, data_list, file_found)
+                    report.end_artifact_report()
+                    
+                    tsvname = f'Google Photos' + report_title + '- Shared Media'
+                    tsv(report_folder, data_headers, data_list, tsvname, file_found)
+                    
+                    tlactivity = f'Google Photos' + report_title + '- Shared Media'
+                    timeline(report_folder, tlactivity, data_list, data_headers)
+                else:
+                    logfunc('No Google Photos' + report_title + '- Shared Media data available')
             
-            cursor.execute('''
-            select
-            datetime(utc_timestamp/1000, 'unixepoch') as "Timestamp (UTC)",
-            filename,
-            replace(remote_url,'=s0-d',''),
-            size_bytes,
-            datetime(capture_timestamp/1000, 'unixepoch') as "Capture Local Timestamp",
-            timezone_offset/3600000,
-            upload_status
-            from shared_media
-            ''')
-
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport('Google Photos' + report_title + '- Shared Media')
-                report.start_artifact_report(report_folder, 'Google Photos' + report_title + '- Shared Media')
-                report.add_script()
-                data_headers = ('Timestamp','File Name','Remote URL','Size','Captured Timestamp (Local)','Timezone Offset','Upload Status %')
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'Google Photos' + report_title + '- Shared Media'
-                tsv(report_folder, data_headers, data_list, tsvname, file_found)
-                
-                tlactivity = f'Google Photos' + report_title + '- Shared Media'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc('No Google Photos' + report_title + '- Shared Media data available')
-            
-            cursor.execute('''
-            select 
-            DISTINCT(local_media.bucket_id),
-            local_media.folder_name,
-            rtrim(local_media.filepath, replace(local_media.filepath, '/', ''))
-            from local_media, backup_folders
-            where local_media.bucket_id = backup_folders.bucket_id
-            ''')
-
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport('Google Photos' + report_title + '- Backed Up Folders')
-                report.start_artifact_report(report_folder, 'Google Photos' + report_title + '- Backed Up Folders')
-                report.add_script()
-                data_headers = ('Bucket ID','Backed Up Folder Name','Backed Up Folder Path',)
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2]))
-
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'Google Photos' + report_title + '- Backed Up Folders'
-                tsv(report_folder, data_headers, data_list, tsvname, file_found)
-                
-                tlactivity = f'Google Photos' + report_title + '- Backed Up Folders'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc('No Google Photos' + report_title + '- Backed Up Folders data available')
+            # check for backup_folders table, the older versions does not have it
+            if does_table_exist_in_db(file_found, 'backup_folders') == True:
+                cursor.execute('''
+                select 
+                DISTINCT(local_media.bucket_id),
+                local_media.folder_name,
+                rtrim(local_media.filepath, replace(local_media.filepath, '/', ''))
+                from local_media, backup_folders
+                where local_media.bucket_id = backup_folders.bucket_id
+                ''')
+    
+                all_rows = cursor.fetchall()
+                usageentries = len(all_rows)
+                if usageentries > 0:
+                    report = ArtifactHtmlReport('Google Photos' + report_title + '- Backed Up Folders')
+                    report.start_artifact_report(report_folder, 'Google Photos' + report_title + '- Backed Up Folders')
+                    report.add_script()
+                    data_headers = ('Bucket ID','Backed Up Folder Name','Backed Up Folder Path',)
+                    data_list = []
+                    for row in all_rows:
+                        data_list.append((row[0],row[1],row[2]))
+    
+                    report.write_artifact_data_table(data_headers, data_list, file_found)
+                    report.end_artifact_report()
+                    
+                    tsvname = f'Google Photos' + report_title + '- Backed Up Folders'
+                    tsv(report_folder, data_headers, data_list, tsvname, file_found)
+                    
+                    tlactivity = f'Google Photos' + report_title + '- Backed Up Folders'
+                    timeline(report_folder, tlactivity, data_list, data_headers)
+                else:
+                    logfunc('No Google Photos' + report_title + '- Backed Up Folders data available')
             
             db.close()
 
@@ -347,17 +361,23 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text, time_offset)
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             
-            cursor.execute('''
+            # check for media_store_id column, the older versions does not have it
+            if does_column_exist_in_db(file_found, 'local', 'media_store_id') == True:
+                local_media_store_id_column = "media_store_id"
+            else:
+                local_media_store_id_column = "'' as media_store_id"
+
+            cursor.execute(f'''
             select
             datetime(deleted_time/1000, 'unixepoch'),
             local_path,
             content_uri,
             trash_file_name,
+            {local_media_store_id_column},
             case is_video
                 when 0 then ''
                 when 1 then 'Yes'
-            end,
-            media_store_id
+            end
             from local
             ''')
             

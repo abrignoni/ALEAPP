@@ -6,14 +6,14 @@ import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_cachelocation(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_cachelocation(files_found, report_folder, seeker, wrap_text):
 
     source_file = ''
     
     for file_found in files_found:
         
         file_name = str(file_found)
-        source_file = file_found.replace(seeker.directory, '')
+        source_file = file_found.replace(seeker.data_folder, '')
  
         data_list = []
  

@@ -29,7 +29,7 @@ def TryGetStringValue(root, xPathExpression):
 def GetFirstChild(element): 
     return element[0].text if len(element) else ''
 
-def get_kijijiLocalUserInfo(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_kijijiLocalUserInfo(files_found, report_folder, seeker, wrap_text):
     file_found = str(files_found[0])
     logfunc(f'XML file {file_found} is being interrogated...')
     report = ArtifactHtmlReport('Kijiji Local User Information')

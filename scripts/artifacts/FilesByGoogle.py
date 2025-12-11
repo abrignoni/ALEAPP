@@ -1,29 +1,38 @@
 __artifacts_v2__ = {
-    "FilesByGoogle": {
-        "name": "Files By Google",
-        "description": "Parses the Files by Google application",
+    "fbg_master": {
+        "name": "Files By Google - Files Master",
+        "description": "Parses the master files list from the Files by Google application",
         "author": "@KevinPagano3",
-        "version": "0.0.3",
-        "date": "2021-01-18",
+        "creation_date": "2021-01-18",
+        "last_updated_date": "2025-09-09",
         "requirements": "none",
         "category": "Files By Google",
         "notes": "",
-        "paths": ('*/com.google.android.apps.nbu.files/databases/files_master_database*','*/com.google.android.apps.nbu.files/databases/search_history_database*'),
-        "function": "get_FilesByGoogle"
-    }
+        "paths": ('*/com.google.android.apps.nbu.files/databases/files_master_database*'),
+        "output_types": "standard",
+        "artifact_icon": "file"
+    },
+    "fbg_searchhistory": {
+        "name": "Files By Google - Search History",
+        "description": "Parses the Files by Google application search history",
+        "author": "@KevinPagano3",
+        "date": "2021-01-18",
+        "last_updated_date": "2025-09-09",
+        "requirements": "none",
+        "category": "Files By Google",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.nbu.files/databases/search_history_database*'),
+        "output_types": "standard",
+        "artifact_icon": "search"
+    },
 }
 
-import sqlite3
-import textwrap
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
-
-def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset):
-    
+@artifact_processor
+def fbg_master(files_found, report_folder, seeker, wrap_text):
     data_list_master = []
-    data_list_search = []
-    
+
     for file_found in files_found:
         file_found = str(file_found)
         
@@ -67,11 +76,21 @@ def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset
                     if last_mod_date is None:
                         pass
                     else:
-                        last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),time_offset)
+                        last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),'UTC')
                 
                     data_list_master.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],file_found))
             db.close()
             
+    data_headers = (('Date Modified','datetime'),'Root Path','Root Relative Path','File Name','Size','Mime Type','Media Type','URI','Hidden','Title','Parent Folder','Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+    return data_headers, data_list_master, 'See source file(s) below'
+            
+@artifact_processor
+def fbg_searchhistory(files_found, report_folder, seeker, wrap_text):
+    data_list_search = []
+    
+    for file_found in files_found:
+        file_found = str(file_found)
+
         # Search History
         if file_found.endswith('search_history_database'):
             db = open_sqlite_db_readonly(file_found)
@@ -94,44 +113,12 @@ def get_FilesByGoogle(files_found, report_folder, seeker, wrap_text, time_offset
                     if timestamp is None:
                         pass
                     else:
-                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),'UTC')
                     data_list_search.append((timestamp,row[1],file_found))
             db.close()
             
         else:
             continue # Skip all other files
             
-    # Master report
-    if data_list_master:    
-        report = ArtifactHtmlReport('Files by Google - Files Master')
-        report.start_artifact_report(report_folder, 'Files by Google - Files Master')
-        report.add_script()
-        data_headers = ('Date Modified','Root Path','Root Relative Path','File Name','Size','Mime Type','Media Type','URI','Hidden','Title','Parent Folder','Source') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-
-        report.write_artifact_data_table(data_headers, data_list_master, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Files By Google - Files Master'
-        tsv(report_folder, data_headers, data_list_master, tsvname)
-        
-        tlactivity = f'Files By Google - Files Master'
-        timeline(report_folder, tlactivity, data_list_master, data_headers)
-
-    else:
-        logfunc('No Files By Google - Files Master data available')
-        
-    # Search History report
-    if data_list_search:
-        report = ArtifactHtmlReport('File by Google - Search History')
-        report.start_artifact_report(report_folder, 'Files By Google - Search History')
-        report.add_script()
-        data_headers = ('Timestamp','Search Term','Source') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        
-        report.write_artifact_data_table(data_headers, data_list_search, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Files By Google - Search History'
-        tsv(report_folder, data_headers, data_list_search, tsvname)
-        
-        tlactivity = f'Files By Google - Search History'
-        timeline(report_folder, tlactivity, data_list_search, data_headers)
+    data_headers = (('Timestamp','datetime'),'Search Term','Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+    return data_headers, data_list_search, 'See source file(s) below'

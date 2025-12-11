@@ -15,7 +15,7 @@ import xlsxwriter
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields, check_internet_connection
 
-def get_garmin_polyline(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_garmin_polyline(files_found, report_folder, seeker, wrap_text):
     report_folder = report_folder.rstrip('/')
     report_folder = report_folder.rstrip('\\')
     report_folder_base, _ = os.path.split(report_folder)

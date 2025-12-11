@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
-def get_appLockerfishingnetpat(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_appLockerfishingnetpat(files_found, report_folder, seeker, wrap_text):
     
     standardKey = '526e7934384e693861506a59436e5549'
     standardIV = '526e7934384e693861506a59436e5549'

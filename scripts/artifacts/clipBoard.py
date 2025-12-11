@@ -1,8 +1,24 @@
+__artifacts_v2__ = {
+    "clipboard": {
+        "name": "Clipboard Data",
+        "description": "Clipboard artifacts",
+        "author": "Alexis Brignoni",
+        "version": "0.0.2",
+        "creation_date": "2022-01-08",
+        "last_updated_date": "2025-09-09",
+        "requirements": "none",
+        "category": "Clipboard",
+        "notes": "",
+        "paths": ('*/*clipboard/*/*'),
+        "output_types": "standard",
+        "artifact_icon": "clipboard",
+    }
+}
+
 import os
 import time
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, media_to_html, timeline
+from scripts.ilapfuncs import artifact_processor, media_to_html
 
 def triage_text(file_found):
     output = ''
@@ -27,7 +43,8 @@ def triage_text(file_found):
     
     return str(output.rstrip())
 
-def get_clipBoard(files_found, report_folder, seeker, wrap_text, time_offset):
+@artifact_processor
+def clipboard(files_found, report_folder, seeker, wrap_text):
     data_list = []
     for file_found in files_found:
         if file_found.endswith('.DS_Store'):
@@ -52,29 +69,6 @@ def get_clipBoard(files_found, report_folder, seeker, wrap_text, time_offset):
                     modtime = os.path.getmtime(file_found)
                     modtime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modtime))
                     data_list.append((modtime, textdata, path))
-            
-            
     
-    if len(data_list) > 0:
-        report = ArtifactHtmlReport('Clipboard Data')
-        report.start_artifact_report(report_folder, f'Clipboard Data')
-        report.add_script()
-        data_headers = ('Modified Time', 'Data', 'Path')
-        report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = f'Clipboard Data'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'Clipboard Data'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-        
-    else:
-        logfunc(f'No Clipboard Data available')
-
-__artifacts__ = {
-        "ClipBoard": (
-                "Clipboard",
-                ('*/*clipboard/*/*'),
-                get_clipBoard)
-}
+    data_headers = (('Modified Time','datetime'), 'Data', 'Path')
+    return data_headers, data_list, file_found

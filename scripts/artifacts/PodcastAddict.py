@@ -9,9 +9,9 @@ import sqlite3
 import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_podcasts(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_podcasts(files_found, report_folder, seeker, wrap_text):
 
     source_file = ''
     for file_found in files_found:

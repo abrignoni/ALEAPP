@@ -1,10 +1,23 @@
-import datetime
-import os
+__artifacts_v2__ = {
+    "powerOffReset": {
+        "name": "Power Off Reset",
+        "description": "Parses powering off and reset events",
+        "author": "@stark4n6",
+        "creation_date": "2021-10-12",
+        "last_update_date": "2025-08-09",
+        "requirements": "none",
+        "category": "Power Events",
+        "notes": "",
+        "paths": ('*/log/power_off_reset_reason.txt','*/log/power_off_reset_reason_backup.txt'),
+        "output_types": "standard",
+        "artifact_icon": "power",
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import logfunc, artifact_processor
 
-def get_powerOffReset(files_found, report_folder, seeker, wrap_text, time_offset):
+@artifact_processor
+def powerOffReset(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
     pattern = 'REASON:'
@@ -34,32 +47,9 @@ def get_powerOffReset(files_found, report_folder, seeker, wrap_text, time_offset
                     reason_split = entry[3].split(": ")
                     reason = reason_split[1]
                     
-                    data_list.append((timestamp1,timezone,action,reason))
+                    data_list.append((timestamp1,timezone,action,reason, file_found))
                 else:
                     continue
 
-        num_entries = len(data_list)
-    if num_entries > 0:
-        report = ArtifactHtmlReport('Power Off Reset')
-        report.start_artifact_report(report_folder, 'Power Off Reset')
-        report.add_script()
-        data_headers = ('Timestamp (Local)','Timezone Offset','Action','Reason')
-
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Power Off Reset'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Power Off Reset'
-        timeline(report_folder, tlactivity, data_list, data_headers)           
-        
-    else:
-        logfunc('No Power Off Reset data available')
-
-__artifacts__ = {
-        "powerOffReset": (
-                "Power Events",
-                ('*/log/power_off_reset_reason.txt','*/log/power_off_reset_reason_backup.txt'),
-                get_powerOffReset)
-}
+    data_headers = (('Timestamp (Local)','datetime'),'Timezone Offset','Action','Reason','Source File')
+    return data_headers, data_list, 'See source file(s) below:'

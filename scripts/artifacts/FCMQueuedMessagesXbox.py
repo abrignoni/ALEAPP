@@ -24,7 +24,7 @@ import datetime
 import json
 import base64
 import pathlib
-from scripts.ccl_android_fcm_queued_messages import FcmIterator
+from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.artifact_report import ArtifactHtmlReport
 import scripts.ilapfuncs
 
@@ -68,7 +68,7 @@ def process_payload(payload):
     return processed
 
 
-def get_fcm_xbox(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_fcm_xbox(files_found, report_folder, seeker, wrap_text):
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     message_headers = ["FCM Key", "FCM Timestamp", "Conversation ID", "Message Timestamp", "Sender", "Text", "Content"]
     message_rows = []

@@ -22,7 +22,7 @@ from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_bumble(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_bumble(files_found, report_folder, seeker, wrap_text):
     
     source_file_settings = ''
     source_file_chat_db = ''
@@ -47,12 +47,12 @@ def get_bumble(files_found, report_folder, seeker, wrap_text, time_offset):
         file_name = os.path.basename(file_found)
         if file_name == 'ChatComDatabase': # skip -journal and other files
             chat_db = file_found
-            source_file_chat_db = file_found.replace(seeker.directory, '')
+            source_file_chat_db = file_found.replace(seeker.data_folder, '')
             continue
 
         elif file_name.endswith('='):
             settings_file = file_found
-            source_file_settings = file_found.replace(seeker.directory, '')
+            source_file_settings = file_found.replace(seeker.data_folder, '')
             continue
     
     if settings_file != '':
@@ -592,8 +592,8 @@ def get_bumble(files_found, report_folder, seeker, wrap_text, time_offset):
         data_headers = ('Created Timestamp','Modified Timestamp','Sender ID','Sender Name','Recipient ID','Recipient Name','Message Text','Message URL','Message Type','Message Direction','Conversation ID','Message ID') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         data_list = []
         for row in all_rows:
-            time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),time_offset)
-            time_mod = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[1]),time_offset)
+            time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
+            time_mod = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[1]),'UTC')
             if row[7] == 'Outgoing':
                 data_list.append((time_create,time_mod,row[2],str(user_name + ' (local user)'),row[3],row[10],row[4],row[5],row[6],row[7],row[8],row[9]))
             else:

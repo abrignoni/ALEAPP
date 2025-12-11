@@ -4,7 +4,7 @@ import sqlite3
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist_in_db
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/' 
@@ -27,7 +27,7 @@ def get_offline_path(files_found, blob_name):
             return file_found
     return ''
 
-def get_lgRCS(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_lgRCS(files_found, report_folder, seeker, wrap_text):
     file_found = get_rcs_db_path(files_found)
     if not file_found:
         logfunc('Error: Could not get RCS chat database path for LG phones')
@@ -39,7 +39,7 @@ def get_lgRCS(files_found, report_folder, seeker, wrap_text, time_offset):
         folder_name = os.path.basename(report_folder)
 
     db = open_sqlite_db_readonly(file_found)
-    if not does_table_exist(db, 'message'):
+    if not does_table_exist_in_db(file_found, 'message'):
         logfunc('No RCS data in this db, \'message\' table is absent!')
         return
     cursor = db.cursor()

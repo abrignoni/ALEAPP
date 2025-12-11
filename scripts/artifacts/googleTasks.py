@@ -36,7 +36,7 @@ def protobuf_parse_completed(data):
     timezone = b2s(pb[0].get('9',{}).get('1',{}).get('4',''))
     return task, task_details, created, completed, modified, timezone
 
-def get_googleTasks(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_googleTasks(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
 

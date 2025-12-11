@@ -7,7 +7,7 @@ import shutil
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist, media_to_html
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist_in_db, media_to_html
 
 class keyboard_event:
     def __init__(self, id, app, text, textbox_name, textbox_id, event_date, start_date='', end_date=''):
@@ -20,7 +20,7 @@ class keyboard_event:
         self.start_date = start_date
         self.end_date = end_date
 
-def get_gboardCache(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_gboardCache(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -106,7 +106,7 @@ def read_trainingcache2(file_found, report_folder, seeker):
     cursor = db.cursor()
 
     keyboard_events = []
-    if does_table_exist(db, 'training_input_events_table'):
+    if does_table_exist_in_db(file_found, 'training_input_events_table'):
         try:
             cursor.execute('''
                 SELECT _id, _payload, f2 as app, f4 as textbox_name, f5 as textbox_id, datetime(f9/1000, "unixepoch") as ts
@@ -143,7 +143,7 @@ def read_trainingcache2(file_found, report_folder, seeker):
         except (sqlite3.Error, TypeError, ValueError) as ex:
             logfunc(f'read_trainingcache2 had an error reading {file_found} ' + str(ex))
             
-    elif does_table_exist(db, 'tf_table'):
+    elif does_table_exist_in_db(file_found, 'tf_table'):
         try:
             cursor.execute('''
                 SELECT s._id, ts, f3_concat as text_entered, s.f7 as textbox_name, s.f8 as app, s.f9, 

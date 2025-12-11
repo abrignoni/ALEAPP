@@ -5,7 +5,7 @@ import json
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_imo(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_imo(files_found, report_folder, seeker, wrap_text):
 
     source_file_account = ''
     source_file_friends = ''
@@ -14,11 +14,11 @@ def get_imo(files_found, report_folder, seeker, wrap_text, time_offset):
         file_name = str(file_found)
         if file_name.endswith('accountdb.db'):
            imo_account_db = str(file_found)
-           source_file_account = file_found.replace(seeker.directory, '')
+           source_file_account = file_found.replace(seeker.data_folder, '')
 
         if file_name.endswith('imofriends.db'):
            imo_friends_db = str(file_found)
-           source_file_friends = file_found.replace(seeker.directory, '')
+           source_file_friends = file_found.replace(seeker.data_folder, '')
 
     db = open_sqlite_db_readonly(imo_account_db)
     cursor = db.cursor()

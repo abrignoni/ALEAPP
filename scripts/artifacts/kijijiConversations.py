@@ -16,7 +16,7 @@ import sqlite3
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, open_sqlite_db_readonly, does_table_exist
+from scripts.ilapfuncs import logfunc, tsv, open_sqlite_db_readonly, does_table_exist_in_db
 
 LOCAL_USER = 'Local User'
 LOCAL_USER_INDICATOR = 'ME'
@@ -32,12 +32,12 @@ conversations_query = \
     ORDER BY sortByDate ASC;
 '''
 
-def get_kijijiConversations(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_kijijiConversations(files_found, report_folder, seeker, wrap_text):
     file_found = str(files_found[0])
     logfunc(f'Database file {file_found} is being interrogated...')
     db = open_sqlite_db_readonly(file_found)
     db.row_factory = sqlite3.Row # For fetching columns by name
-    tabCheck = does_table_exist(db, 'conversations')
+    tabCheck = does_table_exist_in_db(file_found, 'conversations')
     if tabCheck == False:
         logfunc('The conversations table was not found in the database!')
         return False

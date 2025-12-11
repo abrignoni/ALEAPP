@@ -7,7 +7,7 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_n
 
 from scripts.artifacts.chrome import get_browser_name
 
-def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)

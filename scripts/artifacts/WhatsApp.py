@@ -5,7 +5,7 @@ import xmltodict
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_column_exist_in_db, media_to_html
 
-def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_WhatsApp(files_found, report_folder, seeker, wrap_text):
 
     separator = '/'
     source_file_msg = ''
@@ -14,15 +14,15 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
     whatsapp_wa_db = ''
     
     for file_found in files_found:
-        
+
         file_name = str(file_found)
         if file_name.endswith('msgstore.db'):
            whatsapp_msgstore_db = str(file_found)
-           source_file_msg = file_found.replace(seeker.directory, '')
+           source_file_msg = file_found.replace(seeker.data_folder, '')
 
         if file_name.endswith('wa.db'):
            whatsapp_wa_db = str(file_found)
-           source_file_wa = file_found.replace(seeker.directory, '')
+           source_file_wa = file_found.replace(seeker.data_folder, '')
 
     db = open_sqlite_db_readonly(whatsapp_wa_db)
     cursor = db.cursor()
@@ -73,7 +73,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
     else:
         logfunc('No WhatsApp - Contacts found')
 
-    db.close
+    db.close()
 
     db = open_sqlite_db_readonly(whatsapp_msgstore_db)
     cursor = db.cursor()
@@ -137,7 +137,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
     else:
         logfunc('No WhatsApp - Call Logs found')
         
-    if does_column_exist_in_db(db, 'messages', 'data'):
+    if does_column_exist_in_db(whatsapp_msgstore_db, 'messages', 'data'):
         
         try:
             cursor.execute('''
@@ -203,9 +203,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
             
         else:
             logfunc('No WhatsApp - Messages data available')
-            
-        db.close()
-    
+
     #Looks for newly changed column names
     else:
         
@@ -277,7 +275,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
               
                 if row[7] is not None:
                   mediaident = row[7].split(separator)[-1]
-                  print(mediaident)
+                  # print(mediaident)
                   media = media_to_html(mediaident, files_found, report_folder)
                 else:
                   media = row[7]
@@ -295,7 +293,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
             
         else:
             logfunc('No WhatsApp - One To One Messages found')
-        
+
         try:
             cursor.execute('''
             SELECT
@@ -368,7 +366,7 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
             for row in all_rows:
               if row[8] is not None:
                 mediaident = row[8].split(separator)[-1]
-                print(mediaident)
+                # print(mediaident)
                 media = media_to_html(mediaident, files_found, report_folder)
               else:
                 media = row[8]
@@ -386,48 +384,61 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
             
         else:
             logfunc('No WhatsApp - Group Messages found')
-        
+
         try:
             cursor.execute('''
-            SELECT
-            datetime(chat_view.created_timestamp/1000,'unixepoch') AS "Group Creation Time",
-            chat_view.subject AS "Group Name",
-            wa_group_admin_settings.creator_jid AS "Creator JID",
-            wa_contacts.wa_name AS "Creator WA User Name"
-            FROM
-            chat_view
-            LEFT JOIN wa_group_admin_settings ON wa_group_admin_settings.jid=chat_view.raw_string_jid
-            JOIN jid ON jid.raw_string=wa_group_admin_settings.creator_jid
-            LEFT JOIN wa_contacts ON wa_contacts.jid=jid.raw_string
-            ORDER BY "Group Creation Time" ASC
-            ''')
+                    SELECT
+                    datetime(chat_view.created_timestamp/1000,'unixepoch') AS "Group Creation Time",
+                    chat_view.subject AS "Group Name",
+                    ( SELECT creator_jid FROM wadb.wa_group_admin_settings WHERE wadb.wa_group_admin_settings.jid = jid.raw_string) AS "Creator JID",
+                    ( SELECT wa_name FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid = (SELECT creator_jid FROM wadb.wa_group_admin_settings WHERE wadb.wa_group_admin_settings.jid = jid.raw_string) ) AS "Creator WA User Name",
+                    ( SELECT number FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid = (SELECT creator_jid FROM wadb.wa_group_admin_settings WHERE wadb.wa_group_admin_settings.jid = jid.raw_string) ) AS "Creator WA Number"
+                    FROM
+                    chat_view
+					JOIN jid ON jid._id = chat_view.jid_row_id
+                    LEFT JOIN wa_group_admin_settings ON wa_group_admin_settings.jid=chat_view.jid_row_id
+                    LEFT JOIN wa_contacts ON wa_contacts.jid=jid.raw_string
+					WHERE "Group Name" NOT NULL
+                    ORDER BY "Group Creation Time" ASC
+                    ''')
 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
         except:
             usageentries = 0
-            
+
         if usageentries > 0:
             report = ArtifactHtmlReport('WhatsApp - Group Details')
             report.start_artifact_report(report_folder, 'WhatsApp - Group Details')
             report.add_script()
-            data_headers = ('Group Creation Timestamp','Group Name','Creator JID','Creator WA User Name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+            data_headers = ('Group Creation Timestamp', 'Group Name', 'Creator JID',
+                            'Creator WA User Name', 'Creator WA Number', 'Creator WA Profile Picture', )  # Don't remove the comma, that is required to make this a tuple as there is only 1 element
             data_list = []
             for row in all_rows:
-                data_list.append((row[0], row[1], row[2], row[3]))
+                media = ''
+                profile_picture = ''
+                if row[4] is not None:
+                    profile_picture = row[4]
+                    if len(profile_picture) > 0:
+                        if profile_picture.startswith("+"):
+                            profile_picture = profile_picture[1:]
+                        profile_picture += ".jpg"
+                        media = media_to_html(profile_picture, files_found, report_folder)
 
-            report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db)
+                data_list.append((row[0], row[1], row[2], row[3], row[4], media))
+
+            report.write_artifact_data_table(data_headers, data_list, whatsapp_msgstore_db, whatsapp_wa_db, html_no_escape=['Creator WA Profile Picture'])
             report.end_artifact_report()
-            
+
             tsvname = f'WhatsApp - Group Details'
             tsv(report_folder, data_headers, data_list, tsvname, whatsapp_msgstore_db)
 
             tlactivity = f'WhatsApp - Group Details'
             timeline(report_folder, tlactivity, data_list, data_headers)
-            
+
         else:
-            logfunc('No WhatsApp - Group Details found')    
-        
+            logfunc('No WhatsApp - Group Details found')
+
     for file_found in files_found:
         if('com.whatsapp_preferences_light.xml' in file_found):
             with open(file_found, encoding='utf-8') as fd:
@@ -462,9 +473,11 @@ def get_WhatsApp(files_found, report_folder, seeker, wrap_text, time_offset):
                 else:
                     logfunc("No WhatsApp - Profile data found")
 
+
+
 __artifacts__ = {
     "WhatsApp": (
         "WhatsApp",
-        ('*/com.whatsapp/databases/*.db*','*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml','*/WhatsApp Images/*.*','*/WhatsApp Video/*.*'),
+        ('*com.whatsapp*', '*/com.whatsapp/databases/*.db*','*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml','*/com.whatsapp/shared_prefs/startup_prefs.xml','*/com.whatsapp/shared_prefs/reg_prefs.xml','*/WhatsApp Images/*.*','*/WhatsApp Video/*.*'),
         get_WhatsApp)
 }

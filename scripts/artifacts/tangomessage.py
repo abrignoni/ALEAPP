@@ -17,7 +17,7 @@ def _decodeMessage(wrapper, message):
     return result
 
 
-def get_tangomessage(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_tangomessage(files_found, report_folder, seeker, wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -25,7 +25,7 @@ def get_tangomessage(files_found, report_folder, seeker, wrap_text, time_offset)
         if file_found.endswith('tc.db'):
             break
 
-    source_file = file_found.replace(seeker.directory, '')
+    source_file = file_found.replace(seeker.data_folder, '')
 
     db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()

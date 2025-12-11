@@ -21,7 +21,7 @@ import blackboxprotobuf
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly, convert_utc_human_to_timezone
 
-def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text):
     
     data_list_storage = []
     data_list_myplaces = []
@@ -117,7 +117,7 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text, time_offset
                 url = pb[0].get('6', {}).get('6', b'').decode('utf-8')
                 url = f'<a href="{url}" style = "color:blue" target="_blank">{url}</a>'
                 timestamp = datetime.fromtimestamp(timestamp/1000, tz=timezone.utc)
-                timestamp = convert_utc_human_to_timezone(timestamp, time_offset)
+                timestamp = convert_utc_human_to_timezone(timestamp, 'UTC')
                 data_list_myplaces.append((timestamp,label,latitude,longitude,address,url))
             db.close()
         else:

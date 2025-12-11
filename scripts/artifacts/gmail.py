@@ -8,7 +8,7 @@
 import xml.etree.ElementTree as ET
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
 class keyboard_event:
     def __init__(self, id, app, text, textbox_name, textbox_id, event_date, start_date='', end_date=''):
@@ -21,7 +21,7 @@ class keyboard_event:
         self.start_date = start_date
         self.end_date = end_date
 
-def get_gmailActive(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_gmailActive(files_found, report_folder, seeker, wrap_text):
     #logfunc("If you can read this, the module is working!")
     #logfunc(files_found)
     activeAccount = ''

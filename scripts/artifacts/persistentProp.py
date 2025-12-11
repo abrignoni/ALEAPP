@@ -3,7 +3,7 @@ import datetime
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
-def get_persistentProp(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_persistentProp(files_found, report_folder, seeker, wrap_text):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -11,7 +11,7 @@ def get_persistentProp(files_found, report_folder, seeker, wrap_text, time_offse
             continue # Skip all other files
         
         data_list = []
-        with open(file_found, 'r') as f:
+        with open(file_found, 'r', encoding='utf-8', errors='replace') as f:
             for line in f:
                 clean = line.strip()
                 if clean.startswith('persist.sys.boot.reason.historyDreboot'):

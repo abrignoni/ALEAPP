@@ -5,7 +5,7 @@ import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_skype(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_skype(files_found, report_folder, seeker, wrap_text):
 
     user_id = None
     source_file = ''
@@ -16,7 +16,7 @@ def get_skype(files_found, report_folder, seeker, wrap_text, time_offset):
            skype_db = str(file_found)
            # File name has a format of live: which does not write out to a file system correctly
            # so this will fix it to the original name from what is actually written out.
-           (head, tail) = os.path.split(file_found.replace(seeker.directory, ''))
+           (head, tail) = os.path.split(file_found.replace(seeker.data_folder, ''))
            source_file = os.path.join(head, "live:" + tail[5:])
         else:
            continue
