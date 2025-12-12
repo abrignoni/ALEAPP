@@ -487,8 +487,8 @@ def get_citymapperAppPreferences(files_found, report_folder, _seeker, _wrap_text
                 m.save(map_path)
                 
                 # Create report and add map section
-                report = ArtifactHtmlReport('Citymapper - User Data')
-                report.start_artifact_report(report_folder, 'Citymapper - User Data')
+                report = ArtifactHtmlReport('Citymapper - App Preferences')
+                report.start_artifact_report(report_folder, 'Citymapper - App Preferences')
                 report.add_script()
                 
                 # Source Path section
