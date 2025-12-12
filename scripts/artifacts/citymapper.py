@@ -32,9 +32,9 @@ __artifacts_v2__ = {
         "paths" : ('*/data/data/com.citymapper.app.release/databases/citymapper.db'),
         "output_types": ['tsv', 'timeline', 'lava', 'kml']  # Exclude 'html' to use custom report     
     },
-    "get_citymapperUserData" : {
-        "name": "Citymapper - User Data",
-        "description": "Parses user data from the Citymapper App",
+    "get_citymapperAppPreferences" : {
+        "name": "Citymapper - App Preferences",
+        "description": "Parses app preferences from the Citymapper App",
         "author": "Funeoz",
         "version": "0.0.1",
         "date":"2025-12-12",
@@ -55,7 +55,7 @@ import folium
 import xml.etree.ElementTree as ET
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import artifact_processor, logfunc, tsv, timeline, kmlgen, open_sqlite_db_readonly, convert_unix_ts_to_utc
+from scripts.ilapfuncs import artifact_processor, logfunc, kmlgen, open_sqlite_db_readonly, convert_unix_ts_to_utc
 
 @artifact_processor
 def get_citymapperLocationHistory(files_found, report_folder, _seeker, _wrap_text):
@@ -361,7 +361,7 @@ def get_citymapperSavedTrips(files_found, report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def get_citymapperUserData(files_found, report_folder, _seeker, _wrap_text):
+def get_citymapperAppPreferences(files_found, report_folder, _seeker, _wrap_text):
 
     data_list = []
     source = ''
@@ -492,13 +492,14 @@ def get_citymapperUserData(files_found, report_folder, _seeker, _wrap_text):
                 report.add_script()
                 
                 # Source Path section
-                report.add_section_heading('Source Path', 'h3')
-                report.write_raw_html(f'''
-                    <dl class="row">
-                        <dt class="col-sm-3">File Path</dt>
-                        <dd class="col-sm-9">{source}</dd>
-                    </dl>
-                ''')
+                report.add_section_heading('Source Paths', 'h3')
+                for file_found in files_found:
+                    report.write_raw_html(f'''
+                        <dl class="row">
+                            <dt class="col-sm-3">File Path</dt>
+                            <dd class="col-sm-9">{file_found}</dd>
+                        </dl>
+                    ''')
                 
                 # Device Information
                 report.add_section_heading('Device Information', 'h3')
@@ -528,7 +529,7 @@ def get_citymapperUserData(files_found, report_folder, _seeker, _wrap_text):
                 report.add_section_heading('Location Information', 'h3')
                 report.write_raw_html(f'''
                     <dl class="row">
-                        <dt class="col-sm-3">Last Location (Lat,Lon)</dt>
+                        <dt class="col-sm-3">Last Location (Latitude, Longitude)</dt>
                         <dd class="col-sm-9">{last_location}</dd>
                         <dt class="col-sm-3">CityMapper Region</dt>
                         <dd class="col-sm-9">{cm_region}</dd>
