@@ -22,7 +22,7 @@ def get_siminfo(files_found, report_folder, seeker, wrap_text):
                 continue
             process_siminfo(file_found, uid, report_folder)
         except ValueError:
-                pass # uid was not a number
+            pass # uid was not a number
 
 def process_siminfo(folder, uid, report_folder):
     
