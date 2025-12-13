@@ -226,7 +226,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 order by messages.thread_key, datestamp;
                 ''')
                 snippet = 1
-            except:
+            except sqlite3.OperationalError:
                 cursor.execute('''
                 select
                 case messages.timestamp_ms
@@ -242,7 +242,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
                 (select json_extract (messages.shares, '$[0].href')) as ShareLink,
                 message_reactions.reaction as "Message Reaction",
-                '' as "Message Reaction Timestamp",
+                datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
                 messages.msg_id
                 from messages, threads
                 left join message_reactions on message_reactions.msg_id = messages.msg_id
