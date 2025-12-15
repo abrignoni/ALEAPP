@@ -107,6 +107,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chromeNetworkActionPredictor |
 | chromeOfflinePages |
 | chromeTopSites |
+| citymapper |
 | cmh |
 | contacts |
 | deviceHealthServices_Battery |
