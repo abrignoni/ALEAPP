@@ -11,7 +11,7 @@ def get_persistentProp(files_found, report_folder, seeker, wrap_text):
             continue # Skip all other files
         
         data_list = []
-        with open(file_found, 'r') as f:
+        with open(file_found, 'r', encoding='utf-8', errors='replace') as f:
             for line in f:
                 clean = line.strip()
                 if clean.startswith('persist.sys.boot.reason.historyDreboot'):

@@ -31,6 +31,7 @@ __artifacts_v2__ = {
 
 import sqlite3
 import textwrap
+import os
 
 from packaging import version
 from scripts.artifact_report import ArtifactHtmlReport
@@ -46,8 +47,8 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
         file_found = str(file_found)
         if file_found.lower().endswith('turbo.db'):
             turbo_db = str(file_found)
-            source_file_turbo = file_found.replace(seeker.directory, '')
-           
+            source_file_turbo = os.path.basename(file_found)
+        
             db = open_sqlite_db_readonly(turbo_db)
             cursor = db.cursor()
             cursor.execute('''
@@ -83,11 +84,11 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
                     data_list.append((timestamp,row[1],row[2],row[3],row[4],file_found))
             
             db.close()
-               
+            
     data_headers = (('Timestamp', 'datetime'),'Battery Level','Charge Type','Battery Saver','Timezone','Source')
         
     return data_headers, data_list, source_file_turbo
-               
+            
 @artifact_processor
 def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):     
     source_file_bluetooth = ''
@@ -97,7 +98,7 @@ def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):
     if file_found.lower().endswith('bluetooth.db'):
         bluetooth_db = str(file_found)
         source_file_bluetooth = file_found.replace(seeker.directory, '')
-       
+    
         db = open_sqlite_db_readonly(bluetooth_db)
         cursor = db.cursor()
         cursor.execute('''

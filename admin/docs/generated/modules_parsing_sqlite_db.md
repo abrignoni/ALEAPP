@@ -9,8 +9,13 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | Source Modules |
 |----------------|
 | DuckDuckGo |
+| FairEmail |
 | LinkedIn |
+| OrnetBrowser |
+| ProtonDrive |
 | SimpleStorage_applaunch |
+| TorBrowser |
+| ZangiChats |
 | airtagAndroid |
 | appicons |
 | frosting |
@@ -18,6 +23,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleFitGMS |
 | googlePlaySearches |
 | knuddels |
+| thunderbird |
 <!-- GET_RECORDS_END -->
 
 ### open_sqlite_db_readonly() Usage
@@ -33,7 +39,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | ChessWithFriends |
 | DocList |
 | FacebookMessenger |
-| FairEmail |
 | FilesByGoogle |
 | GarminActivities |
 | GarminChart |
@@ -134,6 +139,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googlePhotos |
 | googleQuickSearchboxRecent |
 | googleTasks |
+| googleVoice |
 | googlemaplocation |
 | groupMe |
 | hikvision |

@@ -1,10 +1,10 @@
 import os
-import sqlite3
 import textwrap
 import urllib.parse
+import re
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly, does_column_exist_in_db
+from scripts.ilapfuncs import logfunc, tsv, timeline, get_next_unused_name, open_sqlite_db_readonly, does_column_exist_in_db
 
 def get_browser_name(file_name):
 
@@ -20,7 +20,7 @@ def get_browser_name(file_name):
         try:
             result = re.search('.*/(.*)/app_webview/Default.*', file_name)
             return result.group(1)
-        except:
+        except Exception:
             return 'Unknown'
     else:
         return 'Unknown'
@@ -204,6 +204,12 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
         else:
             last_access_time_query = "'' as last_access_query"
 
+        # check for tab_url column, the older versions (pre-v65) does not have it
+        if does_column_exist_in_db(file_found, 'downloads', 'tab_url') == True:
+            tab_url_column = "tab_url"
+        else:
+            tab_url_column = "'' as tab_url"
+
         cursor.execute(f'''
         SELECT 
         CASE start_time  
@@ -217,7 +223,7 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
             ELSE datetime(end_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
         END AS "End Time", 
         {last_access_time_query},
-        tab_url, 
+        {tab_url_column}, 
         target_path, 
         CASE state
             WHEN "0" THEN "In Progress"
