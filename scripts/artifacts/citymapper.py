@@ -247,9 +247,6 @@ def get_citymapperSavedTrips(files_found, report_folder, _seeker, _wrap_text):
 
             db.close()
     
-    """if not saved_trip_data_list:
-        return ('No Data',), [], source"""
-    
     trip_headers = ('ID', 'Commute Type', 'Timestamp', 'Home Latitude', 'Home Longitude', 'Work Latitude', 'Work Longitude', 'Region Code')
     
     # Create KML
@@ -322,8 +319,6 @@ def get_citymapperSavedTrips(files_found, report_folder, _seeker, _wrap_text):
             
             # Summary section
             report.add_section_heading('Saved Trips Summary', 'h3')
-            home_count = sum(1 for row in saved_trip_data_list if row[3] and row[4])
-            work_count = sum(1 for row in saved_trip_data_list if row[5] and row[6])
             report.write_raw_html(f'''
                 <dl class="row">
                     <dt class="col-sm-3">Total Saved Trips</dt>
