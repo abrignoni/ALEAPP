@@ -12,6 +12,7 @@ dist/
 .installed.cfg
 *.egg
 MANIFEST
+myenv/
 
 # Installers
 *.cab
