@@ -33,9 +33,10 @@ from scripts.ilapfuncs import artifact_processor, get_file_path, \
     get_sqlite_db_records, logfunc, open_sqlite_db_readonly
 
 @artifact_processor
-def plz_interaction(files_found, report_folder, seeker, wrap_text):
+def plz_interaction(files_found):
     source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
     data_list = []
+    cursor = None
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -76,7 +77,7 @@ def plz_interaction(files_found, report_folder, seeker, wrap_text):
         logfunc('No Swissmeteo')
 
 @artifact_processor
-def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
+def swissmeteo_plz(files_found):
     source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
     data_list = []
 
@@ -106,7 +107,7 @@ def coordinate_to_osm(lat, lon):
 
 def lv03_to_osm(E, N): 
     # based on https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/master/scripts/py/wgs84_ch1903.py
-    y, x = (E-600000)/1e6, (N-200000)/1e6; 
+    y, x = (E-600000)/1e6, (N-200000)/1e6
     lat = (16.9023892 + (3.238272 * x)) + \
             - (0.270978 * pow(y, 2)) + \
             - (0.002528 * pow(x, 2)) + \
