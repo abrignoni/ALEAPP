@@ -117,7 +117,7 @@ def lv03_to_osm(E, N):
                 + (0.791484 * y * x) + \
                 + (0.1306 * y * pow(x, 2))) + \
                 - (0.0436 * pow(y, 3))
-    lat, lon = lat*100/36, lon*100/36; 
+    lat, lon = lat*100/36, lon*100/36
     return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=15"
 
 def get_location_infos(cursor, NPA):
