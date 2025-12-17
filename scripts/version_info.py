@@ -29,6 +29,6 @@ aleapp_contributors = [
     ['Anthony Reince', 'https://www.linkedin.com/in/anthony-reince-a60115239/','',''],
     ['Damien Attoe', 'https://digital4n6withdamien.blogspot.com/','@AttoeDamien','https://github.com/SpyderForensics'],
     ['Anna Kirpichnikova', 'https://www.linkedin.com/in/anna-kirpichnikova-a4819a10b/','','https://github.com/As-arsenicum-33'],
-    ['Christian Peter', 'https://www.linkedin.com/in/christian-peter-49b4ab182/', '@DasZamomin', 'https://github.com/prosch88']
+    ['Christian Peter', 'https://www.linkedin.com/in/christian-peter-49b4ab182/', '@DasZamomin', 'https://github.com/prosch88'],
     ['Jérôme Arn', 'https://www.linkedin.com/in/j%C3%A9r%C3%B4me-a-dfir/', '@theTul1p3', 'https://github.com/Th3Tul1p3']
 ]
