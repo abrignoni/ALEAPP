@@ -33,7 +33,7 @@ from scripts.ilapfuncs import artifact_processor, get_file_path, \
     get_sqlite_db_records, logfunc, open_sqlite_db_readonly
 
 @artifact_processor
-def plz_interaction(files_found, report_folder, seeker, wrap_text):
+def plz_interaction(files_found, _report_folder, _seeker, _wrap_text):
     source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
     data_list = []
     cursor = None
@@ -77,7 +77,7 @@ def plz_interaction(files_found, report_folder, seeker, wrap_text):
         logfunc('No Swissmeteo')
 
 @artifact_processor
-def swissmeteo_plz(files_found, report_folder, seeker, wrap_text):
+def swissmeteo_plz(files_found, _report_folder, _seeker, _wrap_text):
     source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
     data_list = []
 
