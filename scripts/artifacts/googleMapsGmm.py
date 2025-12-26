@@ -85,18 +85,22 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text):
             db = open_sqlite_db_readonly(file_found)
             file_found_myplaces = file_found
             cursor = db.cursor()
-            cursor.execute('''
-            select 
-            rowid,
-            key_string,
-            round(latitude*.000001,6),
-            round(longitude*.000001,6),
-            sync_item,
-            timestamp         
-            from sync_item 
-            ''')
-            all_rows = cursor.fetchall()
-
+            
+            try:
+                cursor.execute('''
+                select 
+                rowid,
+                key_string,
+                round(latitude*.000001,6),
+                round(longitude*.000001,6),
+                sync_item,
+                timestamp        
+                from sync_item 
+                ''')
+                all_rows = cursor.fetchall()
+            except sqlite3.OperationalError:
+                all_rows = []
+            
             for row in all_rows:
                 id = row[0]
                 keystring = row[1]
