@@ -5,39 +5,83 @@ import textwrap
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
+def table_exists(cursor, table_name):
+    """Check if a table exists in the database"""
+    cursor.execute(
+        """
+        SELECT name FROM sqlite_master 
+        WHERE type='table' AND name=?
+    """,
+        (table_name,),
+    )
+    return cursor.fetchone() is not None
+
+
 def get_firefox(files_found, report_folder, seeker, wrap_text):
-    
+
     for file_found in files_found:
         file_found = str(file_found)
         if not os.path.basename(file_found) == 'places.sqlite': # skip -journal and other files
             continue
-        
+
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
-        SELECT
-        datetime(moz_places.last_visit_date_local/1000, 'unixepoch') AS LastVisitDate,
-        moz_places.url AS URL,
-        moz_places.title AS Title,
-        moz_places.visit_count_local AS VisitCount,
-        moz_places.description AS Description,
-        CASE
-            WHEN moz_places.hidden = 0 THEN 'No'
-            WHEN moz_places.hidden = 1 THEN 'Yes'
-        END AS Hidden,
-        CASE
-            WHEN moz_places.typed = 0 THEN 'No'
-            WHEN moz_places.typed = 1 THEN 'Yes'
-        END AS Typed,
-        moz_places.frecency AS Frecency,
-        moz_places.preview_image_url AS PreviewImageURL
-        FROM
-        moz_places
-        INNER JOIN moz_historyvisits ON moz_places.origin_id = moz_historyvisits.id
-        INNER JOIN moz_places_metadata ON moz_places.id = moz_places_metadata.id
-        ORDER BY
-        moz_places.last_visit_date_local ASC  
-        ''')
+
+        has_metadata_table = table_exists(cursor, "moz_places_metadata")
+
+        if has_metadata_table:
+            cursor.execute(
+                """
+            SELECT
+            datetime(moz_places.last_visit_date_local/1000, 'unixepoch') AS LastVisitDate,
+            moz_places.url AS URL,
+            moz_places.title AS Title,
+            moz_places.visit_count_local AS VisitCount,
+            moz_places.description AS Description,
+            CASE
+                WHEN moz_places.hidden = 0 THEN 'No'
+                WHEN moz_places.hidden = 1 THEN 'Yes'
+            END AS Hidden,
+            CASE
+                WHEN moz_places.typed = 0 THEN 'No'
+                WHEN moz_places.typed = 1 THEN 'Yes'
+            END AS Typed,
+            moz_places.frecency AS Frecency,
+            moz_places.preview_image_url AS PreviewImageURL
+            FROM
+            moz_places
+            INNER JOIN moz_historyvisits ON moz_places.origin_id = moz_historyvisits.id
+            INNER JOIN moz_places_metadata ON moz_places.id = moz_places_metadata.id
+            ORDER BY
+            moz_places.last_visit_date_local ASC  
+            """
+            )
+        else:
+            cursor.execute(
+                """
+            SELECT
+            datetime(moz_places.last_visit_date_local/1000, 'unixepoch') AS LastVisitDate,
+            moz_places.url AS URL,
+            moz_places.title AS Title,
+            moz_places.visit_count_local AS VisitCount,
+            moz_places.description AS Description,
+            CASE
+                WHEN moz_places.hidden = 0 THEN 'No'
+                WHEN moz_places.hidden = 1 THEN 'Yes'
+            END AS Hidden,
+            CASE
+                WHEN moz_places.typed = 0 THEN 'No'
+                WHEN moz_places.typed = 1 THEN 'Yes'
+            END AS Typed,
+            moz_places.frecency AS Frecency,
+            moz_places.preview_image_url AS PreviewImageURL
+            FROM
+            moz_places
+            WHERE moz_places.last_visit_date_local IS NOT NULL
+            ORDER BY
+            moz_places.last_visit_date_local ASC  
+            """
+            )
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
@@ -52,15 +96,15 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
-            
+
             tsvname = f'Firefox - Web History'
             tsv(report_folder, data_headers, data_list, tsvname)
-            
+
             tlactivity = f'Firefox - Web History'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Firefox - Web History data available')
-            
+
         cursor = db.cursor()
         cursor.execute('''
         SELECT
@@ -104,15 +148,15 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
-            
+
             tsvname = f'Firefox - Web Visits'
             tsv(report_folder, data_headers, data_list, tsvname)
-            
+
             tlactivity = f'Firefox - Web Visits'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Firefox - Web Visits data available')
-        
+
         cursor = db.cursor()
         cursor.execute('''
         SELECT
@@ -147,15 +191,16 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
-            
+
             tsvname = f'Firefox - Bookmarks'
             tsv(report_folder, data_headers, data_list, tsvname)
-            
+
             tlactivity = f'Firefox - Bookmarks'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Firefox - Bookmarks data available')
-            
+
+    if table_exists(cursor, "moz_places_metadata_search_queries"):
         cursor = db.cursor()
         cursor.execute('''
         SELECT
@@ -178,14 +223,16 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
 
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
-            
+
             tsvname = f'Firefox - Search Terms'
             tsv(report_folder, data_headers, data_list, tsvname)
-            
+
         else:
             logfunc('No Firefox - Search Terms data available')
-        
-        db.close()
+    else:
+        logfunc('No Firefox - Search Terms data available')
+
+    db.close()
     
 __artifacts__ = {
         "Firefox": (

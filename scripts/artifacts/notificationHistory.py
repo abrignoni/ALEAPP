@@ -39,8 +39,21 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 multi_root = True
                 tree = abxread(file_found, multi_root)
             else:
-                tree = ET.parse(file_found)
-            
+                try:
+                    tree = ET.parse(file_found)
+                except ET.ParseError:
+                    with open(file_found, "r", encoding="utf-8", errors="ignore") as f:
+                        raw = f.read()
+                        cut_point = raw.rfind("</settings>")
+                        if cut_point != -1:
+                            clean_xml = raw[
+                                : cut_point + 11
+                            ]
+                            tree = ET.ElementTree(ET.fromstring(clean_xml))
+                        else:
+                            logfunc(f"Error: Could not recover {file_name}")
+                            continue
+
             root = tree.getroot()
             for setting in root.findall(".//setting"):
                 if setting.attrib.get('name') == 'notification_history_enabled':
@@ -58,22 +71,37 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 data_headers = ('Status', 'User')
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
-                
+
                 tsvname = f'Android Notification History - Status'
                 tsv(report_folder, data_headers, data_list, tsvname)
-                
+
             else:
                 logfunc('No Android Notification History - Status data available')
-        
+
         #parsing notification_policy.xml
-        if file_name.endswith('notification_policy.xml'):
+        elif file_name.endswith('notification_policy.xml'):
             data_list = []
             if (checkabx(file_found)):
                 multi_root = False
                 tree = abxread(file_found, multi_root)
             else:
-                tree = ET.parse(file_found)
-            
+                try:
+                    tree = ET.parse(file_found)
+                except ET.ParseError:
+                    with open(file_found, "r", encoding="utf-8", errors="ignore") as f:
+                        raw = f.read()
+                        if "</notification-policy>" in raw:
+                            clean_xml = raw[: raw.rfind("</notification-policy>") + 22]
+                            tree = ET.ElementTree(ET.fromstring(clean_xml))
+                        elif "</snoozed-notifications>" in raw:
+                            clean_xml = raw[
+                                : raw.rfind("</snoozed-notifications>") + 24
+                            ]
+                            tree = ET.ElementTree(ET.fromstring(clean_xml))
+                        else:
+                            logfunc(f"Error: Could not recover {file_name}")
+                            continue
+
             root = tree.getroot()
             for elem in root:
                 if elem.tag == 'snoozed-notifications':
@@ -94,10 +122,10 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 data_headers = ('Reminder Time', 'Snoozed Notification')
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
-                
+
                 tsvname = f'Android Notification History - Snoozed notifications'
                 tsv(report_folder, data_headers, data_list, tsvname)
-                
+
             else:
                 logfunc('No Android Notification History - Snoozed notifications data available')
 
@@ -116,7 +144,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                     major_version = notification_history.major_version if notification_history.HasField('major_version') else None # notification format version should be 1
                     for notification in notification_history.notification:
                         package_name = notification.package if notification.package else package_map.get(notification.package_index, "") #retrieves package from the map if not stored locally
-                        
+
                         #this block tries to fetch the value of each field from within the parsed protobuf file e.g. variable user_id -> recovers the user_id field from the pb
                         fields = ['uid', 'user_id', 'package_index', 'channel_name', 'channel_id','channel_id_index', 'channel_name_index', 'conversation_id', 'conversation_id_index']
                         defaults = {field: 'Error' for field in fields}
@@ -172,10 +200,10 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
         file_directory = os.path.dirname(file_found)  
         report.write_artifact_data_table(data_headers, data_pb_list, file_directory, html_escape=False)
         report.end_artifact_report()
-        
+
         tsvname = f'Android Notification History - Notifications'
         tsv(report_folder, data_headers, data_pb_list, tsvname)
-        
+
         tlactivity = f'Android Notification History - Notifications'
         timeline(report_folder, tlactivity, data_pb_list, data_headers)
     else:
