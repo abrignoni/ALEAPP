@@ -1,3 +1,4 @@
+#keepNotes.py
 __artifacts_v2__ = {
     "keepNotes": {
         "name": "Google Keep Notes",
@@ -28,19 +29,57 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
         if filename.endswith('keep.db'):
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
-            cursor.execute('''
-            SELECT 
-                datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
-                datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
-                datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
-                tree_entity.title AS Title,
-                text_search_note_content_content.c0text AS "Text",
-                tree_entity.last_modifier_email AS "Last Modifier Email"
-            FROM text_search_note_content_content
-            INNER JOIN tree_entity ON text_search_note_content_content.docid = tree_entity._id
-            ''')
+            all_rows = []
 
-            all_rows = cursor.fetchall()
+            primary_query = '''
+                SELECT 
+                    datetime(T1.time_created/1000, 'unixepoch') AS "Time Created",
+                    datetime(T1.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
+                    datetime(T1.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
+                    T1.title AS Title,
+                    T2.c0text AS "Text",
+                    T1.last_modifier_email AS "Last Modifier Email"
+                FROM tree_entity T1
+                INNER JOIN text_search_note_content_content T2 ON T2.docid = T1._id
+            '''
+            data_headers = ('Time Created', 'Time Last Updated', 'User Edited Timestamp', 'Title', 'Text', 'Last Modifier Email')
+
+            try:
+                cursor.execute(primary_query)
+                all_rows = cursor.fetchall()
+                logfunc(f'Good main Query for {filename}.')
+
+            except sqlite3.OperationalError as e:
+                if 'no such table' in str(e):
+                    logfunc(f'Bad Query failed for {filename} missing table: {e}, alternative->')
+                    
+                    fallback_query = '''
+                        SELECT
+                            datetime(T1.time_created/1000, 'unixepoch') AS "Time Created",
+                            datetime(T1.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
+                            datetime(T1.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
+                            T1.title AS Title,
+                            T2.note_content_text AS "Text (From Note Changes)",
+                            T1.last_modifier_email AS "Last Modifier Email"
+                        FROM tree_entity T1
+                        LEFT JOIN note_changes T2 ON T1._id = T2.note_id
+                        GROUP BY T1._id
+                        ORDER BY T1.time_created ASC
+                    '''
+                    data_headers = ('Time Created', 'Time Last Updated', 'User Edited Timestamp', 'Title', 'Text (From Note Changes)', 'Last Modifier Email')
+                    
+                    try:
+                        cursor.execute(fallback_query)
+                        all_rows = cursor.fetchall()
+                        logfunc(f'Good Fallback for {filename}.')
+                    except Exception as fe:
+                        logfunc(f'Bad Fallback, with error: {fe}')
+                        continue 
+                        
+                else:
+                    logfunc(f'Error unhandled SQLite Operational Error in {filename}: {e}')
+                    raise 
+
             usageentries = len(all_rows)
 
             if usageentries > 0:
@@ -51,7 +90,6 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Google Keep Notes')
                 report.start_artifact_report(report_folder, 'Google Keep Notes')
                 report.add_script()
-                data_headers = ('Time Created', 'Time Last Updated', 'User Edited Timestamp', 'Title', 'Text', 'Last Modifier Email')
                 report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
                 report.end_artifact_report()
 
@@ -62,5 +100,4 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
                 timeline(report_folder, tlactivity, data_list, data_headers)
 
             else:
-                logfunc('No Google Keep Notes data available')
-
+                logfunc(f'No Google Keep Notes data available')
