@@ -37,6 +37,7 @@ def get_swellbeing(files_found, report_folder, seeker, wrap_text):
         when usageEvents.eventType=23 THEN 'ACTIVITY_STOPPED'
         when usageEvents.eventType=26 THEN 'DEVICE_SHUTDOWN'
         when usageEvents.eventType=27 THEN 'DEVICE_STARTUP'
+        when usageEvents.eventType=28 THEN 'USER_UNLOCKED'
         else usageEvents.eventType
         END as eventTypeDescription
         FROM usageEvents
