@@ -13,7 +13,7 @@ __artifacts_v2__ = {
             "*/com.whatsapp/files/Logs/*",
             "*/com.whatsapp/databases/wa.db",
         ),
-        output_types: "standard",
+        "output_types": "standard",
         "function": "get_WhatsAppLogFiles",
     }
 }
@@ -247,7 +247,6 @@ class WALogLine:
 # Define a specific token for entering/exiting conversations
 enter_exit_conversation_token = WAToken("conversation/window-focus-changed", "")
 
-@artifact_processor
 def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text):
     """
     Process WhatsApp log files, extract relevant events, and generate forensic reports.
