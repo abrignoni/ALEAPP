@@ -4,13 +4,13 @@
 # Artifact version: 1.0.4
 # Requirements: none
 
-import sqlite3
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_fitbit_user_db(files_found, report_folder, seeker, wrap_text):
+# pylint: disable=broad-exception-caught
+def get_fitbit_user_db(files_found, report_folder, _seeker, _wrap_text):
     
     source_db = ''
     for file_found in files_found:
@@ -247,4 +247,5 @@ __artifacts__ = {
                 "Fitbit",
                 ('*/databases/user.db'),
                 get_fitbit_user_db)
+
 }
