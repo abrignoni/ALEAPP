@@ -1,7 +1,7 @@
 # Module Description: Parses Fitbit Passive Stats DB from Wear OS 
 # Author: ganeshbs17
 # Date: 2025-01-09
-# Artifact version: 1.0.1
+# Artifact version: 1.0.2
 # Requirements: none
 
 import sqlite3
@@ -23,22 +23,14 @@ def get_fitbit_passive_stats(files_found, report_folder, seeker, wrap_text):
         cursor = db.cursor()
 
         # -----------------------------------------------------------------------
-        # 1. Exercise Summaries (Workouts - The "Parent" Record)
+        # 1. Exercise Summaries 
         # -----------------------------------------------------------------------
         try:
             cursor.execute('''
             SELECT
                 datetime(time/1000, 'unixepoch') as "Start Time",
                 sessionId,
-                case exerciseTypeId
-                    when 0 then 'Unknown'
-                    when 39 then 'Running'
-                    when 8 then 'Cycling'
-                    when 79 then 'Walking'
-                    when 40 then 'Swimming'
-                    when 7 then 'Hiking'
-                    else exerciseTypeId
-                end as "Activity Type",
+                exerciseTypeId as "Activity Type ID",  
                 totalDistanceMm / 1000000.0 as "Distance (KM)",
                 steps,
                 caloriesBurned,
@@ -55,7 +47,7 @@ def get_fitbit_passive_stats(files_found, report_folder, seeker, wrap_text):
                 report.start_artifact_report(report_folder, 'Fitbit - Workouts')
                 report.add_script()
                 
-                data_headers = ('Start Time', 'Session ID', 'Activity Type', 'Distance (KM)', 'Steps', 'Calories', 'Avg HR', 'Elevation (ft)')
+                data_headers = ('Start Time', 'Session ID', 'Activity Type ID', 'Distance (KM)', 'Steps', 'Calories', 'Avg HR', 'Elevation (ft)')
                 data_list = []
                 for row in all_rows:
                     data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
@@ -110,7 +102,7 @@ def get_fitbit_passive_stats(files_found, report_folder, seeker, wrap_text):
             logfunc(f'Error parsing Fitbit GPS: {e}')
 
         # -----------------------------------------------------------------------
-        # 3. Heart Rate Stats (Standard)
+        # 3. Heart Rate Stats 
         # -----------------------------------------------------------------------
         try:
             cursor.execute('''
@@ -255,49 +247,7 @@ def get_fitbit_passive_stats(files_found, report_folder, seeker, wrap_text):
             logfunc(f'Error parsing Fitbit AZM: {e}')
 
         # -----------------------------------------------------------------------
-        # 7. Daily Stats (Pattern of Life)
-        # -----------------------------------------------------------------------
-        try:
-            cursor.execute('''
-            SELECT
-                datetime(dayStart/1000, 'unixepoch') as "Date",
-                datetime(lastUpdated/1000, 'unixepoch') as "Last Updated",
-                case statId
-                    when 1 then 'Steps'
-                    when 2 then 'Distance'
-                    when 3 then 'Calories'
-                    when 4 then 'Floors'
-                    else statId
-                end as "Stat Type",
-                value
-            FROM PassiveDailyStatsEntity
-            ORDER BY dayStart DESC
-            ''')
-            
-            all_rows = cursor.fetchall()
-            
-            if len(all_rows) > 0:
-                report = ArtifactHtmlReport('Fitbit - Daily Stats')
-                report.start_artifact_report(report_folder, 'Fitbit - Daily Stats')
-                report.add_script()
-                
-                data_headers = ('Date', 'Last Updated', 'Stat Type', 'Value')
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0], row[1], row[2], row[3]))
-
-                report.write_artifact_data_table(data_headers, data_list, source_db)
-                report.end_artifact_report()
-                
-                tsv(report_folder, data_headers, data_list, 'Fitbit - Daily Stats')
-                timeline(report_folder, 'Fitbit - Daily Stats', data_list, data_headers)
-            else:
-                logfunc('No Fitbit Daily Stats found')
-        except Exception as e:
-            logfunc(f'Error parsing Fitbit Daily Stats: {e}')
-
-        # -----------------------------------------------------------------------
-        # 8. Exercise Splits (Pace/Km)
+        # 7. Exercise Splits (Pace/Km)
         # -----------------------------------------------------------------------
         try:
             cursor.execute('''
@@ -335,7 +285,7 @@ def get_fitbit_passive_stats(files_found, report_folder, seeker, wrap_text):
             logfunc(f'Error parsing Fitbit Splits: {e}')
 
         # -----------------------------------------------------------------------
-        # 9. Opaque Heart Rate (Raw Sensor Data)
+        # 8. Opaque Heart Rate (Raw Sensor Data)
         # -----------------------------------------------------------------------
         try:
             cursor.execute('''
