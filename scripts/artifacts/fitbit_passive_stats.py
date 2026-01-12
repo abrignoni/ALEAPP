@@ -4,12 +4,11 @@
 # Artifact version: 1.0.2
 # Requirements: none
 
-import sqlite3
-
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_fitbit_passive_stats(files_found, report_folder, seeker, wrap_text):
+# pylint: disable=broad-exception-caught
+def get_fitbit_passive_stats(files_found, report_folder, _seeker, _wrap_text):
     
     # Locate the specific database file
     source_db = ''
@@ -329,3 +328,4 @@ __artifacts__ = {
                 ('*/databases/passive_stats.db'),
                 get_fitbit_passive_stats)
 }
+
