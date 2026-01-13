@@ -1,6 +1,8 @@
 # Module Description: Parses Fitbit data from Android (Phone) and Wear OS (Watch)
 
 import json
+import folium 
+import os
 
 from datetime import datetime, timezone
 from scripts.artifact_report import ArtifactHtmlReport
@@ -678,17 +680,60 @@ def get_fitbit_wearos(files_found, report_folder, seeker, wrap_text):
                 ''')
                 all_rows = cursor.fetchall()
                 if len(all_rows) > 0:
+                    # 1. Generate the standard text report first
                     report = ArtifactHtmlReport('Fitbit - GPS Trackpoints (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - GPS Trackpoints (Wear OS)','GPS trackpoints recorded during exercises. Parsed from ExerciseGpsEntity table.')
+                    report.start_artifact_report(report_folder, 'Fitbit - GPS Trackpoints (Wear OS)', 'GPS Coordinates. <b><a href="Fitbit/Fitbit_GPS_Map.html" target="_blank">click here to open in new tab</a></b>')
                     report.add_script()
-                    data_headers = ('Timestamp', 'Latitude', 'Longitude', 'Altitude', 'Speed', 'Bearing', 'Est. Error')
+
+                    data_headers = ('Timestamp', 'Latitude', 'Longitude', 'Altitude', 'Speed', 'Est. Error')
                     data_list = []
+                    points = []
+
                     for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
+                        # Add to text report
+                        data_list.append((row[0], row[1], row[2], row[3], row[4], row[6]))
+                        
+                        # Add to Map Points (Filter out valid 0.0 or nulls if needed)
+                        if row[1] and row[2]:
+                            points.append((row[1], row[2]))
+
+                    # ---------------------------------------------------------
+                    # MAP GENERATION (Folium)
+                    # ---------------------------------------------------------
+                    if len(points) > 0:
+                        try:
+                            # Center map on the first point
+                            m = folium.Map(location=points[0], zoom_start=13, tiles='OpenStreetMap')
+                            
+                            # Add the route line
+                            folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(m)
+                            
+                            # Add Start/End markers
+                            folium.Marker(points[0], popup='Start', icon=folium.Icon(color='green', icon='play')).add_to(m)
+                            folium.Marker(points[-1], popup='End', icon=folium.Icon(color='red', icon='stop')).add_to(m)
+
+                            # Save HTML map to the report folder
+                            map_filename = 'Fitbit_GPS_Map.html'
+                            map_path = os.path.join(report_folder, map_filename)
+                            m.save(map_path)
+                            
+                            logfunc(f'Map generated: {map_path}')
+                        except Exception as e:
+                            logfunc(f'Error generating map: {str(e)}')
+                    # ---------------------------------------------------------
+
                     report.write_artifact_data_table(data_headers, data_list, file_found)
+                    
+                    # --- START: INJECT IFRAME AT BOTTOM ---
+                    if len(points) > 0:
+                        report.add_section_heading('Interactive Map Preview')
+                        report.add_map(f'<iframe src="Fitbit/Fitbit_GPS_Map.html" width="100%" height="600" class="map"></iframe>')
+                    # --- END: INJECT IFRAME AT BOTTOM ---
+
                     report.end_artifact_report()
                     tsv(report_folder, data_headers, data_list, 'Fitbit - GPS Trackpoints (Wear OS)')
                     timeline(report_folder, 'Fitbit - GPS Trackpoints (Wear OS)', data_list, data_headers)
+                    kmlgen(report_folder, 'Fitbit_GPS_WearOS', data_list, data_headers)
             except Exception as e:
                 logfunc(f'Error parsing Fitbit GPS: {e}')
 
