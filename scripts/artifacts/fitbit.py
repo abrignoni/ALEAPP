@@ -4,9 +4,8 @@ import json
 import folium 
 import os
 
-from datetime import datetime, timezone
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, kmlgen, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import logfunc, tsv, kmlgen, timeline, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 __artifacts_v2__ = {
     "Fitbit": {
@@ -35,8 +34,16 @@ __artifacts_v2__ = {
     }
 }
 
-def get_fitbit(files_found, report_folder, seeker, wrap_text):
+def get_fitbit(files_found, report_folder, _seeker, _wrap_text):
     
+    file_found_activity = ''
+    file_found_device = ''
+    file_found_exercise = ''
+    file_found_heart = ''
+    file_found_sleep = ''
+    file_found_social = ''
+    file_found_mobile = ''
+
     data_list_activity = []
     data_list_devices = []
     data_list_exercises = []
@@ -313,10 +320,10 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_activity, file_found_activity)
         report.end_artifact_report()
         
-        tsvname = f'Fitbit Activity'
+        tsvname = 'Fitbit Activity'
         tsv(report_folder, data_headers, data_list_activity, tsvname)
         
-        tlactivity = f'Fitbit Activity'
+        tlactivity = 'Fitbit Activity'
         timeline(report_folder, tlactivity, data_list_activity, data_headers)
     else:
         logfunc('No Fitbit Activity data available')
@@ -330,10 +337,10 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_devices, file_found_device)
         report.end_artifact_report()
         
-        tsvname = f'Fitbit Device Info'
+        tsvname = 'Fitbit Device Info'
         tsv(report_folder, data_headers, data_list_devices, tsvname)
         
-        tlactivity = f'Fitbit Device Info'
+        tlactivity = 'Fitbit Device Info'
         timeline(report_folder, tlactivity, data_list_devices, data_headers)
     else:
         logfunc('No Fitbit Device Info data available')
@@ -347,13 +354,13 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_exercises, file_found_exercise)
         report.end_artifact_report()
         
-        tsvname = f'Fitbit Exercise'
+        tsvname = 'Fitbit Exercise'
         tsv(report_folder, data_headers, data_list_exercises, tsvname)
         
-        tlactivity = f'Fitbit Exercise'
+        tlactivity = 'Fitbit Exercise'
         timeline(report_folder, tlactivity, data_list_exercises, data_headers)
     else:
-        logfunc(f'No Fitbit - Exercise data available')
+        logfunc('No Fitbit - Exercise data available')
         
     if data_list_heart:
         report = ArtifactHtmlReport('Fitbit Heart Rate Summary')
@@ -364,10 +371,10 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_heart, file_found_heart)
         report.end_artifact_report()
         
-        tsvname = f'Fitbit Heart Rate Summary'
+        tsvname = 'Fitbit Heart Rate Summary'
         tsv(report_folder, data_headers, data_list_heart, tsvname)
         
-        tlactivity = f'Fitbit Heart Rate Summary'
+        tlactivity = 'Fitbit Heart Rate Summary'
         timeline(report_folder, tlactivity, data_list_heart, data_headers)
     else:
         logfunc('No Fitbit Heart Rate Summary data available')
@@ -381,10 +388,10 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_sleep_detail, file_found_sleep)
         report.end_artifact_report()
         
-        tsvname = f'Fitbit Sleep Detail'
+        tsvname = 'Fitbit Sleep Detail'
         tsv(report_folder, data_headers, data_list_sleep_detail, tsvname)
         
-        tlactivity = f'Fitbit Sleep Detail'
+        tlactivity = 'Fitbit Sleep Detail'
         timeline(report_folder, tlactivity, data_list_sleep_detail, data_headers)
     else:
         logfunc('No Fitbit Sleep Detail data available')
@@ -398,7 +405,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_sleep_summary, file_found_sleep)
         report.end_artifact_report()
         
-        tsvname = f'Fitbit Sleep Summary'
+        tsvname = 'Fitbit Sleep Summary'
         tsv(report_folder, data_headers, data_list_sleep_summary, tsvname)
     else:
         logfunc('No Fitbit Sleep Summary data available')
@@ -412,7 +419,7 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_friends, file_found_social)
         report.end_artifact_report()
         
-        tsvname = f'Fitbit Friends'
+        tsvname = 'Fitbit Friends'
         tsv(report_folder, data_headers, data_list_friends, tsvname)
         
     else:
@@ -427,10 +434,10 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_user, file_found_social)
         report.end_artifact_report()
         
-        tsvname = f'Fitbit User Profile'
+        tsvname = 'Fitbit User Profile'
         tsv(report_folder, data_headers, data_list_user, tsvname)
         
-        tlactivity = f'Fitbit User Profile'
+        tlactivity = 'Fitbit User Profile'
         timeline(report_folder, tlactivity, data_list_user, data_headers)
         
     else:
@@ -445,17 +452,17 @@ def get_fitbit(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_steps, file_found_mobile)
         report.end_artifact_report()
         
-        tsvname = f'Fitbit Steps'
+        tsvname = 'Fitbit Steps'
         tsv(report_folder, data_headers, data_list_steps, tsvname)
         
-        tlactivity = f'Fitbit Steps'
+        tlactivity = 'Fitbit Steps'
         timeline(report_folder, tlactivity, data_list_steps, data_headers)
         
     else:
         logfunc('No Fitbit Steps data available')
 
 # pylint: disable=broad-exception-caught
-def get_fitbit_wearos(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos(files_found, report_folder, _seeker, _wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -727,7 +734,7 @@ def get_fitbit_wearos(files_found, report_folder, seeker, wrap_text):
                     # --- START: INJECT IFRAME AT BOTTOM ---
                     if len(points) > 0:
                         report.add_section_heading('Interactive Map Preview')
-                        report.add_map(f'<iframe src="Fitbit/Fitbit_GPS_Map.html" width="100%" height="600" class="map"></iframe>')
+                        report.add_map('<iframe src="Fitbit/Fitbit_GPS_Map.html" width="100%" height="600" class="map"></iframe>')
                     # --- END: INJECT IFRAME AT BOTTOM ---
 
                     report.end_artifact_report()
