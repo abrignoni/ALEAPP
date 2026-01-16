@@ -123,7 +123,7 @@ def randochat_messages(files_found, report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def randochat_account(files_found, report_folder, _seeker, _wrap_text):
+def randochat_account(files_found, _report_folder, _seeker, _wrap_text):
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]   
 
 
@@ -172,7 +172,7 @@ def randochat_account(files_found, report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def randochat_contacts(files_found, report_folder, _seeker, _wrap_text):
+def randochat_contacts(files_found, _report_folder, _seeker, _wrap_text):
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]   
     main_db = ''
 
