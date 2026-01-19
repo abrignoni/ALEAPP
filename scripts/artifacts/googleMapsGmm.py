@@ -85,16 +85,26 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text):
             db = open_sqlite_db_readonly(file_found)
             file_found_myplaces = file_found
             cursor = db.cursor()
-            cursor.execute('''
-            select 
-            rowid,
-            key_string,
-            round(latitude*.000001,6),
-            round(longitude*.000001,6),
-            sync_item,
-            timestamp         
-            from sync_item 
-            ''')
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='sync_item';")
+            if not cursor.fetchone():
+                logfunc(f'sync_item table not found in {file_found_myplaces}, skipping.')
+                db.close()
+                continue
+            try:
+                cursor.execute('''
+                select 
+                rowid,
+                key_string,
+                round(latitude*.000001,6),
+                round(longitude*.000001,6),
+                sync_item,
+                timestamp         
+                from sync_item 
+                ''')
+            except sqlite3.OperationalError as e:
+                logfunc(f'sync_item table query failed in {file_found_myplaces}: {e}')
+                db.close()
+                continue
             all_rows = cursor.fetchall()
 
             for row in all_rows:

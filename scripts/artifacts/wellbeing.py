@@ -63,34 +63,39 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text):
                     data_list.append((event_ts, row[2], row[3], file_found))
                     
             cursor = db.cursor()
-            cursor.execute('''
-            SELECT 
-            datetime(component_events.timestamp/1000, "UNIXEPOCH") as timestamp,
-            component_events._id,
-            components.package_id, 
-            packages.package_name, 
-            components.component_name as website,
-            CASE
-            when component_events.type=1 THEN 'ACTIVITY_RESUMED'
-            when component_events.type=2 THEN 'ACTIVITY_PAUSED'
-            else component_events.type
-            END as eventType
-            FROM component_events
-            INNER JOIN components ON component_events.component_id=components._id
-            INNER JOIN packages ON components.package_id=packages._id
-            ORDER BY timestamp
-            ''')
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='component_events';")
+            has_component_events = cursor.fetchone() is not None
+            if has_component_events:
+                cursor.execute('''
+                SELECT 
+                datetime(component_events.timestamp/1000, "UNIXEPOCH") as timestamp,
+                component_events._id,
+                components.package_id, 
+                packages.package_name, 
+                components.component_name as website,
+                CASE
+                when component_events.type=1 THEN 'ACTIVITY_RESUMED'
+                when component_events.type=2 THEN 'ACTIVITY_PAUSED'
+                else component_events.type
+                END as eventType
+                FROM component_events
+                INNER JOIN components ON component_events.component_id=components._id
+                INNER JOIN packages ON components.package_id=packages._id
+                ORDER BY timestamp
+                ''')
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    event_ts = row[0]
-                    if event_ts is None:
-                        pass
-                    else:
-                        event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),'UTC')
-                    data_list_url.append((event_ts, row[1], row[2], row[3], row[4], row[5], file_found))
+                all_rows = cursor.fetchall()
+                usageentries = len(all_rows)
+                if usageentries > 0:
+                    for row in all_rows:
+                        event_ts = row[0]
+                        if event_ts is None:
+                            pass
+                        else:
+                            event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),'UTC')
+                        data_list_url.append((event_ts, row[1], row[2], row[3], row[4], row[5], file_found))
+            else:
+                logfunc('No component_events table in Digital Wellbeing database; skipping URL events.')
             db.close()
             
         else:
