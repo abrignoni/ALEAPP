@@ -168,13 +168,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 when 0 then ""
                 when 1 then "Yes"
             end as "Messenger User",
-            case friendship_status
-                when 0 then "N/A (Self)"
-                when 1 then "Friends"
-                when 2 then "Friend Request Received"
-                when 3 then "Friend Request Sent"
-                when 4 then "Not Friends"
-            end as "Friendship Status",
+            '' as "Friendship Status",
             substr(datetime(birthday_timestamp,'unixepoch'),6,5) as "Birthdate (MM-DD)"
             from contacts
             ''')
@@ -224,7 +218,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
                 (select json_extract (messages.shares, '$[0].href')) as ShareLink,
                 message_reactions.reaction as "Message Reaction",
-                datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
+                '' as "Message Reaction Timestamp",
                 messages.msg_id
                 from messages, threads
                 left join message_reactions on message_reactions.msg_id = messages.msg_id
@@ -248,7 +242,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
                 (select json_extract (messages.shares, '$[0].href')) as ShareLink,
                 message_reactions.reaction as "Message Reaction",
-                datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
+                '' as "Message Reaction Timestamp",
                 messages.msg_id
                 from messages, threads
                 left join message_reactions on message_reactions.msg_id = messages.msg_id
@@ -338,8 +332,8 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 when 0 then 'No'
                 when 1 then 'Yes'
             end is_friend,
-            friendship_status,
-            contact_relationship_status
+            '' as friendship_status,
+            '' contact_relationship_status
             from thread_users
             ''')
 
