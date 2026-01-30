@@ -27,7 +27,7 @@ def alex_live_appops(files_found, _report_folder, _seeker, _wrap_text):
     data_list = []
     
     try:
-        with open(source_path) as app_ops_file:
+        with open(source_path, "r", encoding="utf-8") as app_ops_file:
             app_ops_data = json.load(app_ops_file)
         for package, permissions in app_ops_data.items():
             for permission, value in permissions.items():
