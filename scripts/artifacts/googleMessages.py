@@ -20,17 +20,33 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+
+        parts_columns = {row[1] for row in cursor.execute('PRAGMA table_info(parts)').fetchall()}
+        if 'file_size_bytes' in parts_columns:
+            attachment_case = '''
+        CASE
+        WHEN parts.file_size_bytes=-1 THEN "N/A"
+        ELSE parts.file_size_bytes
+        END AS "Attachment Byte Size"'''
+        elif 'file_size' in parts_columns:
+            attachment_case = '''
+        CASE
+        WHEN parts.file_size=-1 THEN "N/A"
+        ELSE parts.file_size
+        END AS "Attachment Byte Size"'''
+        else:
+            attachment_case = '"N/A" AS "Attachment Byte Size"'
+            logfunc('Google Messages: attachment size column missing; defaulting to N/A.')
+
+        try:
+            cursor.execute(f'''
         SELECT
         datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
         parts.content_type AS "Message Type",
         conversations.name AS "Other Participant/Conversation Name",
         participants.display_destination AS "Message Sender",
         parts.text AS "Message",
-        CASE
-        WHEN parts.file_size_bytes=-1 THEN "N/A"
-        ELSE parts.file_size_bytes
-        END AS "Attachment Byte Size",
+        {attachment_case},
         parts.local_cache_path AS "Attachment Location"
         FROM
         parts
@@ -39,8 +55,11 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         JOIN conversations ON conversations._id=parts.conversation_id
         ORDER BY "Timestamp (UTC)" ASC
         ''')
+            all_rows = cursor.fetchall()
+        except sqlite3.OperationalError as ex:
+            logfunc(f'Google Messages: SQLite error - {ex}')
+            all_rows = []
 
-        all_rows = cursor.fetchall()
         usageentries = len(all_rows)
         if usageentries > 0:
             report = ArtifactHtmlReport('Google Messages')
