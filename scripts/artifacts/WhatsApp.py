@@ -4,7 +4,7 @@ import xmltodict
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, does_column_exist_in_db, media_to_html
 
-def get_WhatsApp(files_found, report_folder, seeker):
+def get_WhatsApp(files_found, report_folder, seeker, _wrap_text):
 
     separator = '/'
     source_file_msg = ''
