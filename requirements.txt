@@ -8,7 +8,7 @@ geopy==2.3.0
 packaging==20.1
 pillow
 polyline==2.0.0
-protobuf==3.10.0
+protobuf==5.29.6
 PyCryptodome
 pytz
 simplekml
