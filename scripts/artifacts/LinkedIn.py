@@ -1,9 +1,6 @@
-# LinkedIn App (com.linkedin.android)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# Version: 0.0.1
-# 
 # Tested with the following versions:
-# 2024-08-16: Android 14, App: 4.1966
+# 2024-08-16: Android 14, App: 4.1.966
+# 2025-02-07: Android 16, App: 4.1.1166
 
 # Requirements:  json, xml
 
@@ -11,25 +8,27 @@
 __artifacts_v2__ = {
 
     
-    "get_linkedin_account": {
+    "linkedin_account": {
         "name": "LinkedIn - Account",
         "description": "Existing account in LinkedIn App. The Public Identifier can be used to visit the public profile on the LinkedIn Website (https://www.linkedin.com/in/[Public Identifier]).",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
-        "date": "2025-04-26",
-        "requirements": "xml",
+        "version": "0.1",
+        "creation_date": "2025-04-26",
+        'last_update_date': '2026-02-07',
+        "requirements": "xml, json",
         "category": "LinkedIn",
         "notes": "",
         "paths": ('*/com.linkedin.android/shared_prefs/linkedInPrefsName.xml'),
         "output_types": "standard",
         "artifact_icon": "user"
     },
-    "get_linkedin_messages": {
+    "linkedin_messages": {
         "name": "LinkedIn - Messages",
         "description": "Messages sent and received from LinkedIn App",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
-        "date": "2025-04-26",
+        "version": "0.1",
+        'creation_date': '2025-04-26',
+        'last_update_date': '2026-02-07',
         "requirements": "",
         "category": "LinkedIn",
         "notes": "",
@@ -39,14 +38,13 @@ __artifacts_v2__ = {
     }
 }
 
-
 import json
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
 
 @artifact_processor
-def get_linkedin_account(files_found, report_folder, seeker, wrap_text):
+def linkedin_account(files_found, _report_folder, _seeker, _wrap_text):
     
     # Get data from xml into a dict to work with
     xml_dict = {}
@@ -74,16 +72,16 @@ def get_linkedin_account(files_found, report_folder, seeker, wrap_text):
     first_name = temp_meModel['miniProfile']['firstName']
     headline = temp_meModel['miniProfile']['occupation']
     public_identifier = temp_meModel['miniProfile']['publicIdentifier']
-    data_list = [(last_login, member_id, last_name, first_name, headline, public_identifier)]
+    data_list = [(last_login, member_id, account_mail, last_name, first_name, headline, public_identifier)]
 
-    data_headers = ('Last Login', 'Member ID', 'Last Name', 'First Name', 'Headline', 'Public Identifier')
+    data_headers = ('Last Login', 'Member ID', 'Account Mail', 'Last Name', 'First Name', 'Headline', 'Public Identifier')
 
     return data_headers, data_list, files_found[0]
 
 
 
 @artifact_processor
-def get_linkedin_messages(files_found, report_folder, seeker, wrap_text):
+def linkedin_messages(files_found, _report_folder, _seeker, _wrap_text):
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
 
     query = ('''
