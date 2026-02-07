@@ -86,7 +86,7 @@ def linkedin_messages(files_found, _report_folder, _seeker, _wrap_text):
 
     query = ('''
             SELECT
-            strftime('%Y-%m-%d %H:%M:%S.', "md"."deliveredAt"/1000, 'unixepoch') || ("md"."deliveredAt"%1000) [deliveredAt],
+            md.deliveredAt[deliveredAt],
             CASE WHEN md.status = '5' 
                 THEN 'Delivered'
                 ELSE 'Unknown'
@@ -107,7 +107,7 @@ def linkedin_messages(files_found, _report_folder, _seeker, _wrap_text):
 
     data_list = []
     for row in db_records:
-        delivery_date = row[0]
+        delivery_date = convert_unix_ts_to_utc(int(row[0])/1000)
         delivery_status = row[1]
         sender_firstname = row[2]
         sender_lastname = row[3]
