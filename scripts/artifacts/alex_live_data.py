@@ -522,7 +522,6 @@ def alex_live_bt_bonded(files_found, _report_folder, _seeker, _wrap_text):
         data_list = []
         in_bonded = False
         for line in btm_dump.splitlines():
-            stripped = line.strip()
             if "Bonded devices:" in line:
                 in_bonded = True
                 continue
