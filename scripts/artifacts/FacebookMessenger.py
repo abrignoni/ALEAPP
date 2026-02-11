@@ -207,8 +207,17 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             source_file = file_found.replace(seeker.data_folder, '')
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
+
+            cursor.execute("PRAGMA table_info('messages');")
+            cols = [r[1] for r in cursor.fetchall()]
+            if 'reaction_timestamp' in cols:
+                reaction_ts_sql = 'datetime(message_reactions.reaction_timestamp/1000,\'unixepoch\') as "Message Reaction Timestamp",'
+            else:
+                reaction_ts_sql = "'' as \"Message Reaction Timestamp\","
+
+
             try:
-                cursor.execute('''
+                cursor.execute(f'''
                 select
                 case messages.timestamp_ms
                     when 0 then ''
@@ -224,7 +233,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
                 (select json_extract (messages.shares, '$[0].href')) as ShareLink,
                 message_reactions.reaction as "Message Reaction",
-                datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
+                {reaction_ts_sql}
                 messages.msg_id
                 from messages, threads
                 left join message_reactions on message_reactions.msg_id = messages.msg_id
@@ -233,7 +242,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 ''')
                 snippet = 1
             except:
-                cursor.execute('''
+                cursor.execute(f'''
                 select
                 case messages.timestamp_ms
                     when 0 then ''
@@ -248,7 +257,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
                 (select json_extract (messages.shares, '$[0].href')) as ShareLink,
                 message_reactions.reaction as "Message Reaction",
-                datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
+                {reaction_ts_sql}
                 messages.msg_id
                 from messages, threads
                 left join message_reactions on message_reactions.msg_id = messages.msg_id
@@ -322,8 +331,26 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 timeline(report_folder, tlactivity, data_list, data_headers)
             else:
                 logfunc(f'No Facebook{typeof}- Calls{usernum} - threads_db2 data available')
+
+            cursor.execute("PRAGMA table_info('thread_users');")
+            cols = [r[1] for r in cursor.fetchall()]
+            if 'friendship_status' in cols:
+                friendship_status_sql = """case friendship_status
+                    when 0 then "N/A (Self)"
+                    when 1 then "Friends"
+                    when 2 then "Friend Request Received"
+                    when 3 then "Friend Request Sent"
+                    when 4 then "Not Friends"
+                end as "Friendship Status","""
+            else:
+                friendship_status_sql = "'' as \"Friendship Status\","
+
+            if 'contact_relationship_status' in cols:
+                contact_relationship_status_sql = 'contact_relationship_status as "Contact Relationship Status"'
+            else:
+                contact_relationship_status_sql = "'' as \"Contact Relationship Status\""
             
-            cursor.execute('''
+            cursor.execute(f'''
             select
             substr(user_key,10),
             first_name,
@@ -338,8 +365,8 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 when 0 then 'No'
                 when 1 then 'Yes'
             end is_friend,
-            friendship_status,
-            contact_relationship_status
+            {friendship_status_sql}
+            {contact_relationship_status_sql}
             from thread_users
             ''')
 

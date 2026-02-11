@@ -4,14 +4,12 @@
 # Version: 0.1
 # Requirements:  None
 
-import os
 import sqlite3
-import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_googleMessages(files_found, report_folder, seeker, wrap_text):
+def get_googleMessages(files_found, report_folder, _seeker, _wrap_text):
     
     for file_found in files_found:
         file_found = str(file_found)
@@ -20,28 +18,52 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+
+        try:
+            cursor.execute("PRAGMA table_info(parts)")
+            columns = [column[1] for column in cursor.fetchall()]
+        except sqlite3.OperationalError:
+            columns = []
+
+        if 'file_size_bytes' in columns:
+            file_size_query = '''
+            CASE
+                WHEN parts.file_size_bytes=-1 THEN "N/A"
+                ELSE parts.file_size_bytes
+            END'''
+        else:
+            file_size_query = "'N/A'"
+
+        if 'local_cache_path' in columns:
+            local_cache_query = 'parts.local_cache_path'
+        else:
+            local_cache_query = "'N/A'"
+
+        query = f'''
         SELECT
         datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
         parts.content_type AS "Message Type",
         conversations.name AS "Other Participant/Conversation Name",
         participants.display_destination AS "Message Sender",
         parts.text AS "Message",
-        CASE
-        WHEN parts.file_size_bytes=-1 THEN "N/A"
-        ELSE parts.file_size_bytes
-        END AS "Attachment Byte Size",
-        parts.local_cache_path AS "Attachment Location"
+        {file_size_query} AS "Attachment Byte Size",
+        {local_cache_query} AS "Attachment Location"
         FROM
         parts
         JOIN messages ON messages._id=parts.message_id
         JOIN participants ON participants._id=messages.sender_id
         JOIN conversations ON conversations._id=parts.conversation_id
         ORDER BY "Timestamp (UTC)" ASC
-        ''')
+        '''
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
+        try:
+            cursor.execute(query)
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+        except sqlite3.Error as e:
+            logfunc(f'Error executing query in Google Messages: {e}')
+            usageentries = 0
+
         if usageentries > 0:
             report = ArtifactHtmlReport('Google Messages')
             report.start_artifact_report(report_folder, 'Google Messages')
@@ -54,10 +76,10 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
             report.write_artifact_data_table(data_headers, data_list, file_found)
             report.end_artifact_report()
             
-            tsvname = f'Google Messages'
+            tsvname = 'Google Messages'
             tsv(report_folder, data_headers, data_list, tsvname)
             
-            tlactivity = f'Google Messages'
+            tlactivity = 'Google Messages'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Google Messages data available')
