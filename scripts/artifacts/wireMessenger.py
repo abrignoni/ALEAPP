@@ -65,44 +65,54 @@ def get_user_id(files_found):
 
 #wire names the database from the user id
 #this function checks the files found for the database matching the user id
-#it also checks that the user id located is in a uuid format  
+#it also checks that the user id located is in a uuid format
 def get_user_database(files_found, user_id):
     #create a regular expression for uuids and compile it
-    re_uuid = r'[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+    re_uuid = r"[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$"
     uuid_match = re.compile(re_uuid)
-    
+
     if re.match(uuid_match, user_id):
         for file_found in files_found:
-            is_sqlite3 = lambda file_found: open(file_found, 'rb').read(16) == b'SQLite format 3\x00'
             file_found = str(file_found)
             user_id = str(user_id)
+
+            #Skip cache folders entirely (avoids broken symlinks/ghost files)
+            if "/cache/" in file_found or "\\cache\\" in file_found:
+                continue
+
             #check if the file found ends with the uuid user id
             if file_found.endswith(user_id):
-                #check if the file found is also a sqlite database and is not a directory
-                if is_sqlite3 and not isdir(file_found):
-                    user_database = file_found
-                    #returns a string of the user database so it can then be queried using sqlite3
-                    return user_database
-                else:
-                    logfunc("Located a file ending with the User ID, but it is not an SQLite DB - I'll continue looking!")
-                    pass
-            else:
-                continue
+                if not isdir(file_found):
+                    try:
+                        with open(file_found, "rb") as f:
+                            file_header = f.read(16)
+                            if file_header == b"SQLite format 3\x00":
+                                return file_found
+                    except (IOError, OSError):
+                        #Silently continue if file cannot be opened (e.g. broken link)
+                        continue
     else:
         logfunc("User ID is not a UUID - decoding not supported!")
         pass
+
+    return None
 
 def get_wire_profile(files_found, report_folder, seeker, wrap_text):
     #get the user id and the database of the user
     user_id = get_user_id(files_found)
     user_database = get_user_database(files_found, user_id)
+
+    if not user_database:
+        logfunc("Valid Wire SQLite database not found.")
+        return
+
     #create an empty list for the profile data
     profile_data = list()
-    
+
     #connect to the db
     db = open_sqlite_db_readonly(user_database)
     cursor = db.cursor()
-    #sqlite query time                
+    #sqlite query time
     cursor.execute('''
     SELECT Users._id AS "User ID",
         Users.name AS "Display Name",
@@ -120,7 +130,7 @@ def get_wire_profile(files_found, report_folder, seeker, wrap_text):
     all_rows = cursor.fetchall()
     db.close()
     usage_entries = len(all_rows)
-    
+
     #check if there were any entries in the database
     if usage_entries > 0:
         #iterate through all rows in the database
@@ -136,15 +146,15 @@ def get_wire_profile(files_found, report_folder, seeker, wrap_text):
                     #update the boolean value to ensure that the profile picture gets parsed
                     found_profile_picture = True
 
-            #check if there was a profile picture located    
+            #check if there was a profile picture located
             if found_profile_picture:
                 profile_data.append((row[0],row[1],row[2],row[3],row[4], row[5], row[6], row[7], row[8], thumb))
             else:
                 profile_data.append((row[0],row[1],row[2],row[3],row[4], row[5], row[6], row[7], row[8], "No profile picture located"))
-                
+
     else:
         logfunc("No entries in the SQLite database!")
-    
+
     #checks if the profile data variable is populated then writes the data to the report
     if profile_data:
         description = 'Parses details about the user profile for Wire Messenger'
@@ -155,7 +165,7 @@ def get_wire_profile(files_found, report_folder, seeker, wrap_text):
                         'Verification Device','Device Model','Date Registered','Profile Picture Name', 'Profile Picture')
         report.write_artifact_data_table(data_headers, profile_data, user_database, html_escape=False)
         report.end_artifact_report()
-        
+
         tsvname = 'Wire User Profile'
         tsv(report_folder, data_headers, profile_data, tsvname)
     else:
@@ -165,13 +175,18 @@ def get_wire_contacts(files_found, report_folder, seeker, wrap_text):
     #get the user id and the database of the user
     user_id = get_user_id(files_found)
     user_database = get_user_database(files_found, user_id)
+
+    if not user_database:
+        logfunc("Valid Wire SQLite database not found.")
+        return
+
     #create an empty list for the contacts data
     contacts_data = list()
-    
+
     #connect to the db
     db = open_sqlite_db_readonly(user_database)
     cursor = db.cursor()
-    #sqlite query time                
+    #sqlite query time
     cursor.execute('''
     Select Users._id As "User ID",
         Users.name As "Display Name",
@@ -182,28 +197,28 @@ def get_wire_contacts(files_found, report_folder, seeker, wrap_text):
     From Users
         Where Users.connection != 'self'
     ''')           
-    
+
     all_rows = cursor.fetchall()
     db.close()
     usage_entries = len(all_rows)
-    
+
     #check if there were any entries in the database
     if usage_entries > 0:
         #iterate through all rows in the database
         for row in all_rows:
-            
+
             user_id = row[0]
             display_name = row[1]
             handle_id = row[2]
             conn_status = row[3]
             conn_time = row[4]
             profile_picture = row[5]
-            
+
             contacts_data.append((user_id, display_name, handle_id,
                                   conn_status, conn_time, profile_picture))
     else:
         logfunc("No entries in the SQLite database!")
-        
+
     #checks if the contacts data variable is populated then writes the data to the report
     if contacts_data:
         description = 'Parses details about the user contacts for Wire Messenger'
@@ -213,19 +228,24 @@ def get_wire_contacts(files_found, report_folder, seeker, wrap_text):
         data_headers = ('User ID', 'Display Name', 'Handle ID', 'Connection Status', 'Connection Time', 'Profile Picture ID')
         report.write_artifact_data_table(data_headers, contacts_data, user_database, html_escape=False)
         report.end_artifact_report()
-        
+
         tsvname = 'Wire User Contacts'
         tsv(report_folder, data_headers, contacts_data, tsvname)
     else:
         logfunc("No contacts data located!")
-        
+
 def get_wire_messages(files_found, report_folder, seeker, wrap_text):
     #get the user id and the database of the user
     user_id = get_user_id(files_found)
     user_database = get_user_database(files_found, user_id)
+
+    if not user_database:
+        logfunc("Valid Wire SQLite database not found.")
+        return
+
     #create an empty list for the messages data
     messages_data = list()
-    
+
     #connect to the db
     db = open_sqlite_db_readonly(user_database)
     cursor = db.cursor()
@@ -236,9 +256,9 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
     timestamp               
     FROM MsgDeletion;
     ''')
-    
+
     deleted_rows = cursor.fetchall()
-    
+
     if len(deleted_rows) == 0:
         cursor.execute('''
         Select
@@ -259,9 +279,9 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
             LEFT JOIN Assets2 ON Messages.asset_id = Assets2._id           
         Order By time;
         ''')
-    
+
     #closing read only db and opening write mode
-    #inserting the deleted messages into the Messages table    
+    #inserting the deleted messages into the Messages table
     else:
         db.close()
         db = sqlite3.connect(user_database)
@@ -276,7 +296,7 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
         UPDATE Messages
         SET msg_type = 'Deleted' WHERE msg_type = '';
         ''')
-        
+
         cursor.execute('''
         Select
             datetime(Messages.time / 1000, 'unixepoch'),
@@ -296,16 +316,16 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
             LEFT JOIN Assets2 ON Messages.asset_id = Assets2._id           
         Order By time;
         ''')
-        
+
     all_rows = cursor.fetchall()
     db.close()
     usage_entries = len(all_rows)
-    
+
     #check if there were any entries in the database
     if usage_entries > 0:
         #iterate through all rows in the database
         for row in all_rows:
-            
+
             date_time = row[0]
             message_id = row[1]
             user_id = row[2]
@@ -316,13 +336,12 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
             reacted_by = row[7]
             call_duration = row[8]
             asset_id = row[9]
-                
-            
+
             messages_data.append((date_time, message_id, user_id,message_type, message_content,
                                   reaction, reaction_dt, reacted_by, call_duration, asset_id))
     else:
         logfunc("No entries in the SQLite database!")
-               
+
     #checks if the messages data variable is populated then writes the data to the report
     if messages_data:
         description = 'Parses details about the messages for Wire Messenger'
@@ -333,7 +352,7 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
                         'Reacted By','Call Duration','Asset ID - Check Path: /data/media/0/Pictures/Wire Images/')
         report.write_artifact_data_table(data_headers, messages_data, user_database, html_escape=False)
         report.end_artifact_report()
-        
+
         tsvname = 'Wire User Contacts'
         tsv(report_folder, data_headers, messages_data, tsvname)
     else:
