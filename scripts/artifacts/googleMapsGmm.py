@@ -85,44 +85,50 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text):
             db = open_sqlite_db_readonly(file_found)
             file_found_myplaces = file_found
             cursor = db.cursor()
-            cursor.execute('''
-            select 
-            rowid,
-            key_string,
-            round(latitude*.000001,6),
-            round(longitude*.000001,6),
-            sync_item,
-            timestamp         
-            from sync_item 
-            ''')
-            all_rows = cursor.fetchall()
+            # --- MULAI PERBAIKAN  ---
+            try:
+                cursor.execute('''
+                select 
+                rowid,
+                key_string,
+                round(latitude*.000001,6),
+                round(longitude*.000001,6),
+                sync_item,
+                timestamp         
+                from sync_item 
+                ''')
+                all_rows = cursor.fetchall()
 
-            for row in all_rows:
-                id = row[0]
-                keystring = row[1]
-                latitude = row[2]
-                longitude = row[3]
-                syncitem = row[4]
-                timestamp = row[5]
-                pb = blackboxprotobuf.decode_message(syncitem, 'None')
+                for row in all_rows:
+                    id = row[0]
+                    keystring = row[1]
+                    latitude = row[2]
+                    longitude = row[3]
+                    syncitem = row[4]
+                    timestamp = row[5]
+                    pb = blackboxprotobuf.decode_message(syncitem, 'None')
 
-                if keystring == "0:0":
-                    label = "Home"
-                elif keystring == "1:0":
-                    label = "Work"
-                else:
-                    label = pb[0].get('6', {}).get('7', b'').decode('utf-8')
+                    if keystring == "0:0":
+                        label = "Home"
+                    elif keystring == "1:0":
+                        label = "Work"
+                    else:
+                        label = pb[0].get('6', {}).get('7', b'').decode('utf-8')
 
-                address = pb[0].get('6', {}).get('2', b'').decode('utf-8')
-                url = pb[0].get('6', {}).get('6', b'').decode('utf-8')
-                url = f'<a href="{url}" style = "color:blue" target="_blank">{url}</a>'
-                timestamp = datetime.fromtimestamp(timestamp/1000, tz=timezone.utc)
-                timestamp = convert_utc_human_to_timezone(timestamp, 'UTC')
-                data_list_myplaces.append((timestamp,label,latitude,longitude,address,url))
+                    address = pb[0].get('6', {}).get('2', b'').decode('utf-8')
+                    url = pb[0].get('6', {}).get('6', b'').decode('utf-8')
+                    url = f'<a href="{url}" style = "color:blue" target="_blank">{url}</a>'
+                    timestamp = datetime.fromtimestamp(timestamp/1000, tz=timezone.utc)
+                    timestamp = convert_utc_human_to_timezone(timestamp, 'UTC')
+                    data_list_myplaces.append((timestamp,label,latitude,longitude,address,url))
+            
+            except sqlite3.OperationalError:
+                logfunc(f"Table sync_item not found in {file_found}")
+            # --- AKHIR PERBAIKAN ---
+            
             db.close()
         else:
             continue
-        
     if data_list_storage:
         report = ArtifactHtmlReport('Google Search History Maps')
         report.start_artifact_report(report_folder, 'Google Search History Maps')
