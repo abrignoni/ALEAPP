@@ -292,8 +292,11 @@ def artifact_processor(func):
         func_name = func.__name__
 
         func_object = func.__globals__.get(func_name, {})
-        artifact_info = func_object.artifact_info #get('artifact_info', {})
-
+        
+        artifact_info = func.__globals__.get('__artifacts_v2__', {}).get(func_name, {})
+        if not artifact_info:
+            artifact_info = func_object.get(func_name, {})
+        
         artifact_name = artifact_info.get('name', func_name)
         category = artifact_info.get('category', '')
         description = artifact_info.get('description', '')
@@ -1307,5 +1310,3 @@ def check_internet_connection():
     except:
         logfunc("Internet connection is not available.")
         return False
-    
-    

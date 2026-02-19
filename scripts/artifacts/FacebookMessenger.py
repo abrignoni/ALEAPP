@@ -1,3 +1,4 @@
+# FacebookMessenger.py
 #2023-02-03: Added support for new msys_database format - Kevin Pagano
 
 import os
@@ -64,34 +65,67 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             source_file = file_found.replace(seeker.data_folder, '')
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
-            cursor.execute('''
-            select
-            datetime(messages.timestamp_ms/1000,'unixepoch') as "Message Time",
-            contacts.name as "Sender",
-            messages.sender_id as "Sender Account ID",
-            messages.thread_key as "Thread Key",
-            messages.text as "Message",
-            attachments.title_text as "Snippet",
-            attachments.subtitle_text as "Call/Location Information",
-            attachments.filename as "Attachment File Name",
-            attachments.playable_url_mime_type as "Attachment Type",
-            attachments.playable_url as "Attachment URL",
-            attachment_ctas.native_url as "Location Lat/Long",
-            reactions.reaction as "Reaction",
-            datetime(reactions.reaction_creation_timestamp_ms/1000,'unixepoch') as "Reaction Time",
-            case
-            when messages.is_admin_message = 1 then "Yes"
-            when messages.is_admin_message = 0 then "No"
-            else messages.is_admin_message
-            end as "Is Admin Message",
-            messages.message_id as "Message ID"
-            from messages
-            join contacts on contacts.id = messages.sender_id
-            left join attachments on attachments.message_id = messages.message_id
-            left join attachment_ctas on messages.message_id = attachment_ctas.message_id
-            left join reactions on reactions.message_id = messages.message_id
-            order by "Message Time" ASC
-            ''')
+            full_schema = True 
+            try:
+                cursor.execute('''
+                select
+                datetime(messages.timestamp_ms/1000,'unixepoch') as "Message Time",
+                contacts.name as "Sender",
+                messages.sender_id as "Sender Account ID",
+                messages.thread_key as "Thread Key",
+                messages.text as "Message",
+                attachments.title_text as "Snippet",
+                attachments.subtitle_text as "Call/Location Information",
+                attachments.filename as "Attachment File Name",
+                attachments.playable_url_mime_type as "Attachment Type",
+                attachments.playable_url as "Attachment URL",
+                attachment_ctas.native_url as "Location Lat/Long",
+                reactions.reaction as "Reaction",
+                datetime(reactions.reaction_creation_timestamp_ms/1000,'unixepoch') as "Reaction Time",
+                case
+                when messages.is_admin_message = 1 then "Yes"
+                when messages.is_admin_message = 0 then "No"
+                else messages.is_admin_message
+                end as "Is Admin Message",
+                messages.message_id as "Message ID"
+                from messages
+                join contacts on contacts.id = messages.sender_id
+                left join attachments on attachments.message_id = messages.message_id
+                left join attachment_ctas on messages.message_id = attachment_ctas.message_id
+                left join reactions on reactions.message_id = messages.message_id
+                order by "Message Time" ASC
+                ''')
+
+            except sqlite3.OperationalError as e:
+                logfunc(f'Error retrieving chats from msys_database: {e}. Attempting alternative query without Reaction Time.')
+                full_schema = False
+                cursor.execute('''
+                select
+                datetime(messages.timestamp_ms/1000,'unixepoch') as "Message Time",
+                contacts.name as "Sender",
+                messages.sender_id as "Sender Account ID",
+                messages.thread_key as "Thread Key",
+                messages.text as "Message",
+                attachments.title_text as "Snippet",
+                attachments.subtitle_text as "Call/Location Information",
+                attachments.filename as "Attachment File Name",
+                attachments.playable_url_mime_type as "Attachment Type",
+                attachments.playable_url as "Attachment URL",
+                attachment_ctas.native_url as "Location Lat/Long",
+                reactions.reaction as "Reaction",
+                case
+                when messages.is_admin_message = 1 then "Yes"
+                when messages.is_admin_message = 0 then "No"
+                else messages.is_admin_message
+                end as "Is Admin Message",
+                messages.message_id as "Message ID"
+                from messages
+                join contacts on contacts.id = messages.sender_id
+                left join attachments on attachments.message_id = messages.message_id
+                left join attachment_ctas on messages.message_id = attachment_ctas.message_id
+                left join reactions on reactions.message_id = messages.message_id
+                order by "Message Time" ASC
+                ''')
 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
@@ -99,10 +133,17 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Facebook - Chats - msys_database')
                 report.start_artifact_report(report_folder, f'Facebook{typeof}- Chats{usernum} - msys_database')
                 report.add_script()
-                data_headers = ('Message Timestamp','Sender','Sender ID','Thread Key','Message','Snippet','Call/Location Information','Attachment Name','Attachment Type','Attachment URL','Location Lat/Long','Reaction','Reaction Timestamp','Is Admin Message','Message ID') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14]))
+                
+                if full_schema:
+                    data_headers = ('Message Timestamp','Sender','Sender ID','Thread Key','Message','Snippet','Call/Location Information','Attachment Name','Attachment Type','Attachment URL','Location Lat/Long','Reaction','Reaction Timestamp','Is Admin Message','Message ID') # 15 columns
+                    data_list = []
+                    for row in all_rows:
+                        data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14]))
+                else:
+                    data_headers = ('Message Timestamp','Sender','Sender ID','Thread Key','Message','Snippet','Call/Location Information','Attachment Name','Attachment Type','Attachment URL','Location Lat/Long','Reaction','Is Admin Message','Message ID') # 14 columns
+                    data_list = []
+                    for row in all_rows:
+                        data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13]))
 
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
@@ -197,7 +238,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 tsv(report_folder, data_headers, data_list, tsvname, source_file)
                 
             else:
-                logfunc(f'No Facebook{typeof}- Contacts{usernum} - msys_database data available')   
+                logfunc(f'No Facebook{typeof}- Contacts{usernum} - msys_database data available')    
             
             db.close()
             
@@ -207,13 +248,15 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             source_file = file_found.replace(seeker.data_folder, '')
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
+            
+            snippet = 0 
             try:
                 cursor.execute('''
                 select
                 case messages.timestamp_ms
                     when 0 then ''
                     else datetime(messages.timestamp_ms/1000,'unixepoch')
-                End	as Datestamp,
+                End as Datestamp,
                 (select json_extract (messages.sender, '$.name')) as "Sender",
                 substr((select json_extract (messages.sender, '$.user_key')),10) as "Sender ID",
                 messages.thread_key,
@@ -231,14 +274,16 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
                 order by messages.thread_key, datestamp;
                 ''')
-                snippet = 1
-            except:
+                snippet = 1 
+            except sqlite3.OperationalError as e:
+                logfunc(f'Handling Error from threads_db2: {e}. current Query without snippet and Reaction Timestamp.')
+                
                 cursor.execute('''
                 select
                 case messages.timestamp_ms
                     when 0 then ''
                     else datetime(messages.timestamp_ms/1000,'unixepoch')
-                End	as Datestamp,
+                End as Datestamp,
                 (select json_extract (messages.sender, '$.name')) as "Sender",
                 substr((select json_extract (messages.sender, '$.user_key')),10) as "Sender ID",
                 messages.thread_key,
@@ -248,14 +293,13 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 (select json_extract (messages.shares, '$[0].description')) as ShareDesc,
                 (select json_extract (messages.shares, '$[0].href')) as ShareLink,
                 message_reactions.reaction as "Message Reaction",
-                datetime(message_reactions.reaction_timestamp/1000,'unixepoch') as "Message Reaction Timestamp",
                 messages.msg_id
                 from messages, threads
                 left join message_reactions on message_reactions.msg_id = messages.msg_id
                 where messages.thread_key=threads.thread_key and generic_admin_message_extensible_data IS NULL and msg_type != -1
                 order by messages.thread_key, datestamp;
                 ''')
-                
+            
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
             if usageentries > 0:
@@ -269,9 +313,9 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                     for row in all_rows:
                         data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12]))
                 else:
-                    data_headers = ('Timestamp','Sender Name','Sender ID','Thread Key','Message','Attachment Name','Share Name','Share Description','Share Link','Message Reaction','Message Reaction Timestamp','Message ID')
+                    data_headers = ('Timestamp','Sender Name','Sender ID','Thread Key','Message','Attachment Name','Share Name','Share Description','Share Link','Message Reaction','Message ID')
                     for row in all_rows:
-                        data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11]))
+                        data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10]))
                         
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
@@ -307,7 +351,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Facebook - Calls - threads_db2')
                 report.start_artifact_report(report_folder, f'Facebook{typeof}- Calls{usernum} - threads_db2')
                 report.add_script()
-                data_headers = ('Timestamp','Call Duration','Caller ID','Receiver Name','Receiver ID','Video Call','Thread Key') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+                data_headers = ('Call Timestamp','Call Duration','Caller ID','Receiver Name','Receiver ID','Video Call','Thread Key') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
                 data_list = []
                 for row in all_rows:
                     data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
@@ -323,25 +367,49 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             else:
                 logfunc(f'No Facebook{typeof}- Calls{usernum} - threads_db2 data available')
             
-            cursor.execute('''
-            select
-            substr(user_key,10),
-            first_name,
-            last_name,
-            username,
-            (select json_extract (profile_pic_square, '$[0].url')) as profile_pic_square,
-            case is_messenger_user
-                when 0 then ''
-                else 'Yes'
-            end is_messenger_user,
-            case is_friend
-                when 0 then 'No'
-                when 1 then 'Yes'
-            end is_friend,
-            friendship_status,
-            contact_relationship_status
-            from thread_users
-            ''')
+            contacts_full_schema = True 
+            try:
+                cursor.execute('''
+                select
+                substr(user_key,10),
+                first_name,
+                last_name,
+                username,
+                (select json_extract (profile_pic_square, '$[0].url')) as profile_pic_square,
+                case is_messenger_user
+                    when 0 then ''
+                    else 'Yes'
+                end is_messenger_user,
+                case is_friend
+                    when 0 then 'No'
+                    when 1 then 'Yes'
+                end is_friend,
+                friendship_status,
+                contact_relationship_status
+                from thread_users
+                ''')
+            
+            except sqlite3.OperationalError as e:
+                logfunc(f'Handling Error : {e}. current Query without friendship_status/contact_relationship_status.')
+                contacts_full_schema = False
+                cursor.execute('''
+                select
+                substr(user_key,10),
+                first_name,
+                last_name,
+                username,
+                (select json_extract (profile_pic_square, '$[0].url')) as profile_pic_square,
+                case is_messenger_user
+                    when 0 then ''
+                    else 'Yes'
+                end is_messenger_user,
+                case is_friend
+                    when 0 then 'No'
+                    when 1 then 'Yes'
+                end is_friend
+                from thread_users
+                ''')
+            # --- END threads_db2 CONTACTS EXCEPTION HANDLING ---
 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
@@ -349,10 +417,17 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
                 report = ArtifactHtmlReport('Facebook - Contacts - threads_db2')
                 report.start_artifact_report(report_folder, f'Facebook{typeof}- Contacts{usernum} - threads_db2')
                 report.add_script()
-                data_headers = ('User ID','First Name','Last Name','Username','Profile Pic URL','Is Messenger User','Is Friend','Friendship Status','Contact Relationship Status') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
                 data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
+                
+                if contacts_full_schema:
+                    data_headers = ('User ID','First Name','Last Name','Username','Profile Pic URL','Is Messenger User','Is Friend','Friendship Status','Contact Relationship Status')
+                    for row in all_rows:
+                        data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
+                else:
+                    data_headers = ('User ID','First Name','Last Name','Username','Profile Pic URL','Is Messenger User','Is Friend')
+                    for row in all_rows:
+                        data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+
 
                 report.write_artifact_data_table(data_headers, data_list, file_found)
                 report.end_artifact_report()
@@ -368,7 +443,7 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
             continue
 
         else:
-            continue # Skip all other files
+            continue 
     
 __artifacts__ = {
         "FacebookMessenger": (
