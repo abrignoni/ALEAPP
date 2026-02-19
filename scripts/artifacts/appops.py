@@ -137,12 +137,19 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
         
         data_list = []
         #check if file is abx
-        if (checkabx(file_found)):
-            multi_root = False
-            tree = abxread(file_found, multi_root)
-        else:
-            tree = ET.parse(file_found)
-        root = tree.getroot()
+        try:
+            if (checkabx(file_found)):
+                multi_root = False
+                tree = abxread(file_found, multi_root)
+            else:
+                tree = ET.parse(file_found)
+            root = tree.getroot()
+        except ET.ParseError:
+            logfunc(f"Skipping invalid XML/AppOps file: {file_found}")
+            continue
+        except Exception as e:
+            logfunc(f"Error parsing AppOps file {file_found}: {str(e)}")
+            continue
         
         for elem in root.iter('pkg'):
             pkg = elem.attrib['n']
