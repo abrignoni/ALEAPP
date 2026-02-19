@@ -24,7 +24,7 @@ def get_offlinePages(files_found, report_folder, seeker, wrap_text):
         file_found = str(file_found)
         
         modified_time = os.path.getmtime(file_found)
-        utc_modified_date = datetime.fromtimestamp(modified_time, tz=timezone.utc)
+        utc_modified_date = datetime.fromtimestamp(modified_time)
         
         timestamp = convert_utc_int_to_timezone(utc_modified_date, 'UTC')
         

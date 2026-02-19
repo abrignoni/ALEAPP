@@ -136,6 +136,7 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                     else:
                         subjectline = ''
                 
+                messagehtml = ''
                 messagetest = (message.get('6', '')) #HTML message
                 if messagetest != '':
                     messagetest = message['6'].get('2','')
