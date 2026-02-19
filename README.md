@@ -170,6 +170,17 @@ def get_cool_data1(files_found, report_folder, seeker, wrap_text):
 
 ```
 
+## Known Issues
+
+### v3.4.0 Windows Executable
+
+The Windows executable for v3.4.0 may crash due to a missing `xmltodict` dependency. This issue has been fixed in the main branch. Users experiencing this issue can:
+
+1. **Use the Python version**: Download the source code and run via Python after installing dependencies with `pip install -r requirements.txt`
+2. **Wait for the next release**: The fix will be included in the next official release
+
+See [Issue #572](https://github.com/abrignoni/ALEAPP/issues/572) for more details.
+
 ## Acknowledgements
 
 This tool is the result of a collaborative effort of many people in the DFIR community.
