@@ -22,7 +22,7 @@ def get_siminfo(files_found, report_folder, seeker, wrap_text):
                 continue
             process_siminfo(file_found, uid, report_folder)
         except ValueError:
-                pass # uid was not a number
+            pass # uid was not a number
 
 def process_siminfo(folder, uid, report_folder):
     
@@ -32,34 +32,49 @@ def process_siminfo(folder, uid, report_folder):
 
     #Query to create report
     try:
-        cursor.execute('''
-        SELECT
-            number,
-            imsi,
-            display_name,
-            carrier_name,
-            iso_country_code,
-            carrier_id,
-            icc_id
-        FROM
-            siminfo
-        ''')
+        # Find columns that available
+        columns_info = cursor.fetchall()
+        available_columns = [col[1] for col in columns_info]
     except:
-        cursor.execute('''
+        # If siminfo table don't exist 
+        logfunc(f'Error getting table schema for SIM_info_{uid}')
+        db.close()
+        return
+    
+    #Helper function
+    def get_col(col_name):
+        return col_name if col_name in available_columns else "''"
+    
+    id_col = "''"
+    if 'imsi' in available_columns: id_col = 'imsi'
+    elif 'card_id' in available_columns: id_col = 'card_id'
+    elif 'sim_id' in available_columns: id_col = 'sim_id'
+    
+    iso_col = "''"
+    if 'iso_country_code' in available_columns: iso_column = 'iso_country_code'
+    elif 'country_iso' in available_columns: iso_column = 'country_iso'
+    
+    icc_col = get_col('icc_id')
+    
+    query = f'''
         SELECT
-            number,
-            card_id,
-            display_name,
-            carrier_name,
-            carrier_name,
-            carrier_name,
-            icc_id
-        FROM
-            siminfo
-        ''')
-
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
+            {get_col('number')},
+            {id_col} as sim_identifier,
+            {get_col('display_name')},
+            {get_col('carrier_name')},
+            {iso_col} as country_iso,
+            {get_col('carrier_id')},
+            {icc_col}
+        FROM siminfo
+    '''
+    
+    try:
+        cursor.execute(query)
+        all_rows = cursor.fetchall()
+        usageentries = len(all_rows)
+    except Exception as e:
+        logfunc(f'Error executing query for SIM_info_{uid}: {str(e)}')
+        usageentries = 0
     if usageentries > 0:
         report = ArtifactHtmlReport('Device Info')
         report.start_artifact_report(report_folder, f'SIM_info_{uid}')
@@ -68,17 +83,21 @@ def process_siminfo(folder, uid, report_folder):
         
         data_list = []
         for row in all_rows:
-            if row[3] == row[4]:
-                row1 = ''
-                row4 = ''
-                row5 = ''
-            else:
-                row1 = row[1]
-                row4 = row[4]
-                row5 = row[5]
-            data_list.append((row[0], row1, row[2], row[3], row4, row5, row[6]))
-            logdevinfo(f"<b>SIM Number & IMSI: </b>{row[0]} - {row1}")
-            logdevinfo(f"<b>SIM Display Name: </b>{row[2]}")
+            # Collect data directly
+            number = str(row[0]) if row[0] is not None else ''
+            identifier = str(row[1]) if row[1] is not None else ''
+            display_name = str(row[2]) if row[2] is not None else ''
+            carrier = str(row[3]) if row[3] is not None else ''
+            iso = str(row[4]) if row[4] is not None else ''
+            carrier_id = str(row[5]) if row[5] is not None else ''
+            icc_id = str(row[6]) if row[6] is not None else ''
+        
+            data_list.append((number, identifier, display_name, carrier, iso, carrier_id, icc_id))
+            
+            logdevinfo(f"<b>SIM Number: </b>{number}")
+            logdevinfo(f"<b>SIM ID (IMSI/CardID): </b>{identifier}")
+            logdevinfo(f"<b>SIM Carrier: </b>{carrier}")
+            
         report.write_artifact_data_table(data_headers, data_list, folder)
         report.end_artifact_report()
         
@@ -87,6 +106,8 @@ def process_siminfo(folder, uid, report_folder):
     else:
         logfunc(f'No SIM_Info{uid} data available')    
     db.close()
+    
+
 
 __artifacts__ = {
         "siminfo": (
