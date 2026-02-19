@@ -98,8 +98,22 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Google Duo - Contacts data available')
-    
-        cursor.execute('''
+
+        cursor.execute("SELECT * FROM messages LIMIT 0")
+        cols = [d[0] for d in cursor.description]
+        has_saved_status = 'saved_status' in cols
+
+        if has_saved_status:
+            file_saved_expr = """
+            case saved_status
+                when 0 then ''
+                when 1 then 'Yes'
+            end
+            """
+        else:
+            file_saved_expr = "''"
+
+        cursor.execute(f'''
         select
         case sent_timestamp_millis
             when 0 then ''
@@ -118,10 +132,7 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
         content_uri,
         replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), '') as 'File Name',
         content_size_bytes,
-        case saved_status
-            when 0 then ''
-            when 1 then 'Yes'
-        end as 'File Saved'
+        {file_saved_expr} as 'File Saved'
         from messages
         ''')
 
