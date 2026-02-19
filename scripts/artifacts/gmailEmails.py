@@ -110,6 +110,7 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                 attachname = row[15]
                 attachhash = row[16]
                 attachment = ''
+                messagehtml = ''
                 
                 to = (message.get('1', '')).get('2', '') if '1' in message and '2' in message['1'] else '' #receiver
                 if isinstance(to, bytes):

@@ -236,11 +236,36 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
     timestamp               
     FROM MsgDeletion;
     ''')
-    
+
     deleted_rows = cursor.fetchall()
     
     if len(deleted_rows) == 0:
-        cursor.execute('''
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Assets2';")
+        has_assets2 = cursor.fetchone() is not None
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Assets';")
+        has_assets = cursor.fetchone() is not None
+        asset_join = ""
+        asset_name_expr = "''"
+        cursor.execute("PRAGMA table_info(Messages);")
+        msg_cols = {c[1] for c in cursor.fetchall()}
+        has_asset_id = 'asset_id' in msg_cols
+        if has_asset_id and has_assets2:
+            cursor.execute("PRAGMA table_info(Assets2);")
+            cols = {c[1] for c in cursor.fetchall()}
+            asset_col = "name" if "name" in cols else "_id"
+            asset_join = "LEFT JOIN Assets2 ON Messages.asset_id = Assets2._id"
+            asset_name_expr = f"Assets2.{asset_col}"
+        elif has_asset_id and has_assets:
+            cursor.execute("PRAGMA table_info(Assets);")
+            cols = {c[1] for c in cursor.fetchall()}
+            asset_col = "name" if "name" in cols else "_id"
+            asset_join = "LEFT JOIN Assets ON Messages.asset_id = Assets._id"
+            asset_name_expr = f"Assets.{asset_col}"
+        else:
+            asset_join = ""
+            asset_name_expr = "''"
+
+        base_query = f'''
         Select
             datetime(Messages.time / 1000, 'unixepoch'),
             Messages._id AS "Message ID",
@@ -251,14 +276,15 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
             datetime(Likings."timestamp" / 1000, 'unixepoch'),
             Users1.name As "Liked By",
             time(Messages.duration / 1000, 'unixepoch'),
-            Assets2.name
+            {asset_name_expr}
         From Messages
             Left Join Users On Users._id = Messages.user_id
             Left Join Likings On Messages._id = Likings.message_id
             Left Join Users Users1 On Likings.user_id = Users1._id
-            LEFT JOIN Assets2 ON Messages.asset_id = Assets2._id           
+            {asset_join}
         Order By time;
-        ''')
+        '''
+        cursor.execute(base_query)
     
     #closing read only db and opening write mode
     #inserting the deleted messages into the Messages table    
@@ -277,25 +303,51 @@ def get_wire_messages(files_found, report_folder, seeker, wrap_text):
         SET msg_type = 'Deleted' WHERE msg_type = '';
         ''')
         
-        cursor.execute('''
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Assets2';")
+        has_assets2 = cursor.fetchone() is not None
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Assets';")
+        has_assets = cursor.fetchone() is not None
+        asset_join = ""
+        asset_name_expr = "''"
+        cursor.execute("PRAGMA table_info(Messages);")
+        msg_cols = {c[1] for c in cursor.fetchall()}
+        has_asset_id = 'asset_id' in msg_cols
+        if has_asset_id and has_assets2:
+            cursor.execute("PRAGMA table_info(Assets2);")
+            cols = {c[1] for c in cursor.fetchall()}
+            asset_col = "name" if "name" in cols else "_id"
+            asset_join = "LEFT JOIN Assets2 ON Messages.asset_id = Assets2._id"
+            asset_name_expr = f"Assets2.{asset_col}"
+        elif has_asset_id and has_assets:
+            cursor.execute("PRAGMA table_info(Assets);")
+            cols = {c[1] for c in cursor.fetchall()}
+            asset_col = "name" if "name" in cols else "_id"
+            asset_join = "LEFT JOIN Assets ON Messages.asset_id = Assets._id"
+            asset_name_expr = f"Assets.{asset_col}"
+        else:
+            asset_join = ""
+            asset_name_expr = "''"
+
+        base_query = f'''
         Select
             datetime(Messages.time / 1000, 'unixepoch'),
             Messages._id AS "Message ID",
             Users.name,
             Messages.msg_type,
-            json_extract(Messages.content, '$[0].content')AS "Content",
+            json_extract(Messages.content, '$[0].content') AS "Content",
             CASE Likings."action" WHEN 1 THEN "Liked" END,
             datetime(Likings."timestamp" / 1000, 'unixepoch'),
             Users1.name As "Liked By",
             time(Messages.duration / 1000, 'unixepoch'),
-            Assets2.name
+            {asset_name_expr}
         From Messages
             Left Join Users On Users._id = Messages.user_id
             Left Join Likings On Messages._id = Likings.message_id
             Left Join Users Users1 On Likings.user_id = Users1._id
-            LEFT JOIN Assets2 ON Messages.asset_id = Assets2._id           
+            {asset_join}
         Order By time;
-        ''')
+        '''
+        cursor.execute(base_query)
         
     all_rows = cursor.fetchall()
     db.close()

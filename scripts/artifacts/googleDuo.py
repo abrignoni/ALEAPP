@@ -16,30 +16,48 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
     
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+        cursor.execute("PRAGMA table_info(activity_history);")
+        ah_cols = {col[1] for col in cursor.fetchall()}
+
+        has_other = 'other_id' in ah_cols
+        has_call_state = 'call_state' in ah_cols
+        has_outgoing = 'outgoing' in ah_cols
+
+        local_user_expr = "''"  
+        remote_user_expr = "substr(other_id, 0,instr(other_id, '|'))" if has_other else "''"
+        call_status_expr = """case call_state
+            when 0 then 'Left Message'
+            when 1 then 'Missed Call'
+            when 2 then 'Answered'
+            when 4 then ''
+        end""" if has_call_state else "''"
+        direction_expr = """case outgoing
+            when 0 then 'Incoming'
+            when 1 then 'Outgoing'
+        end""" if has_outgoing else "''"
+        join_clause = "left join duo_users on duo_users.user_id = substr(other_id, 0,instr(other_id, '|'))" if has_other else ""
+
+        query = f'''
         select
         datetime(timestamp_usec/1000000, 'unixepoch') as 'Timestamp',
-        substr(self_id, 0,instr(self_id, '|')) as 'Local User',
-        substr(other_id, 0,instr(other_id, '|')) as 'Remote User',
+        {local_user_expr} as 'Local User',
+        {remote_user_expr} as 'Remote User',
         duo_users.contact_display_name as 'Contact Name',
         case activity_type
             when 1 then 'Call'
             when 2 then 'Note'
             when 4 then 'Reaction'
         end as 'Activity Type',
-        case call_state
-            when 0 then 'Left Message'
-            when 1 then 'Missed Call'
-            when 2 then 'Answered'
-            when 4 then ''
-        end as 'Call Status',
-        case outgoing
-            when 0 then 'Incoming'
-            when 1 then 'Outgoing'
-        end as 'Direction'
+        {call_status_expr} as 'Call Status',
+        {direction_expr} as 'Direction'
         from activity_history
-        left join duo_users on duo_users.user_id = substr(other_id, 0,instr(other_id, '|'))
-        ''')
+        {join_clause}
+        '''
+        try:
+            cursor.execute(query)
+        except sqlite3.OperationalError as e:
+            logfunc(f'Call history query failed in {file_found}: {e}')
+            continue
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
@@ -99,7 +117,19 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Google Duo - Contacts data available')
     
-        cursor.execute('''
+        cursor.execute("PRAGMA table_info(messages);")
+        msg_cols = {col[1] for col in cursor.fetchall()}
+
+        has_size = 'content_size_bytes' in msg_cols
+        has_saved = 'saved_status' in msg_cols
+
+        size_expr = 'content_size_bytes' if has_size else "''"
+        saved_expr = """case saved_status
+            when 0 then ''
+            when 1 then 'Yes'
+        end""" if has_saved else "''"
+
+        notes_query = f'''
         select
         case sent_timestamp_millis
             when 0 then ''
@@ -117,13 +147,15 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
         recipient_id,
         content_uri,
         replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), '') as 'File Name',
-        content_size_bytes,
-        case saved_status
-            when 0 then ''
-            when 1 then 'Yes'
-        end as 'File Saved'
+        {size_expr} as 'Content Size',
+        {saved_expr} as 'File Saved'
         from messages
-        ''')
+        '''
+        try:
+            cursor.execute(notes_query)
+        except sqlite3.OperationalError as e:
+            logfunc(f'Google Duo notes query failed in {file_found}: {e}')
+            continue
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
