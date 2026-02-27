@@ -16,11 +16,11 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.samsung.knox.securefolder/databases/history_log_database'),
         "output_types": ["standard"],
-        "artifact_icon": "inbox"
+        "artifact_icon": "database"
     }
 }
 from datetime import datetime, timezone
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
 @artifact_processor
 def history_log(files_found, _report_folder, _seeker, _wrap_text):
