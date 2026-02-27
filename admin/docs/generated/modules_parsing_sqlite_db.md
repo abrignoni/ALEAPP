@@ -23,6 +23,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleFitGMS |
 | googlePlaySearches |
 | knuddels |
+| shistorylog |
 | swissmeteo |
 | thunderbird |
 <!-- GET_RECORDS_END -->
