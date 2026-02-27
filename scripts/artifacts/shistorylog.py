@@ -16,7 +16,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.samsung.knox.securefolder/databases/history_log_database'),
         "output_types": ["standard"],
-        "artifact_icon": "inbox"
+        "artifact_icon": "database"
     }
 }
 from datetime import datetime, timezone
