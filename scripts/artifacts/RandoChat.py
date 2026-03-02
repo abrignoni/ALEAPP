@@ -117,7 +117,15 @@ def randochat_messages(files_found, report_folder, _seeker, _wrap_text):
 
         data_list.append((timestamp, content, contact_name, direction, attachment, conv_id, message_id))
     
-    data_headers = ('Timestamp', 'Content', 'Contact Username', 'Sent?',  'Media File', 'Conversation ID', 'Message ID')
+    data_headers = (
+                        ('Timestamp', 'datetime'),
+                        'Content', 
+                        'Contact Username',
+                        'Sent?', 
+                        'Media File',
+                        'Conversation ID',
+                        'Message ID'
+                    )
 
     return data_headers, data_list, main_db
 
@@ -166,7 +174,16 @@ def randochat_account(files_found, _report_folder, _seeker, _wrap_text):
 
         data_list.append((username, sex, age, language, device_id, age_from, age_to, preferred_sex))
     
-    data_headers = ('Username', 'User Sex', 'User Age', 'Language',  'Device ID', 'Preferred Age From', 'Preferred Age To', 'Preferred Sex')
+    data_headers = (
+                        'Username',
+                        'User Sex',
+                        'User Age',
+                        'Language',
+                        'Device ID',
+                        'Preferred Age From',
+                        'Preferred Age To',
+                        'Preferred Sex'
+                    )
 
     return data_headers, data_list, main_db
 

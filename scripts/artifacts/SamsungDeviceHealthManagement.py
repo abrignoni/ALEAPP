@@ -87,7 +87,12 @@ def sdhms_config_reloads(files_found, _report_folder, _seeker, _wrap_text):
 
         data_list.append(( config_reload_time, reason, config_key, config_version))
 
-    data_headers = ('Config Reload Time' , 'Config Reload Reason', 'Config Key', 'Config Version')
+    data_headers = (
+                        ('Config Reload Time', 'datetime'),
+                        'Config Reload Reason',
+                        'Config Key',
+                        'Config Version'
+                    )
 
     return data_headers, data_list, files_found[0]
 
@@ -120,7 +125,14 @@ def sdhms_netstat(files_found, _report_folder, _seeker, _wrap_text):
 
         data_list.append(( start_time, end_time, entry_id, package_name, package_uid, net_usage))
 
-    data_headers = ('Start Time', 'End Time', 'Entry ID', 'Package Name', 'Package UID', 'Network Usage')
+    data_headers = (
+                        ('Start Time', 'datetime'),
+                        ('End Time', 'datetime'),
+                        'Entry ID',
+                        'Package Name',
+                        'Package UID',
+                        'Network Usage'
+                    )
 
     return data_headers, data_list, files_found[0]
 
@@ -155,9 +167,26 @@ def sdhms_temperature(files_found, _report_folder, _seeker, _wrap_text):
         pa_temp = row[6]
         wifi_temp = row[7]
 
-        data_list.append(( timestamp, skin_temp, ap_temp, bat_temp, usb_temp, chg_temp, pa_temp, wifi_temp))
+        data_list.append((  timestamp,
+                            skin_temp,
+                            ap_temp,
+                            bat_temp,
+                            usb_temp,
+                            chg_temp,
+                            pa_temp,
+                            wifi_temp)
+                        )
 
-    data_headers = ('Timestamp', 'Chassis Temperature', 'Processor Temperatur', 'Battery Temperature', 'USB Temperature', 'Charging IC Temperature', 'Cellular Radio Temperature', 'WiFi Temperature')
+    data_headers = (
+                        ('Timestamp', 'datetime'),
+                        'Chassis Temperature',
+                        'Processor Temperatur',
+                        'Battery Temperature',
+                        'USB Temperature',
+                        'Charging IC Temperature',
+                        'Cellular Radio Temperature',
+                        'WiFi Temperature'
+                    )
 
     return data_headers, data_list, files_found[0]
 
@@ -190,8 +219,22 @@ def sdhms_cpustats(files_found, _report_folder, _seeker, _wrap_text):
         process_id = row[5]
         process_cpu_usage = row[6]
 
-        data_list.append(( start_time, end_time, uptime, process_name, package_id, process_id, process_cpu_usage))
+        data_list.append((  start_time,
+                            end_time,
+                            uptime,
+                            process_name,
+                            package_id,
+                            process_id,
+                            process_cpu_usage))
 
-    data_headers = ('Start Time', 'End Time', 'Uptime', 'Process Name', 'Package ID', 'PRocess ID', 'Process CPU Usage')
+    data_headers = (
+                        ('Start Time', 'datetime'),
+                        ('End Time', 'datetime'),
+                        'Uptime',
+                        'Process Name',
+                        'Package ID',
+                        'Process ID',
+                        'Process CPU Usage'
+                    )
 
     return data_headers, data_list, files_found[0]

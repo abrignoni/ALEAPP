@@ -74,7 +74,15 @@ def linkedin_account(files_found, _report_folder, _seeker, _wrap_text):
     public_identifier = temp_meModel['miniProfile']['publicIdentifier']
     data_list = [(last_login, member_id, account_mail, last_name, first_name, headline, public_identifier)]
 
-    data_headers = ('Last Login', 'Member ID', 'Account Mail', 'Last Name', 'First Name', 'Headline', 'Public Identifier')
+    data_headers = (    
+                        ('Last Login', 'datetime'),
+                        'Member ID',
+                        'Account Mail',
+                        'Last Name',
+                        'First Name',
+                        'Headline',
+                        'Public Identifier'
+                    )
 
     return data_headers, data_list, files_found[0]
 
@@ -118,8 +126,28 @@ def linkedin_messages(files_found, _report_folder, _seeker, _wrap_text):
         message = row[8]
         conversationurn = row[9]
 
-        data_list.append((delivery_date, delivery_status, sender_firstname, sender_lastname, sender_headline, sender_profile_url, sender_distance, subject, message, conversationurn))
+        data_list.append(   (delivery_date,
+                            delivery_status,
+                            sender_firstname,
+                            sender_lastname,
+                            sender_headline,
+                            sender_profile_url,
+                            sender_distance,
+                            subject,
+                            message,
+                            conversationurn)
+                        )
 
-    data_headers = ('Delivery Date', 'Delivery Status', 'Sender First Name', 'Sender Last Name', 'Sender Headline', 'Sender Profile Url', 'Sender Distance', 'Subject', 'Message', 'Conversation Urn')
+    data_headers = (    ('Delivery Date', 'datetime'),
+                        'Delivery Status',
+                        'Sender First Name',
+                        'Sender Last Name',
+                        'Sender Headline',
+                        'Sender Profile Url',
+                        'Sender Distance',
+                        'Subject',
+                        'Message',
+                        'Conversation Urn'
+                    )
 
     return data_headers, data_list, files_found[0]

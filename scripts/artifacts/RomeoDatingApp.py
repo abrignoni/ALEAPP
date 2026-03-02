@@ -105,10 +105,31 @@ def romeo_dating_messages(files_found, _report_folder, _seeker, _wrap_text):
 
 
 
-            data_list.append((timestamp, contact_id, contact_name, text, status, saved, unread, message_id, image_contained, main_db))
+            data_list.append((  timestamp,
+                                contact_id,
+                                contact_name,
+                                text,
+                                status,
+                                saved,
+                                unread,
+                                message_id,
+                                image_contained,
+                                main_db
+                            ))
         
-        data_headers = ('Timestamp', 'Contact ID', 'Contact Username', 'Text',  'Status', 'Saved?', 'Unread?', 'Message ID', 'Image Contained?', 'Source Database')
-        # On android we only know if an Image was part of the message, content isn't on the phone anymore - so just "image contained?"
+        data_headers = (    ('Timestamp', 'datetime'),
+                            'Contact ID',
+                            'Contact Username',
+                            'Text', 
+                            'Status',
+                            'Saved?',
+                            'Unread?',
+                            'Message ID',
+                            'Image Contained?',
+                            'Source Database'
+                        )
+        # On android we only know if an Image was part of the message,
+        # content isn't on the phone anymore- so just "image contained?"
 
     return data_headers, data_list, 'See Table for Source DB'
 
@@ -174,9 +195,39 @@ def romeo_dating_contacts(files_found, _report_folder, _seeker, _wrap_text):
             blocked = row[13]
 
 
-            data_list.append((fetch_timestamp, delete_timestamp, contact_id, contact_name, headline, notes, status, age, weight, height, city, country, deactivated, blocked, main_db))
+            data_list.append((  fetch_timestamp,
+                                delete_timestamp,
+                                contact_id,
+                                contact_name,
+                                headline,
+                                notes,
+                                status,
+                                age,
+                                weight,
+                                height,
+                                city,
+                                country,
+                                deactivated,
+                                blocked,
+                                main_db
+                            ))
     
-    data_headers = ('Last Fetched', 'Deleted', 'Contact ID', 'Contact Name', 'Headline', 'Notes', 'Status', 'Age', 'Weight', 'Height', 'City', 'Country', 'Deactivated?', 'Blocked?', 'Source Database')
+    data_headers = (    ('Last Fetched', 'datetime'),
+                        ('Deleted', 'datetime'),
+                        'Contact ID',
+                        'Contact Name',
+                        'Headline',
+                        'Notes',
+                        'Status',
+                        'Age',
+                        'Weight',
+                        'Height',
+                        'City',
+                        'Country',
+                        'Deactivated?',
+                        'Blocked?',
+                        'Source Database'
+                    )
 
     return data_headers, data_list, 'See Table for Source DB'
 
@@ -227,8 +278,34 @@ def romeo_dating_accounts(files_found, _report_folder, _seeker, _wrap_text):
         birthdate = row[12]
 
 
-        data_list.append((account_id, username, email, address, city, latitude, longitude, headline, profile_text, creation_date, last_login_date, age, birthdate))
+        data_list.append((  account_id,
+                            username,
+                            email,
+                            address,
+                            city,
+                            latitude,
+                            longitude,
+                            headline,
+                            profile_text,
+                            creation_date,
+                            last_login_date,
+                            age,
+                            birthdate
+                        ))
     
-    data_headers = ('Account ID', 'Username', 'E-Mail', 'Address', 'City', 'Latitude', 'Longitude', 'Headline', 'Profile Text', 'Creation Date', 'Last Login Date', 'Age', 'Birthdate')
+    data_headers = (    'Account ID',
+                        'Username',
+                        'E-Mail',
+                        'Address',
+                        'City',
+                        'Latitude',
+                        'Longitude',
+                        'Headline',
+                        'Profile Text',
+                        ('Creation Date', 'datetime'),
+                        ('Last Login Date', 'datetime'),
+                        'Age',
+                        'Birthdate'
+                    )
 
     return data_headers, data_list, main_db

@@ -79,8 +79,29 @@ def snotes(files_found, report_folder, _seeker, _wrap_text):
             if os.path.basename(file_path) in media_path:
                 media.append(media_to_html(os.path.basename(media_path), medias, report_folder))
 
-        data_list.append(( created, last_modified, title, content, is_deleted, deleted, first_opened, second_opened, last_opened, media))
+        data_list.append((  created,
+                            last_modified,
+                            title,
+                            content,
+                            is_deleted,
+                            deleted,
+                            first_opened,
+                            second_opened,
+                            last_opened,
+                            media)
+                        )
 
-    data_headers = ('Creation Time' , 'Last Modification TIme', 'Title', 'Text Content', 'Deleted?', 'Deletion Time', 'First Opened Time', 'Second Opened Time', 'Last Opened Time', 'Media')
+    data_headers = (
+                        ('Creation Time', 'datetime'),
+                        ('Last Modification Time', 'datetime'),
+                        'Title',
+                        'Text Content',
+                        'Deleted?',
+                        ('Deletion Time', 'datetime'),
+                        ('First Opened Time', 'datetime'),
+                        ('Second Opened Time', 'datetime'),
+                        ('Last Opened Time', 'datetime'),
+                        'Media'
+                    )
 
     return data_headers, data_list, files_found[0]
