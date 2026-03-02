@@ -1,14 +1,14 @@
 import itertools
 import re
 import string
+import sqlite3
 from pathlib import Path
-from os.path import join
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, media_to_html, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, tsv, media_to_html, open_sqlite_db_readonly
 
 
-def _sanitize_output_filename(filename, default_name='recovered_file.bin'):
+def sanitize_output_filename(filename, default_name='recovered_file.bin'):
     raw_name = str(filename or '')
     normalized = raw_name.replace('\\', '/')
     safe_name = Path(normalized).name
@@ -19,14 +19,14 @@ def _sanitize_output_filename(filename, default_name='recovered_file.bin'):
     return safe_name
 
 
-def _build_safe_output_path(report_folder, original_filename):
+def build_safe_output_path(report_folder, original_filename):
     report_root = Path(report_folder).resolve()
-    sanitized_name = _sanitize_output_filename(original_filename)
+    sanitized_name = sanitize_output_filename(original_filename)
     output_path = (report_root / sanitized_name).resolve()
     try:
         output_path.relative_to(report_root)
     except ValueError:
-        output_path = report_root / _sanitize_output_filename(None)
+        output_path = report_root / sanitize_output_filename(None)
 
     if output_path.exists():
         stem = output_path.stem
@@ -39,20 +39,6 @@ def _build_safe_output_path(report_folder, original_filename):
                 break
             index += 1
     return output_path
-
-
-'''def extract_PIN_from_db(file_found):
-    try:
-        connection = open_sqlite_db_readonly(file_found)
-
-        set_pointer = connection.cursor()
-        set_pointer.execute("SELECT passwd_temp FROM albumstemp")
-
-        encrypted_password = set_pointer.fetchone()[0]
-
-        return encrypted_password, file_found
-    except:
-        return None'''
 
 
 def extract_data_from_db(file_found):
@@ -97,7 +83,7 @@ def extract_data_from_db(file_found):
             dict_of_dicts[encrypted_filename] = new_dict
 
         return dict_of_dicts, list_of_enc_pins, file_found
-    except:
+    except (sqlite3.Error, OSError, ValueError, TypeError, AttributeError, IndexError, KeyError):
         return None
 
 
@@ -129,8 +115,7 @@ def brute_force_pin(encoded_PIN):
                 if decoded_test_value_string == encoded_PIN:
                     #logfunc(f'Decrypted PIN is: {pin}')
                     return pin
-            else:
-                pin_len += 1
+            pin_len += 1
 
         if decoded_PIN is None:
             print('Sorry. No PIN found.')
@@ -153,30 +138,6 @@ def raw_pin_to_XOR_key(pin):
     hex_XOR_key = hex(int_XOR_key)
 
     return hex_XOR_key
-
-
-'''def read_file_info(file_found):
-    file_match_dict = {}
-    print(f'readfileinfo: {file_found}')
-    connection = open_sqlite_db_readonly(file_found)
-
-    set_pointer = connection.cursor()
-    set_pointer.execute("SELECT file_name_from, file_path_new FROM hideimagevideo")
-
-    required_column = set_pointer.fetchall()
-
-    if len(required_column) < 1:
-        logfunc('No encrypted media present')
-        return
-    else:
-        for filename in required_column:
-            decrypted_filename = filename[0]
-            encrypted_filename = filename[1].split('/')[-1]
-
-            file_match_dict[decrypted_filename] = encrypted_filename
-
-    return file_match_dict'''
-
 
 def file_decryption(files_found, dict_of_file_info, dict_of_pin_dicts, report_folder):
     data_list = []
@@ -221,7 +182,7 @@ def file_decryption(files_found, dict_of_file_info, dict_of_pin_dicts, report_fo
                                 byte = file_to_decrypt.read(1)
 
                             xord_bytes_decrypted = bytes(xor_list)
-                            decrypted_output_path = _build_safe_output_path(report_folder, decrypted_file_name)
+                            decrypted_output_path = build_safe_output_path(report_folder, decrypted_file_name)
                             with open(decrypted_output_path, 'wb') as decryptedFile:
                                 decryptedFile.write(xord_bytes_decrypted)
                                 decryptedFile.close()
@@ -248,24 +209,28 @@ def file_decryption(files_found, dict_of_file_info, dict_of_pin_dicts, report_fo
                                                              html_no_escape=['Media'])
                             report.end_artifact_report()
 
-                            tsvname = f'NQVault'
+                            tsvname = 'NQVault'
                             tsv(report_folder, data_headers, data_list, tsvname)
 
 
 # MAIN #
 def get_NQVault(files_found, report_folder, seeker, wrap_text):
+    _ = seeker, wrap_text
     data_list = []
     list_of_enc_pins = []
     dict_of_file_info = {}
     dict_of_pin_dicts = {}
-    sucess = 0
+    file_found_pin = ''
+    success = 0
     # Get the "encrypted" PIN from DB
     for file_found in files_found:
         if file_found.endswith('322w465ay423xy11'):
             # multiple password hashes may be present, so these are stored as a list
-            dict_of_file_info, list_of_enc_pins, file_found_pin = extract_data_from_db(file_found)
-            sucess = 1
-    if sucess == 0:
+            extraction_result = extract_data_from_db(file_found)
+            if extraction_result:
+                dict_of_file_info, list_of_enc_pins, file_found_pin = extraction_result
+                success = 1
+    if success == 0:
         logfunc('No Database DB Found or no hashed PIN present.')
         return
 
@@ -291,7 +256,8 @@ def get_NQVault(files_found, report_folder, seeker, wrap_text):
         report.add_script()
         data_headers = ('Encrypted PIN', 'Decrypted PIN')
 
-        report.write_artifact_data_table(data_headers, data_list, file_found_pin, html_no_escape=['Media'])
+        report_source = file_found_pin if file_found_pin else 'NQ Vault Source DB'
+        report.write_artifact_data_table(data_headers, data_list, report_source, html_no_escape=['Media'])
         report.end_artifact_report()
 
         # Media decryption funct

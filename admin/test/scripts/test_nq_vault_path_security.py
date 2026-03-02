@@ -18,14 +18,14 @@ import scripts.ilapfuncs as ilapfuncs
 
 class TestNQVaultPathSecurity(unittest.TestCase):
     def test_sanitize_output_filename_removes_traversal(self):
-        sanitized = NQ_Vault._sanitize_output_filename('../../../Users/examiner/.zshrc')
+        sanitized = NQ_Vault.sanitize_output_filename('../../../Users/examiner/.zshrc')
         self.assertEqual(sanitized, 'zshrc')
 
     def test_build_safe_output_path_is_confined_to_report_folder(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             report_folder = Path(tmpdir) / 'report'
             report_folder.mkdir()
-            safe_path = NQ_Vault._build_safe_output_path(
+            safe_path = NQ_Vault.build_safe_output_path(
                 str(report_folder),
                 '../../../../../../outside_written.bin',
             )
