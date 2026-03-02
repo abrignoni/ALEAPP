@@ -13,6 +13,11 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | LinkedIn |
 | OrnetBrowser |
 | ProtonDrive |
+| RandoChat |
+| RomeoDatingApp |
+| SamsungDeviceHealthManagement |
+| SamsungNotes |
+| SamsungTrash |
 | SimpleStorage_applaunch |
 | TorBrowser |
 | ZangiChats |
