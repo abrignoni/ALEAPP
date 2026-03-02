@@ -1,10 +1,44 @@
 import itertools
+import re
 import string
 from pathlib import Path
 from os.path import join
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, media_to_html, open_sqlite_db_readonly
+
+
+def _sanitize_output_filename(filename, default_name='recovered_file.bin'):
+    raw_name = str(filename or '')
+    normalized = raw_name.replace('\\', '/')
+    safe_name = Path(normalized).name
+    safe_name = re.sub(r'[\x00-\x1f<>:"/\\|?*]+', '_', safe_name)
+    safe_name = safe_name.strip().strip('.')
+    if not safe_name:
+        return default_name
+    return safe_name
+
+
+def _build_safe_output_path(report_folder, original_filename):
+    report_root = Path(report_folder).resolve()
+    sanitized_name = _sanitize_output_filename(original_filename)
+    output_path = (report_root / sanitized_name).resolve()
+    try:
+        output_path.relative_to(report_root)
+    except ValueError:
+        output_path = report_root / _sanitize_output_filename(None)
+
+    if output_path.exists():
+        stem = output_path.stem
+        suffix = output_path.suffix
+        index = 1
+        while True:
+            candidate = report_root / f'{stem}_{index}{suffix}'
+            if not candidate.exists():
+                output_path = candidate
+                break
+            index += 1
+    return output_path
 
 
 '''def extract_PIN_from_db(file_found):
@@ -187,12 +221,13 @@ def file_decryption(files_found, dict_of_file_info, dict_of_pin_dicts, report_fo
                                 byte = file_to_decrypt.read(1)
 
                             xord_bytes_decrypted = bytes(xor_list)
-                            with open(join(report_folder, decrypted_file_name), 'wb') as decryptedFile:
+                            decrypted_output_path = _build_safe_output_path(report_folder, decrypted_file_name)
+                            with open(decrypted_output_path, 'wb') as decryptedFile:
                                 decryptedFile.write(xord_bytes_decrypted)
                                 decryptedFile.close()
 
                                 tolink = []
-                                pathdec = join(report_folder, decrypted_file_name)
+                                pathdec = str(decrypted_output_path)
                                 tolink.append(pathdec)
                                 thumb = media_to_html(pathdec, tolink, report_folder)
 
