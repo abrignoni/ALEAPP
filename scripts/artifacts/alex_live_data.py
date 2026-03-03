@@ -215,7 +215,7 @@ def parse_timestamp(s, device_ts):
 # Helper to split the Dumpsys Output
 def split_dumpsys_log(dumpsys_file) -> dict:
     """Function to split the dumpsys txt file in service parts"""
-    global _PARSED_DUMPSYS, _DUMPSYS_DICT, _DEVICE_TIME
+    global _PARSED_DUMPSYS, _DUMPSYS_DICT, _DEVICE_TIME # pylint: disable=global-statement
     if _PARSED_DUMPSYS:
         return
     if not dumpsys_file:
