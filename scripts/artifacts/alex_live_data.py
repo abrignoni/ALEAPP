@@ -120,6 +120,21 @@ __artifacts_v2__ = {
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "user"
+    },
+    "alex_live_logcat": {
+        "name": "Logcat",
+        "description": "Parses the Logcat \
+            logs of an \
+                ALEX PRFS backup.",
+        "author": "@C_Peter",
+        "creation_date": "2026-03-03",
+        "last_update_date": "2026-03-03",
+        "requirements": "none",
+        "category": "ALEX Live Data",
+        "notes": "",
+        "paths": ('*/extra/logcat.txt'),
+        "output_types": ["html", "lava", "tsv"],
+        "artifact_icon": "terminal"
     }
 }
 
@@ -200,7 +215,7 @@ def parse_timestamp(s, device_ts):
 # Helper to split the Dumpsys Output
 def split_dumpsys_log(dumpsys_file) -> dict:
     """Function to split the dumpsys txt file in service parts"""
-    global _PARSED_DUMPSYS, _DUMPSYS_DICT, _DEVICE_TIME
+    global _PARSED_DUMPSYS, _DUMPSYS_DICT, _DEVICE_TIME # pylint: disable=global-statement
     if _PARSED_DUMPSYS:
         return
     if not dumpsys_file:
@@ -712,3 +727,44 @@ def alex_live_appops(files_found, _report_folder, _seeker, _wrap_text):
 
     return data_headers, data_list, source_path
 
+# Logcat (Android 10 and up as these allow the epoch-timestamps)
+@artifact_processor
+def alex_live_logcat(files_found, _report_folder, _seeker, _wrap_text):
+    """Parses the logcat logs"""
+    source_path = get_file_path(files_found, "logcat.txt")
+    data_list = []
+    log_pattern = re.compile(
+        r'^\s*'
+        r'(\d+(?:\.\d+)?)\s+'
+        r'(\d+)\s+'
+        r'(\d+)\s+'
+        r'([VDIWEF])\s+'
+        r'(\S.*?)\s*:\s*'
+        r'(.*)$'
+    )
+
+    log_levels = {
+        "V" : "Verbose",
+        "D" : "Debug",
+        "I" : "Info",
+        "W" : "Warn",
+        "E" : "Error",
+        "F" : "Fatal",
+        "S" : "Silent"
+    }
+    with open(source_path, "r", encoding="utf-8") as logcat_file:
+        for line in logcat_file:
+            line = line.expandtabs().rstrip()
+            match = log_pattern.match(line)
+            if match:
+                l_timestamp = match.group(1)
+                l_time = datetime.datetime.fromtimestamp(float(l_timestamp), tz=datetime.timezone.utc)
+                l_pid = match.group(2)
+                l_tid = match.group(3)
+                l_lvl = match.group(4)
+                l_lvl_long = log_levels.get(l_lvl, l_lvl)
+                l_tag = match.group(5)
+                l_message = match.group(6)
+                data_list.append((l_time, l_pid, l_tid, l_lvl_long, l_tag, l_message))
+    data_headers = (('Timestamp', 'datetime'),  'PID', 'TID', 'Level', 'Tag', 'Message')
+    return data_headers, data_list, source_path
