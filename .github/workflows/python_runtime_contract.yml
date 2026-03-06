@@ -1,0 +1,29 @@
+name: Python Runtime Contract
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/python_runtime_contract.yml'
+      - 'README.md'
+      - 'requirements.txt'
+      - 'admin/test/scripts/test_runtime_requirements.py'
+
+jobs:
+  runtime-contract:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run runtime contract tests
+        run: python -m unittest discover -s admin/test/scripts -p 'test_*.py'

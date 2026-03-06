@@ -6,7 +6,7 @@ fitdecode==0.10.0
 folium==0.14.0
 geopy==2.3.0
 packaging==20.1
-pillow>=10.3.0,<12.0.0
+pillow==12.1.1
 polyline==2.0.0
 protobuf==3.10.0
 PyCryptodome
