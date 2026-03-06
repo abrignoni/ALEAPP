@@ -150,11 +150,11 @@ class TestDependencyCompatibility(unittest.TestCase):
 
     def test_imagetk_imports_when_tkinter_is_available(self):
         try:
-            import tkinter  # noqa: F401
+            importlib.import_module("tkinter")
         except ModuleNotFoundError:
             self.skipTest("tkinter is not available in this Python build")
 
-        from PIL import ImageTk  # noqa: F401
+        importlib.import_module("PIL.ImageTk")
 
 
 if __name__ == "__main__":
