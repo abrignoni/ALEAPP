@@ -22,6 +22,8 @@ class TestRuntimeRequirements(unittest.TestCase):
         workflow = workflow_path.read_text(encoding="utf-8")
         self.assertIn("'3.10'", workflow)
         self.assertIn("'3.11'", workflow)
+        self.assertIn("python -m pip install -r requirements.txt", workflow)
+        self.assertIn("test_runtime_requirements.py", workflow)
 
 
 if __name__ == "__main__":
