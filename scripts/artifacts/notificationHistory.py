@@ -104,16 +104,30 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
         else:
             #iterate through the notification pbs
             try:
-                notification_history = notificationhistory_pb2.NotificationHistoryProto()
-                with open(file_found, 'rb') as f:
+                with open(file_found, "rb") as f:
+                    data = f.read()
+                    #Skip files that are not real NotificationHistory Protobufs
+                    if len(data) < 32:
+                        logfunc(f"Skipped, too small to be protobuf: {file_found}")
+                        continue
+                    if b"string pool" not in data:
+                        logfunc(f"Skipped, not a NotificationHistory protobuf: {file_found}")
+                        continue
+                        
+                    notification_history = notificationhistory_pb2.NotificationHistoryProto()
                     try:
-                        notification_history.ParseFromString(f.read()) #The error 'Wrong wire type in tag. ' likely happens due to the given .proto map file.  
+                        notification_history.ParseFromString(data)
                     except Exception as e:
-                        logfunc(f'Error in the ParseFromString() function. The error message was: {e}')
-
-                    package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)} # one of the protobuf files stores the package name and indexes
+                        logfunc(f"Skipped, invalid protobuf format: {file_found} ({e})")
+                        continue
 
                     major_version = notification_history.major_version if notification_history.HasField('major_version') else None # notification format version should be 1
+                    
+                    package_map = {}
+                    if notification_history.HasField('string_pool'):
+                        for i, pkg in enumerate(notification_history.string_pool):
+                            package_map[i] = pkg
+                    
                     for notification in notification_history.notification:
                         package_name = notification.package if notification.package else package_map.get(notification.package_index, "") #retrieves package from the map if not stored locally
                         
