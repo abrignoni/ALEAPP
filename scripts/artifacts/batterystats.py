@@ -1,15 +1,13 @@
 __artifacts_v2__ = {
-
-
     "battery_stats_daily": {
         "name": "Android Battery Stats Daily",
         "description": "Parses the Android System batterystats-daily.xml - \
-                        Steps string is on format: [device_state]-[battery_level]-[time_in_ms]",
+                        Steps string is in format: [device_state]-[battery_level]-[time_in_ms]",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "version": "0.0.1",
         "creation_date": "2026-03-12",
-        "last_update_date": "2026-03-12",
-        "requirements": "",
+        "last_update_date": "2026-03-14",
+        "requirements": "xmltodict, xml",
         "category": "Android Battery Statistics",
         "notes": "",
         "output_types": ["standard"],
@@ -47,6 +45,7 @@ def battery_stats_daily(files_found, _report_folder, _seeker, _wrap_text):
         return [value]
 
     # Mappings from https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/os/BatteryStats.java
+    # Validated with Test data from Android 14, 15, 16 - on Fairphone 4, Samsung S24, Pixel 8a
     initial_state_meanings = {
         "f": "Screen OFF at step start (Display.STATE_OFF)",
         "o": "Screen ON at step start (Display.STATE_ON)",
