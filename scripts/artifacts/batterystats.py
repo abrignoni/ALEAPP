@@ -45,7 +45,6 @@ def battery_stats_daily(files_found, _report_folder, _seeker, _wrap_text):
         return [value]
 
     # Mappings from https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/os/BatteryStats.java
-    # Validated with Test data from Android 14, 15, 16 - on Fairphone 4, Samsung S24, Pixel 8a
     initial_state_meanings = {
         "f": "Screen OFF at step start (Display.STATE_OFF)",
         "o": "Screen ON at step start (Display.STATE_ON)",
