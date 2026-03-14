@@ -5,6 +5,7 @@ import blackboxprotobuf
 import os
 import shutil
 import sqlite3
+from google.protobuf.message import DecodeError
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist_in_db, media_to_html
@@ -124,22 +125,27 @@ def read_trainingcache2(file_found, report_folder, seeker):
             all_rows = cursor.fetchall()
             for row in all_rows:
                 pb = row['_payload']
-                data, actual_types = blackboxprotobuf.decode_message(pb, pb_types)
-                texts = data.get('7', {}).get('2', [])
-                text_typed = ''
-                if texts:
-                    if isinstance(texts, list):
-                        for t in texts:
-                            text_typed += t.get('1', b'').decode('utf8', 'ignore')
-                    else:
-                        text_typed = texts.get('1', b'').decode('utf8', 'ignore')
+                try:
+                    data, actual_types = blackboxprotobuf.decode_message(pb, pb_types)
+                    texts = data.get('7', {}).get('2', [])
+                    text_typed = ''
+                    if texts:
+                        if isinstance(texts, list):
+                            for t in texts:
+                                text_typed += t.get('1', b'').decode('utf8', 'ignore')
+                        else:
+                            text_typed = texts.get('1', b'').decode('utf8', 'ignore')
 
-                # Not filtering out blanks for now
-                textbox_name = row['textbox_name']
-                textbox_id = row['textbox_id']
-                if len(textbox_id) > len(textbox_name):
-                    textbox_id = textbox_id[len(textbox_name) + 4:]
-                keyboard_events.append(keyboard_event(row['_id'], row['app'], text_typed, row['textbox_name'], row['textbox_id'], row['ts']))
+                    # Not filtering out blanks for now
+                    textbox_name = row['textbox_name']
+                    textbox_id = row['textbox_id']
+                    if len(textbox_id) > len(textbox_name):
+                        textbox_id = textbox_id[len(textbox_name) + 4:]
+                    keyboard_events.append(keyboard_event(row['_id'], row['app'], text_typed, row['textbox_name'], row['textbox_id'], row['ts']))
+                except (DecodeError, ValueError, AttributeError, TypeError) as inner_ex:
+                    # Skip rows with malformed protobuf data
+                    logfunc(f'Skipping row with malformed protobuf data: {inner_ex}')
+                    continue
         except (sqlite3.Error, TypeError, ValueError) as ex:
             logfunc(f'read_trainingcache2 had an error reading {file_found} ' + str(ex))
             
