@@ -148,6 +148,8 @@ from scripts.ilapfuncs import artifact_processor, \
 _PARSED_DUMPSYS = False
 _DUMPSYS_DICT = {}
 _DEVICE_TIME = 0
+#Convert arabic numbers:
+trans = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
 
 # Timestamp Helper - Converts to UNIX Timestamp
 def parse_timestamp(s, device_ts):
@@ -155,6 +157,7 @@ def parse_timestamp(s, device_ts):
     if not s or not isinstance(s, str):
         return None
     s = s.strip()
+    s = s.translate(trans)
     # ISO format: 2026-02-02T05:37:49.732
     try:
         dt = datetime.datetime.strptime(s[:19], "%Y-%m-%dT%H:%M:%S")
@@ -499,6 +502,7 @@ def alex_live_usagestats_yearly(files_found, _report_folder, _seeker, _wrap_text
                 else:
                     timestamp = parse_timestamp(value, _DEVICE_TIME)
                     if timestamp is None:
+                        value = value.translate(trans)
                         row_values.append(value)
                     else:
                         out_time = datetime.datetime.fromtimestamp(
