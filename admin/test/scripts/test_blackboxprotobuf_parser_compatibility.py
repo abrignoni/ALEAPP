@@ -2,6 +2,8 @@ import ast
 import unittest
 from pathlib import Path
 
+# Import scripts before blackboxprotobuf so the package-level compatibility shim
+# is applied exactly as it is when artifact modules are loaded by ALEAPP.
 import scripts  # pylint: disable=unused-import
 import blackboxprotobuf
 
