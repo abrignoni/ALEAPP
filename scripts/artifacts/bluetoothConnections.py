@@ -57,7 +57,7 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('Bluetooth Connections')
         report.start_artifact_report(report_folder, f'Bluetooth Connections')
         report.add_script()
-        data_headers = ('Last Connected Timestamp','Device Name','MAC Address','Link Key')
+        data_headers = ('First Connected Timestamp','Device Name','MAC Address','Link Key')
         report.write_artifact_data_table(data_headers, data_list, file_found)
         report.end_artifact_report()
         
@@ -97,6 +97,6 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
 __artifacts__ = {
         "Bluetooth Connections": (
                 "Bluetooth Connections",
-                ('*/misc/bluedroid/bt_config.conf'),
+                ('*/misc/bluedroid/bt_config.conf','*/bt_config.conf'),
                 get_bluetoothConnections)
 }
