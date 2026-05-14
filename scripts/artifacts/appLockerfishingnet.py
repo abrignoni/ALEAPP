@@ -51,12 +51,12 @@ def get_appLockerfishingnet(files_found, report_folder, seeker, wrap_text):
                     decrypted = 'True'
                 except ValueError as e:
                     logfunc(f'Error on {file_found}: {e}')
-                    shutil.copyfile(file_found, join(report_folder, basename(file_found)))
+                    shutil.copy2(file_found, join(report_folder, basename(file_found)))
                     decrypted = 'False'
                 
             else:
                 #print(ext.extension)
-                shutil.copyfile(file_found, join(report_folder, basename(file_found)))
+                shutil.copy2(file_found, join(report_folder, basename(file_found)))
                 decrypted = 'Not encrypted'
         
             tolink = []

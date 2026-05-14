@@ -5,7 +5,7 @@ import struct
 
 from pathlib import Path
 from scripts.ilapfuncs import *
-from shutil import copyfile
+from shutil import copy2
 from zipfile import ZipFile
 
 from fnmatch import _compile_pattern
@@ -68,7 +68,7 @@ class FileSeekerDir(FileSeekerBase):
                 if item not in self.copied or force:
                     try:
                         os.makedirs(os.path.dirname(data_path), exist_ok=True)
-                        copyfile(item, data_path)
+                        copy2(item, data_path)
                         self.copied[item] = data_path
                         creation_date = Path(item).stat().st_ctime
                         modification_date = Path(item).stat().st_mtime
