@@ -53,12 +53,15 @@ def get_appSemloc(files_found, report_folder, seeker, wrap_text):
                     #print(record_key)
                     #print(latlongrecord)
                     timestamp = value['2']
+                    timestamp2 = latlongrecord['6']
                     timestamp = datetime.fromtimestamp(timestamp/1000, tz=timezone.utc)
+                    timestamp2 = datetime.fromtimestamp(timestamp2/1000, tz=timezone.utc)
+                    
                     latitude = latlongrecord['1']/1e7
                     longitude = latlongrecord['2']/1e7
                     accuracy = latlongrecord['3']/1000
                     
-                    data_list.append((timestamp,record_sequence,latitude,longitude,accuracy,pf))
+                    data_list.append((timestamp,timestamp2,record_sequence,latitude,longitude,accuracy,pf))
         
     if len(data_list) > 0:
         maindirectory = str(pathlib.Path(in_db_dir).parent)
@@ -66,7 +69,7 @@ def get_appSemloc(files_found, report_folder, seeker, wrap_text):
         report = ArtifactHtmlReport('App Semantic Location')
         report.start_artifact_report(report_folder, 'App Semantic Location', description)
         report.add_script()
-        data_headers = ('Timestamp','Rec. Sequence','Latitude','Longitude','Horizontal Acc.','Origin')
+        data_headers = ('Timestamp','Timestamp ','Rec. Sequence','Latitude','Longitude','Horizontal Acc.','Origin')
         report.write_artifact_data_table(data_headers, data_list, maindirectory)
         report.end_artifact_report()
             
