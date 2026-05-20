@@ -40,7 +40,6 @@ __artifacts_v2__ = {
 }
 
 import os
-import shutil
 import sqlite3
 import datetime
 import html as html_module
