@@ -10,19 +10,22 @@ __artifacts_v2__ = {
             "Each image is displayed as a clickable thumbnail with file metadata."
         ),
         "author": "Guilherme Guilherme",
-        "version": "1.3",
-        "date": "2026-05-03",
+        "version": "1.4",
+        "date": "2026-05-20",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
             "The Glide disk cache location: cache/image_manager_disk_cache/*.0. "
             "Each .0 file is a raw JPEG. The filename is a SHA-256 hash of the signed Firebase URL. "
-            "The module directly links to the original file using absolute paths. "
+            "The module searches for the cache directory using multiple fallback paths. "
             "For the preview to work, the report must be opened on the same computer that extracted "
-            "the data, and the browser must allow file:// links (most do when the report is also "
-            "opened from a file:// location)."
+            "the data, and the browser must allow file:// links."
         ),
-        "paths": ("*/com.scaleup.chatai/cache/image_manager_disk_cache",),
+        "paths": (
+            "*/com.scaleup.chatai/cache/image_manager_disk_cache",
+            "*/data/data/com.scaleup.chatai/cache/image_manager_disk_cache",
+            "*/*/com.scaleup.chatai/cache/image_manager_disk_cache",
+        ),
         "function": "get_nova_cache_images",
     }
 }
@@ -75,23 +78,66 @@ def get_nova_cache_images(files_found, report_folder, seeker, wrap_text):
     """
     # Collect all unique cache directories from the glob matches
     cache_dirs = set()
+
     for path in files_found:
         path = str(path)
         if os.path.isdir(path):
             cache_dirs.add(path)
         else:
             parent = os.path.dirname(path)
-            cache_dirs.add(parent)
+            if os.path.isdir(parent):
+                cache_dirs.add(parent)
+
+    # If no cache directories found by glob, try manual fallback paths
+    if not cache_dirs:
+        extraction_root = getattr(seeker, "search_dir", "")
+        scripts.ilapfuncs.logfunc(
+            f"[nova_cache_images] Searching for cache in: {extraction_root}"
+        )
+
+        # Try common paths
+        fallback_paths = [
+            os.path.join(
+                extraction_root,
+                "data",
+                "data",
+                "com.scaleup.chatai",
+                "cache",
+                "image_manager_disk_cache",
+            ),
+            os.path.join(
+                extraction_root,
+                "data",
+                "com.scaleup.chatai",
+                "cache",
+                "image_manager_disk_cache",
+            ),
+            os.path.join(
+                extraction_root,
+                "com.scaleup.chatai",
+                "cache",
+                "image_manager_disk_cache",
+            ),
+        ]
+
+        for fb_path in fallback_paths:
+            if os.path.isdir(fb_path):
+                cache_dirs.add(fb_path)
+                scripts.ilapfuncs.logfunc(
+                    f"[nova_cache_images] Found cache via fallback: {fb_path}"
+                )
+                break
 
     if not cache_dirs:
         scripts.ilapfuncs.logfunc("[nova_cache_images] No cache directory found.")
         return
 
-    all_images = []  # list of dict with metadata and absolute path
+    all_images = []
 
     for cache_dir in cache_dirs:
         if not os.path.isdir(cache_dir):
             continue
+        scripts.ilapfuncs.logfunc(f"[nova_cache_images] Scanning: {cache_dir}")
         for fname in os.listdir(cache_dir):
             if not fname.endswith(".0"):
                 continue
@@ -117,7 +163,6 @@ def get_nova_cache_images(files_found, report_folder, seeker, wrap_text):
 
     all_images.sort(key=lambda x: x["mtime"], reverse=True)
 
-    # Prepare HTML rows
     headers = [
         "Thumbnail & Filename",
         "File Size",
@@ -128,10 +173,8 @@ def get_nova_cache_images(files_found, report_folder, seeker, wrap_text):
     tsv_rows = []
 
     for img in all_images:
-        # Convert absolute path to file:// URL
         abs_url = "file://" + os.path.abspath(img["abs_path"])
-        # For display, use the basename as label
-        display_name = f"{img['original_name']}"
+        display_name = img["original_name"]
         thumbnail_html = (
             f'<div style="text-align:center;">'
             f'  <a href="{abs_url}" target="_blank" title="Open original .0 file">'
@@ -148,7 +191,6 @@ def get_nova_cache_images(files_found, report_folder, seeker, wrap_text):
         html_rows.append((thumbnail_html, size_str, mtime_str, img["original_name"]))
         tsv_rows.append((display_name, size_str, mtime_str, img["original_name"]))
 
-    # Generate HTML report directly inside report_folder (top-level _HTML)
     report_name = "Nova AI Chatbot - Cached Images"
     report = ArtifactHtmlReport(report_name)
     report.start_artifact_report(report_folder, report_name)
@@ -158,7 +200,6 @@ def get_nova_cache_images(files_found, report_folder, seeker, wrap_text):
     )
     report.end_artifact_report()
 
-    # TSV export
     tsv_path = os.path.join(report_folder, f"{report_name}.tsv")
     with open(tsv_path, "w", newline="", encoding="utf-8") as tsvfile:
         writer = csv.writer(tsvfile, delimiter="\t")
@@ -168,5 +209,5 @@ def get_nova_cache_images(files_found, report_folder, seeker, wrap_text):
         writer.writerows(tsv_rows)
 
     scripts.ilapfuncs.logfunc(
-        f"[nova_cache_images] Displayed {len(all_images)} cached images using file:// links."
+        f"[nova_cache_images] Displayed {len(all_images)} cached images."
     )
