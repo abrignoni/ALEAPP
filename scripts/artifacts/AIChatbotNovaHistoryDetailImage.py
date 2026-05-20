@@ -41,6 +41,7 @@ __artifacts_v2__ = {
 }
 
 import os
+import shutil
 import sqlite3
 import datetime
 import html as html_module
@@ -320,7 +321,7 @@ def get_nova_chatbot_images(files_found, report_folder, seeker, wrap_text):
                 soft_deleted,
             ) = row
 
-            # filename = _resolve_image_file(img_url, seeker, images_dir)
+            filename = _resolve_image_file(img_url, seeker, images_dir)
 
             common = (
                 img_id,
@@ -343,17 +344,17 @@ def get_nova_chatbot_images(files_found, report_folder, seeker, wrap_text):
                 pipeline,
                 style_id,
                 msg_type,
-                # filename
+                filename,
             )
 
             # For TSV we also include the origin (derived from msg_type)
-            # origin_label = (
-            #     "User-submitted"
-            #     if msg_type == 0
-            #     else "AI-generated"
-            #     if msg_type == 1
-            #     else "Unknown"
-            # )
+            origin_label = (
+                "User-submitted"
+                if msg_type == 0
+                else "AI-generated"
+                if msg_type == 1
+                else "Unknown"
+            )
 
             html_rows.append(
                 common

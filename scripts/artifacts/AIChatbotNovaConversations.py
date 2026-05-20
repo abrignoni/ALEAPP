@@ -39,6 +39,7 @@ __artifacts_v2__ = {
 }
 
 import os
+import shutil
 import sqlite3
 import datetime
 import html as html_module
@@ -199,7 +200,7 @@ def _build_image_html(msg_type, img_urls, img_prompts, img_states, resolved_file
     parts = []
     for i, url in enumerate(urls):
         prompt = prompts[i] if i < len(prompts) else ""
-        # filename = resolved_filenames[i] if i < len(resolved_filenames) else None
+        filename = resolved_filenames[i] if i < len(resolved_filenames) else None
 
         cell = '<div style="font-size:12px; line-height:1.8; text-align:center;">'
 
