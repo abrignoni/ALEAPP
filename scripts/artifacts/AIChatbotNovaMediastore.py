@@ -3,12 +3,12 @@ __artifacts_v2__ = {
         "name": "User Media Submissions",
         "description": (
             "Identifies media files submitted by the user to Nova AI Chatbot, including "
-            "uploaded documents and photos captured using the in-app camera. The artifact "
-            "lists recovered filenames, conversation context, timestamps, MIME types, and resolved "
-            "physical paths from the extracted filesystem."
+            "uploaded documents, chat-attached images, and photos captured using the in-app camera. "
+            "The artifact lists recovered filenames, conversation context, timestamps, MIME types, "
+            "and resolved physical paths from the extracted filesystem."
         ),
         "author": "Guilherme Guilherme",
-        "version": "3.3",
+        "version": "3.4",
         "date": "2026-05-21",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
@@ -97,7 +97,7 @@ def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
 
     all_items = []
 
-    # 2. Process chat database attachments and cross-reference with MediaStore
+    # 2. Process chat database documents and cross-reference with MediaStore
     try:
         db = open_sqlite_db_readonly(nova_db)
         cur = db.cursor()
@@ -138,7 +138,6 @@ def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
             if match_key in media_lookup:
                 match = media_lookup[match_key]
                 if match["local_path"]:
-                    # Correctly links local images into ALEAPP's standard thumb pipeline
                     media_to_html(file_name, match["local_path"], report_folder)
                 display_path = _parse_path(match["data_path"])
             else:
@@ -147,7 +146,7 @@ def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
             all_items.append(
                 (
                     file_name or "Unknown",
-                    "Submitted to AI",
+                    "Submitted Document",
                     message or "",
                     conversation or "Untitled",
                     conv_uuid or "",
@@ -161,7 +160,83 @@ def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
     except Exception as e:
         logfunc(f"[nova_user_submissions] Error querying documents: {e}")
 
-    # 3. Process standalone camera storage entries matching the application context
+    # 3. New: Process user chat-submitted images (HistoryDetailImage)
+    try:
+        db = open_sqlite_db_readonly(nova_db)
+        cur = db.cursor()
+        cur.execute("""
+            SELECT
+                hdi.url,
+                hdi.prompt,
+                hd.text,
+                hd.createdAt,
+                h.title,
+                h.UUID
+            FROM HistoryDetailImage hdi
+            INNER JOIN HistoryDetail hd ON hd.id = hdi.historyDetailID
+            INNER JOIN History h ON h.id = hd.historyID
+            WHERE hd.type = 0
+            ORDER BY hd.createdAt DESC
+        """)
+        for (
+            img_url,
+            prompt,
+            message,
+            created_at,
+            conversation,
+            conv_uuid,
+        ) in cur.fetchall():
+            mtime_str = ""
+            if created_at:
+                try:
+                    mtime_str = datetime.datetime.fromtimestamp(
+                        float(created_at) / 1000, timezone.utc
+                    ).strftime("%Y-%m-%d %H:%M:%S UTC")
+                except Exception:
+                    mtime_str = str(created_at)
+
+            # Extract the raw filename out of the remote url endpoint path
+            file_name = (
+                os.path.basename(img_url.split("?")[0])
+                if img_url
+                else "Unknown_Image.jpg"
+            )
+
+            # Form an inline context blending user's text message input with any associated image generation prompts
+            context_pieces = []
+            if message:
+                context_pieces.append(f"Msg: {message}")
+            if prompt:
+                context_pieces.append(f"Prompt: {prompt}")
+            combined_context = " | ".join(context_pieces)
+
+            match_key = file_name.lower()
+            if match_key in media_lookup:
+                match = media_lookup[match_key]
+                if match["local_path"]:
+                    media_to_html(file_name, match["local_path"], report_folder)
+                display_path = _parse_path(match["data_path"])
+            else:
+                display_path = "Cloud-only (Firebase Storage)"
+
+            all_items.append(
+                (
+                    file_name,
+                    "Submitted Image",
+                    combined_context,
+                    conversation or "Untitled",
+                    conv_uuid or "",
+                    mtime_str,
+                    "",  # Size metadata is typically absent or cloud-side for image mappings
+                    "image/jpeg",
+                    display_path,
+                )
+            )
+        db.close()
+    except Exception as e:
+        logfunc(f"[nova_user_submissions] Error querying submitted images: {e}")
+
+    # 4. Process standalone camera storage entries matching the application context
     if media_db:
         try:
             db = open_sqlite_db_readonly(media_db)
@@ -202,7 +277,7 @@ def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
                         "Camera Photo",
                         "",
                         "Camera photo (not associated with a message)",
-                        "",  # Camera pictures do not have an associated conversation UUID
+                        "",
                         mtime_str,
                         size if size is not None else "",
                         mime_type or "image/jpeg",
@@ -221,7 +296,6 @@ def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
     deduped = []
     seen = set()
     for row in all_items:
-        # Deduplicate using filename (index 0) and physical path data (index 8)
         key = (row[0].lower(), row[8])
         if key in seen:
             continue
@@ -245,7 +319,6 @@ def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
         "Path",
     )
 
-    # Compliant HTML injection vulnerability protection handled securely by the framework via DataTables
     report.write_artifact_data_table(
         headers,
         deduped,
