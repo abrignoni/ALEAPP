@@ -1,6 +1,6 @@
 __artifacts_v2__ = {
     "nova_chatbot_conversations": {
-        "name": "Nova AI Chatbot - Conversations (Full Detail)",
+        "name": "Conversations (Full Detail)",
         "description": (
             "Reconstructs full conversations from the AI Chatbot - Nova app by joining "
             "History, HistoryDetail, HistoryDetailImage, HistoryDetailDocument, and "
@@ -565,7 +565,7 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, wrap_text
             tsv_rows.append(common + (img_tsv, doc_tsv, link_urls or ""))
 
         # HTML report
-        report_name = "Nova AI Chatbot - Conversations (Full Detail)"
+        report_name = "Conversations (Full Detail)"
         report = ArtifactHtmlReport(report_name)
         report.start_artifact_report(report_folder, report_name)
         report.add_script()

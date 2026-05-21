@@ -1,6 +1,6 @@
 __artifacts_v2__ = {
     "nova_chatbot_links": {
-        "name": "Nova AI Chatbot - Shared Links",
+        "name": "Shared Links",
         "description": (
             "Extracts all link records from the AI Chatbot - Nova app "
             "(HistoryDetailLink table). Each row represents one URL shared within "
@@ -202,7 +202,7 @@ def get_nova_chatbot_links(files_found, report_folder, seeker, wrap_text):
             scripts.ilapfuncs.logfunc(
                 f"[nova_chatbot_links] HistoryDetailLink table is empty in {file_found}."
             )
-            report_name = "Nova AI Chatbot - HistoryDetailLinks"
+            report_name = "HistoryDetailLinks"
             report = ArtifactHtmlReport(report_name)
             report.start_artifact_report(report_folder, report_name)
             report.add_script()
@@ -280,7 +280,7 @@ def get_nova_chatbot_links(files_found, report_folder, seeker, wrap_text):
             tsv_rows.append(common + (link_url or "",))
 
         # HTML report
-        report_name = "Nova AI Chatbot - HistoryDetailLinks"
+        report_name = "HistoryDetailLinks"
         report = ArtifactHtmlReport(report_name)
         report.start_artifact_report(report_folder, report_name)
         report.add_script()
