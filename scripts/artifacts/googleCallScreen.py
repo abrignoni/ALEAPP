@@ -1,3 +1,4 @@
+#googleCallScreen.py
 import blackboxprotobuf
 import os
 import shutil
@@ -21,17 +22,40 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
     
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
-        select
-        datetime(lastModifiedMillis/1000,'unixepoch'),
-        audioRecordingFilePath,
-        conversation,
-        id,
-        replace(audioRecordingFilePath, rtrim(audioRecordingFilePath, replace(audioRecordingFilePath, '/', '')), '') as 'File Name'
-        from Transcript
-        ''')
+        
+        try:
+            cursor.execute('''
+            select
+            datetime(lastModifiedMillis/1000,'unixepoch'), -- Index 0
+            audioRecordingFilePath,                        -- Index 1
+            conversation,                                  -- Index 2
+            id,                                            -- Index 3
+            replace(audioRecordingFilePath, rtrim(audioRecordingFilePath, replace(audioRecordingFilePath, '/', '')), '') as 'File Name' -- Index 4
+            from Transcript
+            ''')
+            logfunc('Using primary query (with all expected columns).')
+            all_rows = cursor.fetchall()
 
-        all_rows = cursor.fetchall()
+        except sqlite3.OperationalError as e:
+            if 'no such column' in str(e):
+                logfunc(f'Column not found in {file_found}. current Alternative')
+                
+                cursor.execute('''
+                select
+                               
+                NULL, -- Placeholder for the missing lastModifiedMillis timestamp (Index 0)
+                NULL, -- Placeholder for the missing audioRecordingFilePath (Index 1)
+                conversation, -- Actual value (Index 2)
+                id,           -- Actual value (Index 3)
+                NULL          -- Placeholder for 'File Name' (Index 4)
+                from Transcript
+                ''')
+                all_rows = cursor.fetchall()
+            else:
+                logfunc(f'An unexpected database error occurred: {e}')
+                db.close()
+                continue 
+
         usageentries = len(all_rows)
         data_list = []
         
@@ -56,11 +80,11 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
         if usageentries > 0:
             for row in all_rows:
             
-                lm_ts = row[0]
-                recording_path = row[1]
-                pb = row[2]
+                lm_ts = row[0] 
+                recording_path = row[1] 
+                pb = row[2] 
                 convo_id = row[3]
-                recording_filename = row[4]
+                recording_filename = row[4] 
                 audio_clip = ''
                 conversation = ''
                 
@@ -72,10 +96,11 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
                     convo_transcript = x['convo_text'] + '<br><br>'
                     conversation += convo_timestamp + convo_transcript
                     
-                for match in files_found:
-                    if str(recording_filename) in match:
-                        shutil.copy2(match, report_folder)
-                        audio_clip = f'<audio controls><source src="{folder_name}/{recording_filename}"></audio>'
+                if recording_filename:
+                    for match in files_found:
+                        if str(recording_filename) in match:
+                            shutil.copy2(match, report_folder)
+                            audio_clip = f'<audio controls><source src="{folder_name}/{recording_filename}"></audio>'
                                 
                 data_list.append((lm_ts,recording_path,conversation,audio_clip))
         
@@ -95,7 +120,7 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
             tlactivity = f'Google Call Screen'
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
-            logfunc('No Google Call Screen data available')
+            logfunc('Google Call Screen data not found')
     
         db.close()
 

@@ -38,11 +38,17 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
+@artifact_processor
 def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
     source_file_turbo = ''
     turbo_db = ''
     data_list = []
-        
+    
+    try:
+        time_offset 
+    except NameError:
+        time_offset = '0' 
+    
     for file_found in files_found:
         file_found = str(file_found)
         if file_found.lower().endswith('turbo.db'):
@@ -80,7 +86,10 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
                     if timestamp is None:
                         pass
                     else:
-                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                        try:
+                            timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
+                        except Exception as e:
+                            pass 
                     data_list.append((timestamp,row[1],row[2],row[3],row[4],file_found))
             
             db.close()
