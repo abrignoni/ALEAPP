@@ -20,6 +20,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | SamsungTrash |
 | SimpleStorage_applaunch |
 | TorBrowser |
+| WithingsHealthMate |
 | ZangiChats |
 | airtagAndroid |
 | appicons |
@@ -84,7 +85,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | VerizonRDDWIFI |
 | Viber |
 | WhatsApp |
-| WithingsHealthMate |
 | WordsWithFriends |
 | Xender |
 | Zapya |
