@@ -152,9 +152,65 @@ def set_media_references(media_ref_id, media_id, artifact_info, name, media_path
     ))
     lava_insert_sqlite_media_references(media_references)
 
+    # Module-level cache for filename lookup map (improves check_in_media performance)
+_filename_lookup_map = None
+_cached_files_found_id = None
+
+def _build_filename_lookup_map(files_found):
+    """Builds and returns a dictionary mapping filenames to a list of full paths."""
+    filename_lookup = {}
+    for full_path in files_found:
+        filename = os.path.basename(full_path)
+        if filename not in filename_lookup:
+            filename_lookup[filename] = []
+        filename_lookup[filename].append(full_path)
+    return filename_lookup
+
+def _get_filename_lookup_map(files_found):
+    """Returns the cached filename lookup map, building it if necessary."""
+    global _filename_lookup_map, _cached_files_found_id
+    files_found_id = id(files_found)
+    if _filename_lookup_map is None or _cached_files_found_id != files_found_id:
+        _filename_lookup_map = _build_filename_lookup_map(files_found)
+        _cached_files_found_id = files_found_id
+    return _filename_lookup_map
+
+def get_source_file_path(files_found, partial_path):
+    """
+    Finds the full source path for a given partial or relative path.
+    
+    This function uses a pre-computed lookup map for high-speed searching.
+    It first finds candidate paths based on the filename and then verifies
+    the match using the full partial path provided.
+    
+    Args:
+        files_found: List of file paths to search through
+        partial_path (str): The partial or relative path of the file to find.
+    
+    Returns:
+        str: The full path of the matching source file, or None if not found.
+    """
+    lookup_map = _get_filename_lookup_map(files_found)
+    
+    if lookup_map is None:
+        return None
+    
+    filename = os.path.basename(partial_path)
+    
+    if filename in lookup_map:
+        candidate_paths = lookup_map[filename]
+        for candidate in candidate_paths:
+            if Path(candidate).match(partial_path):
+                return candidate
+    
+    return None
+
+
 def check_in_media(artifact_info, report_folder, seeker, files_found, file_path, name="", converted_file_path=False):
-    extraction_path = next(
-        (path for path in files_found if Path(path).match(file_path)), None)
+        extraction_path = get_source_file_path(files_found, file_path)
+    if not extraction_path:
+        logfunc(f'No matching file found for "{file_path}"')
+        return None
     file_info = seeker.file_infos.get(extraction_path)
     if file_info:
         extraction_path = converted_file_path if converted_file_path else Path(extraction_path)
