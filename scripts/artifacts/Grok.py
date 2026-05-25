@@ -180,10 +180,6 @@ def grok_generatedvideos(files_found, report_folder, seeker, wrap_text):
         missing_flag = "Present"
 
         media_item = check_in_media(
-            artifact_info,
-            report_folder,
-            seeker,
-            files_found,
             file_found,
             filename
         )

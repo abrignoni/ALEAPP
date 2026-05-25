@@ -6,7 +6,7 @@ import shutil
 from collections import OrderedDict
 from scripts.html_parts import *
 from scripts.ilapfuncs import logfunc
-from scripts.version_info import aleapp_version, aleapp_contributors
+from scripts.version_info import leapp_version, aleapp_contributors
 from scripts.report_icons import icon_mappings, feather_icon_names
 
 def get_icon_name(category, artifact):
@@ -199,15 +199,15 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
         """
 
     # Get script run log (this will be tab2)
-    devinfo_files_path = os.path.join(reportfolderbase, 'Script Logs', 'DeviceInfo.html')
+    devinfo_files_path = os.path.join(reportfolderbase, '_HTML', '_Script_Logs', 'DeviceInfo.html')
     tab2_content = get_file_content(devinfo_files_path)
 
     # Get script run log (this will be tab3)
-    script_log_path = os.path.join(reportfolderbase, 'Script Logs', 'Screen Output.html')
+    script_log_path = os.path.join(reportfolderbase, '_HTML', '_Script_Logs', 'Screen_Output.html')
     tab3_content = get_file_content(script_log_path)
 
-    # Get processed files list (this will be tab3)
-    processed_files_path = os.path.join(reportfolderbase, 'Script Logs', 'ProcessedFilesLog.html')
+    # Get processed files list (this will be tab4)
+    processed_files_path = os.path.join(reportfolderbase, '_HTML', '_Script_Logs', 'ProcessedFilesLog.html')
     tab4_content = get_file_content(processed_files_path)
 
     content += tabs_code.format(tab1_content, tab2_content, tab3_content, tab4_content)
@@ -228,7 +228,7 @@ def create_index_html(reportfolderbase, time_in_secs, time_HMS, extraction_type,
     html_reportfolderbase.mkdir(exist_ok=True)
     with html_reportfolderbase.joinpath(filename).open('w', encoding='utf8') as f:
         f.write(page_header.format(page_title))
-        f.write(body_start.format(f"ALEAPP {aleapp_version}"))
+        f.write(body_start.format(f"ALEAPP {leapp_version}"))
         f.write(body_sidebar_setup + active_nav_list_data + body_sidebar_trailer)
         f.write(body_main_header + body_main_data_title.format(body_heading, body_description))
         f.write(content)

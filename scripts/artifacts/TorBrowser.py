@@ -67,13 +67,7 @@ def torbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
         modified_ts = os.path.getmtime(file_found)
         modifiedtime = datetime.datetime.utcfromtimestamp(int(modified_ts)).strftime('%Y-%m-%d %H:%M:%S')
 
-        media_item = check_in_media(
-            artifact_info,
-            report_folder,
-            seeker,
-            files_found,
-            filename
-        )
+        media_item = check_in_media(filename)
 
         if media_item:
             data_list.append((modifiedtime, media_item, filename, location))

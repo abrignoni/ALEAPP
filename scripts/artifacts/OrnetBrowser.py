@@ -326,10 +326,6 @@ def ornetbrowser_opentabs(files_found, report_folder, seeker, wrap_text):
             thumb_path = thumb_lookup.get(cached_filename)
             if thumb_path:
                 tab_thumbnail_media = check_in_media(
-                    artifact_info,
-                    report_folder,
-                    seeker,
-                    files_found,
                     thumb_path,
                     cached_filename
                 )
@@ -451,7 +447,7 @@ def ornetbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
         filepath = str(media_path.parents[1])
         
         timestamp = (datetime.datetime.utcfromtimestamp(utctime/1000).strftime('%Y-%m-%d %H:%M:%S'))
-        media_item = check_in_media(artifact_info, report_folder, seeker, files_found, file_found, filename)
+        media_item = check_in_media(file_found, filename)
 
         if media_item:
             data_list.append((timestamp, media_item, filename, str(file_found)))

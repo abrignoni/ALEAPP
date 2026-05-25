@@ -2,7 +2,7 @@ import html
 import os
 import sys
 from scripts.html_parts import *
-from scripts.version_info import aleapp_version
+from scripts.version_info import leapp_version
 
 class ArtifactHtmlReport:
 
@@ -21,7 +21,7 @@ class ArtifactHtmlReport:
         '''Creates the report HTML file and writes the artifact name as a heading'''
         self.report_file = open(os.path.join(report_folder, f'{artifact_file_name}.temphtml'), 'w', encoding='utf8')
         self.report_file.write(page_header.format(f'ALEAPP - {self.artifact_name} report'))
-        self.report_file.write(body_start.format(f'ALEAPP {aleapp_version}'))
+        self.report_file.write(body_start.format(f'ALEAPP {leapp_version}'))
         self.report_file.write(body_sidebar_setup)
         self.report_file.write(body_sidebar_dynamic_data_placeholder) # placeholder for sidebar data
         self.report_file.write(body_sidebar_trailer)
