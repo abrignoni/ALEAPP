@@ -148,14 +148,15 @@ def deepseek_chat_messages(files_found, report_folder, seeker, wrap_text):
 
                                 inserted_at_utc = str(inserted_at)
 
-                        content_html = extract_content_from_fragments(
+                        content = extract_content_from_fragments(
                             fragments
                         )
-
-                        chat_html = f'''
+                        
+                        '''
+                        chat_html = f
                         <div class="chat-message">
                             <div class="chat-content">
-                                {content_html}
+                                {content}
                             </div>
                         </div>
                         '''
@@ -165,7 +166,7 @@ def deepseek_chat_messages(files_found, report_folder, seeker, wrap_text):
                             table_name,
                             inserted_at_utc,
                             role,
-                            chat_html
+                            content
                         ))
 
                 except Exception as e:
