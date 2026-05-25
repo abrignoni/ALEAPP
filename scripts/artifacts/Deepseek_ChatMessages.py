@@ -44,7 +44,10 @@ def extract_content_from_fragments(fragments):
                 contents.append(item.get("content", ""))
 
         full_text = "\n\n".join(contents)
-
+        
+        #HTML conversion removed because LAVA will support markdown.
+        #HTML escape not allowed do to possible avenue for injection attacks
+        '''' 
         full_text = html.unescape(full_text)
 
         rendered_html = markdown.markdown(
@@ -55,11 +58,12 @@ def extract_content_from_fragments(fragments):
                 "sane_lists"
             ]
         )
+        '''
 
-        return rendered_html
+        return full_text
 
     except Exception:
-        return html.escape(str(fragments))
+        return (str(fragments))
 
 
 @artifact_processor
