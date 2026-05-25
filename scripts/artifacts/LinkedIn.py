@@ -37,12 +37,12 @@ __artifacts_v2__ = {
         "data_views": {
             "chat": {
                 "directionSentValue": 1,
-                "threadDiscriminatorColumn": "Conversation Urn",
+                "conversationDiscriminatorColumn": "Conversation Urn",
                 "textColumn": "Message",
                 "directionColumn": "Sent",
                 "timeColumn": "Delivery Date",
                 "senderColumn": "Sender Name",
-                "threadLabelColumn": "Conversation Label"
+                "conversationLabelColumn": "Conversation Label"
             }
         },
         "artifact_icon": "message-square"
