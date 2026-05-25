@@ -71,7 +71,7 @@ def samsungTrash(files_found, report_folder, seeker, _wrap_text):
 
             if matched_media_path:
                 media_item = check_in_media(
-                    artifact_info, report_folder, seeker, files_found + [matched_media_path], matched_media_path, Path(matched_media_path).name
+                    matched_media_path, Path(matched_media_path).name
                 )
 
             data_list.append((

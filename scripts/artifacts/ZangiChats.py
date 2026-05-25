@@ -109,7 +109,7 @@ def zangichats(files_found, _report_folder, _seeker, _wrap_text):
                 media_path = f"files/zangi/Zangi Files/{msgId}.*"
             try:
                 attach_file_name = Path(media_path).name
-                attach_file = check_in_media(artifact_info, _report_folder, _seeker, files_found, media_path, attach_file_name)
+                attach_file = check_in_media(media_path, attach_file_name)
             except TypeError:
                 attach_file = ""
         else:

@@ -4,7 +4,8 @@ Format = [ Name, Blog-url, Twitter-handle, Github-url]
 Leave blank if not available
 """
 
-aleapp_version = '3.6.0-dev.0'
+leapp_name = 'ALEAPP'
+leapp_version = '2.6.0-dev.1'
 
 aleapp_contributors = [
     ['Alexis Brignoni', 'https://abrignoni.com', '@AlexisBrignoni', 'https://github.com/abrignoni'],

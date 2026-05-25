@@ -251,7 +251,7 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
                                 # get the audio file
                                 for audio_file in files_found:
                                     if "audio" in audio_file and message_id in audio_file:
-                                        recording = check_in_media(artifact_info, report_folder, seeker, files_found, audio_file)
+                                        recording = check_in_media(audio_file)
                                         break
                                 
                                 data_list.append((timestamp,account_number,direction,from_num,to_num,call_status,voicemail,duration,recording))
@@ -364,7 +364,7 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
                             # get the voicemail audio file
                             for audio_file in files_found:
                                 if "audio" in audio_file and message_id in audio_file:
-                                    audio = check_in_media(artifact_info, report_folder, seeker, files_found, audio_file)
+                                    audio = check_in_media(audio_file)
                                     break
 
                             data_list.append((timestamp,account_number,from_num,to_num,duration,read_status,transcript,audio))
@@ -469,7 +469,7 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                                     # image file resides in Photo MMS images folder
                                     # filename: message_id + "-14" + extension
                                     if "Photo MMS images" in image and message_id in image and "-14" in image:
-                                        thumb = check_in_media(artifact_info, report_folder, seeker, files_found, image)
+                                        thumb = check_in_media(image)
                                         data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_num,read_status,message_content,thumb))
                                         break
 
@@ -543,7 +543,7 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                                     # image file resides in Photo MMS images folder
                                     # filename: message_id + "-14" + extension
                                     if "Photo MMS images" in image and message_id in image and "-14" in image:
-                                        thumb = check_in_media(artifact_info, report_folder, seeker, files_found, image)
+                                        thumb = check_in_media(image)
                                         data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,thumb))
                                         break
                                 
