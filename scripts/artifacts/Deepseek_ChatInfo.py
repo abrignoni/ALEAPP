@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from scripts.ilapfuncs import (
     artifact_processor,
@@ -37,7 +37,12 @@ def deepseek_chat_info(files_found, report_folder, seeker, wrap_text):
         chat_session_list
     """
 
-    data_headers = ('Chat ID', 'Title', 'Last Updated (UTC)')
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'Chat ID',
+        'Title',
+        'Last Updated (UTC)'
+    )
 
     for source_path in files_found:
 
@@ -47,6 +52,7 @@ def deepseek_chat_info(files_found, report_folder, seeker, wrap_text):
             continue
 
         try:
+
             cursor = db.cursor()
             cursor.execute(query)
 
@@ -56,18 +62,31 @@ def deepseek_chat_info(files_found, report_folder, seeker, wrap_text):
 
                 chat_id, title, updated_at = row
 
+                lava_timestamp = None
+                updated_at_utc = ""
+
                 if updated_at:
+
                     try:
-                        updated_at = datetime.utcfromtimestamp(
-                            float(updated_at)
+
+                        ts = float(updated_at)
+
+                        lava_timestamp = ts
+
+                        updated_at_utc = datetime.fromtimestamp(
+                            ts,
+                            tz=timezone.utc
                         ).strftime('%Y-%m-%d %H:%M:%S')
+
                     except Exception:
-                        updated_at = str(updated_at)
+
+                        updated_at_utc = str(updated_at)
 
                 data_list.append((
+                    lava_timestamp,
                     chat_id,
                     title,
-                    updated_at
+                    updated_at_utc
                 ))
 
         except Exception as e:

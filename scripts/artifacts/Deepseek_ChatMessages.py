@@ -2,7 +2,7 @@ import json
 import html
 import markdown
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from scripts.ilapfuncs import (
     artifact_processor,
@@ -66,6 +66,7 @@ def extract_content_from_fragments(fragments):
 def deepseek_chat_messages(files_found, report_folder, seeker, wrap_text):
 
     data_headers = (
+        ('Timestamp', 'datetime'),
         'Chat Table',
         'Inserted At (UTC)',
         'Role',
@@ -123,15 +124,25 @@ def deepseek_chat_messages(files_found, report_folder, seeker, wrap_text):
 
                     for role, inserted_at, fragments in rows:
 
+                        lava_timestamp = None
+                        inserted_at_utc = ""
+
                         if inserted_at:
 
                             try:
-                                inserted_at = datetime.utcfromtimestamp(
-                                    float(inserted_at)
+
+                                ts = float(inserted_at)
+
+                                lava_timestamp = ts
+
+                                inserted_at_utc = datetime.fromtimestamp(
+                                    ts,
+                                    tz=timezone.utc
                                 ).strftime('%Y-%m-%d %H:%M:%S')
 
                             except Exception:
-                                inserted_at = str(inserted_at)
+
+                                inserted_at_utc = str(inserted_at)
 
                         content_html = extract_content_from_fragments(
                             fragments
@@ -146,8 +157,9 @@ def deepseek_chat_messages(files_found, report_folder, seeker, wrap_text):
                         '''
 
                         data_list.append((
+                            lava_timestamp,
                             table_name,
-                            inserted_at,
+                            inserted_at_utc,
                             role,
                             chat_html
                         ))
