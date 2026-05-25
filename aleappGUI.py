@@ -9,10 +9,11 @@ import scripts.plugin_loader as plugin_loader
 
 from PIL import Image, ImageTk
 from tkinter import ttk, filedialog as tk_filedialog, messagebox as tk_msgbox
-from scripts.version_info import aleapp_version
+from scripts.version_info import leapp_version
 from scripts.search_files import *
 from scripts.modules_to_exclude import modules_to_exclude
 from scripts.lavafuncs import *
+from scripts.context import Context
 
 
 def pickModules():
@@ -206,6 +207,7 @@ def process(casedata):
         progress_bar.config(maximum=len(selected_modules))
         casedata = {key: value.get() for key, value in casedata.items()}
         out_params = OutputParameters(output_folder)
+        Context.set_output_params(out_params)
         wrap_text = True
 
         bottom_frame.pack_forget()
@@ -215,16 +217,16 @@ def process(casedata):
         logtext_frame.pack(padx=8, pady=4, expand=True, fill='both')
         progress_bar_frame.pack(padx=2, pady=2, ipady=2, fill='x')
 
-        initialize_lava(input_path, out_params.report_folder_base, extracttype)
+        initialize_lava(input_path, out_params.output_folder_base, extracttype)
 
         crunch_successful = aleapp.crunch_artifacts(
             selected_modules, extracttype, input_path, out_params, wrap_text, loader, 
             casedata, profile_filename)
         
-        lava_finalize_output(out_params.report_folder_base)
+        lava_finalize_output(out_params.output_folder_base)
 
         if crunch_successful:
-            report_path = os.path.join(out_params.report_folder_base, 'index.html')
+            report_path = os.path.join(out_params.output_folder_base, 'index.html')
             if report_path.startswith('\\\\?\\'):  # windows
                 report_path = report_path[4:]
             if report_path.startswith('\\\\'):  # UNC path
@@ -452,7 +454,7 @@ theme_button = '#d0dbbd'
 
 ## Main window properties
 main_window.minsize(890, 690)
-main_window.title(f'ALEAPP version {aleapp_version}')
+main_window.title(f'ALEAPP version {leapp_version}')
 main_window.configure(bg=theme_bgcolor)
 logo_icon = tk.PhotoImage(file=icon)
 main_window.iconphoto(True, logo_icon)
