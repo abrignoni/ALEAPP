@@ -1,6 +1,6 @@
 import json
 import html
-import markdown
+#import markdown
 
 from datetime import datetime, timezone
 
@@ -16,7 +16,7 @@ __artifacts_v2__ = {
         "author": "RicardoBentoSantos",
         "creation_date": "2026-05-24",
         "last_update_date": "2026-05-24",
-        "requirements": "markdown",
+        "requirements": "",
         "category": "DeepSeek",
         "notes": "",
         "paths": ('*/data/data/com.deepseek.chat/databases/deepseek_chat_*.db'),
