@@ -17,7 +17,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "",
-        "paths" : ('*/data/data/com.citymapper.app.release/databases/citymapper.db'),
+        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db'),
         "output_types": ['tsv', 'timeline', 'lava', 'kml']  # Exclude 'html' to use custom report     
     },
     "get_citymapperSavedTrips" : {
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "",
-        "paths" : ('*/data/data/com.citymapper.app.release/databases/citymapper.db'),
+        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db'),
         "output_types": ['tsv', 'timeline', 'lava', 'kml']  # Exclude 'html' to use custom report     
     },
     "get_citymapperAppPreferences" : {
@@ -41,10 +41,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "",
-        "paths" : ('*/data/data/com.citymapper.app.release/shared_prefs/superProperties.xml*', 
-                   '*/data/data/com.citymapper.app.release/shared_prefs/preferences.xml*',
-                   '*/data/data/com.citymapper.app.release/shared_prefs/Session.xml*',
-                   '*/data/data/com.citymapper.app.release/shared_prefs/no_backup_preferences.xml*'
+        "paths" : ('*/data/com.citymapper.app.release/shared_prefs/superProperties.xml*', 
+                   '*/data/com.citymapper.app.release/shared_prefs/preferences.xml*',
+                   '*/data/com.citymapper.app.release/shared_prefs/Session.xml*',
+                   '*/data/com.citymapper.app.release/shared_prefs/no_backup_preferences.xml*'
         ),
         "output_types": ['tsv', 'timeline', 'lava', 'kml']  # Exclude 'html' to use custom report
     }

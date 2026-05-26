@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Burner",
         "notes": "",
-        "paths": ('*/data/data/com.adhoclabs.burner/databases/burnerDatabase.db*'),
+        "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*'),
         "function": "get_burnerUser"
     }
 }

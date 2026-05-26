@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Google Keep Notes",
         "notes": "",
-        "paths": ('*/data/data/com.google.android.keep/databases/keep.db*'),
+        "paths": ('*/data/com.google.android.keep/databases/keep.db*'),
         "function": "get_keepNotes"
     }
 }
