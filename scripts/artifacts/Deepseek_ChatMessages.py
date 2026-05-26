@@ -19,7 +19,7 @@ __artifacts_v2__ = {
         "requirements": "",
         "category": "DeepSeek",
         "notes": "",
-        "paths": ('*/data/data/com.deepseek.chat/databases/deepseek_chat_*.db'),
+        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "message-square",
         "html_columns": ["Message Content"]
