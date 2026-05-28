@@ -12,8 +12,8 @@ Number of v1 artifacts: 195
 Number of v2 artifacts: 139  
 Number of modules with 'lava output': 96  
 Number of modules using 'artifact_icon': 94  
-Number of modules using 'version': 81  
-Number of modules using 'last_update_date': 77  
+Number of modules using 'version': 80  
+Number of modules using 'last_update_date': 78  
 Number of modules with errors or no recognized artifacts: 2  
 
 ## V2 Artifacts Table
@@ -85,7 +85,7 @@ Number of modules with errors or no recognized artifacts: 2
 | [alex_live_data.py](/scripts/artifacts/alex_live_data.py) | alex_live_account | Dumpsys - Accounts | html, lava, tsv | user |  | 2026-02-06 | Outputs the Accounts from the Dumpsys log of an ALEX PRFS backup. | ``*/extra/dumpsys_*.txt`` |
 | [alex_live_data.py](/scripts/artifacts/alex_live_data.py) | alex_live_batterystats | Dumpsys - Batterystats | html, lava, tsv | battery-charging |  | 2026-03-19 | Outputs the Batterystats from the Dumpsys log of an ALEX PRFS backup. | ``*/extra/dumpsys_*.txt``, ``*/device_info_alex.json`` |
 | [alex_live_data.py](/scripts/artifacts/alex_live_data.py) | alex_live_logcat | Logcat | html, lava, tsv | terminal |  | 2026-03-03 | Parses the Logcat logs of an ALEX PRFS backup. | ``*/extra/logcat.txt`` |
-| [androidauto.py](/scripts/artifacts/androidauto.py) | extract_android_auto | Android Auto Connected Cars | standard | truck | 0.0.1 |  | Android Auto connected cars | ``*/com.google.android.projection.gearhead/databases/carservicedata.db`` |
+| [androidauto.py](/scripts/artifacts/androidauto.py) | extract_android_auto | Android Auto - Connected Cars | standard | truck |  | 2026-05-28 | Android Auto connected cars | ``*/com.google.android.projection.gearhead/databases/carservicedata.db*`` |
 | [appSemloc.py](/scripts/artifacts/appSemloc.py) | appSemloc | App Semantic Locations |  |  | 1 |  | App Semantic Locations | ``*/com.google.android.gms/app_semanticlocation_rawsignal_db/*`` |
 | [appicons.py](/scripts/artifacts/appicons.py) | appIcons | App Icon | html, lava | package |  | 2025-03-08 | Extract App icons from Nexus launcher database | ``*/com.google.android.apps.nexuslauncher/databases/app_icons.db*`` |
 | [battery_usage_v9.py](/scripts/artifacts/battery_usage_v9.py) | battery_usage_v9 | Settings Services - Battery Usages v9 - Battery States |  |  | 0.0.1 |  | Getting Battery Usage data out of the database battery-usage-db-v9. Introduced with Android 14 | ``*/user_de/*/com.android.settings/databases/battery-usage-db-v9`` |
