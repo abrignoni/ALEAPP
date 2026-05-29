@@ -1,39 +1,51 @@
+# AI Chatbot - Nova (com.scaleup.chatai)
+# Artifact module: Shared Preferences - Account & Usage
+#
+# Author  : Guilherme Guilherme
+# Version : 1.4
+# Date    : 2026-05-30
+# Category: AI Chatbot - Nova
+
 __artifacts_v2__ = {
-    "nova_shared_prefs": {
-        "name": "Shared Preferences",
-        "description": (
-            "Extracts account info, decoded Firebase JWT data, usage metrics, and Adapty payment "
-            "profile data from ChatAI app preference files, optimized using LAVA-compliant timestamp parsing."
-        ),
+    "nova_momo_prefs": {
+        "name": "Shared Preferences - Account & Usage",
+        "description": "Extracts account info, decoded Firebase JWT data, device identifiers, and comprehensive usage metrics from MOMO_PREF_FILE.xml",
         "author": "Guilherme Guilherme",
-        "version": "1.1",
-        "date": "2026-05-29",
+        "version": "1.4",
+        "date": "2026-05-30",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
-        "notes": "Decodes Firebase JWT tokens and parses nested Adapty JSON strings.",
-        "paths": (
-            "*/com.scaleup.chatai/shared_prefs/MOMO_PREF_FILE.xml",
-            "*/com.scaleup.chatai/shared_prefs/AdaptySDKPrefs.xml",
-        ),
-        "function": "get_chat_ai_prefs",
-        "output_types": "standard",
+        "paths": ("*/com.scaleup.chatai/shared_prefs/MOMO_PREF_FILE.xml",),
+        "function": "get_nova_momo_prefs",
+        "output_types": "all",
         "artifact_icon": "settings",
-    }
+    },
+    "nova_adapty_prefs": {
+        "name": "Shared Preferences - Adapty Payment",
+        "description": "Extracts payment profile and installation metadata from AdaptySDKPrefs.xml",
+        "author": "Guilherme Guilherme",
+        "version": "1.4",
+        "date": "2026-05-30",
+        "requirements": "none",
+        "category": "AI Chatbot - Nova",
+        "paths": ("*/com.scaleup.chatai/shared_prefs/AdaptySDKPrefs.xml",),
+        "function": "get_nova_adapty_prefs",
+        "output_types": "all",
+        "artifact_icon": "credit-card",
+    },
 }
-
 
 import json
 import base64
 import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv
+from scripts.ilapfuncs import artifact_processor, logfunc, tsv
 
 
 def decode_jwt(token):
+    """Decode JWT payload without signature validation"""
     try:
-        # JWT is Header.Payload.Signature
         payload_b64 = token.split(".")[1]
-        # Add padding if necessary
         missing_padding = len(payload_b64) % 4
         if missing_padding:
             payload_b64 += "=" * (4 - missing_padding)
@@ -43,200 +55,209 @@ def decode_jwt(token):
         return None
 
 
-def get_chat_ai_prefs(files_found, report_folder, seeker, wrap_text):
-    logfunc("Processing data for ChatAI Shared Preferences")
+def format_key_name(key):
+    """Convert internal key names to user-friendly display names"""
+    name = key.replace("KEY_", "").replace("_", " ")
+    return " ".join(word.capitalize() for word in name.split())
 
-    for file_found in files_found:
-        file_found = str(file_found)
 
-        if file_found.endswith("MOMO_PREF_FILE.xml"):
+@artifact_processor
+def get_nova_momo_prefs(files_found, report_folder, seeker, wrap_text):
+    """
+    Extract data from MOMO_PREF_FILE.xml
+    Note: No media handling needed as this contains only preference data
+    """
+    if not files_found:
+        logfunc("[nova_momo_prefs] No MOMO_PREF_FILE.xml found")
+        return
+
+    file_path = str(files_found[0])
+    account_data = []
+    identifiers = []
+    usage_data = []
+    flags = []
+
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+    except Exception as e:
+        logfunc(f"[nova_momo_prefs] Error parsing XML: {e}")
+        return
+
+    for elem in root:
+        name = elem.get("name")
+        value = elem.get("value") if elem.get("value") is not None else elem.text
+
+        if not name:
+            continue
+
+        # Decode Firebase JWT for account info
+        if name == "KEY_USER_FIREBASE_ID_TOKEN":
+            decoded = decode_jwt(value)
+            if decoded:
+                account_data.extend(
+                    [
+                        ("Firebase Email", decoded.get("email", "")),
+                        ("Firebase Name", decoded.get("name", "")),
+                        ("Firebase UID", decoded.get("user_id", "")),
+                        (
+                            "Sign-in Provider",
+                            decoded.get("firebase", {}).get("sign_in_provider", ""),
+                        ),
+                    ]
+                )
+
+        # Device identifiers
+        elif name in [
+            "KEY_USER_AUTHENTICATION_ID",
+            "KEY_USER_INSTALLATIONS_ID",
+            "KEY_PLATFORM_ID",
+            "KEY_FCM_TOKEN",
+        ]:
+            identifiers.append((format_key_name(name), value))
+
+        # Boolean flags and settings
+        elif name.startswith("KEY_DID_") or name.startswith("KEY_IS_"):
+            flags.append((format_key_name(name), "Yes" if value == "true" else "No"))
+
+        # Usage metrics (all other KEY_USER_USAGE_* fields)
+        elif name.startswith("KEY_USER_USAGE_") or name in [
+            "KEY_SUCCESSFULL_CHAT_RESPONSE",
+            "KEY_SESSION_COUNT",
+            "KEY_HISTORY_BOX_SHOWN",
+        ]:
+            usage_data.append((format_key_name(name), value))
+
+    # Generate reports
+    if account_data:
+        report = ArtifactHtmlReport("Shared Prefs - Account Information")
+        report.start_artifact_report(
+            report_folder, "Shared Prefs - Account Information"
+        )
+        report.add_script()
+        report.write_artifact_data_table(
+            ("Field", "Value"), account_data, file_path, html_escape=False
+        )
+        report.end_artifact_report()
+        tsv(
+            report_folder,
+            ("Field", "Value"),
+            account_data,
+            "Shared Prefs - Account Information",
+        )
+
+    if identifiers:
+        report = ArtifactHtmlReport("Shared Prefs - Device Identifiers")
+        report.start_artifact_report(report_folder, "Shared Prefs - Device Identifiers")
+        report.add_script()
+        report.write_artifact_data_table(
+            ("Identifier", "Value"), identifiers, file_path, html_escape=False
+        )
+        report.end_artifact_report()
+        tsv(
+            report_folder,
+            ("Identifier", "Value"),
+            identifiers,
+            "Shared Prefs - Device Identifiers",
+        )
+
+    if usage_data:
+        report = ArtifactHtmlReport("Shared Prefs - Usage Metrics")
+        report.start_artifact_report(report_folder, "Shared Prefs - Usage Metrics")
+        report.add_script()
+        report.write_artifact_data_table(
+            ("Metric", "Value"), usage_data, file_path, html_escape=False
+        )
+        report.end_artifact_report()
+        tsv(
+            report_folder,
+            ("Metric", "Value"),
+            usage_data,
+            "Shared Prefs - Usage Metrics",
+        )
+
+    if flags:
+        report = ArtifactHtmlReport("Shared Prefs - App Settings")
+        report.start_artifact_report(report_folder, "Shared Prefs - App Settings")
+        report.add_script()
+        report.write_artifact_data_table(
+            ("Setting", "Value"), flags, file_path, html_escape=False
+        )
+        report.end_artifact_report()
+        tsv(report_folder, ("Setting", "Value"), flags, "Shared Prefs - App Settings")
+
+
+@artifact_processor
+def get_nova_adapty_prefs(files_found, report_folder, seeker, wrap_text):
+    """Extract data from AdaptySDKPrefs.xml"""
+    if not files_found:
+        logfunc("[nova_adapty_prefs] No AdaptySDKPrefs.xml found")
+        return
+
+    file_path = str(files_found[0])
+    data_list = []
+
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+    except Exception as e:
+        logfunc(f"[nova_adapty_prefs] Error parsing XML: {e}")
+        return
+
+    for elem in root:
+        name = elem.get("name")
+        value = elem.get("value") if elem.get("value") is not None else elem.text
+
+        if not name or not value:
+            continue
+
+        if name == "LAST_SENT_INSTALLATION_META":
             try:
-                tree = ET.parse(file_found)
-                root = tree.getroot()
-            except Exception as e:
-                logfunc(f"[ChatAIPrefs] Error parsing XML file {file_found}: {e}")
-                continue
+                meta = json.loads(value)
+                for k, v in meta.items():
+                    data_list.append((f"Meta: {k}", str(v)))
+            except Exception:
+                pass
 
-            jwt_info = {}
-            usage_metrics = []
-            generic_ids = []
-
-            for elem in root:
-                name = elem.get("name")
-                value = elem.get("value") if elem.get("value") else elem.text
-
-                if not name:
-                    continue
-
-                # Decode Firebase JWT
-                if name == "KEY_USER_FIREBASE_ID_TOKEN" and value:
-                    decoded = decode_jwt(value)
-                    if decoded:
-                        jwt_info = {
-                            "Email": decoded.get("email"),
-                            "Name": decoded.get("name"),
-                            "Firebase UID": decoded.get("user_id"),
-                            "Sign-in Provider": decoded.get("firebase", {}).get(
-                                "sign_in_provider"
-                            ),
-                        }
-
-                # Identity Keys
-                elif name in [
-                    "KEY_USER_AUTHENTICATION_ID",
-                    "KEY_USER_INSTALLATIONS_ID",
-                    "KEY_PLATFORM_ID",
-                    "KEY_FCM_TOKEN",
-                ]:
-                    generic_ids.append((name, value or ""))
-
-                # Global Metrics
-                elif name in ["KEY_SUCCESSFULL_CHAT_RESPONSE", "KEY_SESSION_COUNT"]:
-                    usage_metrics.append((name, value or ""))
-
-                # Individual Bot Usage (Generalizing the pattern)
-                elif (
-                    "KEY_USER_USAGE_RIGHT_COUNT" in name
-                    or "KEY_USER_USAGE_TOTAL_COUNT" in name
-                ):
-                    usage_metrics.append((name, value or ""))
-
-            # Report 1: MOMO Account & IDs (Sem timestamp nativo associado às chaves)
-            if jwt_info or generic_ids:
-                report_name = "Shared Prefs - Account Identifiers"
-                report = ArtifactHtmlReport(report_name)
-                report.start_artifact_report(report_folder, report_name)
-                report.add_script()
-
-                data_list = []
-                for k, v in jwt_info.items():
-                    data_list.append(("", k, v, "Decoded from JWT"))
-                for k, v in generic_ids:
-                    data_list.append(("", k, v, "XML Raw Value"))
-
-                headers = ("Timestamp", "Key/Field", "Value", "Source Type")
-                report.write_artifact_data_table(
-                    headers, data_list, file_found, html_escape=True
-                )
-                report.end_artifact_report()
-                tsv(report_folder, headers, data_list, report_name, file_found)
-
-            # Report 2: MOMO Usage Metrics
-            if usage_metrics:
-                report_name = "Shared Prefs - Usage Metrics"
-                report = ArtifactHtmlReport(report_name)
-                report.start_artifact_report(report_folder, report_name)
-                report.add_script()
-
-                data_list = [("", k, v) for k, v in usage_metrics]
-                headers = ("Timestamp", "Metric Key", "Value")
-
-                report.write_artifact_data_table(
-                    headers, data_list, file_found, html_escape=True
-                )
-                report.end_artifact_report()
-                tsv(report_folder, headers, data_list, report_name, file_found)
-
-        elif file_found.endswith("AdaptySDKPrefs.xml"):
+        if name in ["get_purchaser_info_response", "PROFILE"]:
             try:
-                tree = ET.parse(file_found)
-                root = tree.getroot()
-            except Exception as e:
-                logfunc(f"[ChatAIPrefs] Error parsing XML file {file_found}: {e}")
-                continue
+                p_data = json.loads(value)
+                if "data" in p_data:
+                    attrs = p_data["data"].get("attributes", {})
+                else:
+                    attrs = p_data
 
-            adapty_main = []
-            adapty_meta = []
-
-            for elem in root:
-                name = elem.get("name")
-                value = elem.get("value") if elem.get("value") else elem.text
-
-                if not name:
-                    continue
-
-                # Parse Installation Meta JSON
-                if name == "LAST_SENT_INSTALLATION_META" and value:
-                    try:
-                        meta = json.loads(value)
-                        for k, v in meta.items():
-                            adapty_meta.append(("", k, str(v)))
-                    except Exception:
-                        pass
-
-                # Parse Profile JSON
-                if name in ["get_purchaser_info_response", "PROFILE"] and value:
-                    try:
-                        p_data = json.loads(value)
-                        if "data" in p_data:
-                            attrs = p_data["data"].get("attributes", {})
-                        else:
-                            attrs = p_data
-
-                        custom = attrs.get("custom_attributes", {})
-                        ts = attrs.get("timestamp") or p_data.get("timestamp")
-
-                        # Conversão para Float Epoch compatível com LAVA (Segundos)
-                        lava_timestamp = ""
-                        if ts is not None:
-                            try:
-                                lava_timestamp = float(ts) / 1000
-                            except (ValueError, TypeError):
-                                lava_timestamp = ts
-
-                        adapty_main.append(
-                            (
-                                lava_timestamp,
-                                "Is Test User",
-                                str(attrs.get("is_test_user", "")),
-                            )
-                        )
-                        adapty_main.append(
-                            (
-                                lava_timestamp,
-                                "Old App Instance ID",
-                                str(custom.get("oldAppInstanceId", "")),
-                            )
-                        )
-                        adapty_main.append(
-                            (
-                                lava_timestamp,
-                                "Total Revenue (USD)",
-                                str(attrs.get("total_revenue_usd", "")),
-                            )
-                        )
-                        adapty_main.append(
-                            (
-                                lava_timestamp,
-                                "Paywall Type",
-                                str(custom.get("paywallType", "")),
-                            )
-                        )
-                    except Exception:
-                        pass
-
-            if adapty_main:
-                report_name = "Shared Prefs - Adapty Payment Profile"
-                report = ArtifactHtmlReport(report_name)
-                report.start_artifact_report(report_folder, report_name)
-                report.add_script()
-
-                headers = ("Timestamp", "Attribute", "Value")
-                report.write_artifact_data_table(
-                    headers, adapty_main, file_found, html_escape=True
+                custom = attrs.get("custom_attributes", {})
+                data_list.extend(
+                    [
+                        ("Is Test User", str(attrs.get("is_test_user", ""))),
+                        (
+                            "Old App Instance ID",
+                            str(custom.get("oldAppInstanceId", "")),
+                        ),
+                        (
+                            "Total Revenue (USD)",
+                            str(attrs.get("total_revenue_usd", "")),
+                        ),
+                        ("Paywall Type", str(custom.get("paywallType", ""))),
+                    ]
                 )
-                report.end_artifact_report()
-                tsv(report_folder, headers, adapty_main, report_name, file_found)
+            except Exception:
+                pass
 
-            if adapty_meta:
-                report_name = "Shared Prefs - Adapty Device Meta"
-                report = ArtifactHtmlReport(report_name)
-                report.start_artifact_report(report_folder, report_name)
-                report.add_script()
-
-                headers = ("Timestamp", "Meta Key", "Value")
-                report.write_artifact_data_table(
-                    headers, adapty_meta, file_found, html_escape=True
-                )
-                report.end_artifact_report()
-                tsv(report_folder, headers, adapty_meta, report_name, file_found)
+    if data_list:
+        report = ArtifactHtmlReport("Shared Prefs - Adapty Payment Data")
+        report.start_artifact_report(
+            report_folder, "Shared Prefs - Adapty Payment Data"
+        )
+        report.add_script()
+        report.write_artifact_data_table(
+            ("Field", "Value"), data_list, file_path, html_escape=False
+        )
+        report.end_artifact_report()
+        tsv(
+            report_folder,
+            ("Field", "Value"),
+            data_list,
+            "Shared Prefs - Adapty Payment Data",
+        )
