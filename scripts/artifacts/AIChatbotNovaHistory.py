@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     },
     "nova_chatbot_history_detail": {
-        "name": "History Detail",
+        "name": "HistoryDetail",
         "description": "Extracts individual messages from Nova AI Chatbot",
         "author": "Guilherme Guilherme",
         "version": "6.1",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
         "artifact_icon": "message-circle",
     },
     "nova_chatbot_documents": {
-        "name": "History Detail Documents",
+        "name": "HistoryDetailDocuments",
         "description": "Extracts document records from Nova AI Chatbot (Firebase URLs)",
         "author": "Guilherme Guilherme",
         "version": "6.1",
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "artifact_icon": "file-text",
     },
     "nova_chatbot_images": {
-        "name": "History Detail Images",
+        "name": "HistoryDetailImages",
         "description": "Extracts image records from Nova AI Chatbot (Firebase URLs)",
         "author": "Guilherme Guilherme",
         "version": "6.1",
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "artifact_icon": "image",
     },
     "nova_chatbot_links": {
-        "name": "History Detail Links",
+        "name": "HistoryDetailLinks",
         "description": "Extracts link records from Nova AI Chatbot",
         "author": "Guilherme Guilherme",
         "version": "6.1",
