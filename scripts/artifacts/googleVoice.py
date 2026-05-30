@@ -61,11 +61,10 @@ import blackboxprotobuf
 import os
 import time
 import struct
-import inspect
 from scripts.ilapfuncs import artifact_processor, get_binary_file_content, open_sqlite_db_readonly, does_table_exist_in_db, check_in_media
 
 @artifact_processor
-def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
+def googlevoice_accounts(files_found, _report_folder, _seeker, _wrap_text):
     data_headers = ('Account Number', 'Full Name', 'Email Address', 'Linked Phone Number', 'Current Google Voice Number')
     data_list = []
     source_path = ""
@@ -144,7 +143,7 @@ def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
+def googlevoice_calls(files_found, _report_folder, _seeker, _wrap_text):
     data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Direction', 'Caller', 'Recipient', 'Call Status', 'Voicemail Left', 'Duration', ('Call Recording', 'media'))
     data_list = []
     source_path = ""
@@ -244,7 +243,6 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
                             # 23 has values if an incoming call was recorded
                             recording = ""
                             if '23' in message[0]:
-                                artifact_info = inspect.stack()[0]
                                 message_id = message[0]['1'].decode('utf-8')
                                 recording = ""
 
@@ -262,7 +260,7 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
+def googlevoice_voicemails(files_found, _report_folder, _seeker, _wrap_text):
     data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Caller', 'Recipient', 'Duration', 'Read Status', 'Transcript', ('Audio File', 'media'))
     data_list = []
     source_path = ""
@@ -359,7 +357,6 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
 
                             # Audio File
                             audio = ""
-                            artifact_info = inspect.stack()[0]
                             message_id = message[0]['1'].decode('utf-8')
                             # get the voicemail audio file
                             for audio_file in files_found:
@@ -372,7 +369,7 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
+def googlevoice_messages(files_found, _report_folder, _seeker, _wrap_text):
     data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Conversation ID', 'Direction', 'Sender', 'Recipient(s)', 'Read Status', 'Message', ('Image', 'media'))
     data_list = []
     source_path = ""
@@ -464,7 +461,6 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
 
                             # Image
                             if "MMS" in message_content:
-                                artifact_info = inspect.stack()[0]
                                 message_id = message[0]['1'].decode('utf-8')
 
                                 # get image file
@@ -538,7 +534,6 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
 
                             # Image
                             if "MMS" in message_content:
-                                artifact_info = inspect.stack()[0]
                                 message_id = message[0]['1'].decode('utf-8')
 
                                 # get the image file

@@ -14,13 +14,12 @@ __artifacts_v2__ = {
 }
 
 import sqlite3
-import datetime
 import os
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_keepNotes(files_found, report_folder, seeker, wrap_text):
+def get_keepNotes(files_found, report_folder, _seeker, _wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
         filename = os.path.basename(file_found)

@@ -13,19 +13,16 @@ __artifacts_v2__ = {
     }
 }
 
-import sqlite3
-import textwrap
-
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist_in_db, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, kmlgen, does_table_exist_in_db, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_airGuard(files_found, report_folder, seeker, wrap_text):
-    
+def get_airGuard(files_found, report_folder, _seeker, _wrap_text):
+
     data_list_scans = []
     data_list_tracker = []
-    
+    file_found = ''
+
     for file_found in files_found:
-        file_name = str(file_found)
         
         if file_found.endswith('attd_db'):
             db = open_sqlite_db_readonly(file_found)
@@ -146,10 +143,10 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_tracker, file_found)
         report.end_artifact_report()
         
-        tsvname = f'AirGuard AirTag Tracker'
+        tsvname = 'AirGuard AirTag Tracker'
         tsv(report_folder, data_headers, data_list_tracker, tsvname)
-        
-        tlactivity = f'AirGuard AirTag Tracker'
+
+        tlactivity = 'AirGuard AirTag Tracker'
         timeline(report_folder, tlactivity, data_list_tracker, data_headers)
         
         kmlactivity = 'AirGuard AirTag Tracker'
@@ -168,10 +165,10 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list_scans, file_found)
         report.end_artifact_report()
         
-        tsvname = f'AirGuard AirTag Scans'
+        tsvname = 'AirGuard AirTag Scans'
         tsv(report_folder, data_headers, data_list_scans, tsvname)
-        
-        tlactivity = f'AirGuard AirTag Scans'
+
+        tlactivity = 'AirGuard AirTag Scans'
         timeline(report_folder, tlactivity, data_list_scans, data_headers)
         
     else:

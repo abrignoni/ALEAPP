@@ -29,16 +29,12 @@ __artifacts_v2__ = {
     }
 }
 
-import sqlite3
-import textwrap
 import os
 
-from packaging import version
-from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
-def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
+def Turbo_Battery(files_found, _report_folder, _seeker, _wrap_text):
     source_file_turbo = ''
     turbo_db = ''
     data_list = []
@@ -90,9 +86,8 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_file_turbo
             
 @artifact_processor
-def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):
+def Turbo_Bluetooth(files_found, _report_folder, _seeker, _wrap_text):
     source_file_bluetooth = ''
-    turbo_db = ''
     data_list = []
 
     for file_found in files_found:

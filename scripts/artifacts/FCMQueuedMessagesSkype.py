@@ -21,7 +21,6 @@ SOFTWARE.
 """
 
 import pathlib
-import sys
 import datetime
 import json
 import typing
@@ -201,7 +200,7 @@ def process_content(content: str):
         return html.escape(html.unescape(content), quote=False)
 
 
-def get_fcm_skype(files_found, report_folder, seeker, wrap_text, mode):
+def get_fcm_skype(files_found, report_folder, _seeker, _wrap_text, mode):
     if mode == "s":
         app_name = "Skype"
         app_id = "com.skype.raider"
