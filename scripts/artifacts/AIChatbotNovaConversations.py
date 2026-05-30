@@ -68,12 +68,77 @@ CHAT_BOT_MODEL_MAP = {
     29: "GPT-4o Mini",
 }
 
+ASSISTANT_MAP = {
+    1: "Margot Robbie",
+    2: "Elon Musk",
+    3: "Snoop Dogg",
+    4: "Steve Jobs",
+    5: "LeBron James",
+    6: "Zendaya",
+    7: "Steve Harvey",
+    8: "Botanist",
+    9: "Veterinarian",
+    10: "Dietitian",
+    11: "Accountant",
+    12: "Architect",
+    13: "Artist",
+    14: "Chef",
+    15: "Designer",
+    16: "Software Developer",
+    17: "Doctor",
+    18: "Influencer",
+    19: "Journalist",
+    20: "Lawyer",
+    21: "Math Teacher",
+    22: "Personal Trainer",
+    23: "Pilot",
+    24: "Scientist",
+    25: "Writer Assistant",
+    26: "Taylor Swift",
+    27: "Dermatologist",
+    28: "Astrologer",
+    29: "Fashion Designer",
+    30: "Phoebe Buffay",
+    31: "Thomas Shelby",
+    32: "Barney Stinson",
+    33: "Dwight Schrute",
+    34: "Sub-Zero",
+    35: "Pikachu",
+    36: "Super Mario",
+    37: "Hello Kitty",
+    38: "Doctor Who",
+    39: "Chandler Bing",
+    40: "Michael Scott",
+    41: "Walter White",
+    42: "The Grinch",
+    43: "Santa Claus",
+    44: "Loki",
+    45: "Dr. House",
+    46: "Relationship Doctor",
+    47: "Kylie Jenner",
+    58: "Prophecy",
+}
+
+
+def get_assistant(assistant_id):
+    if not assistant_id:
+        return ""
+    try:
+        name = ASSISTANT_MAP.get(int(assistant_id))
+        return (
+            f"{name} ({assistant_id})" if name else f"Unknown Persona ({assistant_id})"
+        )
+    except (TypeError, ValueError):
+        return str(assistant_id)
+
+
 QUERY = """
 SELECT
     h.id                        AS conv_id,
     h.UUID                      AS conv_uuid,
     h.title                     AS conv_title,
     h.chatBotModel              AS chat_bot_model,
+    h.assistantId               AS assistant_id,
     h.softDeleted               AS soft_deleted,
     h.syncState                 AS conv_sync_state,
 
@@ -165,6 +230,7 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, wrap_text
         "Conv. UUID",
         "Conv. Title",
         "AI Model",
+        "Assistant Persona",
         "Conv. Deleted",
         "Msg. ID",
         "Msg. UUID",
@@ -196,7 +262,9 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, wrap_text
                 else f"Unknown Model ({model_int})"
             )
 
-        raw_role = row[8]
+        assistant_persona = get_assistant(row[4])
+
+        raw_role = row[9]
         role_str = (
             "USER"
             if raw_role == 0
@@ -206,7 +274,7 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, wrap_text
         )
 
         # A. Documents
-        doc_names_raw = row[16]
+        doc_names_raw = row[17]
         doc_media_ref = ""
         doc_dev_path = "Cloud-only"
 
@@ -226,7 +294,7 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, wrap_text
                 )
 
         # B. Images
-        img_urls_raw = row[14]
+        img_urls_raw = row[15]
         img_media_refs = []
         img_dev_path = "Cloud-only"
 
@@ -260,23 +328,24 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, wrap_text
                 row[1] or "",
                 row[2] or "",
                 model_name,
-                "DELETED" if row[4] == 1 else "No",
-                row[6],
-                row[7] or "",
+                assistant_persona,
+                "DELETED" if row[5] == 1 else "No",
+                row[7],
+                row[8] or "",
                 role_str,
-                row[9] or "",
-                row[10] if row[10] is not None else "",
-                row[11] or "",
-                float(row[12]) / 1000 if row[12] else None,
-                row[15] or "",
+                row[10] or "",
+                row[11] if row[11] is not None else "",
+                row[12] or "",
+                float(row[13]) / 1000 if row[13] else None,
+                row[16] or "",
                 img_media_refs[0] if img_media_refs else "",
                 img_dev_path,
-                row[14] or "",
-                row[16] or "",
+                row[15] or "",
+                row[17] or "",
                 doc_media_ref,
                 doc_dev_path,
-                row[18] or "",
                 row[19] or "",
+                row[20] or "",
             )
         )
 
