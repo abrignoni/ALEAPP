@@ -13,21 +13,15 @@ def get_googleInitiatedNav(files_found, report_folder, seeker, wrap_text):
             pb = arreglo[8:]
             values, types = blackboxprotobuf.decode_message(pb)
         
-        if isinstance(values, dict):
-            timestamp = values['1']['2']
+        entries = values.get('1', [])
+        if isinstance(entries, dict):
+            entries = [entries]
+        for entry in entries:
+            timestamp = entry['2']
             timestamp = datetime.fromtimestamp(timestamp/1000000, tz=timezone.utc)
             timestamp = convert_utc_human_to_timezone(timestamp, 'UTC')
-            intendeddest = values['1']['4']['1'].decode()
-            
+            intendeddest = entry['4']['1'].decode()
             data_list.append((timestamp, intendeddest))
-        else:
-            for data in values['1']:
-                timestamp = data['2']
-                timestamp = datetime.fromtimestamp(timestamp/1000000, tz=timezone.utc)
-                timestamp = convert_utc_human_to_timezone(timestamp, 'UTC')
-                intendeddest = data['4']['1'].decode()
-                
-                data_list.append((timestamp, intendeddest))
                         
         if len(data_list) > 0:
             report = ArtifactHtmlReport('Google Initiated Navigation')

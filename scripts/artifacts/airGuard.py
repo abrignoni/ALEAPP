@@ -118,12 +118,16 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text):
                     if start_scan_ts is None or start_scan_ts == 'None':
                         pass
                     else:
+                        if len(start_scan_ts.split(':')) == 2:
+                            start_scan_ts += ':00'
                         start_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(start_scan_ts),'UTC')
-                    
+
                     end_scan_ts = str(row[1]).replace("T", " ")
                     if end_scan_ts is None or end_scan_ts == 'None':
                         pass
                     else:
+                        if len(end_scan_ts.split(':')) == 2:
+                            end_scan_ts += ':00'
                         end_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(end_scan_ts),'UTC')
                     
                     data_list_scans.append((start_scan_ts,end_scan_ts,row[2],row[3],row[4],row[5],file_found))

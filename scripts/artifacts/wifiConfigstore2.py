@@ -27,15 +27,22 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                 for a in elem:
                     #print(a.tag)
                     #print(a.text)
+                    configcombined = ssidcombined = bssidcombined = ''
+                    PreSharedKeycombined = WEPKeyscombined = HiddenSSIDcombined = ''
+                    RandomizedMacAddresscombined = CreatorNamecombined = CreationTimecombined = ''
+                    ConnectChoicecombined = ConnectChoiceTimeStampcombined = ''
+                    HasEverConnectedcombined = IpAssignmentcombined = ProxySettingscombined = ''
                     for b in a:
                         #print(b.tag)
                         tagg = b.tag
-                        
+
                         for c in b:
                             combined = (c.attrib, c.text)
-                            datafieldname = (c.attrib['name']) #field
+                            datafieldname = c.attrib.get('name')
+                            if datafieldname is None:
+                                continue
                             datafieldvalue = (c.attrib.get('value', ''))
-                            datafielddata= (c.text) 
+                            datafielddata= (c.text)
                             
                             if datafieldname == 'ConfigKey':
                                 configkey = f'{datafielddata}'

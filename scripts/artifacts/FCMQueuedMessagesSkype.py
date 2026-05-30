@@ -283,7 +283,10 @@ def get_fcm_skype(files_found, report_folder, seeker, wrap_text, mode):
                         conversation_id = rec.key_values["conversationId"]
                         # trim the number at the start for the lookup, so it can be used consistently with calls
                         conversation_id = STARTS_WITH_NUMBER.sub("", conversation_id, 1)
-                        payload = json.loads(rec.key_values["rawPayload"])
+                        try:
+                            payload = json.loads(rec.key_values["rawPayload"])
+                        except json.JSONDecodeError:
+                            continue
                         metadata = make_metadata_field(
                             payload,
                             {

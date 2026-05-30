@@ -456,7 +456,11 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                             # Message
                             message_content = ""
                             if '10' in message[0]:
-                                message_content = message[0]['10'].decode('utf-8')
+                                raw = message[0]['10']
+                                if isinstance(raw, bytes):
+                                    message_content = raw.decode('utf-8')
+                                elif isinstance(raw, dict):
+                                    message_content = next((v.decode('utf-8') for v in raw.values() if isinstance(v, bytes)), str(raw))
 
                             # Image
                             if "MMS" in message_content:
