@@ -1,5 +1,4 @@
 __artifacts_v2__ = {
-    # Key must match the function name exactly
     "get_nova_momo_prefs": {
         "name": "Shared Preferences - Account & Usage",
         "description": "Extracts account info, decoded Firebase JWT data, device identifiers, and usage metrics.",

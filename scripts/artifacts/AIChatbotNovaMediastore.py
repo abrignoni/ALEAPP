@@ -1,55 +1,46 @@
 __artifacts_v2__ = {
     "nova_user_submissions": {
         "name": "User Media Submissions",
-        "description": (
-            "Identifies media files submitted by the user to Nova AI Chatbot, including "
-            "uploaded documents, chat-attached images, and photos captured using the in-app camera. "
-            "The artifact lists recovered filenames, conversation context, timestamps, MIME types, "
-            "and resolved physical paths from the extracted filesystem."
-        ),
+        "description": "Extracts Nova AI media. Identifies files via database indexing (MediaStore) and performs a filesystem sweep for orphaned camera captures.",
         "author": "Guilherme Guilherme",
-        "version": "3.4",
-        "date": "2026-05-21",
+        "version": "3.6",
+        "date": "2026-05-30",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
-        "notes": "Sources: chat-ai.db and Android MediaStore databases.",
+        "notes": "Integrates chat-ai.db history with physical filesystem discovery. Note: chat-ai.db contains text data only, not media files.",
         "paths": (
-            "*/com.scaleup.chatai/databases/chat-ai.db",
-            "*/com.android.providers.media/databases/external*.db",
-            "*/com.google.android.providers.media.module/databases/external*.db",
+            "**/com.scaleup.chatai/databases/chat-ai.db",
+            "**/com.android.providers.media/databases/external*.db",
+            "**/com.google.android.providers.media.module/databases/external*.db",
+            "**/data/media/0/Android/media/com.scaleup.chatai/Nova/*",
         ),
         "function": "get_nova_user_submissions",
-        "output_types": "standard",
+        "output_types": ["standard", "lava"],
         "artifact_icon": "folder",
     }
 }
 
 import os
-import datetime
-from datetime import timezone
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, open_sqlite_db_readonly, media_to_html
+from types import SimpleNamespace
+from scripts.ilapfuncs import (
+    artifact_processor,
+    logfunc,
+    open_sqlite_db_readonly,
+    check_in_media,
+    get_file_path,
+)
 
 
-def _parse_path(raw_path):
-    """Normalizes paths and slices them to always start at /data."""
-    if not raw_path:
-        return ""
-    normalized = str(raw_path).replace("\\", "/")
-    if "/data/" in normalized:
-        return "/data/" + normalized.split("/data/", 1)[1]
-    elif "data/data/" in normalized:
-        return "/data/data/" + normalized.split("data/data/", 1)[1]
-    return normalized
-
-
+@artifact_processor
 def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
-    logfunc("Processing data for Nova User Media Submissions")
+    logfunc("Processing Nova User Media (Logic + Physical Sweep)")
 
-    files_found = [
-        x for x in files_found if not x.endswith(("-journal", "-wal", "-shm"))
-    ]
-    nova_db = next((str(x) for x in files_found if "chat-ai.db" in str(x)), None)
+    # Use the artifact_info injected by the framework (cleaner than inspect.stack)
+    artifact_info = SimpleNamespace(**get_nova_user_submissions.artifact_info)
+    artifact_info.filename = __file__
+
+    # Find databases
+    nova_db = get_file_path(files_found, "chat-ai.db")
     media_db = next(
         (
             str(x)
@@ -59,274 +50,131 @@ def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
         None,
     )
 
-    if not nova_db:
-        logfunc("[nova_user_submissions] Nova database not found.")
-        return
-
-    extraction_root = getattr(seeker, "search_dir", "") or ""
-    media_lookup = {}
-
-    # 1. Map the MediaStore database records to see what is on local storage
-    if media_db:
-        try:
-            db = open_sqlite_db_readonly(media_db)
-            cur = db.cursor()
-            cur.execute("""
-                SELECT _display_name, _data, _size, date_added, mime_type
-                FROM files
-                WHERE _data IS NOT NULL
-            """)
-            for display_name, data_path, size, date_added, mime_type in cur.fetchall():
-                local_path = ""
-                if data_path:
-                    clean_rel = str(data_path).replace("\\", "/").lstrip("/")
-                    if clean_rel.startswith("storage/emulated/0/"):
-                        clean_rel = clean_rel.replace(
-                            "storage/emulated/0/", "data/media/0/", 1
-                        )
-
-                    candidate_path = os.path.join(extraction_root, clean_rel)
-                    if os.path.exists(candidate_path):
-                        local_path = candidate_path
-
-                key = (display_name or os.path.basename(str(data_path))).lower()
-                media_lookup[key] = {"data_path": data_path, "local_path": local_path}
-            db.close()
-        except Exception as e:
-            logfunc(f"[nova_user_submissions] Error building MediaStore lookup: {e}")
-
     all_items = []
+    processed_paths = set()
 
-    # 2. Process chat database documents and cross-reference with MediaStore
-    try:
-        db = open_sqlite_db_readonly(nova_db)
-        cur = db.cursor()
-        cur.execute("""
-            SELECT
-                hdd.name,
-                hdd.mimeType,
-                hdd.size,
-                hd.text,
-                hd.createdAt,
-                h.title,
-                h.UUID
-            FROM HistoryDetailDocument hdd
-            INNER JOIN HistoryDetail hd ON hd.id = hdd.historyDetailID
-            INNER JOIN History h ON h.id = hd.historyID
-            WHERE hd.type = 0
-            ORDER BY hd.createdAt DESC
-        """)
-        for (
-            file_name,
-            mime_type,
-            size_db,
-            message,
-            created_at,
-            conversation,
-            conv_uuid,
-        ) in cur.fetchall():
-            mtime_str = ""
-            if created_at:
-                try:
-                    mtime_str = datetime.datetime.fromtimestamp(
-                        float(created_at) / 1000, timezone.utc
-                    ).strftime("%Y-%m-%d %H:%M:%S UTC")
-                except Exception:
-                    mtime_str = str(created_at)
+    # Pre-build lookup for files in the extraction to quickly find them by name
+    # Focus on the Nova folder to avoid collisions
+    nova_files_lookup = {}
+    nova_path_part = "Android/media/com.scaleup.chatai/Nova"
+    for f in files_found:
+        if nova_path_part in str(f):
+            nova_files_lookup[os.path.basename(f).lower()] = str(f)
 
-            match_key = (file_name or "").lower()
-            if match_key in media_lookup:
-                match = media_lookup[match_key]
-                if match["local_path"]:
-                    media_to_html(file_name, match["local_path"], report_folder)
-                display_path = _parse_path(match["data_path"])
-            else:
-                display_path = "Cloud-only (Firebase Storage)"
-
-            all_items.append(
-                (
-                    file_name or "Unknown",
-                    "Submitted Document",
-                    message or "",
-                    conversation or "Untitled",
-                    conv_uuid or "",
-                    mtime_str,
-                    size_db if size_db is not None else "",
-                    mime_type or "",
-                    display_path,
-                )
-            )
-        db.close()
-    except Exception as e:
-        logfunc(f"[nova_user_submissions] Error querying documents: {e}")
-
-    # 3. New: Process user chat-submitted images (HistoryDetailImage)
-    try:
-        db = open_sqlite_db_readonly(nova_db)
-        cur = db.cursor()
-        cur.execute("""
-            SELECT
-                hdi.url,
-                hdi.prompt,
-                hd.text,
-                hd.createdAt,
-                h.title,
-                h.UUID
-            FROM HistoryDetailImage hdi
-            INNER JOIN HistoryDetail hd ON hd.id = hdi.historyDetailID
-            INNER JOIN History h ON h.id = hd.historyID
-            WHERE hd.type = 0
-            ORDER BY hd.createdAt DESC
-        """)
-        for (
-            img_url,
-            prompt,
-            message,
-            created_at,
-            conversation,
-            conv_uuid,
-        ) in cur.fetchall():
-            mtime_str = ""
-            if created_at:
-                try:
-                    mtime_str = datetime.datetime.fromtimestamp(
-                        float(created_at) / 1000, timezone.utc
-                    ).strftime("%Y-%m-%d %H:%M:%S UTC")
-                except Exception:
-                    mtime_str = str(created_at)
-
-            # Extract the raw filename out of the remote url endpoint path
-            file_name = (
-                os.path.basename(img_url.split("?")[0])
-                if img_url
-                else "Unknown_Image.jpg"
-            )
-
-            # Form an inline context blending user's text message input with any associated image generation prompts
-            context_pieces = []
-            if message:
-                context_pieces.append(f"Msg: {message}")
-            if prompt:
-                context_pieces.append(f"Prompt: {prompt}")
-            combined_context = " | ".join(context_pieces)
-
-            match_key = file_name.lower()
-            if match_key in media_lookup:
-                match = media_lookup[match_key]
-                if match["local_path"]:
-                    media_to_html(file_name, match["local_path"], report_folder)
-                display_path = _parse_path(match["data_path"])
-            else:
-                display_path = "Cloud-only (Firebase Storage)"
-
-            all_items.append(
-                (
-                    file_name,
-                    "Submitted Image",
-                    combined_context,
-                    conversation or "Untitled",
-                    conv_uuid or "",
-                    mtime_str,
-                    "",  # Size metadata is typically absent or cloud-side for image mappings
-                    "image/jpeg",
-                    display_path,
-                )
-            )
-        db.close()
-    except Exception as e:
-        logfunc(f"[nova_user_submissions] Error querying submitted images: {e}")
-
-    # 4. Process standalone camera storage entries matching the application context
+    # 1. Database Indexed Lookup (MediaStore)
+    media_lookup = {}
     if media_db:
-        try:
-            db = open_sqlite_db_readonly(media_db)
+        with open_sqlite_db_readonly(media_db) as db:
             cur = db.cursor()
-            cur.execute("""
-                SELECT _display_name, _data, _size, date_added, mime_type
-                FROM files
-                WHERE bucket_display_name = 'Nova' OR _data LIKE '%/Nova/%'
-                ORDER BY date_added DESC
-            """)
-            for display_name, data_path, size, date_added, mime_type in cur.fetchall():
-                mtime_str = ""
-                if date_added:
-                    try:
-                        mtime_str = datetime.datetime.fromtimestamp(
-                            int(date_added), timezone.utc
-                        ).strftime("%Y-%m-%d %H:%M:%S UTC")
-                    except Exception:
-                        mtime_str = str(date_added)
+            cur.execute("SELECT _display_name, _data FROM files WHERE _data IS NOT NULL")
+            for name, path in cur.fetchall():
+                key = (name or os.path.basename(str(path))).lower()
+                media_lookup[key] = path
 
-                fname = display_name or (
-                    os.path.basename(str(data_path)) if data_path else "Unknown"
+    # 2. Extract from Nova Chat DB
+    if nova_db:
+        with open_sqlite_db_readonly(nova_db) as db:
+            cur = db.cursor()
+
+            # Documents
+            cur.execute(
+                "SELECT hdd.name, hdd.mimeType, hd.text, hd.createdAt FROM HistoryDetailDocument hdd INNER JOIN HistoryDetail hd ON hd.id = hdd.historyDetailID"
+            )
+            for name, mime, msg, ts in cur.fetchall():
+                key = (name or "").lower()
+                dev_path = media_lookup.get(key)
+                media_ref = ""
+                ext_path = nova_files_lookup.get(key)
+                if ext_path:
+                    media_ref = check_in_media(
+                        artifact_info, report_folder, seeker, files_found, ext_path, name
+                    )
+                    processed_paths.add(ext_path)
+
+                all_items.append(
+                    (
+                        name,
+                        "Document",
+                        msg,
+                        "",
+                        "",
+                        float(ts) / 1000 if ts else None,
+                        "",
+                        mime,
+                        media_ref,
+                        dev_path or "Cloud-only",
+                    )
                 )
 
-                clean_rel = str(data_path).replace("\\", "/").lstrip("/")
-                if clean_rel.startswith("storage/emulated/0/"):
-                    clean_rel = clean_rel.replace(
-                        "storage/emulated/0/", "data/media/0/", 1
+            # Images
+            cur.execute(
+                "SELECT hdi.url, hdi.prompt, hd.text, hd.createdAt FROM HistoryDetailImage hdi INNER JOIN HistoryDetail hd ON hd.id = hdi.historyDetailID"
+            )
+            for url, prompt, msg, ts in cur.fetchall():
+                fname = os.path.basename(url.split("?")[0])
+                key = fname.lower()
+                dev_path = media_lookup.get(key)
+                media_ref = ""
+                ext_path = nova_files_lookup.get(key)
+                if ext_path:
+                    media_ref = check_in_media(
+                        artifact_info,
+                        report_folder,
+                        seeker,
+                        files_found,
+                        ext_path,
+                        fname,
                     )
-
-                local_path = os.path.join(extraction_root, clean_rel)
-                if os.path.exists(local_path):
-                    media_to_html(fname, local_path, report_folder)
+                    processed_paths.add(ext_path)
 
                 all_items.append(
                     (
                         fname,
-                        "Camera Photo",
+                        "Image",
+                        f"Msg: {msg} | Prompt: {prompt}",
                         "",
-                        "Camera photo (not associated with a message)",
                         "",
-                        mtime_str,
-                        size if size is not None else "",
-                        mime_type or "image/jpeg",
-                        _parse_path(data_path),
+                        float(ts) / 1000 if ts else None,
+                        "",
+                        "image/jpeg",
+                        media_ref,
+                        dev_path or "Cloud-only",
                     )
                 )
-            db.close()
-        except Exception as e:
-            logfunc(f"[nova_user_submissions] Error querying camera photos: {e}")
 
-    if not all_items:
-        logfunc("[nova_user_submissions] No media found.")
-        return
-
-    # Deduplicate entries safely using filename and localized storage path attributes
-    deduped = []
-    seen = set()
-    for row in all_items:
-        key = (row[0].lower(), row[8])
-        if key in seen:
-            continue
-        seen.add(key)
-        deduped.append(row)
-
-    report_name = "User Media Submissions"
-    report = ArtifactHtmlReport(report_name)
-    report.start_artifact_report(report_folder, report_name)
-    report.add_script()
+    # 3. Physical Sweep (Orphaned Files in /Nova)
+    for file_path in files_found:
+        if nova_path_part in str(file_path) and str(file_path) not in processed_paths:
+            fname = os.path.basename(file_path)
+            media_ref = check_in_media(
+                artifact_info, report_folder, seeker, files_found, str(file_path), fname
+            )
+            all_items.append(
+                (
+                    fname,
+                    "Orphaned Media",
+                    "Found in /Nova folder (No DB link)",
+                    "",
+                    "",
+                    None,
+                    "",
+                    "image/jpeg",
+                    media_ref,
+                    str(file_path),
+                )
+            )
 
     headers = (
         "File Name",
         "Type",
-        "User Message / Context",
-        "Conversation Title",
-        "Conv. UUID",
-        "Date (UTC)",
-        "Size (Bytes)",
-        "MIME Type",
+        "Context",
+        "Conv. Title",
+        "UUID",
+        ("Date (UTC)", "datetime"),
+        "Size",
+        "MIME",
+        ("Media", "media"),
         "Path",
     )
 
-    report.write_artifact_data_table(
-        headers,
-        deduped,
-        nova_db,
-        table_id="NovaUserSubmissions",
-        html_escape=True,
-    )
-    report.end_artifact_report()
-
-    tsv(report_folder, headers, deduped, report_name, nova_db)
-    logfunc(f"[nova_user_submissions] Found {len(deduped)} total items.")
+    return headers, all_items, nova_db or "Filesystem"
