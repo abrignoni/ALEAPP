@@ -204,7 +204,7 @@ def get_role(role_int):
 
 
 @artifact_processor
-def get_nova_chatbot_history(files_found, report_folder, seeker, wrap_text):
+def get_nova_chatbot_history(files_found, _report_folder, _seeker, _wrap_text):
     db_path = get_file_path(files_found, "chat-ai.db")
     if not db_path:
         return (), [], ""
@@ -267,7 +267,7 @@ def get_nova_chatbot_history(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_nova_chatbot_history_detail(files_found, report_folder, seeker, wrap_text):
+def get_nova_chatbot_history_detail(files_found, _report_folder, _seeker, _wrap_text):
     db_path = get_file_path(files_found, "chat-ai.db")
     if not db_path:
         return (), [], ""
@@ -337,7 +337,7 @@ def get_nova_chatbot_history_detail(files_found, report_folder, seeker, wrap_tex
 
 
 @artifact_processor
-def get_nova_chatbot_documents(files_found, report_folder, seeker, wrap_text):
+def get_nova_chatbot_documents(files_found, _report_folder, _seeker, _wrap_text):
     db_path = get_file_path(files_found, "chat-ai.db")
     if not db_path:
         return (), [], ""
@@ -409,7 +409,7 @@ def get_nova_chatbot_documents(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_nova_chatbot_images(files_found, report_folder, seeker, wrap_text):
+def get_nova_chatbot_images(files_found, _report_folder, _seeker, _wrap_text):
     db_path = get_file_path(files_found, "chat-ai.db")
     if not db_path:
         return (), [], ""
@@ -482,7 +482,7 @@ def get_nova_chatbot_images(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_nova_chatbot_links(files_found, report_folder, seeker, wrap_text):
+def get_nova_chatbot_links(files_found, _report_folder, _seeker, _wrap_text):
     db_path = get_file_path(files_found, "chat-ai.db")
     if not db_path:
         return (), [], ""

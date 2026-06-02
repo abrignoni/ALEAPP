@@ -171,7 +171,7 @@ ORDER BY h.id ASC, hd.createdAt ASC
 
 
 @artifact_processor
-def get_nova_chatbot_conversations(files_found, report_folder, seeker, wrap_text):
+def get_nova_chatbot_conversations(files_found, report_folder, seeker, _wrap_text):
     logfunc("Processing data for Nova Full Conversations")
 
     # Use framework-injected artifact_info
@@ -210,7 +210,7 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, wrap_text
                 for display_name, data_path in cur.fetchall():
                     key = (display_name or os.path.basename(str(data_path))).lower()
                     media_lookup[key] = data_path
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logfunc(
                 f"[nova_chatbot_conversations] Error building MediaStore lookup: {e}"
             )
@@ -221,7 +221,7 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, wrap_text
             cursor = db.cursor()
             cursor.execute(QUERY)
             rows_raw = cursor.fetchall()
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f"[nova_chatbot_conversations] Error reading {nova_db}: {e}")
         return (), [], ""
 

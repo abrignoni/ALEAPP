@@ -40,7 +40,7 @@ def decode_jwt(token):
             payload_b64 += "=" * (4 - missing_padding)
         decoded = base64.b64decode(payload_b64).decode("utf-8")
         return json.loads(decoded)
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         return None
 
 
@@ -50,13 +50,13 @@ def format_key_name(key):
 
 
 @artifact_processor
-def get_nova_momo_prefs(files_found, report_folder, seeker, wrap_text):
+def get_nova_momo_prefs(files_found, _report_folder, _seeker, _wrap_text):
     file_path = str(files_found[0])
     data_list = []
 
     try:
         root = ET.parse(file_path).getroot()
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f"[nova_momo_prefs] Error parsing XML: {e}")
         return (), [], ""
 
@@ -87,13 +87,13 @@ def get_nova_momo_prefs(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_nova_adapty_prefs(files_found, report_folder, seeker, wrap_text):
+def get_nova_adapty_prefs(files_found, _report_folder, _seeker, _wrap_text):
     file_path = str(files_found[0])
     data_list = []
 
     try:
         root = ET.parse(file_path).getroot()
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f"[nova_adapty_prefs] Error parsing XML: {e}")
         return (), [], ""
 

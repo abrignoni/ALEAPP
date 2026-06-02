@@ -38,7 +38,6 @@ icon_mappings = \
         'default': 'user'
     },
     'AGGREGATE DICTIONARY': 'book',
-    'AI CHATBOT - NOVA': 'message-circle',
     'AIRDROP DISCOVERABLE': 'search',
     'AIRDROP EMAILS': 'send',
     'AIRDROP NUMBERS': 'smartphone',

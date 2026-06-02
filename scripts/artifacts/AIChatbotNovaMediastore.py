@@ -32,7 +32,7 @@ from scripts.ilapfuncs import (
 
 
 @artifact_processor
-def get_nova_user_submissions(files_found, report_folder, seeker, wrap_text):
+def get_nova_user_submissions(files_found, report_folder, seeker, _wrap_text):
     logfunc("Processing Nova User Media (Logic + Physical Sweep)")
 
     # Use the artifact_info injected by the framework (cleaner than inspect.stack)
