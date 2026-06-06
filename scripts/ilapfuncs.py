@@ -624,7 +624,7 @@ def get_sqlite_db_path(path):
         # and '/' safe so the drive letter and forward slashes are preserved.
         return "%5C%5C%3F%5C" + quote(remainder, safe=':/')
     else:
-        return path
+        return quote(str(path), safe='/')
 
 def open_sqlite_db_readonly(path):
     '''Opens a sqlite db in read-only mode, so original db (and -wal/journal are intact)'''
