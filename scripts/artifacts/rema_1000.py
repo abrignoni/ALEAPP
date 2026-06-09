@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Rema1000 Receipts",
         "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan Selv'. All raw data.",
         "author": "Nicolai Martini",
-        "version": "1.1",
+        "version": "1.2",
         "creation_date": "2026-04-17",
         "last_update_date": "2026-06-09",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
@@ -17,7 +17,7 @@ __artifacts_v2__ = {
         "name": "Rema1000 Receipts, prettified",
         "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan Selv'. Data is prettified.",
         "author": "Nicolai Martini",
-        "version": "1.1",
+        "version": "1.2",
         "creation_date": "2026-04-17",
         "last_update_date": "2026-06-09",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
@@ -37,15 +37,15 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfu
 def rema1000_receipt_raw(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith('receipts.db'):
+        if file_found.endswith("receipts.db"):
             source_path = file_found
-            data_headers = ('id','displayId','paymentDate','paymentSource',
-                            'storeNumber','totalPrice','totalPriceString',
-                            'totalDiscount','totalVat','Chargeback',
-                            'searchText','zipString','pp_id','pp_cardType','pp_maskedPan')
+            data_headers = ("id","displayId","paymentDate","paymentSource",
+                            "storeNumber","totalPrice","totalPriceString",
+                            "totalDiscount","totalVat","Chargeback",
+                            "searchText","zipString","pp_id","pp_cardType","pp_maskedPan")
             db = open_sqlite_db_readonly(file_found)
             cur = db.cursor()
-            cur.execute(f"""
+            cur.execute("""
                         SELECT *
                         FROM ReceiptEntity;
                         """)
@@ -61,11 +61,11 @@ def rema1000_receipt_raw(files_found, report_folder, seeker, wrap_text):
                     entries_list.append(list_row)
                 return data_headers, entries_list, source_path
             else:
-                logfunc('No Rema1000 | Scan & Go data available')
+                logfunc("No Rema1000 | Scan & Go data available")
 
 
 @artifact_processor
-def rema1000_receipt_prettified(files_found, report_folder, seeker, wrap_text):  
+def rema1000_receipt_prettified(files_found, report_folder, seeker, wrap_text):
     available_products=[]
     translation_table = str.maketrans({
         "Æ": "AE", "æ": "ae",
@@ -75,21 +75,21 @@ def rema1000_receipt_prettified(files_found, report_folder, seeker, wrap_text):
     })
     
     for file_found in files_found:
-        if file_found.endswith('receipts.db'):
+        if file_found.endswith("receipts.db"):
             source_path = file_found
             products=open_sqlite_db_readonly(file_found)
             products_cur=products.cursor()
-            products_cur.execute(f"""
+            products_cur.execute("""
                                  SELECT shelfText1
                                  FROM ReceiptItemEntity;
                                  """)            
             for product in products_cur.fetchall():
                 product=product[0].replace("SMÅKAGER","SMAKAGER") # Danish norm to replace Å/å with AA/aa but this one item diverts from norm.
                 available_products.append(product.translate(translation_table).lower())
-            data_headers = ('Date and time, DK','Location','Items','Total price, DKK', 'Payment method','Payment Card Type', 'Payment Card PAN')
+            data_headers = ("Date and time, DK","Location","Items","Total price, DKK", "Payment method","Payment Card Type", "Payment Card PAN")
             receipt_db = open_sqlite_db_readonly(file_found)
             receipt_cur = receipt_db.cursor()
-            receipt_cur.execute(f"""
+            receipt_cur.execute("""
                         SELECT paymentDate, paymentSource,
                         totalPrice, searchText, zipString,
                         pp_cardType, pp_maskedPan
@@ -106,7 +106,7 @@ def rema1000_receipt_prettified(files_found, report_folder, seeker, wrap_text):
                         if list_row[i] is None:
                             list_row[i]="None"
                     prettified_list[0]=f"{datetime.fromtimestamp(list_row[0]/1000, tz=ZoneInfo('Europe/Copenhagen')).strftime('%Y-%m-%d %H:%M:%S')}"
-                    prettified_list[1]= f"{list_row[3].split(";")[1].capitalize()}, {list_row[4]}, {list_row[3].split(";")[2].capitalize()}"
+                    prettified_list[1]= f"{list_row[3].split(';')[1].capitalize()}, {list_row[4]}, {list_row[3].split(';')[2].capitalize()}"
                     split_items = [item.translate(translation_table) for item in list_row[3].split(";")[3:]]
                     prettified_list[2]=", ".join([item for item in split_items if item in available_products])
                     prettified_list[3]=f"{list_row[2]/100:.2f}"
@@ -116,4 +116,4 @@ def rema1000_receipt_prettified(files_found, report_folder, seeker, wrap_text):
                     entries_list.append(prettified_list)
                 return data_headers, entries_list, source_path
             else:
-                logfunc('No Rema1000 | Scan & Go data available')
+                logfunc("No Rema1000 | Scan & Go data available")
