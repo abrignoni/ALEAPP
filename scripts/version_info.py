@@ -40,5 +40,6 @@ aleapp_contributors = [
      '', 'https://github.com/As-arsenicum-33'],
     ['Christian Peter', 'https://www.linkedin.com/in/christian-peter-49b4ab182/',
      '@DasZamomin', 'https://github.com/prosch88'],
-    ['Jérôme Arn', 'https://www.linkedin.com/in/j%C3%A9r%C3%B4me-a-dfir/', '@theTul1p3', 'https://github.com/Th3Tul1p3']
+    ['Jérôme Arn', 'https://www.linkedin.com/in/j%C3%A9r%C3%B4me-a-dfir/', '@theTul1p3', 'https://github.com/Th3Tul1p3'],
+    ['Nicolai Martini', 'https://github.com/NicolaiMartini/']
 ]
