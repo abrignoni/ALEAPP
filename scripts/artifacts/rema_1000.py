@@ -3,42 +3,42 @@ __artifacts_v2__ = {
         "name": "Rema1000 Receipts",
         "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan Selv'. All raw data.",
         "author": "Nicolai Martini",
-        "version": "1.0",
-        "date": "2026-06-04",
+        "version": "1.1",
+        "creation_date": "2026-04-17",
+        "last_update_date": "2026-06-09",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "Rema1000 | Scan Selv",
         "notes": "forensics data of supermarket habit and location insights.",
         "paths": ("*/dk.rema1000.app/databases/receipts.db*",),
-        "function": "get_receipts_raw"
+        "output_types": "standard",
+        "artifact_icon": "shopping-cart"
     },
     "rema1000_receipt_prettified": {
         "name": "Rema1000 Receipts, prettified",
-        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan Selv'. All data is focused and prettified, and supportive data from */dk.rema1000.app/databases/shopdatabase.db is used for items column.",
+        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan Selv'. Data is prettified.",
         "author": "Nicolai Martini",
-        "version": "1.0",
-        "date": "2026-06-04",
+        "version": "1.1",
+        "creation_date": "2026-04-17",
+        "last_update_date": "2026-06-09",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "Rema1000 | Scan Selv",
         "notes": "forensics data of supermarket habit and location insights.",
-        "paths": ("*/dk.rema1000.app/databases/shopdatabase.db*","*/dk.rema1000.app/databases/receipts.db*"),
-        "function": "get_receipts_prettified"
+        "paths": ("*/dk.rema1000.app/databases/receipts.db*"),
+        "output_types": "standard",
+        "artifact_icon": "shopping-cart"
     }
 }
 
-
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from scripts.ilapfuncs import open_sqlite_db_readonly, logfunc
-from scripts.artifact_report import ArtifactHtmlReport
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
 
-def get_receipts_raw(files_found, report_folder, seeker, wrap_text):  
-    report = ArtifactHtmlReport("Rema 1000")
-    report_name = "Rema 1000, raw"
-    report.start_artifact_report(report_folder,report_name)
-    report.add_script()
+@artifact_processor
+def rema1000_receipt_raw(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
         if file_found.endswith('receipts.db'):
+            source_path = file_found
             data_headers = ('id','displayId','paymentDate','paymentSource',
                             'storeNumber','totalPrice','totalPriceString',
                             'totalDiscount','totalVat','Chargeback',
@@ -59,31 +59,33 @@ def get_receipts_raw(files_found, report_folder, seeker, wrap_text):
                         if list_row[i] is None:
                             list_row[i]="None"
                     entries_list.append(list_row)
-                report.write_artifact_data_table(data_headers,entries_list,files_found[1])
-                report.end_artifact_report()
+                return data_headers, entries_list, source_path
             else:
                 logfunc('No Rema1000 | Scan & Go data available')
 
 
-def get_receipts_prettified(files_found, report_folder, seeker, wrap_text):  
+@artifact_processor
+def rema1000_receipt_prettified(files_found, report_folder, seeker, wrap_text):  
     available_products=[]
-    report = ArtifactHtmlReport("Rema 1000")
-    report_name = "Rema 1000, formatted"
-    report.start_artifact_report(report_folder,report_name)
-    report.add_script()
+    translation_table = str.maketrans({
+        "Æ": "AE", "æ": "ae",
+        "Ø": "OE", "ø": "oe",
+        "Å": "AA", "å": "aa",
+        ".": ""
+    })
+    
     for file_found in files_found:
-        if file_found.endswith('shopdatabase.db'):
-            prod_db=open_sqlite_db_readonly(file_found)
-            prod_cur=prod_db.cursor()
-            prod_cur.execute(f"""
-                             SELECT shelfText1
-                             FROM ProductEntity;
-                             """)
-            for product in prod_cur.fetchall():
-                product=product[0].replace("Å","A")
-                product=product.replace(".","")
-                available_products.append(product.lower())
         if file_found.endswith('receipts.db'):
+            source_path = file_found
+            products=open_sqlite_db_readonly(file_found)
+            products_cur=products.cursor()
+            products_cur.execute(f"""
+                                 SELECT shelfText1
+                                 FROM ReceiptItemEntity;
+                                 """)            
+            for product in products_cur.fetchall():
+                product=product[0].replace("SMÅKAGER","SMAKAGER") # Danish norm to replace Å/å with AA/aa but this one item diverts from norm.
+                available_products.append(product.translate(translation_table).lower())
             data_headers = ('Date and time, DK','Location','Items','Total price, DKK', 'Payment method','Payment Card Type', 'Payment Card PAN')
             receipt_db = open_sqlite_db_readonly(file_found)
             receipt_cur = receipt_db.cursor()
@@ -105,14 +107,13 @@ def get_receipts_prettified(files_found, report_folder, seeker, wrap_text):
                             list_row[i]="None"
                     prettified_list[0]=f"{datetime.fromtimestamp(list_row[0]/1000, tz=ZoneInfo('Europe/Copenhagen')).strftime('%Y-%m-%d %H:%M:%S')}"
                     prettified_list[1]= f"{list_row[3].split(";")[1].capitalize()}, {list_row[4]}, {list_row[3].split(";")[2].capitalize()}"
-                    split_items=list_row[3].split(";")[3:]
-                    prettified_list[2]=[item for item in split_items if item in available_products]
+                    split_items = [item.translate(translation_table) for item in list_row[3].split(";")[3:]]
+                    prettified_list[2]=", ".join([item for item in split_items if item in available_products])
                     prettified_list[3]=f"{list_row[2]/100:.2f}"
                     prettified_list[4]=list_row[1]
                     prettified_list[5]=list_row[5]
                     prettified_list[6]=list_row[6]
                     entries_list.append(prettified_list)
-                report.write_artifact_data_table(data_headers,entries_list,files_found[5])
-                report.end_artifact_report()
+                return data_headers, entries_list, source_path
             else:
                 logfunc('No Rema1000 | Scan & Go data available')
