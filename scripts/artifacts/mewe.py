@@ -4,8 +4,9 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 APP_NAME = 'MeWe'
-DB_NAME = 'app_database'
+DB_NAMES = ('app_database', 'app_v3.db')  # Added support for app_v3.db
 SGSESSION_FILE = 'SGSession.xml'
+
 CHAT_MESSAGES_QUERY = '''
     SELECT
         DATETIME(createdAt, 'unixepoch'),
@@ -30,6 +31,7 @@ CHAT_MESSAGES_QUERY = '''
     FROM CHAT_MESSAGE
     JOIN CHAT_THREAD ON threadId = CHAT_THREAD.id
 '''
+
 
 def _perform_query(cursor, query):
     try:
@@ -71,11 +73,11 @@ def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
             value = node.attrib['value']
         except:
             value = node.text
-            
+
         data_list.append((node.attrib['name'], value))
 
     tl_bool = False
-    
+
     _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name, tl_bool)
 
 
@@ -116,12 +118,12 @@ def get_mewe(files_found, report_folder, seeker, wrap_text):
     db_file_name = None
     xml_file = None
     xml_file_name = None
-    
+
     app_database_processed = False
     sgsession_processed = False
 
     for ff in files_found:
-        if ff.endswith(DB_NAME) and not app_database_processed:
+        if ff.endswith(DB_NAMES) and not app_database_processed:
             db_file = ff
             db_file_name = ff.replace(seeker.data_folder, '')
             _parse_app_database(db_file, db_file_name, report_folder)
@@ -131,16 +133,17 @@ def get_mewe(files_found, report_folder, seeker, wrap_text):
             xml_file_name = ff.replace(seeker.data_folder, '')
             _parse_xml(xml_file, xml_file_name, report_folder, SGSESSION_FILE, 'SGSession')
             sgsession_processed = True
-            
+
     artifacts = [
         app_database_processed, sgsession_processed
     ]
     if not (True in artifacts):
         logfunc(f'{APP_NAME} data not found')
 
+
 __artifacts__ = {
-        "mewe": (
-                "MeWe",
-                ('*/com.mewe/databases/app_database', '*/com.mewe/shared_prefs/SGSession.xml'),
-                get_mewe)
+    "mewe": (
+        "MeWe",
+        ('*/com.mewe/databases/app_database', '*/com.mewe/databases/app_v3.db', '*/com.mewe/shared_prefs/SGSession.xml'),
+        get_mewe)
 }
