@@ -28,20 +28,29 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
         if filename.endswith('keep.db'):
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
-            cursor.execute('''
-            SELECT 
-                datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
-                datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
-                datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
-                tree_entity.title AS Title,
-                text_search_note_content_content.c0text AS "Text",
-                tree_entity.last_modifier_email AS "Last Modifier Email"
-            FROM text_search_note_content_content
-            INNER JOIN tree_entity ON text_search_note_content_content.docid = tree_entity._id
-            ''')
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
+            try:
+                cursor.execute('''
+                SELECT 
+                    datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
+                    datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
+                    datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
+                    tree_entity.title AS Title,
+                    text_search_note_content_content.c0text AS "Text",
+                    tree_entity.last_modifier_email AS "Last Modifier Email"
+                FROM text_search_note_content_content
+                INNER JOIN tree_entity ON text_search_note_content_content.docid = tree_entity._id
+                ''')
+
+                all_rows = cursor.fetchall()
+                usageentries = len(all_rows)
+            except sqlite3.OperationalError as ex:
+                logfunc(f'Google Keep Notes: SQLite error - {ex}')
+                usageentries = 0
+                all_rows = []
+            finally:
+                cursor.close()
+                db.close()
 
             if usageentries > 0:
                 data_list = []
@@ -63,4 +72,3 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
 
             else:
                 logfunc('No Google Keep Notes data available')
-
