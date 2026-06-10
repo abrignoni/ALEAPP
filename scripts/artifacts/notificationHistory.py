@@ -31,7 +31,7 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
         file_name = os.path.basename(file_found)
-        #parsing settings_secure.xml
+        # parsing settings_secure.xml
         if file_name.endswith('settings_secure.xml'):
             data_list = []
             user = os.path.basename(os.path.dirname(file_found))
@@ -65,8 +65,8 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
             else:
                 logfunc('No Android Notification History - Status data available')
         
-        #parsing notification_policy.xml
-        if file_name.endswith('notification_policy.xml'):
+        # parsing notification_policy.xml
+        elif file_name.endswith('notification_policy.xml'):
             data_list = []
             if (checkabx(file_found)):
                 multi_root = False
@@ -84,12 +84,10 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                                 snooze_time = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(notification_ts/1000.0)),'UTC')
                                 notification_key = notification.attrib.get('key')
                                 data_list.append((f'{snooze_time}', notification_key))
-                    else:
-                        pass #no snoozed notifications found    
             if data_list:
                 description = f'Notifications the user chose to snooze for a specific time interval'
                 report = ArtifactHtmlReport('Android Notification History - Snoozed notifications')
-                report.start_artifact_report(report_folder, 'Snoozed notifications', description) #'Android Notification History - Snoozed notifications')
+                report.start_artifact_report(report_folder, 'Snoozed notifications', description)
                 report.add_script()
                 data_headers = ('Reminder Time', 'Snoozed Notification')
                 report.write_artifact_data_table(data_headers, data_list, file_found)
@@ -97,48 +95,71 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                 
                 tsvname = f'Android Notification History - Snoozed notifications'
                 tsv(report_folder, data_headers, data_list, tsvname)
-                
             else:
                 logfunc('No Android Notification History - Snoozed notifications data available')
 
         else:
-            #iterate through the notification pbs
+            # iterate through the notification pbs
             try:
                 notification_history = notificationhistory_pb2.NotificationHistoryProto()
                 with open(file_found, 'rb') as f:
+                    raw_data = f.read()
                     try:
-                        notification_history.ParseFromString(f.read()) #The error 'Wrong wire type in tag. ' likely happens due to the given .proto map file.  
+                        notification_history.ParseFromString(raw_data)  #error in here
                     except Exception as e:
-                        logfunc(f'Error in the ParseFromString() function. The error message was: {e}')
+                        logfunc(f"[!] Skipping invalid protobuf in notification history: {file_found}")
+                        logfunc(f"    ParseFromString() failed: {e}")
+                        # skip this file safely
+			# bug fix 
+                        continue
 
-                    package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)} # one of the protobuf files stores the package name and indexes
+                    # build package map safely
+                    try:
+                        package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)}
+                    except Exception as e:
+                        logfunc(f"[!] Could not build package map for {file_found}: {e}")
+                        package_map = {}
 
-                    major_version = notification_history.major_version if notification_history.HasField('major_version') else None # notification format version should be 1
+                    major_version = (
+                        notification_history.major_version
+                        if notification_history.HasField('major_version')
+                        else None
+                    )
+
                     for notification in notification_history.notification:
-                        package_name = notification.package if notification.package else package_map.get(notification.package_index, "") #retrieves package from the map if not stored locally
-                        
-                        #this block tries to fetch the value of each field from within the parsed protobuf file e.g. variable user_id -> recovers the user_id field from the pb
-                        fields = ['uid', 'user_id', 'package_index', 'channel_name', 'channel_id','channel_id_index', 'channel_name_index', 'conversation_id', 'conversation_id_index']
-                        defaults = {field: 'Error' for field in fields}
+                        package_name = (
+                            notification.package
+                            if notification.package
+                            else package_map.get(notification.package_index, "")
+                        )
+
+                        fields = [
+                            'uid', 'user_id', 'package_index', 'channel_name',
+                            'channel_id','channel_id_index','channel_name_index',
+                            'conversation_id','conversation_id_index'
+                        ]
                         values = {}
                         for field in fields:
                             try:
                                 values[field] = getattr(notification, field)
                             except AttributeError:
                                 values[field] = 'Error'
-                        #extra block that does the same for the notifications with icons
+
+                        icon_fields = [
+                            'image_type', 'image_bitmap_filename', 'image_resource_id',
+                            'image_resource_id_package','image_data_length',
+                            'image_data_offset','image_uri'
+                        ]
                         if notification.HasField('icon'):
-                            icon_fields = ['image_type', 'image_bitmap_filename', 'image_resource_id', 'image_resource_id_package','image_data_length', 'image_data_offset', 'image_uri']
                             for icon_field in icon_fields:
-                                values[icon_field] = getattr(notification.icon, icon_field)
+                                try:
+                                    values[icon_field] = getattr(notification.icon, icon_field)
+                                except AttributeError:
+                                    values[icon_field] = None
                         else:
-                            icon_fields = [
-                                'image_type', 'image_bitmap_filename', 'image_resource_id', 'image_resource_id_package',
-                                'image_data_length', 'image_data_offset', 'image_uri'
-                            ]
                             for icon_field in icon_fields:
                                 values[icon_field] = None
-                        #here the returned values are assigned to the variables which are reported
+
                         uid = values['uid']
                         user_id = values['user_id']
                         package_index = values['package_index']
@@ -148,7 +169,10 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                         channel_name_index = values['channel_name_index']
                         conversation_id = values['conversation_id']
                         conversation_id_index = values['conversation_id_index']
-                        posted_time = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(notification.posted_time_ms/1000.0)),'UTC') if notification.HasField('posted_time_ms') else None
+                        posted_time = (
+                            convert_utc_human_to_timezone(convert_ts_int_to_utc(int(notification.posted_time_ms/1000.0)),'UTC')
+                            if notification.HasField('posted_time_ms') else None
+                        )
                         title = notification.title if notification.HasField('title') else None
                         text = notification.text if notification.HasField('text') else None
                         image_type = values['image_type']
@@ -159,24 +183,14 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
                         image_data_offset = values['image_data_offset']
                         image_uri = values['image_uri']
                         file_creation = convert_utc_human_to_timezone(convert_ts_int_to_utc(int(file_name)/1000.0),'UTC')
-                        data_pb_list.append((f'{posted_time}',title,text,package_name,user_id,uid,package_index,channel_name,channel_name_index,channel_id,channel_id_index,conversation_id,conversation_id_index,major_version,image_type,image_bitmap_filename,image_resource_id,image_resource_id_package,image_data_length,image_data_offset,image_uri,file_name,f'{file_creation}'))
-            except Exception as e:
-                logfunc(f'Error while opening notification pb files. The error message was:" {e}"')
 
-    if len(data_pb_list) > 0:
-        description = f'A history of the notifications that landed on the device during the last 24h'
-        report = ArtifactHtmlReport('Android Notification History - Notifications')
-        report.start_artifact_report(report_folder, f'Notifications', description)
-        report.add_script()
-        data_headers = ('Posted Time','Title', 'Text','Package Name','User ID','UID','Package Index','Channel Name','Channel Name Index','Channel ID','Channel ID Index','Conversation ID','Conversation ID Index','Major Version','Image Type','Image Bitmap Filename','Image Resource ID','Image Resource ID Package','Image Data Length','Image Data Offset','Image URI','Protobuf File Name','Protobuf File Creation Date')#,'','','','','','','','','','','','','','')
-        file_directory = os.path.dirname(file_found)  
-        report.write_artifact_data_table(data_headers, data_pb_list, file_directory, html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = f'Android Notification History - Notifications'
-        tsv(report_folder, data_headers, data_pb_list, tsvname)
-        
-        tlactivity = f'Android Notification History - Notifications'
-        timeline(report_folder, tlactivity, data_pb_list, data_headers)
-    else:
-        logfunc(f'No Android Notification History - Notifications available')
+                        data_pb_list.append((
+                            f'{posted_time}',title,text,package_name,user_id,uid,
+                            package_index,channel_name,channel_name_index,channel_id,
+                            channel_id_index,conversation_id,conversation_id_index,
+                            major_version,image_type,image_bitmap_filename,image_resource_id,
+                            image_resource_id_package,image_data_length,image_data_offset,
+                            image_uri,file_name,f'{file_creation}'
+                        ))
+            except Exception as e:
+                logfunc(f'[!] Error while reading notification pb: {file_found} | {e}')
