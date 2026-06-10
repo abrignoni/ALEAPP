@@ -94,53 +94,58 @@ def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
                 timeline(report_folder, tlactivity, data_list, data_headers)
             else:
                 logfunc(f'No {browser_name} - Autofill - Entries data available')
-        
-        cursor.execute(f'''
-        select
-            datetime(date_modified, 'unixepoch'),
-            autofill_profiles.guid,
-            autofill_profile_names.first_name,
-            autofill_profile_names.middle_name,
-            autofill_profile_names.last_name,
-            autofill_profile_emails.email,
-            autofill_profile_phones.number,
-            autofill_profiles.company_name,
-            autofill_profiles.street_address,
-            autofill_profiles.city,
-            autofill_profiles.state,
-            autofill_profiles.zipcode,
-            datetime(use_date, 'unixepoch'),
-            autofill_profiles.use_count
-        from autofill_profiles
-        inner join autofill_profile_emails ON autofill_profile_emails.guid = autofill_profiles.guid
-        inner join autofill_profile_phones ON autofill_profiles.guid = autofill_profile_phones.guid
-        inner join autofill_profile_names ON autofill_profile_phones.guid = autofill_profile_names.guid
-        ''')
+                
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='autofill_profiles'")
+        if cursor.fetchone():
+            try:
+                cursor.execute(f'''
+                select
+                    datetime(date_modified, 'unixepoch'),
+                    autofill_profiles.guid,
+                    autofill_profile_names.first_name,
+                    autofill_profile_names.middle_name,
+                    autofill_profile_names.last_name,
+                    autofill_profile_emails.email,
+                    autofill_profile_phones.number,
+                    autofill_profiles.company_name,
+                    autofill_profiles.street_address,
+                    autofill_profiles.city,
+                    autofill_profiles.state,
+                    autofill_profiles.zipcode,
+                    datetime(use_date, 'unixepoch'),
+                    autofill_profiles.use_count
+                from autofill_profiles
+                inner join autofill_profile_emails ON autofill_profile_emails.guid = autofill_profiles.guid
+                inner join autofill_profile_phones ON autofill_profiles.guid = autofill_profile_phones.guid
+                inner join autofill_profile_names ON autofill_profile_phones.guid = autofill_profile_names.guid
+                ''')
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Autofill - Profiles')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Autofill - Profiles.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Date Modified','GUID','First Name','Middle Name','Last Name','Email','Phone Number','Company Name','Address','City','State','Zip Code','Date Last Used','Use Count')
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13]))
+                all_rows = cursor.fetchall()
+                usageentries = len(all_rows)
+                if usageentries > 0:
+                    report = ArtifactHtmlReport(f'{browser_name} - Autofill - Profiles')
+                    #check for existing and get next name for report file, so report from another file does not get overwritten
+                    report_path = os.path.join(report_folder, f'{browser_name} - Autofill - Profiles.temphtml')
+                    report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
+                    report.start_artifact_report(report_folder, os.path.basename(report_path))
+                    report.add_script()
+                    data_headers = ('Date Modified','GUID','First Name','Middle Name','Last Name','Email','Phone Number','Company Name','Address','City','State','Zip Code','Date Last Used','Use Count')
+                    data_list = []
+                    for row in all_rows:
+                        data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Autofill - Profiles'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Autofill - Profiles'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc(f'No {browser_name} - Autofill - Profiles data available')
+                    report.write_artifact_data_table(data_headers, data_list, file_found)
+                    report.end_artifact_report()
+                    
+                    tsvname = f'{browser_name} - Autofill - Profiles'
+                    tsv(report_folder, data_headers, data_list, tsvname)
+                    
+                    tlactivity = f'{browser_name} - Autofill - Profiles'
+                    timeline(report_folder, tlactivity, data_list, data_headers)
+                else:
+                    logfunc(f'No {browser_name} - Autofill - Profiles data available')
+            except sqlite3.OperationalError as e:
+                logfunc(f'Error reading {browser_name} - Autofill - Profiles: {e}')
         
         db.close()
 
