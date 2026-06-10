@@ -20,6 +20,9 @@ from bs4 import BeautifulSoup
 from geopy.geocoders import Nominatim
 from packaging import version
 from PIL import Image
+
+os.environ.setdefault("PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION", "python")
+
 from google.protobuf import descriptor
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
