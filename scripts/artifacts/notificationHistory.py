@@ -103,13 +103,35 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
 
         else:
             #iterate through the notification pbs
+            # try:
+            #     notification_history = notificationhistory_pb2.NotificationHistoryProto()
+            #     with open(file_found, 'rb') as f:
+            #         try:
+            #             notification_history.ParseFromString(f.read()) #The error 'Wrong wire type in tag. ' likely happens due to the given .proto map file.  
+            #         except Exception as e:
+            #             logfunc(f'Error in the ParseFromString() function. The error message was: {e}')
+
             try:
-                notification_history = notificationhistory_pb2.NotificationHistoryProto()
-                with open(file_found, 'rb') as f:
+                    with open(file_found, "rb") as f:
+                        data = f.read()
+                    
+                    # Skip files that are not real NotificationHistory Protobufs
+                    if len(data) < 32:
+                        logfunc(f"Skipped, too small to be protobuf: {file_found}")
+                        continue
+                    
+                    if b"string_pool" not in data:
+                        logfunc(f"Skipped, not a NotificationHistory protobuf: {file_found}")
+                        continue
+                    
+                    notification_history = notificationhistory_pb2.NotificationHistoryProto()
+
                     try:
-                        notification_history.ParseFromString(f.read()) #The error 'Wrong wire type in tag. ' likely happens due to the given .proto map file.  
+                        notification_history.ParseFromString(data)
                     except Exception as e:
-                        logfunc(f'Error in the ParseFromString() function. The error message was: {e}')
+                        logfunc(f"Skipped, invalid protobuf format: {file_found} ({e})")
+                        continue
+
 
                     package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)} # one of the protobuf files stores the package name and indexes
 
