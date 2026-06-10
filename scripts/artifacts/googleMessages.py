@@ -20,25 +20,63 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
-        SELECT
-        datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
-        parts.content_type AS "Message Type",
-        conversations.name AS "Other Participant/Conversation Name",
-        participants.display_destination AS "Message Sender",
-        parts.text AS "Message",
-        CASE
-        WHEN parts.file_size_bytes=-1 THEN "N/A"
-        ELSE parts.file_size_bytes
-        END AS "Attachment Byte Size",
-        parts.local_cache_path AS "Attachment Location"
-        FROM
-        parts
-        JOIN messages ON messages._id=parts.message_id
-        JOIN participants ON participants._id=messages.sender_id
-        JOIN conversations ON conversations._id=parts.conversation_id
-        ORDER BY "Timestamp (UTC)" ASC
-        ''')
+        try:
+            cursor.execute('''
+            SELECT
+            datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
+            parts.content_type AS "Message Type",
+            conversations.name AS "Other Participant/Conversation Name",
+            participants.display_destination AS "Message Sender",
+            parts.text AS "Message",
+            CASE
+            WHEN parts.file_size_bytes=-1 THEN "N/A"
+            ELSE parts.file_size_bytes
+            END AS "Attachment Byte Size",
+            parts.local_cache_path AS "Attachment Location"
+            FROM
+            parts
+            JOIN messages ON messages._id=parts.message_id
+            JOIN participants ON participants._id=messages.sender_id
+            JOIN conversations ON conversations._id=parts.conversation_id
+            ORDER BY "Timestamp (UTC)" ASC
+            ''')
+        except:
+            # Fallback for databases without file_size_bytes column
+            try:
+                cursor.execute('''
+                SELECT
+                datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
+                parts.content_type AS "Message Type",
+                conversations.name AS "Other Participant/Conversation Name",
+                participants.display_destination AS "Message Sender",
+                parts.text AS "Message",
+                "N/A" AS "Attachment Byte Size",
+                parts.local_cache_path AS "Attachment Location"
+                FROM
+                parts
+                JOIN messages ON messages._id=parts.message_id
+                JOIN participants ON participants._id=messages.sender_id
+                JOIN conversations ON conversations._id=parts.conversation_id
+                ORDER BY "Timestamp (UTC)" ASC
+                ''')
+            except:
+                # Final fallback for databases without both file_size_bytes and local_cache_path columns
+                cursor.execute('''
+                SELECT
+                datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
+                parts.content_type AS "Message Type",
+                conversations.name AS "Other Participant/Conversation Name",
+                participants.display_destination AS "Message Sender",
+                parts.text AS "Message",
+                "N/A" AS "Attachment Byte Size",
+                "N/A" AS "Attachment Location"
+                FROM
+                parts
+                JOIN messages ON messages._id=parts.message_id
+                JOIN participants ON participants._id=messages.sender_id
+                JOIN conversations ON conversations._id=parts.conversation_id
+                ORDER BY "Timestamp (UTC)" ASC
+                ''')
 
         all_rows = cursor.fetchall()
         usageentries = len(all_rows)
