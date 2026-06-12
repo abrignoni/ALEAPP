@@ -420,8 +420,8 @@ def lava_get_media_item(media_id):
     """
 
     cursor = lava_db.cursor()
-    query = f"SELECT * FROM _lava_media_items WHERE id='{media_id}'"
-    return cursor.execute(query).fetchone()
+    query = "SELECT * FROM _lava_media_items WHERE id = ?"
+    return cursor.execute(query, (media_id,)).fetchone()
     # return result.fetchone()
 
 
@@ -474,8 +474,8 @@ def lava_get_media_references(media_ref):
     """
 
     cursor = lava_db.cursor()
-    query = f"SELECT * FROM _lava_media_references WHERE id='{media_ref}'"
-    return cursor.execute(query).fetchone()
+    query = "SELECT * FROM _lava_media_references WHERE id = ?"
+    return cursor.execute(query, (media_ref,)).fetchone()
 
 
 def lava_insert_sqlite_media_references(media_references):
@@ -524,12 +524,12 @@ def lava_get_full_media_info(media_ref_id):
 
     lava_db.row_factory = sqlite3.Row
     cursor = lava_db.cursor()
-    query = f'''
+    query = '''
     SELECT *
     FROM _lava_media_info
-    WHERE media_ref_id = '{media_ref_id}'
+    WHERE media_ref_id = ?
     '''
-    return cursor.execute(query).fetchone()
+    return cursor.execute(query, (media_ref_id,)).fetchone()
 
 
 def lava_insert_sqlite_artifact_search_pattern(artifact_regex_id, module_name, artifact_name, regex):
