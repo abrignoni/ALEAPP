@@ -1,12 +1,10 @@
-import os
 import datetime
 import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, abxread, checkabx, logdevinfo
+from scripts.ilapfuncs import logfunc, tsv, abxread, checkabx
 
-def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
+def get_wifiConfigstore(files_found, report_folder, _seeker, _wrap_text):
     data_list = []
-    mini_data_list = []
     count = -1
     
     for file_found in files_found:
@@ -27,87 +25,62 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                 for a in elem:
                     #print(a.tag)
                     #print(a.text)
+                    configcombined = ssidcombined = bssidcombined = ''
+                    PreSharedKeycombined = WEPKeyscombined = HiddenSSIDcombined = ''
+                    RandomizedMacAddresscombined = CreatorNamecombined = CreationTimecombined = ''
+                    ConnectChoicecombined = ConnectChoiceTimeStampcombined = ''
+                    HasEverConnectedcombined = IpAssignmentcombined = ProxySettingscombined = ''
                     for b in a:
-                        #print(b.tag)
-                        tagg = b.tag
-                        
                         for c in b:
-                            combined = (c.attrib, c.text)
-                            datafieldname = (c.attrib['name']) #field
-                            datafieldvalue = (c.attrib.get('value', ''))
-                            datafielddata= (c.text) 
-                            
+                            datafieldname = c.attrib.get('name')
+                            if datafieldname is None:
+                                continue
+                            datafieldvalue = c.attrib.get('value', '')
+                            datafielddata = c.text
+
                             if datafieldname == 'ConfigKey':
-                                configkey = f'{datafielddata}'
-                                configkeyvalue = f'{datafieldvalue}'
-                                configcombined = f'{configkey}'
-                                
-                            if datafieldname == 'SSID':
-                                SSID = f'{datafielddata}'
-                                SSIDvalue = f'{datafieldvalue}'
-                                ssidcombined = f'{SSID}'
-                                
-                            if datafieldname == 'BSSID':
-                                BSSID = f'{datafielddata}'
-                                BSSIDvalue = f'{datafieldvalue}'
-                                bssidcombined = f'{BSSID}'
-                                
-                            if datafieldname == 'PreSharedKey':
-                                PreSharedKey = f'{datafielddata}'
-                                PreSharedKeyvalue = f'{datafieldvalue}'
-                                PreSharedKeycombined = f'{PreSharedKey}'
-                                
-                            if datafieldname == 'WEPKeys':
-                                WEPKeys = f'{datafielddata}'
-                                WEPKeysvalue = f'{datafieldvalue}'
-                                WEPKeyscombined = f'{WEPKeys}'
-                                
-                            if datafieldname == 'HiddenSSID':
-                                HiddenSSID = f'{datafielddata}'
-                                HiddenSSIDvalue = f'{datafieldvalue}'
-                                HiddenSSIDcombined = f'{HiddenSSID}'
-                                
-                            if datafieldname == 'RandomizedMacAddress':
-                                RandomizedMacAddress = f'{datafielddata}'
-                                RandomizedMacAddressvalue = f'{datafieldvalue}'
-                                RandomizedMacAddresscombined = f'{RandomizedMacAddress}'
-                                
-                            if datafieldname == 'CreatorName':
-                                CreatorName = f'{datafielddata}'
-                                CreatorNamevalue = f'{datafieldvalue}'
-                                CreatorNamecombined = f'{CreatorName}'
-                                
-                            if datafieldname == 'CreationTime':
-                                CreationTime = f'{datafielddata}'
-                                CreationTimevalue = f'{datafieldvalue}'
-                                CreationTimecombined = f'{CreationTime}'
-                                
-                            if datafieldname == 'ConnectChoice':
-                                ConnectChoice = f'{datafielddata}'
-                                ConnectChoicevalue = f'{datafieldvalue}'
-                                ConnectChoicecombined = f'{ConnectChoice}'
-                                
-                            if datafieldname == 'ConnectChoiceTimeStamp':
-                                ConnectChoiceTimeStamp = f'{datafielddata}'
-                                ConnectChoiceTimeStampvalue = f'{datafieldvalue}'
-                                ConnectChoiceTimeStampcombined = f'{ConnectChoiceTimeStampvalue}'
+                                configcombined = datafielddata or ''
+
+                            elif datafieldname == 'SSID':
+                                ssidcombined = datafielddata or ''
+
+                            elif datafieldname == 'BSSID':
+                                bssidcombined = datafielddata or ''
+
+                            elif datafieldname == 'PreSharedKey':
+                                PreSharedKeycombined = datafielddata or ''
+
+                            elif datafieldname == 'WEPKeys':
+                                WEPKeyscombined = datafielddata or ''
+
+                            elif datafieldname == 'HiddenSSID':
+                                HiddenSSIDcombined = datafieldvalue or ''
+
+                            elif datafieldname == 'RandomizedMacAddress':
+                                RandomizedMacAddresscombined = datafielddata or ''
+
+                            elif datafieldname == 'CreatorName':
+                                CreatorNamecombined = datafielddata or ''
+
+                            elif datafieldname == 'CreationTime':
+                                CreationTimecombined = datafielddata or ''
+
+                            elif datafieldname == 'ConnectChoice':
+                                ConnectChoicecombined = datafielddata or ''
+
+                            elif datafieldname == 'ConnectChoiceTimeStamp':
+                                ConnectChoiceTimeStampcombined = datafieldvalue
                                 if int(ConnectChoiceTimeStampcombined) > 1:
-                                    ConnectChoiceTimeStampcombined = datetime.datetime.utcfromtimestamp(int(ConnectChoiceTimeStampvalue) / 1000)
-                                    
-                            if datafieldname == 'HasEverConnected':
-                                HasEverConnected = f'{datafielddata}'
-                                HasEverConnectedvalue = f'{datafieldvalue}'
-                                HasEverConnectedcombined = f'{HasEverConnectedvalue}'
-                                
-                            if datafieldname == 'IpAssignment':
-                                IpAssignment = f'{datafielddata}'
-                                IpAssignmentvalue = f'{datafieldvalue}'
-                                IpAssignmentcombined = f'{IpAssignment}'
-                                
-                            if datafieldname == 'ProxySettings':
-                                ProxySettings = f'{datafielddata}'
-                                ProxySettingsvalue = f'{datafieldvalue}'
-                                ProxySettingscombined = f'{ProxySettings} - {ProxySettingsvalue}'
+                                    ConnectChoiceTimeStampcombined = datetime.datetime.utcfromtimestamp(int(datafieldvalue) / 1000)
+
+                            elif datafieldname == 'HasEverConnected':
+                                HasEverConnectedcombined = datafieldvalue or ''
+
+                            elif datafieldname == 'IpAssignment':
+                                IpAssignmentcombined = datafielddata or ''
+
+                            elif datafieldname == 'ProxySettings':
+                                ProxySettingscombined = f'{datafielddata} - {datafieldvalue}'
                                 
                     data_list.append((configcombined,ssidcombined,bssidcombined,PreSharedKeycombined, WEPKeyscombined,HiddenSSIDcombined,RandomizedMacAddresscombined,CreatorNamecombined,CreationTimecombined,ConnectChoicecombined,ConnectChoiceTimeStampcombined,HasEverConnectedcombined,IpAssignmentcombined,ProxySettingscombined))                    
         
