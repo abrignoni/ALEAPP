@@ -28,18 +28,43 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
         if filename.endswith('keep.db'):
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
-            cursor.execute('''
-            SELECT 
-                datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
-                datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
-                datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
-                tree_entity.title AS Title,
-                text_search_note_content_content.c0text AS "Text",
-                tree_entity.last_modifier_email AS "Last Modifier Email"
-            FROM text_search_note_content_content
-            INNER JOIN tree_entity ON text_search_note_content_content.docid = tree_entity._id
-            ''')
-
+            
+            cursor.execute("""
+                SELECT name FROM sqlite_master 
+                WHERE type='table' AND name LIKE '%text_search_note_content%'
+            """)
+            fts_table = cursor.fetchone()
+            
+            if fts_table:
+                query = '''
+                SELECT 
+                    datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
+                    datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
+                    datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
+                    tree_entity.title AS Title,
+                    text_search_note_content_content.c0text AS "Text",
+                    tree_entity.last_modifier_email AS "Last Modifier Email"
+                FROM tree_entity
+                LEFT JOIN text_search_note_content_content ON text_search_note_content_content.docid = tree_entity._id
+                WHERE tree_entity.title IS NOT NULL OR text_search_note_content_content.c0text IS NOT NULL
+                ORDER BY tree_entity.time_created DESC
+                '''
+            else:
+                query = '''
+                SELECT 
+                    datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
+                    datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
+                    datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
+                    tree_entity.title AS Title,
+                    list_item.text AS "Text",
+                    tree_entity.last_modifier_email AS "Last Modifier Email"
+                FROM tree_entity
+                LEFT JOIN list_item ON tree_entity._id = list_item._id
+                WHERE tree_entity.title IS NOT NULL OR list_item.text IS NOT NULL
+                ORDER BY tree_entity.time_created DESC
+                '''
+            
+            cursor.execute(query)
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
 
