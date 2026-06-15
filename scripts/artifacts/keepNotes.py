@@ -14,13 +14,12 @@ __artifacts_v2__ = {
 }
 
 import sqlite3
-import datetime
 import os
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
-def get_keepNotes(files_found, report_folder, seeker, wrap_text):
+def get_keepNotes(files_found, report_folder, _seeker, _wrap_text):
     for file_found in files_found:
         file_found = str(file_found)
         filename = os.path.basename(file_found)
@@ -28,17 +27,21 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
         if filename.endswith('keep.db'):
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
-            cursor.execute('''
-            SELECT 
-                datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
-                datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
-                datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
-                tree_entity.title AS Title,
-                text_search_note_content_content.c0text AS "Text",
-                tree_entity.last_modifier_email AS "Last Modifier Email"
-            FROM text_search_note_content_content
-            INNER JOIN tree_entity ON text_search_note_content_content.docid = tree_entity._id
-            ''')
+            try:
+                cursor.execute('''
+                SELECT
+                    datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
+                    datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
+                    datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
+                    tree_entity.title AS Title,
+                    text_search_note_content_content.c0text AS "Text",
+                    tree_entity.last_modifier_email AS "Last Modifier Email"
+                FROM text_search_note_content_content
+                INNER JOIN tree_entity ON text_search_note_content_content.docid = tree_entity._id
+                ''')
+            except sqlite3.OperationalError as e:
+                logfunc(f'Google Keep Notes query failed: {e}')
+                continue
 
             all_rows = cursor.fetchall()
             usageentries = len(all_rows)
