@@ -18,6 +18,9 @@ from urllib.parse import quote
 import scripts.artifact_report as artifact_report
 from scripts.context import Context
 
+
+_console_write = sys.stdout.write
+
 # common third party imports
 import pytz
 import simplekml
@@ -112,6 +115,7 @@ class MediaReferences():
 
 def logfunc(message=""):
     def redirect_logs(string):
+        _console_write(string)
         log_text.insert('end', string)
         log_text.see('end')
         log_text.update()
