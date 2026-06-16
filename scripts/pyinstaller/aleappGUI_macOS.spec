@@ -20,6 +20,7 @@ a = Analysis(
         'polyline',
         'xmltodict',
         'xlsxwriter',
+        'zoneinfo',
     ],
     hookspath=[],
     hooksconfig={},

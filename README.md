@@ -27,16 +27,32 @@ To run on **Linux**, you will also need to install `tkinter` separately like so:
 
 To compile to an executable so you can run this on a system without python installed.
 
+_Windows OS_
+
 To create aleapp.exe, run:
 
 ```
-pyinstaller --onefile aleapp.spec
+pyinstaller \scripts\pyinstaller\aleapp.spec
 ```
 
 To create aleappGUI.exe, run:
 
 ```
-pyinstaller --onefile --noconsole aleappGUI.spec
+pyinstaller \scripts\pyinstaller\aleappGUI.spec
+```
+
+_macOS_
+
+To create aleapp, run:
+
+```
+pyinstaller /scripts/pyinstaller/aleapp_macos.spec
+```
+
+To create aleappGUI.app, run:
+
+```
+pyinstaller /scripts/pyinstaller/aleappGUI_macos.spec
 ```
 
 ## Usage
