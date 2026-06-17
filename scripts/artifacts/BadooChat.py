@@ -20,7 +20,8 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
+def get_badoo_chat(files_found, report_folder, _seeker, _wrap_text):
+    typeM = None
     logfunc("Processing data for Badoo Conections")
     files_found = [x for x in files_found if not x.endswith('-journal')]
     file_found = str(files_found[0])
@@ -44,7 +45,7 @@ def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
         data_list = []
 
         for row in all_rows:
-            id = row[0]
+            msg_id = row[0]
             gender = row[1]
             if (gender == 0):
                 gender_text = "Male"
@@ -68,7 +69,7 @@ def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
             work = row[6]
             education = row[7]
             encrypted_user_id = row[8]
-            cursor.execute(f'''
+            cursor.execute('''
                                         Select sender_id, recipient_id, datetime("created_timestamp"/1000,'unixepoch'), payload, payload_type
                                         from message
                                         where sender_id = '{encrypted_user_id}' or recipient_id = '{encrypted_user_id}'
@@ -81,19 +82,19 @@ def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
                 for message in messages:
                     text = message[3]
                     text = json.loads(text)
-                    type = message[4]
+                    msg_type = message[4]
                     # Check if text exists
-                    if type == 'TEXT':
+                    if msg_type == 'TEXT':
                         message_text = text['text']
                         typeM = 'text'
-                    elif type == 'QUESTION_GAME':
+                    elif msg_type == 'QUESTION_GAME':
                         message_text = text['text']
                         if 'answer_own' in text:
                             message_text = message_text + ';Own Answer:' + text['answer_own']
                         if 'answer_other' in text:
                             message_text = message_text + ';Other Answer:' + text['answer_other']
                         typeM = 'question'
-                    elif type == 'INSTANT_VIDEO' or type == 'AUDIO' or type == 'IMAGE':
+                    elif msg_type == 'INSTANT_VIDEO' or msg_type == 'AUDIO' or msg_type == 'IMAGE':
                         message_text = text['url']
                         typeM = 'url'
 
@@ -107,9 +108,9 @@ def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
                 chat = {'name': user_name, 'messages': message_list}
                 chat = json.dumps(chat)
                 report.add_chat_invisble(encrypted_user_id, chat)
-                button = f'<button type="button" class="btn btn-primary" onclick="createChat(\'' + str(encrypted_user_id) + '\', \'' + str(user_image_url) + '\')">Open Chat</button>'
+                button = '<button msg_type="button" class="btn btn-primary" onclick="createChat(\'' + str(encrypted_user_id) + '\', \'' + str(user_image_url) + '\')">Open Chat</button>'
             else:
-                button = '<button type="button" class="btn btn-primary" disabled>Open Chat</button>'
+                button = '<button msg_type="button" class="btn btn-primary" disabled>Open Chat</button>'
             data_list.append((id, gender_text, user_name, user_image, age, photo_urls, work, education, encrypted_user_id, button))
         # Filter by date
         table_id = "BadooChat"
@@ -119,10 +120,10 @@ def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
         report.add_chat()
         report.end_artifact_report()
 
-        tsvname = f'Badoo - Chat'
+        tsvname = 'Badoo - Chat'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Badoo - Chat'
+        tlactivity = 'Badoo - Chat'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:

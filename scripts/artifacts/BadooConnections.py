@@ -18,7 +18,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_badoo_conn(files_found, report_folder, seeker, wrap_text):
+def get_badoo_conn(files_found, report_folder, _seeker, _wrap_text):
     logfunc("Processing data for Badoo Conections")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     file_found = str(files_found[0])
@@ -41,7 +41,7 @@ def get_badoo_conn(files_found, report_folder, seeker, wrap_text):
         data_list = []
 
         for row in all_rows:
-            id = row[0]
+            conn_id = row[0]
             name = row[1]
             gender = row[2]
             origin = row[3]
@@ -54,10 +54,10 @@ def get_badoo_conn(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id, html_escape=False)
         report.end_artifact_report()
 
-        tsvname = f'Badoo - Connections'
+        tsvname = 'Badoo - Connections'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Badoo - Connections'
+        tlactivity = 'Badoo - Connections'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:

@@ -26,7 +26,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields, check_internet_connection
 
 
-def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
+def get_adidas_activities(files_found, report_folder, _seeker, _wrap_text):
     logfunc("Processing data for Adidas Activities")
     use_network = check_internet_connection()
     if use_network:
@@ -90,7 +90,7 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
                 # logfunc(f"Polyline: {poly}")
                 try:
                     coordinates = polyline.decode(poly)
-                except:
+                except Exception:
                     logfunc(f"Polyline: {poly} could not be decoded")
                     poly = None
                     break
@@ -98,10 +98,10 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
                 place_lon = []
                 if use_network:
                     if os.name == 'nt':
-                        f = open(report_folder + "\\" + str(row[0]) + ".xlsx", "w")
+                        f = open(report_folder + "\\" + str(row[0], encoding='utf-8') + ".xlsx", "w")
                         workbook = xlsxwriter.Workbook(report_folder + "\\" + str(row[0]) + ".xlsx")
                     else:
-                        f = open(report_folder + "/" + str(row[0]) + ".xlsx", "w")
+                        f = open(report_folder + "/" + str(row[0], encoding='utf-8') + ".xlsx", "w")
                         workbook = xlsxwriter.Workbook(report_folder + "/" + str(row[0]) + ".xlsx")
                     worksheet = workbook.add_worksheet()
                     rowE = 0
@@ -229,11 +229,11 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
                 # remove extra indentation
                 kml = kml.replace("    ", "")
                 if os.name == 'nt':
-                    with open(report_folder + '\\' + str(row[0]) + '.kml', 'w') as f:
+                    with open(report_folder + '\\' + str(row[0], encoding='utf-8') + '.kml', 'w') as f:
                         f.write(kml)
                         f.close()
                 else:
-                    with open(report_folder + '/' + str(row[0]) + '.kml', 'w') as f:
+                    with open(report_folder + '/' + str(row[0], encoding='utf-8') + '.kml', 'w') as f:
                         f.write(kml)
                         f.close()
 
@@ -269,10 +269,10 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
             report.add_map(htmlMap)
         report.end_artifact_report()
 
-        tsvname = f'Adidas - Activities'
+        tsvname = 'Adidas - Activities'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Adidas - Activities'
+        tlactivity = 'Adidas - Activities'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:

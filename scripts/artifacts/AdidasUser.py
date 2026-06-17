@@ -20,7 +20,17 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_adidas_user(files_found, report_folder, seeker, wrap_text):
+def get_adidas_user(files_found, report_folder, _seeker, _wrap_text):
+    user_id = None
+    height = None
+    weight = None
+    country = None
+    gender = None
+    email = None
+    image = None
+    my_fitness_pal = None
+    garmin_connect = None
+    polar = None
     logfunc("Processing data for Adidas User")
     files_found = [x for x in files_found if not x.endswith('-journal')]
     file_found = str(files_found[0])
@@ -92,10 +102,10 @@ def get_adidas_user(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id, html_escape=False)
         report.end_artifact_report()
 
-        tsvname = f'Adidas - User'
+        tsvname = 'Adidas - User'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Adidas - User'
+        tlactivity = 'Adidas - User'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:

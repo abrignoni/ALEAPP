@@ -15,7 +15,7 @@ __artifacts_v2__ = {
 }
 
 import base64
-from os.path import isfile, join, basename, dirname, getsize, abspath
+from os.path import isfile, join, basename, dirname
 from os import makedirs
 import xml.etree.ElementTree as ET
 from hashlib import sha256, sha1
@@ -32,7 +32,7 @@ import datetime
 
 ### Import ALEAPP Modules
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, media_to_html
+from scripts.ilapfuncs import logfunc, tsv, , , media_to_html
 
 ### Function to reduce code (slightly) to be used with log function
 def printFunc(dataToPrint,prependDash,newLine, appendDash):
@@ -84,9 +84,13 @@ def decryptData(encryptedInput, masterKey):
     return(decryptedData)        
 
 ### Main
-def get_AVG(files_found, report_folder, seeker, wrap_text):
+def get_AVG(files_found, report_folder, _seeker, _wrap_text):
     
     ### Known variables to be used
+    keyStore = None
+    pinSettingsFile = None
+    append = None
+    files = None
     pinDict = {}
     PinSettingsExists = False
     keyFileFound = False
@@ -202,13 +206,13 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
                             break   
         ### If it doesn't log it
         except IndexError:
-            printFunc(f'*****\t\t\tNo user Pattern found in file', True, False, True) 
+            printFunc('*****\t\t\tNo user Pattern found in file', True, False, True) 
 
         ### If the keyfile is present continue with the decryption using the identified PIN        
         if keyFileFound:         
             javaPIN = pinDict[currentPIN]
             encryption_details_data_list.append(('Java Equivilant',javaPIN.decode("utf-8")))
-            printFunc(f'*****\t\t\tDeriving PBKDF2 key', True, False, True)
+            printFunc('*****\t\t\tDeriving PBKDF2 key', True, False, True)
             ### derivedKey derivation 
             ## Derive the Primary key from the provided PIN
             keyData = identifyMasterKey(javaPIN, interpretKeyFile.masterIV)
@@ -247,15 +251,15 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
         data_headers = ("Encryption Details", "Value",) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
         report.write_artifact_data_table(data_headers, encryption_details_data_list, "Multiple Files")
         report.end_artifact_report()
-        tsvname = f"AVG - Encryption Details"
+        tsvname = "AVG - Encryption Details"
         tsv(report_folder, data_headers, encryption_details_data_list, tsvname, "Multiple Files")
   
     ### Media file decryption   
     ## '.metadata_store' to be dealt with differently
     ### If '.metadata_store' exists, decrypt the file and iterate through the contents and write to report
     if(metaDataFile):
-         metaDataDict = {}
-         with open (metaDataFile, 'rb') as currentFile:
+        metaDataDict = {}
+        with open (metaDataFile, 'rb') as currentFile:
             ### Decrypt the data
             decryptedData = decryptData(currentFile.read(), masterKey)
             decryptedMetaDataFile = json.loads(decryptedData.decode('utf-8'))
@@ -329,7 +333,7 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
         media_report.write_artifact_data_table(media_data_headers, media_data_list, maindirectory, html_no_escape=['Media'])
         report.end_artifact_report()
             
-        tsvname = f'AVG - Media Files'
+        tsvname = 'AVG - Media Files'
         tsv(report_folder, data_headers, media_data_list, tsvname)                  
     else:
         logfunc('No files found to decrypt')

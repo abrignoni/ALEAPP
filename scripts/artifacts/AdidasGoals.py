@@ -20,7 +20,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_adidas_goals(files_found, report_folder, seeker, wrap_text):
+def get_adidas_goals(files_found, report_folder, _seeker, _wrap_text):
     logfunc("Processing data for Adidas Goals")
     files_found = [x for x in files_found if not x.endswith('-journal')]
     file_found = str(files_found[0])
@@ -43,7 +43,7 @@ def get_adidas_goals(files_found, report_folder, seeker, wrap_text):
         data_headers = ('ID', 'Metric', 'Remote ID', 'User ID', 'Version', 'Target', 'Recurrence', 'Start Date', 'End Date', 'Sport Types', 'Created At', 'Updated At', 'Deleted At')
         data_list = []
         for row in all_rows:
-            id = row[0]
+            goal_id = row[0]
             metric = row[1]
             remote_id = row[2]
             user_id = row[3]
@@ -75,10 +75,10 @@ def get_adidas_goals(files_found, report_folder, seeker, wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id, html_escape=False)
         report.end_artifact_report()
 
-        tsvname = f'Adidas - Goals'
+        tsvname = 'Adidas - Goals'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = f'Adidas - Goals'
+        tlactivity = 'Adidas - Goals'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:

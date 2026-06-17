@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_usagestats": {
         "name": "usagestats",
-        "description": "Event types referenced from core\java\android\app\usage\UsageEvents.java",
+        "description": "Event types referenced from core/java/android/app/usage/UsageEvents.java",
         "author": "",
         "creation_date": "2000-01-01",
         "last_updated_date": "2000-01-01",
