@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "wellbeing": {
+    "get_wellbeing": {
         "name": "Digital Wellbeing",
         "description": "Parses Digital Wellbeing events",
         "author": "@AlexisBrignoni",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Digital Wellbeing",
         "notes": "",
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
-        "function": "get_wellbeing"
     }
 }
 

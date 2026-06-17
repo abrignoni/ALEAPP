@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "smanagerCrash": {
+    "get_smanagerCrash": {
         "name": "smanagerCrash",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.samsung.android.sm/databases/sm.db',),
         "output_types": None,
-        "function": "get_smanagerCrash",
         "artifact_icon": "package",
     }
 }

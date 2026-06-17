@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "textnow": {
+    "get_textnow": {
         "name": "textnow",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.enflick.android.TextNow/databases/textnow_data.db*',),
         "output_types": None,
-        "function": "get_textnow",
         "artifact_icon": "message-square",
     }
 }

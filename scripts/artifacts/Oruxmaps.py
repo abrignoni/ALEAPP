@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Oruxmaps": {
+    "get_Oruxmaps": {
         "name": "Oruxmaps",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('**/oruxmaps/tracklogs/oruxmapstracks.db*',),
         "output_types": None,
-        "function": "get_Oruxmaps",
         "artifact_icon": "map-pin",
     }
 }

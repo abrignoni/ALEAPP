@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "runtimePerms": {
+    "get_runtimePerms": {
         "name": "runtimePerms",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/users/*/runtime-permissions.xml',),
         "output_types": None,
-        "function": "get_runtimePerms",
         "artifact_icon": "activity",
     }
 }

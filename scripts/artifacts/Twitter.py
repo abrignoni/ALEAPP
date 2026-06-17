@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "twitter": {
+    "get_Twitter": {
         "name": "twitter",
         "description": "Twitter Searches",
         "author": "Kevin Pagano (https://startme.stark4n6.com)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.twitter.android/databases/*-search.db*',),
         "output_types": None,
-        "function": "get_Twitter",
         "artifact_icon": "users",
     }
 }

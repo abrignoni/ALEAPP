@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Teleguard": {
+    "get_teleguard": {
         "name": "Teleguard",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": None,
-        "function": "get_teleguard",
         "artifact_icon": "file",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "blueskysearches": {
+    "get_blueskysearches": {
         "name": "Bluesky",
         "description": "User generated searches",
         "author": "DFIRcon 2025 Miami",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*'),
-        "function": "get_blueskysearches"
     }
 }
 

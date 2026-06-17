@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GooglePhotos": {
+    "get_googlePhotos": {
         "name": "GooglePhotos",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": None,
-        "function": "get_googlePhotos",
         "artifact_icon": "image",
     }
 }

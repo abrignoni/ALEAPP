@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "sms_mms_backup": {
+    "get_sms_mms_from_backup": {
         "name": "sms_mms_backup",
         "description": "Backup agent code defined here:",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.providers.telephony/d_f/*_backup',),
         "output_types": None,
-        "function": "get_sms_mms_from_backup",
         "artifact_icon": "message-square",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "zepplife_heartrate": {
+    "extract_zepplife_heartrate": {
         "name": "Zepp Life - Heart Rate",
         "description": "Heart rate history from Zepp Life",
         "author": "its5Q",
@@ -10,7 +10,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.xiaomi.hm.health/databases/origin_db*',),
         "output_types": "standard",
-        "function": "extract_zepplife_heartrate",
         "artifact_icon": "heart",
     }
 }

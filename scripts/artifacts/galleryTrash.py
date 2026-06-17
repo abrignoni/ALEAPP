@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Gallery Trash": {
+    "get_galleryTrash": {
         "name": "Gallery Trash",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/com.sec.android.gallery3d/databases/local.db*',),
         "output_types": None,
-        "function": "get_galleryTrash",
         "artifact_icon": "image",
     }
 }

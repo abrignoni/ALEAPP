@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "protonVPN User": {
+    "get_protonVPN": {
         "name": "protonVPN User",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/ch.protonvpn.android/databases/db',),
         "output_types": None,
-        "function": "get_protonVPN",
         "artifact_icon": "user",
     }
 }

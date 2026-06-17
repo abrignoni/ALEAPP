@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "wifiConfigstore2": {
+    "get_wifiConfigstore": {
         "name": "wifiConfigstore2",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/misc/wifi/WifiConfigStore.xml',),
         "output_types": None,
-        "function": "get_wifiConfigstore",
         "artifact_icon": "wifi",
     }
 }

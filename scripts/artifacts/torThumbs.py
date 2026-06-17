@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "torThumbs": {
+    "get_torThumbs": {
         "name": "torThumbs",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/thumbnails/*.0',),
         "output_types": None,
-        "function": "get_torThumbs",
         "artifact_icon": "file",
     }
 }

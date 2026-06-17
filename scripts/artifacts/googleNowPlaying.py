@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GoogleNowPlaying": {
+    "get_googleNowPlaying": {
         "name": "GoogleNowPlaying",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.intelligence.sense/db/history_db*',),
         "output_types": None,
-        "function": "get_googleNowPlaying",
         "artifact_icon": "chrome",
     }
 }

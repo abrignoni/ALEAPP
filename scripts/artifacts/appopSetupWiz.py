@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "appopSetupWiz": {
+    "get_appopSetupWiz": {
         "name": "appopSetupWiz",
         "description": "check if file is abx",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/appops.xml',),
         "output_types": None,
-        "function": "get_appopSetupWiz",
         "artifact_icon": "package",
     }
 }

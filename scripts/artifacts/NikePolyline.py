@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "NikePolyline": {
+    "get_nike_polyline": {
         "name": "NikePolyline",
         "description": "Get GPS data from the table 'activity_polyline' and activity_details",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
         "output_types": None,
-        "function": "get_nike_polyline",
         "artifact_icon": "message-square",
     }
 }

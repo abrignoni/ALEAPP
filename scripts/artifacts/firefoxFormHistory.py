@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FirefoxFormHistory": {
+    "get_firefoxFormHistory": {
         "name": "FirefoxFormHistory",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/formhistory.sqlite*',),
         "output_types": None,
-        "function": "get_firefoxFormHistory",
         "artifact_icon": "globe",
     }
 }

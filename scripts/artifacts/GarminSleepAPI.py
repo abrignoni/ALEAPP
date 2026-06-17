@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminSleepAPI": {
+    "get_sleep_api": {
         "name": "GarminSleepAPI",
         "description": "Get Information related to Garmin Sleep API",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/garmin.api/sleep*',),
         "output_types": None,
-        "function": "get_sleep_api",
         "artifact_icon": "activity",
     }
 }

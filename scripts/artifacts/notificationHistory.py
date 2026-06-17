@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Android Notification History": {
+    "get_notificationHistory": {
         "name": "Android Notification History",
         "description": "Get Android notifications' history, policy and settings. This parser is based on a research project",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
@@ -12,7 +12,6 @@ __artifacts_v2__ = {
             '**/system/users/*/settings_secure.xml',
             '**/system/notification_policy.xml',
         ),
-        "function": "get_notificationHistory"
     }
 }
 

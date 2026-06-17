@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminUser": {
+    "get_garminUP": {
         "name": "GarminUser",
         "description": "Get User information from gcm_user_reference.xml file from Garmin Connect shared preferences",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/gcm_user_preferences*',),
         "output_types": None,
-        "function": "get_garminUP",
         "artifact_icon": "user",
     }
 }

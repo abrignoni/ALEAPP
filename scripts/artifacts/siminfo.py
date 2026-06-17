@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "siminfo": {
+    "get_siminfo": {
         "name": "siminfo",
         "description": "Filter for path xxx/yyy/system_ce/0",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/user_de/*/com.android.providers.telephony/databases/telephony.db',),
         "output_types": None,
-        "function": "get_siminfo",
         "artifact_icon": "info",
     }
 }

@@ -4,7 +4,7 @@ import scripts.artifacts.artGlobals as aG
 from packaging import version
 
 __artifacts_v2__ = {
-    "smyfilesOpHistory": {
+    "get_smyfiles_OpHistory": {
         "name": "My Files Operation History",
         "description": "Extracts Operation History from My Files database",
         "author": "@PensiveHike",
@@ -14,7 +14,6 @@ __artifacts_v2__ = {
         "category": "My Files",
         "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown characters will be replaced with '?'.",
         "paths": '*/com.sec.android.app.myfiles/databases/OperationHistory.db*',
-        "function": "get_smyfiles_OpHistory"
     }
 }
 

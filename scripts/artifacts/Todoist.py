@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Todoist": {
+    "get_Todoist": {
         "name": "Todoist",
         "description": "Todoist - Parses items, notes and projects",
         "author": "Kevin Pagano (https://startme.stark4n6.com)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.todoist/databases/database.db*',),
         "output_types": None,
-        "function": "get_Todoist",
         "artifact_icon": "file-text",
     }
 }

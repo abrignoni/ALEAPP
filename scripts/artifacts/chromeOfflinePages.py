@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChromeOfflinePages": {
+    "get_chromeOfflinePages": {
         "name": "ChromeOfflinePages",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*',),
         "output_types": None,
-        "function": "get_chromeOfflinePages",
         "artifact_icon": "message-square",
     }
 }

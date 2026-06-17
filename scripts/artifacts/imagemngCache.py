@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ImagemngCache": {
+    "get_imagemngCache": {
         "name": "ImagemngCache",
         "description": "else:",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/cache/image_manager_disk_cache/*.*',),
         "output_types": None,
-        "function": "get_imagemngCache",
         "artifact_icon": "image",
     }
 }

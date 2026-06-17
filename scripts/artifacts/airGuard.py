@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "AirGuard": {
+    "get_airGuard": {
         "name": "AirGuard",
         "description": "Parses the AirGuard AirTag app",
         "author": "@AlexisBrignoni",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "AirTags",
         "notes": "",
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*'),
-        "function": "get_airGuard"
     }
 }
 

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "tangomessage": {
+    "get_tangomessage": {
         "name": "tangomessage",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.sgiggle.production/files/tc.db*',),
         "output_types": None,
-        "function": "get_tangomessage",
         "artifact_icon": "message-square",
     }
 }

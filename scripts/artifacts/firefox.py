@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Firefox": {
+    "get_firefox": {
         "name": "Firefox",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
         "output_types": None,
-        "function": "get_firefox",
         "artifact_icon": "globe",
     }
 }

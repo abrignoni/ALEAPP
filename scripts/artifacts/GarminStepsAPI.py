@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminStepsAPI": {
+    "get_steps_api": {
         "name": "GarminStepsAPI",
         "description": "Get Information related to the Heart Rate from the Garmin API using the JSON file extracted",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/garmin.api/steps*',),
         "output_types": None,
-        "function": "get_steps_api",
         "artifact_icon": "activity",
     }
 }

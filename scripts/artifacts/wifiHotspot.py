@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "wifiHotspot": {
+    "get_wifiHotspot": {
         "name": "wifiHotspot",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/misc/wifi/softap.conf',),
         "output_types": None,
-        "function": "get_wifiHotspot",
         "artifact_icon": "wifi",
     }
 }

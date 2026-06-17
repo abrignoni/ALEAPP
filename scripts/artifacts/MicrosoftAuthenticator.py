@@ -23,7 +23,6 @@ __artifacts_v2__ = {
         "category": "MS Authenticator",
         "notes": "Get Account information from MS authenticator app.",
         "paths": ('*/com.azure.authenticator/databases/PhoneFactor*'),
-        "function": "get_MSAuth_accounts"
     }
 }
 

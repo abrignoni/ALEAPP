@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "App Locker": {
+    "get_appLockerfishingnet": {
         "name": "App Locker",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/.privacy_safe/picture/*',),
         "output_types": None,
-        "function": "get_appLockerfishingnet",
         "artifact_icon": "image",
     }
 }

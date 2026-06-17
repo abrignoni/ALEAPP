@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "pSettings": {
+    "get_pSettings": {
         "name": "pSettings",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.gsf/databases/googlesettings.db*',),
         "output_types": None,
-        "function": "get_pSettings",
         "artifact_icon": "settings",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChromeLoginData": {
+    "get_chromeLoginData": {
         "name": "ChromeLoginData",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Login Data*',),
         "output_types": None,
-        "function": "get_chromeLoginData",
         "artifact_icon": "globe",
     }
 }

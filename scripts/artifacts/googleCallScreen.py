@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GoogleCallScreen": {
+    "get_googleCallScreen": {
         "name": "GoogleCallScreen",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.dialer/databases/callscreen_transcripts*',),
         "output_types": None,
-        "function": "get_googleCallScreen",
         "artifact_icon": "phone",
     }
 }

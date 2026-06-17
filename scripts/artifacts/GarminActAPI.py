@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminActAPI": {
+    "get_act_api": {
         "name": "GarminActAPI",
         "description": "Get the activities from the Garmin API using the JSON extracted from the Garmin API",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/garmin.api/activities*',),
         "output_types": None,
-        "function": "get_act_api",
         "artifact_icon": "activity",
     }
 }

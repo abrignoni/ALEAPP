@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Strava": {
+    "get_gps": {
         "name": "Strava",
         "description": "Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.strava/files*',),
         "output_types": None,
-        "function": "get_gps",
         "artifact_icon": "activity",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "skype": {
+    "get_skype": {
         "name": "skype",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.skype.raider/databases/live*',),
         "output_types": None,
-        "function": "get_skype",
         "artifact_icon": "message-square",
     }
 }

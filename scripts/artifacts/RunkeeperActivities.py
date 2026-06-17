@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "RunkeeperActivities": {
+    "get_run_activities": {
         "name": "RunkeeperActivities",
         "description": "Get Information related to the activities of the user from the Runkeeper app database",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*com.fitnesskeeper.runkeeper.pro/databases/RunKeeper.sqlite*',),
         "output_types": None,
-        "function": "get_run_activities",
         "artifact_icon": "activity",
     }
 }

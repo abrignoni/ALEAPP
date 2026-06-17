@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "usagestats": {
+    "get_usagestats": {
         "name": "usagestats",
         "description": "Event types referenced from core\java\android\app\usage\UsageEvents.java",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/usagestats/*',),
         "output_types": None,
-        "function": "get_usagestats",
         "artifact_icon": "battery",
     }
 }

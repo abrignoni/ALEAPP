@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "InstalledappsVending": {
+    "get_installedappsVending": {
         "name": "InstalledappsVending",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.vending/databases/localappstate.db*',),
         "output_types": None,
-        "function": "get_installedappsVending",
         "artifact_icon": "package",
     }
 }

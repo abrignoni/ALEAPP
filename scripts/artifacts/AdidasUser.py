@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "AdidasUser": {
+    "get_adidas_user": {
         "name": "AdidasUser",
         "description": "Get Information related to users from the Adidas Running app stored in user.db",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*com.runtastic.android/databases/user.db*',),
         "output_types": None,
-        "function": "get_adidas_user",
         "artifact_icon": "user",
     }
 }

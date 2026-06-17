@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FirefoxPermissions": {
+    "get_firefoxPermissions": {
         "name": "FirefoxPermissions",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*',),
         "output_types": None,
-        "function": "get_firefoxPermissions",
         "artifact_icon": "globe",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "PumaActivities": {
+    "get_puma_activities": {
         "name": "PumaActivities",
         "description": "Get Information related to the activities of the user from the PumaTrack app (com.puma.track)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
         "output_types": None,
-        "function": "get_puma_activities",
         "artifact_icon": "activity",
     }
 }

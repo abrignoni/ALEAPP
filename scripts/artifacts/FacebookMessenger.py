@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FacebookMessenger": {
+    "get_FacebookMessenger": {
         "name": "FacebookMessenger",
         "description": "2023-02-03: Added support for new msys_database format - Kevin Pagano",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/*threads_db2*',),
         "output_types": None,
-        "function": "get_FacebookMessenger",
         "artifact_icon": "message-square",
     }
 }

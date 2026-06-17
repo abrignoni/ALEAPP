@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "smembersEvents": {
+    "get_smembersEvents": {
         "name": "smembersEvents",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk.db',),
         "output_types": None,
-        "function": "get_smembersEvents",
         "artifact_icon": "package",
     }
 }

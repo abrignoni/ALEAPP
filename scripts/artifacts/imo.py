@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Imo": {
+    "get_imo": {
         "name": "Imo",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.imo.android.imous/databases/*.db*',),
         "output_types": None,
-        "function": "get_imo",
         "artifact_icon": "message-square",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminJson": {
+    "get_garmin_json": {
         "name": "GarminJson",
         "description": "Get JSON information from the Garmin GCM database",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/gcm_cache*',),
         "output_types": None,
-        "function": "get_garmin_json",
         "artifact_icon": "activity",
     }
 }

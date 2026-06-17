@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Browser Location": {
+    "get_browserlocation": {
         "name": "Browser Location",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.browser/app_geolocation/CachedGeoposition.db',),
         "output_types": None,
-        "function": "get_browserlocation",
         "artifact_icon": "map-pin",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "playgroundVault": {
+    "get_playgroundVault": {
         "name": "playgroundVault",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml',),
         "output_types": None,
-        "function": "get_playgroundVault",
         "artifact_icon": "image",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "VerizonRDD-Battery": {
+    "get_rdd_analytics": {
         "name": "VerizonRDD-Battery",
         "description": "Module Description: Parses Verizon RDD Analytics Battery History",
         "author": "John Hyla",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.verizon.mips.services/databases/RDD_ANALYTICS_DATABASE',),
         "output_types": None,
-        "function": "get_rdd_analytics",
         "artifact_icon": "battery",
     }
 }

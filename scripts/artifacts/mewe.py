@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "mewe": {
+    "get_mewe": {
         "name": "mewe",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.mewe/databases/app_database',),
         "output_types": None,
-        "function": "get_mewe",
         "artifact_icon": "message-square",
     }
 }

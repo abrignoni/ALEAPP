@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "snapchat": {
+    "get_snapchat": {
         "name": "snapchat",
         "description": "Last actions taken in the application and who did them",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.snapchat.android/databases/*.db',),
         "output_types": None,
-        "function": "get_snapchat",
         "artifact_icon": "message-square",
     }
 }

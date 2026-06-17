@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "VLC Thumbs ADB": {
+    "get_vlcthumbsADB": {
         "name": "VLC Thumbs ADB",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.videolan.vlc/ef/medialib/*.*',),
         "output_types": None,
-        "function": "get_vlcthumbsADB",
         "artifact_icon": "image",
     }
 }

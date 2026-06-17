@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "kijijiConversations": {
+    "get_kijijiConversations": {
         "name": "kijijiConversations",
         "description": "Kijiji Conversations",
         "author": "Terry Chabot (Krypterry)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*',),
         "output_types": None,
-        "function": "get_kijijiConversations",
         "artifact_icon": "file",
     }
 }

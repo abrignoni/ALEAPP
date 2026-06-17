@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "googleInitiatedNav": {
+    "get_googleInitiatedNav": {
         "name": "googleInitiatedNav",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.maps/files/new_recent_history_cache_navigated.cs',),
         "output_types": None,
-        "function": "get_googleInitiatedNav",
         "artifact_icon": "map-pin",
     }
 }

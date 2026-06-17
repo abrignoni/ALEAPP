@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "protonmail": {
+    "get_protonmail": {
         "name": "protonmail",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*',),
         "output_types": None,
-        "function": "get_protonmail",
         "artifact_icon": "mail",
     }
 }

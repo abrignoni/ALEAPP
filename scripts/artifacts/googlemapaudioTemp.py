@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GooglemapaudioT": {
+    "get_googlemapaudioTemp": {
         "name": "GooglemapaudioT",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.maps/app_tts-temp/**',),
         "output_types": None,
-        "function": "get_googlemapaudioTemp",
         "artifact_icon": "map-pin",
     }
 }

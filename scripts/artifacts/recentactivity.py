@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "recentactivity": {
+    "get_recentactivity": {
         "name": "recentactivity",
         "description": "Filter for path xxx/yyy/system_ce/0",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system_ce/*',),
         "output_types": None,
-        "function": "get_recentactivity",
         "artifact_icon": "activity",
     }
 }

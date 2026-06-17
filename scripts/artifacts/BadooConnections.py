@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "BadooConnections": {
+    "get_badoo_conn": {
         "name": "BadooConnections",
         "description": "Get Information related to possible connections (messages, views etc) of the user with other users from the Badoo app (com.badoo.mobile)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*com.badoo.mobile/databases/CombinedConnectionsDatabase*',),
         "output_types": None,
-        "function": "get_badoo_conn",
         "artifact_icon": "users",
     }
 }

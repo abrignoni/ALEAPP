@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "discordChats": {
+    "get_discordChats": {
         "name": "discordChats",
         "description": "build a table mapping all non-printable characters to None",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/com.discord/files/kv-storage/*/a*',),
         "output_types": None,
-        "function": "get_discordChats",
         "artifact_icon": "message-square",
     }
 }

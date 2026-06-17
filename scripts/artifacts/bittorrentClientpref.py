@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "BitTorrent Prefs": {
+    "get_bittorrentClientpref": {
         "name": "BitTorrent Prefs",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.bittorrent.client/shared_prefs/com.bittorrent.client_preferences.xml',),
         "output_types": None,
-        "function": "get_bittorrentClientpref",
         "artifact_icon": "download",
     }
 }

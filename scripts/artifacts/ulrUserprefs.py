@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "urlUserprefs": {
+    "get_urluser": {
         "name": "ULR User Prefs",
         "description": "ULR User Prefs",
         "author": "Alexis 'Brigs' Brignoni",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "paths": (
             '*/com.google.android.gms/shared_prefs/ULR_USER_PREFS.xml'
         ),
-        "function": "get_urluser"
     }
 }
 import json

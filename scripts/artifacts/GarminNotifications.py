@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminNotifications": {
+    "get_garmin_notifications": {
         "name": "GarminNotifications",
         "description": "Get Information relative to the notifications stored in the database of the Garmin Connect Mobile application",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/notification-database*',),
         "output_types": None,
-        "function": "get_garmin_notifications",
         "artifact_icon": "activity",
     }
 }

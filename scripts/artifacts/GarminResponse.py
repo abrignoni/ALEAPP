@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminResponse": {
+    "get_garmin_response": {
         "name": "GarminResponse",
         "description": "Get Information related to the Garmin - Responses stored in the database cache",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": None,
-        "function": "get_garmin_response",
         "artifact_icon": "activity",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "slopes": {
+    "get_slopes": {
         "name": "slopes",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.consumedbycode.slopes/databases/slopes.db*',),
         "output_types": None,
-        "function": "get_slopes",
         "artifact_icon": "map-pin",
     }
 }

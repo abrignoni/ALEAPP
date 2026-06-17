@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "package_info": {
+    "get_package_info": {
         "name": "package_info",
         "description": "Represents an app",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/packages.xml',),
         "output_types": None,
-        "function": "get_package_info",
         "artifact_icon": "package",
     }
 }

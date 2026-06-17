@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChromeAutofill": {
+    "get_chromeAutofill": {
         "name": "ChromeAutofill",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Web Data*',),
         "output_types": None,
-        "function": "get_chromeAutofill",
         "artifact_icon": "globe",
     }
 }

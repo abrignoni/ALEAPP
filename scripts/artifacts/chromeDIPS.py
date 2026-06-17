@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChromeDIPS": {
+    "get_chromeDIPS": {
         "name": "ChromeDIPS",
         "description": "Module Description: Parses Chromium DIPS (Detect Incidental Party State)",
         "author": "@KevinPagano3",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/DIPS*',),
         "output_types": None,
-        "function": "get_chromeDIPS",
         "artifact_icon": "globe",
     }
 }

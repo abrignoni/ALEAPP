@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "appSemloc": {
+    "get_appSemloc": {
         "name": "App Semantic Locations",
         "description": "App Semantic Locations",
         "author": "Alexis 'Brigs' Brignoni",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "paths": (
             '*/com.google.android.gms/app_semanticlocation_rawsignal_db/*'
         ),
-        "function": "get_appSemloc"
     }
 }
 import pathlib

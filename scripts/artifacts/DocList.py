@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "DocList'": {
+    "get_DocList": {
         "name": "DocList'",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.docs/databases/DocList.db*',),
         "output_types": None,
-        "function": "get_DocList",
         "artifact_icon": "file",
     }
 }

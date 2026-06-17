@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FirefoxRecentlyClosedTabs": {
+    "get_firefoxRecentlyClosedTabs": {
         "name": "FirefoxRecentlyClosedTabs",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.mozilla.firefox/databases/recently_closed_tabs*',),
         "output_types": None,
-        "function": "get_firefoxRecentlyClosedTabs",
         "artifact_icon": "globe",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FirefoxCookies": {
+    "get_firefoxCookies": {
         "name": "FirefoxCookies",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*',),
         "output_types": None,
-        "function": "get_firefoxCookies",
         "artifact_icon": "globe",
     }
 }

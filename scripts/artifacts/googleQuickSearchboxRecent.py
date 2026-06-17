@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Quicksearch_recent": {
+    "get_quicksearch_recent": {
         "name": "Quicksearch_recent",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.googlequicksearchbox/files/recently/*',),
         "output_types": None,
-        "function": "get_quicksearch_recent",
         "artifact_icon": "search",
     }
 }

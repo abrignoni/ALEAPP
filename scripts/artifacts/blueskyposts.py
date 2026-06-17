@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "blueskyposts": {
+    "get_blueskyposts": {
         "name": "Bluesky",
         "description": "Bluesky Feed Posts",
         "author": "Alexis Brignoni",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/cache/http-cache/*.*'),
-        "function": "get_blueskyposts"
     }
 }
 import os

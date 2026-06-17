@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "mega": {
+    "get_mega": {
         "name": "mega",
         "description": "MEGA",
         "author": "Kevin Pagano (@KevinPagano3)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/mega.privacy.android.app/karere-*.db*',),
         "output_types": None,
-        "function": "get_mega",
         "artifact_icon": "download",
     }
 }

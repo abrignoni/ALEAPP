@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Dahua Technology (DMSS)": {
+    "get_dmss": {
         "name": "Dahua Technology (DMSS)",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": (),
         "output_types": None,
-        "function": "get_dmss",
         "artifact_icon": "terminal",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "persistentProp": {
+    "get_persistentProp": {
         "name": "persistentProp",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/property/persistent_properties',),
         "output_types": None,
-        "function": "get_persistentProp",
         "artifact_icon": "info",
     }
 }

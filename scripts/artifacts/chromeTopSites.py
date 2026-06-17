@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChromeTopSites": {
+    "get_chromeTopSites": {
         "name": "ChromeTopSites",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Top Sites*',),
         "output_types": None,
-        "function": "get_chromeTopSites",
         "artifact_icon": "globe",
     }
 }

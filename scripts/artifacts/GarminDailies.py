@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminDailies": {
+    "get_garmin_dailies": {
         "name": "GarminDailies",
         "description": "Get Information from the table user_daily_summary from the cache-database in the Garmin Connect App",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": None,
-        "function": "get_garmin_dailies",
         "artifact_icon": "activity",
     }
 }

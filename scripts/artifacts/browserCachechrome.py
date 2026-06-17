@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "browserCachechrome": {
+    "get_browserCachechrome": {
         "name": "browserCachechrome",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/com.android.chrome/cache/Cache/*_0',),
         "output_types": None,
-        "function": "get_browserCachechrome",
         "artifact_icon": "globe",
     }
 }

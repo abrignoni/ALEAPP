@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "samsungWeatherClock": {
+    "get_samsungWeatherClock": {
         "name": "samsungWeatherClock",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
         "output_types": None,
-        "function": "get_samsungWeatherClock",
         "artifact_icon": "lock",
     }
 }

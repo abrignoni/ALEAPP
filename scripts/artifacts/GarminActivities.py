@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminActivities": {
+    "get_garmin_activities": {
         "name": "GarminActivities",
         "description": "Get Information relative to the user activities that are present in the database (cache-database) from the Garmin Connect app, the activities are stored in two different tables (activities_details and activities_summaries)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": None,
-        "function": "get_garmin_activities",
         "artifact_icon": "activity",
     }
 }

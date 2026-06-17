@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "settingsSecure": {
+    "get_settingsSecure": {
         "name": "settingsSecure",
         "description": "Filter for path xxx/yyy/system_ce/0",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/users/*/settings_secure.xml',),
         "output_types": None,
-        "function": "get_settingsSecure",
         "artifact_icon": "settings",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "appops": {
+    "get_appops": {
         "name": "appops",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/appops.xml',),
         "output_types": None,
-        "function": "get_appops",
         "artifact_icon": "package",
     }
 }

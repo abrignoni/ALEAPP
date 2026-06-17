@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminWeight": {
+    "get_garmin_weight": {
         "name": "GarminWeight",
         "description": "Get Information relative to the weight data in the database cache-database from the table weight in the Garmin Connect app",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": None,
-        "function": "get_garmin_weight",
         "artifact_icon": "activity",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "scontextLog": {
+    "get_scontextLog": {
         "name": "scontextLog",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.samsung.android.providers.context/databases/ContextLog.db',),
         "output_types": None,
-        "function": "get_scontextLog",
         "artifact_icon": "package",
     }
 }

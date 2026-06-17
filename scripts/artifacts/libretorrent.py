@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Libretorrent": {
+    "get_libretorrent": {
         "name": "Libretorrent",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*',),
         "output_types": None,
-        "function": "get_libretorrent",
         "artifact_icon": "download",
     }
 }

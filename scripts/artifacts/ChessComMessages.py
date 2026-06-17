@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChessComMessages": {
+    "get_ChessComMessages": {
         "name": "ChessComMessages",
         "description": "Chess database",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.chess/databases/chess-database*',),
         "output_types": None,
-        "function": "get_ChessComMessages",
         "artifact_icon": "message-square",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "DiscreteNative": {
+    "get_discreteNative": {
         "name": "DiscreteNative",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/appops/discrete/**',),
         "output_types": None,
-        "function": "get_discreteNative",
         "artifact_icon": "file",
     }
 }

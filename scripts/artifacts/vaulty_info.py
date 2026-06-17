@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "vaulty_info": {
+    "get_vaulty_info": {
         "name": "vaulty_info",
         "description": "Prefs File",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml',),
         "output_types": None,
-        "function": "get_vaulty_info",
         "artifact_icon": "lock",
     }
 }

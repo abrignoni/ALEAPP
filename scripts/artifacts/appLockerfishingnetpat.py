@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "App Locker Pat": {
+    "get_appLockerfishingnetpat": {
         "name": "App Locker Pat",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml',),
         "output_types": None,
-        "function": "get_appLockerfishingnetpat",
         "artifact_icon": "image",
     }
 }

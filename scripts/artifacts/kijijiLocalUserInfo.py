@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "kijijiLocalUserInfo": {
+    "get_kijijiLocalUserInfo": {
         "name": "kijijiLocalUserInfo",
         "description": "Kijiji Local User Information",
         "author": "Terry Chabot (Krypterry)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.ebay.kijiji.ca/shared_prefs/LoginData.xml',),
         "output_types": None,
-        "function": "get_kijijiLocalUserInfo",
         "artifact_icon": "user",
     }
 }

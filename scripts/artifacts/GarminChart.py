@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminCharts": {
+    "get_garmin_chart": {
         "name": "GarminCharts",
         "description": "Get Information from the table activity_charts and activitie_details in the database cache-database from Garmin Connect",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": None,
-        "function": "get_garmin_chart",
         "artifact_icon": "activity",
     }
 }

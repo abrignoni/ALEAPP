@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GmailActive": {
+    "get_gmailActive": {
         "name": "GmailActive",
         "description": "gmailActive: Get gmail account information",
         "author": "Joshua James {joshua@dfirscience.org}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.gm/shared_prefs/Gmail.xml',),
         "output_types": None,
-        "function": "get_gmailActive",
         "artifact_icon": "mail",
     }
 }

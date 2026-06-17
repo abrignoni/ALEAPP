@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "smyFiles2": {
+    "get_smyFiles2": {
         "name": "smyFiles2",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db',),
         "output_types": None,
-        "function": "get_smyFiles2",
         "artifact_icon": "file",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "walStrings": {
+    "get_walStrings": {
         "name": "walStrings",
         "description": "If  we only want ascii, use 'ascii_chars_re' below",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/*-wal',),
         "output_types": None,
-        "function": "get_walStrings",
         "artifact_icon": "file",
     }
 }

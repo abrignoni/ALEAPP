@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "mega_transfers": {
+    "get_mega_transfers": {
         "name": "mega_transfers",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/mega.privacy.android.app/databases/megapreferences',),
         "output_types": None,
-        "function": "get_mega_transfers",
         "artifact_icon": "download",
     }
 }

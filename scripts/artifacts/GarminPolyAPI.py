@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminPolyAPI": {
+    "get_poly_api": {
         "name": "GarminPolyAPI",
         "description": "Get GPS coordinates from Garmin API related to activities",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/garmin.api/activity_details*',),
         "output_types": None,
-        "function": "get_poly_api",
         "artifact_icon": "activity",
     }
 }

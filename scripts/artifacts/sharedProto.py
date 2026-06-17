@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "sharedProto": {
+    "get_sharedProto": {
         "name": "Shared Proto Data",
         "description": "Shared Proto data from Samsung Browser",
         "author": "@AlexisBrignoni",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Samsung Browser",
         "notes": "",
         "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*'),
-        "function": "get_sharedProto"
     }
 }
 import pathlib

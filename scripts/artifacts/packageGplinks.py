@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "packageGplinks": {
+    "get_packageGplinks": {
         "name": "packageGplinks",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/packages.list',),
         "output_types": None,
-        "function": "get_packageGplinks",
         "artifact_icon": "package",
     }
 }

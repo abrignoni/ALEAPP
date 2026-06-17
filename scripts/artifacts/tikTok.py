@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "tikTok": {
+    "get_tikTok": {
         "name": "tikTok",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*_im.db*',),
         "output_types": None,
-        "function": "get_tikTok",
         "artifact_icon": "users",
     }
 }

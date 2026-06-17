@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "smyfilescache": {
+    "get_smyfilescache": {
         "name": "smyfilescache",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*',),
         "output_types": None,
-        "function": "get_smyfilescache",
         "artifact_icon": "file",
     }
 }

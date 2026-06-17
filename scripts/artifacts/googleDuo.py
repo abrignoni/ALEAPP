@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "googleDuo": {
+    "get_googleDuo": {
         "name": "googleDuo",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*',),
         "output_types": None,
-        "function": "get_googleDuo",
         "artifact_icon": "chrome",
     }
 }

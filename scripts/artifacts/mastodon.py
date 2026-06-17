@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "mastodon": {
+    "get_mastodon": {
         "name": "mastodon",
         "description": "Module Description: Parses Mastodon timeline, notifications and searches",
         "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": None,
-        "function": "get_mastodon",
         "artifact_icon": "message-square",
     }
 }

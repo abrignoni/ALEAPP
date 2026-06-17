@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Burner": {
+    "get_burner": {
         "name": "Burner",
         "description": "Burner",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
         "output_types": None,
-        "function": "get_burner",
         "artifact_icon": "shield",
     }
 }

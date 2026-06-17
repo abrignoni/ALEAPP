@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "userDict": {
+    "get_userDict": {
         "name": "userDict",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.providers.userdictionary/databases/user_dict.db*',),
         "output_types": None,
-        "function": "get_userDict",
         "artifact_icon": "user",
     }
 }

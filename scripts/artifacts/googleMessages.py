@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GoogleMessages": {
+    "get_googleMessages": {
         "name": "GoogleMessages",
         "description": "Google Messages",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.messaging/databases/bugle_db*',),
         "output_types": None,
-        "function": "get_googleMessages",
         "artifact_icon": "message-square",
     }
 }

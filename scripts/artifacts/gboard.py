@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GboardCache": {
+    "get_gboardCache": {
         "name": "GboardCache",
         "description": "Update 2023-05-01 from @KevinPagano3 (https://startme.stark4n6.com)",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db',),
         "output_types": None,
-        "function": "get_gboardCache",
         "artifact_icon": "chrome",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "AVG": {
+    "get_AVG": {
         "name": "AVG",
         "description": "## Import required modules",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml',),
         "output_types": None,
-        "function": "get_AVG",
         "artifact_icon": "image",
     }
 }

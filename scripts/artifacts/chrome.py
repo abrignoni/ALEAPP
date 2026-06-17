@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Chrome": {
+    "get_chrome": {
         "name": "Chrome",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/History*',),
         "output_types": None,
-        "function": "get_chrome",
         "artifact_icon": "globe",
     }
 }

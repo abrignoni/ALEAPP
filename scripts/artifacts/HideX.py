@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "HideX": {
+    "get_HideX": {
         "name": "HideX",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.flatfish.cal.privacy/databases/hidex.db*',),
         "output_types": None,
-        "function": "get_HideX",
         "artifact_icon": "message-square",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Quicksearch": {
+    "get_quicksearch": {
         "name": "Quicksearch",
         "description": "Represents a search query session",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb',),
         "output_types": None,
-        "function": "get_quicksearch",
         "artifact_icon": "search",
     }
 }

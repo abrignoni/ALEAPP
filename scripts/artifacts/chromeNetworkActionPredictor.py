@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChromeNetworkActionPredictor": {
+    "get_chromeNetworkActionPredictor": {
         "name": "ChromeNetworkActionPredictor",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_Chrome/Default/Network Action Predictor*',),
         "output_types": None,
-        "function": "get_chromeNetworkActionPredictor",
         "artifact_icon": "wifi",
     }
 }

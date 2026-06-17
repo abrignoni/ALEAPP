@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "PikPak Cloud List": {
+    "get_pikpakCloudlist": {
         "name": "PikPak Cloud List",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.pikcloud.pikpak/databases/pikpak_files_*.db*',),
         "output_types": None,
-        "function": "get_pikpakCloudlist",
         "artifact_icon": "file",
     }
 }

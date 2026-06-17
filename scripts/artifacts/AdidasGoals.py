@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "AdidasGoals": {
+    "get_adidas_goals": {
         "name": "AdidasGoals",
         "description": "Get Information related to user defined goals from the Adidas Running app stored in goals",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.runtastic.android/databases/goals*',),
         "output_types": None,
-        "function": "get_adidas_goals",
         "artifact_icon": "activity",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GroupMe": {
+    "get_groupMe": {
         "name": "GroupMe",
         "description": "GroupMe",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.groupme.android/databases/groupme.db',),
         "output_types": None,
-        "function": "get_groupMe",
         "artifact_icon": "message-square",
     }
 }

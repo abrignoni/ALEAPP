@@ -8,7 +8,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, kmlgen, timeline, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 __artifacts_v2__ = {
-    "Fitbit": {
+    "get_fitbit": {
         "name": "Fitbit Smartphone Data",
         "description": "Parses Fitbit activities from Android Smartphone app",
         "author": "@AlexisBrignoni",
@@ -18,7 +18,6 @@ __artifacts_v2__ = {
         "category": "Fitbit",
         "notes": "Updated 2023-12-12 by @segumarc",
         "paths": ('*/com.fitbit.FitbitMobile/databases/activity_db*','*/com.fitbit.FitbitMobile/databases/device_database*','*/com.fitbit.FitbitMobile/databases/exercise_db*','*/com.fitbit.FitbitMobile/databases/heart_rate_db*','*/com.fitbit.FitbitMobile/databases/sleep*','*/com.fitbit.FitbitMobile/databases/social_db*','*/com.fitbit.FitbitMobile/databases/mobile_track_db*'),
-        "function": "get_fitbit"
     },
     "FitbitWearOS": {
         "name": "Fitbit Wear OS Data",
@@ -30,7 +29,6 @@ __artifacts_v2__ = {
         "category": "Fitbit",
         "notes": "Specific to Pixel Watch/Wear OS",
         "paths": ('*/com.fitbit.FitbitMobile/databases/user.db*', '*/com.fitbit.FitbitMobile/databases/passive_stats.db*'),
-        "function": "get_fitbit_wearos"
     }
 }
 

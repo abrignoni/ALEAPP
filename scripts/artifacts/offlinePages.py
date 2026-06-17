@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "pages": {
+    "get_offlinePages": {
         "name": "pages",
         "description": "fetch the timezone information",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/*.mhtml',),
         "output_types": None,
-        "function": "get_offlinePages",
         "artifact_icon": "message-square",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "oldpowerOffReset": {
+    "get_oldpowerOffReset": {
         "name": "oldpowerOffReset",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/log/power_off_reset_reason.txt',),
         "output_types": None,
-        "function": "get_oldpowerOffReset",
         "artifact_icon": "battery",
     }
 }

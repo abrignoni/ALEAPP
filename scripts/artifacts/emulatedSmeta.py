@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "EmulatedSmeta": {
+    "get_emulatedSmeta": {
         "name": "Emulated Storage Metadata",
         "description": "Parses emulated storage metadata from external.db",
         "author": "@AlexisBrignoni",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Emulated Storage Metadata",
         "notes": "2023-02-10 - Updated by @KevinPagano3",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*','*/com.android.providers.media/databases/external.db*'),
-        "function": "get_emulatedSmeta"
     }
 }
 

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "skout": {
+    "get_skout": {
         "name": "skout",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.skout.android/databases/skoutDatabase*',),
         "output_types": None,
-        "function": "get_skout",
         "artifact_icon": "users",
     }
 }

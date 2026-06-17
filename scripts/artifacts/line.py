@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "line": {
+    "get_line": {
         "name": "line",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": None,
-        "function": "get_line",
         "artifact_icon": "message-square",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "WordsWithFriends": {
+    "get_WordsWithFriends": {
         "name": "WordsWithFriends",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.zynga.words/db/wf_database.sqlite',),
         "output_types": None,
-        "function": "get_WordsWithFriends",
         "artifact_icon": "message-square",
     }
 }

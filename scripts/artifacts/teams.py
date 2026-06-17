@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "teams": {
+    "get_teams": {
         "name": "teams",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": None,
-        "function": "get_teams",
         "artifact_icon": "message-square",
     }
 }

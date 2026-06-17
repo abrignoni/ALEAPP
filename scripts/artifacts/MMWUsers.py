@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "MapUsers": {
+    "get_map_users": {
         "name": "MapUsers",
         "description": "Get Information related to the user from the Map My Walk app",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*com.mapmywalk.android2/databases/mmdk_user*',),
         "output_types": None,
-        "function": "get_map_users",
         "artifact_icon": "map-pin",
     }
 }

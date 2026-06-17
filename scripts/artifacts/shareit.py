@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "shareit": {
+    "get_shareit": {
         "name": "shareit",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.lenovo.anyshare.gps/databases/history.db*',),
         "output_types": None,
-        "function": "get_shareit",
         "artifact_icon": "download",
     }
 }

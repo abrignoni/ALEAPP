@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "InstalledappsLibrary": {
+    "get_installedappsLibrary": {
         "name": "InstalledappsLibrary",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.vending/databases/library.db*',),
         "output_types": None,
-        "function": "get_installedappsLibrary",
         "artifact_icon": "package",
     }
 }

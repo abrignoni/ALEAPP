@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Bluetooth Connections": {
+    "get_bluetoothConnections": {
         "name": "Bluetooth Connections",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/misc/bluedroid/bt_config.conf',),
         "output_types": None,
-        "function": "get_bluetoothConnections",
         "artifact_icon": "wifi",
     }
 }

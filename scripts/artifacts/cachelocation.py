@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Cache Location": {
+    "get_cachelocation": {
         "name": "Cache Location",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.location/files/cache.cell/cache.cell',),
         "output_types": None,
-        "function": "get_cachelocation",
         "artifact_icon": "map-pin",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Podcast Addict": {
+    "get_podcasts": {
         "name": "Podcast Addict",
         "description": "Module Description: Parses Podcast Addict Episode Database",
         "author": "John Hyla",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.bambuna.podcastaddict/databases/podcastAddict.db',),
         "output_types": None,
-        "function": "get_podcasts",
         "artifact_icon": "headphones",
     }
 }

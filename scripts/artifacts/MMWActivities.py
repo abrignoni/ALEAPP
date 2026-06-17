@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "MapWalkActivities": {
+    "get_map_activities": {
         "name": "MapWalkActivities",
         "description": "Get Information related to the activities of the user from the Map My Walk app",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*com.mapmywalk.android2/databases/workout.db*',),
         "output_types": None,
-        "function": "get_map_activities",
         "artifact_icon": "map-pin",
     }
 }

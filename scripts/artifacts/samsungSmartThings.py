@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "samsungSmartThings": {
+    "get_samsungSmartThings": {
         "name": "samsungSmartThings",
         "description": "Samsung SmartThings",
         "author": "Kevin Pagano (@KevinPagno3)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.samsung.android.oneconnect/databases/QcDB.db*',),
         "output_types": None,
-        "function": "get_samsungSmartThings",
         "artifact_icon": "file",
     }
 }

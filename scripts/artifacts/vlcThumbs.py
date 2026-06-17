@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "VLC Thumbs": {
+    "get_vlcThumbs": {
         "name": "VLC Thumbs",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.videolan.vlc/files/medialib/*.jpg',),
         "output_types": None,
-        "function": "get_vlcThumbs",
         "artifact_icon": "image",
     }
 }

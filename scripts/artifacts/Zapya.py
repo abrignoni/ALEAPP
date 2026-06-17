@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Zapya": {
+    "get_Zapya": {
         "name": "Zapya",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*',),
         "output_types": None,
-        "function": "get_Zapya",
         "artifact_icon": "download",
     }
 }

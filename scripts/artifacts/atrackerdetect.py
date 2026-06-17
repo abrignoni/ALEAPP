@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "atrackerdetect": {
+    "get_atrackerdetect": {
         "name": "atrackerdetect",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml',),
         "output_types": None,
-        "function": "get_atrackerdetect",
         "artifact_icon": "alert-triangle",
     }
 }

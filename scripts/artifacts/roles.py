@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "roles": {
+    "get_roles": {
         "name": "roles",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/users/*/roles.xml',),
         "output_types": None,
-        "function": "get_roles",
         "artifact_icon": "package",
     }
 }

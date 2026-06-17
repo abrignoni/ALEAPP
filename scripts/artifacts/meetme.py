@@ -1,6 +1,6 @@
 #Update line 3-13
 __artifacts_v2__ = {
-    "MeetMe": {
+    "get_meetmechats": {
         "name": "MeetMe Chats",
         "description": "Parses MeetMe Chat database",
         "author": "Matt Beers",
@@ -10,7 +10,6 @@ __artifacts_v2__ = {
         "category": "Chats",
         "notes": "",
         "paths": ('*/data/com.myyearbook.m/databases/chats.db*'),
-        "function": "get_meetmechats"
     }
 }
 

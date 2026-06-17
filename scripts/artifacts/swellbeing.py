@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "swellbeing": {
+    "get_swellbeing": {
         "name": "swellbeing",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
         "output_types": None,
-        "function": "get_swellbeing",
         "artifact_icon": "battery",
     }
 }

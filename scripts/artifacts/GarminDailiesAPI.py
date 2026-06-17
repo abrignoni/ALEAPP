@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminDailiesAPI": {
+    "get_dailies_api": {
         "name": "GarminDailiesAPI",
         "description": "Get Information related to the Daily summaries from the Garmin API using the JSON file extracted",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/garmin.api/daily*',),
         "output_types": None,
-        "function": "get_dailies_api",
         "artifact_icon": "activity",
     }
 }

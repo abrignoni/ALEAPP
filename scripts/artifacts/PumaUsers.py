@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "PumaUsers": {
+    "get_puma_users": {
         "name": "PumaUsers",
         "description": "Get Information related to the users table in the Puma Trac database",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
         "output_types": None,
-        "function": "get_puma_users",
         "artifact_icon": "user",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "blueskymessages": {
+    "get_blueskymessages": {
         "name": "Bluesky",
         "description": "Bluesky Messages",
         "author": "Alexis Brignoni",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*','*/xyz.blueskyweb.app/cache/http-cache/*.*'),
-        "function": "get_blueskymessages"
     }
 }
 import os

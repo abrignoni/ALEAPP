@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminFacebook USES INTERNET": {
+    "get_garminFB": {
         "name": "GarminFacebook USES INTERNET",
         "description": "Get Information relative to user Facebook account from the XML file in shared_prefs and tries to use the access token to get the user's profile picture",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/com.facebook*',),
         "output_types": None,
-        "function": "get_garminFB",
         "artifact_icon": "activity",
     }
 }

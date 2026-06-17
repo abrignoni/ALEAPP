@@ -7,7 +7,7 @@ import datetime
 import os
 
 __artifacts_v2__ = {
-    "smyfilesTrash": {
+    "get_smyfiles_trash": {
         "name": "My Files Trash",
         "description": "Shows Original Location and Deletion Timestamp of files/folders within My Files Trash",
         "author": "@PensiveHike",
@@ -17,7 +17,6 @@ __artifacts_v2__ = {
         "category": "My Files",
         "notes": "Timestamp corroborated with My Files Operation History database",
         "paths": ('*/com.sec.android.app.myfiles/files/trash/*', '*/.Trash/com.sec.android.app.myfiles/*'),
-        "function": "get_smyfiles_trash"
     }
 }
 

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "bittorrentDlhist": {
+    "get_bittorrentDlhist": {
         "name": "bittorrentDlhist",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/dlhistory*.config.bak',),
         "output_types": None,
-        "function": "get_bittorrentDlhist",
         "artifact_icon": "download",
     }
 }

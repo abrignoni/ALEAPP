@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FCM_XBox": {
+    "get_fcm_xbox": {
         "name": "FCM_XBox",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": None,
-        "function": "get_fcm_xbox",
         "artifact_icon": "database",
     }
 }

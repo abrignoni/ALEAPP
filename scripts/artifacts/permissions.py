@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "permissions": {
+    "get_permissions": {
         "name": "permissions",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/packages.xml',),
         "output_types": None,
-        "function": "get_permissions",
         "artifact_icon": "settings",
     }
 }

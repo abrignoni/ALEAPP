@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Google Maps GMM": {
+    "get_googleMapsGmm": {
         "name": "Google Maps GMM",
         "description": "Parse Google Maps GMM db files",
         "author": "@AlexisBrignoni",  
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "GEO Location",
         "notes": "Updated 2023-12-12 by @segumarc, wrong file_found was wrote in the 'located at' field in the html report",
         "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db','*/com.google.android.apps.maps/databases/gmm_storage.db'),
-        "function": "get_googleMapsGmm"
     }
 }
 

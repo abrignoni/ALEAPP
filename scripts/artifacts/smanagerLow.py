@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "smanagerLow": {
+    "get_smanagerLow": {
         "name": "smanagerLow",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.samsung.android.sm/databases/lowpowercontext-system-db',),
         "output_types": None,
-        "function": "get_smanagerLow",
         "artifact_icon": "package",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChessComGames": {
+    "get_ChessComGames": {
         "name": "ChessComGames",
         "description": "Username",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.chess/databases/chess-database*',),
         "output_types": None,
-        "function": "get_ChessComGames",
         "artifact_icon": "grid",
     }
 }

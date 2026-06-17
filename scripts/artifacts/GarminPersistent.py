@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminPresistent": {
+    "get_presisted": {
         "name": "GarminPresistent",
         "description": "Get Information stored in the Garmin Persistent json file",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/files/PersistedInstallation*',),
         "output_types": None,
-        "function": "get_presisted",
         "artifact_icon": "activity",
     }
 }

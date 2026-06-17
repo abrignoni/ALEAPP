@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "smembersAppInv": {
+    "get_smembersAppInv": {
         "name": "smembersAppInv",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db',),
         "output_types": None,
-        "function": "get_smembersAppInv",
         "artifact_icon": "package",
     }
 }

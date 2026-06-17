@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "kijijiRecentSearches": {
+    "get_kijijiRecentSearches": {
         "name": "kijijiRecentSearches",
         "description": "Kijiji Local Recent Searches",
         "author": "Terry Chabot (Krypterry)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.ebay.kijiji.ca/databases/searches.*',),
         "output_types": None,
-        "function": "get_kijijiRecentSearches",
         "artifact_icon": "search",
     }
 }

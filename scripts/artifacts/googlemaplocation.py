@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Googlemaplocation": {
+    "get_googlemaplocation": {
         "name": "Googlemaplocation",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.maps/databases/da_destination_history*',),
         "output_types": None,
-        "function": "get_googlemaplocation",
         "artifact_icon": "map-pin",
     }
 }

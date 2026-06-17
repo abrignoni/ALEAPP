@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FCM_Tumblr": {
+    "get_fcm_instagram": {
         "name": "FCM Tumblr",
         "description": "Reads records from fcm_queued_messages.ldb related to com.tumblr",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": None,
-        "function": "get_fcm_instagram",
         "artifact_icon": "message-square",
     }
 }

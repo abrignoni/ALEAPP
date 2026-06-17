@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "androidauto": {
+    "extract_android_auto": {
         "name": "Android Auto Connected Cars",
         "description": "Android Auto connected cars",
         "author": "its5Q",
@@ -10,7 +10,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.projection.gearhead/databases/carservicedata.db'),
         "output_types": "standard",
-        "function": "extract_android_auto",
         "artifact_icon": "truck",
     }
 }

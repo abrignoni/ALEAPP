@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FCM_Dump": {
+    "get_fcm_dump": {
         "name": "FCM_Dump",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": None,
-        "function": "get_fcm_dump",
         "artifact_icon": "database",
     }
 }

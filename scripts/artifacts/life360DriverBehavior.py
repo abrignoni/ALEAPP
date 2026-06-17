@@ -1,12 +1,11 @@
 __artifacts_v2__ = {
-    "Life360DriverBehavior": {
+    "get_TripEvents": {
         "name": "Life360 Driver Behavior Trip Events and Waypoints",
         "description": "Parses Events and Waypoints from Life360 DriverBehavior/trips JSON files",
         "author": "Heather Charpentier",
         "category": "Life360DriverBehavior",
         "notes": "Processes event data and waypoints from trip JSON files",
-        "paths": ('*/trips/*.json',),  
-        "function": "get_TripEvents"
+        "paths": ('*/trips/*.json',),
     }
 }
 

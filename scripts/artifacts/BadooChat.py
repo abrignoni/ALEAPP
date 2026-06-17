@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "BadooChat": {
+    "get_badoo_chat": {
         "name": "BadooChat",
         "description": "Get Information related to the Chats of the user with other users from the Badoo app (com.badoo.mobile)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*com.badoo.mobile/databases/ChatComDatabase*',),
         "output_types": None,
-        "function": "get_badoo_chat",
         "artifact_icon": "message-square",
     }
 }

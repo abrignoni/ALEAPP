@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Bumble": {
+    "get_bumble": {
         "name": "Bumble",
         "description": "Parses Bumble chats, matches and user details",
         "author": "@KevinPagano3",
@@ -8,7 +8,6 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Bumble",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*','*/com.bumble.app/files/c2V0dGluZ3M='),
-        "function": "get_bumble"
     }
 }
 

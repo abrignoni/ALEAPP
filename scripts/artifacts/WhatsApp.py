@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "WhatsApp": {
+    "get_WhatsApp": {
         "name": "WhatsApp",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*com.whatsapp*',),
         "output_types": None,
-        "function": "get_WhatsApp",
         "artifact_icon": "message-square",
     }
 }

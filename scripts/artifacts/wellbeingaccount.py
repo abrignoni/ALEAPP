@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "wellbeingaccount": {
+    "get_wellbeingaccount": {
         "name": "wellbeingaccount",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.wellbeing/files/AccountData.pb',),
         "output_types": None,
-        "function": "get_wellbeingaccount",
         "artifact_icon": "battery",
     }
 }

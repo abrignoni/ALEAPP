@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "browserCachefirefox": {
+    "get_browserCachefirefox": {
         "name": "browserCachefirefox",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/org.mozilla.firefox/cache/*/cache2/entries/**',),
         "output_types": None,
-        "function": "get_browserCachefirefox",
         "artifact_icon": "globe",
     }
 }

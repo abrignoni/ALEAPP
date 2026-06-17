@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "TorrentData": {
+    "get_TorrentData": {
         "name": "TorrentData",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/*.torrent',),
         "output_types": None,
-        "function": "get_TorrentData",
         "artifact_icon": "download",
     }
 }

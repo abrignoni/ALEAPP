@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Call Logs": {
+    "get_calllogs": {
         "name": "Call Logs",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.providers.contacts/databases/contact*',),
         "output_types": None,
-        "function": "get_calllogs",
         "artifact_icon": "phone",
     }
 }

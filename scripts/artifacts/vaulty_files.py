@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "vaulty_files": {
+    "get_vaulty_files": {
         "name": "vaulty_files",
         "description": "Media database",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.theronrogers.vaultyfree/databases/media.db',),
         "output_types": None,
-        "function": "get_vaulty_files",
         "artifact_icon": "lock",
     }
 }

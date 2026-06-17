@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChromeCookies": {
+    "get_chromeCookies": {
         "name": "ChromeCookies",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Cookies*',),
         "output_types": None,
-        "function": "get_chromeCookies",
         "artifact_icon": "globe",
     }
 }

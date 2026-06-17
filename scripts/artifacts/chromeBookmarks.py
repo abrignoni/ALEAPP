@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChromeBookmarks": {
+    "get_chromeBookmarks": {
         "name": "ChromeBookmarks",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Bookmarks*',),
         "output_types": None,
-        "function": "get_chromeBookmarks",
         "artifact_icon": "globe",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "installedappsGass": {
+    "get_installedappsGass": {
         "name": "installedappsGass",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.gms/databases/gass.db*',),
         "output_types": None,
-        "function": "get_installedappsGass",
         "artifact_icon": "package",
     }
 }

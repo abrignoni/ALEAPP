@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "setupWizardinfo": {
+    "get_setupWizardinfo": {
         "name": "setupWizardinfo",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml',),
         "output_types": None,
-        "function": "get_setupWizardinfo",
         "artifact_icon": "info",
     }
 }

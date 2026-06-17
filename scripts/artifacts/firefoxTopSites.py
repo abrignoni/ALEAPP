@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FirefoxTopSites": {
+    "get_firefoxTopSites": {
         "name": "FirefoxTopSites",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.mozilla.firefox/databases/top_sites*',),
         "output_types": None,
-        "function": "get_firefoxTopSites",
         "artifact_icon": "globe",
     }
 }

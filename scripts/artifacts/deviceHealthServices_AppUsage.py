@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Turbo_AppUsage": {
+    "get_Turbo_AppUsage": {
         "name": "Turbo_AppUsage",
         "description": "Parses application usage via Device Health Services",
         "author": "@KevinPagano3",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Device Health Services",
         "notes": "",
         "paths": ('*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml'),
-        "function": "get_Turbo_AppUsage"
     }
 }
 

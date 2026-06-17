@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Tusky": {
+    "get_tusky": {
         "name": "Tusky",
         "description": "Module Description: Parses Tusky timeline, notifications and searches",
         "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.keylesspalace.tusky/databases/tuskyDB*',),
         "output_types": None,
-        "function": "get_tusky",
         "artifact_icon": "message-square",
     }
 }

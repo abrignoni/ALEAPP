@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Samsung Honeyboard Clipboard Historty": {
+    "get_Honeyboard_Clipboard": {
         "name": "Samsung Honeyboard - Clipboard History",
         "description": "Parses the text clipboard History.",
         "author": "@segumarc",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Clipboard",
         "notes": ".",
         "paths": ('*/com.samsung.android.honeyboard/databases/ClipItem*'),
-        "function": "get_Honeyboard_Clipboard"
     },
     "Samsung Honeyboard Clipboard Screenshot": {
         "name": "Samsung Honeyboard - Clipboard Screenshot",
@@ -21,7 +20,6 @@ __artifacts_v2__ = {
         "category": "Clipboard",
         "notes": ".",
         "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip'),
-        "function": "get_honeyboard_screenshot"
     }
 }
 import os

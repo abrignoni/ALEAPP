@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Errp": {
+    "get_errp": {
         "name": "Errp",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/users/service/eRR.p',),
         "output_types": None,
-        "function": "get_errp",
         "artifact_icon": "file",
     }
 }

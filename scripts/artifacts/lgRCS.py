@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "lgRCS": {
+    "get_lgRCS": {
         "name": "lgRCS",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/mmssms.db*',),
         "output_types": None,
-        "function": "get_lgRCS",
         "artifact_icon": "message-square",
     }
 }

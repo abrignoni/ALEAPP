@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Usagehistory": {
+    "get_usageHistory": {
         "name": "Usagehistory",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/usage-history.xml',),
         "output_types": None,
-        "function": "get_usageHistory",
         "artifact_icon": "globe",
     }
 }

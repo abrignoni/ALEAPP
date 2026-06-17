@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "likee_location": {
+    "get_likee_db": {
         "name": "likee_location",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/video.like/files/*/*location.kv',),
         "output_types": None,
-        "function": "get_likee_db",
         "artifact_icon": "map-pin",
     }
 }

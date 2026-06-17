@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminSPO2": {
+    "get_garmin_spo2": {
         "name": "GarminSPO2",
         "description": "Get Information related to Garmin Pulse Ox from acclimation_pulse_ox_details table and generate a chart",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": None,
-        "function": "get_garmin_spo2",
         "artifact_icon": "activity",
     }
 }

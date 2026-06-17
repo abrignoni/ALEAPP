@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "NikeActivities": {
+    "get_nike_activities": {
         "name": "NikeActivities",
         "description": "Get Information relative to the user activities that are present in the database (com.nike.nrc.room) from the Nike Run app",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
         "output_types": None,
-        "function": "get_nike_activities",
         "artifact_icon": "activity",
     }
 }

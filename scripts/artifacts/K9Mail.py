@@ -23,7 +23,6 @@ __artifacts_v2__ = {
         "category": "K-9 Mail",
         "notes": "Get Account informations and E-Mails feom K-9 Mail App. Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html",
         "paths": ('*/com.fsck.k9/databases/*'),
-        "function": "get_k9mail_data"
     }
 }
 

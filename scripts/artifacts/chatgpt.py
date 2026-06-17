@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "chatgpt": {
+    "get_chatgpt": {
         "name": "ChatGPT",
         "description": "Get user's ChatGPT conversations, settings and media files. This parser is based on a research project. Parser is validated up to the app's 1.2024.177 version",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
@@ -13,7 +13,6 @@ __artifacts_v2__ = {
             '**/com.openai.chatgpt/shared_prefs/*',
             '**/com.openai.chatgpt/cache/files/*',
         ),
-        "function": "get_chatgpt"
     }
 }
 

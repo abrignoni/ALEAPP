@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminStressAPI": {
+    "get_stress_api": {
         "name": "GarminStressAPI",
         "description": "Get Information from Garmin Stress API",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/garmin.api/stress*',),
         "output_types": None,
-        "function": "get_stress_api",
         "artifact_icon": "activity",
     }
 }

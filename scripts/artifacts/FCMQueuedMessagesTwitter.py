@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FCM_Twitter": {
+    "get_fcm_twitter": {
         "name": "FCM_Twitter",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": None,
-        "function": "get_fcm_twitter",
         "artifact_icon": "database",
     }
 }

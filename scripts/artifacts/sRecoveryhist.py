@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "sRecoveryhist": {
+    "get_sRecoveryhist": {
         "name": "sRecoveryhist",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/efs/recovery/history',),
         "output_types": None,
-        "function": "get_sRecoveryhist",
         "artifact_icon": "file",
     }
 }

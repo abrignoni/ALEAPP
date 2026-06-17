@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "chatgpt2": {
+    "get_chatpgt2": {
         "name": "ChatGPT",
         "description": "Android ChatGPT conversations",
         "author": "Alexis Brignoni",
@@ -12,7 +12,6 @@ __artifacts_v2__ = {
         "paths": ('*/data/data/com.openai.chatgpt/databases/*conversations.db*'),
         "html_columns": ['Content'],
         "output_types": "standard",
-        "function": "get_chatpgt2",
         "artifact_icon": "loader",
     }
 }

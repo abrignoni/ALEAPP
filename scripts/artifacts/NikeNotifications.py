@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "NikeNotifications": {
+    "get_nike_notifications": {
         "name": "NikeNotifications",
         "description": "Get Information relative to the notifications stored in the database of the Nike Run Club Mobile application",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.nike.plusgps/databases/ns_inbox.db*',),
         "output_types": None,
-        "function": "get_nike_notifications",
         "artifact_icon": "activity",
     }
 }

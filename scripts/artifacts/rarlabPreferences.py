@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "rarlabPreferences": {
+    "get_rarlabPreferences": {
         "name": "rarlabPreferences",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.rarlab.rar_preferences.xml',),
         "output_types": None,
-        "function": "get_rarlabPreferences",
         "artifact_icon": "settings",
     }
 }

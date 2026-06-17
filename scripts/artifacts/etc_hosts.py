@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Etc_hosts": {
+    "get_etc_hosts": {
         "name": "Etc_hosts",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/etc/hosts',),
         "output_types": None,
-        "function": "get_etc_hosts",
         "artifact_icon": "file",
     }
 }

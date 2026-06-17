@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Calendar": {
+    "get_calendar": {
         "name": "Calendar",
         "description": "Parses provider calendars and events",
         "author": "@KevinPagano3",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Calendar",
         "notes": "",
         "paths": ('*/data/com.google.android.calendar/databases/cal_v2a*','*/com.android.providers.calendar/databases/calendar.db*'),
-        "function": "get_calendar"
     }
 }
 

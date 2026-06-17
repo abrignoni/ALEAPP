@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Life360": {
+    "get_Life360": {
         "name": "Life360",
         "description": "Parses the Life360 app locations, device battery, and more",
         "author": "@KevinPagano3",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Life360",
         "notes": "",
         "paths": ('*/com.life360.android.safetymapd/databases/messaging.db*','*/com.life360.android.safetymapd/databases/L360LocalStoreRoomDatabase*','*/com.life360.android.safetymapd/databases/L360EventStore.db*'),
-        "function": "get_Life360"
     }
 }
 

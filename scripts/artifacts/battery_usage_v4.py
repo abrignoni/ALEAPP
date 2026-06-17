@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "battery_usage_v4": {
+    "get_battery_usage_v4": {
         "name": "battery_usage_v4",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*',),
         "output_types": None,
-        "function": "get_battery_usage_v4",
         "artifact_icon": "battery",
     }
 }

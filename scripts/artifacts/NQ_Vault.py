@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "NQVault": {
+    "get_NQVault": {
         "name": "NQVault",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11',),
         "output_types": None,
-        "function": "get_NQVault",
         "artifact_icon": "image",
     }
 }

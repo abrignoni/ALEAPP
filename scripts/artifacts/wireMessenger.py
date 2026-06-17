@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Wire User Profile": {
+    "get_wire_profile": {
         "name": "Wire User Profile",
         "description": "Parses details about the user profile for Wire Messenger",
         "author": "@cf-eglendye",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**'),
-        "function": "get_wire_profile"
     },
         "Wire Contacts": {
         "name": "Wire Contacts",
@@ -21,7 +20,6 @@ __artifacts_v2__ = {
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**',),
-        "function": "get_wire_contacts"
     },
     "Wire Messages": {
         "name": "Wire Messages",
@@ -33,7 +31,6 @@ __artifacts_v2__ = {
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**'),
-        "function": "get_wire_messages"
     }
 }
 

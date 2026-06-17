@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "sms_mms": {
+    "get_sms_mms": {
         "name": "sms_mms",
         "description": "Reference for flag values for mms:",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',),
         "output_types": None,
-        "function": "get_sms_mms",
         "artifact_icon": "message-square",
     }
 }

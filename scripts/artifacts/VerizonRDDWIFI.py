@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "VerizonRDD-WIFI": {
+    "get_rdd_wifi": {
         "name": "VerizonRDD-WIFI",
         "description": "Module Description: Parses Verizon RDD Wifi Data",
         "author": "John Hyla",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.verizon.mips.services/databases/RDD_WIFI_DATA_DATABASE',),
         "output_types": None,
-        "function": "get_rdd_wifi",
         "artifact_icon": "wifi",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FCM_Jungrammer": {
+    "get_fcm_jungrammer": {
         "name": "FCM_Jungrammer",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": None,
-        "function": "get_fcm_jungrammer",
         "artifact_icon": "database",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GoogleKeepNotes": {
+    "get_googleKeepNotes": {
         "name": "GoogleKeepNotes",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.keep/databases/keep.db*',),
         "output_types": None,
-        "function": "get_googleKeepNotes",
         "artifact_icon": "file-text",
     }
 }

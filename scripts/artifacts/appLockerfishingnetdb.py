@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "App Locker DB": {
+    "get_appLockerfishingnetdb": {
         "name": "App Locker DB",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/.privacy_safe/db/privacy_safe.db',),
         "output_types": None,
-        "function": "get_appLockerfishingnetdb",
         "artifact_icon": "image",
     }
 }

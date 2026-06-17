@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "sChats": {
+    "get_schats": {
         "name": "Sideline Chats and Calls",
         "description": "Parses Sideline's textfree database",
         "author": "Matt Beers",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Chats",
         "notes": "",
         "paths": ('*/data/com.sideline.phone.number/databases/textfree*'),
-        "function": "get_schats"
     }
 }
 

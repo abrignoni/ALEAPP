@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "One Drive": {
+    "get_onedrive": {
         "name": "OneDrive Metadata",
         "description": "Parses the QTMetadata.db from OneDrive",
         "author": "Matt Beers and Anthony Reince",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Cloud Storage",
         "notes": "",
         "paths": ('*/com.microsoft.skydrive/files/QTMetadata.db*'),
-        "function": "get_onedrive",
         "artifact_icon": "cloud"
     }
 }

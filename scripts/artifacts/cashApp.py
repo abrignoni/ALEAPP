@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Cash App": {
+    "get_cashApp": {
         "name": "Cash App",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.squareup.cash/databases/cash_money.db*',),
         "output_types": None,
-        "function": "get_cashApp",
         "artifact_icon": "package",
     }
 }

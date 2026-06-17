@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "RunkeeperUser": {
+    "get_run_user": {
         "name": "RunkeeperUser",
         "description": "Get User information from the xml file com.fitnesskeeper.runkeeper.pro_preferences.xml in the Runkeeper app related to the user",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.fitnesskeeper.runkeeper.pro/shared_prefs/com.fitnesskeeper.runkeeper.pro_preferences*',),
         "output_types": None,
-        "function": "get_run_user",
         "artifact_icon": "user",
     }
 }

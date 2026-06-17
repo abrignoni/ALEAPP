@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Build": {
+    "get_build": {
         "name": "Build",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/vendor/build.prop',),
         "output_types": None,
-        "function": "get_build",
         "artifact_icon": "info",
     }
 }

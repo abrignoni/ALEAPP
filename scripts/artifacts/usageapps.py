@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "usageapps": {
+    "get_usageapps": {
         "name": "usageapps",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.as/databases/reflection_gel_events.db*',),
         "output_types": None,
-        "function": "get_usageapps",
         "artifact_icon": "package",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Cello": {
+    "get_Cello": {
         "name": "Cello",
         "description": "Parses the Cello db for Google Drive metadata",
         "author": "@KevinPagano3",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Google Drive",
         "notes": "",
         "paths": ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*'),
-        "function": "get_Cello"
     }
 }
 

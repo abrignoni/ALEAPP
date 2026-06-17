@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChessWithFriends": {
+    "get_ChessWithFriends": {
         "name": "ChessWithFriends",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite',),
         "output_types": None,
-        "function": "get_ChessWithFriends",
         "artifact_icon": "message-square",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "googleLastTrip": {
+    "get_googleLastTrip": {
         "name": "googleLastTrip",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.maps/files/saved_directions.data.cs',),
         "output_types": None,
-        "function": "get_googleLastTrip",
         "artifact_icon": "map-pin",
     }
 }

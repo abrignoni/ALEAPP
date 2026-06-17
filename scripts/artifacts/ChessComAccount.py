@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChessComAcct": {
+    "get_ChessComAccount": {
         "name": "ChessComAcct",
         "description": "Data results",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.chess/shared_prefs/com.chess.app.login_credentials.xml',),
         "output_types": None,
-        "function": "get_ChessComAccount",
         "artifact_icon": "grid",
     }
 }

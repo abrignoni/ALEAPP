@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "FirefoxDownloads": {
+    "get_firefoxDownloads": {
         "name": "FirefoxDownloads",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',),
         "output_types": None,
-        "function": "get_firefoxDownloads",
         "artifact_icon": "globe",
     }
 }

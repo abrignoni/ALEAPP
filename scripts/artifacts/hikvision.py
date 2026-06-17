@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "hikvision": {
+    "get_hikvision": {
         "name": "hikvision",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.connect.enduser/databases/database.hik*',),
         "output_types": None,
-        "function": "get_hikvision",
         "artifact_icon": "video",
     }
 }

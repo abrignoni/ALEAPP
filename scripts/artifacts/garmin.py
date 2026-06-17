@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Garmin": {
+    "get_garmin": {
         "name": "Garmin",
         "description": "Module Description: Parses the Garmin app for activities, connections and notifications",
         "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*',),
         "output_types": None,
-        "function": "get_garmin",
         "artifact_icon": "activity",
     }
 }

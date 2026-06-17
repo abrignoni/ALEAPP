@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "burnerSubscription": {
+    "get_burnerSubscription": {
         "name": "Burner: Second Phone Number",
         "description": "Parses Burner Subscription Information",
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "category": "Burner",
         "notes": "",
         "paths": ('*/data/data/com.adhoclabs.burner/databases/burnerDatabase.db*'),
-        "function": "get_burnerSubscription"
     }
 }
 

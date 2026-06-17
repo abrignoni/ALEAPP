@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Viber": {
+    "get_Viber": {
         "name": "Viber",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": None,
-        "function": "get_Viber",
         "artifact_icon": "message-square",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "suggestions": {
+    "get_suggestions": {
         "name": "suggestions",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml',),
         "output_types": None,
-        "function": "get_suggestions",
         "artifact_icon": "clock",
     }
 }

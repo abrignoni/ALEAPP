@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "cmh": {
+    "get_cmh": {
         "name": "cmh",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/cmh.db',),
         "output_types": None,
-        "function": "get_cmh",
         "artifact_icon": "file",
     }
 }

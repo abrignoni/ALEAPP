@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "torrentResumeinfo": {
+    "get_torrentResumeinfo": {
         "name": "torrentResumeinfo",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/*.resume',),
         "output_types": None,
-        "function": "get_torrentResumeinfo",
         "artifact_icon": "download",
     }
 }

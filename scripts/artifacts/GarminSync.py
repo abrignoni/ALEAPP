@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminSync": {
+    "get_garmin_sync": {
         "name": "GarminSync",
         "description": "Get Information related to the sync process stored in the sync_cache database file",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/sync_cache*',),
         "output_types": None,
-        "function": "get_garmin_sync",
         "artifact_icon": "activity",
     }
 }

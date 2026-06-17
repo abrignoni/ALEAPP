@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "wifiProfiles": {
+    "get_wifiProfiles": {
         "name": "wifiProfiles",
         "description": "Create sqlite databases",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/misc/wifi/WifiConfigStore.xml',),
         "output_types": None,
-        "function": "get_wifiProfiles",
         "artifact_icon": "wifi",
     }
 }

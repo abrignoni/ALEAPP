@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChromeMediaHistory": {
+    "get_chromeMediaHistory": {
         "name": "ChromeMediaHistory",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Media History*',),
         "output_types": None,
-        "function": "get_chromeMediaHistory",
         "artifact_icon": "image",
     }
 }

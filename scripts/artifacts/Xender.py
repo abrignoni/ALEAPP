@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "Xender": {
+    "get_Xender": {
         "name": "Xender",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/cn.xender/databases/trans-history-db*',),
         "output_types": None,
-        "function": "get_Xender",
         "artifact_icon": "download",
     }
 }

@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "VLC": {
+    "get_vlcMedia": {
         "name": "VLC",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*vlc_media.db*',),
         "output_types": None,
-        "function": "get_vlcMedia",
         "artifact_icon": "image",
     }
 }

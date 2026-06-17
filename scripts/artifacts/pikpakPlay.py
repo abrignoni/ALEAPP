@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "PikPak Play": {
+    "get_pikpakPlay": {
         "name": "PikPak Play",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.pikcloud.pikpak/databases/greendao.db*',),
         "output_types": None,
-        "function": "get_pikpakPlay",
         "artifact_icon": "file",
     }
 }

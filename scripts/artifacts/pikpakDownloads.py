@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "PikPak Downloads": {
+    "get_pikpakDownloads": {
         "name": "PikPak Downloads",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.pikcloud.pikpak/databases/pikpak_downloads.db*',),
         "output_types": None,
-        "function": "get_pikpakDownloads",
         "artifact_icon": "download",
     }
 }

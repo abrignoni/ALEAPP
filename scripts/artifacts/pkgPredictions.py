@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "pkgPredictions": {
+    "get_pkgPredictions": {
         "name": "pkgPredictions",
         "description": "Package Predictions - Parses Samsung package prediction details",
         "author": "Kevin Pagano (https://startme.stark4n6.com)",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/PkgPredictions.db*',),
         "output_types": None,
-        "function": "get_pkgPredictions",
         "artifact_icon": "package",
     }
 }

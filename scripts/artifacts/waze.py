@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "waze": {
+    "get_waze": {
         "name": "waze",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.waze/user.db*',),
         "output_types": None,
-        "function": "get_waze",
         "artifact_icon": "map-pin",
     }
 }

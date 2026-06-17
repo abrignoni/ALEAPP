@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "sWipehist": {
+    "get_sWipehist": {
         "name": "sWipehist",
         "description": "",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/efs/recovery/history',),
         "output_types": None,
-        "function": "get_sWipehist",
         "artifact_icon": "file",
     }
 }

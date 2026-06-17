@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "ChessComFriends": {
+    "get_ChessComFriends": {
         "name": "ChessComFriends",
         "description": "Chess database",
         "author": "",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.chess/databases/chess-database*',),
         "output_types": None,
-        "function": "get_ChessComFriends",
         "artifact_icon": "grid",
     }
 }

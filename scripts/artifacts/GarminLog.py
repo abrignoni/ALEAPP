@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "GarminLog": {
+    "get_log": {
         "name": "GarminLog",
         "description": "Get Information stored in the Garmin Log file",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/files/logs/app.log*',),
         "output_types": None,
-        "function": "get_log",
         "artifact_icon": "activity",
     }
 }
