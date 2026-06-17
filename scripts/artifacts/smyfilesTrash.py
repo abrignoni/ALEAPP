@@ -11,7 +11,6 @@ __artifacts_v2__ = {
         "name": "My Files Trash",
         "description": "Shows Original Location and Deletion Timestamp of files/folders within My Files Trash",
         "author": "@PensiveHike",
-        "version": "0.1",
         "date": "2024-06-05",
         "requirements": "none",
         "category": "My Files",

@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "GarminDailies",
         "description": "Get Information from the table user_daily_summary from the cache-database in the Garmin Connect App",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-02-24",
         "last_updated_date": "2023-02-24",
         "requirements": "Python 3.7 or higher",

@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "mega",
         "description": "MEGA",
         "author": "Kevin Pagano (@KevinPagano3)",
-        "version": "0.1",
         "creation_date": "2021-01-31",
         "last_updated_date": "2021-01-31",
         "requirements": "None",

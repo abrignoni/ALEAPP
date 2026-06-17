@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Bluesky",
         "description": "User generated searches",
         "author": "DFIRcon 2025 Miami",
-        "version": "0.0.1",
         "date": "2024-11-15",
         "requirements": "none",
         "category": "Bluesky",

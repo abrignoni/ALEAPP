@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Bumble",
         "description": "Parses Bumble chats, matches and user details",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
         "date": "2022-11-07",
         "requirements": "none",
         "category": "Bumble",

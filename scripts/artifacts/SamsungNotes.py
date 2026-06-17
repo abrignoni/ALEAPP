@@ -9,7 +9,6 @@ __artifacts_v2__ = {
         "name": "Samsung Notes",
         "description": "Samsung Notes",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-01-17",
         "last_update_date": "2026-01-17",
         "requirements": "os",

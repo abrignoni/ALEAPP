@@ -4,7 +4,6 @@ __artifacts_v2__ = {
         "description": "Parses the Android System batterystats-daily.xml - \
                         Steps string is in format: [device_state]-[battery_level]-[time_in_ms]",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-03-12",
         "last_update_date": "2026-03-16",
         "requirements": "xmltodict, xml",

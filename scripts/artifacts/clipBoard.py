@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Clipboard Data",
         "description": "Clipboard artifacts",
         "author": "Alexis Brignoni",
-        "version": "0.0.2",
         "creation_date": "2022-01-08",
         "last_updated_date": "2025-09-09",
         "requirements": "none",

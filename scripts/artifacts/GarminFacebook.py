@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "GarminFacebook USES INTERNET",
         "description": "Get Information relative to user Facebook account from the XML file in shared_prefs and tries to use the access token to get the user's profile picture",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-02-24",
         "last_updated_date": "2023-02-24",
         "requirements": "Python 3.7 or higher, ElementTree, json and datetime, http.client",

@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "kijijiConversations",
         "description": "Kijiji Conversations",
         "author": "Terry Chabot (Krypterry)",
-        "version": "1.0.2",
         "creation_date": "2000-01-01",
         "last_updated_date": "2000-01-01",
         "requirements": "None",

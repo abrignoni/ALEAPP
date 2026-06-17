@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Calendar",
         "description": "Parses provider calendars and events",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
         "date": "2023-01-06",
         "requirements": "none",
         "category": "Calendar",

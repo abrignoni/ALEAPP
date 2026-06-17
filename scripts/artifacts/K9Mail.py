@@ -17,7 +17,6 @@ __artifacts_v2__ = {
         "name": "K-9 Mail - Data",
         "description": "K-9 Mail - Data",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "date": "2024-05-04",
         "requirements": "datetime, json, base64",
         "category": "K-9 Mail",

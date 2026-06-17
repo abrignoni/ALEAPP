@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "SimpleStorage - App Launch",
         "description": "Parses SimpleStorage for application launch",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
         "creation_date": "2022-12-13",
         "last_updated": "2025-09-12",
         "requirements": "none",

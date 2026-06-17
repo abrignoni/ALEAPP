@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "GarminResponse",
         "description": "Get Information related to the Garmin - Responses stored in the database cache",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-02-24",
         "last_updated_date": "2023-02-24",
         "requirements": "Python 3.7 or higher and json",

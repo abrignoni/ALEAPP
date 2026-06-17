@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Burner",
         "description": "Burner",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
-        "version": "0.1",
         "creation_date": "2021-02-05",
         "last_updated_date": "2021-02-05",
         "requirements": "None",

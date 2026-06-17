@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "siminfo",
         "description": "Filter for path xxx/yyy/system_ce/0",
         "author": "",
-        "version": "1.0",
         "creation_date": "2000-01-01",
         "last_updated_date": "2000-01-01",
         "requirements": "none",

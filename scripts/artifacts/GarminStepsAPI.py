@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "GarminStepsAPI",
         "description": "Get Information related to the Heart Rate from the Garmin API using the JSON file extracted",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-02-24",
         "last_updated_date": "2023-02-24",
         "requirements": "Python 3.7 or higher, json",

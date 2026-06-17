@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Garmin",
         "description": "Module Description: Parses the Garmin app for activities, connections and notifications",
         "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
-        "version": "1.0",
         "creation_date": "2023-01-18",
         "last_updated_date": "2023-01-18",
         "requirements": "none",

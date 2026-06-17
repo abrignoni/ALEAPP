@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "PumaUsers",
         "description": "Get Information related to the users table in the Puma Trac database",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-03-25",
         "last_updated_date": "2023-03-25",
         "requirements": "Python 3.7 or higher",

@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Emulated Storage Metadata",
         "description": "Parses emulated storage metadata from external.db",
         "author": "@AlexisBrignoni",
-        "version": "0.0.2",
         "date": "2020-10-19",
         "requirements": "none",
         "category": "Emulated Storage Metadata",

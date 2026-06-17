@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Digital Wellbeing",
         "description": "Parses Digital Wellbeing events",
         "author": "@AlexisBrignoni",
-        "version": "0.0.1",
         "date": "2020-02-2",
         "requirements": "none",
         "category": "Digital Wellbeing",

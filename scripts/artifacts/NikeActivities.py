@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "NikeActivities",
         "description": "Get Information relative to the user activities that are present in the database (com.nike.nrc.room) from the Nike Run app",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-03-18",
         "last_updated_date": "2023-03-18",
         "requirements": "Python 3.7 or higher and json",

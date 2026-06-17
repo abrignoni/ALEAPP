@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "ChatGPT",
         "description": "Android ChatGPT conversations",
         "author": "Alexis Brignoni",
-        "version": "0.0.2",
         "creation_date": "2025-07-08",
         "last_updated_date": "2025-09-09",
         "requirements": "none",

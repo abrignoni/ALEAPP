@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "AdidasGoals",
         "description": "Get Information related to user defined goals from the Adidas Running app stored in goals",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-04-21",
         "last_updated_date": "2023-04-21",
         "requirements": "Python 3.7 or higher",

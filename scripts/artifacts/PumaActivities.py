@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "PumaActivities",
         "description": "Get Information related to the activities of the user from the PumaTrack app (com.puma.track)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-03-25",
         "last_updated_date": "2023-03-25",
         "requirements": "Python 3.7 or higher, folium",

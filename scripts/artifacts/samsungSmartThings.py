@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "samsungSmartThings",
         "description": "Samsung SmartThings",
         "author": "Kevin Pagano (@KevinPagno3)",
-        "version": "1.0",
         "creation_date": "2022-06-13",
         "last_updated_date": "2022-06-13",
         "requirements": "none",

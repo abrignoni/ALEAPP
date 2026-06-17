@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "OneDrive Metadata",
         "description": "Parses the QTMetadata.db from OneDrive",
         "author": "Matt Beers and Anthony Reince",
-        "version": "0.0.9",
         "date": "2025-04-17",
         "requirements": "none",
         "category": "Cloud Storage",

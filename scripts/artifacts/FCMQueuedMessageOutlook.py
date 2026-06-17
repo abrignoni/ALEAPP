@@ -31,7 +31,6 @@ __artifacts_v2__ = {
         "name": "FCM-Outlook Notifications",
         "description": "Outlook Notifications from FCM",
         "author": "Alex Caithness & @jfhyla",
-        "version": "0.2.1",
         "creation_date": "2022-07-28",
         "last_updated": "2025-07-31",
         "requirements": "none",

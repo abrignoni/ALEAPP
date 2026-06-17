@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Shared Proto Data",
         "description": "Shared Proto data from Samsung Browser",
         "author": "@AlexisBrignoni",
-        "version": "0.0.1",
         "date": "2024-07-23",
         "requirements": "none",
         "category": "Samsung Browser",

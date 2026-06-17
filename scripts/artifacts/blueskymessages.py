@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Bluesky",
         "description": "Bluesky Messages",
         "author": "Alexis Brignoni",
-        "version": "0.0.1",
         "date": "2024-11-19",
         "requirements": "none",
         "category": "Bluesky",

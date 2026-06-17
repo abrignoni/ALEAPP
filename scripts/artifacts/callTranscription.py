@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Android Call Transcriptions",
         "description": "Parses recorded calls transcriptions",
         "author": "Alexis Brignoni",
-        "version": "0.0.1",
         "date": "2025-09-19",
         "requirements": "none",
         "category": "phone",

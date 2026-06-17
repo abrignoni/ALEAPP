@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "sms_mms",
         "description": "Reference for flag values for mms:",
         "author": "",
-        "version": "1.0",
         "creation_date": "2000-01-01",
         "last_updated_date": "2000-01-01",
         "requirements": "none",

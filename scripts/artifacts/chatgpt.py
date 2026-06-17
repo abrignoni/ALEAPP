@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "ChatGPT",
         "description": "Get user's ChatGPT conversations, settings and media files. This parser is based on a research project. Parser is validated up to the app's 1.2024.177 version",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
-        "version": "1.0.2",
         "date": "2024-07-09",
         "requirements": "",
         "category": "ChatGPT",

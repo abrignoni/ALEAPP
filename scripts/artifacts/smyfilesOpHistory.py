@@ -8,7 +8,6 @@ __artifacts_v2__ = {
         "name": "My Files Operation History",
         "description": "Extracts Operation History from My Files database",
         "author": "@PensiveHike",
-        "version": "0.1",
         "date": "2024-06-05",
         "requirements": "none",
         "category": "My Files",

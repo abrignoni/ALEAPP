@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Samsung Trash",
         "description": "Parses Samsung trash records from com.samsung.android.providers.trash",
         "author": "Kalinko",
-        "version": "0.1",
         "creation_date": "2026-02-21",
         "last_update_date": "2026-02-21",
         "requirements": "inspect, pathlib",

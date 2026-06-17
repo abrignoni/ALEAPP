@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Zepp Life - Heart Rate",
         "description": "Heart rate history from Zepp Life",
         "author": "its5Q",
-        "version": "0.0.1",
         "date": "2025-07-28",
         "requirements": "none",
         "category": "Zepp Life",

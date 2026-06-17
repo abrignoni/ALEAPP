@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "mastodon",
         "description": "Module Description: Parses Mastodon timeline, notifications and searches",
         "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
-        "version": "1.0",
         "creation_date": "2022-12-07",
         "last_updated_date": "2022-12-07",
         "requirements": "BeautifulSoup",

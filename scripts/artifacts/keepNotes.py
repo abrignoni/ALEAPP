@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Google Keep Notes",
         "description": "Parses Google Keep Notes",
         "author": "Heather Charpentier",
-        "version": "0.0.1",
         "date": "2024-12-02",
         "requirements": "none",
         "category": "Google Keep Notes",

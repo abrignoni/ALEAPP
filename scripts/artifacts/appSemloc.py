@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "App Semantic Locations",
         "description": "App Semantic Locations",
         "author": "Alexis 'Brigs' Brignoni",
-        "version": "1",
         "date": "2024/06/21",
         "requirements": "",
         "category": "App Semantic Locations",

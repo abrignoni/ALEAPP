@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Podcast Addict",
         "description": "Module Description: Parses Podcast Addict Episode Database",
         "author": "John Hyla",
-        "version": "1.0",
         "creation_date": "2023-07-07",
         "last_updated_date": "2023-07-07",
         "requirements": "none",

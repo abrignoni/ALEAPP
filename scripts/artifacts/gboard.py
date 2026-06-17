@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "GboardCache",
         "description": "Update 2023-05-01 from @KevinPagano3 (https://startme.stark4n6.com)",
         "author": "",
-        "version": "1.0",
         "creation_date": "2000-01-01",
         "last_updated_date": "2000-01-01",
         "requirements": "none",

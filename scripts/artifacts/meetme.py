@@ -4,7 +4,6 @@ __artifacts_v2__ = {
         "name": "MeetMe Chats",
         "description": "Parses MeetMe Chat database",
         "author": "Matt Beers",
-        "version": "0.0.1",
         "date": "2024-12-27",
         "requirements": "none",
         "category": "Chats",

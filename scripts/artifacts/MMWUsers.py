@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "MapUsers",
         "description": "Get Information related to the user from the Map My Walk app",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-03-25",
         "last_updated_date": "2023-03-25",
         "requirements": "Python 3.7 or higher",

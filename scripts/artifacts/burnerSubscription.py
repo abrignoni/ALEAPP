@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Burner: Second Phone Number",
         "description": "Parses Burner Subscription Information",
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
-        "version": "0.0.1",
         "date": "2024-02-15",
         "requirements": "none",
         "category": "Burner",

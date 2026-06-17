@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Tusky",
         "description": "Module Description: Parses Tusky timeline, notifications and searches",
         "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
-        "version": "1.0",
         "creation_date": "2022-12-12",
         "last_updated_date": "2022-12-12",
         "requirements": "BeautifulSoup",

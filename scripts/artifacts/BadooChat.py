@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "BadooChat",
         "description": "Get Information related to the Chats of the user with other users from the Badoo app (com.badoo.mobile)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-05-03",
         "last_updated_date": "2023-05-03",
         "requirements": "Python 3.7 or higher, json",

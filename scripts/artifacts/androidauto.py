@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Android Auto Connected Cars",
         "description": "Android Auto connected cars",
         "author": "its5Q",
-        "version": "0.0.1",
         "date": "2025-07-28",
         "requirements": "none",
         "category": "Android Auto",

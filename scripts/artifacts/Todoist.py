@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Todoist",
         "description": "Todoist - Parses items, notes and projects",
         "author": "Kevin Pagano (https://startme.stark4n6.com)",
-        "version": "0.1",
         "creation_date": "2023-04-26",
         "last_updated_date": "2023-04-26",
         "requirements": "None",

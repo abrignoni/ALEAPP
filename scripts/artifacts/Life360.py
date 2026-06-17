@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Life360",
         "description": "Parses the Life360 app locations, device battery, and more",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
         "date": "2024-01-17",
         "requirements": "none",
         "category": "Life360",

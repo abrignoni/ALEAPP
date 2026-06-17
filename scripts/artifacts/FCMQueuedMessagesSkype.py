@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "FCM_Skype",
         "description": "",
         "author": "",
-        "version": "1.0",
         "creation_date": "2000-01-01",
         "last_updated_date": "2000-01-01",
         "requirements": "none",

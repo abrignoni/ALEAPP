@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Strava",
         "description": "Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-03-24",
         "last_updated_date": "2023-03-24",
         "requirements": "Python 3.7 or higher, folium and polyline, fitdecode, datetime",

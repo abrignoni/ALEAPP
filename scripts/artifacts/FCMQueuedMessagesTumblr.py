@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "FCM Tumblr",
         "description": "Reads records from fcm_queued_messages.ldb related to com.tumblr",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
-        "version": "1.1",
         "creation_date": "2022-01-01",
         "last_updated_date": "2022-01-01",
         "requirements": "none",

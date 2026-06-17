@@ -17,7 +17,6 @@ __artifacts_v2__ = {
         "name": "Microsoft Authenticator - Accounts",
         "description": "Parses the existing Accounts out of the Microsoft Authenticator App.",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "date": "2024-05-11",
         "requirements": "",
         "category": "MS Authenticator",

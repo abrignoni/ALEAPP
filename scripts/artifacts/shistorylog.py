@@ -8,7 +8,6 @@ __artifacts_v2__ = {
         "name": "Samsung Knox History Log",
         "description": "Samsung Knox History Log",
         "author": "Alexis Brignoni {linqapp.com/abrignoni}",
-        "version": "0.0.1",
         "creation_date": "2026-02-27",
         "last_update_date": "2025-02-27",
         "requirements": "sqlite",

@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "GarminNotifications",
         "description": "Get Information relative to the notifications stored in the database of the Garmin Connect Mobile application",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
-        "version": "1.0",
         "creation_date": "2023-02-24",
         "last_updated_date": "2023-02-24",
         "requirements": "Python 3.7 or higher",

@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Sideline Chats and Calls",
         "description": "Parses Sideline's textfree database",
         "author": "Matt Beers",
-        "version": "0.0.1",
         "date": "2024-02-08",
         "requirements": "none",
         "category": "Chats",

@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "AirGuard",
         "description": "Parses the AirGuard AirTag app",
         "author": "@AlexisBrignoni",
-        "version": "0.0.2",
         "date": "2022-01-08",
         "requirements": "none",
         "category": "AirTags",

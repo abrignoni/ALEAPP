@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "walStrings",
         "description": "If  we only want ascii, use 'ascii_chars_re' below",
         "author": "",
-        "version": "1.0",
         "creation_date": "2000-01-01",
         "last_updated_date": "2000-01-01",
         "requirements": "none",

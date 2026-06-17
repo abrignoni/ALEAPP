@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "kijijiLocalUserInfo",
         "description": "Kijiji Local User Information",
         "author": "Terry Chabot (Krypterry)",
-        "version": "1.0.1",
         "creation_date": "2000-01-01",
         "last_updated_date": "2000-01-01",
         "requirements": "None",
