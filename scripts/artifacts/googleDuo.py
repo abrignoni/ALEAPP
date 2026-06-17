@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Google Duo",
         "notes": "",
-        "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*',),
+        "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*', '*/com.google.android.apps.tachyon/files/media/*.*'),
         "output_types": None,
         "artifact_icon": "chrome",
     }

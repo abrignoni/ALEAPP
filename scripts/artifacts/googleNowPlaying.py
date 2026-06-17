@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Now Playing",
         "notes": "",
-        "paths": ('*/com.google.intelligence.sense/db/history_db*',),
+        "paths": ('*/com.google.intelligence.sense/db/history_db*', '*/com.google.android.as/databases/history_db*'),
         "output_types": None,
         "artifact_icon": "chrome",
     }

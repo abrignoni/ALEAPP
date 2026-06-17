@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "ProtonMail",
         "notes": "",
-        "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*',),
+        "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*', '*/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
         "output_types": None,
         "artifact_icon": "mail",
     }

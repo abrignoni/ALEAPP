@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Device Health Services",
         "notes": "",
         "paths": ('*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml'),
+        "output_types": None,
     }
 }
 

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "",
-        "paths": ('*/com.google.android.gms/databases/gass.db*',),
+        "paths": ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
         "output_types": None,
         "artifact_icon": "package",
     }

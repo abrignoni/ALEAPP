@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": "",
-        "paths": ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml',),
+        "paths": ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml', '*/applocker/vault/*'),
         "output_types": None,
         "artifact_icon": "image",
     }

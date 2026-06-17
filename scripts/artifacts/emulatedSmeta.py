@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Emulated Storage Metadata",
         "notes": "2023-02-10 - Updated by @KevinPagano3",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*','*/com.android.providers.media/databases/external.db*'),
+        "output_types": None,
     }
 }
 

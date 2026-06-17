@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**'),
+        "output_types": None,
     },
         "Wire Contacts": {
         "name": "Wire Contacts",
@@ -18,6 +19,7 @@ __artifacts_v2__ = {
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**',),
+        "output_types": None,
     },
     "Wire Messages": {
         "name": "Wire Messages",
@@ -28,6 +30,7 @@ __artifacts_v2__ = {
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**'),
+        "output_types": None,
     }
 }
 

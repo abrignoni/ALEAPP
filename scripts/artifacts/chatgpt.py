@@ -7,6 +7,7 @@ __artifacts_v2__ = {
         "requirements": "",
         "category": "ChatGPT",
         "paths": (
+        "output_types": None,
             '**/com.openai.chatgpt/databases/*.*',
             '**/com.openai.chatgpt/files/datastore/*.*',
             '**/com.openai.chatgpt/shared_prefs/*',

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
-        "paths": ('*/app_chrome/Default/Cookies*',),
+        "paths": ('*/app_chrome/Default/Cookies*', '*/app_sbrowser/Default/Cookies*', '*/app_opera/Cookies*', '*/app_webview/Default/Cookies*'),
         "output_types": None,
         "artifact_icon": "globe",
     }

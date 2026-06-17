@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "App Semantic Locations",
         "notes": "Thanks to Josh Hickman for the research",
         "paths": (
+        "output_types": None,
             '*/com.google.android.gms/shared_prefs/ULR_USER_PREFS.xml'
         ),
     }

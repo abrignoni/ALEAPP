@@ -9,6 +9,7 @@ __artifacts_v2__ = {
         "category": "Burner",
         "notes": "",
         "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*'),
+        "output_types": None,
         "function": "get_burnerMessages"
     }
 }

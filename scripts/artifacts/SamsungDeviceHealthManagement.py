@@ -15,6 +15,7 @@ __artifacts_v2__ = {
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/anomaly.db*'),
+        "output_types": None,
         "artifact_icon": "settings"
     },
     "sdhms_netstat": {
@@ -27,6 +28,7 @@ __artifacts_v2__ = {
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
+        "output_types": None,
         "artifact_icon": "bar-chart"
     },
     "sdhms_temperature": {
@@ -39,6 +41,7 @@ __artifacts_v2__ = {
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
+        "output_types": None,
         "artifact_icon": "thermometer"
     },
     "sdhms_cpustats": {
@@ -51,6 +54,7 @@ __artifacts_v2__ = {
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
+        "output_types": None,
         "artifact_icon": "cpu"
     }
 

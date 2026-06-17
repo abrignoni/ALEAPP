@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Usage Stats",
         "notes": "",
-        "paths": ('*/system/usagestats/*',),
+        "paths": ('*/system/usagestats/*', '*/system_ce/*/usagestats*'),
         "output_types": None,
         "artifact_icon": "battery",
     }

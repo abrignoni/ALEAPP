@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Digital Wellbeing",
         "notes": "",
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
+        "output_types": None,
     }
 }
 

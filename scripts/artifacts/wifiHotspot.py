@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "WiFi Profiles",
         "notes": "",
-        "paths": ('*/misc/wifi/softap.conf',),
+        "paths": ('*/misc/wifi/softap.conf', '*/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml'),
         "output_types": None,
         "artifact_icon": "wifi",
     }

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Teleguard",
         "notes": "",
-        "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
+        "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*', '*/data/ch.swisscows.messenger.teleguardapp/cache/**'),
         "output_types": None,
         "artifact_icon": "file",
     }

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "MeWe",
         "notes": "",
-        "paths": ('*/com.mewe/databases/app_database',),
+        "paths": ('*/com.mewe/databases/app_database', '*/com.mewe/shared_prefs/SGSession.xml'),
         "output_types": None,
         "artifact_icon": "message-square",
     }

@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Chats",
         "notes": "",
         "paths": ('*/data/com.sideline.phone.number/databases/textfree*'),
+        "output_types": None,
     }
 }
 

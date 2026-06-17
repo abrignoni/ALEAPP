@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
-        "paths": ('*/app_chrome/Default/History*',),
+        "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": None,
         "artifact_icon": "globe",
     }

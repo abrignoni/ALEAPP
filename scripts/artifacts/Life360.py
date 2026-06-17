@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Life360",
         "notes": "",
         "paths": ('*/com.life360.android.safetymapd/databases/messaging.db*','*/com.life360.android.safetymapd/databases/L360LocalStoreRoomDatabase*','*/com.life360.android.safetymapd/databases/L360EventStore.db*'),
+        "output_types": None,
     }
 }
 

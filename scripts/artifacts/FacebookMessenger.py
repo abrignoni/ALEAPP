@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "",
-        "paths": ('*/*threads_db2*',),
+        "paths": ('*/*threads_db2*', '*/msys_database*'),
         "output_types": None,
         "artifact_icon": "message-square",
     }

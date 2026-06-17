@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "blackboxprotobuf",
         "category": "Google Chat",
         "notes": "",
-        "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*',),
+        "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*', '*/com.google.android.apps.dynamite/databases/dynamite.db*', '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
         "output_types": None,
         "artifact_icon": "message-square",
     }

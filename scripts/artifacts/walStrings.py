@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "SQLite Journaling",
         "notes": "",
-        "paths": ('*/*-wal',),
+        "paths": ('*/*-wal', '*/*-journal'),
         "output_types": None,
         "artifact_icon": "file",
     }

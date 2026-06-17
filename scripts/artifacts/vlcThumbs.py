@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "VLC",
         "notes": "",
-        "paths": ('*/org.videolan.vlc/files/medialib/*.jpg',),
+        "paths": ('*/org.videolan.vlc/files/medialib/*.jpg', '*/org.videolan.vlc/app_db/vlc_media.db*'),
         "output_types": None,
         "artifact_icon": "image",
     }

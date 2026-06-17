@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Gallery Trash",
         "notes": "",
-        "paths": ('*/data/com.sec.android.gallery3d/databases/local.db*',),
+        "paths": ('*/data/com.sec.android.gallery3d/databases/local.db*', '*/data/com.sec.android.gallery3d/files/.Trash/**'),
         "output_types": None,
         "artifact_icon": "image",
     }

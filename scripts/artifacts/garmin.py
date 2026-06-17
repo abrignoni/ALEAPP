@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Garmin",
         "notes": "",
-        "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*',),
+        "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*', '*/data/com.garmin.android.apps.connectmobile/databases/notification-database*', '*/data/com.garmin.android.apps.connectmobile/databases/cache-database*'),
         "output_types": None,
         "artifact_icon": "activity",
     }

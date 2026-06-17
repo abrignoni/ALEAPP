@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": "",
-        "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml',),
+        "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
         "output_types": None,
         "artifact_icon": "image",
     }

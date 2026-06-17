@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "AirTags",
         "notes": "",
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*'),
+        "output_types": None,
     }
 }
 

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Google Now & QuickSearch",
         "notes": "",
-        "paths": ('*/com.google.android.googlequicksearchbox/files/recently/*',),
+        "paths": ('*/com.google.android.googlequicksearchbox/files/recently/*', '*/com.google.android.googlequicksearchbox/files/accounts/*/RecentsDataStore.pb', '*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db'),
         "output_types": None,
         "artifact_icon": "search",
     }

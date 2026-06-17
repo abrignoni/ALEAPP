@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Image Manager Cache",
         "notes": "",
-        "paths": ('*/cache/image_manager_disk_cache/*.*',),
+        "paths": ('*/cache/image_manager_disk_cache/*.*', '*/*.cnt'),
         "output_types": None,
         "artifact_icon": "image",
     }

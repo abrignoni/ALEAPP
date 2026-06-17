@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "BitTorrent",
         "notes": "",
-        "paths": ('*/dlhistory*.config.bak',),
+        "paths": ('*/dlhistory*.config.bak', '*/dlhistory*.config'),
         "output_types": None,
         "artifact_icon": "download",
     }

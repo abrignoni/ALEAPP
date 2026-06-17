@@ -17,6 +17,7 @@ __artifacts_v2__ = {
         "category": "Fitbit",
         "notes": "Updated 2023-12-12 by @segumarc",
         "paths": ('*/com.fitbit.FitbitMobile/databases/activity_db*','*/com.fitbit.FitbitMobile/databases/device_database*','*/com.fitbit.FitbitMobile/databases/exercise_db*','*/com.fitbit.FitbitMobile/databases/heart_rate_db*','*/com.fitbit.FitbitMobile/databases/sleep*','*/com.fitbit.FitbitMobile/databases/social_db*','*/com.fitbit.FitbitMobile/databases/mobile_track_db*'),
+        "output_types": None,
     },
     "FitbitWearOS": {
         "name": "Fitbit Wear OS Data",
@@ -27,6 +28,7 @@ __artifacts_v2__ = {
         "category": "Fitbit",
         "notes": "Specific to Pixel Watch/Wear OS",
         "paths": ('*/com.fitbit.FitbitMobile/databases/user.db*', '*/com.fitbit.FitbitMobile/databases/passive_stats.db*'),
+        "output_types": None,
     }
 }
 

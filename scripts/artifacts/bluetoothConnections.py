@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Bluetooth Connections",
         "notes": "",
-        "paths": ('*/misc/bluedroid/bt_config.conf',),
+        "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
         "output_types": None,
         "artifact_icon": "wifi",
     }

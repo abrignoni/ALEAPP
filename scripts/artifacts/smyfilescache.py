@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "My Files",
         "notes": "",
-        "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*',),
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*', '*/com.sec.android.app.myfiles/cache/*.*'),
         "output_types": None,
         "artifact_icon": "file",
     }

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "TikTok",
         "notes": "",
-        "paths": ('*_im.db*',),
+        "paths": ('*_im.db*', '*db_im_xx*'),
         "output_types": None,
         "artifact_icon": "users",
     }

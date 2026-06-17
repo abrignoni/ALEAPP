@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": "",
-        "paths": ('*/.privacy_safe/picture/*',),
+        "paths": ('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*'),
         "output_types": None,
         "artifact_icon": "image",
     }

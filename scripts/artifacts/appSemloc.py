@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "App Semantic Locations",
         "notes": "Thanks to Alex Caithness for the ccc_leveldb libraries",
         "paths": (
+        "output_types": None,
             '*/com.google.android.gms/app_semanticlocation_rawsignal_db/*'
         ),
     }

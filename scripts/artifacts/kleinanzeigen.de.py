@@ -244,6 +244,7 @@ __artifacts_v2__ = {
         "category": "kleinanzeigen.de App",
         "notes": "",
         "paths": ('*/com.ebay.kleinanzeigen/shared_prefs/com.ebay.kleinanzeigen_preferences.xml'),
+        "output_types": None,
     },
     "get_kleinanzeigenrecentsearchescache": {
         "name": "kleinanzeigen.de - Recent Searches Cache",
@@ -254,6 +255,7 @@ __artifacts_v2__ = {
         "category": "kleinanzeigen.de App",
         "notes": "",
         "paths": ('*/com.ebay.kleinanzeigen/files/RECENT_SEARCHES_CACHE'),
+        "output_types": None,
     },
     "get_kleinanzeigennonresettablerecentsearchescache": {
         "name": "kleinanzeigen.de - Non resettable Recent Searches Cache",
@@ -264,6 +266,7 @@ __artifacts_v2__ = {
         "category": "kleinanzeigen.de App",
         "notes": "",
         "paths": ('*/com.ebay.kleinanzeigen/files/NON_RESETTABLE_RECENT_SEARCHES_CACHE'),
+        "output_types": None,
     },
     "get_kleinanzeigenmessagebox":  {
         "name": "kleinanzeigen.de - Messagebox",
@@ -274,5 +277,6 @@ __artifacts_v2__ = {
         "category": "kleinanzeigen.de App",
         "notes": "",
         "paths": ('*com.ebay.kleinanzeigen/databases/messageBoxDatabase.db*'),
+        "output_types": None,
     }
 }

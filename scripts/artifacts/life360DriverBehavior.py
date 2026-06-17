@@ -6,6 +6,7 @@ __artifacts_v2__ = {
         "category": "Life360DriverBehavior",
         "notes": "Processes event data and waypoints from trip JSON files",
         "paths": ('*/trips/*.json',),
+        "output_types": None,
     }
 }
 

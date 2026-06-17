@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Call Logs",
         "notes": "",
-        "paths": ('*/com.android.providers.contacts/databases/contact*',),
+        "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
         "output_types": None,
         "artifact_icon": "phone",
     }

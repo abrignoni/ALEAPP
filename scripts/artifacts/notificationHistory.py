@@ -7,6 +7,7 @@ __artifacts_v2__ = {
         "requirements": "",
         "category": "Android Notification History",
         "paths": (
+        "output_types": None,
             '**/system_ce/*/notification_history/history/*',
             '**/system/users/*/settings_secure.xml',
             '**/system/notification_policy.xml',

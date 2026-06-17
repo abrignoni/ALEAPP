@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
-        "paths": ('*/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*',),
+        "paths": ('*/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '*/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*', '*/app_webview/Default/Offline Pages/metadata/OfflinePages.db*'),
         "output_types": None,
         "artifact_icon": "message-square",
     }

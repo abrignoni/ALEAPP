@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Cloud Storage",
         "notes": "",
         "paths": ('*/com.microsoft.skydrive/files/QTMetadata.db*'),
+        "output_types": None,
         "artifact_icon": "cloud"
     }
 }

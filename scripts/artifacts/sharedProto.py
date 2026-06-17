@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Samsung Browser",
         "notes": "",
         "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*'),
+        "output_types": None,
     }
 }
 import pathlib

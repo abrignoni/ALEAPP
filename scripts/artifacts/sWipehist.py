@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Wipe & Setup",
         "notes": "",
-        "paths": ('*/efs/recovery/history',),
+        "paths": ('*/efs/recovery/history', '*/data/log/recovery_history.log'),
         "output_types": None,
         "artifact_icon": "file",
     }

@@ -20,6 +20,7 @@ __artifacts_v2__ = {
         "category": "Settings Services - Battery Usage v9 - Battery States",
         "notes": "Getting battery usage data from Settings Services - Android 14 - Based on post https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html",
         "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9'),
+        "output_types": None,
     },
     "app_battery_usage_v9": {
         "name": "Settings Services - App Battery Usages v9 - App Battery Usage Events",
@@ -30,6 +31,7 @@ __artifacts_v2__ = {
         "category": "Settings Services - Battery Usage v9 - App Battery Usage Events",
         "notes": "Getting App Battery Usage Event from Settings Services - Based on https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html",
         "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9'),
+        "output_types": None,
     }
 }
 

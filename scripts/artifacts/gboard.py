@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Gboard Keyboard",
         "notes": "",
-        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db',),
+        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db', '*/com.google.android.inputmethod.latin/databases/gboard_clipboard.db*', '*/com.google.android.inputmethod.latin/files/clipboard_image/*'),
         "output_types": None,
         "artifact_icon": "chrome",
     }

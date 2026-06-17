@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
-        "paths": ('*/app_chrome/Default/Media History*',),
+        "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
         "output_types": None,
         "artifact_icon": "image",
     }

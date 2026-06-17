@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/cache/http-cache/*.*'),
+        "output_types": None,
     }
 }
 import os

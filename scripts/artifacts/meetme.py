@@ -9,6 +9,7 @@ __artifacts_v2__ = {
         "category": "Chats",
         "notes": "",
         "paths": ('*/data/com.myyearbook.m/databases/chats.db*'),
+        "output_types": None,
     }
 }
 

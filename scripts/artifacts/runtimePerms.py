@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Permissions",
         "notes": "",
-        "paths": ('*/system/users/*/runtime-permissions.xml',),
+        "paths": ('*/system/users/*/runtime-permissions.xml', '*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml'),
         "output_types": None,
         "artifact_icon": "activity",
     }

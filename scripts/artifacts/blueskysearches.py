@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*'),
+        "output_types": None,
     }
 }
 

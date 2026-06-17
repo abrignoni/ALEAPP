@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "BeautifulSoup",
         "category": "Mastodon",
         "notes": "",
-        "paths": ('*/org.joinmastodon.android/databases/*.db*',),
+        "paths": ('*/org.joinmastodon.android/databases/*.db*', '*/org.joinmastodon.android/files/*.json'),
         "output_types": None,
         "artifact_icon": "message-square",
     }

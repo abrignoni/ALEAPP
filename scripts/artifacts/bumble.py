@@ -7,6 +7,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Bumble",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*','*/com.bumble.app/files/c2V0dGluZ3M='),
+        "output_types": None,
     }
 }
 

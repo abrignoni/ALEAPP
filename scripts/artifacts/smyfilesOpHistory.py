@@ -13,6 +13,7 @@ __artifacts_v2__ = {
         "category": "My Files",
         "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown characters will be replaced with '?'.",
         "paths": '*/com.sec.android.app.myfiles/databases/OperationHistory.db*',
+        "output_types": None,
     }
 }
 

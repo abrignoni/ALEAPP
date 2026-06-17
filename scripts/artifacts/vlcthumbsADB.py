@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "VLC thumbs",
         "notes": "",
-        "paths": ('*/org.videolan.vlc/ef/medialib/*.*',),
+        "paths": ('*/org.videolan.vlc/ef/medialib/*.*', '*/org.videolan.vlc/ef/medialib/thumbnails/*.*'),
         "output_types": None,
         "artifact_icon": "image",
     }

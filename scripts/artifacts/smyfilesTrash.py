@@ -16,6 +16,7 @@ __artifacts_v2__ = {
         "category": "My Files",
         "notes": "Timestamp corroborated with My Files Operation History database",
         "paths": ('*/com.sec.android.app.myfiles/files/trash/*', '*/.Trash/com.sec.android.app.myfiles/*'),
+        "output_types": None,
     }
 }
 

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GEO Location",
         "notes": "",
-        "paths": ('*/com.google.android.location/files/cache.cell/cache.cell',),
+        "paths": ('*/com.google.android.location/files/cache.cell/cache.cell', '*/com.google.android.location/files/cache.wifi/cache.wifi'),
         "output_types": None,
         "artifact_icon": "map-pin",
     }

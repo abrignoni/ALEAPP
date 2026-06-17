@@ -9,6 +9,7 @@ __artifacts_v2__ = {
         "category": "GEO Location",
         "notes": "Updated 2023-12-12 by @segumarc, wrong file_found was wrote in the 'located at' field in the html report",
         "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db','*/com.google.android.apps.maps/databases/gmm_storage.db'),
+        "output_types": None,
     }
 }
 

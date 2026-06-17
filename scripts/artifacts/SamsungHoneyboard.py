@@ -8,6 +8,7 @@ __artifacts_v2__ = {
         "category": "Clipboard",
         "notes": ".",
         "paths": ('*/com.samsung.android.honeyboard/databases/ClipItem*'),
+        "output_types": None,
     },
     "Samsung Honeyboard Clipboard Screenshot": {
         "name": "Samsung Honeyboard - Clipboard Screenshot",
@@ -18,6 +19,7 @@ __artifacts_v2__ = {
         "category": "Clipboard",
         "notes": ".",
         "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip'),
+        "output_types": None,
     }
 }
 import os

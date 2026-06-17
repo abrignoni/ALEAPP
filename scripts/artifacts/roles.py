@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "App Roles",
         "notes": "",
-        "paths": ('*/system/users/*/roles.xml',),
+        "paths": ('*/system/users/*/roles.xml', '*/misc_de/*/apexdata/com.android.permission/roles.xml'),
         "output_types": None,
         "artifact_icon": "package",
     }

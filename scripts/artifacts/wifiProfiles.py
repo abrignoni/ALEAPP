@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "WiFi Profiles",
         "notes": "",
-        "paths": ('*/misc/wifi/WifiConfigStore.xml',),
+        "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": None,
         "artifact_icon": "wifi",
     }

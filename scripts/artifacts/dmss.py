@@ -6,9 +6,9 @@ __artifacts_v2__ = {
         "creation_date": "2000-01-01",
         "last_updated_date": "2000-01-01",
         "requirements": "none",
-        "category": "",
+        "category": "Dahua Technology (DMSS)",
         "notes": "",
-        "paths": (),
+        "paths": ('*/com.mm.android.DMSS/databases/*', '*/Android/data/com.mm.android.DMSS/files/Download/snapshot/*'),
         "output_types": None,
         "artifact_icon": "terminal",
     }

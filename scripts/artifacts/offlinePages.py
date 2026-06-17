@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Offline Pages",
         "notes": "",
-        "paths": ('*/*.mhtml',),
+        "paths": ('*/*.mhtml', '*/*.mht'),
         "output_types": None,
         "artifact_icon": "message-square",
     }

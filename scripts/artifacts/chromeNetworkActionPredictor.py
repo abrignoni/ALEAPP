@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
-        "paths": ('*/app_Chrome/Default/Network Action Predictor*',),
+        "paths": ('*/app_Chrome/Default/Network Action Predictor*', '*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predicator*', '*/app_webview/Default/Network Action Predictor*'),
         "output_types": None,
         "artifact_icon": "wifi",
     }
