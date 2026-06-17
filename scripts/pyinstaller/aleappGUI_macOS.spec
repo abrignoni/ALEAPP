@@ -60,5 +60,5 @@ app = BUNDLE(
     name='aleappGUI.app',
     icon='../../assets/icon.icns',
     bundle_identifier='4n6.brigs.ALEAPP',
-    version='3.5.0',
+    version='3.7.0-dev.0',
 )

@@ -1,19 +1,3 @@
-__artifacts_v2__ = {
-    "get_ChessWithFriends": {
-        "name": "ChessWithFriends",
-        "description": "",
-        "author": "",
-        "creation_date": "2000-01-01",
-        "last_updated_date": "2000-01-01",
-        "requirements": "none",
-        "category": "Chats",
-        "notes": "",
-        "paths": ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite',),
-        "output_types": None,
-        "artifact_icon": "message-square",
-    }
-}
-
 import sqlite3
 import textwrap
 
@@ -63,3 +47,9 @@ def get_ChessWithFriends(files_found, report_folder, seeker, wrap_text):
     
     db.close()
     
+__artifacts__ = {
+        "ChessWithFriends": (
+                "Chats",
+                ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite', '*/data/com.zynga.chess.googleplay/db/wf_database.sqlite'),
+                get_ChessWithFriends)
+}

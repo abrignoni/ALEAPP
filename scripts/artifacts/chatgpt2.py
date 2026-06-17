@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "ChatGPT",
         "notes": "",
-        "paths": ('*/data/data/com.openai.chatgpt/databases/*conversations.db*'),
+        "paths": ('*/data/com.openai.chatgpt/databases/*conversations.db*'),
         "html_columns": ['Content'],
         "output_types": "standard",
         "artifact_icon": "loader",

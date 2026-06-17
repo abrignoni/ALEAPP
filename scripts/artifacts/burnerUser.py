@@ -1,13 +1,15 @@
 __artifacts_v2__ = {
-    "get_burnerUser": {
+    "burnerUser": {
         "name": "Burner: Second Phone Number",
         "description": "Parses Burner User Information",
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
+        "version": "0.0.1",
         "date": "2024-02-15",
         "requirements": "none",
         "category": "Burner",
         "notes": "",
-        "paths": ('*/data/data/com.adhoclabs.burner/databases/burnerDatabase.db*'),
+        "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*'),
+        "function": "get_burnerUser"
     }
 }
 

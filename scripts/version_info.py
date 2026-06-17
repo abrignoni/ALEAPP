@@ -5,13 +5,12 @@ Leave blank if not available
 """
 
 leapp_name = 'ALEAPP'
-leapp_version = '2.6.0-dev.1'
+leapp_version = '3.7.0-dev.0'
 
 aleapp_contributors = [
     ['Alexis Brignoni', 'https://abrignoni.com', '@AlexisBrignoni', 'https://github.com/abrignoni'],
     ['Yogesh Khatri', 'https://swiftforensics.com', '@SwiftForensics', 'https://github.com/ydkhatri'],
-    ['Alex Caithness', 'https://www.linkedin.com/in/alex-caithness-a7504151/',
-     '@kviddy', 'https://github.com/cclgroupltd'],
+    ['Alex Caithness', 'https://www.linkedin.com/in/alex-caithness-a7504151/', '@kviddy', 'https://github.com/cclgroupltd'],
     ['Kevin Pagano', 'https://stark4n6.com', '@KevinPagano3', 'https://github.com/stark4n6'],
     ['Josh Hickman', 'https://thebinaryhick.blog/', '@josh_hickman1', ''],
     ['Troy Schnack', 'https://troy4n6.blogspot.com/', '@TroySchnack', ''],
@@ -25,20 +24,16 @@ aleapp_contributors = [
     ['Evangelos Dragonas', 'https://atropos4n6.com/', '@theAtropos4n6', 'https://github.com/theAtropos4n6'],
     ['James Habben', 'https://4n6ir.com/', '@JamesHabben', 'https://github.com/JamesHabben'],
     ['Matt Beers', 'https://www.linkedin.com/in/mattbeersii', '', 'https://github.com/dabeersboys'],
-    ['Heather Charpentier', 'https://www.linkedin.com/in/heather-charpentier-bb28b031/',
-     '', 'https://github.com/charpy4n6'],
+    ['Heather Charpentier', 'https://www.linkedin.com/in/heather-charpentier-bb28b031/', '', 'https://github.com/charpy4n6'],
     ['Panos Nakoutis', '', '@4n6equals10', ''],
-    ['Johann Polewczyk', 'https://www.linkedin.com/in/johann-polewczyk-6a905425/',
-     '@johannplw', 'https://github.com/Johann-PLW'],
+    ['Johann Polewczyk', 'https://www.linkedin.com/in/johann-polewczyk-6a905425/', '@johannplw', 'https://github.com/Johann-PLW'],
     ['Bruno Fischer', 'https://german4n6.blogspot.com/', '', 'https://github.com/BrunoFischerGermany'],
     ['Marco Neumann', 'https://bebinary4n6.blogspot.com/', '@kalinko4n6', 'https://github.com/kalink0'],
     ['Marc Seguin', 'https://segumarc.com', '@segumarc', 'https://github.com/segumarc'],
     ['Anthony Reince', 'https://www.linkedin.com/in/anthony-reince-a60115239/', '', ''],
-    ['Damien Attoe', 'https://digital4n6withdamien.blogspot.com/',
-     '@AttoeDamien', 'https://github.com/SpyderForensics'],
-    ['Anna Kirpichnikova', 'https://www.linkedin.com/in/anna-kirpichnikova-a4819a10b/',
-     '', 'https://github.com/As-arsenicum-33'],
-    ['Christian Peter', 'https://www.linkedin.com/in/christian-peter-49b4ab182/',
-     '@DasZamomin', 'https://github.com/prosch88'],
-    ['Jérôme Arn', 'https://www.linkedin.com/in/j%C3%A9r%C3%B4me-a-dfir/', '@theTul1p3', 'https://github.com/Th3Tul1p3']
+    ['Damien Attoe', 'https://digital4n6withdamien.blogspot.com/', '@AttoeDamien', 'https://github.com/SpyderForensics'],
+    ['Anna Kirpichnikova', 'https://www.linkedin.com/in/anna-kirpichnikova-a4819a10b/', '', 'https://github.com/As-arsenicum-33'],
+    ['Christian Peter', 'https://www.linkedin.com/in/christian-peter-49b4ab182/', '@DasZamomin', 'https://github.com/prosch88'],
+    ['Jérôme Arn', 'https://www.linkedin.com/in/j%C3%A9r%C3%B4me-a-dfir/', '@theTul1p3', 'https://github.com/Th3Tul1p3'],
+    ['Nicolai Martini', '', '', 'https://github.com/NicolaiMartini/']
 ]

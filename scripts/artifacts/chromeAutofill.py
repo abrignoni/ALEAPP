@@ -1,19 +1,3 @@
-__artifacts_v2__ = {
-    "get_chromeAutofill": {
-        "name": "ChromeAutofill",
-        "description": "",
-        "author": "",
-        "creation_date": "2000-01-01",
-        "last_updated_date": "2000-01-01",
-        "requirements": "none",
-        "category": "Chromium",
-        "notes": "",
-        "paths": ('*/app_chrome/Default/Web Data*',),
-        "output_types": None,
-        "artifact_icon": "globe",
-    }
-}
-
 import os
 import sqlite3
 import textwrap
@@ -159,3 +143,10 @@ def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Autofill - Profiles data available')
         
         db.close()
+
+__artifacts__ = {
+        "ChromeAutofill": (
+                "Chromium",
+                ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
+                get_chromeAutofill)
+}

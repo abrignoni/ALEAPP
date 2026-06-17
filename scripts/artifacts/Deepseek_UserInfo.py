@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "DeepSeek",
         "notes": "",
-        "paths": ('*/data/data/com.deepseek.chat/databases/deepseek_chat.db'),
+        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat.db'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "user"
     }
