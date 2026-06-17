@@ -1,8 +1,21 @@
-# Get Information relative to the user activities that are present in the database (db) from the Adidas Running app, the activities are stored the table (session)
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher, json, polyline, folium
+__artifacts_v2__ = {
+    "AdidasActivities": {
+        "name": "Adidas Activities",
+        "description": "Get information relative to user activities from the Adidas Running app",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-24",
+        "last_updated_date": "2023-03-24",
+        "requirements": "Python 3.7 or higher, json, polyline, folium",
+        "category": "Adidas Running",
+        "notes": "",
+        "paths": ('*/com.runtastic.android/databases/db*',),
+        "output_types": None,
+        "function": "get_adidas_activities",
+        "artifact_icon": "activity",
+    }
+}
+
 import json
 import os
 import sqlite3
@@ -272,9 +285,3 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
     db.close()
 
 
-__artifacts__ = {
-    "AdidasActivities": (
-        "Adidas-Running",
-        ('*/com.runtastic.android/databases/db*'),
-        get_adidas_activities)
-}

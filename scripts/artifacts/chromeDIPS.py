@@ -1,9 +1,20 @@
-# Module Description: Parses Chromium DIPS (Detect Incidental Party State)
-# Author: @KevinPagano3
-# Date: 2023-04-07
-# Artifact version: 0.0.1
-# Requirements: none
-# Thanks to Ryan Benson for awareness https://github.com/obsidianforensics/hindsight/pull/146/commits/015ee189c97c0a4e48deb59568dfe4f536ace8aa
+__artifacts_v2__ = {
+    "ChromeDIPS": {
+        "name": "ChromeDIPS",
+        "description": "Module Description: Parses Chromium DIPS (Detect Incidental Party State)",
+        "author": "@KevinPagano3",
+        "version": "1.0",
+        "creation_date": "2023-04-07",
+        "last_updated_date": "2023-04-07",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/DIPS*',),
+        "output_types": None,
+        "function": "get_chromeDIPS",
+        "artifact_icon": "globe",
+    }
+}
 
 import os
 from scripts.artifact_report import ArtifactHtmlReport
@@ -148,10 +159,3 @@ def get_chromeDIPS(files_found, report_folder):
             logfunc(f'No {browser_name} - Detect Incidental Party State data available')
 
         db.close()
-
-__artifacts__ = {
-        "ChromeDIPS": (
-                "Chromium",
-                ('*/app_chrome/Default/DIPS*','*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*','*/app_webview/Default/DIPS*'),
-                get_chromeDIPS)
-}

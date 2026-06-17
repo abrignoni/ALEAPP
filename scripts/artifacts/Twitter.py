@@ -1,8 +1,20 @@
-# Twitter Searches
-# Author:  Kevin Pagano (https://startme.stark4n6.com)
-# Date 2023-04-26
-# Version: 0.1
-# Requirements:  None
+__artifacts_v2__ = {
+    "twitter": {
+        "name": "twitter",
+        "description": "Twitter Searches",
+        "author": "Kevin Pagano (https://startme.stark4n6.com)",
+        "version": "0.1",
+        "creation_date": "2023-04-26",
+        "last_updated_date": "2023-04-26",
+        "requirements": "None",
+        "category": "Twitter",
+        "notes": "",
+        "paths": ('*/com.twitter.android/databases/*-search.db*',),
+        "output_types": None,
+        "function": "get_Twitter",
+        "artifact_icon": "users",
+    }
+}
 
 import sqlite3
 import textwrap
@@ -64,11 +76,3 @@ def get_Twitter(files_found, report_folder, seeker, wrap_text):
         logfunc('No Twitter - Searches data available')
         
     db.close()
-
-__artifacts__ = {
-        "twitter": (
-                "Twitter",
-                ('*/com.twitter.android/databases/*-search.db*'),
-                get_Twitter)
-}
-    

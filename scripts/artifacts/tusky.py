@@ -1,8 +1,20 @@
-# Module Description: Parses Tusky timeline, notifications and searches
-# Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
-# Date: 2022-12-12
-# Artifact version: 0.0.1
-# Requirements: BeautifulSoup
+__artifacts_v2__ = {
+    "Tusky": {
+        "name": "Tusky",
+        "description": "Module Description: Parses Tusky timeline, notifications and searches",
+        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "version": "1.0",
+        "creation_date": "2022-12-12",
+        "last_updated_date": "2022-12-12",
+        "requirements": "BeautifulSoup",
+        "category": "Tusky",
+        "notes": "",
+        "paths": ('*/com.keylesspalace.tusky/databases/tuskyDB*',),
+        "output_types": None,
+        "function": "get_tusky",
+        "artifact_icon": "message-square",
+    }
+}
 
 import datetime
 import json
@@ -176,10 +188,3 @@ def get_tusky(files_found, report_folder, seeker, wrap_text):
             logfunc('Tusky - Account Details data available')
         
         db.close()
-
-__artifacts__ = {
-        "Tusky": (
-                "Tusky",
-                ('*/com.keylesspalace.tusky/databases/tuskyDB*'),
-                get_tusky)
-}

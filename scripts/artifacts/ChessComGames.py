@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ChessComGames": {
+        "name": "ChessComGames",
+        "description": "Username",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chess.com",
+        "notes": "",
+        "paths": ('*/com.chess/databases/chess-database*',),
+        "output_types": None,
+        "function": "get_ChessComGames",
+        "artifact_icon": "grid",
+    }
+}
+
 import sqlite3
 import textwrap
 import xml.etree.ElementTree as ET
@@ -42,12 +60,3 @@ def get_ChessComGames(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-        "ChessComGames": (
-                "Chess.com",
-                ('*/com.chess/databases/chess-database*', '*/data/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
-                get_ChessComGames)
-}
-
-

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Googlemaplocation": {
+        "name": "Googlemaplocation",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/databases/da_destination_history*',),
+        "output_types": None,
+        "function": "get_googlemaplocation",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -58,10 +76,3 @@ def get_googlemaplocation(files_found, report_folder, seeker, wrap_text):
             
         db.close()
         
-__artifacts__ = {
-        "Googlemaplocation": (
-                "GEO Location",
-                ('*/com.google.android.apps.maps/databases/da_destination_history*'),
-                get_googlemaplocation)
-}
-    

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "FirefoxTopSites": {
+        "name": "FirefoxTopSites",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/databases/top_sites*',),
+        "output_types": None,
+        "function": "get_firefoxTopSites",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -50,9 +68,3 @@ def get_firefoxTopSites(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "FirefoxTopSites": (
-                "Firefox",
-                ('*/org.mozilla.firefox/databases/top_sites*'),
-                get_firefoxTopSites)
-}

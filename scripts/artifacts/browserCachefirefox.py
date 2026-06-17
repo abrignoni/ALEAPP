@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "browserCachefirefox": {
+        "name": "browserCachefirefox",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Browser Cache",
+        "notes": "",
+        "paths": ('*/data/org.mozilla.firefox/cache/*/cache2/entries/**',),
+        "output_types": None,
+        "function": "get_browserCachefirefox",
+        "artifact_icon": "globe",
+    }
+}
+
 import datetime
 import email
 import os
@@ -81,11 +99,4 @@ def get_browserCachefirefox(files_found, report_folder, seeker, wrap_text):
         tsvname = f'Firefox Browser Cache'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-            
-__artifacts__ = {
-        "browserCachefirefox": (
-                "Browser Cache",
-                ( '*/data/org.mozilla.firefox/cache/*/cache2/entries/**'),
-                get_browserCachefirefox)
-}
             

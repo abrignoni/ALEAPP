@@ -1,8 +1,21 @@
-# Get JSON information from the Garmin GCM database
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher and json module
+__artifacts_v2__ = {
+    "GarminJson": {
+        "name": "GarminJson",
+        "description": "Get JSON information from the Garmin GCM database",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher and json module",
+        "category": "Garmin-GCM",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/gcm_cache*',),
+        "output_types": None,
+        "function": "get_garmin_json",
+        "artifact_icon": "activity",
+    }
+}
+
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -78,10 +91,3 @@ def get_garmin_json(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "GarminJson": (
-        "Garmin-GCM",
-        ('*/com.garmin.android.apps.connectmobile/databases/gcm_cache*'),
-        get_garmin_json)
-}

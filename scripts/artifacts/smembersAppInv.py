@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "smembersAppInv": {
+        "name": "smembersAppInv",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db',),
+        "output_types": None,
+        "function": "get_smembersAppInv",
+        "artifact_icon": "package",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -44,10 +62,3 @@ def get_smembersAppInv(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Members - Apps data available')
     
     db.close()
-
-__artifacts__ = {
-        "smembersAppInv": (
-                "App Interaction",
-                ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
-                get_smembersAppInv)
-}

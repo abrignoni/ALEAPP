@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ChromeCookies": {
+        "name": "ChromeCookies",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Cookies*',),
+        "output_types": None,
+        "function": "get_chromeCookies",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -86,10 +104,3 @@ def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Cookies data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeCookies": (
-                "Chromium",
-                ('*/app_chrome/Default/Cookies*', '*/app_sbrowser/Default/Cookies*', '*/app_opera/Cookies*', '*/app_webview/Default/Cookies*'),
-                get_chromeCookies)
-}

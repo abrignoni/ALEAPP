@@ -1,4 +1,21 @@
-### Import required modules
+__artifacts_v2__ = {
+    "AVG": {
+        "name": "AVG",
+        "description": "## Import required modules",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": "",
+        "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml',),
+        "output_types": None,
+        "function": "get_AVG",
+        "artifact_icon": "image",
+    }
+}
+
 import base64
 from os.path import isfile, join, basename, dirname, getsize, abspath
 from os import makedirs
@@ -319,9 +336,3 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No files found to decrypt')
         
-__artifacts__ = {
-        "AVG": (
-                "Encrypting Media Apps",
-                ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
-                get_AVG)
-}

@@ -1,9 +1,21 @@
-# Get GPS data from the table 'activity_polyline' and activity_details
-# The script uses polyline to decode the GPS data and folium to plot the GPS data on a map
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher, folium and polyline, datetime
+__artifacts_v2__ = {
+    "GarminPolyline": {
+        "name": "GarminPolyline",
+        "description": "Get GPS data from the table 'activity_polyline' and activity_details",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher, folium and polyline, datetime",
+        "category": "Garmin-Cache",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
+        "output_types": None,
+        "function": "get_garmin_polyline",
+        "artifact_icon": "message-square",
+    }
+}
+
 import datetime
 import os
 import sqlite3
@@ -266,10 +278,3 @@ def get_garmin_polyline(files_found, report_folder, seeker, wrap_text):
         conn.close()
     db.close()
 
-
-__artifacts__ = {
-    "GarminPolyline": (
-        "Garmin-Cache",
-        ('*/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-        get_garmin_polyline)
-}

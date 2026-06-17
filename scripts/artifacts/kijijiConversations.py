@@ -1,17 +1,21 @@
-# Kijiji Conversations
-# Author:  Terry Chabot (Krypterry)
-# Version: 1.0.2
-# Kijiji App Version Tested: v17.5.0b172 (2022-05-06)
-# Requirements:  None
-#
-#   Description:
-#   Obtains individual chat messages that were sent and received using the Kijiji application.
-#
-#   Additional Info:
-#       Kijiji.ca is a Canadian online classified advertising website and part of eBay Classifieds Group, with over 16 million unique visitors per month.
-#
-#       Kijiji, May 2022 <https://help.kijiji.ca/helpdesk/basics/what-is-kijiji>
-#       Wikipedia - The Free Encyclopedia, May 2022, <https://en.wikipedia.org/wiki/Kijiji>
+__artifacts_v2__ = {
+    "kijijiConversations": {
+        "name": "kijijiConversations",
+        "description": "Kijiji Conversations",
+        "author": "Terry Chabot (Krypterry)",
+        "version": "1.0.2",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "None",
+        "category": "Kijiji Conversations",
+        "notes": "",
+        "paths": ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*',),
+        "output_types": None,
+        "function": "get_kijijiConversations",
+        "artifact_icon": "file",
+    }
+}
+
 import sqlite3
 import json
 
@@ -111,10 +115,3 @@ def AppendMessageRowsToDataList(data_list,
             recipientName = LOCAL_USER
 
         data_list.append((message['sortByDate'], conversationId, advertId, advertTitle, message['identifier'], senderId, senderName, recipientId, recipientName, message['state'], message['text']))
-
-__artifacts__ = {
-        "kijijiConversations": (
-                "Kijiji Conversations",
-                ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*'),
-                get_kijijiConversations)
-}

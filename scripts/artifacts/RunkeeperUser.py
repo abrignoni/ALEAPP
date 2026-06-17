@@ -1,8 +1,21 @@
-# Get User information from the xml file com.fitnesskeeper.runkeeper.pro_preferences.xml in the Runkeeper app related to the user
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-25
-# Version: 1.0
-# Requirements: Python 3.7 or higher and ElementTree
+__artifacts_v2__ = {
+    "RunkeeperUser": {
+        "name": "RunkeeperUser",
+        "description": "Get User information from the xml file com.fitnesskeeper.runkeeper.pro_preferences.xml in the Runkeeper app related to the user",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-25",
+        "last_updated_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher and ElementTree",
+        "category": "Runkeeper",
+        "notes": "",
+        "paths": ('*/com.fitnesskeeper.runkeeper.pro/shared_prefs/com.fitnesskeeper.runkeeper.pro_preferences*',),
+        "output_types": None,
+        "function": "get_run_user",
+        "artifact_icon": "user",
+    }
+}
+
 import datetime
 import xml.etree.ElementTree as ET
 
@@ -78,10 +91,3 @@ def get_run_user(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc("No Runkeeper XML data found")
 
-
-__artifacts__ = {
-    "RunkeeperUser": (
-        "Runkeeper",
-        ('*/com.fitnesskeeper.runkeeper.pro/shared_prefs/com.fitnesskeeper.runkeeper.pro_preferences*'),
-        get_run_user)
-}

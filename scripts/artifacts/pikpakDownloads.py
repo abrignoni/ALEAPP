@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "PikPak Downloads": {
+        "name": "PikPak Downloads",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "PikPak",
+        "notes": "",
+        "paths": ('*/com.pikcloud.pikpak/databases/pikpak_downloads.db*',),
+        "output_types": None,
+        "function": "get_pikpakDownloads",
+        "artifact_icon": "download",
+    }
+}
+
 import sqlite3
 import os
 
@@ -49,9 +67,3 @@ def get_pikpakDownloads(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No PikPak Downloads data available')
     
-__artifacts__ = {
-        "PikPak Downloads": (
-                "PikPak",
-                ('*/com.pikcloud.pikpak/databases/pikpak_downloads.db*'),
-                get_pikpakDownloads)
-}

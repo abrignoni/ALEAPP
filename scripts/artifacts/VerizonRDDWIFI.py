@@ -1,8 +1,20 @@
-# Module Description: Parses Verizon RDD Wifi Data
-# Author: John Hyla
-# Date: 2023-07-07
-# Artifact version: 0.0.1
-# Requirements: none
+__artifacts_v2__ = {
+    "VerizonRDD-WIFI": {
+        "name": "VerizonRDD-WIFI",
+        "description": "Module Description: Parses Verizon RDD Wifi Data",
+        "author": "John Hyla",
+        "version": "1.0",
+        "creation_date": "2023-07-07",
+        "last_updated_date": "2023-07-07",
+        "requirements": "none",
+        "category": "Verizon RDD Analytics",
+        "notes": "",
+        "paths": ('*/com.verizon.mips.services/databases/RDD_WIFI_DATA_DATABASE',),
+        "output_types": None,
+        "function": "get_rdd_wifi",
+        "artifact_icon": "wifi",
+    }
+}
 
 import os
 import sqlite3
@@ -61,10 +73,3 @@ def get_rdd_wifi(files_found, report_folder, seeker, wrap_text):
     
     return
 
-
-__artifacts__ = {
-    "VerizonRDD-WIFI": (
-        "Verizon RDD Analytics",
-        ('*/com.verizon.mips.services/databases/RDD_WIFI_DATA_DATABASE'),
-        get_rdd_wifi)
-}

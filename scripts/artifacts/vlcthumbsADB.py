@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "VLC Thumbs ADB": {
+        "name": "VLC Thumbs ADB",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "VLC thumbs",
+        "notes": "",
+        "paths": ('*/org.videolan.vlc/ef/medialib/*.*',),
+        "output_types": None,
+        "function": "get_vlcthumbsADB",
+        "artifact_icon": "image",
+    }
+}
+
 import os
 import datetime
 from pathlib import Path
@@ -64,9 +82,3 @@ def get_vlcthumbsADB(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('VLC Media Lib data available')
         
-__artifacts__ = {
-        "VLC Thumbs ADB": (
-                "VLC thumbs",
-                ('*/org.videolan.vlc/ef/medialib/*.*','*/org.videolan.vlc/ef/medialib/thumbnails/*.*'),
-                get_vlcthumbsADB)
-}

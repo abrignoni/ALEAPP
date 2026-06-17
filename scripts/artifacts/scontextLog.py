@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "scontextLog": {
+        "name": "scontextLog",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.samsung.android.providers.context/databases/ContextLog.db',),
+        "output_types": None,
+        "function": "get_scontextLog",
+        "artifact_icon": "package",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -48,10 +66,3 @@ def get_scontextLog(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Context Log data available')
     
     db.close()
-
-__artifacts__ = {
-        "scontextLog": (
-                "App Interaction",
-                ('*/com.samsung.android.providers.context/databases/ContextLog.db'),
-                get_scontextLog)
-}

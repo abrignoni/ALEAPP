@@ -1,8 +1,21 @@
-# Get User information from gcm_user_reference.xml file from Garmin Connect shared preferences
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher and ElementTree
+__artifacts_v2__ = {
+    "GarminUser": {
+        "name": "GarminUser",
+        "description": "Get User information from gcm_user_reference.xml file from Garmin Connect shared preferences",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher and ElementTree",
+        "category": "Garmin-SharedPrefs",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/gcm_user_preferences*',),
+        "output_types": None,
+        "function": "get_garminUP",
+        "artifact_icon": "user",
+    }
+}
+
 import xml.etree.ElementTree as ET
 
 
@@ -68,10 +81,3 @@ def get_garminUP(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc("No Garmin XML data found")
 
-
-__artifacts__ = {
-    "GarminUser": (
-        "Garmin-SharedPrefs",
-        ('*/com.garmin.android.apps.connectmobile/shared_prefs/gcm_user_preferences*'),
-        get_garminUP)
-}

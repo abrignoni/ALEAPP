@@ -1,8 +1,20 @@
-# Todoist - Parses items, notes and projects
-# Author:  Kevin Pagano (https://startme.stark4n6.com)
-# Date 2023-04-26
-# Version: 0.1
-# Requirements:  None
+__artifacts_v2__ = {
+    "Todoist": {
+        "name": "Todoist",
+        "description": "Todoist - Parses items, notes and projects",
+        "author": "Kevin Pagano (https://startme.stark4n6.com)",
+        "version": "0.1",
+        "creation_date": "2023-04-26",
+        "last_updated_date": "2023-04-26",
+        "requirements": "None",
+        "category": "Todoist",
+        "notes": "",
+        "paths": ('*/com.todoist/databases/database.db*',),
+        "output_types": None,
+        "function": "get_Todoist",
+        "artifact_icon": "file-text",
+    }
+}
 
 import sqlite3
 import textwrap
@@ -154,11 +166,3 @@ def get_Todoist(files_found, report_folder, seeker, wrap_text):
         logfunc('No Todoist - Projects data available') 
                 
     db.close()
-
-__artifacts__ = {
-        "Todoist": (
-                "Todoist",
-                ('*/com.todoist/databases/database.db*'),
-                get_Todoist)
-}
-    

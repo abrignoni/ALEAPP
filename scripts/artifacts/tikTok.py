@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "tikTok": {
+        "name": "tikTok",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "TikTok",
+        "notes": "",
+        "paths": ('*_im.db*',),
+        "output_types": None,
+        "function": "get_tikTok",
+        "artifact_icon": "users",
+    }
+}
+
 from os.path import dirname, join
 import sqlite3
 
@@ -93,10 +111,3 @@ def get_tikTok(files_found, report_folder, seeker, wrap_text):
         logfunc('No TikTok Contacts available')
     
     db.close()
-
-__artifacts__ = {
-        "tikTok": (
-                "TikTok",
-                ('*_im.db*', '*db_im_xx*'),
-                get_tikTok)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "LibretorrentFR": {
+        "name": "LibretorrentFR",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Libre Torrent",
+        "notes": "",
+        "paths": ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*',),
+        "output_types": None,
+        "function": "get_libretorrentFR",
+        "artifact_icon": "download",
+    }
+}
+
 import sqlite3
 import textwrap
 import bencoding
@@ -103,10 +121,3 @@ def get_libretorrentFR(files_found, report_folder, seeker, wrap_text):
         logfunc('No Libre Torrents Fast Resume data available')
         
     db.close()
-
-__artifacts__ = {
-        "LibretorrentFR": (
-                "Libre Torrent",
-                ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*','*/libretorrent.db*'),
-                get_libretorrentFR)
-}

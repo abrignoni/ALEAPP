@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "rarlabPreferences": {
+        "name": "rarlabPreferences",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "RAR Lab Prefs",
+        "notes": "",
+        "paths": ('*/com.rarlab.rar_preferences.xml',),
+        "output_types": None,
+        "function": "get_rarlabPreferences",
+        "artifact_icon": "settings",
+    }
+}
+
 import os
 import datetime
 import json
@@ -50,9 +68,3 @@ def get_rarlabPreferences(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc(f'No RAR Lab Preferences data available')
             
-__artifacts__ = {
-        "rarlabPreferences": (
-                "RAR Lab Prefs",
-                ('*/com.rarlab.rar_preferences.xml'),
-                get_rarlabPreferences)
-}

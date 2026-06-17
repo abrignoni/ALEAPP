@@ -1,8 +1,21 @@
-# Get Information related to the Chats of the user with other users from the Badoo app (com.badoo.mobile)
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-05-03
-# Version: 1.0
-# Requirements: Python 3.7 or higher, json
+__artifacts_v2__ = {
+    "BadooChat": {
+        "name": "BadooChat",
+        "description": "Get Information related to the Chats of the user with other users from the Badoo app (com.badoo.mobile)",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-05-03",
+        "last_updated_date": "2023-05-03",
+        "requirements": "Python 3.7 or higher, json",
+        "category": "Badoo",
+        "notes": "",
+        "paths": ('*com.badoo.mobile/databases/ChatComDatabase*',),
+        "output_types": None,
+        "function": "get_badoo_chat",
+        "artifact_icon": "message-square",
+    }
+}
+
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -119,10 +132,3 @@ def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "BadooChat": (
-        "Badoo",
-        ('*com.badoo.mobile/databases/ChatComDatabase*'),
-        get_badoo_chat)
-}

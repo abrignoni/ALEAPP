@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "setupWizardinfo": {
+        "name": "setupWizardinfo",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml',),
+        "output_types": None,
+        "function": "get_setupWizardinfo",
+        "artifact_icon": "info",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -37,9 +55,3 @@ def get_setupWizardinfo(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Setup_Wizard_Info XML data available')
             
-__artifacts__ = {
-        "setupWizardinfo": (
-                "Wipe & Setup",
-                ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml'),
-                get_setupWizardinfo)
-}

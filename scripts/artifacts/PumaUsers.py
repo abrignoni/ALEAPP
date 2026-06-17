@@ -1,8 +1,20 @@
-# Get Information related to the users table in the Puma Trac database
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-25
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "PumaUsers": {
+        "name": "PumaUsers",
+        "description": "Get Information related to the users table in the Puma Trac database",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-25",
+        "last_updated_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher",
+        "category": "Puma-Trac",
+        "notes": "",
+        "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
+        "output_types": None,
+        "function": "get_puma_users",
+        "artifact_icon": "user",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -60,10 +72,3 @@ def get_puma_users(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "PumaUsers": (
-        "Puma-Trac",
-        ('*com.pumapumatrac/databases/pumatrac-db*'),
-        get_puma_users)
-}

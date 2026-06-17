@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "PikPak Cloud List": {
+        "name": "PikPak Cloud List",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "PikPak",
+        "notes": "",
+        "paths": ('*/com.pikcloud.pikpak/databases/pikpak_files_*.db*',),
+        "output_types": None,
+        "function": "get_pikpakCloudlist",
+        "artifact_icon": "file",
+    }
+}
+
 import sqlite3
 import os
 
@@ -54,9 +72,3 @@ def get_pikpakCloudlist(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No PikPak Cloud List data available')
     
-__artifacts__ = {
-        "PikPak Cloud List": (
-                "PikPak",
-                ('*/com.pikcloud.pikpak/databases/pikpak_files_*.db*'),
-                get_pikpakCloudlist)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "appopSetupWiz": {
+        "name": "appopSetupWiz",
+        "description": "check if file is abx",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/system/appops.xml',),
+        "output_types": None,
+        "function": "get_appopSetupWiz",
+        "artifact_icon": "package",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -49,10 +67,3 @@ def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Appops Setup Wizard data available')
-
-__artifacts__ = {
-        "appopSetupWiz": (
-                "Wipe & Setup",
-                ('*/system/appops.xml'),
-                get_appopSetupWiz)
-}

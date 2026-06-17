@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Libretorrent": {
+        "name": "Libretorrent",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Libre Torrent",
+        "notes": "",
+        "paths": ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*',),
+        "output_types": None,
+        "function": "get_libretorrent",
+        "artifact_icon": "download",
+    }
+}
+
 import sqlite3
 import textwrap
 from datetime import datetime
@@ -53,10 +71,3 @@ def get_libretorrent(files_found, report_folder, seeker, wrap_text):
         logfunc('No Libre Torrents data available')
         
     db.close()
-
-__artifacts__ = {
-        "Libretorrent": (
-                "Libre Torrent",
-                ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*','*/libretorrent.db*'),
-                get_libretorrent)
-}

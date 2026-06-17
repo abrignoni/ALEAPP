@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "shareit": {
+        "name": "shareit",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "File Transfer",
+        "notes": "",
+        "paths": ('*/com.lenovo.anyshare.gps/databases/history.db*',),
+        "output_types": None,
+        "function": "get_shareit",
+        "artifact_icon": "download",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -53,10 +71,3 @@ def get_shareit(files_found, report_folder, seeker, wrap_text):
         logfunc('No Shareit file transfer data available')
 
     db.close()
-
-__artifacts__ = {
-        "shareit": (
-                "File Transfer",
-                ('*/com.lenovo.anyshare.gps/databases/history.db*'),
-                get_shareit)
-}

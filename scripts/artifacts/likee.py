@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "likee_location": {
+        "name": "likee_location",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "LIKEE",
+        "notes": "",
+        "paths": ('*/video.like/files/*/*location.kv',),
+        "output_types": None,
+        "function": "get_likee_db",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import os
 import sys
 import re
@@ -170,10 +188,4 @@ def get_likee_db(files_found, report_folder, seeker, wrap_text):
             logfunc("No Message data found" + (str(file_found)))
 
         db.close()
-
-
-__artifacts__ = {
-    "likee_location": ("LIKEE", ("*/video.like/files/*/*location.kv"), get_likee),
-    "likee_databases": ("LIKEE", ("*/video.like/databases/*.db"), get_likee_db),
-}
 

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "siminfo": {
+        "name": "siminfo",
+        "description": "Filter for path xxx/yyy/system_ce/0",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Device Info",
+        "notes": "",
+        "paths": ('*/user_de/*/com.android.providers.telephony/databases/telephony.db',),
+        "output_types": None,
+        "function": "get_siminfo",
+        "artifact_icon": "info",
+    }
+}
+
 import glob
 import json
 import os
@@ -87,10 +105,3 @@ def process_siminfo(folder, uid, report_folder):
     else:
         logfunc(f'No SIM_Info{uid} data available')    
     db.close()
-
-__artifacts__ = {
-        "siminfo": (
-                "Device Info",
-                ('*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
-                get_siminfo)
-}

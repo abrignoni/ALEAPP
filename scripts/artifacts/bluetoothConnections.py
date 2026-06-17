@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Bluetooth Connections": {
+        "name": "Bluetooth Connections",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Bluetooth Connections",
+        "notes": "",
+        "paths": ('*/misc/bluedroid/bt_config.conf',),
+        "output_types": None,
+        "function": "get_bluetoothConnections",
+        "artifact_icon": "wifi",
+    }
+}
+
 import csv
 import datetime
 import os
@@ -93,10 +111,3 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc(f'No Bluetooth Adapter Information data available')
-
-__artifacts__ = {
-        "Bluetooth Connections": (
-                "Bluetooth Connections",
-                ('*/misc/bluedroid/bt_config.conf','*/bt_config.conf'),
-                get_bluetoothConnections)
-}

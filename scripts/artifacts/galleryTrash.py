@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Gallery Trash": {
+        "name": "Gallery Trash",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Gallery Trash",
+        "notes": "",
+        "paths": ('*/data/com.sec.android.gallery3d/databases/local.db*',),
+        "output_types": None,
+        "function": "get_galleryTrash",
+        "artifact_icon": "image",
+    }
+}
+
 import sqlite3
 import json
 import datetime
@@ -66,10 +84,3 @@ def get_galleryTrash(files_found, report_folder, seeker, wrap_text):
                 
             else:
                 logfunc('No Gallery Trash Files data available')
-
-__artifacts__ = {
-        "Gallery Trash": (
-                "Gallery Trash",
-                ('*/data/com.sec.android.gallery3d/databases/local.db*','*/data/com.sec.android.gallery3d/files/.Trash/**'),
-                get_galleryTrash)
-}

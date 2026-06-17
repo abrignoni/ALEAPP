@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "runtimePerms": {
+        "name": "runtimePerms",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Permissions",
+        "notes": "",
+        "paths": ('*/system/users/*/runtime-permissions.xml',),
+        "output_types": None,
+        "function": "get_runtimePerms",
+        "artifact_icon": "activity",
+    }
+}
+
 import xml.etree.ElementTree as ET 
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -61,9 +79,3 @@ def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
                     tsvname = f'Runtime Permissions_{user}'
                     tsv(report_folder, data_headers, data_list, tsvname)
                 
-__artifacts__ = {
-        "runtimePerms": (
-                "Permissions",
-                ('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml'),
-                get_runtimePerms)
-}

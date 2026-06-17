@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "suggestions": {
+        "name": "suggestions",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml',),
+        "output_types": None,
+        "function": "get_suggestions",
+        "artifact_icon": "clock",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -42,10 +60,3 @@ def get_suggestions(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Suggestions XML data available')
-
-__artifacts__ = {
-        "suggestions": (
-                "Wipe & Setup",
-                ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
-                get_suggestions)
-}

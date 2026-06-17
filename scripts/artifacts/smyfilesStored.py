@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "smyfilesStored": {
+        "name": "smyfilesStored",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*',),
+        "output_types": None,
+        "function": "get_smyfilesStored",
+        "artifact_icon": "file",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -66,10 +84,3 @@ def get_smyfilesStored(files_found, report_folder, seeker, text_wrap):
         logfunc('No My Files DB Stored data available')
     
     db.close()
-
-__artifacts__ = {
-        "smyfilesStored": (
-                "My Files",
-                ('*/com.sec.android.app.myfiles/databases/FileCache.db*'),
-                get_smyfilesStored)
-}

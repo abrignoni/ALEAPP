@@ -1,5 +1,20 @@
-# Update 2023-05-01 from @KevinPagano3 (https://startme.stark4n6.com)
-# Added support for parsing gboard_clipboard.db database
+__artifacts_v2__ = {
+    "GboardCache": {
+        "name": "GboardCache",
+        "description": "Update 2023-05-01 from @KevinPagano3 (https://startme.stark4n6.com)",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Gboard Keyboard",
+        "notes": "",
+        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db',),
+        "output_types": None,
+        "function": "get_gboardCache",
+        "artifact_icon": "chrome",
+    }
+}
 
 import blackboxprotobuf
 import os
@@ -311,10 +326,3 @@ def read_trainingcachev3_sessions(file_found, report_folder, seeker):
 
     # Close
     conn.close()
-
-__artifacts__ = {
-        "GboardCache": (
-                "Gboard Keyboard",
-                ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db','*/com.google.android.inputmethod.latin/databases/gboard_clipboard.db*','*/com.google.android.inputmethod.latin/files/clipboard_image/*'),
-                get_gboardCache)
-}

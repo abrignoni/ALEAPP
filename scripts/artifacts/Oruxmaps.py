@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Oruxmaps": {
+        "name": "Oruxmaps",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('**/oruxmaps/tracklogs/oruxmapstracks.db*',),
+        "output_types": None,
+        "function": "get_Oruxmaps",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -69,10 +87,3 @@ def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
         logfunc('No Oruxmaps Tracks data available')
 
     db.close()
-
-__artifacts__ = {
-        "Oruxmaps": (
-                "GEO Location",
-                ('**/oruxmaps/tracklogs/oruxmapstracks.db*'),
-                get_Oruxmaps)
-}

@@ -1,8 +1,20 @@
-# Get Information stored in the Garmin Log file
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "GarminLog": {
+        "name": "GarminLog",
+        "description": "Get Information stored in the Garmin Log file",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Garmin-Files",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/files/logs/app.log*',),
+        "output_types": None,
+        "function": "get_log",
+        "artifact_icon": "activity",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv
@@ -60,10 +72,3 @@ def get_log(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc("No Garmin Log data found")
 
-
-__artifacts__ = {
-    "GarminLog": (
-        "Garmin-Files",
-        ('*/com.garmin.android.apps.connectmobile/files/logs/app.log*'),
-        get_log)
-}

@@ -1,8 +1,20 @@
-# Burner
-# Author:  Josh Hickman (josh@thebinaryhick.blog)
-# Date 2021-02-05
-# Version: 0.1
-# Requirements:  None
+__artifacts_v2__ = {
+    "Burner": {
+        "name": "Burner",
+        "description": "Burner",
+        "author": "Josh Hickman (josh@thebinaryhick.blog)",
+        "version": "0.1",
+        "creation_date": "2021-02-05",
+        "last_updated_date": "2021-02-05",
+        "requirements": "None",
+        "category": "Burner",
+        "notes": "",
+        "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
+        "output_types": None,
+        "function": "get_burner",
+        "artifact_icon": "shield",
+    }
+}
 
 import os
 import sqlite3
@@ -108,9 +120,3 @@ def get_burner(files_found, report_folder, seeker, wrap_text):
                 
         db.close()
         
-__artifacts__ = {
-        "Burner": (
-                "Burner",
-                ('*/com.adhoclabs.burner/databases/burners.db'),
-                get_burner)
-}

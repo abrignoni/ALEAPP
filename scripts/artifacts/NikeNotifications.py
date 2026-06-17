@@ -1,8 +1,20 @@
-# Get Information relative to the notifications stored in the database of the Nike Run Club Mobile application
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-18
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "NikeNotifications": {
+        "name": "NikeNotifications",
+        "description": "Get Information relative to the notifications stored in the database of the Nike Run Club Mobile application",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-18",
+        "last_updated_date": "2023-03-18",
+        "requirements": "Python 3.7 or higher",
+        "category": "Nike-Run",
+        "notes": "",
+        "paths": ('*/com.nike.plusgps/databases/ns_inbox.db*',),
+        "output_types": None,
+        "function": "get_nike_notifications",
+        "artifact_icon": "activity",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -67,10 +79,3 @@ def get_nike_notifications(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "NikeNotifications": (
-        "Nike-Run",
-        ('*/com.nike.plusgps/databases/ns_inbox.db*'),
-        get_nike_notifications)
-}

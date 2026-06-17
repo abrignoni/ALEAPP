@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "WordsWithFriends": {
+        "name": "WordsWithFriends",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chats",
+        "notes": "",
+        "paths": ('*/com.zynga.words/db/wf_database.sqlite',),
+        "output_types": None,
+        "function": "get_WordsWithFriends",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -49,10 +67,3 @@ def get_WordsWithFriends(files_found, report_folder, seeker, wrap_text):
         logfunc('No Words With Friends data available')
     
     db.close()
-
-__artifacts__ = {
-        "WordsWithFriends": (
-                "Chats",
-                ('*/com.zynga.words/db/wf_database.sqlite'),
-                get_WordsWithFriends)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Browser Location": {
+        "name": "Browser Location",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.android.browser/app_geolocation/CachedGeoposition.db',),
+        "output_types": None,
+        "function": "get_browserlocation",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -50,10 +68,3 @@ def get_browserlocation(files_found, report_folder, seeker, wrap_text):
             
         db.close()
         
-__artifacts__ = {
-        "Browser Location": (
-                "GEO Location",
-                ('*/com.android.browser/app_geolocation/CachedGeoposition.db'),
-                get_browserlocation)
-}
-    

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "oldpowerOffReset": {
+        "name": "oldpowerOffReset",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Power Events",
+        "notes": "",
+        "paths": ('*/log/power_off_reset_reason.txt',),
+        "output_types": None,
+        "function": "get_oldpowerOffReset",
+        "artifact_icon": "battery",
+    }
+}
+
 from datetime import datetime
 import os
 from pathlib import Path
@@ -36,10 +54,3 @@ def get_oldpowerOffReset(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc(f'Power Off Reset file available')
-
-__artifacts__ = {
-        "oldpowerOffReset": (
-                "Power Events",
-                ('*/log/power_off_reset_reason.txt','*/log/power_off_reset_reason_backup.txt'),
-                get_oldpowerOffReset)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "line": {
+        "name": "line",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Line",
+        "notes": "",
+        "paths": ('*/jp.naver.line.android/databases/**',),
+        "output_types": None,
+        "function": "get_line",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -179,9 +197,3 @@ def get_line(files_found, report_folder, seeker, wrap_text):
 
     db.close
     
-__artifacts__ = {
-        "line": (
-                "Line",
-                ('*/jp.naver.line.android/databases/**'),
-                get_line)
-}

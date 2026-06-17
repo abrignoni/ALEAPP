@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "NQVault": {
+        "name": "NQVault",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Encrypting Media apps",
+        "notes": "",
+        "paths": ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11',),
+        "output_types": None,
+        "function": "get_NQVault",
+        "artifact_icon": "image",
+    }
+}
+
 import itertools
 import re
 import string
@@ -269,11 +287,3 @@ def get_NQVault(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Database DB Found or no hashed PIN present.')
 
-
-__artifacts__ = {
-    "NQVault": (
-        "Encrypting Media apps",
-        ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11',
-         '*/SystemAndroid/Data/**', '/media/0/SystemAndroid/Data/322w465ay423xy11'),
-        get_NQVault)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "GoogleNowPlaying": {
+        "name": "GoogleNowPlaying",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Now Playing",
+        "notes": "",
+        "paths": ('*/com.google.intelligence.sense/db/history_db*',),
+        "output_types": None,
+        "function": "get_googleNowPlaying",
+        "artifact_icon": "chrome",
+    }
+}
+
 import blackboxprotobuf
 import json
 import sqlite3
@@ -136,10 +154,3 @@ def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Now Playing history')
 
         db.close()
-
-__artifacts__ = {
-        "GoogleNowPlaying": (
-                "Now Playing",
-                ('*/com.google.intelligence.sense/db/history_db*','*/com.google.android.as/databases/history_db*'),
-                get_googleNowPlaying)
-}

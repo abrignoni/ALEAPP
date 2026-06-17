@@ -1,9 +1,20 @@
-# MEGA
-# Author:  Kevin Pagano (@KevinPagano3)
-# Website: stark4n6.com
-# Date 2021-01-31
-# Version: 0.1
-# Requirements:  None
+__artifacts_v2__ = {
+    "mega": {
+        "name": "mega",
+        "description": "MEGA",
+        "author": "Kevin Pagano (@KevinPagano3)",
+        "version": "0.1",
+        "creation_date": "2021-01-31",
+        "last_updated_date": "2021-01-31",
+        "requirements": "None",
+        "category": "Mega",
+        "notes": "",
+        "paths": ('*/mega.privacy.android.app/karere-*.db*',),
+        "output_types": None,
+        "function": "get_mega",
+        "artifact_icon": "download",
+    }
+}
 
 import json
 import os
@@ -82,10 +93,3 @@ def get_mega(files_found, report_folder, seeker, wrap_text):
             logfunc('No MEGA - Chat data available')
         
         db.close()
-
-__artifacts__ = {
-        "mega": (
-                "Mega",
-                ('*/mega.privacy.android.app/karere-*.db*'),
-                get_mega)
-}

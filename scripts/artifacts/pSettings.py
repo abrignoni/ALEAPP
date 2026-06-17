@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "pSettings": {
+        "name": "pSettings",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Device Info",
+        "notes": "",
+        "paths": ('*/com.google.android.gsf/databases/googlesettings.db*',),
+        "output_types": None,
+        "function": "get_pSettings",
+        "artifact_icon": "settings",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -42,9 +60,3 @@ def get_pSettings(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Partner Settings data available')
             
-__artifacts__ = {
-        "pSettings": (
-                "Device Info",
-                ('*/com.google.android.gsf/databases/googlesettings.db*'),
-                get_pSettings)
-}

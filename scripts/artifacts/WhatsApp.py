@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "WhatsApp": {
+        "name": "WhatsApp",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "WhatsApp",
+        "notes": "",
+        "paths": ('*com.whatsapp*',),
+        "output_types": None,
+        "function": "get_WhatsApp",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import xmltodict
 
@@ -481,10 +499,3 @@ def get_WhatsApp(files_found, report_folder, seeker, _wrap_text):
                     logfunc("No WhatsApp - Profile data found")
 
 
-
-__artifacts__ = {
-    "WhatsApp": (
-        "WhatsApp",
-        ('*com.whatsapp*', '*/com.whatsapp/databases/*.db*','*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml','*/com.whatsapp/shared_prefs/startup_prefs.xml','*/com.whatsapp/shared_prefs/reg_prefs.xml','*/WhatsApp Images/*.*','*/WhatsApp Video/*.*'),
-        get_WhatsApp)
-}

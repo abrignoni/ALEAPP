@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ChromeNetworkActionPredictor": {
+        "name": "ChromeNetworkActionPredictor",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_Chrome/Default/Network Action Predictor*',),
+        "output_types": None,
+        "function": "get_chromeNetworkActionPredictor",
+        "artifact_icon": "wifi",
+    }
+}
+
 import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
@@ -52,10 +70,3 @@ def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_te
             logfunc(f'No {browser_name} - Network Action Predictor data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeNetworkActionPredictor": (
-                "Chromium",
-                ('*/app_Chrome/Default/Network Action Predictor*','*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predicator*','*/app_webview/Default/Network Action Predictor*'),
-                get_chromeNetworkActionPredictor)
-}

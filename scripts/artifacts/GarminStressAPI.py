@@ -1,9 +1,21 @@
-# Get Information from Garmin Stress API
-# Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher, json and datetime
+__artifacts_v2__ = {
+    "GarminStressAPI": {
+        "name": "GarminStressAPI",
+        "description": "Get Information from Garmin Stress API",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher, json and datetime",
+        "category": "Garmin-API",
+        "notes": "",
+        "paths": ('*/garmin.api/stress*',),
+        "output_types": None,
+        "function": "get_stress_api",
+        "artifact_icon": "activity",
+    }
+}
+
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -70,10 +82,3 @@ def get_stress_api(files_found, report_folder, seeker, wrap_text):
     tsvname = f'Garmin Log'
     tsv(report_folder, data_headers, data_list, tsvname)
 
-
-__artifacts__ = {
-    "GarminStressAPI": (
-        "Garmin-API",
-        ('*/garmin.api/stress*'),
-        get_stress_api)
-}

@@ -1,10 +1,20 @@
-# Google Chat Messages & Group Information
-# Author:  Josh Hickman (josh@thebinaryhick.blog) & Alexis Brignoni (https://linqapp.com/abrignoni)
-# Date 2021-02-05
-# Version: 0.2
-# Requirements:  blackboxprotobuf
-# Updated 2023-04-13 by Kevin Pagano (https://startme.stark4n6.com)
-# Fix path, add Drafts and User details
+__artifacts_v2__ = {
+    "GoogleChat": {
+        "name": "GoogleChat",
+        "description": "Google Chat Messages & Group Information",
+        "author": "Josh Hickman (josh@thebinaryhick.blog) & Alexis Brignoni (https://linqapp.com/abrignoni)",
+        "version": "0.2",
+        "creation_date": "2021-02-05",
+        "last_updated_date": "2021-02-05",
+        "requirements": "blackboxprotobuf",
+        "category": "Google Chat",
+        "notes": "",
+        "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*',),
+        "output_types": None,
+        "function": "get_googleChat",
+        "artifact_icon": "message-square",
+    }
+}
 
 import os
 import sqlite3
@@ -207,9 +217,3 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text):
         else:
             pass
     db.close
-__artifacts__ = {
-        "GoogleChat": (
-                "Google Chat",
-                ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*','*/com.google.android.apps.dynamite/databases/dynamite.db*','*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
-                get_googleChat)
-}

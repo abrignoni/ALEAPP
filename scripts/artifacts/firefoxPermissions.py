@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "FirefoxPermissions": {
+        "name": "FirefoxPermissions",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*',),
+        "output_types": None,
+        "function": "get_firefoxPermissions",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -55,9 +73,3 @@ def get_firefoxPermissions(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "FirefoxPermissions": (
-                "Firefox",
-                ('*/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*'),
-                get_firefoxPermissions)
-}

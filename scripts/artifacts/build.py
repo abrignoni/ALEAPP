@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Build": {
+        "name": "Build",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Device Info",
+        "notes": "",
+        "paths": ('*/vendor/build.prop',),
+        "output_types": None,
+        "function": "get_build",
+        "artifact_icon": "info",
+    }
+}
+
 import os
 import scripts.artifacts.artGlobals 
 
@@ -67,10 +85,3 @@ def get_build(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc(f'No Build Info data available')    
-
-__artifacts__ = {
-        "Build": (
-                "Device Info",
-                ('*/vendor/build.prop'),
-                get_build)
-}

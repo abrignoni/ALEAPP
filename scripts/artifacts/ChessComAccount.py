@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ChessComAcct": {
+        "name": "ChessComAcct",
+        "description": "Data results",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chess.com",
+        "notes": "",
+        "paths": ('*/com.chess/shared_prefs/com.chess.app.login_credentials.xml',),
+        "output_types": None,
+        "function": "get_ChessComAccount",
+        "artifact_icon": "grid",
+    }
+}
+
 import sqlite3
 import textwrap
 import xml.etree.ElementTree as ET
@@ -47,12 +65,3 @@ def get_ChessComAccount(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-        "ChessComAcct": (
-                "Chess.com",
-                ('*/com.chess/shared_prefs/com.chess.app.login_credentials.xml', '*/data/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
-                get_ChessComAccount)
-}
- 
-

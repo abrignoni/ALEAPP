@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "protonmail": {
+        "name": "protonmail",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "ProtonMail",
+        "notes": "",
+        "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*',),
+        "output_types": None,
+        "function": "get_protonmail",
+        "artifact_icon": "mail",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -124,9 +142,3 @@ def get_protonmail(files_found, report_folder, seeker, wrap_text):
         else:
             continue
         
-__artifacts__ = {
-        "protonmail": (
-                "ProtonMail",
-                ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*','*/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
-                get_protonmail)
-}

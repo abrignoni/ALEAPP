@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "cmh": {
+        "name": "cmh",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Samsung_CMH",
+        "notes": "",
+        "paths": ('*/cmh.db',),
+        "output_types": None,
+        "function": "get_cmh",
+        "artifact_icon": "file",
+    }
+}
+
 import glob
 import json
 import os
@@ -54,10 +72,3 @@ def get_cmh(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc(f'No Samsung_CMH_GeoData available')    
     db.close()
-
-__artifacts__ = {
-        "cmh": (
-                "Samsung_CMH",
-                ('*/cmh.db'),
-                get_cmh)
-}

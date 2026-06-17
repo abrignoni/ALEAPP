@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "TorrentData": {
+        "name": "TorrentData",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Torrent Data",
+        "notes": "",
+        "paths": ('*/*.torrent',),
+        "output_types": None,
+        "function": "get_TorrentData",
+        "artifact_icon": "download",
+    }
+}
+
 import sqlite3
 import textwrap
 import bencoding
@@ -114,10 +132,3 @@ def get_TorrentData(files_found, report_folder, seeker, wrap_text):
         logfunc('No Torrent Data available')
         
 
-
-__artifacts__ = {
-        "TorrentData": (
-                "Torrent Data",
-                ('*/*.torrent'),
-                get_TorrentData)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "wifiProfiles": {
+        "name": "wifiProfiles",
+        "description": "Create sqlite databases",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "WiFi Profiles",
+        "notes": "",
+        "paths": ('*/misc/wifi/WifiConfigStore.xml',),
+        "output_types": None,
+        "function": "get_wifiProfiles",
+        "artifact_icon": "wifi",
+    }
+}
+
 import os
 import xml.etree.ElementTree as ET
 import textwrap
@@ -166,10 +184,3 @@ def get_wifiProfiles(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No Wi-Fi Profiles data available')
-
-__artifacts__ = {
-        "wifiProfiles": (
-                "WiFi Profiles",
-                ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
-                get_wifiProfiles)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "App Locker": {
+        "name": "App Locker",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": "",
+        "paths": ('*/.privacy_safe/picture/*',),
+        "output_types": None,
+        "function": "get_appLockerfishingnet",
+        "artifact_icon": "image",
+    }
+}
+
 import sys
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
@@ -83,10 +101,3 @@ def get_appLockerfishingnet(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Calculator Locker data available')
-
-__artifacts__ = {
-        "App Locker": (
-                "Encrypting Media Apps",
-                ('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*'),
-                get_appLockerfishingnet)
-}

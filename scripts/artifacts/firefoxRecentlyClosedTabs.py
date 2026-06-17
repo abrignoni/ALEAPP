@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "FirefoxRecentlyClosedTabs": {
+        "name": "FirefoxRecentlyClosedTabs",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/databases/recently_closed_tabs*',),
+        "output_types": None,
+        "function": "get_firefoxRecentlyClosedTabs",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -45,10 +63,3 @@ def get_firefoxRecentlyClosedTabs(files_found, report_folder, seeker, wrap_text)
             logfunc('No Firefox - Recently Closed Tabs data available')
         
         db.close()
-
-__artifacts__ = {
-        "FirefoxRecentlyClosedTabs": (
-                "Firefox",
-                ('*/org.mozilla.firefox/databases/recently_closed_tabs*'),
-                get_firefoxRecentlyClosedTabs)
-}

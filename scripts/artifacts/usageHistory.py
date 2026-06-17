@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Usagehistory": {
+        "name": "Usagehistory",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/usage-history.xml',),
+        "output_types": None,
+        "function": "get_usageHistory",
+        "artifact_icon": "globe",
+    }
+}
+
 import xml.etree.ElementTree as ET  
 import datetime
 
@@ -45,10 +63,3 @@ def get_usageHistory(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('Usage History data available')
-
-__artifacts__ = {
-        "Usagehistory": (
-                "App Interaction",
-                ('*/usage-history.xml'),
-                get_usageHistory)
-}

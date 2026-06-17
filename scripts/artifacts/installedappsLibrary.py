@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "InstalledappsLibrary": {
+        "name": "InstalledappsLibrary",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Installed Apps",
+        "notes": "",
+        "paths": ('*/com.android.vending/databases/library.db*',),
+        "output_types": None,
+        "function": "get_installedappsLibrary",
+        "artifact_icon": "package",
+    }
+}
+
 import sqlite3
 from pathlib import Path
 
@@ -51,10 +69,3 @@ def get_installedappsLibrary(files_found, report_folder, seeker, wrap_text):
                 logfunc(f'No Installed Apps (Library) data available for user {user}')
             
     db.close()
-
-__artifacts__ = {
-        "InstalledappsLibrary": (
-                "Installed Apps",
-                ('*/com.android.vending/databases/library.db*'),
-                get_installedappsLibrary)
-}

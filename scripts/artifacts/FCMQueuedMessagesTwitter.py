@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "FCM_Twitter": {
+        "name": "FCM_Twitter",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": None,
+        "function": "get_fcm_twitter",
+        "artifact_icon": "database",
+    }
+}
+
 """
 Copyright 2022, CCL Forensics
 
@@ -137,10 +155,3 @@ def get_fcm_twitter(files_found, report_folder, seeker, wrap_text):
     scripts.ilapfuncs.logfunc("Un-processed 'channels' (contact R&D if you think these are required for your case):")
     scripts.ilapfuncs.logfunc("\n".join(channels))
 
-
-__artifacts__ = {
-    "FCM_Twitter": (
-        "Firebase Cloud Messaging",
-        ('*/fcm_queued_messages.ldb/*'),
-        get_fcm_twitter)
-}

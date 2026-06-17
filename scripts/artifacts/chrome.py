@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Chrome": {
+        "name": "Chrome",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/History*',),
+        "output_types": None,
+        "function": "get_chrome",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import textwrap
 import urllib.parse
@@ -366,10 +384,3 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
         
         
         db.close()
-
-__artifacts__ = {
-        "Chrome": (
-                "Chromium",
-                ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
-                get_chrome)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "torThumbs": {
+        "name": "torThumbs",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "TOR",
+        "notes": "",
+        "paths": ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/thumbnails/*.0',),
+        "output_types": None,
+        "function": "get_torThumbs",
+        "artifact_icon": "file",
+    }
+}
+
 import os
 import datetime
 from pathlib import Path
@@ -53,9 +71,3 @@ def get_torThumbs(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No TOR Thumbnails data available')
         
-__artifacts__ = {
-        "torThumbs": (
-                "TOR",
-                ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/thumbnails/*.0'),
-                get_torThumbs)
-}

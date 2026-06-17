@@ -1,8 +1,21 @@
-# Get Information related to the activities of the user from the Map My Walk app
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-25
-# Version: 1.0
-# Requirements: Python 3.7 or higher, folium
+__artifacts_v2__ = {
+    "MapWalkActivities": {
+        "name": "MapWalkActivities",
+        "description": "Get Information related to the activities of the user from the Map My Walk app",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-25",
+        "last_updated_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher, folium",
+        "category": "Map-My-Walk",
+        "notes": "",
+        "paths": ('*com.mapmywalk.android2/databases/workout.db*',),
+        "output_types": None,
+        "function": "get_map_activities",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import datetime
 import json
 import os
@@ -275,10 +288,3 @@ def get_map_activities(files_found, report_folder, seeker, wrap_text):
         conn.close()
     db.close()
 
-
-__artifacts__ = {
-    "MapWalkActivities": (
-        "Map-My-Walk",
-        ('*com.mapmywalk.android2/databases/workout.db*'),
-        get_map_activities)
-}

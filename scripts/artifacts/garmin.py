@@ -1,7 +1,20 @@
-# Module Description: Parses the Garmin app for activities, connections and notifications
-# Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
-# Date: 2023-01-18
-# Artifact version: 0.0.1
+__artifacts_v2__ = {
+    "Garmin": {
+        "name": "Garmin",
+        "description": "Module Description: Parses the Garmin app for activities, connections and notifications",
+        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "version": "1.0",
+        "creation_date": "2023-01-18",
+        "last_updated_date": "2023-01-18",
+        "requirements": "none",
+        "category": "Garmin",
+        "notes": "",
+        "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*',),
+        "output_types": None,
+        "function": "get_garmin",
+        "artifact_icon": "activity",
+    }
+}
 
 import calendar
 import os
@@ -365,9 +378,3 @@ def get_garmin(files_found, report_folder, seeker, wrap_text):
         else:
             break
     
-__artifacts__ = {
-        "Garmin": (
-                "Garmin",
-                ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*','*/data/com.garmin.android.apps.connectmobile/databases/notification-database*','*/data/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-                get_garmin)
-}

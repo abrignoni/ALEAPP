@@ -1,3 +1,20 @@
+__artifacts_v2__ = {
+    "App Locker DB": {
+        "name": "App Locker DB",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": "",
+        "paths": ('*/.privacy_safe/db/privacy_safe.db',),
+        "output_types": None,
+        "function": "get_appLockerfishingnetdb",
+        "artifact_icon": "image",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
@@ -30,9 +47,3 @@ def get_appLockerfishingnetdb(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Calculator Locker Database data available')
             
-__artifacts__ = {
-        "App Locker DB": (
-                "Encrypting Media Apps",
-                ('*/.privacy_safe/db/privacy_safe.db'),
-                get_appLockerfishingnetdb)
-}

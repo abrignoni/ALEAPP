@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "GoogleKeepNotes": {
+        "name": "GoogleKeepNotes",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Google Keep",
+        "notes": "",
+        "paths": ('*/com.google.android.keep/databases/keep.db*',),
+        "output_types": None,
+        "function": "get_googleKeepNotes",
+        "artifact_icon": "file-text",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -134,9 +152,3 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
             logfunc("No Google Keep - Notes Sharing data found")
         db.close()
         
-__artifacts__ = {
-        "GoogleKeepNotes": (
-                "Google Keep",
-                ('*/com.google.android.keep/databases/keep.db*'),
-                get_googleKeepNotes)
-}

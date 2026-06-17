@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "wifiConfigstore2": {
+        "name": "wifiConfigstore2",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "WiFi Profiles",
+        "notes": "",
+        "paths": ('*/misc/wifi/WifiConfigStore.xml',),
+        "output_types": None,
+        "function": "get_wifiConfigstore",
+        "artifact_icon": "wifi",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -125,9 +143,3 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
             else:
                 logfunc(f'No Wifi Configuration Store {count} data available')
             
-__artifacts__ = {
-        "wifiConfigstore2": (
-                "WiFi Profiles",
-                ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
-                get_wifiConfigstore)
-}

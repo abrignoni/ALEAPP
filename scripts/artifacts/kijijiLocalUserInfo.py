@@ -1,17 +1,21 @@
-# Kijiji Local User Information
-# Author:  Terry Chabot (Krypterry)
-# Version: 1.0.1
-# Kijiji App Version Tested: v17.5.0b172 (2022-05-06)
-# Requirements:  None
-#
-#   Description:
-#   Obtains information about the logged-in Kijiji application user.
-#
-#   Additional Info:
-#       Kijiji.ca is a Canadian online classified advertising website and part of eBay Classifieds Group, with over 16 million unique visitors per month.
-#
-#       Kijiji, May 2022 <https://help.kijiji.ca/helpdesk/basics/what-is-kijiji>
-#       Wikipedia - The Free Encyclopedia, May 2022, <https://en.wikipedia.org/wiki/Kijiji>
+__artifacts_v2__ = {
+    "kijijiLocalUserInfo": {
+        "name": "kijijiLocalUserInfo",
+        "description": "Kijiji Local User Information",
+        "author": "Terry Chabot (Krypterry)",
+        "version": "1.0.1",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "None",
+        "category": "Kijiji Local User Information",
+        "notes": "",
+        "paths": ('*/com.ebay.kijiji.ca/shared_prefs/LoginData.xml',),
+        "output_types": None,
+        "function": "get_kijijiLocalUserInfo",
+        "artifact_icon": "user",
+    }
+}
+
 import xml.etree.ElementTree as ET
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -54,10 +58,3 @@ def get_kijijiLocalUserInfo(files_found, report_folder, seeker, wrap_text):
     
     tsvname = f'Kijiji Local User Information'
     tsv(report_folder, data_headers, data_list, tsvname)    
-
-__artifacts__ = {
-        "kijijiLocalUserInfo": (
-                "Kijiji Local User Information",
-                ('*/com.ebay.kijiji.ca/shared_prefs/LoginData.xml'),
-                get_kijijiLocalUserInfo)
-}

@@ -1,8 +1,21 @@
-# Get Information relative to the user activities that are present in the database (cache-database) from the Garmin Connect app, the activities are stored in two different tables (activities_details and activities_summaries)
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher and json
+__artifacts_v2__ = {
+    "GarminActivities": {
+        "name": "GarminActivities",
+        "description": "Get Information relative to the user activities that are present in the database (cache-database) from the Garmin Connect app, the activities are stored in two different tables (activities_details and activities_summaries)",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher and json",
+        "category": "Garmin-Cache",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
+        "output_types": None,
+        "function": "get_garmin_activities",
+        "artifact_icon": "activity",
+    }
+}
+
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -133,10 +146,3 @@ def get_garmin_activities(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "GarminActivities": (
-        "Garmin-Cache",
-        ('*/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-        get_garmin_activities)
-}

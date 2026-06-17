@@ -1,4 +1,20 @@
-#2023-02-03: Added support for new msys_database format - Kevin Pagano
+__artifacts_v2__ = {
+    "FacebookMessenger": {
+        "name": "FacebookMessenger",
+        "description": "2023-02-03: Added support for new msys_database format - Kevin Pagano",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Facebook Messenger",
+        "notes": "",
+        "paths": ('*/*threads_db2*',),
+        "output_types": None,
+        "function": "get_FacebookMessenger",
+        "artifact_icon": "message-square",
+    }
+}
 
 import os
 import sqlite3
@@ -370,9 +386,3 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         else:
             continue # Skip all other files
     
-__artifacts__ = {
-        "FacebookMessenger": (
-                "Facebook Messenger",
-                ('*/*threads_db2*','*/msys_database*'),
-                get_FacebookMessenger)
-}

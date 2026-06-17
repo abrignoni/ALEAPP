@@ -1,4 +1,20 @@
-
+__artifacts_v2__ = {
+    "packageGplinks": {
+        "name": "packageGplinks",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Installed Apps",
+        "notes": "",
+        "paths": ('*/system/packages.list',),
+        "output_types": None,
+        "function": "get_packageGplinks",
+        "artifact_icon": "package",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -33,10 +49,3 @@ def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc('No Google Play Links for Apps data available')
-
-__artifacts__ = {
-        "packageGplinks": (
-                "Installed Apps",
-                ('*/system/packages.list'),
-                get_packageGplinks)
-}

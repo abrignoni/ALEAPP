@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "hikvision": {
+        "name": "hikvision",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Hikvision",
+        "notes": "",
+        "paths": ('*/com.connect.enduser/databases/database.hik*',),
+        "output_types": None,
+        "function": "get_hikvision",
+        "artifact_icon": "video",
+    }
+}
+
 """"
 Developed by Evangelos D. (@theAtropos4n6)
 
@@ -196,11 +214,3 @@ def get_hikvision(files_found, report_folder, seeker, wrap_text):
                         logfunc(f'No Hikvision - User Created Media data available')
 
                     db.close()
-
-__artifacts__ = {
-        "hikvision": (
-                "Hikvision",
-                ('*/com.connect.enduser/databases/database.hik*','*/com.connect.enduser/databases/ezvizlog.db',
-                 '*/com.connect.enduser/databases/image.db*','*/0/Pictures/Hik-Connect Album/*'),
-                get_hikvision)
-}

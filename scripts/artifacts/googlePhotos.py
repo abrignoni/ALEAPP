@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "GooglePhotos": {
+        "name": "GooglePhotos",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Google Photos",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
+        "output_types": None,
+        "function": "get_googlePhotos",
+        "artifact_icon": "image",
+    }
+}
+
 import os
 import shutil
 
@@ -421,10 +439,3 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
             
         else:
             continue
-
-__artifacts__ = {
-        "GooglePhotos": (
-                "Google Photos",
-                ('*/com.google.android.apps.photos/databases/gphotos*.db*','*/com.google.android.apps.photos/databases/disk_cache*','*/com.google.android.apps.photos/cache/glide_cache/*','*/com.google.android.apps.photos/databases/local_trash.db*','*/com.google.android.apps.photos/files/trash_files/*'),
-                get_googlePhotos)
-}

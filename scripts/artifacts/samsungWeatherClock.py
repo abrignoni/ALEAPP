@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "samsungWeatherClock": {
+        "name": "samsungWeatherClock",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Samsung Weather Clock",
+        "notes": "",
+        "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
+        "output_types": None,
+        "function": "get_samsungWeatherClock",
+        "artifact_icon": "lock",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -135,11 +153,3 @@ def get_samsungWeatherClock(files_found, report_folder, seeker, wrap_text):
             logfunc('No Samsung Weather Clock - Hourly data available')
         
     db.close()
-
-__artifacts__ = {
-        "samsungWeatherClock": (
-                "Samsung Weather Clock",
-                ('*/com.sec.android.daemonapp/databases/WeatherClock*'),
-                get_samsungWeatherClock)
-}
-

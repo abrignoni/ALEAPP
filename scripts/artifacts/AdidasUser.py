@@ -1,8 +1,21 @@
-# Get Information related to users from the Adidas Running app stored in user.db
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "AdidasUser": {
+        "name": "AdidasUser",
+        "description": "Get Information related to users from the Adidas Running app stored in user.db",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-24",
+        "last_updated_date": "2023-03-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Adidas-Running",
+        "notes": "",
+        "paths": ('*com.runtastic.android/databases/user.db*',),
+        "output_types": None,
+        "function": "get_adidas_user",
+        "artifact_icon": "user",
+    }
+}
+
 import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -92,10 +105,3 @@ def get_adidas_user(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "AdidasUser": (
-        "Adidas-Running",
-        ('*com.runtastic.android/databases/user.db*'),
-        get_adidas_user)
-}

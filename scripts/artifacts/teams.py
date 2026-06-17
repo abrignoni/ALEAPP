@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "teams": {
+        "name": "teams",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Teams",
+        "notes": "",
+        "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
+        "output_types": None,
+        "function": "get_teams",
+        "artifact_icon": "message-square",
+    }
+}
+
 import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
@@ -199,11 +217,3 @@ def get_teams(files_found, report_folder, seeker, wrap_text):
             logfunc('No Teams File Info data available')
             
     db.close()
-
-__artifacts__ = {
-        "teams": (
-                "Teams",
-                ('*/com.microsoft.teams/databases/SkypeTeams.db*'),
-                get_teams)
-}
-    

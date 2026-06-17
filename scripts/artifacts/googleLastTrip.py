@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "googleLastTrip": {
+        "name": "googleLastTrip",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/files/saved_directions.data.cs',),
+        "output_types": None,
+        "function": "get_googleLastTrip",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import blackboxprotobuf
 from datetime import *
 from scripts.artifact_report import ArtifactHtmlReport
@@ -76,10 +94,3 @@ def get_googleLastTrip(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc(f'No Google Maps Last Trip available')
-
-__artifacts__ = {
-        "googleLastTrip": (
-                "GEO Location",
-                ('*/com.google.android.apps.maps/files/saved_directions.data.cs'),
-                get_googleLastTrip)
-}

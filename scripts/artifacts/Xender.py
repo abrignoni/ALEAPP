@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Xender": {
+        "name": "Xender",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "File Transfer",
+        "notes": "",
+        "paths": ('*/cn.xender/databases/trans-history-db*',),
+        "output_types": None,
+        "function": "get_Xender",
+        "artifact_icon": "download",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -89,10 +107,3 @@ def get_Xender(files_found, report_folder, seeker, wrap_text):
         logfunc('No Xender file transfer messages data available')
 
     db.close()
-
-__artifacts__ = {
-        "Xender": (
-                "File Transfer",
-                ('*/cn.xender/databases/trans-history-db*'),
-                get_Xender)
-}

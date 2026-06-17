@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "tangomessage": {
+        "name": "tangomessage",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Tango",
+        "notes": "",
+        "paths": ('*/com.sgiggle.production/files/tc.db*',),
+        "output_types": None,
+        "function": "get_tangomessage",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import base64
 import datetime
@@ -65,10 +83,3 @@ def get_tangomessage(files_found, report_folder, seeker, wrap_text):
         logfunc('No Tango Messages data available')
 
     db.close()
-
-__artifacts__ = {
-        "tangomessage": (
-                "Tango",
-                ('*/com.sgiggle.production/files/tc.db*'),
-                get_tangomessage)
-}

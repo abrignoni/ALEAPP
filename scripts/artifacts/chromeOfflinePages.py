@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ChromeOfflinePages": {
+        "name": "ChromeOfflinePages",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*',),
+        "output_types": None,
+        "function": "get_chromeOfflinePages",
+        "artifact_icon": "message-square",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -60,10 +78,3 @@ def get_chromeOfflinePages(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Offline Pages data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeOfflinePages": (
-                "Chromium",
-                ('*/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '*/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*', '*/app_webview/Default/Offline Pages/metadata/OfflinePages.db*'),
-                get_chromeOfflinePages)
-}

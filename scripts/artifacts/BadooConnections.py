@@ -1,8 +1,20 @@
-# Get Information related to possible connections (messages, views etc) of the user with other users from the Badoo app (com.badoo.mobile)
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-05-03
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "BadooConnections": {
+        "name": "BadooConnections",
+        "description": "Get Information related to possible connections (messages, views etc) of the user with other users from the Badoo app (com.badoo.mobile)",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-05-03",
+        "last_updated_date": "2023-05-03",
+        "requirements": "Python 3.7 or higher",
+        "category": "Badoo",
+        "notes": "",
+        "paths": ('*com.badoo.mobile/databases/CombinedConnectionsDatabase*',),
+        "output_types": None,
+        "function": "get_badoo_conn",
+        "artifact_icon": "users",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -55,10 +67,3 @@ def get_badoo_conn(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "BadooConnections": (
-        "Badoo",
-        ('*com.badoo.mobile/databases/CombinedConnectionsDatabase*'),
-        get_badoo_conn)
-}

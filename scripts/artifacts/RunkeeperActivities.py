@@ -1,8 +1,21 @@
-# Get Information related to the activities of the user from the Runkeeper app database
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-25
-# Version: 1.0
-# Requirements: Python 3.7 or higher, folium
+__artifacts_v2__ = {
+    "RunkeeperActivities": {
+        "name": "RunkeeperActivities",
+        "description": "Get Information related to the activities of the user from the Runkeeper app database",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-25",
+        "last_updated_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher, folium",
+        "category": "Runkeeper",
+        "notes": "",
+        "paths": ('*com.fitnesskeeper.runkeeper.pro/databases/RunKeeper.sqlite*',),
+        "output_types": None,
+        "function": "get_run_activities",
+        "artifact_icon": "activity",
+    }
+}
+
 import datetime
 import json
 import os
@@ -251,10 +264,3 @@ def get_run_activities(files_found, report_folder, seeker, wrap_text):
         conn.close()
     db.close()
 
-
-__artifacts__ = {
-    "RunkeeperActivities": (
-        "Runkeeper",
-        ('*com.fitnesskeeper.runkeeper.pro/databases/RunKeeper.sqlite*'),
-        get_run_activities)
-}

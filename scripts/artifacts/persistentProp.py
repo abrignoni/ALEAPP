@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "persistentProp": {
+        "name": "persistentProp",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/property/persistent_properties',),
+        "output_types": None,
+        "function": "get_persistentProp",
+        "artifact_icon": "info",
+    }
+}
+
 import os
 import datetime
 from scripts.artifact_report import ArtifactHtmlReport
@@ -49,9 +67,3 @@ def get_persistentProp(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Persistent Properties data available')
             
-__artifacts__ = {
-        "persistentProp": (
-                "Wipe & Setup",
-                ('*/property/persistent_properties'),
-                get_persistentProp)
-}

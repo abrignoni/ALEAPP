@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "GooglemapaudioT": {
+        "name": "GooglemapaudioT",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Google Maps Temp Voice Guidance",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/app_tts-temp/**',),
+        "output_types": None,
+        "function": "get_googlemapaudioTemp",
+        "artifact_icon": "map-pin",
+    }
+}
+
 from re import fullmatch
 from datetime import datetime
 from pathlib import Path
@@ -53,9 +71,3 @@ def get_googlemapaudioTemp(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Google Maps Temp Voice Guidance found')
             
-__artifacts__ = {
-        "GooglemapaudioT": (
-                "Google Maps Temp Voice Guidance",
-                ('*/com.google.android.apps.maps/app_tts-temp/**'),
-                get_googlemapaudioTemp)
-}

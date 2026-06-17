@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "torrentinfo": {
+        "name": "torrentinfo",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "BitTorrent",
+        "notes": "",
+        "paths": ('*/*.torrent',),
+        "output_types": None,
+        "function": "get_torrentinfo",
+        "artifact_icon": "download",
+    }
+}
+
 import bencoding
 import hashlib
 import datetime
@@ -62,10 +80,3 @@ def get_torrentinfo(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "torrentinfo": (
-        "BitTorrent",
-        ('*/*.torrent'),
-        get_torrentinfo)
-}

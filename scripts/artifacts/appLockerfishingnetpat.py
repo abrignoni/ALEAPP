@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "App Locker Pat": {
+        "name": "App Locker Pat",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": "",
+        "paths": ('*/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml',),
+        "output_types": None,
+        "function": "get_appLockerfishingnetpat",
+        "artifact_icon": "image",
+    }
+}
+
 import sys
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
@@ -39,9 +57,3 @@ def get_appLockerfishingnetpat(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Calculator Locker Pattern data available')
             
-__artifacts__ = {
-        "App Locker Pat": (
-                "Encrypting Media Apps",
-                ('*/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml'),
-                get_appLockerfishingnetpat)
-}

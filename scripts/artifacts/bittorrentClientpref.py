@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "BitTorrent Prefs": {
+        "name": "BitTorrent Prefs",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "BitTorrent",
+        "notes": "",
+        "paths": ('*/com.bittorrent.client/shared_prefs/com.bittorrent.client_preferences.xml',),
+        "output_types": None,
+        "function": "get_bittorrentClientpref",
+        "artifact_icon": "download",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -45,9 +63,3 @@ def get_bittorrentClientpref(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Bittorent Client Preferences data available')
         
-__artifacts__ = {
-        "BitTorrent Prefs": (
-                "BitTorrent",
-                ('*/com.bittorrent.client/shared_prefs/com.bittorrent.client_preferences.xml'),
-                get_bittorrentClientpref)
-}

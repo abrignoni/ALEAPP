@@ -1,8 +1,20 @@
-# Samsung SmartThings
-# Author: Kevin Pagano (@KevinPagno3)
-# Date: 2022-06-13
-# Artifact version: 0.0.1
-# Requirements: none
+__artifacts_v2__ = {
+    "samsungSmartThings": {
+        "name": "samsungSmartThings",
+        "description": "Samsung SmartThings",
+        "author": "Kevin Pagano (@KevinPagno3)",
+        "version": "1.0",
+        "creation_date": "2022-06-13",
+        "last_updated_date": "2022-06-13",
+        "requirements": "none",
+        "category": "Samsung SmartThings",
+        "notes": "",
+        "paths": ('*/com.samsung.android.oneconnect/databases/QcDB.db*',),
+        "output_types": None,
+        "function": "get_samsungSmartThings",
+        "artifact_icon": "file",
+    }
+}
 
 import sqlite3
 import textwrap
@@ -56,9 +68,3 @@ def get_samsungSmartThings(files_found, report_folder, seeker, wrap_text):
         
         db.close()
         
-__artifacts__ = {
-        "samsungSmartThings": (
-                "Samsung SmartThings",
-                ('*/com.samsung.android.oneconnect/databases/QcDB.db*'),
-                get_samsungSmartThings)
-}

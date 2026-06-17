@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Googlemapaudio": {
+        "name": "Googlemapaudio",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Google Maps Voice Guidance",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/app_tts-cache/*_*',),
+        "output_types": None,
+        "function": "get_googlemapaudio",
+        "artifact_icon": "map-pin",
+    }
+}
+
 from re import fullmatch
 from datetime import datetime
 from pathlib import Path
@@ -67,9 +85,3 @@ def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Google Audio Locations found')
             
-__artifacts__ = {
-        "Googlemapaudio": (
-                "Google Maps Voice Guidance",
-                ('*/com.google.android.apps.maps/app_tts-cache/*_*'),
-                get_googlemapaudio)
-}

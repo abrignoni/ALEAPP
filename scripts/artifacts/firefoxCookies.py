@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "FirefoxCookies": {
+        "name": "FirefoxCookies",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*',),
+        "output_types": None,
+        "function": "get_firefoxCookies",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -51,9 +69,3 @@ def get_firefoxCookies(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "FirefoxCookies": (
-                "Firefox",
-                ('*/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*'),
-                get_firefoxCookies)
-}

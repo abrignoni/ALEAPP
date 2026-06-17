@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "permissions": {
+        "name": "permissions",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Permissions",
+        "notes": "",
+        "paths": ('*/system/packages.xml',),
+        "output_types": None,
+        "function": "get_permissions",
+        "artifact_icon": "settings",
+    }
+}
+
 import xml.etree.ElementTree as ET 
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -90,10 +108,3 @@ def get_permissions(files_found, report_folder, seeker, wrap_text):
                     
                     tsvname = f'Permissions - Packages and Shared User'
                     tsv(report_folder, data_headers, data_list_packages_su, tsvname)
-
-__artifacts__ = {
-        "permissions": (
-                "Permissions",
-                ('*/system/packages.xml'),
-                get_permissions)
-}

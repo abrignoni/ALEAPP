@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "usagestats": {
+        "name": "usagestats",
+        "description": "Event types referenced from core\java\android\app\usage\UsageEvents.java",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Usage Stats",
+        "notes": "",
+        "paths": ('*/system/usagestats/*',),
+        "output_types": None,
+        "function": "get_usagestats",
+        "artifact_icon": "battery",
+    }
+}
+
 import glob
 import json
 import os
@@ -570,9 +588,3 @@ def process_usagestats(folder, uid, report_folder, version):
     logfunc(f'Records processed for user {uid}: {processed}')
     db.close()
     
-__artifacts__ = {
-    "usagestats": (
-        "Usage Stats",
-        ('*/system/usagestats/*', '*/system_ce/*/usagestats*'),
-        get_usagestats)
-}

@@ -1,8 +1,21 @@
-# Get Information related to the Garmin - Responses stored in the database cache
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher and json
+__artifacts_v2__ = {
+    "GarminResponse": {
+        "name": "GarminResponse",
+        "description": "Get Information related to the Garmin - Responses stored in the database cache",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher and json",
+        "category": "Garmin-Cache",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
+        "output_types": None,
+        "function": "get_garmin_response",
+        "artifact_icon": "activity",
+    }
+}
+
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -71,10 +84,3 @@ def get_garmin_response(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "GarminResponse": (
-        "Garmin-Cache",
-        ('*/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-        get_garmin_response)
-}

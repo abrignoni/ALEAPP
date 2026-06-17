@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "recentactivity": {
+        "name": "recentactivity",
+        "description": "Filter for path xxx/yyy/system_ce/0",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Recent Activity",
+        "notes": "",
+        "paths": ('*/system_ce/*',),
+        "output_types": None,
+        "function": "get_recentactivity",
+        "artifact_icon": "activity",
+    }
+}
+
 import glob
 import json
 import os
@@ -207,10 +225,3 @@ def process_recentactivity(folder, uid, report_folder):
             report.write_raw_html('<br />')
         
         report.end_artifact_report()
-
-__artifacts__ = {
-        "recentactivity": (
-                "Recent Activity",
-                ('*/system_ce/*'),
-                get_recentactivity)
-}

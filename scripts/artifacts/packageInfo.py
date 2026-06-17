@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "package_info": {
+        "name": "package_info",
+        "description": "Represents an app",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Installed Apps",
+        "notes": "",
+        "paths": ('*/system/packages.xml',),
+        "output_types": None,
+        "function": "get_package_info",
+        "artifact_icon": "package",
+    }
+}
+
 import datetime
 import os
 import xmltodict
@@ -94,10 +112,3 @@ def get_package_info(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No package data available')            
-
-__artifacts__ = {
-        "package_info": (
-                "Installed Apps",
-                ('*/system/packages.xml'),
-                get_package_info)
-}

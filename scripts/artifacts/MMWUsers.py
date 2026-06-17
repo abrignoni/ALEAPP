@@ -1,8 +1,20 @@
-# Get Information related to the user from the Map My Walk app
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-25
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "MapUsers": {
+        "name": "MapUsers",
+        "description": "Get Information related to the user from the Map My Walk app",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-25",
+        "last_updated_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher",
+        "category": "Map-My-Walk",
+        "notes": "",
+        "paths": ('*com.mapmywalk.android2/databases/mmdk_user*',),
+        "output_types": None,
+        "function": "get_map_users",
+        "artifact_icon": "map-pin",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -58,10 +70,3 @@ def get_map_users(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "MapUsers": (
-        "Map-My-Walk",
-        ('*com.mapmywalk.android2/databases/mmdk_user*'),
-        get_map_users)
-}

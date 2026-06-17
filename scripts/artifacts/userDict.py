@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "userDict": {
+        "name": "userDict",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "User Dictionary",
+        "notes": "",
+        "paths": ('*/com.android.providers.userdictionary/databases/user_dict.db*',),
+        "output_types": None,
+        "function": "get_userDict",
+        "artifact_icon": "user",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -39,11 +57,3 @@ def get_userDict(files_found, report_folder, seeker, wrap_text):
         logfunc('No User Dictionary data available')
     
     db.close()
-
-__artifacts__ = {
-    "userDict": (
-        "User Dictionary",
-        ('*/com.android.providers.userdictionary/databases/user_dict.db*'),
-        get_userDict)
-}
-

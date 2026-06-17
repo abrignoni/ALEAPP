@@ -1,9 +1,21 @@
-# Get GPS data from the table 'activity_polyline' and activity_details
-# The script uses polyline to decode the GPS data and folium to plot the GPS data on a map
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-18
-# Version: 1.0
-# Requirements: Python 3.7 or higher, folium and polyline, datetime
+__artifacts_v2__ = {
+    "NikePolyline": {
+        "name": "NikePolyline",
+        "description": "Get GPS data from the table 'activity_polyline' and activity_details",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-18",
+        "last_updated_date": "2023-03-18",
+        "requirements": "Python 3.7 or higher, folium and polyline, datetime",
+        "category": "Nike-Run",
+        "notes": "",
+        "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
+        "output_types": None,
+        "function": "get_nike_polyline",
+        "artifact_icon": "message-square",
+    }
+}
+
 import datetime
 import os
 import sqlite3
@@ -241,10 +253,3 @@ def get_nike_polyline(files_found, report_folder, seeker, wrap_text):
         conn.close()
     db.close()
 
-
-__artifacts__ = {
-    "NikePolyline": (
-        "Nike-Run",
-        ('*/com.nike.plusgps/databases/com.nike.nrc.room*'),
-        get_nike_polyline)
-}

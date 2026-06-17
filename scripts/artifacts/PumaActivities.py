@@ -1,8 +1,21 @@
-# Get Information related to the activities of the user from the PumaTrack app (com.puma.track)
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-25
-# Version: 1.0
-# Requirements: Python 3.7 or higher, folium
+__artifacts_v2__ = {
+    "PumaActivities": {
+        "name": "PumaActivities",
+        "description": "Get Information related to the activities of the user from the PumaTrack app (com.puma.track)",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-25",
+        "last_updated_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher, folium",
+        "category": "Puma-Trac",
+        "notes": "",
+        "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
+        "output_types": None,
+        "function": "get_puma_activities",
+        "artifact_icon": "activity",
+    }
+}
+
 import datetime
 import json
 import os
@@ -255,10 +268,3 @@ def get_puma_activities(files_found, report_folder, seeker, wrap_text):
         conn.close()
     db.close()
 
-
-__artifacts__ = {
-    "PumaActivities": (
-        "Puma-Trac",
-        ('*com.pumapumatrac/databases/pumatrac-db*'),
-        get_puma_activities)
-}

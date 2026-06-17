@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Call Logs": {
+        "name": "Call Logs",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Call Logs",
+        "notes": "",
+        "paths": ('*/com.android.providers.contacts/databases/contact*',),
+        "output_types": None,
+        "function": "get_calllogs",
+        "artifact_icon": "phone",
+    }
+}
+
 import os
 import sqlite3
 import datetime
@@ -77,10 +95,3 @@ def get_calllogs(files_found, report_folder, seeker, wrap_text):
         db.close()
     
     return
-
-__artifacts__ = {
-    "Call Logs":(
-        "Call Logs",
-        ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
-        get_calllogs)
-}

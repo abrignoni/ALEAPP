@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "sRecoveryhist": {
+        "name": "sRecoveryhist",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/efs/recovery/history',),
+        "output_types": None,
+        "function": "get_sRecoveryhist",
+        "artifact_icon": "file",
+    }
+}
+
 import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
@@ -70,10 +88,3 @@ def get_sRecoveryhist(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Samsung Recovery History data available')
-
-__artifacts__ = {
-        "sRecoveryhist": (
-                "Wipe & Setup",
-                ('*/efs/recovery/history'),
-                get_sRecoveryhist)
-}

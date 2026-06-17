@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ChessComMessages": {
+        "name": "ChessComMessages",
+        "description": "Chess database",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chess.com",
+        "notes": "",
+        "paths": ('*/com.chess/databases/chess-database*',),
+        "output_types": None,
+        "function": "get_ChessComMessages",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -30,11 +48,3 @@ def get_ChessComMessages(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-        "ChessComMessages": (
-                "Chess.com",
-                ('*/com.chess/databases/chess-database*'),
-                get_ChessComMessages)
-}
-

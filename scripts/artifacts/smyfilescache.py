@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "smyfilescache": {
+        "name": "smyfilescache",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*',),
+        "output_types": None,
+        "function": "get_smyfilescache",
+        "artifact_icon": "file",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -97,10 +115,3 @@ def get_smyfilescache(files_found, report_folder, seeker, text_wrap):
         
     
     db.close()
-
-__artifacts__ = {
-        "smyfilescache": (
-                "My Files",
-                ('*/com.sec.android.app.myfiles/databases/FileCache.db*','*/com.sec.android.app.myfiles/cache/*.*'),
-                get_smyfilescache)
-}

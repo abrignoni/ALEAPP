@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Errp": {
+        "name": "Errp",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/system/users/service/eRR.p',),
+        "output_types": None,
+        "function": "get_errp",
+        "artifact_icon": "file",
+    }
+}
+
 import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, convert_local_to_utc
@@ -66,9 +84,3 @@ def get_errp(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Samsung Samsung eRR.p data available')
             
-__artifacts__ = {
-        "Errp": (
-                "Wipe & Setup",
-                ('*/system/users/service/eRR.p'),
-                get_errp)
-}

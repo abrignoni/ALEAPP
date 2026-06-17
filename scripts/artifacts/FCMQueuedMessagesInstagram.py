@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "FCM_Instagram": {
+        "name": "FCM_Instagram",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": None,
+        "function": "get_fcm_instagram",
+        "artifact_icon": "database",
+    }
+}
+
 """
 Copyright 2022, CCL Forensics
 
@@ -69,10 +87,3 @@ def get_fcm_instagram(files_found, report_folder, seeker, wrap_text):
         else:
             scripts.ilapfuncs.logfunc("No FCM Instagram notifications found")
 
-
-__artifacts__ = {
-    "FCM_Instagram": (
-        "Firebase Cloud Messaging",
-        ('*/fcm_queued_messages.ldb/*'),
-        get_fcm_instagram)
-}

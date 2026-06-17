@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "waze": {
+        "name": "waze",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Waze",
+        "notes": "",
+        "paths": ('*/com.waze/user.db*',),
+        "output_types": None,
+        "function": "get_waze",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -50,11 +68,3 @@ def get_waze(files_found, report_folder, seeker, wrap_text):
         logfunc('No Waze - Recently Searched Locations data available')
         
     db.close()
-
-__artifacts__ = {
-        "waze": (
-                "Waze",
-                ('*/com.waze/user.db*'),
-                get_waze)
-}
-    

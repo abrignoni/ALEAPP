@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "playgroundVault": {
+        "name": "playgroundVault",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": "",
+        "paths": ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml',),
+        "output_types": None,
+        "function": "get_playgroundVault",
+        "artifact_icon": "image",
+    }
+}
+
 import sys
 import shutil
 import os
@@ -96,10 +114,3 @@ def get_playgroundVault(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Playground Vault data available')
-
-__artifacts__ = {
-        "playgroundVault": (
-                "Encrypting Media Apps",
-                ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml','*/applocker/vault/*'),
-                get_playgroundVault)
-}

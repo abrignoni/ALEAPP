@@ -1,8 +1,21 @@
-# Get Information stored in the Garmin Persistent json file
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher, json and datetime
+__artifacts_v2__ = {
+    "GarminPresistent": {
+        "name": "GarminPresistent",
+        "description": "Get Information stored in the Garmin Persistent json file",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher, json and datetime",
+        "category": "Garmin-Files",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/files/PersistedInstallation*',),
+        "output_types": None,
+        "function": "get_presisted",
+        "artifact_icon": "activity",
+    }
+}
+
 import datetime
 import json
 
@@ -48,10 +61,3 @@ def get_presisted(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc("No Garmin Presistent data found")
 
-
-__artifacts__ = {
-    "GarminPresistent": (
-        "Garmin-Files",
-        ('*/com.garmin.android.apps.connectmobile/files/PersistedInstallation*'),
-        get_presisted)
-}

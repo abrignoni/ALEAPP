@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ChromeLoginData": {
+        "name": "ChromeLoginData",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Login Data*',),
+        "output_types": None,
+        "function": "get_chromeLoginData",
+        "artifact_icon": "globe",
+    }
+}
+
 import datetime
 import os
 import re
@@ -104,9 +122,3 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "ChromeLoginData": (
-                "Chromium",
-                ('*/app_chrome/Default/Login Data*', '*/app_sbrowser/Default/Login Data*', '*/app_opera/Login Data*', '*/app_webview/Default/Login Data*'),
-                get_chromeLoginData)
-}

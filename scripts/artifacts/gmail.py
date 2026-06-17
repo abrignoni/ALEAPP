@@ -1,9 +1,20 @@
-# gmailActive: Get gmail account information
-# Author: Joshua James {joshua@dfirscience.org}
-# Date: 2021-11-08
-# Artifact version: 0.0.1
-# Android version tested: 11
-# Requirements: none
+__artifacts_v2__ = {
+    "GmailActive": {
+        "name": "GmailActive",
+        "description": "gmailActive: Get gmail account information",
+        "author": "Joshua James {joshua@dfirscience.org}",
+        "version": "1.0",
+        "creation_date": "2021-11-08",
+        "last_updated_date": "2021-11-08",
+        "requirements": "none",
+        "category": "Gmail",
+        "notes": "",
+        "paths": ('*/com.google.android.gm/shared_prefs/Gmail.xml',),
+        "output_types": None,
+        "function": "get_gmailActive",
+        "artifact_icon": "mail",
+    }
+}
 
 import xml.etree.ElementTree as ET
 
@@ -47,10 +58,3 @@ def get_gmailActive(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No active Gmail account found')
-
-__artifacts__ = {
-        "GmailActive": (
-                "Gmail",
-                ('*/com.google.android.gm/shared_prefs/Gmail.xml'),
-                get_gmailActive)
-}

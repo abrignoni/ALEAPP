@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "snapchat": {
+        "name": "snapchat",
+        "description": "Last actions taken in the application and who did them",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Snapchat",
+        "notes": "",
+        "paths": ('*/com.snapchat.android/databases/*.db',),
+        "output_types": None,
+        "function": "get_snapchat",
+        "artifact_icon": "message-square",
+    }
+}
+
 import bcrypt
 import xml.etree.ElementTree as ET
 import datetime
@@ -402,10 +420,3 @@ def get_snapchat(files_found, report_folder, seeker, wrap_text):
     ]
     if not (True in artifacts):
         logfunc(f'{APP_NAME} data not found')
-
-__artifacts__ = {
-        "snapchat": (
-                "Snapchat",
-                ('*/com.snapchat.android/databases/*.db', '*/com.snapchat.android/shared_prefs/*.xml'),
-                get_snapchat)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "torrentResumeinfo": {
+        "name": "torrentResumeinfo",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "BitTorrent",
+        "notes": "",
+        "paths": ('*/*.resume',),
+        "output_types": None,
+        "function": "get_torrentResumeinfo",
+        "artifact_icon": "download",
+    }
+}
+
 import bencoding
 import hashlib
 import datetime
@@ -52,10 +70,3 @@ def get_torrentResumeinfo(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "torrentResumeinfo": (
-        "BitTorrent",
-        ('*/*.resume'),
-        get_torrentResumeinfo)
-}

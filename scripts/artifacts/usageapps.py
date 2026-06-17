@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "usageapps": {
+        "name": "usageapps",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.google.android.as/databases/reflection_gel_events.db*',),
+        "output_types": None,
+        "function": "get_usageapps",
+        "artifact_icon": "package",
+    }
+}
+
 import blackboxprotobuf
 import json
 import sqlite3
@@ -117,10 +135,3 @@ def get_usageapps(files_found, report_folder, seeker, wrap_text):
             logfunc('No Usage Apps data available')
         
         db.close()
-
-__artifacts__ = {
-        "usageapps": (
-                "App Interaction",
-                ('*/com.google.android.as/databases/reflection_gel_events.db*'),
-                get_usageapps)
-}

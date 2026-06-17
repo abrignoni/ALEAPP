@@ -1,8 +1,20 @@
-# Get Information relative to the notifications stored in the database of the Garmin Connect Mobile application
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "GarminNotifications": {
+        "name": "GarminNotifications",
+        "description": "Get Information relative to the notifications stored in the database of the Garmin Connect Mobile application",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Garmin-Notifications",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/notification-database*',),
+        "output_types": None,
+        "function": "get_garmin_notifications",
+        "artifact_icon": "activity",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -54,10 +66,3 @@ def get_garmin_notifications(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "GarminNotifications": (
-        "Garmin-Notifications",
-        ('*/com.garmin.android.apps.connectmobile/databases/notification-database*'),
-        get_garmin_notifications)
-}

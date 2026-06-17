@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "sms_mms": {
+        "name": "sms_mms",
+        "description": "Reference for flag values for mms:",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "SMS & MMS",
+        "notes": "",
+        "paths": ('*/com.android.providers.telephony/databases/mmssms*',),
+        "output_types": None,
+        "function": "get_sms_mms",
+        "artifact_icon": "message-square",
+    }
+}
+
 import os
 import shutil
 import sqlite3
@@ -277,10 +295,3 @@ def read_mms_messages(db, report_folder, file_found, seeker):
         logfunc('No MMS messages found!')
         return False
     return True
-
-__artifacts__ = {
-        "sms_mms": (
-                "SMS & MMS",
-                ('*/com.android.providers.telephony/databases/mmssms*'),
-                get_sms_mms)
-}

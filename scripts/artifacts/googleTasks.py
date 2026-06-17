@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "GoogleTasks": {
+        "name": "GoogleTasks",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Google Tasks",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db',),
+        "output_types": None,
+        "function": "get_googleTasks",
+        "artifact_icon": "file-text",
+    }
+}
+
 import os
 import textwrap
 from datetime import datetime
@@ -86,9 +104,3 @@ def get_googleTasks(files_found, report_folder, seeker, wrap_text):
         
         db.close()
         
-__artifacts__ = {
-        "GoogleTasks": (
-                "Google Tasks",
-                ('*/com.google.android.apps.tasks/files/tasks-*/data.db'),
-                get_googleTasks)
-}

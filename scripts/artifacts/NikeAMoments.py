@@ -1,9 +1,21 @@
-# Get Information relative to the activity moments that are present in the database (com.nike.nrc.room) from the Nike Run app
-# Present the data in a timeline using timeline JS
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-18
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "NikeActivityMoments": {
+        "name": "NikeActivityMoments",
+        "description": "Get Information relative to the activity moments that are present in the database (com.nike.nrc.room) from the Nike Run app",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-18",
+        "last_updated_date": "2023-03-18",
+        "requirements": "Python 3.7 or higher",
+        "category": "Nike-Run",
+        "notes": "",
+        "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
+        "output_types": None,
+        "function": "get_nike_activMoments",
+        "artifact_icon": "activity",
+    }
+}
+
 import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -109,10 +121,3 @@ def get_nike_activMoments(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "NikeActivityMoments": (
-        "Nike-Run",
-        ('*/com.nike.plusgps/databases/com.nike.nrc.room*'),
-        get_nike_activMoments)
-}

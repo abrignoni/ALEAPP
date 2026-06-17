@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "slopes": {
+        "name": "slopes",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Slopes",
+        "notes": "",
+        "paths": ('*/com.consumedbycode.slopes/databases/slopes.db*',),
+        "output_types": None,
+        "function": "get_slopes",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -146,10 +164,3 @@ def get_slopes(files_found, report_folder, seeker, wrap_text):
             logfunc('No Slopes - Lift Details data available')
 
         db.close()
-
-__artifacts__ = {
-        "slopes": (
-                "Slopes",
-                ('*/com.consumedbycode.slopes/databases/slopes.db*'),
-                get_slopes)
-}

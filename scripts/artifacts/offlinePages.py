@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "pages": {
+        "name": "pages",
+        "description": "fetch the timezone information",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Offline Pages",
+        "notes": "",
+        "paths": ('*/*.mhtml',),
+        "output_types": None,
+        "function": "get_offlinePages",
+        "artifact_icon": "message-square",
+    }
+}
+
 from datetime import *
 import email
 import os
@@ -52,11 +70,3 @@ def get_offlinePages(files_found, report_folder, seeker, wrap_text):
         
         tlactivity = 'Offline Pages'
         timeline(report_folder, tlactivity, data_list, data_headers)
-
-__artifacts__ = {
-        "pages": (
-                "Offline Pages",
-                ('*/*.mhtml', '*/*.mht'),
-                get_offlinePages)
-}
-            

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "settingsSecure": {
+        "name": "settingsSecure",
+        "description": "Filter for path xxx/yyy/system_ce/0",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Device Info",
+        "notes": "",
+        "paths": ('*/system/users/*/settings_secure.xml',),
+        "output_types": None,
+        "function": "get_settingsSecure",
+        "artifact_icon": "settings",
+    }
+}
+
 import glob
 import json
 import os
@@ -67,9 +85,3 @@ def process_ssecure(file_path, uid, report_folder):
     else:
         logfunc('No Settings Secure data available')
         
-__artifacts__ = {
-        "settingsSecure": (
-                "Device Info",
-                ('*/system/users/*/settings_secure.xml'),
-                get_settingsSecure)
-}

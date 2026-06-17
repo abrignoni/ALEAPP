@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "smyFiles2": {
+        "name": "smyFiles2",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db',),
+        "output_types": None,
+        "function": "get_smyFiles2",
+        "artifact_icon": "file",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -135,10 +153,3 @@ def get_smyFiles2(files_found, report_folder, seeker, wrap_text):
         logfunc('No My Files DB Google Drive data available')
         
     db.close()
-
-__artifacts__ = {
-        "smyFiles2": (
-                "My Files",
-                ('*/com.sec.android.app.myfiles/databases/FileInfo.db','*/com.sec.android.app.myfiles/cache/*.*'),
-                get_smyFiles2)
-}

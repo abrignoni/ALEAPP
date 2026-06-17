@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "googleInitiatedNav": {
+        "name": "googleInitiatedNav",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/files/new_recent_history_cache_navigated.cs',),
+        "output_types": None,
+        "function": "get_googleInitiatedNav",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import blackboxprotobuf
 from datetime import *
 from scripts.artifact_report import ArtifactHtmlReport
@@ -45,10 +63,3 @@ def get_googleInitiatedNav(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc(f'No Google Initiated Navigation available')
-
-__artifacts__ = {
-        "googleInitiatedNav": (
-                "GEO Location",
-                ('*/com.google.android.apps.maps/files/new_recent_history_cache_navigated.cs','*/new_recent_history_cache_navigated.cs'),
-                get_googleInitiatedNav)
-}

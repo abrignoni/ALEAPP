@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Zapya": {
+        "name": "Zapya",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "File Transfer",
+        "notes": "",
+        "paths": ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*',),
+        "output_types": None,
+        "function": "get_Zapya",
+        "artifact_icon": "download",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -47,10 +65,3 @@ def get_Zapya(files_found, report_folder, seeker, wrap_text):
         logfunc('No Zapya data available')
     
     db.close()
-
-__artifacts__ = {
-        "Zapya": (
-                "File Transfer",
-                ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*'),
-                get_Zapya)
-}

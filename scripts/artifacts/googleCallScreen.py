@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "GoogleCallScreen": {
+        "name": "GoogleCallScreen",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Google Call Screen",
+        "notes": "",
+        "paths": ('*/com.google.android.dialer/databases/callscreen_transcripts*',),
+        "output_types": None,
+        "function": "get_googleCallScreen",
+        "artifact_icon": "phone",
+    }
+}
+
 import blackboxprotobuf
 import os
 import shutil
@@ -98,10 +116,3 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Call Screen data available')
     
         db.close()
-
-__artifacts__ = {
-        "GoogleCallScreen": (
-                "Google Call Screen",
-                ('*/com.google.android.dialer/databases/callscreen_transcripts*','*/com.google.android.dialer/files/callscreenrecordings/*.*'),
-                get_googleCallScreen)
-}

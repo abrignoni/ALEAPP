@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Cash App": {
+        "name": "Cash App",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Cash App",
+        "notes": "",
+        "paths": ('*/com.squareup.cash/databases/cash_money.db*',),
+        "output_types": None,
+        "function": "get_cashApp",
+        "artifact_icon": "package",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -53,11 +71,3 @@ def get_cashApp(files_found, report_folder, seeker, wrap_text):
         logfunc('No Cash App Transactions data available')
     
     db.close()
-
-__artifacts__ = {
-        "Cash App": (
-                "Cash App",
-                ('*/com.squareup.cash/databases/cash_money.db*'),
-                get_cashApp)
-}
-

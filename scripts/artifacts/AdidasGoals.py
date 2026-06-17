@@ -1,8 +1,21 @@
-# Get Information related to user defined goals from the Adidas Running app stored in goals
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-04-21
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "AdidasGoals": {
+        "name": "AdidasGoals",
+        "description": "Get Information related to user defined goals from the Adidas Running app stored in goals",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-04-21",
+        "last_updated_date": "2023-04-21",
+        "requirements": "Python 3.7 or higher",
+        "category": "Adidas-Running",
+        "notes": "",
+        "paths": ('*/com.runtastic.android/databases/goals*',),
+        "output_types": None,
+        "function": "get_adidas_goals",
+        "artifact_icon": "activity",
+    }
+}
+
 import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -75,10 +88,3 @@ def get_adidas_goals(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "AdidasGoals": (
-        "Adidas-Running",
-        ('*/com.runtastic.android/databases/goals*'),
-        get_adidas_goals)
-}

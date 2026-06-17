@@ -1,8 +1,21 @@
-# Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher, folium and polyline, fitdecode, datetime
+__artifacts_v2__ = {
+    "Strava": {
+        "name": "Strava",
+        "description": "Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-03-24",
+        "last_updated_date": "2023-03-24",
+        "requirements": "Python 3.7 or higher, folium and polyline, fitdecode, datetime",
+        "category": "Strava",
+        "notes": "",
+        "paths": ('*/com.strava/files*',),
+        "output_types": None,
+        "function": "get_gps",
+        "artifact_icon": "activity",
+    }
+}
+
 from datetime import datetime
 import warnings
 import os
@@ -265,10 +278,3 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
 
     if use_network:
         conn.close()
-
-__artifacts__ = {
-    "Strava": (
-        "Strava",
-        ('*/com.strava/files*'),
-        get_gps)
-}

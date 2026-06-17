@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "browserCachechrome": {
+        "name": "browserCachechrome",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Browser Cache",
+        "notes": "",
+        "paths": ('*/data/com.android.chrome/cache/Cache/*_0',),
+        "output_types": None,
+        "function": "get_browserCachechrome",
+        "artifact_icon": "globe",
+    }
+}
+
 import datetime
 import email
 import os
@@ -92,10 +110,3 @@ def get_browserCachechrome(files_found, report_folder, seeker, wrap_text):
         tsvname = f'Chrome Browser Cache'
         tsv(report_folder, data_headers, data_list, tsvname)
     
-__artifacts__ = {
-        "browserCachechrome": (
-                "Browser Cache",
-                ( '*/data/com.android.chrome/cache/Cache/*_0'),
-                get_browserCachechrome)
-}
-            

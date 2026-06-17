@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ImagemngCache": {
+        "name": "ImagemngCache",
+        "description": "else:",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Image Manager Cache",
+        "notes": "",
+        "paths": ('*/cache/image_manager_disk_cache/*.*',),
+        "output_types": None,
+        "function": "get_imagemngCache",
+        "artifact_icon": "image",
+    }
+}
+
 import datetime
 from os.path import isfile, isdir, join, basename, dirname, getsize, abspath, getmtime
 
@@ -31,10 +49,3 @@ def get_imagemngCache(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc(f'No Image Manager Cache files available')
-
-__artifacts__ = {
-        "ImagemngCache": (
-                "Image Manager Cache",
-                ('*/cache/image_manager_disk_cache/*.*','*/*.cnt'),
-                get_imagemngCache)
-}

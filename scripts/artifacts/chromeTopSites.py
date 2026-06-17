@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ChromeTopSites": {
+        "name": "ChromeTopSites",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Top Sites*',),
+        "output_types": None,
+        "function": "get_chromeTopSites",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 
@@ -57,9 +75,3 @@ def get_chromeTopSites(files_found, report_folder, seeker, wrap_text):
         
         db.close()
         
-__artifacts__ = {
-        "ChromeTopSites": (
-                "Chromium",
-                ('*/app_chrome/Default/Top Sites*', '*/app_sbrowser/Default/Top Sites*', '*/app_opera/Top Sites*', '*/app_webview/Default/Top Sites*'),
-                get_chromeTopSites)
-}

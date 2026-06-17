@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "HideX": {
+        "name": "HideX",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "GroupMe",
+        "notes": "",
+        "paths": ('*/com.flatfish.cal.privacy/databases/hidex.db*',),
+        "output_types": None,
+        "function": "get_HideX",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -43,10 +61,3 @@ def get_HideX(files_found, report_folder, seeker, wrap_text):
         logfunc('No HideX data available')
     
     db.close()
-
-__artifacts__ = {
-        "HideX": (
-                "GroupMe",
-                ('*/com.flatfish.cal.privacy/databases/hidex.db*'),
-                get_HideX)
-}

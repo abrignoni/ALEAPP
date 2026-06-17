@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "discordChats": {
+        "name": "discordChats",
+        "description": "build a table mapping all non-printable characters to None",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Discord Chats",
+        "notes": "",
+        "paths": ('*/data/com.discord/files/kv-storage/*/a*',),
+        "output_types": None,
+        "function": "get_discordChats",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import textwrap
 import sys
@@ -85,10 +103,3 @@ def get_discordChats(files_found, report_folder, seeker, wrap_text):
         logfunc('No Discord Chats data available')
         
     db.close()
-
-__artifacts__ = {
-        "discordChats": (
-                "Discord Chats",
-                ('*/data/com.discord/files/kv-storage/*/a*'),
-                get_discordChats)
-}

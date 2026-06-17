@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Firefox": {
+        "name": "Firefox",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
+        "output_types": None,
+        "function": "get_firefox",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -187,9 +205,3 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "Firefox": (
-                "Firefox",
-                ('*/org.mozilla.firefox/files/places.sqlite*'),
-                get_firefox)
-}

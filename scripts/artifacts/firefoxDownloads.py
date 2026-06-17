@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "FirefoxDownloads": {
+        "name": "FirefoxDownloads",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',),
+        "output_types": None,
+        "function": "get_firefoxDownloads",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -55,9 +73,3 @@ def get_firefoxDownloads(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "FirefoxDownloads": (
-                "Firefox",
-                ('*/org.mozilla.firefox/databases/mozac_downloads_database*'),
-                get_firefoxDownloads)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "ChromeBookmarks": {
+        "name": "ChromeBookmarks",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Bookmarks*',),
+        "output_types": None,
+        "function": "get_chromeBookmarks",
+        "artifact_icon": "globe",
+    }
+}
+
 import datetime
 import json
 import os
@@ -59,10 +77,3 @@ def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc(f'No {browser_name} - Bookmarks data available')
-
-__artifacts__ = {
-        "ChromeBookmarks": (
-                "Chromium",
-                ('*/app_chrome/Default/Bookmarks*', '*/app_sbrowser/Default/Bookmarks*', '*/app_opera/Bookmarks*', '*/app_webview/Default/Bookmarks*'),
-                get_chromeBookmarks)
-}

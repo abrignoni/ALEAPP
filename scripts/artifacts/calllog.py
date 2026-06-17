@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Call logs ": {
+        "name": "Call logs ",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Call Logs",
+        "notes": "",
+        "paths": ('*/com.android.providers.contacts/databases/calllog.db*',),
+        "output_types": None,
+        "function": "get_calllog",
+        "artifact_icon": "phone",
+    }
+}
+
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -89,10 +107,3 @@ def get_calllog(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Call Log data available')
-
-__artifacts__ = {
-        "Call logs ": (
-                "Call Logs",
-                ('*/com.android.providers.contacts/databases/calllog.db*','*/com.samsung.android.providers.contacts/databases/calllog.db*'),
-                get_calllog)
-}

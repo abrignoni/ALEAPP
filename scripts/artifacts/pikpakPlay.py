@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "PikPak Play": {
+        "name": "PikPak Play",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "PikPak",
+        "notes": "",
+        "paths": ('*/com.pikcloud.pikpak/databases/greendao.db*',),
+        "output_types": None,
+        "function": "get_pikpakPlay",
+        "artifact_icon": "file",
+    }
+}
+
 import sqlite3
 import os
 
@@ -49,9 +67,3 @@ def get_pikpakPlay(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No PikPak Play data available')
     
-__artifacts__ = {
-        "PikPak Play": (
-                "PikPak",
-                ('*/com.pikcloud.pikpak/databases/greendao.db*'),
-                get_pikpakPlay)
-}

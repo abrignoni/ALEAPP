@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "mewe": {
+        "name": "mewe",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "",
+        "paths": ('*/com.mewe/databases/app_database',),
+        "output_types": None,
+        "function": "get_mewe",
+        "artifact_icon": "message-square",
+    }
+}
+
 import xml.etree.ElementTree as ET
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -137,10 +155,3 @@ def get_mewe(files_found, report_folder, seeker, wrap_text):
     ]
     if not (True in artifacts):
         logfunc(f'{APP_NAME} data not found')
-
-__artifacts__ = {
-        "mewe": (
-                "MeWe",
-                ('*/com.mewe/databases/app_database', '*/com.mewe/shared_prefs/SGSession.xml'),
-                get_mewe)
-}

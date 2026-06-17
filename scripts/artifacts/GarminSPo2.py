@@ -1,8 +1,20 @@
-# Get Information related to Garmin Pulse Ox from acclimation_pulse_ox_details table and generate a chart
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "GarminSPO2": {
+        "name": "GarminSPO2",
+        "description": "Get Information related to Garmin Pulse Ox from acclimation_pulse_ox_details table and generate a chart",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Garmin-Cache",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
+        "output_types": None,
+        "function": "get_garmin_spo2",
+        "artifact_icon": "activity",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -119,10 +131,3 @@ def get_garmin_spo2(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "GarminSPO2": (
-        "Garmin-Cache",
-        ('*/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-        get_garmin_spo2)
-}

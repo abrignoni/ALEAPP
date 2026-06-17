@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Etc_hosts": {
+        "name": "Etc_hosts",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Etc Hosts",
+        "notes": "",
+        "paths": ('*/system/etc/hosts',),
+        "output_types": None,
+        "function": "get_etc_hosts",
+        "artifact_icon": "file",
+    }
+}
+
 import codecs
 import csv
 
@@ -34,9 +52,3 @@ def get_etc_hosts(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc(f'No etc hosts file available, or nothing significant found.')
         
-__artifacts__ = {
-        "Etc_hosts": (
-                "Etc Hosts",
-                ('*/system/etc/hosts'),
-                get_etc_hosts)
-}

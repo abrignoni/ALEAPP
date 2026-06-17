@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "protonVPN User": {
+        "name": "protonVPN User",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "ProtonVPN",
+        "notes": "",
+        "paths": ('*/ch.protonvpn.android/databases/db',),
+        "output_types": None,
+        "function": "get_protonVPN",
+        "artifact_icon": "user",
+    }
+}
+
 import os
 import re
 import socket
@@ -136,10 +154,3 @@ def get_protonVPN(files_found, report_folder, seeker, wrap_text):
 				logfunc('No ProtonVPN - User Info available')
 
 			db.close()
-
-__artifacts__ = {
-	"protonVPN User": (
-		"ProtonVPN", 
-		('*/ch.protonvpn.android/databases/db', '*/ch.protonvpn.android/shared_prefs/ServerListUpdater.xml', '*/ch.protonvpn.android/log/Data.log'), get_protonVPN
-	)
-}

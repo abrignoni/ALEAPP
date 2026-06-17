@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "smembersEvents": {
+        "name": "smembersEvents",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk.db',),
+        "output_types": None,
+        "function": "get_smembersEvents",
+        "artifact_icon": "package",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -41,10 +59,3 @@ def get_smembersEvents(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Members - Events data available')
     
     db.close()
-
-__artifacts__ = {
-        "smembersEvents": (
-                "App Interaction",
-                ('*/com.samsung.oh/databases/com_pocketgeek_sdk.db'),
-                get_smembersEvents)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "textnow": {
+        "name": "textnow",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Text Now",
+        "notes": "",
+        "paths": ('*/com.enflick.android.TextNow/databases/textnow_data.db*',),
+        "output_types": None,
+        "function": "get_textnow",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -165,9 +183,3 @@ def get_textnow(files_found, report_folder, seeker, wrap_text):
 
     db.close
     
-__artifacts__ = {
-    "textnow": (
-        "Text Now",
-        ('*/com.enflick.android.TextNow/databases/textnow_data.db*'),
-        get_textnow)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "vaulty_files": {
+        "name": "vaulty_files",
+        "description": "Media database",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Vaulty",
+        "notes": "",
+        "paths": ('*/com.theronrogers.vaultyfree/databases/media.db',),
+        "output_types": None,
+        "function": "get_vaulty_files",
+        "artifact_icon": "lock",
+    }
+}
+
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -30,10 +48,3 @@ def get_vaulty_files(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "vaulty_files": (
-        "Vaulty",
-        ('*/com.theronrogers.vaultyfree/databases/media.db'),
-        get_vaulty_files)
-}

@@ -1,8 +1,20 @@
-# Package Predictions - Parses Samsung package prediction details
-# Author:  Kevin Pagano (https://startme.stark4n6.com)
-# Date 2023-05-01
-# Version: 0.1
-# Requirements:  None
+__artifacts_v2__ = {
+    "pkgPredictions": {
+        "name": "pkgPredictions",
+        "description": "Package Predictions - Parses Samsung package prediction details",
+        "author": "Kevin Pagano (https://startme.stark4n6.com)",
+        "version": "0.1",
+        "creation_date": "2023-05-01",
+        "last_updated_date": "2023-05-01",
+        "requirements": "None",
+        "category": "Package Predictions",
+        "notes": "",
+        "paths": ('*/system/PkgPredictions.db*',),
+        "output_types": None,
+        "function": "get_pkgPredictions",
+        "artifact_icon": "package",
+    }
+}
 
 import sqlite3
 import textwrap
@@ -80,11 +92,3 @@ def get_pkgPredictions(files_found, report_folder, seeker, wrap_text):
         logfunc('No Package Predictions data available')
                 
     db.close()
-
-__artifacts__ = {
-        "pkgPredictions": (
-                "Package Predictions",
-                ('*/system/PkgPredictions.db*'),
-                get_pkgPredictions)
-}
-    

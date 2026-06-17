@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "smyfilesRecents": {
+        "name": "smyfilesRecents",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/myfiles.db*',),
+        "output_types": None,
+        "function": "get_smyfilesRecents",
+        "artifact_icon": "file",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -103,10 +121,3 @@ def get_smyfilesRecents(files_found, report_folder, seeker, wrap_text):
         logfunc('No My Files DB Recents data available')
     
     db.close()
-
-__artifacts__ = {
-        "smyfilesRecents": (
-                "My Files",
-                ('*/com.sec.android.app.myfiles/databases/myfiles.db*','*/com.sec.android.app.myfiles/databases/FileInfo.db*'),
-                get_smyfilesRecents)
-}

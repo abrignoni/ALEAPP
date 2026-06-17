@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "FirefoxFormHistory": {
+        "name": "FirefoxFormHistory",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/formhistory.sqlite*',),
+        "output_types": None,
+        "function": "get_firefoxFormHistory",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -50,9 +68,3 @@ def get_firefoxFormHistory(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "FirefoxFormHistory": (
-                "Firefox",
-                ('*/org.mozilla.firefox/files/mozilla/*.default/formhistory.sqlite*'),
-                get_firefoxFormHistory)
-}

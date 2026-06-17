@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "lgRCS": {
+        "name": "lgRCS",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "RCS Chats",
+        "notes": "",
+        "paths": ('*/mmssms.db*',),
+        "output_types": None,
+        "function": "get_lgRCS",
+        "artifact_icon": "message-square",
+    }
+}
+
 import os
 import shutil
 import sqlite3
@@ -90,10 +108,3 @@ def get_lgRCS(files_found, report_folder, seeker, wrap_text):
         logfunc('No RCS Chats - LG data available')
     
     db.close()
-
-__artifacts__ = {
-        "lgRCS": (
-                "RCS Chats",
-                ('*/mmssms.db*'),
-                get_lgRCS)
-}

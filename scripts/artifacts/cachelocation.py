@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Cache Location": {
+        "name": "Cache Location",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.google.android.location/files/cache.cell/cache.cell',),
+        "output_types": None,
+        "function": "get_cachelocation",
+        "artifact_icon": "map-pin",
+    }
+}
+
 import sqlite3
 import datetime
 import struct
@@ -50,10 +68,3 @@ def get_cachelocation(files_found, report_folder, seeker, wrap_text):
 
         else:
             logfunc('No Cachelocation Logs found')
-
-__artifacts__ = {
-        "Cache Location": (
-                "GEO Location",
-                ('*/com.google.android.location/files/cache.cell/cache.cell', '*/com.google.android.location/files/cache.wifi/cache.wifi'),
-                get_cachelocation)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "googleDuo": {
+        "name": "googleDuo",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Google Duo",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*',),
+        "output_types": None,
+        "function": "get_googleDuo",
+        "artifact_icon": "chrome",
+    }
+}
+
 import os
 import shutil
 import sqlite3
@@ -168,10 +186,3 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Duo - Notes data available')
     
     db.close()
-
-__artifacts__ = {
-        "googleDuo": (
-                "Google Duo",
-                ('*/com.google.android.apps.tachyon/databases/tachyon.db*','*/com.google.android.apps.tachyon/files/media/*.*'),
-                get_googleDuo)
-}

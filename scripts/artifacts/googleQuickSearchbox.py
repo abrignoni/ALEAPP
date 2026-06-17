@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Quicksearch": {
+        "name": "Quicksearch",
+        "description": "Represents a search query session",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Google Now & QuickSearch",
+        "notes": "",
+        "paths": ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb',),
+        "output_types": None,
+        "function": "get_quicksearch",
+        "artifact_icon": "search",
+    }
+}
+
 import blackboxprotobuf
 import datetime
 import os
@@ -156,11 +174,3 @@ def get_quicksearch(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No recent quick search or now data available')
-
-__artifacts__ = {
-        "Quicksearch": (
-                "Google Now & QuickSearch",
-                ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
-                get_quicksearch)
-}
-            

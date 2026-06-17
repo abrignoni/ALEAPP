@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Viber": {
+        "name": "Viber",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Viber",
+        "notes": "",
+        "paths": ('*/com.viber.voip/databases/*',),
+        "output_types": None,
+        "function": "get_Viber",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 from hashlib import sha256
 
@@ -210,10 +228,3 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         logfunc('No Viber Hidden Chat PIN found')        
 
     db.close()
-
-__artifacts__ = {
-  "Viber": (
-    "Viber",
-    ('*/com.viber.voip/databases/*'),
-    get_Viber)
-}

@@ -1,8 +1,20 @@
-# Google Messages
-# Author:  Josh Hickman (josh@thebinaryhick.blog)
-# Date 2021-01-30
-# Version: 0.1
-# Requirements:  None
+__artifacts_v2__ = {
+    "GoogleMessages": {
+        "name": "GoogleMessages",
+        "description": "Google Messages",
+        "author": "Josh Hickman (josh@thebinaryhick.blog)",
+        "version": "0.1",
+        "creation_date": "2021-01-30",
+        "last_updated_date": "2021-01-30",
+        "requirements": "None",
+        "category": "Google Messages",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.messaging/databases/bugle_db*',),
+        "output_types": None,
+        "function": "get_googleMessages",
+        "artifact_icon": "message-square",
+    }
+}
 
 import os
 import sqlite3
@@ -63,10 +75,3 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Messages data available')
         
         db.close()
-
-__artifacts__ = {
-        "GoogleMessages": (
-                "Google Messages",
-                ('*/com.google.android.apps.messaging/databases/bugle_db*'),
-                get_googleMessages)
-}

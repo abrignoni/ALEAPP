@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "VLC": {
+        "name": "VLC",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "VLC",
+        "notes": "",
+        "paths": ('*vlc_media.db*',),
+        "output_types": None,
+        "function": "get_vlcMedia",
+        "artifact_icon": "image",
+    }
+}
+
 import sqlite3
 import os
 
@@ -51,9 +69,3 @@ def get_vlcMedia(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No VLC Media data available')
     
-__artifacts__ = {
-        "VLC": (
-                "VLC",
-                ('*vlc_media.db*'),
-                get_vlcMedia)
-}

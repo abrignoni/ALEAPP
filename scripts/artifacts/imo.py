@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "Imo": {
+        "name": "Imo",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "IMO",
+        "notes": "",
+        "paths": ('*/com.imo.android.imous/databases/*.db*',),
+        "output_types": None,
+        "function": "get_imo",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import datetime
 import json
@@ -108,11 +126,4 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
         logfunc('No IMO Messages found')
 
     db.close
-    
-__artifacts__ = {
-        "Imo": (
-                "IMO",
-                ('*/com.imo.android.imous/databases/*.db*'),
-                get_imo)
-}
     

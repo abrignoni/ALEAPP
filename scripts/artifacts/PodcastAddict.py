@@ -1,8 +1,20 @@
-# Module Description: Parses Podcast Addict Episode Database
-# Author: John Hyla
-# Date: 2023-07-07
-# Artifact version: 0.0.1
-# Requirements: none
+__artifacts_v2__ = {
+    "Podcast Addict": {
+        "name": "Podcast Addict",
+        "description": "Module Description: Parses Podcast Addict Episode Database",
+        "author": "John Hyla",
+        "version": "1.0",
+        "creation_date": "2023-07-07",
+        "last_updated_date": "2023-07-07",
+        "requirements": "none",
+        "category": "Podcast Addict",
+        "notes": "",
+        "paths": ('*/com.bambuna.podcastaddict/databases/podcastAddict.db',),
+        "output_types": None,
+        "function": "get_podcasts",
+        "artifact_icon": "headphones",
+    }
+}
 
 import os
 import sqlite3
@@ -63,10 +75,3 @@ def get_podcasts(files_found, report_folder, seeker, wrap_text):
     
     return
 
-
-__artifacts__ = {
-    "Podcast Addict": (
-        "Podcast Addict",
-        ('*/com.bambuna.podcastaddict/databases/podcastAddict.db'),
-        get_podcasts)
-}

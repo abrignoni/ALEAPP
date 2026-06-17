@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "VLC Thumbs": {
+        "name": "VLC Thumbs",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "VLC",
+        "notes": "",
+        "paths": ('*/org.videolan.vlc/files/medialib/*.jpg',),
+        "output_types": None,
+        "function": "get_vlcThumbs",
+        "artifact_icon": "image",
+    }
+}
+
 import os
 import shutil
 
@@ -70,12 +88,3 @@ def get_vlcThumbs(files_found, report_folder, seeker, wrap_text):
                 tlactivity = f'VLC Thumbnail Data'
                 timeline(report_folder, tlactivity, data_list, data_headers)
     
-__artifacts__ = {
-        "VLC Thumbs": (
-                "VLC",
-                ('*/org.videolan.vlc/files/medialib/*.jpg', '*/org.videolan.vlc/app_db/vlc_media.db*'),
-                get_vlcThumbs)
-}
-
-        
-        

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "vaulty_info": {
+        "name": "vaulty_info",
+        "description": "Prefs File",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Vaulty",
+        "notes": "",
+        "paths": ('*/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml',),
+        "output_types": None,
+        "function": "get_vaulty_info",
+        "artifact_icon": "lock",
+    }
+}
+
 import xmltodict
 from hashlib import md5
 import base64
@@ -84,10 +102,3 @@ def get_vaulty_info(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "vaulty_info": (
-        "Vaulty",
-        ('*/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml'),
-        get_vaulty_info)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "smanagerCrash": {
+        "name": "smanagerCrash",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.samsung.android.sm/databases/sm.db',),
+        "output_types": None,
+        "function": "get_smanagerCrash",
+        "artifact_icon": "package",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -39,10 +57,3 @@ def get_smanagerCrash(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Smart Manager - Crash data available')
     
     db.close()
-
-__artifacts__ = {
-        "smanagerCrash": (
-                "App Interaction",
-                ('*/com.samsung.android.sm/databases/sm.db'),
-                get_smanagerCrash)
-}

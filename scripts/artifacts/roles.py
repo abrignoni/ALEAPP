@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "roles": {
+        "name": "roles",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "App Roles",
+        "notes": "",
+        "paths": ('*/system/users/*/roles.xml',),
+        "output_types": None,
+        "function": "get_roles",
+        "artifact_icon": "package",
+    }
+}
+
 import xml.etree.ElementTree as ET 
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -57,11 +75,3 @@ def get_roles(files_found, report_folder, seeker, wrap_text):
                     
                     tsvname = f'App Roles_{user}'
                     tsv(report_folder, data_headers, data_list, tsvname)
-
-__artifacts__ = {
-        "roles": (
-                "App Roles",
-                ('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml'),
-                get_roles)
-}
-            

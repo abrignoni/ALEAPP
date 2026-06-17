@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "DiscreteNative": {
+        "name": "DiscreteNative",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Privacy Dashboard",
+        "notes": "",
+        "paths": ('*/system/appops/discrete/**',),
+        "output_types": None,
+        "function": "get_discreteNative",
+        "artifact_icon": "file",
+    }
+}
+
 import os
 import datetime
 import pathlib
@@ -78,9 +96,3 @@ def get_discreteNative(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Privacy Dashboard data available')
         
-__artifacts__ = {
-        "DiscreteNative": (
-                "Privacy Dashboard",
-                ('*/system/appops/discrete/**'),
-                get_discreteNative)
-}

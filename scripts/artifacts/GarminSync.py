@@ -1,8 +1,20 @@
-# Get Information related to the sync process stored in the sync_cache database file
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+__artifacts_v2__ = {
+    "GarminSync": {
+        "name": "GarminSync",
+        "description": "Get Information related to the sync process stored in the sync_cache database file",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "version": "1.0",
+        "creation_date": "2023-02-24",
+        "last_updated_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Garmin-Sync",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/sync_cache*',),
+        "output_types": None,
+        "function": "get_garmin_sync",
+        "artifact_icon": "activity",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -53,10 +65,3 @@ def get_garmin_sync(files_found, report_folder, seeker, wrap_text):
 
     db.close()
 
-
-__artifacts__ = {
-    "GarminSync": (
-        "Garmin-Sync",
-        ('*/com.garmin.android.apps.connectmobile/databases/sync_cache*'),
-        get_garmin_sync)
-}

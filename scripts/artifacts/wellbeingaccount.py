@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "wellbeingaccount": {
+        "name": "wellbeingaccount",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Digital Wellbeing",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.wellbeing/files/AccountData.pb',),
+        "output_types": None,
+        "function": "get_wellbeingaccount",
+        "artifact_icon": "battery",
+    }
+}
+
 import json
 import os
 
@@ -23,10 +41,3 @@ def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text):
     
     tsvname = f'wellbeing account'
     tsv(report_folder, data_headers, data_list, tsvname)
-
-__artifacts__ = {
-        "wellbeingaccount": (
-                "Digital Wellbeing",
-                ('*/com.google.android.apps.wellbeing/files/AccountData.pb'),
-                get_wellbeingaccount)
-}

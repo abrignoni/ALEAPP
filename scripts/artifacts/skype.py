@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "skype": {
+        "name": "skype",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Skype",
+        "notes": "",
+        "paths": ('*/com.skype.raider/databases/live*',),
+        "output_types": None,
+        "function": "get_skype",
+        "artifact_icon": "message-square",
+    }
+}
+
 import sqlite3
 import datetime
 import os
@@ -203,9 +221,3 @@ def get_skype(files_found, report_folder, seeker, wrap_text):
 
         db.close
         
-__artifacts__ = {
-        "skype": (
-                "Skype",
-                ('*/com.skype.raider/databases/live*'),
-                get_skype)
-}

@@ -1,8 +1,20 @@
-# Module Description: Parses Mastodon timeline, notifications and searches
-# Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
-# Date: 2022-12-07
-# Artifact version: 0.0.3
-# Requirements: BeautifulSoup
+__artifacts_v2__ = {
+    "mastodon": {
+        "name": "mastodon",
+        "description": "Module Description: Parses Mastodon timeline, notifications and searches",
+        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "version": "1.0",
+        "creation_date": "2022-12-07",
+        "last_updated_date": "2022-12-07",
+        "requirements": "BeautifulSoup",
+        "category": "Mastodon",
+        "notes": "",
+        "paths": ('*/org.joinmastodon.android/databases/*.db*',),
+        "output_types": None,
+        "function": "get_mastodon",
+        "artifact_icon": "message-square",
+    }
+}
 
 import datetime
 import json
@@ -339,10 +351,3 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list_instance_json, data_headers)
     else:
         logfunc('No Mastodon - Instance Details data available')
-
-__artifacts__ = {
-        "mastodon": (
-                "Mastodon",
-                ('*/org.joinmastodon.android/databases/*.db*','*/org.joinmastodon.android/files/*.json'),
-                get_mastodon)
-}

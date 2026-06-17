@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "mega_transfers": {
+        "name": "mega_transfers",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Mega",
+        "notes": "",
+        "paths": ('*/mega.privacy.android.app/databases/megapreferences',),
+        "output_types": None,
+        "function": "get_mega_transfers",
+        "artifact_icon": "download",
+    }
+}
+
 import sqlite3
 import base64
 from Crypto.Cipher import AES
@@ -92,9 +110,3 @@ def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No MEGA files data available')
     
-__artifacts__ = {
-        "mega_transfers": (
-                "Mega",
-                ('*/mega.privacy.android.app/databases/megapreferences'),
-                get_mega_transfers)
-}

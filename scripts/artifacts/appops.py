@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "appops": {
+        "name": "appops",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Permissions",
+        "notes": "",
+        "paths": ('*/system/appops.xml',),
+        "output_types": None,
+        "function": "get_appops",
+        "artifact_icon": "package",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -269,9 +287,3 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
                 else:
                     logfunc('No Appops.xml data available')
             
-__artifacts__ = {
-        "appops": (
-                "Permissions",
-                ('*/system/appops.xml'),
-                get_appops)
-}

@@ -1,3 +1,21 @@
+__artifacts_v2__ = {
+    "swellbeing": {
+        "name": "swellbeing",
+        "description": "",
+        "author": "",
+        "version": "1.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "none",
+        "category": "Digital Wellbeing",
+        "notes": "",
+        "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
+        "output_types": None,
+        "function": "get_swellbeing",
+        "artifact_icon": "battery",
+    }
+}
+
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
@@ -65,10 +83,3 @@ def get_swellbeing(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Samsung Digital Wellbeing - Events data available')
-
-__artifacts__ = {
-        "swellbeing": (
-                "Digital Wellbeing",
-                ('*/com.samsung.android.forest/databases/dwbCommon.db*'),
-                get_swellbeing)
-}

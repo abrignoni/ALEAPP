@@ -1,17 +1,21 @@
-# Kijiji Local Recent Searches
-# Author:  Terry Chabot (Krypterry)
-# Version: 1.0.0
-# Kijiji App Version Tested: v17.5.0b172 (2022-05-06)
-# Requirements:  None
-#
-#   Description:
-#   Obtains search terms entered by the local user, potentially including GPS location.
-#
-#   Additional Info:
-#       Kijiji.ca is a Canadian online classified advertising website and part of eBay Classifieds Group, with over 16 million unique visitors per month.
-#
-#       Kijiji, May 2022 <https://help.kijiji.ca/helpdesk/basics/what-is-kijiji>
-#       Wikipedia - The Free Encyclopedia, May 2022, <https://en.wikipedia.org/wiki/Kijiji>
+__artifacts_v2__ = {
+    "kijijiRecentSearches": {
+        "name": "kijijiRecentSearches",
+        "description": "Kijiji Local Recent Searches",
+        "author": "Terry Chabot (Krypterry)",
+        "version": "1.0.0",
+        "creation_date": "2000-01-01",
+        "last_updated_date": "2000-01-01",
+        "requirements": "None",
+        "category": "Kijiji Recent Searches",
+        "notes": "",
+        "paths": ('*/com.ebay.kijiji.ca/databases/searches.*',),
+        "output_types": None,
+        "function": "get_kijijiRecentSearches",
+        "artifact_icon": "search",
+    }
+}
+
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -75,10 +79,3 @@ def get_kijijiRecentSearches(files_found, report_folder, seeker, wrap_text):
         logfunc('No Kijiji Recent Search data was found.')
 
     db.close()
-
-__artifacts__ = {
-    "kijijiRecentSearches": (
-        "Kijiji Recent Searches",
-        ('*/com.ebay.kijiji.ca/databases/searches.*'),
-        get_kijijiRecentSearches)
-}
