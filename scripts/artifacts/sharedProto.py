@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Shared Proto Data",
         "description": "Shared Proto data from Samsung Browser",
         "author": "@AlexisBrignoni",
-        "date": "2024-07-23",
+        "creation_date": "2024-07-23",
+        "last_update_date": "2024-07-23",
         "requirements": "none",
         "category": "Samsung Browser",
         "notes": "",
         "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*'),
         "output_types": None,
+        "artifact_icon": "file",
     }
 }
 import pathlib

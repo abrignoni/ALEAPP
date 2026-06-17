@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Reads records from fcm_queued_messages.ldb related to com.tumblr",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-01-01",
-        "last_updated_date": "2022-01-01",
+        "last_update_date": "2022-01-01",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",
         "notes": "",

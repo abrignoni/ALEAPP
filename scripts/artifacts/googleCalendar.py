@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Calendar",
         "description": "Parses provider calendars and events",
         "author": "@KevinPagano3",
-        "date": "2023-01-06",
+        "creation_date": "2023-01-06",
+        "last_update_date": "2023-01-06",
         "requirements": "none",
         "category": "Calendar",
         "notes": "",
         "paths": ('*/data/com.google.android.calendar/databases/cal_v2a*','*/com.android.providers.calendar/databases/calendar.db*'),
         "output_types": None,
+        "artifact_icon": "calendar",
     }
 }
 

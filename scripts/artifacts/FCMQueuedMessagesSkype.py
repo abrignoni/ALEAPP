@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
-    "FCM_Skype": {
+    "get_fcm_skype": {
         "name": "FCM_Skype",
         "description": "",
         "author": "",
-        "creation_date": "2000-01-01",
-        "last_updated_date": "2000-01-01",
+        "creation_date": "2022-07-28",
+        "last_update_date": "2022-07-28",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",
         "notes": "",

@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Bluesky",
         "description": "User generated searches",
         "author": "DFIRcon 2025 Miami",
-        "date": "2024-11-15",
+        "creation_date": "2024-11-15",
+        "last_update_date": "2024-11-15",
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*'),
         "output_types": None,
+        "artifact_icon": "search",
     }
 }
 

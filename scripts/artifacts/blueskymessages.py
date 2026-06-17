@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Bluesky",
         "description": "Bluesky Messages",
         "author": "Alexis Brignoni",
-        "date": "2024-11-19",
+        "creation_date": "2024-11-19",
+        "last_update_date": "2024-11-19",
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*','*/xyz.blueskyweb.app/cache/http-cache/*.*'),
         "output_types": None,
+        "artifact_icon": "message-square",
     }
 }
 import os

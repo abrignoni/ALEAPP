@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Twitter Searches",
         "author": "Kevin Pagano (https://startme.stark4n6.com)",
         "creation_date": "2023-04-26",
-        "last_updated_date": "2023-04-26",
+        "last_update_date": "2023-04-26",
         "requirements": "None",
         "category": "Twitter",
         "notes": "",

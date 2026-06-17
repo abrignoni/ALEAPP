@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Google Messages",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-01-30",
-        "last_updated_date": "2021-01-30",
+        "last_update_date": "2021-01-30",
         "requirements": "None",
         "category": "Google Messages",
         "notes": "",

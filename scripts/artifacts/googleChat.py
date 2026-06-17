@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Google Chat Messages & Group Information",
         "author": "Josh Hickman (josh@thebinaryhick.blog) & Alexis Brignoni (https://linqapp.com/abrignoni)",
         "creation_date": "2021-02-05",
-        "last_updated_date": "2021-02-05",
+        "last_update_date": "2021-02-05",
         "requirements": "blackboxprotobuf",
         "category": "Google Chat",
         "notes": "",

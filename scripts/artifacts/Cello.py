@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Cello",
         "description": "Parses the Cello db for Google Drive metadata",
         "author": "@KevinPagano3",
-        "date": "2020-12-21",
+        "creation_date": "2020-12-21",
+        "last_update_date": "2020-12-21",
         "requirements": "none",
         "category": "Google Drive",
         "notes": "",
         "paths": ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*'),
         "output_types": None,
+        "artifact_icon": "file",
     }
 }
 

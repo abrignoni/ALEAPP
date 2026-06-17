@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "MEGA",
         "author": "Kevin Pagano (@KevinPagano3)",
         "creation_date": "2021-01-31",
-        "last_updated_date": "2021-01-31",
+        "last_update_date": "2021-01-31",
         "requirements": "None",
         "category": "Mega",
         "notes": "",

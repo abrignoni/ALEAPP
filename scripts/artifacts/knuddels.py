@@ -4,6 +4,7 @@ __artifacts_v2__ = {
         "description": "Extracts Knuddels Chats from database files",
         "author": "@As-arsenicum-33",
         "creation_date": "2025-05-04",
+        "last_update_date": "2025-05-04",
         "last_updated": "2025-06-21",
         "requirements": "none",
         "category": "Knuddels",

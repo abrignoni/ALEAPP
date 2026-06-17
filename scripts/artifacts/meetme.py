@@ -4,12 +4,14 @@ __artifacts_v2__ = {
         "name": "MeetMe Chats",
         "description": "Parses MeetMe Chat database",
         "author": "Matt Beers",
-        "date": "2024-12-27",
+        "creation_date": "2024-12-27",
+        "last_update_date": "2024-12-27",
         "requirements": "none",
         "category": "Chats",
         "notes": "",
         "paths": ('*/data/com.myyearbook.m/databases/chats.db*'),
         "output_types": None,
+        "artifact_icon": "users",
     }
 }
 

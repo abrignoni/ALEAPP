@@ -32,6 +32,7 @@ __artifacts_v2__ = {
         "description": "Outlook Notifications from FCM",
         "author": "Alex Caithness & @jfhyla",
         "creation_date": "2022-07-28",
+        "last_update_date": "2022-07-28",
         "last_updated": "2025-07-31",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",

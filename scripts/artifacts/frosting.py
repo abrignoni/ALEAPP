@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "App updates via the frosting.db",
         "author": "@stark4n6",
         "creation_date": "2022-07-28",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "",

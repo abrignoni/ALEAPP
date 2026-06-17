@@ -1,15 +1,17 @@
 __artifacts_v2__ = {
-    "keepNotes": {
+    "get_keepNotes": {
         "name": "Google Keep Notes",
         "description": "Parses Google Keep Notes",
         "author": "Heather Charpentier",
         "version": "0.0.1",
-        "date": "2024-12-02",
+        "creation_date": "2024-12-02",
+        "last_update_date": "2024-12-02",
         "requirements": "none",
         "category": "Google Keep Notes",
         "notes": "",
         "paths": ('*/data/com.google.android.keep/databases/keep.db*'),
         "output_types": None,
+        "artifact_icon": "file-text",
         "function": "get_keepNotes"
     }
 }

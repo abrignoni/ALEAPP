@@ -3,10 +3,14 @@ __artifacts_v2__ = {
         "name": "Life360 Driver Behavior Trip Events and Waypoints",
         "description": "Parses Events and Waypoints from Life360 DriverBehavior/trips JSON files",
         "author": "Heather Charpentier",
+        "creation_date": "2024-09-17",
+        "last_update_date": "2024-09-17",
+        "requirements": "none",
         "category": "Life360DriverBehavior",
         "notes": "Processes event data and waypoints from trip JSON files",
         "paths": ('*/trips/*.json',),
         "output_types": None,
+        "artifact_icon": "map-pin",
     }
 }
 

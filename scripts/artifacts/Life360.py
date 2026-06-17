@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Life360",
         "description": "Parses the Life360 app locations, device battery, and more",
         "author": "@KevinPagano3",
-        "date": "2024-01-17",
+        "creation_date": "2024-01-17",
+        "last_update_date": "2024-01-17",
         "requirements": "none",
         "category": "Life360",
         "notes": "",
         "paths": ('*/com.life360.android.safetymapd/databases/messaging.db*','*/com.life360.android.safetymapd/databases/L360LocalStoreRoomDatabase*','*/com.life360.android.safetymapd/databases/L360EventStore.db*'),
         "output_types": None,
+        "artifact_icon": "map-pin",
     }
 }
 

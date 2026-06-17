@@ -1,3 +1,19 @@
+__artifacts_v2__ = {
+    "get_ChessComAccount": {
+        "name": "Chess.com Account",
+        "description": "Parses Chess.com account credentials and session data",
+        "author": "",
+        "creation_date": "2022-03-27",
+        "last_update_date": "2022-03-27",
+        "requirements": "none",
+        "category": "Chess.com",
+        "notes": "",
+        "paths": ('*/com.chess/shared_prefs/com.chess.app.login_credentials.xml', '*/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
+        "output_types": None,
+        "artifact_icon": "grid",
+    }
+}
+
 import sqlite3
 import textwrap
 import xml.etree.ElementTree as ET

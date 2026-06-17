@@ -1,3 +1,19 @@
+__artifacts_v2__ = {
+    "get_chromeAutofill": {
+        "name": "Chrome Autofill",
+        "description": "Parses Chrome autofill data",
+        "author": "",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2020-03-19",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
+        "output_types": None,
+        "artifact_icon": "globe",
+    }
+}
+
 import os
 import sqlite3
 import textwrap

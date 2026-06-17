@@ -3,8 +3,8 @@ __artifacts_v2__ = {
         "name": "ChessComMessages",
         "description": "Chess database",
         "author": "",
-        "creation_date": "2000-01-01",
-        "last_updated_date": "2000-01-01",
+        "creation_date": "2022-02-23",
+        "last_update_date": "2022-02-23",
         "requirements": "none",
         "category": "Chess.com",
         "notes": "",
@@ -16,7 +16,9 @@ __artifacts_v2__ = {
 
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import tsv, def get_ChessComMessages(files_found, report_folder, _seeker, _wrap_text):
+from scripts.ilapfuncs import tsv
+
+def get_ChessComMessages(files_found, report_folder, _seeker, _wrap_text):
     
     title = "Chess.com Messages"
 

@@ -3,23 +3,26 @@ __artifacts_v2__ = {
         "name": "Samsung Honeyboard - Clipboard History",
         "description": "Parses the text clipboard History.",
         "author": "@segumarc",
-        "date": "2024-05-30",
+        "creation_date": "2024-05-30",
+        "last_update_date": "2024-05-30",
         "requirements": "",
         "category": "Clipboard",
         "notes": ".",
         "paths": ('*/com.samsung.android.honeyboard/databases/ClipItem*'),
         "output_types": None,
+        "artifact_icon": "clipboard",
     },
-    "Samsung Honeyboard Clipboard Screenshot": {
+    "get_honeyboard_screenshot": {
         "name": "Samsung Honeyboard - Clipboard Screenshot",
         "description": "Parses the Samsung honeyboard clipboard Screenshot.",
         "author": "@segumarc",
-        "date": "2024-05-30",
+        "creation_date": "2024-05-30",
         "requirements": "",
         "category": "Clipboard",
         "notes": ".",
         "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip'),
         "output_types": None,
+        "artifact_icon": "clipboard",
     }
 }
 import os

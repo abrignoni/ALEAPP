@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Module Description: Parses Verizon RDD Wifi Data",
         "author": "John Hyla",
         "creation_date": "2023-07-07",
-        "last_updated_date": "2023-07-07",
+        "last_update_date": "2023-07-07",
         "requirements": "none",
         "category": "Verizon RDD Analytics",
         "notes": "",

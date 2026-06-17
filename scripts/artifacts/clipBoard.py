@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Clipboard artifacts",
         "author": "Alexis Brignoni",
         "creation_date": "2022-01-08",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Clipboard",
         "notes": "",

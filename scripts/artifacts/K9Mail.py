@@ -13,16 +13,18 @@
 __artifacts_v2__ = {
 
     
-    "K9MailData": {
+    "get_k9mail_data": {
         "name": "K-9 Mail - Data",
         "description": "K-9 Mail - Data",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "date": "2024-05-04",
+        "creation_date": "2024-05-04",
+        "last_update_date": "2024-05-04",
         "requirements": "datetime, json, base64",
         "category": "K-9 Mail",
         "notes": "Get Account informations and E-Mails feom K-9 Mail App. Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html",
         "paths": ('*/com.fsck.k9/databases/*'),
         "output_types": None,
+        "artifact_icon": "mail",
     }
 }
 

@@ -3,34 +3,38 @@ __artifacts_v2__ = {
         "name": "Wire User Profile",
         "description": "Parses details about the user profile for Wire Messenger",
         "author": "@cf-eglendye",
-        "date": "2024-04-24",
+        "creation_date": "2024-04-24",
+        "last_update_date": "2024-04-24",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**'),
         "output_types": None,
+        "artifact_icon": "message-square",
     },
-        "Wire Contacts": {
+        "get_wire_contacts": {
         "name": "Wire Contacts",
         "description": "Parses user contacts for Wire Messenger",
         "author": "@cf-eglendye",
-        "date": "2024-04-24",
+        "creation_date": "2024-04-24",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**',),
         "output_types": None,
+        "artifact_icon": "message-square",
     },
-    "Wire Messages": {
+    "get_wire_messages": {
         "name": "Wire Messages",
         "description": "Parses messages and call history for Wire Messenger",
         "author": "@cf-eglendye",
-        "date": "2024-04-24",
+        "creation_date": "2024-04-24",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**'),
         "output_types": None,
+        "artifact_icon": "message-square",
     }
 }
 

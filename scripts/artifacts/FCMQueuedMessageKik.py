@@ -26,6 +26,7 @@ __artifacts_v2__ = {
         "description": "Kik Notifications from FCM",
         "author": "@jfhyla",
         "creation_date": "2025-07-31",
+        "last_update_date": "2025-07-31",
         "last_updated": "2025-07-31",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",

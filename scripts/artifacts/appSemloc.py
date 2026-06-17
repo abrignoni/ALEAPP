@@ -3,14 +3,15 @@ __artifacts_v2__ = {
         "name": "App Semantic Locations",
         "description": "App Semantic Locations",
         "author": "Alexis 'Brigs' Brignoni",
-        "date": "2024/06/21",
+        "creation_date": "2024/06/21",
+        "last_update_date": "2024/06/21",
         "requirements": "",
         "category": "App Semantic Locations",
         "notes": "Thanks to Alex Caithness for the ccc_leveldb libraries",
         "paths": (
-        "output_types": None,
-            '*/com.google.android.gms/app_semanticlocation_rawsignal_db/*'
+            '*/com.google.android.gms/app_semanticlocation_rawsignal_db/*',
         ),
+        "output_types": None,
     }
 }
 import pathlib

@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Package Predictions - Parses Samsung package prediction details",
         "author": "Kevin Pagano (https://startme.stark4n6.com)",
         "creation_date": "2023-05-01",
-        "last_updated_date": "2023-05-01",
+        "last_update_date": "2023-05-01",
         "requirements": "None",
         "category": "Package Predictions",
         "notes": "",

@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Timestamp of when a factory reset occurred",
         "author": "Kevin Pagano",
         "creation_date": "2022-01-05",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Wipe & Setup",
         "notes": "",

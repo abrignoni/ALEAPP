@@ -3,16 +3,17 @@ __artifacts_v2__ = {
         "name": "ChatGPT",
         "description": "Get user's ChatGPT conversations, settings and media files. This parser is based on a research project. Parser is validated up to the app's 1.2024.177 version",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
-        "date": "2024-07-09",
+        "creation_date": "2024-07-09",
+        "last_update_date": "2024-07-09",
         "requirements": "",
         "category": "ChatGPT",
         "paths": (
-        "output_types": None,
             '**/com.openai.chatgpt/databases/*.*',
             '**/com.openai.chatgpt/files/datastore/*.*',
             '**/com.openai.chatgpt/shared_prefs/*',
             '**/com.openai.chatgpt/cache/files/*',
         ),
+        "output_types": None,
     }
 }
 

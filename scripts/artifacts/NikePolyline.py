@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Get GPS data from the table 'activity_polyline' and activity_details",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-18",
-        "last_updated_date": "2023-03-18",
+        "last_update_date": "2023-03-18",
         "requirements": "Python 3.7 or higher, folium and polyline, datetime",
         "category": "Nike-Run",
         "notes": "",

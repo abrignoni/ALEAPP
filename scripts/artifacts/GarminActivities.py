@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Get Information relative to the user activities that are present in the database (cache-database) from the Garmin Connect app, the activities are stored in two different tables (activities_details and activities_summaries)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
-        "last_updated_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
         "requirements": "Python 3.7 or higher and json",
         "category": "Garmin-Cache",
         "notes": "",

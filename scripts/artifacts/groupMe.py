@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "GroupMe",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-XX",
-        "last_updated_date": "2021-02-XX",
+        "last_update_date": "2021-02-XX",
         "requirements": "None",
         "category": "GroupMe",
         "notes": "",

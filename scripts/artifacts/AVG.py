@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "get_AVG": {
         "name": "AVG",
-        "description": "## Import required modules",
+        "description": "",
         "author": "",
-        "creation_date": "2000-01-01",
-        "last_updated_date": "2000-01-01",
+        "creation_date": "2022-05-03",
+        "last_update_date": "2022-05-03",
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": "",
@@ -32,7 +32,7 @@ import datetime
 
 ### Import ALEAPP Modules
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, , , media_to_html
+from scripts.ilapfuncs import logfunc, tsv, media_to_html
 
 ### Function to reduce code (slightly) to be used with log function
 def printFunc(dataToPrint,prependDash,newLine, appendDash):

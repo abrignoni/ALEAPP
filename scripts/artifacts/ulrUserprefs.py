@@ -3,14 +3,15 @@ __artifacts_v2__ = {
         "name": "ULR User Prefs",
         "description": "ULR User Prefs",
         "author": "Alexis 'Brigs' Brignoni",
-        "date": "2024/06/21",
+        "creation_date": "2024/06/21",
+        "last_update_date": "2024/06/21",
         "requirements": "",
         "category": "App Semantic Locations",
         "notes": "Thanks to Josh Hickman for the research",
         "paths": (
-        "output_types": None,
-            '*/com.google.android.gms/shared_prefs/ULR_USER_PREFS.xml'
+            '*/com.google.android.gms/shared_prefs/ULR_USER_PREFS.xml',
         ),
+        "output_types": None,
     }
 }
 import json

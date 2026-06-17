@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "gmailActive: Get gmail account information",
         "author": "Joshua James {joshua@dfirscience.org}",
         "creation_date": "2021-11-08",
-        "last_updated_date": "2021-11-08",
+        "last_update_date": "2021-11-08",
         "requirements": "none",
         "category": "Gmail",
         "notes": "",

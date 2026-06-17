@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Get User information from the xml file com.fitnesskeeper.runkeeper.pro_preferences.xml in the Runkeeper app related to the user",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-25",
-        "last_updated_date": "2023-03-25",
+        "last_update_date": "2023-03-25",
         "requirements": "Python 3.7 or higher and ElementTree",
         "category": "Runkeeper",
         "notes": "",

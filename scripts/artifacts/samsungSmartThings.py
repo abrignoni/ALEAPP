@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Samsung SmartThings",
         "author": "Kevin Pagano (@KevinPagno3)",
         "creation_date": "2022-06-13",
-        "last_updated_date": "2022-06-13",
+        "last_update_date": "2022-06-13",
         "requirements": "none",
         "category": "Samsung SmartThings",
         "notes": "",

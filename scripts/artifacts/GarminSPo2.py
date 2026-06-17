@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Get Information related to Garmin Pulse Ox from acclimation_pulse_ox_details table and generate a chart",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
-        "last_updated_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
         "requirements": "Python 3.7 or higher",
         "category": "Garmin-Cache",
         "notes": "",

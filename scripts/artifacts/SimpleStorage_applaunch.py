@@ -4,6 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses SimpleStorage for application launch",
         "author": "@KevinPagano3",
         "creation_date": "2022-12-13",
+        "last_update_date": "2022-12-13",
         "last_updated": "2025-09-12",
         "requirements": "none",
         "category": "Android System Intelligence",

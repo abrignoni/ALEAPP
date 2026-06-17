@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Get Information related to users from the Adidas Running app stored in user.db",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-24",
-        "last_updated_date": "2023-03-24",
+        "last_update_date": "2023-03-24",
         "requirements": "Python 3.7 or higher",
         "category": "Adidas-Running",
         "notes": "",

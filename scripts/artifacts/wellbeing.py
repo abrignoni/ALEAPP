@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Digital Wellbeing",
         "description": "Parses Digital Wellbeing events",
         "author": "@AlexisBrignoni",
-        "date": "2020-02-2",
+        "creation_date": "2020-02-2",
+        "last_update_date": "2020-02-2",
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": "",
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
         "output_types": None,
+        "artifact_icon": "heart",
     }
 }
 

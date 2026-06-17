@@ -13,16 +13,18 @@
 __artifacts_v2__ = {
 
     
-    "MSAuthenticatorAccounts": {
+    "get_MSAuth_accounts": {
         "name": "Microsoft Authenticator - Accounts",
         "description": "Parses the existing Accounts out of the Microsoft Authenticator App.",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "date": "2024-05-11",
+        "creation_date": "2024-05-11",
+        "last_update_date": "2024-05-11",
         "requirements": "",
         "category": "MS Authenticator",
         "notes": "Get Account information from MS authenticator app.",
         "paths": ('*/com.azure.authenticator/databases/PhoneFactor*'),
         "output_types": None,
+        "artifact_icon": "shield",
     }
 }
 

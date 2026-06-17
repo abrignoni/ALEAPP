@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Bluesky",
         "description": "Bluesky Feed Posts",
         "author": "Alexis Brignoni",
-        "date": "2024-11-20",
+        "creation_date": "2024-11-20",
+        "last_update_date": "2024-11-20",
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/cache/http-cache/*.*'),
         "output_types": None,
+        "artifact_icon": "edit",
     }
 }
 import os

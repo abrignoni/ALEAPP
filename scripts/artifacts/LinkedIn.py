@@ -13,6 +13,7 @@ __artifacts_v2__ = {
         "description": "Existing account in LinkedIn App. The Public Identifier can be used to visit the public profile on the LinkedIn Website (https://www.linkedin.com/in/[Public Identifier]).",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2025-04-26",
+        "last_update_date": "2025-04-26",
         'last_update_date': '2026-02-07',
         "requirements": "xml, json",
         "category": "LinkedIn",

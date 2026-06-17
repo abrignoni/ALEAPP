@@ -3,11 +3,13 @@ __artifacts_v2__ = {
         "name": "Bumble",
         "description": "Parses Bumble chats, matches and user details",
         "author": "@KevinPagano3",
-        "date": "2022-11-07",
+        "creation_date": "2022-11-07",
+        "last_update_date": "2022-11-07",
         "requirements": "none",
         "category": "Bumble",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*','*/com.bumble.app/files/c2V0dGluZ3M='),
         "output_types": None,
+        "artifact_icon": "users",
     }
 }
 

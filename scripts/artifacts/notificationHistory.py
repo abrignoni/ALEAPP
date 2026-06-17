@@ -3,15 +3,16 @@ __artifacts_v2__ = {
         "name": "Android Notification History",
         "description": "Get Android notifications' history, policy and settings. This parser is based on a research project",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
-        "date": "2024-07-02",
+        "creation_date": "2024-07-02",
+        "last_update_date": "2024-07-02",
         "requirements": "",
         "category": "Android Notification History",
         "paths": (
-        "output_types": None,
             '**/system_ce/*/notification_history/history/*',
             '**/system/users/*/settings_secure.xml',
             '**/system/notification_policy.xml',
         ),
+        "output_types": None,
     }
 }
 

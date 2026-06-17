@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Get Information related to the Daily summaries from the Garmin API using the JSON file extracted",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-28",
-        "last_updated_date": "2023-02-28",
+        "last_update_date": "2023-02-28",
         "requirements": "Python 3.7 or higher, json",
         "category": "Garmin-API",
         "notes": "",

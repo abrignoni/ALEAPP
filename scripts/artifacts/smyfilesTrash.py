@@ -11,12 +11,14 @@ __artifacts_v2__ = {
         "name": "My Files Trash",
         "description": "Shows Original Location and Deletion Timestamp of files/folders within My Files Trash",
         "author": "@PensiveHike",
-        "date": "2024-06-05",
+        "creation_date": "2024-06-05",
+        "last_update_date": "2024-06-05",
         "requirements": "none",
         "category": "My Files",
         "notes": "Timestamp corroborated with My Files Operation History database",
         "paths": ('*/com.sec.android.app.myfiles/files/trash/*', '*/.Trash/com.sec.android.app.myfiles/*'),
         "output_types": None,
+        "artifact_icon": "trash-2",
     }
 }
 

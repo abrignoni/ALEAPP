@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "AirGuard",
         "description": "Parses the AirGuard AirTag app",
         "author": "@AlexisBrignoni",
-        "date": "2022-01-08",
+        "creation_date": "2022-01-08",
+        "last_update_date": "2022-01-08",
         "requirements": "none",
         "category": "AirTags",
         "notes": "",
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*'),
         "output_types": None,
+        "artifact_icon": "shield",
     }
 }
 

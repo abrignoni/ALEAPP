@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Emulated Storage Metadata",
         "description": "Parses emulated storage metadata from external.db",
         "author": "@AlexisBrignoni",
-        "date": "2020-10-19",
+        "creation_date": "2020-10-19",
+        "last_update_date": "2020-10-19",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
         "notes": "2023-02-10 - Updated by @KevinPagano3",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*','*/com.android.providers.media/databases/external.db*'),
         "output_types": None,
+        "artifact_icon": "file",
     }
 }
 

@@ -12,23 +12,26 @@ __artifacts_v2__ = {
         "name": "Fitbit Smartphone Data",
         "description": "Parses Fitbit activities from Android Smartphone app",
         "author": "@AlexisBrignoni",
-        "date": "2021-04-23",
+        "creation_date": "2021-04-23",
+        "last_update_date": "2021-04-23",
         "requirements": "none",
         "category": "Fitbit",
         "notes": "Updated 2023-12-12 by @segumarc",
         "paths": ('*/com.fitbit.FitbitMobile/databases/activity_db*','*/com.fitbit.FitbitMobile/databases/device_database*','*/com.fitbit.FitbitMobile/databases/exercise_db*','*/com.fitbit.FitbitMobile/databases/heart_rate_db*','*/com.fitbit.FitbitMobile/databases/sleep*','*/com.fitbit.FitbitMobile/databases/social_db*','*/com.fitbit.FitbitMobile/databases/mobile_track_db*'),
         "output_types": None,
+        "artifact_icon": "activity",
     },
-    "FitbitWearOS": {
+    "get_fitbit_wearos": {
         "name": "Fitbit Wear OS Data",
         "description": "Parses User DB and Passive Stats DB from Pixel Watch/Wear OS",
         "author": "Ganeshbs17",
-        "date": "2026-01-12",
+        "creation_date": "2026-01-12",
         "requirements": "none",
         "category": "Fitbit",
         "notes": "Specific to Pixel Watch/Wear OS",
         "paths": ('*/com.fitbit.FitbitMobile/databases/user.db*', '*/com.fitbit.FitbitMobile/databases/passive_stats.db*'),
         "output_types": None,
+        "artifact_icon": "activity",
     }
 }
 

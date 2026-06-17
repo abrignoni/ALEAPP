@@ -8,12 +8,14 @@ __artifacts_v2__ = {
         "name": "My Files Operation History",
         "description": "Extracts Operation History from My Files database",
         "author": "@PensiveHike",
-        "date": "2024-06-05",
+        "creation_date": "2024-06-05",
+        "last_update_date": "2024-06-05",
         "requirements": "none",
         "category": "My Files",
         "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown characters will be replaced with '?'.",
         "paths": '*/com.sec.android.app.myfiles/databases/OperationHistory.db*',
         "output_types": None,
+        "artifact_icon": "clock",
     }
 }
 

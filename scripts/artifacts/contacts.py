@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Contacts from the device",
         "author": "Mark McKinnon",
         "creation_date": "2021-03-11",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Contacts",
         "notes": "",

@@ -3,12 +3,14 @@ __artifacts_v2__ = {
         "name": "Turbo_AppUsage",
         "description": "Parses application usage via Device Health Services",
         "author": "@KevinPagano3",
-        "date": "2021-06-29",
+        "creation_date": "2021-06-29",
+        "last_update_date": "2021-06-29",
         "requirements": "none",
         "category": "Device Health Services",
         "notes": "",
         "paths": ('*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml'),
         "output_types": None,
+        "artifact_icon": "bar-chart-2",
     }
 }
 
