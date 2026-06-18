@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_firefoxCookies": {
+        "name": "FirefoxCookies",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-12",
+        "last_update_date": "2022-01-12",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*',),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_firefoxCookies",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -51,9 +69,3 @@ def get_firefoxCookies(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "FirefoxCookies": (
-                "Firefox",
-                ('*/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*'),
-                get_firefoxCookies)
-}

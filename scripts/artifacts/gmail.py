@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0622,W1309
+__artifacts_v2__ = {
+    "get_gmailActive": {
+        "name": "GmailActive",
+        "description": "gmailActive: Get gmail account information",
+        "author": "Joshua James {joshua@dfirscience.org}",
+        "creation_date": "2021-11-08",
+        "last_update_date": "2021-11-08",
+        "requirements": "none",
+        "category": "Gmail",
+        "notes": "",
+        "paths": ('*/com.google.android.gm/shared_prefs/Gmail.xml',),
+        "output_types": None,
+        "artifact_icon": "mail",
+        "function": "get_gmailActive",
+    }
+}
+
 # gmailActive: Get gmail account information
 # Author: Joshua James {joshua@dfirscience.org}
 # Date: 2021-11-08
@@ -47,10 +65,3 @@ def get_gmailActive(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No active Gmail account found')
-
-__artifacts__ = {
-        "GmailActive": (
-                "Gmail",
-                ('*/com.google.android.gm/shared_prefs/Gmail.xml'),
-                get_gmailActive)
-}

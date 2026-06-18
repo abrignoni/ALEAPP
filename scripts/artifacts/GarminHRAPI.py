@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0631,W1309,W1514
+__artifacts_v2__ = {
+    "get_hr_api": {
+        "name": "GarminHRAPI",
+        "description": "Get Information related to the Heart Rate from the Garmin API using the JSON file extracted",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher, json",
+        "category": "Garmin-API",
+        "notes": "",
+        "paths": ('*/garmin.api/heart_rate*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_hr_api",
+    }
+}
+
 # Get Information related to the Heart Rate from the Garmin API using the JSON file extracted
 # Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
@@ -82,11 +100,3 @@ def get_hr_api(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     tsvname = f'Garmin Log'
     tsv(report_folder, data_headers, data_list, tsvname)
-
-
-__artifacts__ = {
-    "GarminHRAPI": (
-        "Garmin-API",
-        ('*/garmin.api/heart_rate*'),
-        get_hr_api)
-}

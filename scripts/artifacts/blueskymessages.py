@@ -1,17 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W0702,W1309
 __artifacts_v2__ = {
-    "blueskymessages": {
+    "get_blueskymessages": {
         "name": "Bluesky",
         "description": "Bluesky Messages",
         "author": "Alexis Brignoni",
-        "version": "0.0.1",
-        "date": "2024-11-19",
+        "creation_date": "2024-11-19",
+        "last_update_date": "2024-11-19",
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*','*/xyz.blueskyweb.app/cache/http-cache/*.*'),
-        "function": "get_blueskymessages"
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_blueskymessages",
     }
 }
+
 import os
 import json
 import sqlite3

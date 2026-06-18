@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_smanagerCrash": {
+        "name": "smanagerCrash",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.samsung.android.sm/databases/sm.db',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_smanagerCrash",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -39,10 +57,3 @@ def get_smanagerCrash(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Smart Manager - Crash data available')
     
     db.close()
-
-__artifacts__ = {
-        "smanagerCrash": (
-                "App Interaction",
-                ('*/com.samsung.android.sm/databases/sm.db'),
-                get_smanagerCrash)
-}

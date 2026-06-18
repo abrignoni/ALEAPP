@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_swellbeing": {
+        "name": "swellbeing",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-05-21",
+        "last_update_date": "2020-05-21",
+        "requirements": "none",
+        "category": "Digital Wellbeing",
+        "notes": "",
+        "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
+        "output_types": None,
+        "artifact_icon": "battery",
+        "function": "get_swellbeing",
+    }
+}
+
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
@@ -65,10 +83,3 @@ def get_swellbeing(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Samsung Digital Wellbeing - Events data available')
-
-__artifacts__ = {
-        "swellbeing": (
-                "Digital Wellbeing",
-                ('*/com.samsung.android.forest/databases/dwbCommon.db*'),
-                get_swellbeing)
-}

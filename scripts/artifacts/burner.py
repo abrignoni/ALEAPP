@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_burner": {
+        "name": "Burner",
+        "description": "Burner",
+        "author": "Josh Hickman (josh@thebinaryhick.blog)",
+        "creation_date": "2021-02-05",
+        "last_update_date": "2021-02-05",
+        "requirements": "None",
+        "category": "Burner",
+        "notes": "",
+        "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
+        "output_types": None,
+        "artifact_icon": "shield",
+        "function": "get_burner",
+    }
+}
+
 # Burner
 # Author:  Josh Hickman (josh@thebinaryhick.blog)
 # Date 2021-02-05
@@ -108,9 +126,3 @@ def get_burner(files_found, report_folder, seeker, wrap_text):
                 
         db.close()
         
-__artifacts__ = {
-        "Burner": (
-                "Burner",
-                ('*/com.adhoclabs.burner/databases/burners.db'),
-                get_burner)
-}

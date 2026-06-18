@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_appLockerfishingnetpat": {
+        "name": "App Locker Pat",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-12-14",
+        "last_update_date": "2021-12-14",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": "",
+        "paths": ('*/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml',),
+        "output_types": None,
+        "artifact_icon": "image",
+        "function": "get_appLockerfishingnetpat",
+    }
+}
+
 import sys
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
@@ -39,9 +57,3 @@ def get_appLockerfishingnetpat(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Calculator Locker Pattern data available')
             
-__artifacts__ = {
-        "App Locker Pat": (
-                "Encrypting Media Apps",
-                ('*/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml'),
-                get_appLockerfishingnetpat)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0611,W0613,W0631
+__artifacts_v2__ = {
+    "get_tikTok": {
+        "name": "tikTok",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-02",
+        "last_update_date": "2021-03-02",
+        "requirements": "none",
+        "category": "TikTok",
+        "notes": "",
+        "paths": ('*_im.db*', '*db_im_xx*'),
+        "output_types": None,
+        "artifact_icon": "users",
+        "function": "get_tikTok",
+    }
+}
+
 from os.path import dirname, join
 import sqlite3
 
@@ -93,10 +111,3 @@ def get_tikTok(files_found, report_folder, seeker, wrap_text):
         logfunc('No TikTok Contacts available')
     
     db.close()
-
-__artifacts__ = {
-        "tikTok": (
-                "TikTok",
-                ('*_im.db*', '*db_im_xx*'),
-                get_tikTok)
-}

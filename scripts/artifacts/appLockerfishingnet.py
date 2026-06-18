@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_appLockerfishingnet": {
+        "name": "App Locker",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-12-14",
+        "last_update_date": "2021-12-14",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": "",
+        "paths": ('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*'),
+        "output_types": None,
+        "artifact_icon": "image",
+        "function": "get_appLockerfishingnet",
+    }
+}
+
 import sys
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
@@ -83,10 +101,3 @@ def get_appLockerfishingnet(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Calculator Locker data available')
-
-__artifacts__ = {
-        "App Locker": (
-                "Encrypting Media Apps",
-                ('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*'),
-                get_appLockerfishingnet)
-}

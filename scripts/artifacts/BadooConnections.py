@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0622,W1309
+__artifacts_v2__ = {
+    "get_badoo_conn": {
+        "name": "BadooConnections",
+        "description": "Get Information related to possible connections (messages, views etc) of the user with other users from the Badoo app (com.badoo.mobile)",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-05-03",
+        "last_update_date": "2023-05-03",
+        "requirements": "Python 3.7 or higher",
+        "category": "Badoo",
+        "notes": "",
+        "paths": ('*com.badoo.mobile/databases/CombinedConnectionsDatabase*',),
+        "output_types": None,
+        "artifact_icon": "users",
+        "function": "get_badoo_conn",
+    }
+}
+
 # Get Information related to possible connections (messages, views etc) of the user with other users from the Badoo app (com.badoo.mobile)
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-05-03
@@ -54,11 +72,3 @@ def get_badoo_conn(files_found, report_folder, seeker, wrap_text):
         logfunc('No Badoo Connection data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "BadooConnections": (
-        "Badoo",
-        ('*com.badoo.mobile/databases/CombinedConnectionsDatabase*'),
-        get_badoo_conn)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=W0404,W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_playgroundVault": {
+        "name": "playgroundVault",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-16",
+        "last_update_date": "2022-01-16",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": "",
+        "paths": ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml', '*/applocker/vault/*'),
+        "output_types": None,
+        "artifact_icon": "image",
+        "function": "get_playgroundVault",
+    }
+}
+
 import sys
 import shutil
 import os
@@ -96,10 +114,3 @@ def get_playgroundVault(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Playground Vault data available')
-
-__artifacts__ = {
-        "playgroundVault": (
-                "Encrypting Media Apps",
-                ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml','*/applocker/vault/*'),
-                get_playgroundVault)
-}

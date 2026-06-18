@@ -1,3 +1,21 @@
+# pylint: disable=E0606,E1101,W0120,W0611,W0613,W1514
+__artifacts_v2__ = {
+    "get_vaulty_info": {
+        "name": "vaulty_info",
+        "description": "Prefs File",
+        "author": "",
+        "creation_date": "2022-02-23",
+        "last_update_date": "2022-02-23",
+        "requirements": "none",
+        "category": "Vaulty",
+        "notes": "",
+        "paths": ('*/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml',),
+        "output_types": None,
+        "artifact_icon": "lock",
+        "function": "get_vaulty_info",
+    }
+}
+
 import xmltodict
 from hashlib import md5
 import base64
@@ -84,10 +102,3 @@ def get_vaulty_info(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "vaulty_info": (
-        "Vaulty",
-        ('*/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml'),
-        get_vaulty_info)
-}

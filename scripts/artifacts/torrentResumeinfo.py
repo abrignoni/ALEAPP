@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W0702
+__artifacts_v2__ = {
+    "get_torrentResumeinfo": {
+        "name": "torrentResumeinfo",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-26",
+        "last_update_date": "2023-03-26",
+        "requirements": "none",
+        "category": "BitTorrent",
+        "notes": "",
+        "paths": ('*/*.resume',),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_torrentResumeinfo",
+    }
+}
+
 import bencoding
 import hashlib
 import datetime
@@ -52,10 +70,3 @@ def get_torrentResumeinfo(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "torrentResumeinfo": (
-        "BitTorrent",
-        ('*/*.resume'),
-        get_torrentResumeinfo)
-}

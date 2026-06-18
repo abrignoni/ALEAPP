@@ -1,3 +1,21 @@
+# pylint: disable=W0109,W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_googleCallScreen": {
+        "name": "GoogleCallScreen",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-06",
+        "last_update_date": "2021-08-06",
+        "requirements": "none",
+        "category": "Google Call Screen",
+        "notes": "",
+        "paths": ('*/com.google.android.dialer/databases/callscreen_transcripts*', '*/com.google.android.dialer/files/callscreenrecordings/*.*'),
+        "output_types": None,
+        "artifact_icon": "phone",
+        "function": "get_googleCallScreen",
+    }
+}
+
 import blackboxprotobuf
 import os
 import shutil
@@ -98,10 +116,3 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Call Screen data available')
     
         db.close()
-
-__artifacts__ = {
-        "GoogleCallScreen": (
-                "Google Call Screen",
-                ('*/com.google.android.dialer/databases/callscreen_transcripts*','*/com.google.android.dialer/files/callscreenrecordings/*.*'),
-                get_googleCallScreen)
-}

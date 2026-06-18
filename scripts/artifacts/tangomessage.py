@@ -1,3 +1,21 @@
+# pylint: disable=W0107,W0611,W0613,W0631,W0702,W0718,W1309
+__artifacts_v2__ = {
+    "get_tangomessage": {
+        "name": "tangomessage",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-11",
+        "last_update_date": "2021-03-11",
+        "requirements": "none",
+        "category": "Tango",
+        "notes": "",
+        "paths": ('*/com.sgiggle.production/files/tc.db*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_tangomessage",
+    }
+}
+
 import sqlite3
 import base64
 import datetime
@@ -65,10 +83,3 @@ def get_tangomessage(files_found, report_folder, seeker, wrap_text):
         logfunc('No Tango Messages data available')
 
     db.close()
-
-__artifacts__ = {
-        "tangomessage": (
-                "Tango",
-                ('*/com.sgiggle.production/files/tc.db*'),
-                get_tangomessage)
-}

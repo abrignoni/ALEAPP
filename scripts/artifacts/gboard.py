@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W0622
+__artifacts_v2__ = {
+    "get_gboardCache": {
+        "name": "GboardCache",
+        "description": "Update 2023-05-01 from @KevinPagano3 (https://startme.stark4n6.com)",
+        "author": "",
+        "creation_date": "2021-01-09",
+        "last_update_date": "2021-01-09",
+        "requirements": "none",
+        "category": "Gboard Keyboard",
+        "notes": "",
+        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db', '*/com.google.android.inputmethod.latin/databases/gboard_clipboard.db*', '*/com.google.android.inputmethod.latin/files/clipboard_image/*'),
+        "output_types": None,
+        "artifact_icon": "chrome",
+        "function": "get_gboardCache",
+    }
+}
+
 # Update 2023-05-01 from @KevinPagano3 (https://startme.stark4n6.com)
 # Added support for parsing gboard_clipboard.db database
 
@@ -311,10 +329,3 @@ def read_trainingcachev3_sessions(file_found, report_folder, seeker):
 
     # Close
     conn.close()
-
-__artifacts__ = {
-        "GboardCache": (
-                "Gboard Keyboard",
-                ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db','*/com.google.android.inputmethod.latin/databases/gboard_clipboard.db*','*/com.google.android.inputmethod.latin/files/clipboard_image/*'),
-                get_gboardCache)
-}

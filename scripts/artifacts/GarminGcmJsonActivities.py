@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_garmin_gcm_json_activities": {
+        "name": "GarminGcmJsonActivities",
+        "description": "Get JSON information stored in the Garmin GCM database (json_activities table)",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher and json module",
+        "category": "Garmin-GCM",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_garmin_gcm_json_activities",
+    }
+}
+
 # Get JSON information stored in the Garmin GCM database (json_activities table)
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-02-24
@@ -85,11 +103,3 @@ def get_garmin_gcm_json_activities(files_found, report_folder, seeker, wrap_text
         logfunc('No Garmin GCM JSON data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "GarminGcmJsonActivities": (
-        "Garmin-GCM",
-        ('*/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*'),
-        get_garmin_gcm_json_activities)
-}

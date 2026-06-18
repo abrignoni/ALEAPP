@@ -1,3 +1,21 @@
+# pylint: disable=W0401,W0611,W0612,W0613,W0614,W1309
+__artifacts_v2__ = {
+    "get_googleMapsSearches": {
+        "name": "googleMapsSearches",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-10-15",
+        "last_update_date": "2023-10-15",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/files/new_recent_history_cache_search.cs',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_googleMapsSearches",
+    }
+}
+
 import blackboxprotobuf
 from datetime import *
 from scripts.artifact_report import ArtifactHtmlReport
@@ -102,10 +120,3 @@ def get_googleMapsSearches(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc(f'No Google Maps Searches available')
-
-__artifacts__ = {
-        "googleMapsSearches": (
-                "GEO Location",
-                ('*/com.google.android.apps.maps/files/new_recent_history_cache_search.cs'),
-                get_googleMapsSearches)
-}

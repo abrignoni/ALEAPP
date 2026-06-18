@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0718,W1309
+__artifacts_v2__ = {
+    "get_rdd_analytics": {
+        "name": "VerizonRDD-Battery",
+        "description": "Module Description: Parses Verizon RDD Analytics Battery History",
+        "author": "John Hyla",
+        "creation_date": "2023-07-07",
+        "last_update_date": "2023-07-07",
+        "requirements": "none",
+        "category": "Verizon RDD Analytics",
+        "notes": "",
+        "paths": ('*/com.verizon.mips.services/databases/RDD_ANALYTICS_DATABASE',),
+        "output_types": None,
+        "artifact_icon": "battery",
+        "function": "get_rdd_analytics",
+    }
+}
+
 # Module Description: Parses Verizon RDD Analytics Battery History
 # Author: John Hyla
 # Date: 2023-07-07
@@ -61,11 +79,3 @@ def get_rdd_analytics(files_found, report_folder, seeker, wrap_text):
         db.close()
     
     return
-
-
-__artifacts__ = {
-    "VerizonRDD-Battery": (
-        "Verizon RDD Analytics",
-        ('*/com.verizon.mips.services/databases/RDD_ANALYTICS_DATABASE'),
-        get_rdd_analytics)
-}

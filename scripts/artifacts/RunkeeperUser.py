@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_run_user": {
+        "name": "RunkeeperUser",
+        "description": "Get User information from the xml file com.fitnesskeeper.runkeeper.pro_preferences.xml in the Runkeeper app related to the user",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-25",
+        "last_update_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher and ElementTree",
+        "category": "Runkeeper",
+        "notes": "",
+        "paths": ('*/com.fitnesskeeper.runkeeper.pro/shared_prefs/com.fitnesskeeper.runkeeper.pro_preferences*',),
+        "output_types": None,
+        "artifact_icon": "user",
+        "function": "get_run_user",
+    }
+}
+
 # Get User information from the xml file com.fitnesskeeper.runkeeper.pro_preferences.xml in the Runkeeper app related to the user
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-25
@@ -77,11 +95,3 @@ def get_run_user(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc("No Runkeeper XML data found")
-
-
-__artifacts__ = {
-    "RunkeeperUser": (
-        "Runkeeper",
-        ('*/com.fitnesskeeper.runkeeper.pro/shared_prefs/com.fitnesskeeper.runkeeper.pro_preferences*'),
-        get_run_user)
-}

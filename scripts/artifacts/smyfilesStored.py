@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0702,W1309
+__artifacts_v2__ = {
+    "get_smyfilesStored": {
+        "name": "smyfilesStored",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2020-03-19",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_smyfilesStored",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -66,10 +84,3 @@ def get_smyfilesStored(files_found, report_folder, seeker, text_wrap):
         logfunc('No My Files DB Stored data available')
     
     db.close()
-
-__artifacts__ = {
-        "smyfilesStored": (
-                "My Files",
-                ('*/com.sec.android.app.myfiles/databases/FileCache.db*'),
-                get_smyfilesStored)
-}

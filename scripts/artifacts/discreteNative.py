@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_discreteNative": {
+        "name": "DiscreteNative",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-19",
+        "last_update_date": "2022-01-19",
+        "requirements": "none",
+        "category": "Privacy Dashboard",
+        "notes": "",
+        "paths": ('*/system/appops/discrete/**',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_discreteNative",
+    }
+}
+
 import os
 import datetime
 import pathlib
@@ -78,9 +96,3 @@ def get_discreteNative(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Privacy Dashboard data available')
         
-__artifacts__ = {
-        "DiscreteNative": (
-                "Privacy Dashboard",
-                ('*/system/appops/discrete/**'),
-                get_discreteNative)
-}

@@ -1,15 +1,18 @@
+# pylint: disable=W0611,W0613,W0631,W1309
 __artifacts_v2__ = {
-    "wellbeing": {
+    "get_wellbeing": {
         "name": "Digital Wellbeing",
         "description": "Parses Digital Wellbeing events",
         "author": "@AlexisBrignoni",
-        "version": "0.0.1",
-        "date": "2020-02-2",
+        "creation_date": "2020-02-2",
+        "last_update_date": "2020-02-2",
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": "",
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
-        "function": "get_wellbeing"
+        "output_types": None,
+        "artifact_icon": "heart",
+        "function": "get_wellbeing",
     }
 }
 

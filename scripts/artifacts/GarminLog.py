@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_log": {
+        "name": "GarminLog",
+        "description": "Get Information stored in the Garmin Log file",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Garmin-Files",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/files/logs/app.log*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_log",
+    }
+}
+
 # Get Information stored in the Garmin Log file
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-02-24
@@ -59,11 +77,3 @@ def get_log(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc("No Garmin Log data found")
-
-
-__artifacts__ = {
-    "GarminLog": (
-        "Garmin-Files",
-        ('*/com.garmin.android.apps.connectmobile/files/logs/app.log*'),
-        get_log)
-}

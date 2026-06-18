@@ -1,3 +1,21 @@
+# pylint: disable=W0401,W0611,W0613,W0614,W0621,W1309,W1514
+__artifacts_v2__ = {
+    "get_offlinePages": {
+        "name": "pages",
+        "description": "fetch the timezone information",
+        "author": "",
+        "creation_date": "2023-01-25",
+        "last_update_date": "2023-01-25",
+        "requirements": "none",
+        "category": "Offline Pages",
+        "notes": "",
+        "paths": ('*/*.mhtml', '*/*.mht'),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_offlinePages",
+    }
+}
+
 from datetime import *
 import email
 import os
@@ -52,11 +70,3 @@ def get_offlinePages(files_found, report_folder, seeker, wrap_text):
         
         tlactivity = 'Offline Pages'
         timeline(report_folder, tlactivity, data_list, data_headers)
-
-__artifacts__ = {
-        "pages": (
-                "Offline Pages",
-                ('*/*.mhtml', '*/*.mht'),
-                get_offlinePages)
-}
-            

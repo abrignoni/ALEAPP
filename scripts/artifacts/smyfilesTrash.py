@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0611,W0613,W0622,W1309
+__artifacts_v2__ = {
+    "get_smyfiles_trash": {
+        "name": "My Files Trash",
+        "description": "Shows Original Location and Deletion Timestamp of files/folders within My Files Trash",
+        "author": "@PensiveHike",
+        "creation_date": "2024-06-05",
+        "last_update_date": "2024-06-05",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "Timestamp corroborated with My Files Operation History database",
+        "paths": ('*/com.sec.android.app.myfiles/files/trash/*', '*/.Trash/com.sec.android.app.myfiles/*'),
+        "output_types": None,
+        "artifact_icon": "trash-2",
+        "function": "get_smyfiles_trash",
+    }
+}
+
 import shutil
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -5,22 +23,6 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, media
 from scripts.filetype import guess_mime
 import datetime
 import os
-
-__artifacts_v2__ = {
-    "smyfilesTrash": {
-        "name": "My Files Trash",
-        "description": "Shows Original Location and Deletion Timestamp of files/folders within My Files Trash",
-        "author": "@PensiveHike",
-        "version": "0.1",
-        "date": "2024-06-05",
-        "requirements": "none",
-        "category": "My Files",
-        "notes": "Timestamp corroborated with My Files Operation History database",
-        "paths": ('*/com.sec.android.app.myfiles/files/trash/*', '*/.Trash/com.sec.android.app.myfiles/*'),
-        "function": "get_smyfiles_trash"
-    }
-}
-
 # example filepaths
 # /data/media/0/Android/data/com.sec.android.app.myfiles/files/trash/%.'ar74b%a$&7rcrGZ-Y.5$QT2/1639144040510/storage/emulated/0/Download/.!%#@$/Untitled.mov
 # /data/media/0/Android/.Trash/com.sec.android.app.myfiles/09b6cc33-bd68-46ee-8fbd-a147b0348f1aT3/1714648136151/storage/emulated/0/DCIM/Camera/.!%#@$/20240502_120754.mp4
@@ -185,4 +187,3 @@ def get_smyfiles_trash(files_found, report_folder, seeker, wrap_text):
 
     else:
         logfunc('Nothing Located within My Files Trash')
-

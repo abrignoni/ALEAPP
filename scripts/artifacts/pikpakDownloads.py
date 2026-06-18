@@ -1,3 +1,21 @@
+# pylint: disable=E0602,W0611,W0613,W0631
+__artifacts_v2__ = {
+    "get_pikpakDownloads": {
+        "name": "PikPak Downloads",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-24",
+        "last_update_date": "2023-03-24",
+        "requirements": "none",
+        "category": "PikPak",
+        "notes": "",
+        "paths": ('*/com.pikcloud.pikpak/databases/pikpak_downloads.db*',),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_pikpakDownloads",
+    }
+}
+
 import sqlite3
 import os
 
@@ -49,9 +67,3 @@ def get_pikpakDownloads(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No PikPak Downloads data available')
     
-__artifacts__ = {
-        "PikPak Downloads": (
-                "PikPak",
-                ('*/com.pikcloud.pikpak/databases/pikpak_downloads.db*'),
-                get_pikpakDownloads)
-}

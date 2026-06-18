@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0718,W1309
+__artifacts_v2__ = {
+    "get_calllogs": {
+        "name": "Call Logs",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-17",
+        "last_update_date": "2021-03-17",
+        "requirements": "none",
+        "category": "Call Logs",
+        "notes": "",
+        "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
+        "output_types": None,
+        "artifact_icon": "phone",
+        "function": "get_calllogs",
+    }
+}
+
 import os
 import sqlite3
 import datetime
@@ -77,10 +95,3 @@ def get_calllogs(files_found, report_folder, seeker, wrap_text):
         db.close()
     
     return
-
-__artifacts__ = {
-    "Call Logs":(
-        "Call Logs",
-        ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
-        get_calllogs)
-}

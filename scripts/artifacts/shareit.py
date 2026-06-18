@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W0702,W1309
+__artifacts_v2__ = {
+    "get_shareit": {
+        "name": "shareit",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-11",
+        "last_update_date": "2021-03-11",
+        "requirements": "none",
+        "category": "File Transfer",
+        "notes": "",
+        "paths": ('*/com.lenovo.anyshare.gps/databases/history.db*',),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_shareit",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -53,10 +71,3 @@ def get_shareit(files_found, report_folder, seeker, wrap_text):
         logfunc('No Shareit file transfer data available')
 
     db.close()
-
-__artifacts__ = {
-        "shareit": (
-                "File Transfer",
-                ('*/com.lenovo.anyshare.gps/databases/history.db*'),
-                get_shareit)
-}

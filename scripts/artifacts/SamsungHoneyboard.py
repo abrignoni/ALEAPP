@@ -1,29 +1,34 @@
+# pylint: disable=W0311,W0401,W0612,W0613,W0614,W0622,W1309
 __artifacts_v2__ = {
-    "Samsung Honeyboard Clipboard Historty": {
+    "get_Honeyboard_Clipboard": {
         "name": "Samsung Honeyboard - Clipboard History",
         "description": "Parses the text clipboard History.",
         "author": "@segumarc",
-        "version": "0.0.1",
-        "date": "2024-05-30",
+        "creation_date": "2024-05-30",
+        "last_update_date": "2024-05-30",
         "requirements": "",
         "category": "Clipboard",
         "notes": ".",
         "paths": ('*/com.samsung.android.honeyboard/databases/ClipItem*'),
-        "function": "get_Honeyboard_Clipboard"
+        "output_types": None,
+        "artifact_icon": "clipboard",
+        "function": "get_Honeyboard_Clipboard",
     },
-    "Samsung Honeyboard Clipboard Screenshot": {
+    "get_honeyboard_screenshot": {
         "name": "Samsung Honeyboard - Clipboard Screenshot",
         "description": "Parses the Samsung honeyboard clipboard Screenshot.",
         "author": "@segumarc",
-        "version": "0.0.1",
-        "date": "2024-05-30",
+        "creation_date": "2024-05-30",
         "requirements": "",
         "category": "Clipboard",
         "notes": ".",
         "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip'),
-        "function": "get_honeyboard_screenshot"
+        "output_types": None,
+        "artifact_icon": "clipboard",
+        "function": "get_honeyboard_screenshot",
     }
 }
+
 import os
 from datetime import *
 from PIL import Image

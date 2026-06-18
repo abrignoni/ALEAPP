@@ -1,10 +1,11 @@
+# pylint: disable=W0611,W0612,W0613,W0718
 __artifacts_v2__ = {
     "contacts": {
         "name": "Contacts",
         "description": "Contacts from the device",
         "author": "Mark McKinnon",
         "creation_date": "2021-03-11",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Contacts",
         "notes": "",

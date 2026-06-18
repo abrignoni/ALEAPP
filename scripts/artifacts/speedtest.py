@@ -1,14 +1,16 @@
+# pylint: disable=E1121,W0613,W0718
 __artifacts_v2__ = {
     "speedtest_tests": {
         "name": "Speedtest Test Results",
         "description": "Extracts Speedtest Test metadata and other interaction artifacts",
         "author": "its5Q",
-        "version": "0.1",
-        "date": "2025-07-28",
+        "creation_date": "2025-07-28",
+        "last_update_date": "2025-07-28",
         "requirements": "none",
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db',),
+        "output_types": "all",
         "artifact_icon": "loader"
     },
 
@@ -16,12 +18,12 @@ __artifacts_v2__ = {
         "name": "Speedtest Reports - Location",
         "description": "Extracts location data from Speedtest usage reports",
         "author": "its5Q",
-        "version": "0.1",
-        "date": "2025-07-28",
+        "creation_date": "2025-07-28",
         "requirements": "none",
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
+        "output_types": "all",
         "artifact_icon": "map-pin"
     },
 
@@ -29,12 +31,12 @@ __artifacts_v2__ = {
         "name": "Speedtest Reports - Wi-Fi data",
         "description": "Extracts Wi-Fi scan data from Speedtest usage reports",
         "author": "its5Q",
-        "version": "0.1",
-        "date": "2025-07-28",
+        "creation_date": "2025-07-28",
         "requirements": "none",
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
+        "output_types": "all",
         "artifact_icon": "wifi"
     },
 }

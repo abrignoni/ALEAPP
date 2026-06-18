@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W0702,W1309,W1514
+__artifacts_v2__ = {
+    "get_bluetoothConnections": {
+        "name": "Bluetooth Connections",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-06-23",
+        "last_update_date": "2021-06-23",
+        "requirements": "none",
+        "category": "Bluetooth Connections",
+        "notes": "",
+        "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
+        "output_types": None,
+        "artifact_icon": "wifi",
+        "function": "get_bluetoothConnections",
+    }
+}
+
 import csv
 import datetime
 import os
@@ -93,10 +111,3 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc(f'No Bluetooth Adapter Information data available')
-
-__artifacts__ = {
-        "Bluetooth Connections": (
-                "Bluetooth Connections",
-                ('*/misc/bluedroid/bt_config.conf','*/bt_config.conf'),
-                get_bluetoothConnections)
-}

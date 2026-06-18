@@ -1,3 +1,21 @@
+# pylint: disable=E0601,E0606,W0613,W0631,W1309,W1514
+__artifacts_v2__ = {
+    "get_poly_api": {
+        "name": "GarminPolyAPI",
+        "description": "Get GPS coordinates from Garmin API related to activities",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher, json and datetime",
+        "category": "Garmin-API",
+        "notes": "",
+        "paths": ('*/garmin.api/activity_details*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_poly_api",
+    }
+}
+
 # Get GPS coordinates from Garmin API related to activities
 # Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
@@ -223,11 +241,3 @@ def get_poly_api(files_found, report_folder, seeker, wrap_text):
 
     if use_network:
         conn.close()
-
-
-__artifacts__ = {
-    "GarminPolyAPI": (
-        "Garmin-API",
-        ('*/garmin.api/activity_details*'),
-        get_poly_api)
-}

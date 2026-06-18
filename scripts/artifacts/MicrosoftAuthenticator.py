@@ -1,3 +1,23 @@
+# pylint: disable=W0612,W0613,W1309
+__artifacts_v2__ = {
+
+    
+    "get_MSAuth_accounts": {
+        "name": "Microsoft Authenticator - Accounts",
+        "description": "Parses the existing Accounts out of the Microsoft Authenticator App.",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "creation_date": "2024-05-11",
+        "last_update_date": "2024-05-11",
+        "requirements": "",
+        "category": "MS Authenticator",
+        "notes": "Get Account information from MS authenticator app.",
+        "paths": ('*/com.azure.authenticator/databases/PhoneFactor*'),
+        "output_types": None,
+        "artifact_icon": "shield",
+        "function": "get_MSAuth_accounts",
+    }
+}
+
 # Microsoft Authenticator (com.azure.authenticator)
 # Author:  Marco Neumann (kalinko@be-binary.de)
 # Version: 0.0.1
@@ -6,28 +26,6 @@
 # 2024-05-11: Android 14, App: 6.2404.2229
 
 # Requirements: -
-
-
-
-
-__artifacts_v2__ = {
-
-    
-    "MSAuthenticatorAccounts": {
-        "name": "Microsoft Authenticator - Accounts",
-        "description": "Parses the existing Accounts out of the Microsoft Authenticator App.",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
-        "date": "2024-05-11",
-        "requirements": "",
-        "category": "MS Authenticator",
-        "notes": "Get Account information from MS authenticator app.",
-        "paths": ('*/com.azure.authenticator/databases/PhoneFactor*'),
-        "function": "get_MSAuth_accounts"
-    }
-}
-
-
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 

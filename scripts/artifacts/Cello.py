@@ -1,15 +1,18 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
-    "Cello": {
+    "get_Cello": {
         "name": "Cello",
         "description": "Parses the Cello db for Google Drive metadata",
         "author": "@KevinPagano3",
-        "version": "0.0.2",
-        "date": "2020-12-21",
+        "creation_date": "2020-12-21",
+        "last_update_date": "2020-12-21",
         "requirements": "none",
         "category": "Google Drive",
         "notes": "",
         "paths": ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*'),
-        "function": "get_Cello"
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_Cello",
     }
 }
 

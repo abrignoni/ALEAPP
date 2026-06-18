@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0702,W1514
+__artifacts_v2__ = {
+    "get_FacebookMessenger": {
+        "name": "FacebookMessenger",
+        "description": "2023-02-03: Added support for new msys_database format - Kevin Pagano",
+        "author": "",
+        "creation_date": "2021-03-03",
+        "last_update_date": "2021-03-03",
+        "requirements": "none",
+        "category": "Facebook Messenger",
+        "notes": "",
+        "paths": ('*/*threads_db2*', '*/msys_database*'),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_FacebookMessenger",
+    }
+}
+
 #2023-02-03: Added support for new msys_database format - Kevin Pagano
 
 import os
@@ -370,9 +388,3 @@ def get_FacebookMessenger(files_found, report_folder, seeker, wrap_text):
         else:
             continue # Skip all other files
     
-__artifacts__ = {
-        "FacebookMessenger": (
-                "Facebook Messenger",
-                ('*/*threads_db2*','*/msys_database*'),
-                get_FacebookMessenger)
-}

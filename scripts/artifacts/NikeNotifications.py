@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_nike_notifications": {
+        "name": "NikeNotifications",
+        "description": "Get Information relative to the notifications stored in the database of the Nike Run Club Mobile application",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-18",
+        "last_update_date": "2023-03-18",
+        "requirements": "Python 3.7 or higher",
+        "category": "Nike-Run",
+        "notes": "",
+        "paths": ('*/com.nike.plusgps/databases/ns_inbox.db*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_nike_notifications",
+    }
+}
+
 # Get Information relative to the notifications stored in the database of the Nike Run Club Mobile application
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-18
@@ -66,11 +84,3 @@ def get_nike_notifications(files_found, report_folder, seeker, wrap_text):
         logfunc('No Nike Notifications data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "NikeNotifications": (
-        "Nike-Run",
-        ('*/com.nike.plusgps/databases/ns_inbox.db*'),
-        get_nike_notifications)
-}

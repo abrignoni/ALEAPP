@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_googlePhotos": {
+        "name": "GooglePhotos",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-04-14",
+        "last_update_date": "2021-04-14",
+        "requirements": "none",
+        "category": "Google Photos",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*', '*/com.google.android.apps.photos/databases/disk_cache*', '*/com.google.android.apps.photos/cache/glide_cache/*', '*/com.google.android.apps.photos/databases/local_trash.db*', '*/com.google.android.apps.photos/files/trash_files/*'),
+        "output_types": None,
+        "artifact_icon": "image",
+        "function": "get_googlePhotos",
+    }
+}
+
 import os
 import shutil
 
@@ -421,10 +439,3 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
             
         else:
             continue
-
-__artifacts__ = {
-        "GooglePhotos": (
-                "Google Photos",
-                ('*/com.google.android.apps.photos/databases/gphotos*.db*','*/com.google.android.apps.photos/databases/disk_cache*','*/com.google.android.apps.photos/cache/glide_cache/*','*/com.google.android.apps.photos/databases/local_trash.db*','*/com.google.android.apps.photos/files/trash_files/*'),
-                get_googlePhotos)
-}

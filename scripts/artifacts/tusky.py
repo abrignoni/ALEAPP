@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_tusky": {
+        "name": "Tusky",
+        "description": "Module Description: Parses Tusky timeline, notifications and searches",
+        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "creation_date": "2022-12-12",
+        "last_update_date": "2022-12-12",
+        "requirements": "BeautifulSoup",
+        "category": "Tusky",
+        "notes": "",
+        "paths": ('*/com.keylesspalace.tusky/databases/tuskyDB*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_tusky",
+    }
+}
+
 # Module Description: Parses Tusky timeline, notifications and searches
 # Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
 # Date: 2022-12-12
@@ -176,10 +194,3 @@ def get_tusky(files_found, report_folder, seeker, wrap_text):
             logfunc('Tusky - Account Details data available')
         
         db.close()
-
-__artifacts__ = {
-        "Tusky": (
-                "Tusky",
-                ('*/com.keylesspalace.tusky/databases/tuskyDB*'),
-                get_tusky)
-}

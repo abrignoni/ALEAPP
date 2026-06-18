@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_lgRCS": {
+        "name": "lgRCS",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-01-06",
+        "last_update_date": "2021-01-06",
+        "requirements": "none",
+        "category": "RCS Chats",
+        "notes": "",
+        "paths": ('*/mmssms.db*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_lgRCS",
+    }
+}
+
 import os
 import shutil
 import sqlite3
@@ -90,10 +108,3 @@ def get_lgRCS(files_found, report_folder, seeker, wrap_text):
         logfunc('No RCS Chats - LG data available')
     
     db.close()
-
-__artifacts__ = {
-        "lgRCS": (
-                "RCS Chats",
-                ('*/mmssms.db*'),
-                get_lgRCS)
-}

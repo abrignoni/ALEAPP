@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0104,W0311,W0611,W0613,W0702,W1309
+__artifacts_v2__ = {
+    "get_imo": {
+        "name": "Imo",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-11",
+        "last_update_date": "2021-03-11",
+        "requirements": "none",
+        "category": "IMO",
+        "notes": "",
+        "paths": ('*/com.imo.android.imous/databases/*.db*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_imo",
+    }
+}
+
 import sqlite3
 import datetime
 import json
@@ -108,11 +126,4 @@ def get_imo(files_found, report_folder, seeker, wrap_text):
         logfunc('No IMO Messages found')
 
     db.close
-    
-__artifacts__ = {
-        "Imo": (
-                "IMO",
-                ('*/com.imo.android.imous/databases/*.db*'),
-                get_imo)
-}
     

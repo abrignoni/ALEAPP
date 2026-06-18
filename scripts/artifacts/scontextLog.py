@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_scontextLog": {
+        "name": "scontextLog",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-04-18",
+        "last_update_date": "2020-04-18",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.samsung.android.providers.context/databases/ContextLog.db',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_scontextLog",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -48,10 +66,3 @@ def get_scontextLog(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Context Log data available')
     
     db.close()
-
-__artifacts__ = {
-        "scontextLog": (
-                "App Interaction",
-                ('*/com.samsung.android.providers.context/databases/ContextLog.db'),
-                get_scontextLog)
-}

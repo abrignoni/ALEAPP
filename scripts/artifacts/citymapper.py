@@ -1,43 +1,35 @@
-# Citymapper App (com.citymapper.app.release)
-# Author : Funeoz
-# Version : 0.0.1
-
-# Tested with the following versions:
-# 2025-12-12: Android 12.0, App: 11.43.2
-
-# Requirements: Python 3.7 or higher, folium
-
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_citymapperLocationHistory" : {
         "name": "Citymapper - Location History",
         "description": "Parses location history from the Citymapper App",
         "author": "Funeoz",
-        "version": "0.0.1",
-        "date":"2025-12-12",
+        "creation_date":"2025-12-12",
+        "last_update_date": "2025-12-12",
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "",
         "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db'),
-        "output_types": ['tsv', 'timeline', 'lava', 'kml']  # Exclude 'html' to use custom report     
+        "output_types": ['tsv', 'timeline', 'lava', 'kml'],
+        "artifact_icon": "map-pin",
     },
     "get_citymapperSavedTrips" : {
         "name": "Citymapper - Saved Trips",
         "description": "Parses saved trips (home/work) from the Citymapper App",
         "author": "Funeoz",
-        "version": "0.0.1",
-        "date":"2025-12-12",
+        "creation_date":"2025-12-12",
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "",
         "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db'),
-        "output_types": ['tsv', 'timeline', 'lava', 'kml']  # Exclude 'html' to use custom report     
+        "output_types": ['tsv', 'timeline', 'lava', 'kml'],
+        "artifact_icon": "map-pin",
     },
     "get_citymapperAppPreferences" : {
         "name": "Citymapper - App Preferences",
         "description": "Parses app preferences from the Citymapper App",
         "author": "Funeoz",
-        "version": "0.0.1",
-        "date":"2025-12-12",
+        "creation_date":"2025-12-12",
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "",
@@ -46,10 +38,19 @@ __artifacts_v2__ = {
                    '*/data/com.citymapper.app.release/shared_prefs/Session.xml*',
                    '*/data/com.citymapper.app.release/shared_prefs/no_backup_preferences.xml*'
         ),
-        "output_types": ['tsv', 'timeline', 'lava', 'kml']  # Exclude 'html' to use custom report
+        "output_types": ['tsv', 'timeline', 'lava', 'kml'],
+        "artifact_icon": "map-pin",
     }
 }
 
+# Citymapper App (com.citymapper.app.release)
+# Author : Funeoz
+# Version : 0.0.1
+
+# Tested with the following versions:
+# 2025-12-12: Android 12.0, App: 11.43.2
+
+# Requirements: Python 3.7 or higher, folium
 import os
 import folium
 import xml.etree.ElementTree as ET

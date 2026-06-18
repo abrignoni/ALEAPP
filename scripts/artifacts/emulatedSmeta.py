@@ -1,15 +1,18 @@
+# pylint: disable=W0611,W0613,W0631,W1309
 __artifacts_v2__ = {
-    "EmulatedSmeta": {
+    "get_emulatedSmeta": {
         "name": "Emulated Storage Metadata",
         "description": "Parses emulated storage metadata from external.db",
         "author": "@AlexisBrignoni",
-        "version": "0.0.2",
-        "date": "2020-10-19",
+        "creation_date": "2020-10-19",
+        "last_update_date": "2020-10-19",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
         "notes": "2023-02-10 - Updated by @KevinPagano3",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*','*/com.android.providers.media/databases/external.db*'),
-        "function": "get_emulatedSmeta"
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_emulatedSmeta",
     }
 }
 

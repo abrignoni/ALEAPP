@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_slopes": {
+        "name": "slopes",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-04-27",
+        "last_update_date": "2022-04-27",
+        "requirements": "none",
+        "category": "Slopes",
+        "notes": "",
+        "paths": ('*/com.consumedbycode.slopes/databases/slopes.db*',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_slopes",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -146,10 +164,3 @@ def get_slopes(files_found, report_folder, seeker, wrap_text):
             logfunc('No Slopes - Lift Details data available')
 
         db.close()
-
-__artifacts__ = {
-        "slopes": (
-                "Slopes",
-                ('*/com.consumedbycode.slopes/databases/slopes.db*'),
-                get_slopes)
-}

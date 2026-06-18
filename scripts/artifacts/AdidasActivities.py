@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0702,W1309,W1514
+__artifacts_v2__ = {
+    "get_adidas_activities": {
+        "name": "Adidas Activities",
+        "description": "Get information relative to user activities from the Adidas Running app",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-24",
+        "last_update_date": "2023-03-24",
+        "requirements": "Python 3.7 or higher, json, polyline, folium",
+        "category": "Adidas-Running",
+        "notes": "",
+        "paths": ('*/com.runtastic.android/databases/db*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_adidas_activities",
+    }
+}
+
 # Get Information relative to the user activities that are present in the database (db) from the Adidas Running app, the activities are stored the table (session)
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-24
@@ -270,11 +288,3 @@ def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
     if use_network:
         conn.close()
     db.close()
-
-
-__artifacts__ = {
-    "AdidasActivities": (
-        "Adidas-Running",
-        ('*/com.runtastic.android/databases/db*'),
-        get_adidas_activities)
-}

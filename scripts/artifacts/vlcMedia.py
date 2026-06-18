@@ -1,3 +1,21 @@
+# pylint: disable=E0602,W0611,W0613,W0631
+__artifacts_v2__ = {
+    "get_vlcMedia": {
+        "name": "VLC",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-01",
+        "last_update_date": "2021-03-01",
+        "requirements": "none",
+        "category": "VLC",
+        "notes": "",
+        "paths": ('*vlc_media.db*',),
+        "output_types": None,
+        "artifact_icon": "image",
+        "function": "get_vlcMedia",
+    }
+}
+
 import sqlite3
 import os
 
@@ -51,9 +69,3 @@ def get_vlcMedia(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No VLC Media data available')
     
-__artifacts__ = {
-        "VLC": (
-                "VLC",
-                ('*vlc_media.db*'),
-                get_vlcMedia)
-}

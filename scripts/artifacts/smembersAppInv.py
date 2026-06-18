@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_smembersAppInv": {
+        "name": "smembersAppInv",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_smembersAppInv",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -44,10 +62,3 @@ def get_smembersAppInv(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Members - Apps data available')
     
     db.close()
-
-__artifacts__ = {
-        "smembersAppInv": (
-                "App Interaction",
-                ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db'),
-                get_smembersAppInv)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613
+__artifacts_v2__ = {
+    "get_installedappsGass": {
+        "name": "installedappsGass",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-01",
+        "last_update_date": "2020-03-01",
+        "requirements": "none",
+        "category": "Installed Apps",
+        "notes": "",
+        "paths": ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_installedappsGass",
+    }
+}
+
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -48,10 +66,3 @@ def get_installedappsGass(files_found, report_folder, seeker, wrap_text):
                 logfunc('No Installed Apps data available for user {usernum}')
             
             db.close()
-
-__artifacts__ = {
-        "installedappsGass": (
-                "Installed Apps",
-                ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
-                get_installedappsGass)
-}

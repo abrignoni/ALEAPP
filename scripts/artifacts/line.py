@@ -1,3 +1,21 @@
+# pylint: disable=W0104,W0311,W0611,W0613,W0631,W0702,W1309
+__artifacts_v2__ = {
+    "get_line": {
+        "name": "line",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-15",
+        "last_update_date": "2021-03-15",
+        "requirements": "none",
+        "category": "Line",
+        "notes": "",
+        "paths": ('*/jp.naver.line.android/databases/**',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_line",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -179,9 +197,3 @@ def get_line(files_found, report_folder, seeker, wrap_text):
 
     db.close
     
-__artifacts__ = {
-        "line": (
-                "Line",
-                ('*/jp.naver.line.android/databases/**'),
-                get_line)
-}

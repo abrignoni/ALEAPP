@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_galleryTrash": {
+        "name": "Gallery Trash",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-04-25",
+        "last_update_date": "2023-04-25",
+        "requirements": "none",
+        "category": "Gallery Trash",
+        "notes": "",
+        "paths": ('*/data/com.sec.android.gallery3d/databases/local.db*', '*/data/com.sec.android.gallery3d/files/.Trash/**'),
+        "output_types": None,
+        "artifact_icon": "image",
+        "function": "get_galleryTrash",
+    }
+}
+
 import sqlite3
 import json
 import datetime
@@ -66,10 +84,3 @@ def get_galleryTrash(files_found, report_folder, seeker, wrap_text):
                 
             else:
                 logfunc('No Gallery Trash Files data available')
-
-__artifacts__ = {
-        "Gallery Trash": (
-                "Gallery Trash",
-                ('*/data/com.sec.android.gallery3d/databases/local.db*','*/data/com.sec.android.gallery3d/files/.Trash/**'),
-                get_galleryTrash)
-}

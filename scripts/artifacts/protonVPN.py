@@ -1,3 +1,21 @@
+# pylint: disable=W0311,W0611,W0613,W0702,W1309,W1514
+__artifacts_v2__ = {
+    "get_protonVPN": {
+        "name": "protonVPN User",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-09-04",
+        "last_update_date": "2022-09-04",
+        "requirements": "none",
+        "category": "ProtonVPN",
+        "notes": "",
+        "paths": ('*/ch.protonvpn.android/databases/db', '*/ch.protonvpn.android/shared_prefs/ServerListUpdater.xml', '*/ch.protonvpn.android/log/Data.log'),
+        "output_types": None,
+        "artifact_icon": "user",
+        "function": "get_protonVPN",
+    }
+}
+
 import os
 import re
 import socket
@@ -136,10 +154,3 @@ def get_protonVPN(files_found, report_folder, seeker, wrap_text):
 				logfunc('No ProtonVPN - User Info available')
 
 			db.close()
-
-__artifacts__ = {
-	"protonVPN User": (
-		"ProtonVPN", 
-		('*/ch.protonvpn.android/databases/db', '*/ch.protonvpn.android/shared_prefs/ServerListUpdater.xml', '*/ch.protonvpn.android/log/Data.log'), get_protonVPN
-	)
-}

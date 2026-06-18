@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_googlemapaudio": {
+        "name": "Googlemapaudio",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-12-27",
+        "last_update_date": "2021-12-27",
+        "requirements": "none",
+        "category": "Google Maps Voice Guidance",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/app_tts-cache/*_*',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_googlemapaudio",
+    }
+}
+
 from re import fullmatch
 from datetime import datetime
 from pathlib import Path
@@ -67,9 +85,3 @@ def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Google Audio Locations found')
             
-__artifacts__ = {
-        "Googlemapaudio": (
-                "Google Maps Voice Guidance",
-                ('*/com.google.android.apps.maps/app_tts-cache/*_*'),
-                get_googlemapaudio)
-}

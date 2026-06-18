@@ -1,19 +1,22 @@
+# pylint: disable=W0611,W0613,W0631
 __artifacts_v2__ = {
-    "urlUserprefs": {
+    "get_urluser": {
         "name": "ULR User Prefs",
         "description": "ULR User Prefs",
         "author": "Alexis 'Brigs' Brignoni",
-        "version": "1",
-        "date": "2024/06/21",
+        "creation_date": "2024/06/21",
+        "last_update_date": "2024/06/21",
         "requirements": "",
         "category": "App Semantic Locations",
         "notes": "Thanks to Josh Hickman for the research",
         "paths": (
-            '*/com.google.android.gms/shared_prefs/ULR_USER_PREFS.xml'
+            '*/com.google.android.gms/shared_prefs/ULR_USER_PREFS.xml',
         ),
-        "function": "get_urluser"
+        "output_types": None,
+        "function": "get_urluser",
     }
 }
+
 import json
 import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport

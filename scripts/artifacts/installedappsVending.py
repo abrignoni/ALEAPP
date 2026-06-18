@@ -1,3 +1,21 @@
+# pylint: disable=W0311,W0611,W0612,W0613
+__artifacts_v2__ = {
+    "get_installedappsVending": {
+        "name": "InstalledappsVending",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-01",
+        "last_update_date": "2020-03-01",
+        "requirements": "none",
+        "category": "Installed Apps",
+        "notes": "",
+        "paths": ('*/com.android.vending/databases/localappstate.db*',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_installedappsVending",
+    }
+}
+
 import sqlite3
 from pathlib import Path
 
@@ -67,10 +85,3 @@ def get_installedappsVending(files_found, report_folder, seeker, wrap_text):
                     logfunc(f'No Installed Apps data available for user {user}')
     
     db.close()
-
-__artifacts__ = {
-        "InstalledappsVending": (
-                "Installed Apps",
-                ('*/com.android.vending/databases/localappstate.db*'),
-                get_installedappsVending)
-}

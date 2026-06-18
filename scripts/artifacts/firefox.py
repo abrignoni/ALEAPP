@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_firefox": {
+        "name": "Firefox",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-12",
+        "last_update_date": "2022-01-12",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_firefox",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -187,9 +205,3 @@ def get_firefox(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "Firefox": (
-                "Firefox",
-                ('*/org.mozilla.firefox/files/places.sqlite*'),
-                get_firefox)
-}

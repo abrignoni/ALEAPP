@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_discordChats": {
+        "name": "discordChats",
+        "description": "build a table mapping all non-printable characters to None",
+        "author": "",
+        "creation_date": "2023-09-18",
+        "last_update_date": "2023-09-18",
+        "requirements": "none",
+        "category": "Discord Chats",
+        "notes": "",
+        "paths": ('*/data/com.discord/files/kv-storage/*/a*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_discordChats",
+    }
+}
+
 import sqlite3
 import textwrap
 import sys
@@ -85,10 +103,3 @@ def get_discordChats(files_found, report_folder, seeker, wrap_text):
         logfunc('No Discord Chats data available')
         
     db.close()
-
-__artifacts__ = {
-        "discordChats": (
-                "Discord Chats",
-                ('*/data/com.discord/files/kv-storage/*/a*'),
-                get_discordChats)
-}

@@ -1,12 +1,18 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
-    "Life360DriverBehavior": {
+    "get_TripEvents": {
         "name": "Life360 Driver Behavior Trip Events and Waypoints",
         "description": "Parses Events and Waypoints from Life360 DriverBehavior/trips JSON files",
         "author": "Heather Charpentier",
+        "creation_date": "2024-09-17",
+        "last_update_date": "2024-09-17",
+        "requirements": "none",
         "category": "Life360DriverBehavior",
         "notes": "Processes event data and waypoints from trip JSON files",
-        "paths": ('*/trips/*.json',),  
-        "function": "get_TripEvents"
+        "paths": ('*/trips/*.json',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_TripEvents",
     }
 }
 

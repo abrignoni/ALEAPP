@@ -1,19 +1,22 @@
-#Update line 3-13
+# pylint: disable=W0611,W0613,W0631
 __artifacts_v2__ = {
-    "MeetMe": {
+    "get_meetmechats": {
         "name": "MeetMe Chats",
         "description": "Parses MeetMe Chat database",
         "author": "Matt Beers",
-        "version": "0.0.1",
-        "date": "2024-12-27",
+        "creation_date": "2024-12-27",
+        "last_update_date": "2024-12-27",
         "requirements": "none",
         "category": "Chats",
         "notes": "",
         "paths": ('*/data/com.myyearbook.m/databases/chats.db*'),
-        "function": "get_meetmechats"
+        "output_types": None,
+        "artifact_icon": "users",
+        "function": "get_meetmechats",
     }
 }
 
+#Update line 3-13
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport

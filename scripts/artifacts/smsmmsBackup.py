@@ -1,3 +1,21 @@
+# pylint: disable=W0631,W1309
+__artifacts_v2__ = {
+    "get_sms_mms_from_backup": {
+        "name": "sms_mms_backup",
+        "description": "Backup agent code defined here:",
+        "author": "",
+        "creation_date": "2024-08-15",
+        "last_update_date": "2024-08-15",
+        "requirements": "none",
+        "category": "SMS & MMS from backup.ab",
+        "notes": "",
+        "paths": ('*/com.android.providers.telephony/d_f/*_backup',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_sms_mms_from_backup",
+    }
+}
+
 import datetime
 import json
 import zlib
@@ -157,11 +175,3 @@ def get_sms_mms_from_backup(files_found, report_folder, seeker, wrap_text):
         logfunc('No SMS or MMS messages found!')
         return False
     return True
-
-__artifacts__ = {
-        "sms_mms_backup": (
-                "SMS & MMS from backup.ab",
-                ('*/com.android.providers.telephony/d_f/*_backup'),
-                get_sms_mms_from_backup
-        )
-}

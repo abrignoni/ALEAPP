@@ -1,15 +1,18 @@
+# pylint: disable=W0611,W0612,W0613,W0631,W1309
 __artifacts_v2__ = {
-    "Turbo_AppUsage": {
+    "get_Turbo_AppUsage": {
         "name": "Turbo_AppUsage",
         "description": "Parses application usage via Device Health Services",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
-        "date": "2021-06-29",
+        "creation_date": "2021-06-29",
+        "last_update_date": "2021-06-29",
         "requirements": "none",
         "category": "Device Health Services",
         "notes": "",
         "paths": ('*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml'),
-        "function": "get_Turbo_AppUsage"
+        "output_types": None,
+        "artifact_icon": "bar-chart-2",
+        "function": "get_Turbo_AppUsage",
     }
 }
 

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_googleDuo": {
+        "name": "googleDuo",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-07-28",
+        "last_update_date": "2021-07-28",
+        "requirements": "none",
+        "category": "Google Duo",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*', '*/com.google.android.apps.tachyon/files/media/*.*'),
+        "output_types": None,
+        "artifact_icon": "chrome",
+        "function": "get_googleDuo",
+    }
+}
+
 import os
 import shutil
 import sqlite3
@@ -168,10 +186,3 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Duo - Notes data available')
     
     db.close()
-
-__artifacts__ = {
-        "googleDuo": (
-                "Google Duo",
-                ('*/com.google.android.apps.tachyon/databases/tachyon.db*','*/com.google.android.apps.tachyon/files/media/*.*'),
-                get_googleDuo)
-}

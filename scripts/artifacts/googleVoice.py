@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613
 __artifacts_v2__ = {
     "googlevoice_accounts": {
         "name": "Google Voice - User Accounts",
@@ -11,7 +12,6 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/AccountData.pb', '*/data/com.google.android.apps.googlevoice/files/accounts/*/SqliteKeyValueCache:VoiceAccountCache.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
-        "function": "googlevoice_accounts",
     },
     "googlevoice_calls": {
         "name": "Google Voice - Calls",
@@ -25,7 +25,6 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "phone",
-        "function": "googlevoice_calls",
     },
     "googlevoice_voicemails": {
         "name": "Google Voice - Voicemails",
@@ -39,7 +38,6 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "voicemail",
-        "function": "googlevoice_voicemails",
     },
     "googlevoice_messages": {
         "name": "Google Voice - Messages",
@@ -53,7 +51,6 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/Photo MMS images/*', '*/data/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
-        "function": "googlevoice_messages",
     }
 }
 

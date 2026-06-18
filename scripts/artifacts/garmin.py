@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613
+__artifacts_v2__ = {
+    "get_garmin": {
+        "name": "Garmin",
+        "description": "Module Description: Parses the Garmin app for activities, connections and notifications",
+        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "creation_date": "2023-01-18",
+        "last_update_date": "2023-01-18",
+        "requirements": "none",
+        "category": "Garmin",
+        "notes": "",
+        "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*', '*/data/com.garmin.android.apps.connectmobile/databases/notification-database*', '*/data/com.garmin.android.apps.connectmobile/databases/cache-database*'),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_garmin",
+    }
+}
+
 # Module Description: Parses the Garmin app for activities, connections and notifications
 # Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
 # Date: 2023-01-18
@@ -365,9 +383,3 @@ def get_garmin(files_found, report_folder, seeker, wrap_text):
         else:
             break
     
-__artifacts__ = {
-        "Garmin": (
-                "Garmin",
-                ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*','*/data/com.garmin.android.apps.connectmobile/databases/notification-database*','*/data/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-                get_garmin)
-}

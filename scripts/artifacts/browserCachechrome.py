@@ -1,3 +1,21 @@
+# pylint: disable=W0125,W0126,W0404,W0611,W0612,W0613,W0718,W1309
+__artifacts_v2__ = {
+    "get_browserCachechrome": {
+        "name": "browserCachechrome",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-01-28",
+        "last_update_date": "2023-01-28",
+        "requirements": "none",
+        "category": "Browser Cache",
+        "notes": "",
+        "paths": ('*/data/com.android.chrome/cache/Cache/*_0',),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_browserCachechrome",
+    }
+}
+
 import datetime
 import email
 import os
@@ -92,10 +110,3 @@ def get_browserCachechrome(files_found, report_folder, seeker, wrap_text):
         tsvname = f'Chrome Browser Cache'
         tsv(report_folder, data_headers, data_list, tsvname)
     
-__artifacts__ = {
-        "browserCachechrome": (
-                "Browser Cache",
-                ( '*/data/com.android.chrome/cache/Cache/*_0'),
-                get_browserCachechrome)
-}
-            

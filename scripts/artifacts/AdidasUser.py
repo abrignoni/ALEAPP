@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0613,W1309
+__artifacts_v2__ = {
+    "get_adidas_user": {
+        "name": "AdidasUser",
+        "description": "Get Information related to users from the Adidas Running app stored in user.db",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-24",
+        "last_update_date": "2023-03-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Adidas-Running",
+        "notes": "",
+        "paths": ('*com.runtastic.android/databases/user.db*',),
+        "output_types": None,
+        "artifact_icon": "user",
+        "function": "get_adidas_user",
+    }
+}
+
 # Get Information related to users from the Adidas Running app stored in user.db
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-24
@@ -91,11 +109,3 @@ def get_adidas_user(files_found, report_folder, seeker, wrap_text):
         logfunc('No Adidas User data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "AdidasUser": (
-        "Adidas-Running",
-        ('*com.runtastic.android/databases/user.db*'),
-        get_adidas_user)
-}

@@ -1,65 +1,64 @@
-# Android Samsung Device Health Management Service SDHMS (com.sec.android.sdhms)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-#
-# Requirements:
-
 __artifacts_v2__ = {
   
     "sdhms_config_reloads": {
         "name": "SDHMS Config Reload History",
         "description": "SDHMS Config Reload History - Shows e.g. Reboot of Device. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/anomaly.db*'),
+        "output_types": "all",
         "artifact_icon": "settings"
     },
     "sdhms_netstat": {
         "name": "SDHMS Netstat",
         "description": "SDHMS Network Usage per App. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
+        "output_types": "all",
         "artifact_icon": "bar-chart"
     },
     "sdhms_temperature": {
         "name": "SDHMS Temperature Logs",
         "description": "SDHMS Temperature Logs per Sensor in degree Celsius. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
+        "output_types": "all",
         "artifact_icon": "thermometer"
     },
     "sdhms_cpustats": {
         "name": "SDHMS CPU Stats",
         "description": "SDHMS CPU Usage per Process. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
+        "output_types": "all",
         "artifact_icon": "cpu"
     }
 
 }
 
+# Android Samsung Device Health Management Service SDHMS (com.sec.android.sdhms)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+#
+# Requirements:
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
 
 @artifact_processor

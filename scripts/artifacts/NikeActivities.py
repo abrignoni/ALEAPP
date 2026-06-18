@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0622,W1309
+__artifacts_v2__ = {
+    "get_nike_activities": {
+        "name": "NikeActivities",
+        "description": "Get Information relative to the user activities that are present in the database (com.nike.nrc.room) from the Nike Run app",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-18",
+        "last_update_date": "2023-03-18",
+        "requirements": "Python 3.7 or higher and json",
+        "category": "Nike-Run",
+        "notes": "",
+        "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_nike_activities",
+    }
+}
+
 # Get Information relative to the user activities that are present in the database (com.nike.nrc.room) from the Nike Run app
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-18
@@ -154,11 +172,3 @@ def get_nike_activities(files_found, report_folder, seeker, wrap_text):
         logfunc('No Nike Activities data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "NikeActivities": (
-        "Nike-Run",
-        ('*/com.nike.plusgps/databases/com.nike.nrc.room*'),
-        get_nike_activities)
-}

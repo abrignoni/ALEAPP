@@ -1,3 +1,23 @@
+# pylint: disable=W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+
+    
+    "get_k9mail_data": {
+        "name": "K-9 Mail - Data",
+        "description": "K-9 Mail - Data",
+        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "creation_date": "2024-05-04",
+        "last_update_date": "2024-05-04",
+        "requirements": "datetime, json, base64",
+        "category": "K-9 Mail",
+        "notes": "Get Account informations and E-Mails feom K-9 Mail App. Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html",
+        "paths": ('*/com.fsck.k9/databases/*'),
+        "output_types": None,
+        "artifact_icon": "mail",
+        "function": "get_k9mail_data",
+    }
+}
+
 # K-9 Mail App (com.fsck.k9)
 # Author:  Marco Neumann (kalinko@be-binary.de)
 # Version: 0.0.1
@@ -6,27 +26,6 @@
 # 2024-05-04: Android 13, App: 6.802
 
 # Requirements:  datetime, json, base64
-
-
-
-
-__artifacts_v2__ = {
-
-    
-    "K9MailData": {
-        "name": "K-9 Mail - Data",
-        "description": "K-9 Mail - Data",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
-        "date": "2024-05-04",
-        "requirements": "datetime, json, base64",
-        "category": "K-9 Mail",
-        "notes": "Get Account informations and E-Mails feom K-9 Mail App. Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html",
-        "paths": ('*/com.fsck.k9/databases/*'),
-        "function": "get_k9mail_data"
-    }
-}
-
 import datetime
 import json
 import base64

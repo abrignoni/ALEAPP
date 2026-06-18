@@ -1,13 +1,3 @@
-# Withings Health Mate App (com.withings.wiscale2)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# Version: 0.0.2
-# 
-# Tested with the following versions:
-# 2020-10-09: Android 6, App: 5.1.4
-# 2024-04-20: Android 13, App: 6.3.1
-
-# Requirements:  datetime
-
 __artifacts_v2__ = {
 
     
@@ -15,7 +5,6 @@ __artifacts_v2__ = {
         "name": "Health Mate - Accounts",
         "description": "Health Mate Accounts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.1",
         "creation_date": "2024-04-20",
         "last_update_date": "2026-05-14",
         "requirements": "none",
@@ -29,7 +18,6 @@ __artifacts_v2__ = {
         "name": "Health Mate - Trackings",
         "description": "Health Mate Trackings",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.1",
         "creation_date": "2024-04-20",
         "last_update_date": "2026-05-14",
         "requirements": "none",
@@ -44,7 +32,6 @@ __artifacts_v2__ = {
         "name": "Health Mate - Locations",
         "description": "Health Mate Locations",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.1",
         "creation_date": "2024-04-20",
         "last_update_date": "2026-05-14",
         "requirements": "none",
@@ -58,7 +45,6 @@ __artifacts_v2__ = {
         "name": "Health Mate - Messages",
         "description": "Health Mate Messages",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.1",
         "creation_date": "2024-04-20",
         "last_update_date": "2026-05-14",
         "requirements": "none",
@@ -72,21 +58,19 @@ __artifacts_v2__ = {
         "name": "Health Mate - Contacts",
         "description": "Health Mate Contacts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.1",
         "creation_date": "2024-04-21",
         "last_update_date": "2026-05-14",
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*'),
-        "output_types": "message-square",
+        "output_types": "standard",
         "artifact_icon": "users"
     },
     "healthmate_measurements": {
         "name": "Health Mate - Measurements",
         "description": "Health Mate Measurements",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.1",
         "creation_date": "2024-04-21",
         "last_update_date": "2026-05-14",
         "requirements": "none",
@@ -100,7 +84,6 @@ __artifacts_v2__ = {
         "name": "Health Mate - Devices",
         "description": "Health Mate Devices",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.1",
         "creation_date": "2024-04-21",
         "last_update_date": "2026-05-14",
         "requirements": "none",
@@ -112,6 +95,15 @@ __artifacts_v2__ = {
     }
 }
 
+# Withings Health Mate App (com.withings.wiscale2)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# Version: 0.0.2
+# 
+# Tested with the following versions:
+# 2020-10-09: Android 6, App: 5.1.4
+# 2024-04-20: Android 13, App: 6.3.1
+
+# Requirements:  datetime
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records

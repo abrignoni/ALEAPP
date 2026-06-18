@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613
+__artifacts_v2__ = {
+    "get_fcm_skype": {
+        "name": "FCM_Skype",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-07-28",
+        "last_update_date": "2022-07-28",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": None,
+        "function": "get_fcm_skype",
+        "artifact_icon": "message-square",
+    }
+}
+
 """
 Copyright 2022, CCL Forensics
 
@@ -201,7 +219,7 @@ def process_content(content: str):
         return html.escape(html.unescape(content), quote=False)
 
 
-def get_fcm_skype(files_found, report_folder, seeker, wrap_text, mode):
+def get_fcm_skype(files_found, report_folder, seeker, wrap_text, mode="s"):
     if mode == "s":
         app_name = "Skype"
         app_id = "com.skype.raider"
@@ -355,15 +373,3 @@ def get_fcm_skype(files_found, report_folder, seeker, wrap_text, mode):
         scripts.ilapfuncs.timeline(report_folder, report_name, notification_rows, notification_table_header)
     else:
         scripts.ilapfuncs.logfunc(f"No FCM {app_name} other notifications found")
-
-
-__artifacts__ = {
-    "FCM_Skype": (
-        "Firebase Cloud Messaging",
-        ('*/fcm_queued_messages.ldb/*'),
-        lambda a, b, c, d: get_fcm_skype(a, b, c, d, "s")),
-    "FCM_Teams": (
-        "Firebase Cloud Messaging",
-        ('*/fcm_queued_messages.ldb/*'),
-        lambda a, b, c, d: get_fcm_skype(a, b, c, d, "t"))
-}

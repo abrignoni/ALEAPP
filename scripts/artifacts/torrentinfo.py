@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W0702,W0718
+__artifacts_v2__ = {
+    "get_torrentinfo": {
+        "name": "torrentinfo",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-26",
+        "last_update_date": "2023-03-26",
+        "requirements": "none",
+        "category": "BitTorrent",
+        "notes": "",
+        "paths": ('*/*.torrent',),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_torrentinfo",
+    }
+}
+
 import bencoding
 import hashlib
 import datetime
@@ -62,10 +80,3 @@ def get_torrentinfo(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "torrentinfo": (
-        "BitTorrent",
-        ('*/*.torrent'),
-        get_torrentinfo)
-}

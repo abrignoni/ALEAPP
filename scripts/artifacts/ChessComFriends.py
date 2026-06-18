@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613
+__artifacts_v2__ = {
+    "get_ChessComFriends": {
+        "name": "ChessComFriends",
+        "description": "Chess database",
+        "author": "",
+        "creation_date": "2022-02-23",
+        "last_update_date": "2022-02-23",
+        "requirements": "none",
+        "category": "Chess.com",
+        "notes": "",
+        "paths": ('*/com.chess/databases/chess-database*',),
+        "output_types": None,
+        "artifact_icon": "grid",
+        "function": "get_ChessComFriends",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -30,11 +48,3 @@ def get_ChessComFriends(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-        "ChessComFriends": (
-                "Chess.com",
-                ('*/com.chess/databases/chess-database*'),
-                get_ChessComFriends)
-}
-

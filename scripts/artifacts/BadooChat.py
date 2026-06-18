@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0613,W0622,W1309
+__artifacts_v2__ = {
+    "get_badoo_chat": {
+        "name": "BadooChat",
+        "description": "Get Information related to the Chats of the user with other users from the Badoo app (com.badoo.mobile)",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-05-03",
+        "last_update_date": "2023-05-03",
+        "requirements": "Python 3.7 or higher, json",
+        "category": "Badoo",
+        "notes": "",
+        "paths": ('*com.badoo.mobile/databases/ChatComDatabase*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_badoo_chat",
+    }
+}
+
 # Get Information related to the Chats of the user with other users from the Badoo app (com.badoo.mobile)
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-05-03
@@ -118,11 +136,3 @@ def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
         logfunc('No Badoo Chat data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "BadooChat": (
-        "Badoo",
-        ('*com.badoo.mobile/databases/ChatComDatabase*'),
-        get_badoo_chat)
-}

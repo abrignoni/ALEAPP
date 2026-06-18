@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0718
+__artifacts_v2__ = {
+    "get_chrome": {
+        "name": "Chrome",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2020-03-19",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_chrome",
+    }
+}
+
 import os
 import textwrap
 import urllib.parse
@@ -366,10 +384,3 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
         
         
         db.close()
-
-__artifacts__ = {
-        "Chrome": (
-                "Chromium",
-                ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
-                get_chrome)
-}

@@ -1,10 +1,11 @@
+# pylint: disable=W0311,W0401,W0612,W0613,W0614,W0622,W0702,W1309
 __artifacts_v2__ = {
-    "chatgpt": {
+    "get_chatgpt": {
         "name": "ChatGPT",
         "description": "Get user's ChatGPT conversations, settings and media files. This parser is based on a research project. Parser is validated up to the app's 1.2024.177 version",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
-        "version": "1.0.2",
-        "date": "2024-07-09",
+        "creation_date": "2024-07-09",
+        "last_update_date": "2024-07-09",
         "requirements": "",
         "category": "ChatGPT",
         "paths": (
@@ -13,7 +14,8 @@ __artifacts_v2__ = {
             '**/com.openai.chatgpt/shared_prefs/*',
             '**/com.openai.chatgpt/cache/files/*',
         ),
-        "function": "get_chatgpt"
+        "output_types": None,
+        "function": "get_chatgpt",
     }
 }
 

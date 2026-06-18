@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0702
+__artifacts_v2__ = {
+    "get_mewe": {
+        "name": "mewe",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-11-10",
+        "last_update_date": "2021-11-10",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "",
+        "paths": ('*/com.mewe/databases/app_database', '*/com.mewe/shared_prefs/SGSession.xml'),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_mewe",
+    }
+}
+
 import xml.etree.ElementTree as ET
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -137,10 +155,3 @@ def get_mewe(files_found, report_folder, seeker, wrap_text):
     ]
     if not (True in artifacts):
         logfunc(f'{APP_NAME} data not found')
-
-__artifacts__ = {
-        "mewe": (
-                "MeWe",
-                ('*/com.mewe/databases/app_database', '*/com.mewe/shared_prefs/SGSession.xml'),
-                get_mewe)
-}

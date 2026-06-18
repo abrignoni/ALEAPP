@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613
+__artifacts_v2__ = {
+    "get_chromeLoginData": {
+        "name": "ChromeLoginData",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-20",
+        "last_update_date": "2020-03-20",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Login Data*', '*/app_sbrowser/Default/Login Data*', '*/app_opera/Login Data*', '*/app_webview/Default/Login Data*'),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_chromeLoginData",
+    }
+}
+
 import datetime
 import os
 import re
@@ -104,9 +122,3 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "ChromeLoginData": (
-                "Chromium",
-                ('*/app_chrome/Default/Login Data*', '*/app_sbrowser/Default/Login Data*', '*/app_opera/Login Data*', '*/app_webview/Default/Login Data*'),
-                get_chromeLoginData)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_wellbeingaccount": {
+        "name": "wellbeingaccount",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-02-25",
+        "last_update_date": "2020-02-25",
+        "requirements": "none",
+        "category": "Digital Wellbeing",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.wellbeing/files/AccountData.pb',),
+        "output_types": None,
+        "artifact_icon": "battery",
+        "function": "get_wellbeingaccount",
+    }
+}
+
 import json
 import os
 
@@ -23,10 +41,3 @@ def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text):
     
     tsvname = f'wellbeing account'
     tsv(report_folder, data_headers, data_list, tsvname)
-
-__artifacts__ = {
-        "wellbeingaccount": (
-                "Digital Wellbeing",
-                ('*/com.google.android.apps.wellbeing/files/AccountData.pb'),
-                get_wellbeingaccount)
-}

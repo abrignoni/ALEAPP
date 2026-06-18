@@ -1,14 +1,18 @@
+# pylint: disable=W0611,W0613,W0631
 __artifacts_v2__ = {
-    "burnerSubscription": {
+    "get_burnerSubscription": {
         "name": "Burner: Second Phone Number",
         "description": "Parses Burner Subscription Information",
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
         "version": "0.0.1",
-        "date": "2024-02-15",
+        "creation_date": "2024-02-15",
+        "last_update_date": "2024-02-15",
         "requirements": "none",
         "category": "Burner",
         "notes": "",
         "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*'),
+        "output_types": None,
+        "artifact_icon": "credit-card",
         "function": "get_burnerSubscription"
     }
 }

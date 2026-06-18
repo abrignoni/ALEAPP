@@ -1,3 +1,21 @@
+# pylint: disable=W0511,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_quicksearch": {
+        "name": "Quicksearch",
+        "description": "Represents a search query session",
+        "author": "",
+        "creation_date": "2020-03-22",
+        "last_update_date": "2020-03-22",
+        "requirements": "none",
+        "category": "Google Now & QuickSearch",
+        "notes": "",
+        "paths": ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb',),
+        "output_types": None,
+        "artifact_icon": "search",
+        "function": "get_quicksearch",
+    }
+}
+
 import blackboxprotobuf
 import datetime
 import os
@@ -156,11 +174,3 @@ def get_quicksearch(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No recent quick search or now data available')
-
-__artifacts__ = {
-        "Quicksearch": (
-                "Google Now & QuickSearch",
-                ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb'),
-                get_quicksearch)
-}
-            

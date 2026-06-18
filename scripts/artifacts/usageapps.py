@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_usageapps": {
+        "name": "usageapps",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-04-11",
+        "last_update_date": "2020-04-11",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.google.android.as/databases/reflection_gel_events.db*',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_usageapps",
+    }
+}
+
 import blackboxprotobuf
 import json
 import sqlite3
@@ -117,10 +135,3 @@ def get_usageapps(files_found, report_folder, seeker, wrap_text):
             logfunc('No Usage Apps data available')
         
         db.close()
-
-__artifacts__ = {
-        "usageapps": (
-                "App Interaction",
-                ('*/com.google.android.as/databases/reflection_gel_events.db*'),
-                get_usageapps)
-}

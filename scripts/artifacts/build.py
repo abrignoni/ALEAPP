@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_build": {
+        "name": "Build",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-30",
+        "last_update_date": "2020-03-30",
+        "requirements": "none",
+        "category": "Device Info",
+        "notes": "",
+        "paths": ('*/vendor/build.prop',),
+        "output_types": None,
+        "artifact_icon": "info",
+        "function": "get_build",
+    }
+}
+
 import os
 import scripts.artifacts.artGlobals 
 
@@ -67,10 +85,3 @@ def get_build(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc(f'No Build Info data available')    
-
-__artifacts__ = {
-        "Build": (
-                "Device Info",
-                ('*/vendor/build.prop'),
-                get_build)
-}

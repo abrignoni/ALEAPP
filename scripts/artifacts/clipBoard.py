@@ -1,11 +1,11 @@
+# pylint: disable=W0613,W0631
 __artifacts_v2__ = {
     "clipboard": {
         "name": "Clipboard Data",
         "description": "Clipboard artifacts",
         "author": "Alexis Brignoni",
-        "version": "0.0.2",
         "creation_date": "2022-01-08",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Clipboard",
         "notes": "",

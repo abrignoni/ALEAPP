@@ -1,15 +1,18 @@
+# pylint: disable=E0606,W0611,W0612,W0613
 __artifacts_v2__ = {
-    "Calendar": {
+    "get_calendar": {
         "name": "Calendar",
         "description": "Parses provider calendars and events",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
-        "date": "2023-01-06",
+        "creation_date": "2023-01-06",
+        "last_update_date": "2023-01-06",
         "requirements": "none",
         "category": "Calendar",
         "notes": "",
         "paths": ('*/data/com.google.android.calendar/databases/cal_v2a*','*/com.android.providers.calendar/databases/calendar.db*'),
-        "function": "get_calendar"
+        "output_types": None,
+        "artifact_icon": "calendar",
+        "function": "get_calendar",
     }
 }
 

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_appopSetupWiz": {
+        "name": "appopSetupWiz",
+        "description": "check if file is abx",
+        "author": "",
+        "creation_date": "2021-08-15",
+        "last_update_date": "2021-08-15",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/system/appops.xml',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_appopSetupWiz",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -49,10 +67,3 @@ def get_appopSetupWiz(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Appops Setup Wizard data available')
-
-__artifacts__ = {
-        "appopSetupWiz": (
-                "Wipe & Setup",
-                ('*/system/appops.xml'),
-                get_appopSetupWiz)
-}

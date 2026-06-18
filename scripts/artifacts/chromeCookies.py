@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613
+__artifacts_v2__ = {
+    "get_chromeCookies": {
+        "name": "ChromeCookies",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Cookies*', '*/app_sbrowser/Default/Cookies*', '*/app_opera/Cookies*', '*/app_webview/Default/Cookies*'),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_chromeCookies",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -86,10 +104,3 @@ def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Cookies data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeCookies": (
-                "Chromium",
-                ('*/app_chrome/Default/Cookies*', '*/app_sbrowser/Default/Cookies*', '*/app_opera/Cookies*', '*/app_webview/Default/Cookies*'),
-                get_chromeCookies)
-}

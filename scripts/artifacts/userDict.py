@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_userDict": {
+        "name": "userDict",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "User Dictionary",
+        "notes": "",
+        "paths": ('*/com.android.providers.userdictionary/databases/user_dict.db*',),
+        "output_types": None,
+        "artifact_icon": "user",
+        "function": "get_userDict",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -39,11 +57,3 @@ def get_userDict(files_found, report_folder, seeker, wrap_text):
         logfunc('No User Dictionary data available')
     
     db.close()
-
-__artifacts__ = {
-    "userDict": (
-        "User Dictionary",
-        ('*/com.android.providers.userdictionary/databases/user_dict.db*'),
-        get_userDict)
-}
-

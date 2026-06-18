@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_bittorrentClientpref": {
+        "name": "BitTorrent Prefs",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-26",
+        "last_update_date": "2023-03-26",
+        "requirements": "none",
+        "category": "BitTorrent",
+        "notes": "",
+        "paths": ('*/com.bittorrent.client/shared_prefs/com.bittorrent.client_preferences.xml',),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_bittorrentClientpref",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -45,9 +63,3 @@ def get_bittorrentClientpref(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Bittorent Client Preferences data available')
         
-__artifacts__ = {
-        "BitTorrent Prefs": (
-                "BitTorrent",
-                ('*/com.bittorrent.client/shared_prefs/com.bittorrent.client_preferences.xml'),
-                get_bittorrentClientpref)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613
+__artifacts_v2__ = {
+    "get_googleKeepNotes": {
+        "name": "GoogleKeepNotes",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-05-17",
+        "last_update_date": "2021-05-17",
+        "requirements": "none",
+        "category": "Google Keep",
+        "notes": "",
+        "paths": ('*/com.google.android.keep/databases/keep.db*',),
+        "output_types": None,
+        "artifact_icon": "file-text",
+        "function": "get_googleKeepNotes",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -134,9 +152,3 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
             logfunc("No Google Keep - Notes Sharing data found")
         db.close()
         
-__artifacts__ = {
-        "GoogleKeepNotes": (
-                "Google Keep",
-                ('*/com.google.android.keep/databases/keep.db*'),
-                get_googleKeepNotes)
-}

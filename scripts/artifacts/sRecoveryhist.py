@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_sRecoveryhist": {
+        "name": "sRecoveryhist",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-15",
+        "last_update_date": "2021-08-15",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/efs/recovery/history',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_sRecoveryhist",
+    }
+}
+
 import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
@@ -70,10 +88,3 @@ def get_sRecoveryhist(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Samsung Recovery History data available')
-
-__artifacts__ = {
-        "sRecoveryhist": (
-                "Wipe & Setup",
-                ('*/efs/recovery/history'),
-                get_sRecoveryhist)
-}

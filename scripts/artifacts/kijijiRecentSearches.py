@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_kijijiRecentSearches": {
+        "name": "kijijiRecentSearches",
+        "description": "Kijiji Local Recent Searches",
+        "author": "Terry Chabot (Krypterry)",
+        "creation_date": "2022-05-13",
+        "last_update_date": "2022-05-13",
+        "requirements": "None",
+        "category": "Kijiji Recent Searches",
+        "notes": "",
+        "paths": ('*/com.ebay.kijiji.ca/databases/searches.*',),
+        "output_types": None,
+        "artifact_icon": "search",
+        "function": "get_kijijiRecentSearches",
+    }
+}
+
 # Kijiji Local Recent Searches
 # Author:  Terry Chabot (Krypterry)
 # Version: 1.0.0
@@ -75,10 +93,3 @@ def get_kijijiRecentSearches(files_found, report_folder, seeker, wrap_text):
         logfunc('No Kijiji Recent Search data was found.')
 
     db.close()
-
-__artifacts__ = {
-    "kijijiRecentSearches": (
-        "Kijiji Recent Searches",
-        ('*/com.ebay.kijiji.ca/databases/searches.*'),
-        get_kijijiRecentSearches)
-}

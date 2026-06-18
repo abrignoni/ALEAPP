@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_rarlabPreferences": {
+        "name": "rarlabPreferences",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-29",
+        "last_update_date": "2023-03-29",
+        "requirements": "none",
+        "category": "RAR Lab Prefs",
+        "notes": "",
+        "paths": ('*/com.rarlab.rar_preferences.xml',),
+        "output_types": None,
+        "artifact_icon": "settings",
+        "function": "get_rarlabPreferences",
+    }
+}
+
 import os
 import datetime
 import json
@@ -50,9 +68,3 @@ def get_rarlabPreferences(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc(f'No RAR Lab Preferences data available')
             
-__artifacts__ = {
-        "rarlabPreferences": (
-                "RAR Lab Prefs",
-                ('*/com.rarlab.rar_preferences.xml'),
-                get_rarlabPreferences)
-}

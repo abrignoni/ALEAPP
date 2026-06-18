@@ -1,10 +1,11 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "GooglePlaySearches": {
         "name": "Google Play Searches",
         "description": "Search history from the Google Play Store",
         "author": "Alexis Brignoni",
         "creation_date": "2020-04-02",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Google Play Store",
         "notes": "",

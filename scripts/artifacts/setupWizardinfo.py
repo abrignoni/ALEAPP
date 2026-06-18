@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_setupWizardinfo": {
+        "name": "setupWizardinfo",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-15",
+        "last_update_date": "2021-08-15",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml',),
+        "output_types": None,
+        "artifact_icon": "info",
+        "function": "get_setupWizardinfo",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -37,9 +55,3 @@ def get_setupWizardinfo(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Setup_Wizard_Info XML data available')
             
-__artifacts__ = {
-        "setupWizardinfo": (
-                "Wipe & Setup",
-                ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml'),
-                get_setupWizardinfo)
-}

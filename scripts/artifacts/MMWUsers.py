@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_map_users": {
+        "name": "MapUsers",
+        "description": "Get Information related to the user from the Map My Walk app",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-25",
+        "last_update_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher",
+        "category": "Map-My-Walk",
+        "notes": "",
+        "paths": ('*com.mapmywalk.android2/databases/mmdk_user*',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_map_users",
+    }
+}
+
 # Get Information related to the user from the Map My Walk app
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-25
@@ -57,11 +75,3 @@ def get_map_users(files_found, report_folder, seeker, wrap_text):
         logfunc('No Map My Walk Users data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "MapUsers": (
-        "Map-My-Walk",
-        ('*com.mapmywalk.android2/databases/mmdk_user*'),
-        get_map_users)
-}

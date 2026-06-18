@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_wifiProfiles": {
+        "name": "wifiProfiles",
+        "description": "Create sqlite databases",
+        "author": "",
+        "creation_date": "2020-03-23",
+        "last_update_date": "2020-03-23",
+        "requirements": "none",
+        "category": "WiFi Profiles",
+        "notes": "",
+        "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
+        "output_types": None,
+        "artifact_icon": "wifi",
+        "function": "get_wifiProfiles",
+    }
+}
+
 import os
 import xml.etree.ElementTree as ET
 import textwrap
@@ -166,10 +184,3 @@ def get_wifiProfiles(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No Wi-Fi Profiles data available')
-
-__artifacts__ = {
-        "wifiProfiles": (
-                "WiFi Profiles",
-                ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
-                get_wifiProfiles)
-}

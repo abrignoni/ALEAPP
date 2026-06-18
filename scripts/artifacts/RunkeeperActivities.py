@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0622,W1309,W1514
+__artifacts_v2__ = {
+    "get_run_activities": {
+        "name": "RunkeeperActivities",
+        "description": "Get Information related to the activities of the user from the Runkeeper app database",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-25",
+        "last_update_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher, folium",
+        "category": "Runkeeper",
+        "notes": "",
+        "paths": ('*com.fitnesskeeper.runkeeper.pro/databases/RunKeeper.sqlite*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_run_activities",
+    }
+}
+
 # Get Information related to the activities of the user from the Runkeeper app database
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-25
@@ -250,11 +268,3 @@ def get_run_activities(files_found, report_folder, seeker, wrap_text):
     if use_network:
         conn.close()
     db.close()
-
-
-__artifacts__ = {
-    "RunkeeperActivities": (
-        "Runkeeper",
-        ('*com.fitnesskeeper.runkeeper.pro/databases/RunKeeper.sqlite*'),
-        get_run_activities)
-}

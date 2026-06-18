@@ -1,14 +1,17 @@
+# pylint: disable=W0611,W0612,W0613,W1309
 __artifacts_v2__ = {
-    "Bumble": {
+    "get_bumble": {
         "name": "Bumble",
         "description": "Parses Bumble chats, matches and user details",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
-        "date": "2022-11-07",
+        "creation_date": "2022-11-07",
+        "last_update_date": "2022-11-07",
         "requirements": "none",
         "category": "Bumble",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*','*/com.bumble.app/files/c2V0dGluZ3M='),
-        "function": "get_bumble"
+        "output_types": None,
+        "artifact_icon": "users",
+        "function": "get_bumble",
     }
 }
 

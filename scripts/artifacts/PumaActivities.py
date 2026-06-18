@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0622,W1309,W1514
+__artifacts_v2__ = {
+    "get_puma_activities": {
+        "name": "PumaActivities",
+        "description": "Get Information related to the activities of the user from the PumaTrack app (com.puma.track)",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-25",
+        "last_update_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher, folium",
+        "category": "Puma-Trac",
+        "notes": "",
+        "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_puma_activities",
+    }
+}
+
 # Get Information related to the activities of the user from the PumaTrack app (com.puma.track)
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-25
@@ -254,11 +272,3 @@ def get_puma_activities(files_found, report_folder, seeker, wrap_text):
     if use_network:
         conn.close()
     db.close()
-
-
-__artifacts__ = {
-    "PumaActivities": (
-        "Puma-Trac",
-        ('*com.pumapumatrac/databases/pumatrac-db*'),
-        get_puma_activities)
-}

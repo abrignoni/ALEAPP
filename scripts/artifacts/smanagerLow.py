@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_smanagerLow": {
+        "name": "smanagerLow",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.samsung.android.sm/databases/lowpowercontext-system-db',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_smanagerLow",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -44,10 +62,3 @@ def get_smanagerLow(files_found, report_folder, seeker, wrap_text):
         logfunc('No Samsung Smart Manager - Usage data available')
     
     db.close()
-
-__artifacts__ = {
-        "smanagerLow": (
-                "App Interaction",
-                ('*/com.samsung.android.sm/databases/lowpowercontext-system-db'),
-                get_smanagerLow)
-}

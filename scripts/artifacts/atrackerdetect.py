@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_atrackerdetect": {
+        "name": "atrackerdetect",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-08",
+        "last_update_date": "2022-01-08",
+        "requirements": "none",
+        "category": "AirTags",
+        "notes": "",
+        "paths": ('*/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml',),
+        "output_types": None,
+        "artifact_icon": "alert-triangle",
+        "function": "get_atrackerdetect",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -36,10 +54,3 @@ def get_atrackerdetect(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc('No Apple Tracker Detect Prefs data available')
-
-__artifacts__ = {
-        "atrackerdetect": (
-                "AirTags",
-                ('*/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml'),
-                get_atrackerdetect)
-}

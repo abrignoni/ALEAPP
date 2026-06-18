@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1514
+__artifacts_v2__ = {
+    "get_walStrings": {
+        "name": "walStrings",
+        "description": "If  we only want ascii, use 'ascii_chars_re' below",
+        "author": "",
+        "creation_date": "2020-04-17",
+        "last_update_date": "2020-04-17",
+        "requirements": "none",
+        "category": "SQLite Journaling",
+        "notes": "",
+        "paths": ('*/*-wal', '*/*-journal'),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_walStrings",
+    }
+}
+
 import os
 import re
 import string
@@ -57,11 +75,3 @@ def get_walStrings(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Report', 'Location')
     report.write_artifact_data_table(data_headers, data_list, location, html_escape=False)
     report.end_artifact_report()
-
-__artifacts__ = {
-        "walStrings": (
-                "SQLite Journaling",
-                ('*/*-wal', '*/*-journal'),
-                get_walStrings)
-}
-    

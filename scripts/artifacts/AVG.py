@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0311,W0611,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_AVG": {
+        "name": "AVG",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-05-03",
+        "last_update_date": "2022-05-03",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": "",
+        "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
+        "output_types": None,
+        "artifact_icon": "image",
+        "function": "get_AVG",
+    }
+}
+
 ### Import required modules
 import base64
 from os.path import isfile, join, basename, dirname, getsize, abspath
@@ -319,9 +337,3 @@ def get_AVG(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No files found to decrypt')
         
-__artifacts__ = {
-        "AVG": (
-                "Encrypting Media Apps",
-                ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
-                get_AVG)
-}

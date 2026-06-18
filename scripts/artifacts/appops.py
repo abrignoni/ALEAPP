@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0622,W1309
+__artifacts_v2__ = {
+    "get_appops": {
+        "name": "appops",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-15",
+        "last_update_date": "2021-08-15",
+        "requirements": "none",
+        "category": "Permissions",
+        "notes": "",
+        "paths": ('*/system/appops.xml',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_appops",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -269,9 +287,3 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
                 else:
                     logfunc('No Appops.xml data available')
             
-__artifacts__ = {
-        "appops": (
-                "Permissions",
-                ('*/system/appops.xml'),
-                get_appops)
-}

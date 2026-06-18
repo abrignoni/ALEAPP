@@ -1,3 +1,22 @@
+# pylint: disable=W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_fcm_tumblr": {
+        "name": "FCM Tumblr",
+        "description": "Reads records from fcm_queued_messages.ldb related to com.tumblr",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
+        "creation_date": "2022-01-01",
+        "last_update_date": "2022-01-01",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_fcm_instagram",
+    }
+}
+
+
 """
 Copyright 2022, CCL Forensics
 

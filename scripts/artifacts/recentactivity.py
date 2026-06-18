@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613
+__artifacts_v2__ = {
+    "get_recentactivity": {
+        "name": "recentactivity",
+        "description": "Filter for path xxx/yyy/system_ce/0",
+        "author": "",
+        "creation_date": "2020-02-25",
+        "last_update_date": "2020-02-25",
+        "requirements": "none",
+        "category": "Recent Activity",
+        "notes": "",
+        "paths": ('*/system_ce/*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_recentactivity",
+    }
+}
+
 import glob
 import json
 import os
@@ -207,10 +225,3 @@ def process_recentactivity(folder, uid, report_folder):
             report.write_raw_html('<br />')
         
         report.end_artifact_report()
-
-__artifacts__ = {
-        "recentactivity": (
-                "Recent Activity",
-                ('*/system_ce/*'),
-                get_recentactivity)
-}

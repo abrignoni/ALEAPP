@@ -1,3 +1,21 @@
+# pylint: disable=E0601,W0613,W0631,W1309,W1310,W1514
+__artifacts_v2__ = {
+    "get_gps": {
+        "name": "Strava",
+        "description": "Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-24",
+        "last_update_date": "2023-03-24",
+        "requirements": "Python 3.7 or higher, folium and polyline, fitdecode, datetime",
+        "category": "Strava",
+        "notes": "",
+        "paths": ('*/com.strava/files*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_gps",
+    }
+}
+
 # Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-24
@@ -265,10 +283,3 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
 
     if use_network:
         conn.close()
-
-__artifacts__ = {
-    "Strava": (
-        "Strava",
-        ('*/com.strava/files*'),
-        get_gps)
-}

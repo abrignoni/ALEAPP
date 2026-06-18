@@ -1,10 +1,11 @@
+# pylint: disable=E1101,W0401,W0612,W0613,W0614,W0631,W0718,W1309
 __artifacts_v2__ = {
-    "Android Notification History": {
+    "get_notificationHistory": {
         "name": "Android Notification History",
         "description": "Get Android notifications' history, policy and settings. This parser is based on a research project",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
-        "version": "0.0.1",
-        "date": "2024-07-02",
+        "creation_date": "2024-07-02",
+        "last_update_date": "2024-07-02",
         "requirements": "",
         "category": "Android Notification History",
         "paths": (
@@ -12,10 +13,10 @@ __artifacts_v2__ = {
             '**/system/users/*/settings_secure.xml',
             '**/system/notification_policy.xml',
         ),
-        "function": "get_notificationHistory"
+        "output_types": None,
+        "function": "get_notificationHistory",
     }
 }
-
 
 import xml.etree.ElementTree as ET
 from datetime import *

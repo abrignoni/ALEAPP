@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_samsungSmartThings": {
+        "name": "samsungSmartThings",
+        "description": "Samsung SmartThings",
+        "author": "Kevin Pagano (@KevinPagno3)",
+        "creation_date": "2022-06-13",
+        "last_update_date": "2022-06-13",
+        "requirements": "none",
+        "category": "Samsung SmartThings",
+        "notes": "",
+        "paths": ('*/com.samsung.android.oneconnect/databases/QcDB.db*',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_samsungSmartThings",
+    }
+}
+
 # Samsung SmartThings
 # Author: Kevin Pagano (@KevinPagno3)
 # Date: 2022-06-13
@@ -56,9 +74,3 @@ def get_samsungSmartThings(files_found, report_folder, seeker, wrap_text):
         
         db.close()
         
-__artifacts__ = {
-        "samsungSmartThings": (
-                "Samsung SmartThings",
-                ('*/com.samsung.android.oneconnect/databases/QcDB.db*'),
-                get_samsungSmartThings)
-}

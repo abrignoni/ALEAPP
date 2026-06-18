@@ -1,11 +1,3 @@
-# Android Thunderbird App (net.thunderbird.android)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-#
-# Tested with the following versions:
-# 2025-10-27: Android 16, App: 13.0
-
-# Requirements: re, json
-
 __artifacts_v2__ = {
 
     
@@ -13,7 +5,6 @@ __artifacts_v2__ = {
         "name": "Thunderbird - Accounts",
         "description": "Thunderbird Accounts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2025-11-18",
         "last_update_date": "2025-11-18",
         "requirements": "re, json",
@@ -28,7 +19,6 @@ __artifacts_v2__ = {
         "name": "Thunderbird - Messages",
         "description": "Thunderbird Messages",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2025-11-20",
         "last_update_date": "2025-11-20",
         "requirements": "re, json",
@@ -42,6 +32,13 @@ __artifacts_v2__ = {
 
 }
 
+# Android Thunderbird App (net.thunderbird.android)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+#
+# Tested with the following versions:
+# 2025-10-27: Android 16, App: 13.0
+
+# Requirements: re, json
 import re
 import json
 

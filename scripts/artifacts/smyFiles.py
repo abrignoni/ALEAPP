@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W0702,W1309
+__artifacts_v2__ = {
+    "get_smyFiles": {
+        "name": "smyFiles",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-12-17",
+        "last_update_date": "2020-12-17",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/MyFiles*.db*', '*/com.sec.android.app.myfiles/databases/myfiles.db*'),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_smyFiles",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -131,10 +149,3 @@ def get_smyFiles(files_found, report_folder, seeker, wrap_text):
         logfunc('No My Files DB Recent Files data available')
 
     db.close()
-
-__artifacts__ = {
-        "smyFiles": (
-                "My Files",
-                ('*/com.sec.android.app.myfiles/databases/MyFiles*.db*','*/com.sec.android.app.myfiles/databases/myfiles.db*'),
-                get_smyFiles)
-}

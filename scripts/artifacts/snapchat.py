@@ -1,3 +1,21 @@
+# pylint: disable=W0612,W0613,W0622,W0702,W0718
+__artifacts_v2__ = {
+    "get_snapchat": {
+        "name": "snapchat",
+        "description": "Last actions taken in the application and who did them",
+        "author": "",
+        "creation_date": "2021-11-10",
+        "last_update_date": "2021-11-10",
+        "requirements": "none",
+        "category": "Snapchat",
+        "notes": "",
+        "paths": ('*/com.snapchat.android/databases/*.db', '*/com.snapchat.android/shared_prefs/*.xml'),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_snapchat",
+    }
+}
+
 import bcrypt
 import xml.etree.ElementTree as ET
 import datetime
@@ -402,10 +420,3 @@ def get_snapchat(files_found, report_folder, seeker, wrap_text):
     ]
     if not (True in artifacts):
         logfunc(f'{APP_NAME} data not found')
-
-__artifacts__ = {
-        "snapchat": (
-                "Snapchat",
-                ('*/com.snapchat.android/databases/*.db', '*/com.snapchat.android/shared_prefs/*.xml'),
-                get_snapchat)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_googlemapaudioTemp": {
+        "name": "GooglemapaudioT",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-04-27",
+        "last_update_date": "2023-04-27",
+        "requirements": "none",
+        "category": "Google Maps Temp Voice Guidance",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/app_tts-temp/**',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_googlemapaudioTemp",
+    }
+}
+
 from re import fullmatch
 from datetime import datetime
 from pathlib import Path
@@ -53,9 +71,3 @@ def get_googlemapaudioTemp(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Google Maps Temp Voice Guidance found')
             
-__artifacts__ = {
-        "GooglemapaudioT": (
-                "Google Maps Temp Voice Guidance",
-                ('*/com.google.android.apps.maps/app_tts-temp/**'),
-                get_googlemapaudioTemp)
-}

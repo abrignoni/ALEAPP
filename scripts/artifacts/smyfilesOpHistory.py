@@ -1,23 +1,25 @@
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
-import scripts.artifacts.artGlobals as aG
-from packaging import version
-
+# pylint: disable=W0611,W0613,W0702,W1309
 __artifacts_v2__ = {
-    "smyfilesOpHistory": {
+    "get_smyfiles_OpHistory": {
         "name": "My Files Operation History",
         "description": "Extracts Operation History from My Files database",
         "author": "@PensiveHike",
-        "version": "0.1",
-        "date": "2024-06-05",
+        "creation_date": "2024-06-05",
+        "last_update_date": "2024-06-05",
         "requirements": "none",
         "category": "My Files",
         "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown characters will be replaced with '?'.",
         "paths": '*/com.sec.android.app.myfiles/databases/OperationHistory.db*',
-        "function": "get_smyfiles_OpHistory"
+        "output_types": None,
+        "artifact_icon": "clock",
+        "function": "get_smyfiles_OpHistory",
     }
 }
 
+from scripts.artifact_report import ArtifactHtmlReport
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+import scripts.artifacts.artGlobals as aG
+from packaging import version
 # database locations found at
 # /data/data/com.sec.android.app.myfiles/databases/OperationHistory.db
 # /data/user/150/com.sec.android.app.myfiles/databases/OperationHistory.db
@@ -127,4 +129,3 @@ def get_smyfiles_OpHistory(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No My Files DB Operation History data available')
-

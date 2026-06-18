@@ -1,3 +1,21 @@
+# pylint: disable=E0601,W0611,W0612,W0613,W1514
+__artifacts_v2__ = {
+    "get_chromeBookmarks": {
+        "name": "ChromeBookmarks",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-20",
+        "last_update_date": "2020-03-20",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Bookmarks*', '*/app_sbrowser/Default/Bookmarks*', '*/app_opera/Bookmarks*', '*/app_webview/Default/Bookmarks*'),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_chromeBookmarks",
+    }
+}
+
 import datetime
 import json
 import os
@@ -59,10 +77,3 @@ def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc(f'No {browser_name} - Bookmarks data available')
-
-__artifacts__ = {
-        "ChromeBookmarks": (
-                "Chromium",
-                ('*/app_chrome/Default/Bookmarks*', '*/app_sbrowser/Default/Bookmarks*', '*/app_opera/Bookmarks*', '*/app_webview/Default/Bookmarks*'),
-                get_chromeBookmarks)
-}

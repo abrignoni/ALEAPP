@@ -1,10 +1,11 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "googleFitGMS": {
         "name": "Google Fit (GMS) - Activity Sessions",
         "description": "parses the Google Fit database found in com.google.android.gms/databases",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-05",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Google Fit",
         "notes": "This module only parses the Google Fit database found in com.google.android.gms/databases",

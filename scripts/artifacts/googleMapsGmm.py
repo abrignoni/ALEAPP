@@ -1,15 +1,19 @@
+# pylint: disable=E0606,W0401,W0611,W0613,W0614,W0622,W0702,W1309
 __artifacts_v2__ = {
-    "Google Maps GMM": {
+    "get_googleMapsGmm": {
         "name": "Google Maps GMM",
         "description": "Parse Google Maps GMM db files",
         "author": "@AlexisBrignoni",  
         "version": "0.0.3",  
-        "date": "2022-12-30",  
+        "creation_date": "2022-12-30",
+        "last_update_date": "2022-12-30",  
         "requirements": "none",
         "category": "GEO Location",
         "notes": "Updated 2023-12-12 by @segumarc, wrong file_found was wrote in the 'located at' field in the html report",
         "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db','*/com.google.android.apps.maps/databases/gmm_storage.db'),
-        "function": "get_googleMapsGmm"
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_googleMapsGmm",
     }
 }
 

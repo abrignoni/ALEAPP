@@ -1,3 +1,21 @@
+# pylint: disable=W0311,W0611,W0612,W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_settingsSecure": {
+        "name": "settingsSecure",
+        "description": "Filter for path xxx/yyy/system_ce/0",
+        "author": "",
+        "creation_date": "2020-04-02",
+        "last_update_date": "2020-04-02",
+        "requirements": "none",
+        "category": "Device Info",
+        "notes": "",
+        "paths": ('*/system/users/*/settings_secure.xml',),
+        "output_types": None,
+        "artifact_icon": "settings",
+        "function": "get_settingsSecure",
+    }
+}
+
 import glob
 import json
 import os
@@ -67,9 +85,3 @@ def process_ssecure(file_path, uid, report_folder):
     else:
         logfunc('No Settings Secure data available')
         
-__artifacts__ = {
-        "settingsSecure": (
-                "Device Info",
-                ('*/system/users/*/settings_secure.xml'),
-                get_settingsSecure)
-}

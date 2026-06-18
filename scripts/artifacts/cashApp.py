@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_cashApp": {
+        "name": "Cash App",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-10-06",
+        "last_update_date": "2021-10-06",
+        "requirements": "none",
+        "category": "Cash App",
+        "notes": "",
+        "paths": ('*/com.squareup.cash/databases/cash_money.db*',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_cashApp",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -53,11 +71,3 @@ def get_cashApp(files_found, report_folder, seeker, wrap_text):
         logfunc('No Cash App Transactions data available')
     
     db.close()
-
-__artifacts__ = {
-        "Cash App": (
-                "Cash App",
-                ('*/com.squareup.cash/databases/cash_money.db*'),
-                get_cashApp)
-}
-

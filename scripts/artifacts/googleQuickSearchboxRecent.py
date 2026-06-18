@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_quicksearch_recent": {
+        "name": "Quicksearch_recent",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-22",
+        "last_update_date": "2020-03-22",
+        "requirements": "none",
+        "category": "Google Now & QuickSearch",
+        "notes": "",
+        "paths": ('*/com.google.android.googlequicksearchbox/files/recently/*', '*/com.google.android.googlequicksearchbox/files/accounts/*/RecentsDataStore.pb', '*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db'),
+        "output_types": None,
+        "artifact_icon": "search",
+        "function": "get_quicksearch_recent",
+    }
+}
+
 import blackboxprotobuf
 import datetime
 import json
@@ -137,10 +155,3 @@ def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No recent quick search or now data available')
-
-__artifacts__ = {
-        "Quicksearch_recent": (
-                "Google Now & QuickSearch",
-                ('*/com.google.android.googlequicksearchbox/files/recently/*','*/com.google.android.googlequicksearchbox/files/accounts/*/RecentsDataStore.pb','*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db'),
-                get_quicksearch_recent)
-}

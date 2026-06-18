@@ -1,39 +1,45 @@
+# pylint: disable=E0606,W0107,W0120,W0613
 __artifacts_v2__ = {
-    "Wire User Profile": {
+    "get_wire_profile": {
         "name": "Wire User Profile",
         "description": "Parses details about the user profile for Wire Messenger",
         "author": "@cf-eglendye",
-        "version": "0.1",
-        "date": "2024-04-24",
+        "creation_date": "2024-04-24",
+        "last_update_date": "2024-04-24",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**'),
-        "function": "get_wire_profile"
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_wire_profile",
     },
-        "Wire Contacts": {
+    "get_wire_contacts": {
         "name": "Wire Contacts",
         "description": "Parses user contacts for Wire Messenger",
         "author": "@cf-eglendye",
-        "version": "0.1",
-        "date": "2024-04-24",
+        "creation_date": "2024-04-24",
+        "last_update_date": "2024-04-24",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**',),
-        "function": "get_wire_contacts"
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_wire_contacts",
     },
-    "Wire Messages": {
+    "get_wire_messages": {
         "name": "Wire Messages",
         "description": "Parses messages and call history for Wire Messenger",
         "author": "@cf-eglendye",
-        "version": "0.1",
-        "date": "2024-04-24",
+        "creation_date": "2024-04-24",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**'),
-        "function": "get_wire_messages"
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_wire_messages",
     }
 }
 

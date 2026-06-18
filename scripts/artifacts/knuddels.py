@@ -1,10 +1,11 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "knuddels_chats": {
         "name": "Knuddels - Chat Messages",
         "description": "Extracts Knuddels Chats from database files",
         "author": "@As-arsenicum-33",
-        "version": "0.0.2",
         "creation_date": "2025-05-04",
+        "last_update_date": "2025-05-04",
         "last_updated": "2025-06-21",
         "requirements": "none",
         "category": "Knuddels",

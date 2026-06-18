@@ -1,3 +1,21 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_fcm_xbox": {
+        "name": "FCM_XBox",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-07-28",
+        "last_update_date": "2022-07-28",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": None,
+        "artifact_icon": "database",
+        "function": "get_fcm_xbox",
+    }
+}
+
 """
 Copyright 2022, CCL Forensics
 
@@ -148,11 +166,3 @@ def get_fcm_xbox(files_found, report_folder, seeker, wrap_text):
         )
     if not message_rows and not party_rows and not presence_rows:
         scripts.ilapfuncs.logfunc("No Xbox FCM data found")
-
-
-__artifacts__ = {
-    "FCM_XBox": (
-        "Firebase Cloud Messaging",
-        ('*/fcm_queued_messages.ldb/*'),
-        get_fcm_xbox)
-}

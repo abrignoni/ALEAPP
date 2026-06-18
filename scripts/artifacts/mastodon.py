@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0311,W0611,W0612,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_mastodon": {
+        "name": "mastodon",
+        "description": "Module Description: Parses Mastodon timeline, notifications and searches",
+        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "creation_date": "2022-12-07",
+        "last_update_date": "2022-12-07",
+        "requirements": "BeautifulSoup",
+        "category": "Mastodon",
+        "notes": "",
+        "paths": ('*/org.joinmastodon.android/databases/*.db*', '*/org.joinmastodon.android/files/*.json'),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_mastodon",
+    }
+}
+
 # Module Description: Parses Mastodon timeline, notifications and searches
 # Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
 # Date: 2022-12-07
@@ -339,10 +357,3 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list_instance_json, data_headers)
     else:
         logfunc('No Mastodon - Instance Details data available')
-
-__artifacts__ = {
-        "mastodon": (
-                "Mastodon",
-                ('*/org.joinmastodon.android/databases/*.db*','*/org.joinmastodon.android/files/*.json'),
-                get_mastodon)
-}

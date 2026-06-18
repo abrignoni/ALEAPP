@@ -1,17 +1,21 @@
+# pylint: disable=W0105,W0611,W0612,W0613,W0631,W0702,W1309
 __artifacts_v2__ = {
-    "sharedProto": {
+    "get_sharedProto": {
         "name": "Shared Proto Data",
         "description": "Shared Proto data from Samsung Browser",
         "author": "@AlexisBrignoni",
-        "version": "0.0.1",
-        "date": "2024-07-23",
+        "creation_date": "2024-07-23",
+        "last_update_date": "2024-07-23",
         "requirements": "none",
         "category": "Samsung Browser",
         "notes": "",
         "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*'),
-        "function": "get_sharedProto"
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_sharedProto",
     }
 }
+
 import pathlib
 import sqlite3
 import textwrap

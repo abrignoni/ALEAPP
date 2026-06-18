@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_dmss": {
+        "name": "Dahua Technology (DMSS)",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-04-13",
+        "last_update_date": "2023-04-13",
+        "requirements": "none",
+        "category": "Dahua Technology (DMSS)",
+        "notes": "",
+        "paths": ('*/com.mm.android.DMSS/databases/*', '*/Android/data/com.mm.android.DMSS/files/Download/snapshot/*'),
+        "output_types": None,
+        "artifact_icon": "terminal",
+        "function": "get_dmss",
+    }
+}
+
 """"
 Developed by Evangelos Dragonas (@theAtropos4n6)
 
@@ -432,9 +450,3 @@ def get_dmss(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc(f'No Dahua CCTV - User Created Media data available')
         
-__artifacts__ = {
-        "Dahua Technology (DMSS)": (
-                "Dahua Technology (DMSS)",
-                ('*/com.mm.android.DMSS/databases/*','*/Android/data/com.mm.android.DMSS/files/Download/snapshot/*'),
-                get_dmss)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_pSettings": {
+        "name": "pSettings",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "Device Info",
+        "notes": "",
+        "paths": ('*/com.google.android.gsf/databases/googlesettings.db*',),
+        "output_types": None,
+        "artifact_icon": "settings",
+        "function": "get_pSettings",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -42,9 +60,3 @@ def get_pSettings(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Partner Settings data available')
             
-__artifacts__ = {
-        "pSettings": (
-                "Device Info",
-                ('*/com.google.android.gsf/databases/googlesettings.db*'),
-                get_pSettings)
-}

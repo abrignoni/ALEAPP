@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0611,W0613
+__artifacts_v2__ = {
+    "get_googleTasks": {
+        "name": "GoogleTasks",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-21",
+        "last_update_date": "2021-08-21",
+        "requirements": "none",
+        "category": "Google Tasks",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db',),
+        "output_types": None,
+        "artifact_icon": "file-text",
+        "function": "get_googleTasks",
+    }
+}
+
 import os
 import textwrap
 from datetime import datetime
@@ -86,9 +104,3 @@ def get_googleTasks(files_found, report_folder, seeker, wrap_text):
         
         db.close()
         
-__artifacts__ = {
-        "GoogleTasks": (
-                "Google Tasks",
-                ('*/com.google.android.apps.tasks/files/tasks-*/data.db'),
-                get_googleTasks)
-}

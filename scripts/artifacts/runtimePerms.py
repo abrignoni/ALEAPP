@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0613
+__artifacts_v2__ = {
+    "get_runtimePerms": {
+        "name": "runtimePerms",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-01-25",
+        "last_update_date": "2021-01-25",
+        "requirements": "none",
+        "category": "Permissions",
+        "notes": "",
+        "paths": ('*/system/users/*/runtime-permissions.xml', '*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml'),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_runtimePerms",
+    }
+}
+
 import xml.etree.ElementTree as ET 
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -61,9 +79,3 @@ def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
                     tsvname = f'Runtime Permissions_{user}'
                     tsv(report_folder, data_headers, data_list, tsvname)
                 
-__artifacts__ = {
-        "runtimePerms": (
-                "Permissions",
-                ('*/system/users/*/runtime-permissions.xml','*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml'),
-                get_runtimePerms)
-}

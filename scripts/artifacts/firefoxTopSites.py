@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_firefoxTopSites": {
+        "name": "FirefoxTopSites",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-12",
+        "last_update_date": "2022-01-12",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/databases/top_sites*',),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_firefoxTopSites",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -50,9 +68,3 @@ def get_firefoxTopSites(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "FirefoxTopSites": (
-                "Firefox",
-                ('*/org.mozilla.firefox/databases/top_sites*'),
-                get_firefoxTopSites)
-}

@@ -1,15 +1,18 @@
+# pylint: disable=W0611,W0613,W0631
 __artifacts_v2__ = {
-    "sChats": {
+    "get_schats": {
         "name": "Sideline Chats and Calls",
         "description": "Parses Sideline's textfree database",
         "author": "Matt Beers",
-        "version": "0.0.1",
-        "date": "2024-02-08",
+        "creation_date": "2024-02-08",
+        "last_update_date": "2024-02-08",
         "requirements": "none",
         "category": "Chats",
         "notes": "",
         "paths": ('*/data/com.sideline.phone.number/databases/textfree*'),
-        "function": "get_schats"
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_schats",
     }
 }
 

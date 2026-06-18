@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_firefoxDownloads": {
+        "name": "FirefoxDownloads",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-12",
+        "last_update_date": "2022-01-12",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_firefoxDownloads",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -55,9 +73,3 @@ def get_firefoxDownloads(files_found, report_folder, seeker, wrap_text):
         
         db.close()
     
-__artifacts__ = {
-        "FirefoxDownloads": (
-                "Firefox",
-                ('*/org.mozilla.firefox/databases/mozac_downloads_database*'),
-                get_firefoxDownloads)
-}

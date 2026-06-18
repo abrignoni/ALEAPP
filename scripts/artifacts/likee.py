@@ -1,3 +1,35 @@
+# pylint: disable=W0611,W0612,W0613,W0631,W0702,W1309,W1404,W1514,W4701
+__artifacts_v2__ = {
+    "get_likee": {
+        "name": "LIKEE Location",
+        "description": "",
+        "author": "",
+        "creation_date": "2024-05-20",
+        "last_update_date": "2024-05-20",
+        "requirements": "none",
+        "category": "LIKEE",
+        "notes": "",
+        "paths": ('*/video.like/files/*/*location.kv',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_likee",
+    },
+    "get_likee_db": {
+        "name": "LIKEE Databases",
+        "description": "",
+        "author": "",
+        "creation_date": "2024-05-20",
+        "last_update_date": "2024-05-20",
+        "requirements": "none",
+        "category": "LIKEE",
+        "notes": "",
+        "paths": ('*/video.like/databases/*.db',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_likee_db",
+    }
+}
+
 import os
 import sys
 import re
@@ -170,10 +202,3 @@ def get_likee_db(files_found, report_folder, seeker, wrap_text):
             logfunc("No Message data found" + (str(file_found)))
 
         db.close()
-
-
-__artifacts__ = {
-    "likee_location": ("LIKEE", ("*/video.like/files/*/*location.kv"), get_likee),
-    "likee_databases": ("LIKEE", ("*/video.like/databases/*.db"), get_likee_db),
-}
-

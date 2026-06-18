@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0702,W1309
+__artifacts_v2__ = {
+    "get_browserlocation": {
+        "name": "Browser Location",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-17",
+        "last_update_date": "2021-03-17",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.android.browser/app_geolocation/CachedGeoposition.db',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_browserlocation",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -50,10 +68,3 @@ def get_browserlocation(files_found, report_folder, seeker, wrap_text):
             
         db.close()
         
-__artifacts__ = {
-        "Browser Location": (
-                "GEO Location",
-                ('*/com.android.browser/app_geolocation/CachedGeoposition.db'),
-                get_browserlocation)
-}
-    

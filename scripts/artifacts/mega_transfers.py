@@ -1,3 +1,21 @@
+# pylint: disable=W0108,W0613,W1309
+__artifacts_v2__ = {
+    "get_mega_transfers": {
+        "name": "mega_transfers",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-06-04",
+        "last_update_date": "2022-06-04",
+        "requirements": "none",
+        "category": "Mega",
+        "notes": "",
+        "paths": ('*/mega.privacy.android.app/databases/megapreferences',),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_mega_transfers",
+    }
+}
+
 import sqlite3
 import base64
 from Crypto.Cipher import AES
@@ -92,9 +110,3 @@ def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No MEGA files data available')
     
-__artifacts__ = {
-        "mega_transfers": (
-                "Mega",
-                ('*/mega.privacy.android.app/databases/megapreferences'),
-                get_mega_transfers)
-}

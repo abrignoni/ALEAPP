@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_permissions": {
+        "name": "permissions",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-01-28",
+        "last_update_date": "2021-01-28",
+        "requirements": "none",
+        "category": "Permissions",
+        "notes": "",
+        "paths": ('*/system/packages.xml',),
+        "output_types": None,
+        "artifact_icon": "settings",
+        "function": "get_permissions",
+    }
+}
+
 import xml.etree.ElementTree as ET 
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -90,10 +108,3 @@ def get_permissions(files_found, report_folder, seeker, wrap_text):
                     
                     tsvname = f'Permissions - Packages and Shared User'
                     tsv(report_folder, data_headers, data_list_packages_su, tsvname)
-
-__artifacts__ = {
-        "permissions": (
-                "Permissions",
-                ('*/system/packages.xml'),
-                get_permissions)
-}

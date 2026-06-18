@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_libretorrent": {
+        "name": "Libretorrent",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-09-12",
+        "last_update_date": "2023-09-12",
+        "requirements": "none",
+        "category": "Libre Torrent",
+        "notes": "",
+        "paths": ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*', '*/libretorrent.db*'),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_libretorrent",
+    }
+}
+
 import sqlite3
 import textwrap
 from datetime import datetime
@@ -53,10 +71,3 @@ def get_libretorrent(files_found, report_folder, seeker, wrap_text):
         logfunc('No Libre Torrents data available')
         
     db.close()
-
-__artifacts__ = {
-        "Libretorrent": (
-                "Libre Torrent",
-                ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*','*/libretorrent.db*'),
-                get_libretorrent)
-}

@@ -1,3 +1,20 @@
+__artifacts_v2__ = {
+    "get_chromeDIPS": {
+        "name": "ChromeDIPS",
+        "description": "Module Description: Parses Chromium DIPS (Detect Incidental Party State)",
+        "author": "@KevinPagano3",
+        "creation_date": "2023-04-07",
+        "last_update_date": "2023-04-07",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/DIPS*', '*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*', '*/app_webview/Default/DIPS*'),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_chromeDIPS",
+    }
+}
+
 # Module Description: Parses Chromium DIPS (Detect Incidental Party State)
 # Author: @KevinPagano3
 # Date: 2023-04-07
@@ -10,7 +27,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, get_next_unused_name, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
 
-def get_chromeDIPS(files_found, report_folder):
+def get_chromeDIPS(files_found, report_folder, _seeker, _wrap_text):
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -148,10 +165,3 @@ def get_chromeDIPS(files_found, report_folder):
             logfunc(f'No {browser_name} - Detect Incidental Party State data available')
 
         db.close()
-
-__artifacts__ = {
-        "ChromeDIPS": (
-                "Chromium",
-                ('*/app_chrome/Default/DIPS*','*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*','*/app_webview/Default/DIPS*'),
-                get_chromeDIPS)
-}

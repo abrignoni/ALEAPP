@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0611,W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_sWipehist": {
+        "name": "sWipehist",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-15",
+        "last_update_date": "2021-08-15",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/efs/recovery/history', '*/data/log/recovery_history.log'),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_sWipehist",
+    }
+}
+
 import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
@@ -83,10 +101,3 @@ def get_sWipehist(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc(f'No Samsung Wipe History data available')
-
-__artifacts__ = {
-        "sWipehist": (
-                "Wipe & Setup",
-                ('*/efs/recovery/history', '*/data/log/recovery_history.log'),
-                get_sWipehist)
-}

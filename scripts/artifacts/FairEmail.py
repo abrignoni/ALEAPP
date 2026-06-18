@@ -1,14 +1,3 @@
-# FairCode FairEmail App (eu.faircode.email)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# 
-# Tested with the following versions:
-# 2024-04-20: Android 14, App: 1.2178
-
-# Requirements: os
-
-
-
-
 __artifacts_v2__ = {
 
     
@@ -16,7 +5,6 @@ __artifacts_v2__ = {
         "name": "FairEmail - Accounts",
         "description": "FairEmail Accounts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.2",
         "creation_date": "2025-03-08",
         "last_update_date": "2025-11-15",
         "requirements": "none",
@@ -31,7 +19,6 @@ __artifacts_v2__ = {
         "name": "FairEmail - Contacts",
         "description": "FairEmail Contacts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.2",
         "creation_date": "2025-03-08",
         "last_update_date": "2025-11-15",
         "requirements": "none",
@@ -46,7 +33,6 @@ __artifacts_v2__ = {
         "name": "FairEmail - Messages",
         "description": "FairEmail Messages",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2025-11-16",
         "last_update_date": "2025-11-16",
         "requirements": "os",
@@ -59,6 +45,13 @@ __artifacts_v2__ = {
     }
 }
 
+# FairCode FairEmail App (eu.faircode.email)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# 
+# Tested with the following versions:
+# 2024-04-20: Android 14, App: 1.2178
+
+# Requirements: os
 import os
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, media_to_html

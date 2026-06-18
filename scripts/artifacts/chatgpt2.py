@@ -1,18 +1,17 @@
+# pylint: disable=E0606,E1120,E1123,W0611,W0613,W0702,W0718
 __artifacts_v2__ = {
-    "chatgpt2": {
+    "get_chatpgt2": {
         "name": "ChatGPT",
         "description": "Android ChatGPT conversations",
         "author": "Alexis Brignoni",
-        "version": "0.0.2",
         "creation_date": "2025-07-08",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "ChatGPT",
         "notes": "",
         "paths": ('*/data/com.openai.chatgpt/databases/*conversations.db*'),
         "html_columns": ['Content'],
         "output_types": "standard",
-        "function": "get_chatpgt2",
         "artifact_icon": "loader",
     }
 }

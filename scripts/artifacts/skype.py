@@ -1,3 +1,21 @@
+# pylint: disable=W0104,W0311,W0611,W0612,W0613,W0702,W1309
+__artifacts_v2__ = {
+    "get_skype": {
+        "name": "skype",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-15",
+        "last_update_date": "2021-03-15",
+        "requirements": "none",
+        "category": "Skype",
+        "notes": "",
+        "paths": ('*/com.skype.raider/databases/live*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_skype",
+    }
+}
+
 import sqlite3
 import datetime
 import os
@@ -203,9 +221,3 @@ def get_skype(files_found, report_folder, seeker, wrap_text):
 
         db.close
         
-__artifacts__ = {
-        "skype": (
-                "Skype",
-                ('*/com.skype.raider/databases/live*'),
-                get_skype)
-}

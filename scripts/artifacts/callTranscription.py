@@ -1,10 +1,11 @@
+# pylint: disable=E0606,W0401,W0612,W0613,W0614
 __artifacts_v2__ = {
     "get_callTranscription": {
         "name": "Android Call Transcriptions",
         "description": "Parses recorded calls transcriptions",
         "author": "Alexis Brignoni",
-        "version": "0.0.1",
-        "date": "2025-09-19",
+        "creation_date": "2025-09-19",
+        "last_update_date": "2025-09-19",
         "requirements": "none",
         "category": "phone",
         "notes": "",

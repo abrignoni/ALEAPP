@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_googleNowPlaying": {
+        "name": "GoogleNowPlaying",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-22",
+        "last_update_date": "2020-03-22",
+        "requirements": "none",
+        "category": "Now Playing",
+        "notes": "",
+        "paths": ('*/com.google.intelligence.sense/db/history_db*', '*/com.google.android.as/databases/history_db*'),
+        "output_types": None,
+        "artifact_icon": "chrome",
+        "function": "get_googleNowPlaying",
+    }
+}
+
 import blackboxprotobuf
 import json
 import sqlite3
@@ -136,10 +154,3 @@ def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
             logfunc('No Google Now Playing history')
 
         db.close()
-
-__artifacts__ = {
-        "GoogleNowPlaying": (
-                "Now Playing",
-                ('*/com.google.intelligence.sense/db/history_db*','*/com.google.android.as/databases/history_db*'),
-                get_googleNowPlaying)
-}

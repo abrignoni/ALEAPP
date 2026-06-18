@@ -1,3 +1,21 @@
+# pylint: disable=E0602,W0611,W0613,W0631
+__artifacts_v2__ = {
+    "get_pikpakCloudlist": {
+        "name": "PikPak Cloud List",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-24",
+        "last_update_date": "2023-03-24",
+        "requirements": "none",
+        "category": "PikPak",
+        "notes": "",
+        "paths": ('*/com.pikcloud.pikpak/databases/pikpak_files_*.db*',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_pikpakCloudlist",
+    }
+}
+
 import sqlite3
 import os
 
@@ -54,9 +72,3 @@ def get_pikpakCloudlist(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No PikPak Cloud List data available')
     
-__artifacts__ = {
-        "PikPak Cloud List": (
-                "PikPak",
-                ('*/com.pikcloud.pikpak/databases/pikpak_files_*.db*'),
-                get_pikpakCloudlist)
-}

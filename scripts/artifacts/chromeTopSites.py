@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0702
+__artifacts_v2__ = {
+    "get_chromeTopSites": {
+        "name": "ChromeTopSites",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Top Sites*', '*/app_sbrowser/Default/Top Sites*', '*/app_opera/Top Sites*', '*/app_webview/Default/Top Sites*'),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_chromeTopSites",
+    }
+}
+
 import os
 import sqlite3
 
@@ -57,9 +75,3 @@ def get_chromeTopSites(files_found, report_folder, seeker, wrap_text):
         
         db.close()
         
-__artifacts__ = {
-        "ChromeTopSites": (
-                "Chromium",
-                ('*/app_chrome/Default/Top Sites*', '*/app_sbrowser/Default/Top Sites*', '*/app_opera/Top Sites*', '*/app_webview/Default/Top Sites*'),
-                get_chromeTopSites)
-}

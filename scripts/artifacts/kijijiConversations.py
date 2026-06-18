@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_kijijiConversations": {
+        "name": "kijijiConversations",
+        "description": "Kijiji Conversations",
+        "author": "Terry Chabot (Krypterry)",
+        "creation_date": "2022-05-13",
+        "last_update_date": "2022-05-13",
+        "requirements": "None",
+        "category": "Kijiji Conversations",
+        "notes": "",
+        "paths": ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_kijijiConversations",
+    }
+}
+
 # Kijiji Conversations
 # Author:  Terry Chabot (Krypterry)
 # Version: 1.0.2
@@ -111,10 +129,3 @@ def AppendMessageRowsToDataList(data_list,
             recipientName = LOCAL_USER
 
         data_list.append((message['sortByDate'], conversationId, advertId, advertTitle, message['identifier'], senderId, senderName, recipientId, recipientName, message['state'], message['text']))
-
-__artifacts__ = {
-        "kijijiConversations": (
-                "Kijiji Conversations",
-                ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*'),
-                get_kijijiConversations)
-}

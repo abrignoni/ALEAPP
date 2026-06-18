@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_teleguard": {
+        "name": "Teleguard",
+        "description": "",
+        "author": "",
+        "creation_date": "2024-01-09",
+        "last_update_date": "2024-01-09",
+        "requirements": "none",
+        "category": "Teleguard",
+        "notes": "",
+        "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*', '*/data/ch.swisscows.messenger.teleguardapp/cache/**'),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_teleguard",
+    }
+}
+
 import sqlite3
 import json
 import base64
@@ -180,11 +198,3 @@ def get_teleguard(files_found, report_folder, seeker, wrap_text):
             else:
                 logfunc('No Teleguard Channels available')
     db.close()
-
-__artifacts__ = {
-        "Teleguard": (
-                "Teleguard",
-                ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',
-                    '*/data/ch.swisscows.messenger.teleguardapp/cache/**'),
-                get_teleguard)
-}

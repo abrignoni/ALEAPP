@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_garmin_activities": {
+        "name": "GarminActivities",
+        "description": "Get Information relative to the user activities that are present in the database (cache-database) from the Garmin Connect app, the activities are stored in two different tables (activities_details and activities_summaries)",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher and json",
+        "category": "Garmin-Cache",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_garmin_activities",
+    }
+}
+
 # Get Information relative to the user activities that are present in the database (cache-database) from the Garmin Connect app, the activities are stored in two different tables (activities_details and activities_summaries)
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-02-24
@@ -132,11 +150,3 @@ def get_garmin_activities(files_found, report_folder, seeker, wrap_text):
         logfunc('No Garmin Activities data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "GarminActivities": (
-        "Garmin-Cache",
-        ('*/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-        get_garmin_activities)
-}

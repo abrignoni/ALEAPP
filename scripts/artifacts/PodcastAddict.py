@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0718,W1309
+__artifacts_v2__ = {
+    "get_podcasts": {
+        "name": "Podcast Addict",
+        "description": "Module Description: Parses Podcast Addict Episode Database",
+        "author": "John Hyla",
+        "creation_date": "2023-07-07",
+        "last_update_date": "2023-07-07",
+        "requirements": "none",
+        "category": "Podcast Addict",
+        "notes": "",
+        "paths": ('*/com.bambuna.podcastaddict/databases/podcastAddict.db',),
+        "output_types": None,
+        "artifact_icon": "headphones",
+        "function": "get_podcasts",
+    }
+}
+
 # Module Description: Parses Podcast Addict Episode Database
 # Author: John Hyla
 # Date: 2023-07-07
@@ -62,11 +80,3 @@ def get_podcasts(files_found, report_folder, seeker, wrap_text):
         db.close()
     
     return
-
-
-__artifacts__ = {
-    "Podcast Addict": (
-        "Podcast Addict",
-        ('*/com.bambuna.podcastaddict/databases/podcastAddict.db'),
-        get_podcasts)
-}

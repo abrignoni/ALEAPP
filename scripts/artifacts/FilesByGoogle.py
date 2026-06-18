@@ -1,10 +1,11 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "fbg_master": {
         "name": "Files By Google - Files Master",
         "description": "Parses the master files list from the Files by Google application",
         "author": "@KevinPagano3",
         "creation_date": "2021-01-18",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Files By Google",
         "notes": "",
@@ -16,8 +17,8 @@ __artifacts_v2__ = {
         "name": "Files By Google - Search History",
         "description": "Parses the Files by Google application search history",
         "author": "@KevinPagano3",
-        "date": "2021-01-18",
-        "last_updated_date": "2025-09-09",
+        "creation_date": "2021-01-18",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Files By Google",
         "notes": "",

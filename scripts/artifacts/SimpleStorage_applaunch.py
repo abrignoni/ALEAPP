@@ -1,10 +1,11 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "SimpleStorage_applaunch": {
         "name": "SimpleStorage - App Launch",
         "description": "Parses SimpleStorage for application launch",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
         "creation_date": "2022-12-13",
+        "last_update_date": "2022-12-13",
         "last_updated": "2025-09-12",
         "requirements": "none",
         "category": "Android System Intelligence",

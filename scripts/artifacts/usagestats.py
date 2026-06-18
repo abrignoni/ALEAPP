@@ -1,3 +1,21 @@
+# pylint: disable=E0606,E1101,W0311,W0613,W0702,W1309
+__artifacts_v2__ = {
+    "get_usagestats": {
+        "name": "usagestats",
+        "description": "Event types referenced from core/java/android/app/usage/UsageEvents.java",
+        "author": "",
+        "creation_date": "2020-02-25",
+        "last_update_date": "2020-02-25",
+        "requirements": "none",
+        "category": "Usage Stats",
+        "notes": "",
+        "paths": ('*/system/usagestats/*', '*/system_ce/*/usagestats*'),
+        "output_types": None,
+        "artifact_icon": "battery",
+        "function": "get_usagestats",
+    }
+}
+
 import glob
 import json
 import os
@@ -570,9 +588,3 @@ def process_usagestats(folder, uid, report_folder, version):
     logfunc(f'Records processed for user {uid}: {processed}')
     db.close()
     
-__artifacts__ = {
-    "usagestats": (
-        "Usage Stats",
-        ('*/system/usagestats/*', '*/system_ce/*/usagestats*'),
-        get_usagestats)
-}

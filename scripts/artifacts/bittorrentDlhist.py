@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631
+__artifacts_v2__ = {
+    "get_bittorrentDlhist": {
+        "name": "bittorrentDlhist",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-26",
+        "last_update_date": "2023-03-26",
+        "requirements": "none",
+        "category": "BitTorrent",
+        "notes": "",
+        "paths": ('*/dlhistory*.config.bak', '*/dlhistory*.config'),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_bittorrentDlhist",
+    }
+}
+
 import bencoding
 import hashlib
 import datetime
@@ -38,10 +56,3 @@ def get_bittorrentDlhist(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "bittorrentDlhist": (
-        "BitTorrent",
-        ('*/dlhistory*.config.bak','*/dlhistory*.config'),
-        get_bittorrentDlhist)
-}

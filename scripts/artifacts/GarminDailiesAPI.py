@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W0631,W1309,W1514
+__artifacts_v2__ = {
+    "get_dailies_api": {
+        "name": "GarminDailiesAPI",
+        "description": "Get Information related to the Daily summaries from the Garmin API using the JSON file extracted",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-28",
+        "last_update_date": "2023-02-28",
+        "requirements": "Python 3.7 or higher, json",
+        "category": "Garmin-API",
+        "notes": "",
+        "paths": ('*/garmin.api/daily*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_dailies_api",
+    }
+}
+
 # Get Information related to the Daily summaries from the Garmin API using the JSON file extracted
 # Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
@@ -54,11 +72,3 @@ def get_dailies_api(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     tsvname = f'Garmin Log'
     tsv(report_folder, data_headers, data_list, tsvname)
-
-
-__artifacts__ = {
-    "GarminDailiesAPI": (
-        "Garmin-API",
-        ('*/garmin.api/daily*'),
-        get_dailies_api)
-}

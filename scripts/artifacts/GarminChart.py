@@ -1,3 +1,21 @@
+# pylint: disable=W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_garmin_chart": {
+        "name": "GarminCharts",
+        "description": "Get Information from the table activity_charts and activitie_details in the database cache-database from Garmin Connect",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Garmin-Cache",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_garmin_chart",
+    }
+}
+
 # Get Information from the table activity_charts and activitie_details in the database cache-database from Garmin Connect
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-02-24
@@ -94,11 +112,3 @@ def get_garmin_chart(files_found, report_folder, seeker, wrap_text):
         logfunc('No Garmin Charts data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "GarminCharts": (
-        "Garmin-Cache",
-        ('*/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-        get_garmin_chart)
-}

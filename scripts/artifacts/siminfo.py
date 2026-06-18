@@ -1,3 +1,21 @@
+# pylint: disable=W0311,W0611,W0612,W0613,W0702
+__artifacts_v2__ = {
+    "get_siminfo": {
+        "name": "siminfo",
+        "description": "Filter for path xxx/yyy/system_ce/0",
+        "author": "",
+        "creation_date": "2020-03-02",
+        "last_update_date": "2020-03-02",
+        "requirements": "none",
+        "category": "Device Info",
+        "notes": "",
+        "paths": ('*/user_de/*/com.android.providers.telephony/databases/telephony.db',),
+        "output_types": None,
+        "artifact_icon": "info",
+        "function": "get_siminfo",
+    }
+}
+
 import glob
 import json
 import os
@@ -87,10 +105,3 @@ def process_siminfo(folder, uid, report_folder):
     else:
         logfunc(f'No SIM_Info{uid} data available')    
     db.close()
-
-__artifacts__ = {
-        "siminfo": (
-                "Device Info",
-                ('*/user_de/*/com.android.providers.telephony/databases/telephony.db'),
-                get_siminfo)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_kijijiLocalUserInfo": {
+        "name": "kijijiLocalUserInfo",
+        "description": "Kijiji Local User Information",
+        "author": "Terry Chabot (Krypterry)",
+        "creation_date": "2022-05-13",
+        "last_update_date": "2022-05-13",
+        "requirements": "None",
+        "category": "Kijiji Local User Information",
+        "notes": "",
+        "paths": ('*/com.ebay.kijiji.ca/shared_prefs/LoginData.xml',),
+        "output_types": None,
+        "artifact_icon": "user",
+        "function": "get_kijijiLocalUserInfo",
+    }
+}
+
 # Kijiji Local User Information
 # Author:  Terry Chabot (Krypterry)
 # Version: 1.0.1
@@ -54,10 +72,3 @@ def get_kijijiLocalUserInfo(files_found, report_folder, seeker, wrap_text):
     
     tsvname = f'Kijiji Local User Information'
     tsv(report_folder, data_headers, data_list, tsvname)    
-
-__artifacts__ = {
-        "kijijiLocalUserInfo": (
-                "Kijiji Local User Information",
-                ('*/com.ebay.kijiji.ca/shared_prefs/LoginData.xml'),
-                get_kijijiLocalUserInfo)
-}

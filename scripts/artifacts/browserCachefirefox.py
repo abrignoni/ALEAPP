@@ -1,3 +1,21 @@
+# pylint: disable=W0125,W0126,W0404,W0611,W0613,W0702,W0718,W1309
+__artifacts_v2__ = {
+    "get_browserCachefirefox": {
+        "name": "browserCachefirefox",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-01-30",
+        "last_update_date": "2023-01-30",
+        "requirements": "none",
+        "category": "Browser Cache",
+        "notes": "",
+        "paths": ('*/data/org.mozilla.firefox/cache/*/cache2/entries/**',),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_browserCachefirefox",
+    }
+}
+
 import datetime
 import email
 import os
@@ -81,11 +99,4 @@ def get_browserCachefirefox(files_found, report_folder, seeker, wrap_text):
         tsvname = f'Firefox Browser Cache'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-            
-__artifacts__ = {
-        "browserCachefirefox": (
-                "Browser Cache",
-                ( '*/data/org.mozilla.firefox/cache/*/cache2/entries/**'),
-                get_browserCachefirefox)
-}
             

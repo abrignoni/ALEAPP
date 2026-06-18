@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0702,W1309
+__artifacts_v2__ = {
+    "get_DocList": {
+        "name": "DocList'",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-12-21",
+        "last_update_date": "2020-12-21",
+        "requirements": "none",
+        "category": "Google Drive",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.docs/databases/DocList.db*',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_DocList",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -62,10 +80,3 @@ def get_DocList(files_found, report_folder, seeker, wrap_text):
         logfunc('No Google Drive - DocList data available')
     
     db.close()
-
-__artifacts__ = {
-        "DocList'": (
-                "Google Drive",
-                ('*/com.google.android.apps.docs/databases/DocList.db*'),
-                get_DocList)
-}

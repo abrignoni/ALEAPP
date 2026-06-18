@@ -1,4 +1,20 @@
-
+# pylint: disable=E0606,W0611,W0613,W0631,W1309,W1514
+__artifacts_v2__ = {
+    "get_packageGplinks": {
+        "name": "packageGplinks",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-18",
+        "last_update_date": "2021-03-18",
+        "requirements": "none",
+        "category": "Installed Apps",
+        "notes": "",
+        "paths": ('*/system/packages.list',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_packageGplinks",
+    }
+}
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -33,10 +49,3 @@ def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc('No Google Play Links for Apps data available')
-
-__artifacts__ = {
-        "packageGplinks": (
-                "Installed Apps",
-                ('*/system/packages.list'),
-                get_packageGplinks)
-}

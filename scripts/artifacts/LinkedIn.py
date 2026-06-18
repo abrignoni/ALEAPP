@@ -1,10 +1,3 @@
-# Tested with the following versions:
-# 2024-08-16: Android 14, App: 4.1.966
-# 2025-02-07: Android 16, App: 4.1.1166
-
-# Requirements:  json, xml
-
-
 __artifacts_v2__ = {
 
     
@@ -12,7 +5,6 @@ __artifacts_v2__ = {
         "name": "LinkedIn - Account",
         "description": "Existing account in LinkedIn App. The Public Identifier can be used to visit the public profile on the LinkedIn Website (https://www.linkedin.com/in/[Public Identifier]).",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.1",
         "creation_date": "2025-04-26",
         'last_update_date': '2026-02-07',
         "requirements": "xml, json",
@@ -26,7 +18,6 @@ __artifacts_v2__ = {
         "name": "LinkedIn - Messages",
         "description": "Messages sent and received from LinkedIn App",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.2",
         'creation_date': '2025-04-26',
         'last_update_date': '2026-05-14',
         "requirements": "",
@@ -49,8 +40,11 @@ __artifacts_v2__ = {
     }
 }
 
+# Tested with the following versions:
+# 2024-08-16: Android 14, App: 4.1.966
+# 2025-02-07: Android 16, App: 4.1.1166
 
-
+# Requirements:  json, xml
 import json
 import xml.etree.ElementTree as ET
 

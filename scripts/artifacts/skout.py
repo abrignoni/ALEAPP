@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_skout": {
+        "name": "skout",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-05-10",
+        "last_update_date": "2021-05-10",
+        "requirements": "none",
+        "category": "Skout",
+        "notes": "",
+        "paths": ('*/com.skout.android/databases/skoutDatabase*',),
+        "output_types": None,
+        "artifact_icon": "users",
+        "function": "get_skout",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -92,10 +110,3 @@ def get_skout(files_found, report_folder, seeker, wrap_text):
                 
         
     db.close()
-
-__artifacts__ = {
-        "skout": (
-                "Skout",
-                ('*/com.skout.android/databases/skoutDatabase*'),
-                get_skout)
-}

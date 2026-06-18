@@ -1,3 +1,21 @@
+# pylint: disable=E0601,E0606,W0611,W0613
+__artifacts_v2__ = {
+    "get_roles": {
+        "name": "roles",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-01-25",
+        "last_update_date": "2021-01-25",
+        "requirements": "none",
+        "category": "App Roles",
+        "notes": "",
+        "paths": ('*/system/users/*/roles.xml', '*/misc_de/*/apexdata/com.android.permission/roles.xml'),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_roles",
+    }
+}
+
 import xml.etree.ElementTree as ET 
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -57,11 +75,3 @@ def get_roles(files_found, report_folder, seeker, wrap_text):
                     
                     tsvname = f'App Roles_{user}'
                     tsv(report_folder, data_headers, data_list, tsvname)
-
-__artifacts__ = {
-        "roles": (
-                "App Roles",
-                ('*/system/users/*/roles.xml','*/misc_de/*/apexdata/com.android.permission/roles.xml'),
-                get_roles)
-}
-            

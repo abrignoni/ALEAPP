@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_waze": {
+        "name": "waze",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-09",
+        "last_update_date": "2022-01-09",
+        "requirements": "none",
+        "category": "Waze",
+        "notes": "",
+        "paths": ('*/com.waze/user.db*',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_waze",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -50,11 +68,3 @@ def get_waze(files_found, report_folder, seeker, wrap_text):
         logfunc('No Waze - Recently Searched Locations data available')
         
     db.close()
-
-__artifacts__ = {
-        "waze": (
-                "Waze",
-                ('*/com.waze/user.db*'),
-                get_waze)
-}
-    

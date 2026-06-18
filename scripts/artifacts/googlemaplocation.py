@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0702,W1309
+__artifacts_v2__ = {
+    "get_googlemaplocation": {
+        "name": "Googlemaplocation",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-17",
+        "last_update_date": "2021-03-17",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/databases/da_destination_history*',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_googlemaplocation",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -58,10 +76,3 @@ def get_googlemaplocation(files_found, report_folder, seeker, wrap_text):
             
         db.close()
         
-__artifacts__ = {
-        "Googlemaplocation": (
-                "GEO Location",
-                ('*/com.google.android.apps.maps/databases/da_destination_history*'),
-                get_googlemaplocation)
-}
-    

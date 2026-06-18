@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_suggestions": {
+        "name": "suggestions",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-15",
+        "last_update_date": "2021-08-15",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml',),
+        "output_types": None,
+        "artifact_icon": "clock",
+        "function": "get_suggestions",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -42,10 +60,3 @@ def get_suggestions(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No Suggestions XML data available')
-
-__artifacts__ = {
-        "suggestions": (
-                "Wipe & Setup",
-                ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml'),
-                get_suggestions)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_protonmail": {
+        "name": "protonmail",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-04-26",
+        "last_update_date": "2023-04-26",
+        "requirements": "none",
+        "category": "ProtonMail",
+        "notes": "",
+        "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*', '*/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
+        "output_types": None,
+        "artifact_icon": "mail",
+        "function": "get_protonmail",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -124,9 +142,3 @@ def get_protonmail(files_found, report_folder, seeker, wrap_text):
         else:
             continue
         
-__artifacts__ = {
-        "protonmail": (
-                "ProtonMail",
-                ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*','*/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
-                get_protonmail)
-}

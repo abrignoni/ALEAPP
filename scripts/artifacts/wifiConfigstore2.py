@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0611,W0612,W0613
+__artifacts_v2__ = {
+    "get_wifiConfigstore": {
+        "name": "wifiConfigstore2",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-05-11",
+        "last_update_date": "2023-05-11",
+        "requirements": "none",
+        "category": "WiFi Profiles",
+        "notes": "",
+        "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
+        "output_types": None,
+        "artifact_icon": "wifi",
+        "function": "get_wifiConfigstore",
+    }
+}
+
 import os
 import datetime
 import xml.etree.ElementTree as ET
@@ -125,9 +143,3 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
             else:
                 logfunc(f'No Wifi Configuration Store {count} data available')
             
-__artifacts__ = {
-        "wifiConfigstore2": (
-                "WiFi Profiles",
-                ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
-                get_wifiConfigstore)
-}

@@ -1,15 +1,18 @@
+# pylint: disable=W0611,W0612,W0613,W0631,W1309
 __artifacts_v2__ = {
-    "AirGuard": {
+    "get_airGuard": {
         "name": "AirGuard",
         "description": "Parses the AirGuard AirTag app",
         "author": "@AlexisBrignoni",
-        "version": "0.0.2",
-        "date": "2022-01-08",
+        "creation_date": "2022-01-08",
+        "last_update_date": "2022-01-08",
         "requirements": "none",
         "category": "AirTags",
         "notes": "",
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*'),
-        "function": "get_airGuard"
+        "output_types": None,
+        "artifact_icon": "shield",
+        "function": "get_airGuard",
     }
 }
 

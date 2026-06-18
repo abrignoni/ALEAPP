@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0718,W1309
+__artifacts_v2__ = {
+    "get_rdd_wifi": {
+        "name": "VerizonRDD-WIFI",
+        "description": "Module Description: Parses Verizon RDD Wifi Data",
+        "author": "John Hyla",
+        "creation_date": "2023-07-07",
+        "last_update_date": "2023-07-07",
+        "requirements": "none",
+        "category": "Verizon RDD Analytics",
+        "notes": "",
+        "paths": ('*/com.verizon.mips.services/databases/RDD_WIFI_DATA_DATABASE',),
+        "output_types": None,
+        "artifact_icon": "wifi",
+        "function": "get_rdd_wifi",
+    }
+}
+
 # Module Description: Parses Verizon RDD Wifi Data
 # Author: John Hyla
 # Date: 2023-07-07
@@ -60,11 +78,3 @@ def get_rdd_wifi(files_found, report_folder, seeker, wrap_text):
         db.close()
     
     return
-
-
-__artifacts__ = {
-    "VerizonRDD-WIFI": (
-        "Verizon RDD Analytics",
-        ('*/com.verizon.mips.services/databases/RDD_WIFI_DATA_DATABASE'),
-        get_rdd_wifi)
-}

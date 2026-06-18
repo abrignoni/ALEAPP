@@ -1,3 +1,21 @@
+# pylint: disable=W0311,W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_etc_hosts": {
+        "name": "Etc_hosts",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-10-09",
+        "last_update_date": "2020-10-09",
+        "requirements": "none",
+        "category": "Etc Hosts",
+        "notes": "",
+        "paths": ('*/system/etc/hosts',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_etc_hosts",
+    }
+}
+
 import codecs
 import csv
 
@@ -34,9 +52,3 @@ def get_etc_hosts(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc(f'No etc hosts file available, or nothing significant found.')
         
-__artifacts__ = {
-        "Etc_hosts": (
-                "Etc Hosts",
-                ('*/system/etc/hosts'),
-                get_etc_hosts)
-}

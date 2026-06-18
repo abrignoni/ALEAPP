@@ -1,3 +1,21 @@
+# pylint: disable=E0602,W0404,W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_torThumbs": {
+        "name": "torThumbs",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-12-23",
+        "last_update_date": "2021-12-23",
+        "requirements": "none",
+        "category": "TOR",
+        "notes": "",
+        "paths": ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/thumbnails/*.0',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_torThumbs",
+    }
+}
+
 import os
 import datetime
 from pathlib import Path
@@ -53,9 +71,3 @@ def get_torThumbs(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No TOR Thumbnails data available')
         
-__artifacts__ = {
-        "torThumbs": (
-                "TOR",
-                ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/thumbnails/*.0'),
-                get_torThumbs)
-}

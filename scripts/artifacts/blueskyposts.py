@@ -1,17 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W0702,W1309
 __artifacts_v2__ = {
-    "blueskyposts": {
+    "get_blueskyposts": {
         "name": "Bluesky",
         "description": "Bluesky Feed Posts",
         "author": "Alexis Brignoni",
-        "version": "0.0.1",
-        "date": "2024-11-20",
+        "creation_date": "2024-11-20",
+        "last_update_date": "2024-11-20",
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/cache/http-cache/*.*'),
-        "function": "get_blueskyposts"
+        "output_types": None,
+        "artifact_icon": "edit",
+        "function": "get_blueskyposts",
     }
 }
+
 import os
 import json
 import sqlite3

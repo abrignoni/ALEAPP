@@ -1,15 +1,18 @@
+# pylint: disable=W0611,W0613,W0631
 __artifacts_v2__ = {
-    "blueskysearches": {
+    "get_blueskysearches": {
         "name": "Bluesky",
         "description": "User generated searches",
         "author": "DFIRcon 2025 Miami",
-        "version": "0.0.1",
-        "date": "2024-11-15",
+        "creation_date": "2024-11-15",
+        "last_update_date": "2024-11-15",
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*'),
-        "function": "get_blueskysearches"
+        "output_types": None,
+        "artifact_icon": "search",
+        "function": "get_blueskysearches",
     }
 }
 

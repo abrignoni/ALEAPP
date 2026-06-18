@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_battery_usage_v4": {
+        "name": "battery_usage_v4",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-12-21",
+        "last_update_date": "2021-12-21",
+        "requirements": "none",
+        "category": "Settings Services",
+        "notes": "",
+        "paths": ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*',),
+        "output_types": None,
+        "artifact_icon": "battery",
+        "function": "get_battery_usage_v4",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -67,10 +85,3 @@ def get_battery_usage_v4(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Settings Services - Battery Usage data available')
-
-__artifacts__ = {
-        "battery_usage_v4": (
-                "Settings Services",
-                ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*'),
-                get_battery_usage_v4)
-}

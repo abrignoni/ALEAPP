@@ -1,16 +1,16 @@
+# pylint: disable=E1121,W0613,W0718
 __artifacts_v2__ = {
-    "zepplife_heartrate": {
+    "extract_zepplife_heartrate": {
         "name": "Zepp Life - Heart Rate",
         "description": "Heart rate history from Zepp Life",
         "author": "its5Q",
-        "version": "0.0.1",
-        "date": "2025-07-28",
+        "creation_date": "2025-07-28",
+        "last_update_date": "2025-07-28",
         "requirements": "none",
         "category": "Zepp Life",
         "notes": "",
         "paths": ('*/com.xiaomi.hm.health/databases/origin_db*',),
         "output_types": "standard",
-        "function": "extract_zepplife_heartrate",
         "artifact_icon": "heart",
     }
 }

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_pkgPredictions": {
+        "name": "pkgPredictions",
+        "description": "Package Predictions - Parses Samsung package prediction details",
+        "author": "Kevin Pagano (https://startme.stark4n6.com)",
+        "creation_date": "2023-05-01",
+        "last_update_date": "2023-05-01",
+        "requirements": "None",
+        "category": "Package Predictions",
+        "notes": "",
+        "paths": ('*/system/PkgPredictions.db*',),
+        "output_types": None,
+        "artifact_icon": "package",
+        "function": "get_pkgPredictions",
+    }
+}
+
 # Package Predictions - Parses Samsung package prediction details
 # Author:  Kevin Pagano (https://startme.stark4n6.com)
 # Date 2023-05-01
@@ -80,11 +98,3 @@ def get_pkgPredictions(files_found, report_folder, seeker, wrap_text):
         logfunc('No Package Predictions data available')
                 
     db.close()
-
-__artifacts__ = {
-        "pkgPredictions": (
-                "Package Predictions",
-                ('*/system/PkgPredictions.db*'),
-                get_pkgPredictions)
-}
-    

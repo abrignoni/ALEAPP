@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613
+__artifacts_v2__ = {
+    "get_chromeMediaHistory": {
+        "name": "ChromeMediaHistory",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-01-26",
+        "last_update_date": "2021-01-26",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
+        "output_types": None,
+        "artifact_icon": "image",
+        "function": "get_chromeMediaHistory",
+    }
+}
+
 import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
@@ -136,10 +154,3 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Media History - Origins data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeMediaHistory": (
-                "Chromium",
-                ('*/app_chrome/Default/Media History*','*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*','*/app_webview/Default/Media History*'),
-                get_chromeMediaHistory)
-}

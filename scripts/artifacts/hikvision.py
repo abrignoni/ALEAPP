@@ -1,3 +1,21 @@
+# pylint: disable=W0311,W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_hikvision": {
+        "name": "hikvision",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-23",
+        "last_update_date": "2023-03-23",
+        "requirements": "none",
+        "category": "Hikvision",
+        "notes": "",
+        "paths": ('*/com.connect.enduser/databases/database.hik*', '*/com.connect.enduser/databases/ezvizlog.db', '*/com.connect.enduser/databases/image.db*', '*/0/Pictures/Hik-Connect Album/*'),
+        "output_types": None,
+        "artifact_icon": "video",
+        "function": "get_hikvision",
+    }
+}
+
 """"
 Developed by Evangelos D. (@theAtropos4n6)
 
@@ -196,11 +214,3 @@ def get_hikvision(files_found, report_folder, seeker, wrap_text):
                         logfunc(f'No Hikvision - User Created Media data available')
 
                     db.close()
-
-__artifacts__ = {
-        "hikvision": (
-                "Hikvision",
-                ('*/com.connect.enduser/databases/database.hik*','*/com.connect.enduser/databases/ezvizlog.db',
-                 '*/com.connect.enduser/databases/image.db*','*/0/Pictures/Hik-Connect Album/*'),
-                get_hikvision)
-}

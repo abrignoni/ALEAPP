@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0611,W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_errp": {
+        "name": "Errp",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-15",
+        "last_update_date": "2021-08-15",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/system/users/service/eRR.p',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_errp",
+    }
+}
+
 import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, convert_local_to_utc
@@ -66,9 +84,3 @@ def get_errp(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Samsung Samsung eRR.p data available')
             
-__artifacts__ = {
-        "Errp": (
-                "Wipe & Setup",
-                ('*/system/users/service/eRR.p'),
-                get_errp)
-}

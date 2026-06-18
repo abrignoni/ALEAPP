@@ -1,16 +1,18 @@
+# pylint: disable=W0611,W0613,W0631,W0718
 __artifacts_v2__ = {
-    "One Drive": {
+    "get_onedrive": {
         "name": "OneDrive Metadata",
         "description": "Parses the QTMetadata.db from OneDrive",
         "author": "Matt Beers and Anthony Reince",
-        "version": "0.0.9",
-        "date": "2025-04-17",
+        "creation_date": "2025-04-17",
+        "last_update_date": "2025-04-17",
         "requirements": "none",
         "category": "Cloud Storage",
         "notes": "",
         "paths": ('*/com.microsoft.skydrive/files/QTMetadata.db*'),
+        "output_types": None,
+        "artifact_icon": "cloud",
         "function": "get_onedrive",
-        "artifact_icon": "cloud"
     }
 }
 
@@ -22,7 +24,7 @@ import base64
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, timeline, tsv, open_sqlite_db_readonly
 
-def get_onedrive(files_found, report_folder, seeker, wrap_text, time_offset):
+def get_onedrive(files_found, report_folder, seeker, wrap_text):
     data_list = []
 
     for file_found in files_found:

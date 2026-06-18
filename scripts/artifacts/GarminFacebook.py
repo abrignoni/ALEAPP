@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_garminFB": {
+        "name": "GarminFacebook USES INTERNET",
+        "description": "Get Information relative to user Facebook account from the XML file in shared_prefs and tries to use the access token to get the user's profile picture",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher, ElementTree, json and datetime, http.client",
+        "category": "Garmin-SharedPrefs",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/com.facebook*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_garminFB",
+    }
+}
+
 # Get Information relative to user Facebook account from the XML file in shared_prefs and tries to use the access token to get the user's profile picture
 # USES INTERNET CONNECTION
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
@@ -115,11 +133,3 @@ def get_garminFB(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc("No Garmin Facebook data found")
-
-
-__artifacts__ = {
-    "GarminFacebook USES INTERNET": (
-        "Garmin-SharedPrefs",
-        ('*/com.garmin.android.apps.connectmobile/shared_prefs/com.facebook*'),
-        get_garminFB)
-}

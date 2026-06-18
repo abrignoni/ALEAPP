@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_chromeAutofill": {
+        "name": "Chrome Autofill",
+        "description": "Parses Chrome autofill data",
+        "author": "",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2020-03-19",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_chromeAutofill",
+    }
+}
+
 import os
 import sqlite3
 import textwrap
@@ -143,10 +161,3 @@ def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Autofill - Profiles data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeAutofill": (
-                "Chromium",
-                ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
-                get_chromeAutofill)
-}

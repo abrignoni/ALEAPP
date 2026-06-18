@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0104,W0311,W0611,W0613,W0631,W0702,W1309
+__artifacts_v2__ = {
+    "get_textnow": {
+        "name": "textnow",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-15",
+        "last_update_date": "2021-03-15",
+        "requirements": "none",
+        "category": "Text Now",
+        "notes": "",
+        "paths": ('*/com.enflick.android.TextNow/databases/textnow_data.db*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_textnow",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -165,9 +183,3 @@ def get_textnow(files_found, report_folder, seeker, wrap_text):
 
     db.close
     
-__artifacts__ = {
-    "textnow": (
-        "Text Now",
-        ('*/com.enflick.android.TextNow/databases/textnow_data.db*'),
-        get_textnow)
-}

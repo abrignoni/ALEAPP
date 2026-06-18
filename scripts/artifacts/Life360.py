@@ -1,15 +1,18 @@
+# pylint: disable=W0401,W0611,W0612,W0613,W0614,W1309
 __artifacts_v2__ = {
-    "Life360": {
+    "get_Life360": {
         "name": "Life360",
         "description": "Parses the Life360 app locations, device battery, and more",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
-        "date": "2024-01-17",
+        "creation_date": "2024-01-17",
+        "last_update_date": "2024-01-17",
         "requirements": "none",
         "category": "Life360",
         "notes": "",
         "paths": ('*/com.life360.android.safetymapd/databases/messaging.db*','*/com.life360.android.safetymapd/databases/L360LocalStoreRoomDatabase*','*/com.life360.android.safetymapd/databases/L360EventStore.db*'),
-        "function": "get_Life360"
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_Life360",
     }
 }
 

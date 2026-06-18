@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_garmin_sleep": {
+        "name": "GarminSleep",
+        "description": "Get Information relative to the sleep data in the database cache-database from the table sleep_detail in the Garmin Connect app",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Garmin-Cache",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_garmin_sleep",
+    }
+}
+
 # Get Information relative to the sleep data in the database cache-database from the table sleep_detail in the Garmin Connect app
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-02-24
@@ -70,11 +88,3 @@ def get_garmin_sleep(files_found, report_folder, seeker, wrap_text):
         logfunc('No Garmin Sleep data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "GarminSleep": (
-        "Garmin-Cache",
-        ('*/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-        get_garmin_sleep)
-}

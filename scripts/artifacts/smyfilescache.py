@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W0702,W1309
+__artifacts_v2__ = {
+    "get_smyfilescache": {
+        "name": "smyfilescache",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-06-23",
+        "last_update_date": "2022-06-23",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*', '*/com.sec.android.app.myfiles/cache/*.*'),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_smyfilescache",
+    }
+}
+
 import sqlite3
 import textwrap
 
@@ -97,10 +115,3 @@ def get_smyfilescache(files_found, report_folder, seeker, text_wrap):
         
     
     db.close()
-
-__artifacts__ = {
-        "smyfilescache": (
-                "My Files",
-                ('*/com.sec.android.app.myfiles/databases/FileCache.db*','*/com.sec.android.app.myfiles/cache/*.*'),
-                get_smyfilescache)
-}

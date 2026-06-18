@@ -1,19 +1,22 @@
+# pylint: disable=W0401,W0611,W0612,W0613,W0614,W0631
 __artifacts_v2__ = {
-    "appSemloc": {
+    "get_appSemloc": {
         "name": "App Semantic Locations",
         "description": "App Semantic Locations",
         "author": "Alexis 'Brigs' Brignoni",
-        "version": "1",
-        "date": "2024/06/21",
+        "creation_date": "2024/06/21",
+        "last_update_date": "2024/06/21",
         "requirements": "",
         "category": "App Semantic Locations",
         "notes": "Thanks to Alex Caithness for the ccc_leveldb libraries",
         "paths": (
-            '*/com.google.android.gms/app_semanticlocation_rawsignal_db/*'
+            '*/com.google.android.gms/app_semanticlocation_rawsignal_db/*',
         ),
-        "function": "get_appSemloc"
+        "output_types": None,
+        "function": "get_appSemloc",
     }
 }
+
 import pathlib
 import json
 import blackboxprotobuf

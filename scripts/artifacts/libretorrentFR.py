@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0107,W0127,W0611,W0612,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_libretorrentFR": {
+        "name": "LibretorrentFR",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-09-15",
+        "last_update_date": "2023-09-15",
+        "requirements": "none",
+        "category": "Libre Torrent",
+        "notes": "",
+        "paths": ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*', '*/libretorrent.db*'),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_libretorrentFR",
+    }
+}
+
 import sqlite3
 import textwrap
 import bencoding
@@ -103,10 +121,3 @@ def get_libretorrentFR(files_found, report_folder, seeker, wrap_text):
         logfunc('No Libre Torrents Fast Resume data available')
         
     db.close()
-
-__artifacts__ = {
-        "LibretorrentFR": (
-                "Libre Torrent",
-                ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*','*/libretorrent.db*'),
-                get_libretorrentFR)
-}

@@ -1,3 +1,33 @@
+__artifacts_v2__ = {
+    "get_fitbit": {
+        "name": "Fitbit Smartphone Data",
+        "description": "Parses Fitbit activities from Android Smartphone app",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2021-04-23",
+        "last_update_date": "2021-04-23",
+        "requirements": "none",
+        "category": "Fitbit",
+        "notes": "Updated 2023-12-12 by @segumarc",
+        "paths": ('*/com.fitbit.FitbitMobile/databases/activity_db*','*/com.fitbit.FitbitMobile/databases/device_database*','*/com.fitbit.FitbitMobile/databases/exercise_db*','*/com.fitbit.FitbitMobile/databases/heart_rate_db*','*/com.fitbit.FitbitMobile/databases/sleep*','*/com.fitbit.FitbitMobile/databases/social_db*','*/com.fitbit.FitbitMobile/databases/mobile_track_db*'),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_fitbit",
+    },
+    "get_fitbit_wearos": {
+        "name": "Fitbit Wear OS Data",
+        "description": "Parses User DB and Passive Stats DB from Pixel Watch/Wear OS",
+        "author": "Ganeshbs17",
+        "creation_date": "2026-01-12",
+        "requirements": "none",
+        "category": "Fitbit",
+        "notes": "Specific to Pixel Watch/Wear OS",
+        "paths": ('*/com.fitbit.FitbitMobile/databases/user.db*', '*/com.fitbit.FitbitMobile/databases/passive_stats.db*'),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_fitbit_wearos",
+    }
+}
+
 # Module Description: Parses Fitbit data from Android (Phone) and Wear OS (Watch)
 
 import json
@@ -6,34 +36,6 @@ import os
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, kmlgen, timeline, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
-
-__artifacts_v2__ = {
-    "Fitbit": {
-        "name": "Fitbit Smartphone Data",
-        "description": "Parses Fitbit activities from Android Smartphone app",
-        "author": "@AlexisBrignoni",
-        "version": "0.0.4",
-        "date": "2021-04-23",
-        "requirements": "none",
-        "category": "Fitbit",
-        "notes": "Updated 2023-12-12 by @segumarc",
-        "paths": ('*/com.fitbit.FitbitMobile/databases/activity_db*','*/com.fitbit.FitbitMobile/databases/device_database*','*/com.fitbit.FitbitMobile/databases/exercise_db*','*/com.fitbit.FitbitMobile/databases/heart_rate_db*','*/com.fitbit.FitbitMobile/databases/sleep*','*/com.fitbit.FitbitMobile/databases/social_db*','*/com.fitbit.FitbitMobile/databases/mobile_track_db*'),
-        "function": "get_fitbit"
-    },
-    "FitbitWearOS": {
-        "name": "Fitbit Wear OS Data",
-        "description": "Parses User DB and Passive Stats DB from Pixel Watch/Wear OS",
-        "author": "Ganeshbs17",
-        "version": "0.0.1",
-        "date": "2026-01-12",
-        "requirements": "none",
-        "category": "Fitbit",
-        "notes": "Specific to Pixel Watch/Wear OS",
-        "paths": ('*/com.fitbit.FitbitMobile/databases/user.db*', '*/com.fitbit.FitbitMobile/databases/passive_stats.db*'),
-        "function": "get_fitbit_wearos"
-    }
-}
-
 def get_fitbit(files_found, report_folder, _seeker, _wrap_text):
     
     file_found_activity = ''

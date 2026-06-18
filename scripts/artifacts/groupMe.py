@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_groupMe": {
+        "name": "GroupMe",
+        "description": "GroupMe",
+        "author": "Josh Hickman (josh@thebinaryhick.blog)",
+        "creation_date": "2021-02-XX",
+        "last_update_date": "2021-02-XX",
+        "requirements": "None",
+        "category": "GroupMe",
+        "notes": "",
+        "paths": ('*/com.groupme.android/databases/groupme.db',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_groupMe",
+    }
+}
+
 # GroupMe
 # Author:  Josh Hickman (josh@thebinaryhick.blog)
 # Date 2021-02-XX
@@ -116,10 +134,3 @@ def get_groupMe(files_found, report_folder, seeker, wrap_text):
             logfunc('No GroupMe Chat Information data available')
                 
         db.close()
-
-__artifacts__ = {
-        "GroupMe": (
-                "GroupMe",
-                ('*/com.groupme.android/databases/groupme.db'),
-                get_groupMe)
-}

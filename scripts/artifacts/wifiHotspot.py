@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_wifiHotspot": {
+        "name": "wifiHotspot",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-11-18",
+        "last_update_date": "2020-11-18",
+        "requirements": "none",
+        "category": "WiFi Profiles",
+        "notes": "",
+        "paths": ('*/misc/wifi/softap.conf', '*/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml'),
+        "output_types": None,
+        "artifact_icon": "wifi",
+        "function": "get_wifiHotspot",
+    }
+}
+
 import struct
 import xml.etree.ElementTree as ET
 
@@ -53,10 +71,3 @@ def get_wifiHotspot(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc('No Wi-Fi Hotspot data available')
-
-__artifacts__ = {
-        "wifiHotspot": (
-                "WiFi Profiles",
-                ('*/misc/wifi/softap.conf', '*/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml'),
-                get_wifiHotspot)
-}

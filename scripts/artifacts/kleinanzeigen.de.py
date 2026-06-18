@@ -1,3 +1,60 @@
+# pylint: disable=E0606,W0311,W0611,W0612,W0613
+__artifacts_v2__ = {
+    "get_kleinanzeigenaccount": {
+        "name": "kleinanzeigen.de App - Account Details",
+        "description": "Extracts Account Details",
+        "author": "@BrunoFischerGermany",
+        "creation_date": "2024-04-02",
+        "last_update_date": "2024-04-02",
+        "requirements": "none",
+        "category": "kleinanzeigen.de App",
+        "notes": "",
+        "paths": ('*/com.ebay.kleinanzeigen/shared_prefs/com.ebay.kleinanzeigen_preferences.xml'),
+        "output_types": None,
+        "artifact_icon": "shopping-bag",
+        "function": "get_kleinanzeigenaccount",
+    },
+    "get_kleinanzeigenrecentsearchescache": {
+        "name": "kleinanzeigen.de - Recent Searches Cache",
+        "description": "Extracts Recent Searches Cache",
+        "author": "@BrunoFischerGermany",
+        "creation_date": "2024-04-02",
+        "requirements": "none",
+        "category": "kleinanzeigen.de App",
+        "notes": "",
+        "paths": ('*/com.ebay.kleinanzeigen/files/RECENT_SEARCHES_CACHE'),
+        "output_types": None,
+        "artifact_icon": "shopping-bag",
+        "function": "get_kleinanzeigenrecentsearchescache",
+    },
+    "get_kleinanzeigennonresettablerecentsearchescache": {
+        "name": "kleinanzeigen.de - Non resettable Recent Searches Cache",
+        "description": "Extracts Recent Searches Cache",
+        "author": "@BrunoFischerGermany",
+        "creation_date": "2024-04-08",
+        "requirements": "none",
+        "category": "kleinanzeigen.de App",
+        "notes": "",
+        "paths": ('*/com.ebay.kleinanzeigen/files/NON_RESETTABLE_RECENT_SEARCHES_CACHE'),
+        "output_types": None,
+        "artifact_icon": "shopping-bag",
+        "function": "get_kleinanzeigennonresettablerecentsearchescache",
+    },
+    "get_kleinanzeigenmessagebox":  {
+        "name": "kleinanzeigen.de - Messagebox",
+        "description": "Extracts Messages from Database",
+        "author": "@BrunoFischerGermany",
+        "creation_date": "2024-04-13",
+        "requirements": "none",
+        "category": "kleinanzeigen.de App",
+        "notes": "",
+        "paths": ('*com.ebay.kleinanzeigen/databases/messageBoxDatabase.db*'),
+        "output_types": None,
+        "artifact_icon": "shopping-bag",
+        "function": "get_kleinanzeigenmessagebox",
+    }
+}
+
 # kleinanzeigen.de App
 # Author:  Bruno Fischer (@BrunoFischerGermany)
 # Version: 1.0.0
@@ -233,54 +290,3 @@ def get_kleinanzeigenmessagebox(files_found, report_folder, seeker, wrap_text):
 
             else:
                 logfunc('No messageBox data available')
-
-__artifacts_v2__ = {
-    "get_kleinanzeigenaccount": {
-        "name": "kleinanzeigen.de App - Account Details",
-        "description": "Extracts Account Details",
-        "author": "@BrunoFischerGermany",
-        "version": "0.1",
-        "date": "2024-04-02",
-        "requirements": "none",
-        "category": "kleinanzeigen.de App",
-        "notes": "",
-        "paths": ('*/com.ebay.kleinanzeigen/shared_prefs/com.ebay.kleinanzeigen_preferences.xml'),
-        "function": "get_kleinanzeigenaccount"
-    },
-    "get_kleinanzeigenrecentsearchescache": {
-        "name": "kleinanzeigen.de - Recent Searches Cache",
-        "description": "Extracts Recent Searches Cache",
-        "author": "@BrunoFischerGermany",
-        "version": "0.1",
-        "date": "2024-04-02",
-        "requirements": "none",
-        "category": "kleinanzeigen.de App",
-        "notes": "",
-        "paths": ('*/com.ebay.kleinanzeigen/files/RECENT_SEARCHES_CACHE'),
-        "function": "get_kleinanzeigenrecentsearchescache"
-    },
-    "get_kleinanzeigennonresettablerecentsearchescache": {
-        "name": "kleinanzeigen.de - Non resettable Recent Searches Cache",
-        "description": "Extracts Recent Searches Cache",
-        "author": "@BrunoFischerGermany",
-        "version": "0.1",
-        "date": "2024-04-08",
-        "requirements": "none",
-        "category": "kleinanzeigen.de App",
-        "notes": "",
-        "paths": ('*/com.ebay.kleinanzeigen/files/NON_RESETTABLE_RECENT_SEARCHES_CACHE'),
-        "function": "get_kleinanzeigennonresettablerecentsearchescache"
-    },
-    "get_kleinanzeigenmessagebox":  {
-        "name": "kleinanzeigen.de - Messagebox",
-        "description": "Extracts Messages from Database",
-        "author": "@BrunoFischerGermany",
-        "version": "0.1",
-        "date": "2024-04-13",
-        "requirements": "none",
-        "category": "kleinanzeigen.de App",
-        "notes": "",
-        "paths": ('*com.ebay.kleinanzeigen/databases/messageBoxDatabase.db*'),
-        "function": "get_kleinanzeigenmessagebox"
-    }
-}

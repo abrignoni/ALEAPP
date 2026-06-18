@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_cmh": {
+        "name": "cmh",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-05",
+        "last_update_date": "2020-03-05",
+        "requirements": "none",
+        "category": "Samsung_CMH",
+        "notes": "",
+        "paths": ('*/cmh.db',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_cmh",
+    }
+}
+
 import glob
 import json
 import os
@@ -54,10 +72,3 @@ def get_cmh(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc(f'No Samsung_CMH_GeoData available')    
     db.close()
-
-__artifacts__ = {
-        "cmh": (
-                "Samsung_CMH",
-                ('*/cmh.db'),
-                get_cmh)
-}

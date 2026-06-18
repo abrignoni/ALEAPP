@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_sleep_api": {
+        "name": "GarminSleepAPI",
+        "description": "Get Information related to Garmin Sleep API",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher, json and datetime",
+        "category": "Garmin-API",
+        "notes": "",
+        "paths": ('*/garmin.api/sleep*',),
+        "output_types": None,
+        "artifact_icon": "activity",
+        "function": "get_sleep_api",
+    }
+}
+
 # Get Information related to Garmin Sleep API
 # Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
@@ -121,11 +139,3 @@ def get_sleep_api(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc("No Garmin Sleep API data found")
-
-
-__artifacts__ = {
-    "GarminSleepAPI": (
-        "Garmin-API",
-        ('*/garmin.api/sleep*'),
-        get_sleep_api)
-}

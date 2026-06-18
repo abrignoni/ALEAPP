@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0612,W0613,W1309
+__artifacts_v2__ = {
+    "get_cachelocation": {
+        "name": "Cache Location",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-17",
+        "last_update_date": "2021-03-17",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.google.android.location/files/cache.cell/cache.cell', '*/com.google.android.location/files/cache.wifi/cache.wifi'),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_cachelocation",
+    }
+}
+
 import sqlite3
 import datetime
 import struct
@@ -50,10 +68,3 @@ def get_cachelocation(files_found, report_folder, seeker, wrap_text):
 
         else:
             logfunc('No Cachelocation Logs found')
-
-__artifacts__ = {
-        "Cache Location": (
-                "GEO Location",
-                ('*/com.google.android.location/files/cache.cell/cache.cell', '*/com.google.android.location/files/cache.wifi/cache.wifi'),
-                get_cachelocation)
-}

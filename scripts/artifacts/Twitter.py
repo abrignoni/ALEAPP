@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_Twitter": {
+        "name": "twitter",
+        "description": "Twitter Searches",
+        "author": "Kevin Pagano (https://startme.stark4n6.com)",
+        "creation_date": "2023-04-26",
+        "last_update_date": "2023-04-26",
+        "requirements": "None",
+        "category": "Twitter",
+        "notes": "",
+        "paths": ('*/com.twitter.android/databases/*-search.db*',),
+        "output_types": None,
+        "artifact_icon": "users",
+        "function": "get_Twitter",
+    }
+}
+
 # Twitter Searches
 # Author:  Kevin Pagano (https://startme.stark4n6.com)
 # Date 2023-04-26
@@ -64,11 +82,3 @@ def get_Twitter(files_found, report_folder, seeker, wrap_text):
         logfunc('No Twitter - Searches data available')
         
     db.close()
-
-__artifacts__ = {
-        "twitter": (
-                "Twitter",
-                ('*/com.twitter.android/databases/*-search.db*'),
-                get_Twitter)
-}
-    

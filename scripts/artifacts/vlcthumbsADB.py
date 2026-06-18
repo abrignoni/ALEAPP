@@ -1,3 +1,21 @@
+# pylint: disable=W0404,W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_vlcthumbsADB": {
+        "name": "VLC Thumbs ADB",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-08-23",
+        "last_update_date": "2022-08-23",
+        "requirements": "none",
+        "category": "VLC thumbs",
+        "notes": "",
+        "paths": ('*/org.videolan.vlc/ef/medialib/*.*', '*/org.videolan.vlc/ef/medialib/thumbnails/*.*'),
+        "output_types": None,
+        "artifact_icon": "image",
+        "function": "get_vlcthumbsADB",
+    }
+}
+
 import os
 import datetime
 from pathlib import Path
@@ -64,9 +82,3 @@ def get_vlcthumbsADB(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('VLC Media Lib data available')
         
-__artifacts__ = {
-        "VLC Thumbs ADB": (
-                "VLC thumbs",
-                ('*/org.videolan.vlc/ef/medialib/*.*','*/org.videolan.vlc/ef/medialib/thumbnails/*.*'),
-                get_vlcthumbsADB)
-}

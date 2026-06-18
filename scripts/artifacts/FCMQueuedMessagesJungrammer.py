@@ -1,3 +1,21 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_fcm_jungrammer": {
+        "name": "FCM_Jungrammer",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-07-28",
+        "last_update_date": "2022-07-28",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": None,
+        "artifact_icon": "database",
+        "function": "get_fcm_jungrammer",
+    }
+}
+
 """
 Copyright 2022, CCL Forensics
 
@@ -180,11 +198,3 @@ def get_fcm_jungrammer(files_found, report_folder, seeker, wrap_text):
             scripts.ilapfuncs.logfunc()
     else:
         scripts.ilapfuncs.logfunc("No FCM Jungrammer notifications found")
-
-
-__artifacts__ = {
-    "FCM_Jungrammer": (
-        "Firebase Cloud Messaging",
-        ('*/fcm_queued_messages.ldb/*'),
-        get_fcm_jungrammer)
-}

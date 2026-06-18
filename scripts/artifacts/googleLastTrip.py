@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0107,W0301,W0401,W0611,W0612,W0613,W0614,W1309
+__artifacts_v2__ = {
+    "get_googleLastTrip": {
+        "name": "googleLastTrip",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-10-16",
+        "last_update_date": "2023-10-16",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/files/saved_directions.data.cs',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_googleLastTrip",
+    }
+}
+
 import blackboxprotobuf
 from datetime import *
 from scripts.artifact_report import ArtifactHtmlReport
@@ -76,10 +94,3 @@ def get_googleLastTrip(files_found, report_folder, seeker, wrap_text):
             
         else:
             logfunc(f'No Google Maps Last Trip available')
-
-__artifacts__ = {
-        "googleLastTrip": (
-                "GEO Location",
-                ('*/com.google.android.apps.maps/files/saved_directions.data.cs'),
-                get_googleLastTrip)
-}

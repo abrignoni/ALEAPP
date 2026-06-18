@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0104,W0311,W0611,W0613,W0702,W1309
+__artifacts_v2__ = {
+    "get_Viber": {
+        "name": "Viber",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-12-24",
+        "last_update_date": "2020-12-24",
+        "requirements": "none",
+        "category": "Viber",
+        "notes": "",
+        "paths": ('*/com.viber.voip/databases/*',),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_Viber",
+    }
+}
+
 import sqlite3
 from hashlib import sha256
 
@@ -210,10 +228,3 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
         logfunc('No Viber Hidden Chat PIN found')        
 
     db.close()
-
-__artifacts__ = {
-  "Viber": (
-    "Viber",
-    ('*/com.viber.voip/databases/*'),
-    get_Viber)
-}

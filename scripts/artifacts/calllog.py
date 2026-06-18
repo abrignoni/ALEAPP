@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W0631,W1309
+__artifacts_v2__ = {
+    "get_calllog": {
+        "name": "Call logs ",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-02",
+        "last_update_date": "2020-03-02",
+        "requirements": "none",
+        "category": "Call Logs",
+        "notes": "",
+        "paths": ('*/com.android.providers.contacts/databases/calllog.db*', '*/com.samsung.android.providers.contacts/databases/calllog.db*'),
+        "output_types": None,
+        "artifact_icon": "phone",
+        "function": "get_calllog",
+    }
+}
+
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -89,10 +107,3 @@ def get_calllog(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('No Call Log data available')
-
-__artifacts__ = {
-        "Call logs ": (
-                "Call Logs",
-                ('*/com.android.providers.contacts/databases/calllog.db*','*/com.samsung.android.providers.contacts/databases/calllog.db*'),
-                get_calllog)
-}

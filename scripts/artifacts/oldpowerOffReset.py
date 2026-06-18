@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309,W1514
+__artifacts_v2__ = {
+    "get_oldpowerOffReset": {
+        "name": "oldpowerOffReset",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-14",
+        "last_update_date": "2023-03-14",
+        "requirements": "none",
+        "category": "Power Events",
+        "notes": "",
+        "paths": ('*/log/power_off_reset_reason.txt', '*/log/power_off_reset_reason_backup.txt'),
+        "output_types": None,
+        "artifact_icon": "battery",
+        "function": "get_oldpowerOffReset",
+    }
+}
+
 from datetime import datetime
 import os
 from pathlib import Path
@@ -36,10 +54,3 @@ def get_oldpowerOffReset(files_found, report_folder, seeker, wrap_text):
         
     else:
         logfunc(f'Power Off Reset file available')
-
-__artifacts__ = {
-        "oldpowerOffReset": (
-                "Power Events",
-                ('*/log/power_off_reset_reason.txt','*/log/power_off_reset_reason_backup.txt'),
-                get_oldpowerOffReset)
-}

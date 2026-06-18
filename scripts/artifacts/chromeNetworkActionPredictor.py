@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613
+__artifacts_v2__ = {
+    "get_chromeNetworkActionPredictor": {
+        "name": "ChromeNetworkActionPredictor",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2020-03-19",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_Chrome/Default/Network Action Predictor*', '*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predicator*', '*/app_webview/Default/Network Action Predictor*'),
+        "output_types": None,
+        "artifact_icon": "wifi",
+        "function": "get_chromeNetworkActionPredictor",
+    }
+}
+
 import os
 import sqlite3
 from scripts.artifact_report import ArtifactHtmlReport
@@ -52,10 +70,3 @@ def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_te
             logfunc(f'No {browser_name} - Network Action Predictor data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeNetworkActionPredictor": (
-                "Chromium",
-                ('*/app_Chrome/Default/Network Action Predictor*','*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predicator*','*/app_webview/Default/Network Action Predictor*'),
-                get_chromeNetworkActionPredictor)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_Oruxmaps": {
+        "name": "Oruxmaps",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-11",
+        "last_update_date": "2021-03-11",
+        "requirements": "none",
+        "category": "GEO Location",
+        "notes": "",
+        "paths": ('**/oruxmaps/tracklogs/oruxmapstracks.db*',),
+        "output_types": None,
+        "artifact_icon": "map-pin",
+        "function": "get_Oruxmaps",
+    }
+}
+
 import sqlite3
 import datetime
 
@@ -69,10 +87,3 @@ def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
         logfunc('No Oruxmaps Tracks data available')
 
     db.close()
-
-__artifacts__ = {
-        "Oruxmaps": (
-                "GEO Location",
-                ('**/oruxmaps/tracklogs/oruxmapstracks.db*'),
-                get_Oruxmaps)
-}

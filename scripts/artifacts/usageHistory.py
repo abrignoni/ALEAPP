@@ -1,3 +1,21 @@
+# pylint: disable=E0602,W0611,W0613,W0631
+__artifacts_v2__ = {
+    "get_usageHistory": {
+        "name": "Usagehistory",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-07-06",
+        "last_update_date": "2022-07-06",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/usage-history.xml',),
+        "output_types": None,
+        "artifact_icon": "globe",
+        "function": "get_usageHistory",
+    }
+}
+
 import xml.etree.ElementTree as ET  
 import datetime
 
@@ -45,10 +63,3 @@ def get_usageHistory(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc('Usage History data available')
-
-__artifacts__ = {
-        "Usagehistory": (
-                "App Interaction",
-                ('*/usage-history.xml'),
-                get_usageHistory)
-}

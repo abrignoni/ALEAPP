@@ -1,3 +1,21 @@
+# pylint: disable=E0606,W0127,W0611,W0612,W0613,W0631,W0702,W1309
+__artifacts_v2__ = {
+    "get_TorrentData": {
+        "name": "TorrentData",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-09-15",
+        "last_update_date": "2023-09-15",
+        "requirements": "none",
+        "category": "Torrent Data",
+        "notes": "",
+        "paths": ('*/*.torrent',),
+        "output_types": None,
+        "artifact_icon": "download",
+        "function": "get_TorrentData",
+    }
+}
+
 import sqlite3
 import textwrap
 import bencoding
@@ -113,11 +131,3 @@ def get_TorrentData(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No Torrent Data available')
         
-
-
-__artifacts__ = {
-        "TorrentData": (
-                "Torrent Data",
-                ('*/*.torrent'),
-                get_TorrentData)
-}

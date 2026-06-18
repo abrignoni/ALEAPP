@@ -1,3 +1,20 @@
+__artifacts_v2__ = {
+    "get_WhatsApp": {
+        "name": "WhatsApp",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-11",
+        "last_update_date": "2021-03-11",
+        "requirements": "none",
+        "category": "WhatsApp",
+        "notes": "",
+        "paths": ('*com.whatsapp*', '*/com.whatsapp/databases/*.db*', '*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml', '*/com.whatsapp/shared_prefs/startup_prefs.xml', '*/com.whatsapp/shared_prefs/reg_prefs.xml', '*/WhatsApp Images/*.*', '*/WhatsApp Video/*.*'),
+        "output_types": None,
+        "artifact_icon": "message-square",
+        "function": "get_WhatsApp",
+    }
+}
+
 import sqlite3
 import xmltodict
 
@@ -479,12 +496,3 @@ def get_WhatsApp(files_found, report_folder, seeker, _wrap_text):
 
                 else:
                     logfunc("No WhatsApp - Profile data found")
-
-
-
-__artifacts__ = {
-    "WhatsApp": (
-        "WhatsApp",
-        ('*com.whatsapp*', '*/com.whatsapp/databases/*.db*','*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml','*/com.whatsapp/shared_prefs/startup_prefs.xml','*/com.whatsapp/shared_prefs/reg_prefs.xml','*/WhatsApp Images/*.*','*/WhatsApp Video/*.*'),
-        get_WhatsApp)
-}

@@ -1,3 +1,21 @@
+# pylint: disable=E0602,W0611,W0613,W0631
+__artifacts_v2__ = {
+    "get_pikpakPlay": {
+        "name": "PikPak Play",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-24",
+        "last_update_date": "2023-03-24",
+        "requirements": "none",
+        "category": "PikPak",
+        "notes": "",
+        "paths": ('*/com.pikcloud.pikpak/databases/greendao.db*',),
+        "output_types": None,
+        "artifact_icon": "file",
+        "function": "get_pikpakPlay",
+    }
+}
+
 import sqlite3
 import os
 
@@ -49,9 +67,3 @@ def get_pikpakPlay(files_found, report_folder, seeker, wrap_text):
     else:
         logfunc('No PikPak Play data available')
     
-__artifacts__ = {
-        "PikPak Play": (
-                "PikPak",
-                ('*/com.pikcloud.pikpak/databases/greendao.db*'),
-                get_pikpakPlay)
-}

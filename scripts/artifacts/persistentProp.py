@@ -1,3 +1,21 @@
+# pylint: disable=W0611,W0613,W1309
+__artifacts_v2__ = {
+    "get_persistentProp": {
+        "name": "persistentProp",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-18",
+        "last_update_date": "2021-08-18",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/property/persistent_properties',),
+        "output_types": None,
+        "artifact_icon": "info",
+        "function": "get_persistentProp",
+    }
+}
+
 import os
 import datetime
 from scripts.artifact_report import ArtifactHtmlReport
@@ -49,9 +67,3 @@ def get_persistentProp(files_found, report_folder, seeker, wrap_text):
         else:
             logfunc('No Persistent Properties data available')
             
-__artifacts__ = {
-        "persistentProp": (
-                "Wipe & Setup",
-                ('*/property/persistent_properties'),
-                get_persistentProp)
-}

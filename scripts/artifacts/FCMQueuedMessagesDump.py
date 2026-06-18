@@ -1,3 +1,21 @@
+# pylint: disable=W0612,W0613,W0702,W0718
+__artifacts_v2__ = {
+    "get_fcm_dump": {
+        "name": "FCM_Dump",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-07-28",
+        "last_update_date": "2022-07-28",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": None,
+        "artifact_icon": "database",
+        "function": "get_fcm_dump",
+    }
+}
+
 """
 Copyright 2022, CCL Forensics
 
@@ -253,10 +271,3 @@ def process_fcm_dump_com_google_android_googlequicksearchbox(report_folder, pack
         scripts.ilapfuncs.tsv(report_folder, data_headers, data_list_clean, report_name, source_files)
         scripts.ilapfuncs.timeline(report_folder, report_name, data_list_clean, data_headers)
         scripts.ilapfuncs.kmlgen(report_folder, report_name, data_list_clean, data_headers)
-
-__artifacts__ = {
-        "FCM_Dump": (
-                "Firebase Cloud Messaging",
-                ('*/fcm_queued_messages.ldb/*'),
-                get_fcm_dump)
-}

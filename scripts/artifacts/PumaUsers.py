@@ -1,3 +1,21 @@
+# pylint: disable=W0613,W1309
+__artifacts_v2__ = {
+    "get_puma_users": {
+        "name": "PumaUsers",
+        "description": "Get Information related to the users table in the Puma Trac database",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-25",
+        "last_update_date": "2023-03-25",
+        "requirements": "Python 3.7 or higher",
+        "category": "Puma-Trac",
+        "notes": "",
+        "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
+        "output_types": None,
+        "artifact_icon": "user",
+        "function": "get_puma_users",
+    }
+}
+
 # Get Information related to the users table in the Puma Trac database
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-03-25
@@ -59,11 +77,3 @@ def get_puma_users(files_found, report_folder, seeker, wrap_text):
         logfunc('No Puma Users data available')
 
     db.close()
-
-
-__artifacts__ = {
-    "PumaUsers": (
-        "Puma-Trac",
-        ('*com.pumapumatrac/databases/pumatrac-db*'),
-        get_puma_users)
-}
