@@ -1,7 +1,7 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
-    "get_protonmail": {
-        "name": "protonmail",
+    "get_protonmail_messages": {
+        "name": "ProtonMail - Messages",
         "description": "",
         "author": "",
         "creation_date": "2023-04-26",
@@ -9,29 +9,40 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "ProtonMail",
         "notes": "",
-        "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*', '*/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
-        "output_types": None,
+        "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*',),
+        "output_types": "standard",
         "artifact_icon": "mail",
-        "function": "get_protonmail",
+    },
+    "get_protonmail_contacts": {
+        "name": "ProtonMail - Contacts",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-04-26",
+        "last_update_date": "2023-04-26",
+        "requirements": "none",
+        "category": "ProtonMail",
+        "notes": "",
+        "paths": ('*/ch.protonmail.android/databases/*-ContactsDatabase.db*',),
+        "output_types": "standard",
+        "artifact_icon": "mail",
     }
 }
 
-import os
-import sqlite3
-import textwrap
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_protonmail(files_found, report_folder, seeker, wrap_text):
-    
+@artifact_processor
+def get_protonmail_messages(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_name = str(file_found)
-        
+
         if file_name.lower().endswith(('-shm','-wal','-journal')):
             continue
-            
+
         if file_name.endswith('-MessagesDatabase.db'):
+            source_path = file_name
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -79,30 +90,45 @@ def get_protonmail(files_found, report_folder, seeker, wrap_text):
             ''')
 
             all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport('ProtonMail - Messages')
-                report.start_artifact_report(report_folder, 'ProtonMail - Messages')
-                report.add_script()
-                data_headers = ('Message Timestamp','Subject','Sender','Message Direction','Status','Message Size','Accessed Timestamp','Folder','Starred','Number of Attachments','Attachment Name','Attachment Size','To List','Reply To','CC List','BCC List','Message Header') 
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],row[16]))
+            for row in all_rows:
+                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],row[16]))
 
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'ProtonMail - Messages'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'ProtonMail - Messages'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc('No ProtonMail - Messages data available')
-            
             db.close()
-            
+
+    data_headers = (
+        ('Message Timestamp', 'datetime'),
+        'Subject',
+        'Sender',
+        'Message Direction',
+        'Status',
+        'Message Size',
+        ('Accessed Timestamp', 'datetime'),
+        'Folder',
+        'Starred',
+        'Number of Attachments',
+        'Attachment Name',
+        'Attachment Size',
+        'To List',
+        'Reply To',
+        'CC List',
+        'BCC List',
+        'Message Header',
+    )
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_protonmail_contacts(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for file_found in files_found:
+        file_name = str(file_found)
+
+        if file_name.lower().endswith(('-shm','-wal','-journal')):
+            continue
+
         if file_name.endswith('-ContactsDatabase.db'):
+            source_path = file_name
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -116,29 +142,15 @@ def get_protonmail(files_found, report_folder, seeker, wrap_text):
             ''')
 
             all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport('ProtonMail - Contacts')
-                report.start_artifact_report(report_folder, 'ProtonMail - Contacts')
-                report.add_script()
-                data_headers = ('Creation Timestamp','Modified Timestamp','Name','Email') 
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3]))
+            for row in all_rows:
+                data_list.append((row[0],row[1],row[2],row[3]))
 
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'ProtonMail - Contacts'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'ProtonMail - Contacts'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc('No ProtonMail - Contacts data available')
-            
             db.close()
-            
-        else:
-            continue
-        
+
+    data_headers = (
+        ('Creation Timestamp', 'datetime'),
+        ('Modified Timestamp', 'datetime'),
+        'Name',
+        'Email',
+    )
+    return data_headers, data_list, source_path
