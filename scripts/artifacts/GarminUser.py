@@ -1,7 +1,7 @@
-# pylint: disable=W0613,W1309,W1514
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_garminUP": {
-        "name": "GarminUser",
+        "name": "Garmin - User Preferences",
         "description": "Get User information from gcm_user_reference.xml file from Garmin Connect shared preferences",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
@@ -10,9 +10,8 @@ __artifacts_v2__ = {
         "category": "Garmin-SharedPrefs",
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/gcm_user_preferences*',),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",
-        "function": "get_garminUP",
     }
 }
 
@@ -23,21 +22,20 @@ __artifacts_v2__ = {
 # Requirements: Python 3.7 or higher and ElementTree
 import xml.etree.ElementTree as ET
 
-
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline
+from scripts.ilapfuncs import artifact_processor, logfunc
 
 
 # remove whitespace from xml first line
 def remove_whitespace_from_xml_first_line(xml_file):
-    with open(xml_file, 'r') as f:
+    with open(xml_file, 'r', encoding='utf-8') as f:
         lines = f.readlines()
-    #replace first line with <?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+    # replace first line with <?xml version='1.0' encoding='utf-8' standalone='yes' ?>
     lines[0] = '<?xml version=\'1.0\' encoding=\'utf-8\' standalone=\'yes\' ?>\n'
-    with open(xml_file, 'w') as f:
+    with open(xml_file, 'w', encoding='utf-8') as f:
         f.writelines(lines)
 
 
+@artifact_processor
 def get_garminUP(files_found, report_folder, seeker, wrap_text):
     # Dictionary to store the user information
     user_info = {}
@@ -50,11 +48,11 @@ def get_garminUP(files_found, report_folder, seeker, wrap_text):
                  "userPoints", "userGender"]
 
     logfunc("Processing data for Garmin User Profile XML")
-    file = str(files_found[0])
-    logfunc("Processing file: " + file)
+    source_path = str(files_found[0])
+    logfunc("Processing file: " + source_path)
     # File is not well formatted, remove first element from first line
-    remove_whitespace_from_xml_first_line(file)
-    tree = ET.parse(file)
+    remove_whitespace_from_xml_first_line(source_path)
+    tree = ET.parse(source_path)
     root = tree.getroot()
     for child in root:
         for i in attribute:
@@ -67,21 +65,9 @@ def get_garminUP(files_found, report_folder, seeker, wrap_text):
                     if child.text:
                         user_info[i] = child.text
 
-    if len(user_info) > 0:
-        logfunc("Found Garmin User Profile XML")
-        report = ArtifactHtmlReport('User Preferences')
-        report.start_artifact_report(report_folder, 'User Preferences')
-        report.add_script()
-        data_headers = ('Name', 'Value')
-        data_list = []
-        for key, value in user_info.items():
-            data_list.append((key, value))
-        report.write_artifact_data_table(data_headers, data_list, file)
-        report.end_artifact_report()
-        tsvname = f'User'
-        tsv(report_folder, data_headers, data_list, tsvname)
+    data_list = []
+    for key, value in user_info.items():
+        data_list.append((key, value))
 
-        tlactivity = f'User'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc("No Garmin XML data found")
+    data_headers = ('Name', 'Value')
+    return data_headers, data_list, source_path
