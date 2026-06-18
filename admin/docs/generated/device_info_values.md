@@ -11,6 +11,10 @@ This document outlines the various device information collected by LEAPP modules
 | Category | Label | Source Modules |
 |-----------|-------|----------------|
 | ADB Hosts | Hosts | adb_hosts |
+| ProtonVPN | Country | protonVPN |
+| ProtonVPN | IP Address | protonVPN |
+| ProtonVPN | ISP | protonVPN |
+| ProtonVPN | Last IP Check Time | protonVPN |
 | Usagestats | Android version | usagestatsVersion |
 | Usagestats | Build version | usagestatsVersion |
 | Usagestats | Codename | usagestatsVersion |
@@ -25,13 +29,9 @@ This document outlines the various device information collected by LEAPP modules
 | Bluetooth address: {val} | settingsSecure |
 | Bluetooth name: {val} | settingsSecure |
 | Brand: {value} | build |
-| Country: {elem.text} | protonVPN |
 | Device: {value} | build |
 | Factory Reset Timestamp: {reset_time} | factory_reset |
-| IP Address: {elem.text} | protonVPN |
-| ISP: {elem.text} | protonVPN |
 | Last Boot Timestamp: {last_boot_time} | last_boot_time |
-| Last IP Check Time: {timestamp} | protonVPN |
 | Manufacturer: {value} | build |
 | Model: {value} | build |
 | SDK: {value} | build |
