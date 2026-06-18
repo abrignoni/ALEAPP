@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/*-wal', '*/*-journal'),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_walStrings",
     }
 }
 

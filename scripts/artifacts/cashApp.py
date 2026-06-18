@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.squareup.cash/databases/cash_money.db*',),
         "output_types": None,
         "artifact_icon": "package",
+        "function": "get_cashApp",
     }
 }
 

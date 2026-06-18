@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.connect.enduser/databases/database.hik*', '*/com.connect.enduser/databases/ezvizlog.db', '*/com.connect.enduser/databases/image.db*', '*/0/Pictures/Hik-Connect Album/*'),
         "output_types": None,
         "artifact_icon": "video",
+        "function": "get_hikvision",
     }
 }
 

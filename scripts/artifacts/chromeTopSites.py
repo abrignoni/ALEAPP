@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Top Sites*', '*/app_sbrowser/Default/Top Sites*', '*/app_opera/Top Sites*', '*/app_webview/Default/Top Sites*'),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_chromeTopSites",
     }
 }
 

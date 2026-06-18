@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/trips/*.json',),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_TripEvents",
     }
 }
 

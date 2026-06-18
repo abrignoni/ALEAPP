@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
         "output_types": None,
         "artifact_icon": "package",
+        "function": "get_installedappsGass",
     }
 }
 

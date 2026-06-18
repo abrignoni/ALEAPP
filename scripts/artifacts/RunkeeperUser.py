@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.fitnesskeeper.runkeeper.pro/shared_prefs/com.fitnesskeeper.runkeeper.pro_preferences*',),
         "output_types": None,
         "artifact_icon": "user",
+        "function": "get_run_user",
     }
 }
 

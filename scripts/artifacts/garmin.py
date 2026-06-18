@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*', '*/data/com.garmin.android.apps.connectmobile/databases/notification-database*', '*/data/com.garmin.android.apps.connectmobile/databases/cache-database*'),
         "output_types": None,
         "artifact_icon": "activity",
+        "function": "get_garmin",
     }
 }
 

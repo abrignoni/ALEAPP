@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*','*/xyz.blueskyweb.app/cache/http-cache/*.*'),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_blueskymessages",
     }
 }
 

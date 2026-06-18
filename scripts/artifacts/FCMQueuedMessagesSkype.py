@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": None,
-        "function": "",
+        "function": "get_fcm_skype",
         "artifact_icon": "message-square",
     }
 }

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
         "output_types": None,
         "artifact_icon": "lock",
+        "function": "get_samsungWeatherClock",
     }
 }
 

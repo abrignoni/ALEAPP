@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.android.chrome/cache/Cache/*_0',),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_browserCachechrome",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.myyearbook.m/databases/chats.db*'),
         "output_types": None,
         "artifact_icon": "users",
+        "function": "get_meetmechats",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*',),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_firefoxCookies",
     }
 }
 

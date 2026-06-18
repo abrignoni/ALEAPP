@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
         "output_types": None,
         "artifact_icon": "wifi",
+        "function": "get_bluetoothConnections",
     }
 }
 

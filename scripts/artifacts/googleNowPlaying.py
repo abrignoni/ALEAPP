@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.intelligence.sense/db/history_db*', '*/com.google.android.as/databases/history_db*'),
         "output_types": None,
         "artifact_icon": "chrome",
+        "function": "get_googleNowPlaying",
     }
 }
 

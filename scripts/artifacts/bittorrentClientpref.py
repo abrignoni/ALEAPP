@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.bittorrent.client/shared_prefs/com.bittorrent.client_preferences.xml',),
         "output_types": None,
         "artifact_icon": "download",
+        "function": "get_bittorrentClientpref",
     }
 }
 

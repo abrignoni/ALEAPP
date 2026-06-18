@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.docs/app_cello/*/cello.db*', '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*'),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_Cello",
     }
 }
 

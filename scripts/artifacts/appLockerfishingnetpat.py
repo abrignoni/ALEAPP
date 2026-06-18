@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml',),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_appLockerfishingnetpat",
     }
 }
 

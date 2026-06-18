@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.chess/databases/chess-database*',),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_ChessComMessages",
     }
 }
 

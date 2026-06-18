@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml', '*/applocker/vault/*'),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_playgroundVault",
     }
 }
 

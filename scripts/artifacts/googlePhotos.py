@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*', '*/com.google.android.apps.photos/databases/disk_cache*', '*/com.google.android.apps.photos/cache/glide_cache/*', '*/com.google.android.apps.photos/databases/local_trash.db*', '*/com.google.android.apps.photos/files/trash_files/*'),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_googlePhotos",
     }
 }
 

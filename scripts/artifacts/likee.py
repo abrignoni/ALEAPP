@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/video.like/files/*/*location.kv',),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_likee",
     },
     "get_likee_db": {
         "name": "LIKEE Databases",
@@ -25,6 +26,7 @@ __artifacts_v2__ = {
         "paths": ('*/video.like/databases/*.db',),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_likee_db",
     }
 }
 

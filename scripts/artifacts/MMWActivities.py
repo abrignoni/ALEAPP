@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*com.mapmywalk.android2/databases/workout.db*',),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_map_activities",
     }
 }
 

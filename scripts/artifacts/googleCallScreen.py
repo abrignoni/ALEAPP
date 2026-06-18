@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.dialer/databases/callscreen_transcripts*', '*/com.google.android.dialer/files/callscreenrecordings/*.*'),
         "output_types": None,
         "artifact_icon": "phone",
+        "function": "get_googleCallScreen",
     }
 }
 

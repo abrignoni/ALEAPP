@@ -14,6 +14,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.azure.authenticator/databases/PhoneFactor*'),
         "output_types": None,
         "artifact_icon": "shield",
+        "function": "get_MSAuth_accounts",
     }
 }
 

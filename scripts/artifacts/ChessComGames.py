@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.chess/databases/chess-database*', '*/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
         "output_types": None,
         "artifact_icon": "grid",
+        "function": "get_ChessComGames",
     }
 }
 

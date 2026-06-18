@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml',),
         "output_types": None,
         "artifact_icon": "info",
+        "function": "get_setupWizardinfo",
     }
 }
 

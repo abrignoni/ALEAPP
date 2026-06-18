@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.contacts/databases/calllog.db*', '*/com.samsung.android.providers.contacts/databases/calllog.db*'),
         "output_types": None,
         "artifact_icon": "phone",
+        "function": "get_calllog",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.skype.raider/databases/live*',),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_skype",
     }
 }
 

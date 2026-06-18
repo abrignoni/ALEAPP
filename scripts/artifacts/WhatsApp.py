@@ -11,6 +11,7 @@ __artifacts_v2__ = {
         "paths": ('*com.whatsapp*', '*/com.whatsapp/databases/*.db*', '*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml', '*/com.whatsapp/shared_prefs/startup_prefs.xml', '*/com.whatsapp/shared_prefs/reg_prefs.xml', '*/WhatsApp Images/*.*', '*/WhatsApp Video/*.*'),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_WhatsApp",
     }
 }
 

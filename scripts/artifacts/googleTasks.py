@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db',),
         "output_types": None,
         "artifact_icon": "file-text",
+        "function": "get_googleTasks",
     }
 }
 

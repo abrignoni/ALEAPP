@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.mewe/databases/app_database', '*/com.mewe/shared_prefs/SGSession.xml'),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_mewe",
     }
 }
 

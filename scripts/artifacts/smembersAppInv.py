@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db',),
         "output_types": None,
         "artifact_icon": "package",
+        "function": "get_smembersAppInv",
     }
 }
 

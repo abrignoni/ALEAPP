@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/property/persistent_properties',),
         "output_types": None,
         "artifact_icon": "info",
+        "function": "get_persistentProp",
     }
 }
 

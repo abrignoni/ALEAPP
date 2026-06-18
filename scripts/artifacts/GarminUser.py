@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/gcm_user_preferences*',),
         "output_types": None,
         "artifact_icon": "user",
+        "function": "get_garminUP",
     }
 }
 

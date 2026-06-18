@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*'),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_sharedProto",
     }
 }
 

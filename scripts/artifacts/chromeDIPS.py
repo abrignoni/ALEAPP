@@ -11,6 +11,7 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/DIPS*', '*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*', '*/app_webview/Default/DIPS*'),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_chromeDIPS",
     }
 }
 

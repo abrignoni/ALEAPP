@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.browser/app_geolocation/CachedGeoposition.db',),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_browserlocation",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*',),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_kijijiConversations",
     }
 }
 

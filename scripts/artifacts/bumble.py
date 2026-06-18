@@ -11,6 +11,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*','*/com.bumble.app/files/c2V0dGluZ3M='),
         "output_types": None,
         "artifact_icon": "users",
+        "function": "get_bumble",
     }
 }
 

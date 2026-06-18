@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.twitter.android/databases/*-search.db*',),
         "output_types": None,
         "artifact_icon": "users",
+        "function": "get_Twitter",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.todoist/databases/database.db*',),
         "output_types": None,
         "artifact_icon": "file-text",
+        "function": "get_Todoist",
     }
 }
 

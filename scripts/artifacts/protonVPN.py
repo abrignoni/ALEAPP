@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/ch.protonvpn.android/databases/db', '*/ch.protonvpn.android/shared_prefs/ServerListUpdater.xml', '*/ch.protonvpn.android/log/Data.log'),
         "output_types": None,
         "artifact_icon": "user",
+        "function": "get_protonVPN",
     }
 }
 

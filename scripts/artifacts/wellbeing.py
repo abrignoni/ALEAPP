@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
         "output_types": None,
         "artifact_icon": "heart",
+        "function": "get_wellbeing",
     }
 }
 

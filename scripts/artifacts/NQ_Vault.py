@@ -11,6 +11,7 @@ __artifacts_v2__ = {
         "paths": ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11', '*/SystemAndroid/Data/**', '/media/0/SystemAndroid/Data/322w465ay423xy11'),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_NQVault",
     }
 }
 

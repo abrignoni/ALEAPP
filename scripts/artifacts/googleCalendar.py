@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.calendar/databases/cal_v2a*','*/com.android.providers.calendar/databases/calendar.db*'),
         "output_types": None,
         "artifact_icon": "calendar",
+        "function": "get_calendar",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": None,
         "artifact_icon": "database",
+        "function": "get_fcm_dump",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.mm.android.DMSS/databases/*', '*/Android/data/com.mm.android.DMSS/files/Download/snapshot/*'),
         "output_types": None,
         "artifact_icon": "terminal",
+        "function": "get_dmss",
     }
 }
 

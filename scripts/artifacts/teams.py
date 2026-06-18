@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_teams",
     }
 }
 

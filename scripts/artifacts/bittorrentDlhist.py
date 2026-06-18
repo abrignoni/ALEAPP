@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/dlhistory*.config.bak', '*/dlhistory*.config'),
         "output_types": None,
         "artifact_icon": "download",
+        "function": "get_bittorrentDlhist",
     }
 }
 

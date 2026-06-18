@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/cn.xender/databases/trans-history-db*',),
         "output_types": None,
         "artifact_icon": "download",
+        "function": "get_Xender",
     }
 }
 

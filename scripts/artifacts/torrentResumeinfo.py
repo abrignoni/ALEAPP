@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/*.resume',),
         "output_types": None,
         "artifact_icon": "download",
+        "function": "get_torrentResumeinfo",
     }
 }
 

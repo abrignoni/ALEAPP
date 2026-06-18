@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Bookmarks*', '*/app_sbrowser/Default/Bookmarks*', '*/app_opera/Bookmarks*', '*/app_webview/Default/Bookmarks*'),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_chromeBookmarks",
     }
 }
 

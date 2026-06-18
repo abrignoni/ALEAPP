@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*',),
         "output_types": None,
         "artifact_icon": "download",
+        "function": "get_Zapya",
     }
 }
 

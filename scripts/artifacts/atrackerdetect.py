@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml',),
         "output_types": None,
         "artifact_icon": "alert-triangle",
+        "function": "get_atrackerdetect",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.maps/databases/da_destination_history*',),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_googlemaplocation",
     }
 }
 

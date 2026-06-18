@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*vlc_media.db*',),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_vlcMedia",
     }
 }
 

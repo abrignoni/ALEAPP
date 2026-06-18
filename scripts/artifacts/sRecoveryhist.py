@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/efs/recovery/history',),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_sRecoveryhist",
     }
 }
 

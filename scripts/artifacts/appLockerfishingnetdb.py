@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/.privacy_safe/db/privacy_safe.db',),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_appLockerfishingnetdb",
     }
 }
 

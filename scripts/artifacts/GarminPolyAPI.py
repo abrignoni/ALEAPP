@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/garmin.api/activity_details*',),
         "output_types": None,
         "artifact_icon": "activity",
+        "function": "get_poly_api",
     }
 }
 

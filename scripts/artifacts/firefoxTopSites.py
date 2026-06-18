@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/databases/top_sites*',),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_firefoxTopSites",
     }
 }
 

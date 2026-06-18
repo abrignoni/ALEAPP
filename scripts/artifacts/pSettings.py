@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gsf/databases/googlesettings.db*',),
         "output_types": None,
         "artifact_icon": "settings",
+        "function": "get_pSettings",
     }
 }
 

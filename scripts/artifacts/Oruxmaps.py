@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('**/oruxmaps/tracklogs/oruxmapstracks.db*',),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_Oruxmaps",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/cache/image_manager_disk_cache/*.*', '*/*.cnt'),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_imagemngCache",
     }
 }
 

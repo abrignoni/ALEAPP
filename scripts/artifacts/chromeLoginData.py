@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Login Data*', '*/app_sbrowser/Default/Login Data*', '*/app_opera/Login Data*', '*/app_webview/Default/Login Data*'),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_chromeLoginData",
     }
 }
 

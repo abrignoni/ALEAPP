@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.googlequicksearchbox/files/recently/*', '*/com.google.android.googlequicksearchbox/files/accounts/*/RecentsDataStore.pb', '*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db'),
         "output_types": None,
         "artifact_icon": "search",
+        "function": "get_quicksearch_recent",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_chromeAutofill",
     }
 }
 

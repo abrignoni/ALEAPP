@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.snapchat.android/databases/*.db', '*/com.snapchat.android/shared_prefs/*.xml'),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_snapchat",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.theronrogers.vaultyfree/databases/media.db',),
         "output_types": None,
         "artifact_icon": "lock",
+        "function": "get_vaulty_files",
     }
 }
 

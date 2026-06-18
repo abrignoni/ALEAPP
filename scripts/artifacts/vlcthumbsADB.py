@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/org.videolan.vlc/ef/medialib/*.*', '*/org.videolan.vlc/ef/medialib/thumbnails/*.*'),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_vlcthumbsADB",
     }
 }
 

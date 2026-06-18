@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml',),
         "output_types": None,
         "artifact_icon": "clock",
+        "function": "get_suggestions",
     }
 }
 

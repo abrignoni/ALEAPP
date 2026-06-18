@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/xyz.blueskyweb.app/cache/http-cache/*.*'),
         "output_types": None,
         "artifact_icon": "edit",
+        "function": "get_blueskyposts",
     }
 }
 

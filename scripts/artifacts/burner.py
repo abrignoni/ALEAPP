@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
         "output_types": None,
         "artifact_icon": "shield",
+        "function": "get_burner",
     }
 }
 

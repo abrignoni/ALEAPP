@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/user_de/*/com.android.providers.telephony/databases/telephony.db',),
         "output_types": None,
         "artifact_icon": "info",
+        "function": "get_siminfo",
     }
 }
 

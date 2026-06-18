@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/system/users/*/roles.xml', '*/misc_de/*/apexdata/com.android.permission/roles.xml'),
         "output_types": None,
         "artifact_icon": "package",
+        "function": "get_roles",
     }
 }
 

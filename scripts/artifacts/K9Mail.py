@@ -14,6 +14,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.fsck.k9/databases/*'),
         "output_types": None,
         "artifact_icon": "mail",
+        "function": "get_k9mail_data",
     }
 }
 

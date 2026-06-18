@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.as/databases/reflection_gel_events.db*',),
         "output_types": None,
         "artifact_icon": "package",
+        "function": "get_usageapps",
     }
 }
 

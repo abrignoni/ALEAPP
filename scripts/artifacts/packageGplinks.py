@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/system/packages.list',),
         "output_types": None,
         "artifact_icon": "package",
+        "function": "get_packageGplinks",
     }
 }
 

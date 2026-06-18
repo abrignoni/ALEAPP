@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.garmin.android.apps.connectmobile/files/PersistedInstallation*',),
         "output_types": None,
         "artifact_icon": "activity",
+        "function": "get_presisted",
     }
 }
 

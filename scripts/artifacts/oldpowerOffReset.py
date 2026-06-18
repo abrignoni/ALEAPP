@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/log/power_off_reset_reason.txt', '*/log/power_off_reset_reason_backup.txt'),
         "output_types": None,
         "artifact_icon": "battery",
+        "function": "get_oldpowerOffReset",
     }
 }
 

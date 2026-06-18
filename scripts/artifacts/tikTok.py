@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*_im.db*', '*db_im_xx*'),
         "output_types": None,
         "artifact_icon": "users",
+        "function": "get_tikTok",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.android.oneconnect/databases/QcDB.db*',),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_samsungSmartThings",
     }
 }
 

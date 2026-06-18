@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*', '*/com.google.android.apps.tachyon/files/media/*.*'),
         "output_types": None,
         "artifact_icon": "chrome",
+        "function": "get_googleDuo",
     }
 }
 

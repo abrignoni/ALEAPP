@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*'),
         "output_types": None,
         "artifact_icon": "shield",
+        "function": "get_airGuard",
     }
 }
 

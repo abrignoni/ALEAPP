@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.pikcloud.pikpak/databases/pikpak_files_*.db*',),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_pikpakCloudlist",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gm/shared_prefs/Gmail.xml',),
         "output_types": None,
         "artifact_icon": "mail",
+        "function": "get_gmailActive",
     }
 }
 

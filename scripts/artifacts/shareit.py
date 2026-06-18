@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.lenovo.anyshare.gps/databases/history.db*',),
         "output_types": None,
         "artifact_icon": "download",
+        "function": "get_shareit",
     }
 }
 

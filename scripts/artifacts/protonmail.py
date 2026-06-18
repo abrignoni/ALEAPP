@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*', '*/ch.protonmail.android/databases/*-ContactsDatabase.db*'),
         "output_types": None,
         "artifact_icon": "mail",
+        "function": "get_protonmail",
     }
 }
 

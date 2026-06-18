@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*','*/com.android.providers.media/databases/external.db*'),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_emulatedSmeta",
     }
 }
 

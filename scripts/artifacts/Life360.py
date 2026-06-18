@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.life360.android.safetymapd/databases/messaging.db*','*/com.life360.android.safetymapd/databases/L360LocalStoreRoomDatabase*','*/com.life360.android.safetymapd/databases/L360EventStore.db*'),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_Life360",
     }
 }
 

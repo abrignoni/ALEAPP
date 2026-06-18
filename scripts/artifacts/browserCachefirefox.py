@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/org.mozilla.firefox/cache/*/cache2/entries/**',),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_browserCachefirefox",
     }
 }
 

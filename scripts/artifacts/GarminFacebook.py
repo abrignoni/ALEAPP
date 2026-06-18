@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/com.facebook*',),
         "output_types": None,
         "artifact_icon": "activity",
+        "function": "get_garminFB",
     }
 }
 

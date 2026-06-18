@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
         "output_types": None,
         "artifact_icon": "battery",
+        "function": "get_swellbeing",
     }
 }
 

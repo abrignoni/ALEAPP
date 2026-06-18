@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/vendor/build.prop',),
         "output_types": None,
         "artifact_icon": "info",
+        "function": "get_build",
     }
 }
 

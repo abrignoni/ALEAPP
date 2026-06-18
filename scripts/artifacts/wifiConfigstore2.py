@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": None,
         "artifact_icon": "wifi",
+        "function": "get_wifiConfigstore",
     }
 }
 

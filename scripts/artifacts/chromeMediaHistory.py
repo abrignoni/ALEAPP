@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_chromeMediaHistory",
     }
 }
 

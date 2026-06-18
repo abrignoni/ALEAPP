@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Cookies*', '*/app_sbrowser/Default/Cookies*', '*/app_opera/Cookies*', '*/app_webview/Default/Cookies*'),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_chromeCookies",
     }
 }
 

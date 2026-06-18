@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*', '*/com.google.android.apps.dynamite/databases/dynamite.db*', '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_googleChat",
     }
 }
 

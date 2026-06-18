@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/mega.privacy.android.app/karere-*.db*',),
         "output_types": None,
         "artifact_icon": "download",
+        "function": "get_mega",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml'),
         "output_types": None,
         "artifact_icon": "bar-chart-2",
+        "function": "get_Turbo_AppUsage",
     }
 }
 

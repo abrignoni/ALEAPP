@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.ebay.kijiji.ca/shared_prefs/LoginData.xml',),
         "output_types": None,
         "artifact_icon": "user",
+        "function": "get_kijijiLocalUserInfo",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*'),
         "output_types": None,
         "artifact_icon": "search",
+        "function": "get_blueskysearches",
     }
 }
 

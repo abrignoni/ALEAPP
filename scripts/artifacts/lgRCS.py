@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/mmssms.db*',),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_lgRCS",
     }
 }
 

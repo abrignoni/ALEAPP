@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.runtastic.android/databases/goals*',),
         "output_types": None,
         "artifact_icon": "activity",
+        "function": "get_adidas_goals",
     }
 }
 

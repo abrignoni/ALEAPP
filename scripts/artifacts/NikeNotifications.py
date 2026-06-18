@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.nike.plusgps/databases/ns_inbox.db*',),
         "output_types": None,
         "artifact_icon": "activity",
+        "function": "get_nike_notifications",
     }
 }
 

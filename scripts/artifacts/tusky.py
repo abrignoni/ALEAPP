@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.keylesspalace.tusky/databases/tuskyDB*',),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_tusky",
     }
 }
 

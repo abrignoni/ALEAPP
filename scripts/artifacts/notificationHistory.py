@@ -14,6 +14,7 @@ __artifacts_v2__ = {
             '**/system/notification_policy.xml',
         ),
         "output_types": None,
+        "function": "get_notificationHistory",
     }
 }
 

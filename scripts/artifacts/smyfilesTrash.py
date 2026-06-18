@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.app.myfiles/files/trash/*', '*/.Trash/com.sec.android.app.myfiles/*'),
         "output_types": None,
         "artifact_icon": "trash-2",
+        "function": "get_smyfiles_trash",
     }
 }
 

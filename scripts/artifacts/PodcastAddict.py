@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.bambuna.podcastaddict/databases/podcastAddict.db',),
         "output_types": None,
         "artifact_icon": "headphones",
+        "function": "get_podcasts",
     }
 }
 

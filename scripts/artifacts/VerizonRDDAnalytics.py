@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.verizon.mips.services/databases/RDD_ANALYTICS_DATABASE',),
         "output_types": None,
         "artifact_icon": "battery",
+        "function": "get_rdd_analytics",
     }
 }
 

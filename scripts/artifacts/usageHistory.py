@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/usage-history.xml',),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_usageHistory",
     }
 }
 

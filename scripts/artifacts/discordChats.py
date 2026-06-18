@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.discord/files/kv-storage/*/a*',),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_discordChats",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.app.myfiles/databases/myfiles.db*', '*/com.sec.android.app.myfiles/databases/FileInfo.db*'),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_smyfilesRecents",
     }
 }
 

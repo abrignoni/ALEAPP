@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.location/files/cache.cell/cache.cell', '*/com.google.android.location/files/cache.wifi/cache.wifi'),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_cachelocation",
     }
 }
 

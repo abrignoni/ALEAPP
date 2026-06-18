@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.ebay.kijiji.ca/databases/searches.*',),
         "output_types": None,
         "artifact_icon": "search",
+        "function": "get_kijijiRecentSearches",
     }
 }
 

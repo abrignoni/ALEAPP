@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.maps/files/new_recent_history_cache_navigated.cs', '*/new_recent_history_cache_navigated.cs'),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_googleInitiatedNav",
     }
 }
 

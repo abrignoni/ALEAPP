@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
         "output_types": None,
         "artifact_icon": "phone",
+        "function": "get_calllogs",
     }
 }
 

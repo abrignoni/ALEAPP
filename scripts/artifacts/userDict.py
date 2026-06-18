@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.userdictionary/databases/user_dict.db*',),
         "output_types": None,
         "artifact_icon": "user",
+        "function": "get_userDict",
     }
 }
 

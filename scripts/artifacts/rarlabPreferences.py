@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.rarlab.rar_preferences.xml',),
         "output_types": None,
         "artifact_icon": "settings",
+        "function": "get_rarlabPreferences",
     }
 }
 

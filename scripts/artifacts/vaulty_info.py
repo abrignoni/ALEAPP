@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml',),
         "output_types": None,
         "artifact_icon": "lock",
+        "function": "get_vaulty_info",
     }
 }
 

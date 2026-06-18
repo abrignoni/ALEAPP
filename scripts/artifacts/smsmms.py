@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_sms_mms",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/system/usagestats/*', '*/system_ce/*/usagestats*'),
         "output_types": None,
         "artifact_icon": "battery",
+        "function": "get_usagestats",
     }
 }
 

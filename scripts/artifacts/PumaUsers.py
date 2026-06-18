@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
         "output_types": None,
         "artifact_icon": "user",
+        "function": "get_puma_users",
     }
 }
 

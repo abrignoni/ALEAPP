@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.telephony/d_f/*_backup',),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_sms_mms_from_backup",
     }
 }
 

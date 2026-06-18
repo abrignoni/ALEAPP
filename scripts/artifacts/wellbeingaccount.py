@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.wellbeing/files/AccountData.pb',),
         "output_types": None,
         "artifact_icon": "battery",
+        "function": "get_wellbeingaccount",
     }
 }
 

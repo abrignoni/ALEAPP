@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.skout.android/databases/skoutDatabase*',),
         "output_types": None,
         "artifact_icon": "users",
+        "function": "get_skout",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*', '*/data/ch.swisscows.messenger.teleguardapp/cache/**'),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_teleguard",
     }
 }
 

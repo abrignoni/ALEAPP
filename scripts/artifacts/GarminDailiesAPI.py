@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/garmin.api/daily*',),
         "output_types": None,
         "artifact_icon": "activity",
+        "function": "get_dailies_api",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.sideline.phone.number/databases/textfree*'),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_schats",
     }
 }
 

@@ -15,6 +15,7 @@ __artifacts_v2__ = {
             '**/com.openai.chatgpt/cache/files/*',
         ),
         "output_types": None,
+        "function": "get_chatgpt",
     }
 }
 

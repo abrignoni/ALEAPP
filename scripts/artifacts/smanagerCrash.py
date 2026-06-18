@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.android.sm/databases/sm.db',),
         "output_types": None,
         "artifact_icon": "package",
+        "function": "get_smanagerCrash",
     }
 }
 

@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.verizon.mips.services/databases/RDD_WIFI_DATA_DATABASE',),
         "output_types": None,
         "artifact_icon": "wifi",
+        "function": "get_rdd_wifi",
     }
 }
 

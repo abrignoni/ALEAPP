@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/databases/recently_closed_tabs*',),
         "output_types": None,
         "artifact_icon": "globe",
+        "function": "get_firefoxRecentlyClosedTabs",
     }
 }
 

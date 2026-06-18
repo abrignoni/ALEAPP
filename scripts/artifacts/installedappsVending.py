@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.vending/databases/localappstate.db*',),
         "output_types": None,
         "artifact_icon": "package",
+        "function": "get_installedappsVending",
     }
 }
 

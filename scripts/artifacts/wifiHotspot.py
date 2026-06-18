@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/misc/wifi/softap.conf', '*/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml'),
         "output_types": None,
         "artifact_icon": "wifi",
+        "function": "get_wifiHotspot",
     }
 }
 

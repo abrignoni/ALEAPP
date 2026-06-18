@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/system/users/*/settings_secure.xml',),
         "output_types": None,
         "artifact_icon": "settings",
+        "function": "get_settingsSecure",
     }
 }
 

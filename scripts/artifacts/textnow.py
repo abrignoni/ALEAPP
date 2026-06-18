@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.enflick.android.TextNow/databases/textnow_data.db*',),
         "output_types": None,
         "artifact_icon": "message-square",
+        "function": "get_textnow",
     }
 }
 

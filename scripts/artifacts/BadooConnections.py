@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*com.badoo.mobile/databases/CombinedConnectionsDatabase*',),
         "output_types": None,
         "artifact_icon": "users",
+        "function": "get_badoo_conn",
     }
 }
 

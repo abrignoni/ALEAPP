@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.docs/databases/DocList.db*',),
         "output_types": None,
         "artifact_icon": "file",
+        "function": "get_DocList",
     }
 }
 

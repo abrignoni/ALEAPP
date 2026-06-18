@@ -13,6 +13,7 @@ __artifacts_v2__ = {
             '*/com.google.android.gms/shared_prefs/ULR_USER_PREFS.xml',
         ),
         "output_types": None,
+        "function": "get_urluser",
     }
 }
 

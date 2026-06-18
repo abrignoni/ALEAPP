@@ -11,7 +11,8 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.microsoft.skydrive/files/QTMetadata.db*'),
         "output_types": None,
-        "artifact_icon": "cloud"
+        "artifact_icon": "cloud",
+        "function": "get_onedrive",
     }
 }
 

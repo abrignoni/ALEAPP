@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
         "output_types": None,
         "artifact_icon": "image",
+        "function": "get_AVG",
     }
 }
 

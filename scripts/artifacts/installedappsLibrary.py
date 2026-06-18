@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.vending/databases/library.db*',),
         "output_types": None,
         "artifact_icon": "package",
+        "function": "get_installedappsLibrary",
     }
 }
 

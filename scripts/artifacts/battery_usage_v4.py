@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*',),
         "output_types": None,
         "artifact_icon": "battery",
+        "function": "get_battery_usage_v4",
     }
 }
 

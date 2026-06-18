@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": '*/com.sec.android.app.myfiles/databases/OperationHistory.db*',
         "output_types": None,
         "artifact_icon": "clock",
+        "function": "get_smyfiles_OpHistory",
     }
 }
 

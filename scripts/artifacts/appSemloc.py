@@ -13,6 +13,7 @@ __artifacts_v2__ = {
             '*/com.google.android.gms/app_semanticlocation_rawsignal_db/*',
         ),
         "output_types": None,
+        "function": "get_appSemloc",
     }
 }
 

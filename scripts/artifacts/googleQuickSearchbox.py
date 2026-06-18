@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb',),
         "output_types": None,
         "artifact_icon": "search",
+        "function": "get_quicksearch",
     }
 }
 

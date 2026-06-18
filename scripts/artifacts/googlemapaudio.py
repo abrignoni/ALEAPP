@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.maps/app_tts-cache/*_*',),
         "output_types": None,
         "artifact_icon": "map-pin",
+        "function": "get_googlemapaudio",
     }
 }
 

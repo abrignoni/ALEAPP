@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite', '*/data/com.zynga.chess.googleplay/db/wf_database.sqlite'),
         "output_types": None,
         "artifact_icon": "grid",
+        "function": "get_ChessWithFriends",
     }
 }
 
