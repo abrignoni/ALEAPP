@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*'),
-        "output_types": "message-square",
+        "output_types": "standard",
         "artifact_icon": "users"
     },
     "healthmate_measurements": {
