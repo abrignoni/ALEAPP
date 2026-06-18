@@ -46,7 +46,7 @@ def get_vaulty_info(files_found, report_folder, seeker, wrap_text):
             password_hash = item.get("#text", None)
 
     if password_hash:
-        md5_hash_binary = base64.decodestring(password_hash.encode())
+        md5_hash_binary = base64.decodebytes(password_hash.encode())
         md5_hash = binascii.hexlify(md5_hash_binary).decode()
 
         data_list.append(["Password MD5", md5_hash])
@@ -77,7 +77,7 @@ def get_vaulty_info(files_found, report_folder, seeker, wrap_text):
     for item in prefs["map"]["string"]:
         if item.get("@name", None) == "security_answer_hash":
             answer = item.get("#text", None)
-            answer = base64.decodestring(answer.encode())
+            answer = base64.decodebytes(answer.encode())
             answer = binascii.hexlify(answer).decode()
             data_list.append(["Security Answer MD5", answer])
 

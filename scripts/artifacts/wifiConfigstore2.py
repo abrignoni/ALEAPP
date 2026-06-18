@@ -48,7 +48,24 @@ def get_wifiConfigstore(files_found, report_folder, seeker, wrap_text):
                     for b in a:
                         #print(b.tag)
                         tagg = b.tag
-                        
+
+                        # Default every field so a config missing one doesn't raise
+                        # UnboundLocalError or leak the previous config's value
+                        configcombined = ''
+                        ssidcombined = ''
+                        bssidcombined = ''
+                        PreSharedKeycombined = ''
+                        WEPKeyscombined = ''
+                        HiddenSSIDcombined = ''
+                        RandomizedMacAddresscombined = ''
+                        CreatorNamecombined = ''
+                        CreationTimecombined = ''
+                        ConnectChoicecombined = ''
+                        ConnectChoiceTimeStampcombined = ''
+                        HasEverConnectedcombined = ''
+                        IpAssignmentcombined = ''
+                        ProxySettingscombined = ''
+
                         for c in b:
                             combined = (c.attrib, c.text)
                             datafieldname = (c.attrib['name']) #field
