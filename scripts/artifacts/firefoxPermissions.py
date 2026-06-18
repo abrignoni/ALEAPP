@@ -1,7 +1,7 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_firefoxPermissions": {
-        "name": "FirefoxPermissions",
+        "name": "Firefox - Permissions",
         "description": "",
         "author": "",
         "creation_date": "2022-01-12",
@@ -10,26 +10,26 @@ __artifacts_v2__ = {
         "category": "Firefox",
         "notes": "",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "globe",
-        "function": "get_firefoxPermissions",
     }
 }
 
 import os
-import sqlite3
-import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+
+@artifact_processor
 def get_firefoxPermissions(files_found, report_folder, seeker, wrap_text):
-    
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not os.path.basename(file_found) == 'permissions.sqlite': # skip -journal and other files
+        if not os.path.basename(file_found) == 'permissions.sqlite':  # skip -journal and other files
             continue
-        
+
+        source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -50,26 +50,16 @@ def get_firefoxPermissions(files_found, report_folder, seeker, wrap_text):
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Firefox - Permissions')
-            report.start_artifact_report(report_folder, 'Firefox - Permissions')
-            report.add_script()
-            data_headers = ('Modification Timestamp','Origin Site','Permission Type','Status','Expiration Timestamp') 
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4]))
+        for row in all_rows:
+            data_list.append((row[0],row[1],row[2],row[3],row[4]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Firefox - Permissions'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Firefox - Permissions'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Firefox - Permissions data available')
-        
         db.close()
-    
+
+    data_headers = (
+        ('Modification Timestamp', 'datetime'),
+        'Origin Site',
+        'Permission Type',
+        'Status',
+        ('Expiration Timestamp', 'datetime'),
+    )
+    return data_headers, data_list, source_path

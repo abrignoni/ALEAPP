@@ -1,7 +1,7 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_firefoxCookies": {
-        "name": "FirefoxCookies",
+        "name": "Firefox - Cookies",
         "description": "",
         "author": "",
         "creation_date": "2022-01-12",
@@ -10,26 +10,26 @@ __artifacts_v2__ = {
         "category": "Firefox",
         "notes": "",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "globe",
-        "function": "get_firefoxCookies",
     }
 }
 
 import os
-import sqlite3
-import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+
+@artifact_processor
 def get_firefoxCookies(files_found, report_folder, seeker, wrap_text):
-    
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not os.path.basename(file_found) == 'cookies.sqlite': # skip -journal and other files
+        if not os.path.basename(file_found) == 'cookies.sqlite':  # skip -journal and other files
             continue
-        
+
+        source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -46,26 +46,18 @@ def get_firefoxCookies(files_found, report_folder, seeker, wrap_text):
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Firefox - Cookies')
-            report.start_artifact_report(report_folder, 'Firefox - Cookies')
-            report.add_script()
-            data_headers = ('Last Accessed Timestamp','Created Timestamp','Host','Name','Value','Expiration Timestamp','Path') 
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+        for row in all_rows:
+            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Firefox - Cookies'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Firefox - Cookies'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Firefox - Cookies data available')
-        
         db.close()
-    
+
+    data_headers = (
+        ('Last Accessed Timestamp', 'datetime'),
+        ('Created Timestamp', 'datetime'),
+        'Host',
+        'Name',
+        'Value',
+        ('Expiration Timestamp', 'datetime'),
+        'Path',
+    )
+    return data_headers, data_list, source_path
