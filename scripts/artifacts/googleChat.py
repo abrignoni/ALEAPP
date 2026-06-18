@@ -1,3 +1,4 @@
+# pylint: disable=W0104,W0611,W0612,W0613,W0702
 __artifacts_v2__ = {
     "get_googleChat": {
         "name": "GoogleChat",
@@ -13,8 +14,14 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0104,W0611,W0612,W0613,W0702
 
+# Google Chat Messages & Group Information
+# Author:  Josh Hickman (josh@thebinaryhick.blog) & Alexis Brignoni (https://linqapp.com/abrignoni)
+# Date 2021-02-05
+# Version: 0.2
+# Requirements:  blackboxprotobuf
+# Updated 2023-04-13 by Kevin Pagano (https://startme.stark4n6.com)
+# Fix path, add Drafts and User details
 
 import os
 import sqlite3

@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0612,W0613,W1309
 __artifacts_v2__ = {
     "get_wifiProfiles": {
         "name": "wifiProfiles",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "wifi",
     }
 }
-# pylint: disable=W0611,W0612,W0613,W1309
-
 
 import os
 import xml.etree.ElementTree as ET

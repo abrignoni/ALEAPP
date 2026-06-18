@@ -1,15 +1,4 @@
-# K-9 Mail App (com.fsck.k9)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# Version: 0.0.1
-# 
-# Tested with the following versions:
-# 2024-05-04: Android 13, App: 6.802
-
-# Requirements:  datetime, json, base64
-
-
-
-
+# pylint: disable=W0611,W0612,W0613,W1309
 __artifacts_v2__ = {
 
     
@@ -27,9 +16,15 @@ __artifacts_v2__ = {
         "artifact_icon": "mail",
     }
 }
-# pylint: disable=W0611,W0612,W0613,W1309
 
+# K-9 Mail App (com.fsck.k9)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# Version: 0.0.1
+# 
+# Tested with the following versions:
+# 2024-05-04: Android 13, App: 6.802
 
+# Requirements:  datetime, json, base64
 import datetime
 import json
 import base64

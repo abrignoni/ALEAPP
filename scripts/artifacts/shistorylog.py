@@ -1,7 +1,3 @@
-# Samsung Android History Log
-# Author:  Alexis Brignoni (linqapp.com/abrignoni)
-
-
 __artifacts_v2__ = {
     
     "history_log": {
@@ -18,6 +14,9 @@ __artifacts_v2__ = {
         "artifact_icon": "database"
     }
 }
+
+# Samsung Android History Log
+# Author:  Alexis Brignoni (linqapp.com/abrignoni)
 from datetime import datetime, timezone
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
@@ -53,5 +52,3 @@ def history_log(files_found, _report_folder, _seeker, _wrap_text):
     data_headers = ( ('Timestamp', 'datetime'), 'ID', 'Tag', 'Message')
 
     return data_headers, data_list, files_found[0]
-
-

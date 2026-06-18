@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "get_TripEvents": {
         "name": "Life360 Driver Behavior Trip Events and Waypoints",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
-# pylint: disable=W0611,W0613
-
 
 import json
 import os

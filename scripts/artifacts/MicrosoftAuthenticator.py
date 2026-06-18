@@ -1,15 +1,4 @@
-# Microsoft Authenticator (com.azure.authenticator)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# Version: 0.0.1
-# 
-# Tested with the following versions:
-# 2024-05-11: Android 14, App: 6.2404.2229
-
-# Requirements: -
-
-
-
-
+# pylint: disable=W0612,W0613,W1309
 __artifacts_v2__ = {
 
     
@@ -27,10 +16,15 @@ __artifacts_v2__ = {
         "artifact_icon": "shield",
     }
 }
-# pylint: disable=W0612,W0613,W1309
 
+# Microsoft Authenticator (com.azure.authenticator)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# Version: 0.0.1
+# 
+# Tested with the following versions:
+# 2024-05-11: Android 14, App: 6.2404.2229
 
-
+# Requirements: -
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 

@@ -1,13 +1,3 @@
-# Withings Health Mate App (com.withings.wiscale2)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# Version: 0.0.2
-# 
-# Tested with the following versions:
-# 2020-10-09: Android 6, App: 5.1.4
-# 2024-04-20: Android 13, App: 6.3.1
-
-# Requirements:  datetime
-
 __artifacts_v2__ = {
 
     
@@ -105,6 +95,15 @@ __artifacts_v2__ = {
     }
 }
 
+# Withings Health Mate App (com.withings.wiscale2)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# Version: 0.0.2
+# 
+# Tested with the following versions:
+# 2020-10-09: Android 6, App: 5.1.4
+# 2024-04-20: Android 13, App: 6.3.1
+
+# Requirements:  datetime
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records

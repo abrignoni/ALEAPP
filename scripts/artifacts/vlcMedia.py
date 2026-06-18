@@ -1,3 +1,4 @@
+# pylint: disable=E0602,W0611,W0613,W0631
 __artifacts_v2__ = {
     "get_vlcMedia": {
         "name": "VLC",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "image",
     }
 }
-# pylint: disable=E0602,W0611,W0613,W0631
-
 
 import sqlite3
 import os

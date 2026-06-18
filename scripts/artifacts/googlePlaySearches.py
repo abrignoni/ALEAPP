@@ -1,3 +1,4 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "GooglePlaySearches": {
         "name": "Google Play Searches",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         'artifact_icon': 'search'
     }
 }
-# pylint: disable=W0613
-
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
 

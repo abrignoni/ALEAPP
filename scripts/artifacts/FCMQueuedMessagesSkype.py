@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "get_fcm_skype": {
         "name": "FCM_Skype",
@@ -14,8 +15,6 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0611,W0613
-
 
 """
 Copyright 2022, CCL Forensics
@@ -374,4 +373,3 @@ def get_fcm_skype(files_found, report_folder, seeker, wrap_text, mode):
         scripts.ilapfuncs.timeline(report_folder, report_name, notification_rows, notification_table_header)
     else:
         scripts.ilapfuncs.logfunc(f"No FCM {app_name} other notifications found")
-

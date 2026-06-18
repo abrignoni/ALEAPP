@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0612,W0613,W0718
 __artifacts_v2__ = {
     "contacts": {
         "name": "Contacts",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "users",
     }
 }
-# pylint: disable=W0611,W0612,W0613,W0718
-
 
 import os
 import datetime

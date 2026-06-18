@@ -1,3 +1,4 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_fcm_xbox": {
         "name": "FCM_XBox",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "database",
     }
 }
-# pylint: disable=W0613
-
 
 """
 Copyright 2022, CCL Forensics
@@ -166,4 +165,3 @@ def get_fcm_xbox(files_found, report_folder, seeker, wrap_text):
         )
     if not message_rows and not party_rows and not presence_rows:
         scripts.ilapfuncs.logfunc("No Xbox FCM data found")
-

@@ -1,3 +1,4 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_fcm_instagram": {
         "name": "FCM_Instagram",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "database",
     }
 }
-# pylint: disable=W0613
-
 
 """
 Copyright 2022, CCL Forensics
@@ -86,4 +85,3 @@ def get_fcm_instagram(files_found, report_folder, seeker, wrap_text):
             scripts.ilapfuncs.timeline(report_folder, report_name, rows, data_headers)
         else:
             scripts.ilapfuncs.logfunc("No FCM Instagram notifications found")
-

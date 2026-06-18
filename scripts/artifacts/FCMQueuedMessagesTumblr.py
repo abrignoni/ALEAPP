@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613,W1309
 __artifacts_v2__ = {
     "get_fcm_instagram": {
         "name": "FCM Tumblr",
@@ -13,7 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0612,W0613,W1309
 
 
 """

@@ -1,3 +1,4 @@
+# pylint: disable=W0404,W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_vlcthumbsADB": {
         "name": "VLC Thumbs ADB",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "image",
     }
 }
-# pylint: disable=W0404,W0611,W0613,W1309
-
 
 import os
 import datetime

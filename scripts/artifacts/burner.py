@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_burner": {
         "name": "Burner",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "shield",
     }
 }
-# pylint: disable=W0611,W0613,W1309
 
+# Burner
+# Author:  Josh Hickman (josh@thebinaryhick.blog)
+# Date 2021-02-05
+# Version: 0.1
+# Requirements:  None
 
 import os
 import sqlite3

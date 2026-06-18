@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0612,W0613
 __artifacts_v2__ = {
     "get_installedappsLibrary": {
         "name": "InstalledappsLibrary",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "package",
     }
 }
-# pylint: disable=W0611,W0612,W0613
-
 
 import sqlite3
 from pathlib import Path

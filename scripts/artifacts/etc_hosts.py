@@ -1,3 +1,4 @@
+# pylint: disable=W0311,W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_etc_hosts": {
         "name": "Etc_hosts",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
     }
 }
-# pylint: disable=W0311,W0611,W0613,W1309
-
 
 import codecs
 import csv

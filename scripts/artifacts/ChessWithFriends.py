@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_ChessWithFriends": {
         "name": "Chess With Friends",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "grid",
     }
 }
-# pylint: disable=W0611,W0613,W1309
-
 
 import sqlite3
 import textwrap
@@ -65,9 +64,3 @@ def get_ChessWithFriends(files_found, report_folder, seeker, wrap_text):
     
     db.close()
     
-__artifacts__ = {
-        "ChessWithFriends": (
-                "Chats",
-                ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite', '*/data/com.zynga.chess.googleplay/db/wf_database.sqlite'),
-                get_ChessWithFriends)
-}

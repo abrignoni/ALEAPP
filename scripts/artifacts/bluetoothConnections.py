@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0612,W0613,W0702,W1309,W1514
 __artifacts_v2__ = {
     "get_bluetoothConnections": {
         "name": "Bluetooth Connections",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "wifi",
     }
 }
-# pylint: disable=W0611,W0612,W0613,W0702,W1309,W1514
-
 
 import csv
 import datetime

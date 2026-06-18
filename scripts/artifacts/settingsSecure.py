@@ -1,3 +1,4 @@
+# pylint: disable=W0311,W0611,W0612,W0613,W1309,W1514
 __artifacts_v2__ = {
     "get_settingsSecure": {
         "name": "settingsSecure",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "settings",
     }
 }
-# pylint: disable=W0311,W0611,W0612,W0613,W1309,W1514
-
 
 import glob
 import json

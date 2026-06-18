@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "get_installedappsGass": {
         "name": "installedappsGass",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "package",
     }
 }
-# pylint: disable=W0611,W0613
-
 
 import sqlite3
 

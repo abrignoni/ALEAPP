@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "get_ChessComAccount": {
         "name": "Chess.com Account",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "grid",
     }
 }
-# pylint: disable=W0611,W0613
-
 
 import sqlite3
 import textwrap
@@ -65,12 +64,3 @@ def get_ChessComAccount(files_found, report_folder, seeker, wrap_text):
     report.end_artifact_report()
     
     tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-        "ChessComAcct": (
-                "Chess.com",
-                ('*/com.chess/shared_prefs/com.chess.app.login_credentials.xml', '*/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
-                get_ChessComAccount)
-}
- 
-

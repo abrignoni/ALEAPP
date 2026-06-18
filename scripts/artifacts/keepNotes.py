@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "get_keepNotes": {
         "name": "Google Keep Notes",
@@ -15,8 +16,6 @@ __artifacts_v2__ = {
         "function": "get_keepNotes"
     }
 }
-# pylint: disable=W0611,W0613
-
 
 import sqlite3
 import datetime

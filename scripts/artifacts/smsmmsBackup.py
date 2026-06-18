@@ -1,3 +1,4 @@
+# pylint: disable=W0631,W1309
 __artifacts_v2__ = {
     "get_sms_mms_from_backup": {
         "name": "sms_mms_backup",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0631,W1309
-
 
 import datetime
 import json

@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0622,W1309
 __artifacts_v2__ = {
     "get_nike_activMoments": {
         "name": "NikeActivityMoments",
@@ -13,9 +14,13 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0613,W0622,W1309
 
-
+# Get Information relative to the activity moments that are present in the database (com.nike.nrc.room) from the Nike Run app
+# Present the data in a timeline using timeline JS
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-18
+# Version: 1.0
+# Requirements: Python 3.7 or higher
 import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -120,4 +125,3 @@ def get_nike_activMoments(files_found, report_folder, seeker, wrap_text):
         logfunc('No Nike Activities data available')
 
     db.close()
-

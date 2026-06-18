@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_map_users": {
         "name": "MapUsers",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
-# pylint: disable=W0613,W1309
 
+# Get Information related to the user from the Map My Walk app
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-25
+# Version: 1.0
+# Requirements: Python 3.7 or higher
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -69,4 +74,3 @@ def get_map_users(files_found, report_folder, seeker, wrap_text):
         logfunc('No Map My Walk Users data available')
 
     db.close()
-

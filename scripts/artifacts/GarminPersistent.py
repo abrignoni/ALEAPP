@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309,W1514
 __artifacts_v2__ = {
     "get_presisted": {
         "name": "GarminPresistent",
@@ -13,9 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0613,W1309,W1514
 
-
+# Get Information stored in the Garmin Persistent json file
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher, json and datetime
 import datetime
 import json
 
@@ -60,4 +64,3 @@ def get_presisted(files_found, report_folder, seeker, wrap_text):
         tsv(report_folder, data_headers, data_list, tsvname)
     else:
         logfunc("No Garmin Presistent data found")
-

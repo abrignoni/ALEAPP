@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_permissions": {
         "name": "permissions",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "settings",
     }
 }
-# pylint: disable=W0613,W1309
-
 
 import xml.etree.ElementTree as ET 
 

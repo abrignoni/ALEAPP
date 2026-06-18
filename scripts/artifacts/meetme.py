@@ -1,4 +1,4 @@
-#Update line 3-13
+# pylint: disable=W0611,W0613,W0631
 __artifacts_v2__ = {
     "get_meetmechats": {
         "name": "MeetMe Chats",
@@ -14,9 +14,8 @@ __artifacts_v2__ = {
         "artifact_icon": "users",
     }
 }
-# pylint: disable=W0611,W0613,W0631
 
-
+#Update line 3-13
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport

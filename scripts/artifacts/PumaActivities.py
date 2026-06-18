@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0622,W1309,W1514
 __artifacts_v2__ = {
     "get_puma_activities": {
         "name": "PumaActivities",
@@ -13,9 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0613,W0622,W1309,W1514
 
-
+# Get Information related to the activities of the user from the PumaTrack app (com.puma.track)
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-25
+# Version: 1.0
+# Requirements: Python 3.7 or higher, folium
 import datetime
 import json
 import os
@@ -267,4 +271,3 @@ def get_puma_activities(files_found, report_folder, seeker, wrap_text):
     if use_network:
         conn.close()
     db.close()
-

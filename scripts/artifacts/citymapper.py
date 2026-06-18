@@ -1,12 +1,4 @@
-# Citymapper App (com.citymapper.app.release)
-# Author : Funeoz
-# Version : 0.0.1
-
-# Tested with the following versions:
-# 2025-12-12: Android 12.0, App: 11.43.2
-
-# Requirements: Python 3.7 or higher, folium
-
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_citymapperLocationHistory" : {
         "name": "Citymapper - Location History",
@@ -50,9 +42,15 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
-# pylint: disable=W0718
 
+# Citymapper App (com.citymapper.app.release)
+# Author : Funeoz
+# Version : 0.0.1
 
+# Tested with the following versions:
+# 2025-12-12: Android 12.0, App: 11.43.2
+
+# Requirements: Python 3.7 or higher, folium
 import os
 import folium
 import xml.etree.ElementTree as ET

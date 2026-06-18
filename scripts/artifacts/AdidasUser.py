@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0613,W1309
 __artifacts_v2__ = {
     "get_adidas_user": {
         "name": "AdidasUser",
@@ -14,23 +15,18 @@ __artifacts_v2__ = {
     }
 }
 
+# Get Information related to users from the Adidas Running app stored in user.db
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher
 import datetime
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_adidas_user(files_found, report_folder, _seeker, _wrap_text):
-    user_id = None
-    height = None
-    weight = None
-    country = None
-    gender = None
-    email = None
-    image = None
-    my_fitness_pal = None
-    garmin_connect = None
-    polar = None
+def get_adidas_user(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Adidas User")
     files_found = [x for x in files_found if not x.endswith('-journal')]
     file_found = str(files_found[0])
@@ -102,14 +98,13 @@ def get_adidas_user(files_found, report_folder, _seeker, _wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id, html_escape=False)
         report.end_artifact_report()
 
-        tsvname = 'Adidas - User'
+        tsvname = f'Adidas - User'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = 'Adidas - User'
+        tlactivity = f'Adidas - User'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
         logfunc('No Adidas User data available')
 
     db.close()
-

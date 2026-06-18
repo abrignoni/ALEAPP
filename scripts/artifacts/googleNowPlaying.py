@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0611,W0612,W0613,W1309
 __artifacts_v2__ = {
     "get_googleNowPlaying": {
         "name": "GoogleNowPlaying",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "chrome",
     }
 }
-# pylint: disable=E0606,W0611,W0612,W0613,W1309
-
 
 import blackboxprotobuf
 import json

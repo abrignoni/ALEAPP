@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_garmin_response": {
         "name": "GarminResponse",
@@ -13,9 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0613,W1309
 
-
+# Get Information related to the Garmin - Responses stored in the database cache
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher and json
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -83,4 +87,3 @@ def get_garmin_response(files_found, report_folder, seeker, wrap_text):
         logfunc('No Garmin Response data available')
 
     db.close()
-

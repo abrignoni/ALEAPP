@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0622,W1309
 __artifacts_v2__ = {
     "get_sms_mms": {
         "name": "sms_mms",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0611,W0622,W1309
-
 
 import os
 import shutil

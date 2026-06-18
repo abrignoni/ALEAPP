@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_garmin_json": {
         "name": "GarminJson",
@@ -13,9 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0613,W1309
 
-
+# Get JSON information from the Garmin GCM database
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher and json module
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -90,4 +94,3 @@ def get_garmin_json(files_found, report_folder, seeker, wrap_text):
         logfunc('No Garmin JSON data available')
 
     db.close()
-

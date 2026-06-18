@@ -1,9 +1,4 @@
 # pylint: disable=W0611,W0613,W0702,W1309
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
-import scripts.artifacts.artGlobals as aG
-from packaging import version
-
 __artifacts_v2__ = {
     "get_smyfiles_OpHistory": {
         "name": "My Files Operation History",
@@ -20,7 +15,10 @@ __artifacts_v2__ = {
     }
 }
 
-
+from scripts.artifact_report import ArtifactHtmlReport
+from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+import scripts.artifacts.artGlobals as aG
+from packaging import version
 # database locations found at
 # /data/data/com.sec.android.app.myfiles/databases/OperationHistory.db
 # /data/user/150/com.sec.android.app.myfiles/databases/OperationHistory.db
@@ -130,4 +128,3 @@ def get_smyfiles_OpHistory(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc('No My Files DB Operation History data available')
-

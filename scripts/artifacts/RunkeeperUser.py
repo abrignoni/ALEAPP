@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309,W1514
 __artifacts_v2__ = {
     "get_run_user": {
         "name": "RunkeeperUser",
@@ -13,9 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "user",
     }
 }
-# pylint: disable=W0613,W1309,W1514
 
-
+# Get User information from the xml file com.fitnesskeeper.runkeeper.pro_preferences.xml in the Runkeeper app related to the user
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-25
+# Version: 1.0
+# Requirements: Python 3.7 or higher and ElementTree
 import datetime
 import xml.etree.ElementTree as ET
 
@@ -90,4 +94,3 @@ def get_run_user(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc("No Runkeeper XML data found")
-

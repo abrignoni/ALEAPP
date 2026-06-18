@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_kijijiConversations": {
         "name": "kijijiConversations",
@@ -13,9 +14,21 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
     }
 }
-# pylint: disable=W0613,W1309
 
-
+# Kijiji Conversations
+# Author:  Terry Chabot (Krypterry)
+# Version: 1.0.2
+# Kijiji App Version Tested: v17.5.0b172 (2022-05-06)
+# Requirements:  None
+#
+#   Description:
+#   Obtains individual chat messages that were sent and received using the Kijiji application.
+#
+#   Additional Info:
+#       Kijiji.ca is a Canadian online classified advertising website and part of eBay Classifieds Group, with over 16 million unique visitors per month.
+#
+#       Kijiji, May 2022 <https://help.kijiji.ca/helpdesk/basics/what-is-kijiji>
+#       Wikipedia - The Free Encyclopedia, May 2022, <https://en.wikipedia.org/wiki/Kijiji>
 import sqlite3
 import json
 

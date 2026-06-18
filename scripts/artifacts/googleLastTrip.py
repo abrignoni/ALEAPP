@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0107,W0301,W0401,W0611,W0612,W0613,W0614,W1309
 __artifacts_v2__ = {
     "get_googleLastTrip": {
         "name": "googleLastTrip",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
-# pylint: disable=E0606,W0107,W0301,W0401,W0611,W0612,W0613,W0614,W1309
-
 
 import blackboxprotobuf
 from datetime import *

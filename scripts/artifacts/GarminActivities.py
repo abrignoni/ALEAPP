@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_garmin_activities": {
         "name": "GarminActivities",
@@ -13,9 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0613,W1309
 
-
+# Get Information relative to the user activities that are present in the database (cache-database) from the Garmin Connect app, the activities are stored in two different tables (activities_details and activities_summaries)
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher and json
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -145,4 +149,3 @@ def get_garmin_activities(files_found, report_folder, seeker, wrap_text):
         logfunc('No Garmin Activities data available')
 
     db.close()
-

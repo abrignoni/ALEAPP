@@ -1,8 +1,3 @@
-# Android Samsung Device Health Management Service SDHMS (com.sec.android.sdhms)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-#
-# Requirements:
-
 __artifacts_v2__ = {
   
     "sdhms_config_reloads": {
@@ -60,6 +55,10 @@ __artifacts_v2__ = {
 
 }
 
+# Android Samsung Device Health Management Service SDHMS (com.sec.android.sdhms)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+#
+# Requirements:
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
 
 @artifact_processor

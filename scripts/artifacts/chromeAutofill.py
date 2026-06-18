@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_chromeAutofill": {
         "name": "Chrome Autofill",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
     }
 }
-# pylint: disable=W0611,W0613,W1309
-
 
 import os
 import sqlite3
@@ -161,10 +160,3 @@ def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
             logfunc(f'No {browser_name} - Autofill - Profiles data available')
         
         db.close()
-
-__artifacts__ = {
-        "ChromeAutofill": (
-                "Chromium",
-                ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
-                get_chromeAutofill)
-}

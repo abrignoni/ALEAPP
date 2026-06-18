@@ -1,3 +1,4 @@
+# pylint: disable=W0311,W0611,W0613,W0702,W1309,W1514
 __artifacts_v2__ = {
     "get_protonVPN": {
         "name": "protonVPN User",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "user",
     }
 }
-# pylint: disable=W0311,W0611,W0613,W0702,W1309,W1514
-
 
 import os
 import re

@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0631,W0702,W1309
 __artifacts_v2__ = {
     "get_blueskymessages": {
         "name": "Bluesky",
@@ -13,7 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0611,W0613,W0631,W0702,W1309
 
 import os
 import json

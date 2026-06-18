@@ -1,14 +1,3 @@
-# FairCode FairEmail App (eu.faircode.email)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# 
-# Tested with the following versions:
-# 2024-04-20: Android 14, App: 1.2178
-
-# Requirements: os
-
-
-
-
 __artifacts_v2__ = {
 
     
@@ -56,6 +45,13 @@ __artifacts_v2__ = {
     }
 }
 
+# FairCode FairEmail App (eu.faircode.email)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# 
+# Tested with the following versions:
+# 2024-04-20: Android 14, App: 1.2178
+
+# Requirements: os
 import os
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, media_to_html

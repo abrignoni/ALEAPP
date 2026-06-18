@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0107,W0127,W0611,W0612,W0613,W0631,W1309
 __artifacts_v2__ = {
     "get_libretorrentFR": {
         "name": "LibretorrentFR",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "download",
     }
 }
-# pylint: disable=E0606,W0107,W0127,W0611,W0612,W0613,W0631,W1309
-
 
 import sqlite3
 import textwrap

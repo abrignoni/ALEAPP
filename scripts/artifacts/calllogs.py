@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0718,W1309
 __artifacts_v2__ = {
     "get_calllogs": {
         "name": "Call Logs",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "phone",
     }
 }
-# pylint: disable=W0611,W0613,W0718,W1309
-
 
 import os
 import sqlite3

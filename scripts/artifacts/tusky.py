@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0612,W0613,W1309
 __artifacts_v2__ = {
     "get_tusky": {
         "name": "Tusky",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0611,W0612,W0613,W1309
 
+# Module Description: Parses Tusky timeline, notifications and searches
+# Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
+# Date: 2022-12-12
+# Artifact version: 0.0.1
+# Requirements: BeautifulSoup
 
 import datetime
 import json

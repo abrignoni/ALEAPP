@@ -495,5 +495,3 @@ def get_WhatsApp(files_found, report_folder, seeker, _wrap_text):
 
                 else:
                     logfunc("No WhatsApp - Profile data found")
-
-

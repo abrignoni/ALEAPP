@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "get_Cello": {
         "name": "Cello",
@@ -16,6 +17,9 @@ __artifacts_v2__ = {
 
 import os
 import shutil
+import sqlite3
+import textwrap
+
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, get_next_unused_name, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
@@ -30,7 +34,7 @@ def get_offline_path(files_found, blob_name):
             return file_found
     return ''
 
-def get_Cello(files_found, report_folder, _seeker, _wrap_text):
+def get_Cello(files_found, report_folder, seeker, wrap_text):
     
     data_list = []
     tsv_list = []

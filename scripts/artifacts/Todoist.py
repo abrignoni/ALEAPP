@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0631,W1309
 __artifacts_v2__ = {
     "get_Todoist": {
         "name": "Todoist",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "file-text",
     }
 }
-# pylint: disable=W0611,W0613,W0631,W1309
 
+# Todoist - Parses items, notes and projects
+# Author:  Kevin Pagano (https://startme.stark4n6.com)
+# Date 2023-04-26
+# Version: 0.1
+# Requirements:  None
 
 import sqlite3
 import textwrap

@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613,W1309
 __artifacts_v2__ = {
     "get_garmin_spo2": {
         "name": "GarminSPO2",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0612,W0613,W1309
 
+# Get Information related to Garmin Pulse Ox from acclimation_pulse_ox_details table and generate a chart
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -130,4 +135,3 @@ def get_garmin_spo2(files_found, report_folder, seeker, wrap_text):
         logfunc('No Garmin SPO2 data available')
 
     db.close()
-

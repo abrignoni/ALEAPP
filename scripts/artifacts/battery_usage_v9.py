@@ -1,13 +1,4 @@
-# Android Settings Services -  Battery Usages v9 (com.android.settings)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# Version: 0.0.2
-# 
-# Tested with the following versions/devices:
-# 2024-05-19: Android 14 - Fairphone3 and Fairphone 4
-
-
-# Requirements: re, blackboxprotobuf
-
+# pylint: disable=W0311,W0611,W0612,W0613,W0702,W1309
 __artifacts_v2__ = {
 
     
@@ -37,9 +28,16 @@ __artifacts_v2__ = {
         "artifact_icon": "battery",
     }
 }
-# pylint: disable=W0311,W0611,W0612,W0613,W0702,W1309
+
+# Android Settings Services -  Battery Usages v9 (com.android.settings)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# Version: 0.0.2
+# 
+# Tested with the following versions/devices:
+# 2024-05-19: Android 14 - Fairphone3 and Fairphone 4
 
 
+# Requirements: re, blackboxprotobuf
 import re
 import blackboxprotobuf
 import base64

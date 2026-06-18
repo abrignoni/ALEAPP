@@ -1,12 +1,3 @@
-# Module Description: Parses Fitbit data from Android (Phone) and Wear OS (Watch)
-
-import json
-import folium 
-import os
-
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, kmlgen, timeline, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
-
 __artifacts_v2__ = {
     "get_fitbit": {
         "name": "Fitbit Smartphone Data",
@@ -35,6 +26,14 @@ __artifacts_v2__ = {
     }
 }
 
+# Module Description: Parses Fitbit data from Android (Phone) and Wear OS (Watch)
+
+import json
+import folium 
+import os
+
+from scripts.artifact_report import ArtifactHtmlReport
+from scripts.ilapfuncs import logfunc, tsv, kmlgen, timeline, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 def get_fitbit(files_found, report_folder, _seeker, _wrap_text):
     
     file_found_activity = ''

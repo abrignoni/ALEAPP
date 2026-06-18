@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309,W1514
 __artifacts_v2__ = {
     "get_garminUP": {
         "name": "GarminUser",
@@ -13,9 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "user",
     }
 }
-# pylint: disable=W0613,W1309,W1514
 
-
+# Get User information from gcm_user_reference.xml file from Garmin Connect shared preferences
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher and ElementTree
 import xml.etree.ElementTree as ET
 
 
@@ -80,4 +84,3 @@ def get_garminUP(files_found, report_folder, seeker, wrap_text):
         timeline(report_folder, tlactivity, data_list, data_headers)
     else:
         logfunc("No Garmin XML data found")
-

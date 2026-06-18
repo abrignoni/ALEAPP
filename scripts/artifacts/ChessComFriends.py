@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "get_ChessComFriends": {
         "name": "ChessComFriends",
@@ -15,10 +16,12 @@ __artifacts_v2__ = {
 }
 
 import sqlite3
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import tsv
+import textwrap
 
-def get_ChessComFriends(files_found, report_folder, _seeker, _wrap_text):
+from scripts.artifact_report import ArtifactHtmlReport
+from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
+
+def get_ChessComFriends(files_found, report_folder, seeker, wrap_text):
     
     title = "Chess.com Friends"
 

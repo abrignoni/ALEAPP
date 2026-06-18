@@ -1,3 +1,4 @@
+# pylint: disable=W0511,W0612,W0613,W1309
 __artifacts_v2__ = {
     "get_quicksearch": {
         "name": "Quicksearch",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "search",
     }
 }
-# pylint: disable=W0511,W0612,W0613,W1309
-
 
 import blackboxprotobuf
 import datetime

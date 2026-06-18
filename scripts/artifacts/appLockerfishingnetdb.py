@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_appLockerfishingnetdb": {
         "name": "App Locker DB",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "image",
     }
 }
-# pylint: disable=W0611,W0613,W1309
-
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows

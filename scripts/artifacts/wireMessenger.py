@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0107,W0120,W0613
 __artifacts_v2__ = {
     "get_wire_profile": {
         "name": "Wire User Profile",
@@ -37,8 +38,6 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=E0606,W0107,W0120,W0613
-
 
 #get the modules required
 import re

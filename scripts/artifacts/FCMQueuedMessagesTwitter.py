@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "get_fcm_twitter": {
         "name": "FCM_Twitter",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "database",
     }
 }
-# pylint: disable=W0611,W0613
-
 
 """
 Copyright 2022, CCL Forensics
@@ -154,4 +153,3 @@ def get_fcm_twitter(files_found, report_folder, seeker, wrap_text):
 
     scripts.ilapfuncs.logfunc("Un-processed 'channels' (contact R&D if you think these are required for your case):")
     scripts.ilapfuncs.logfunc("\n".join(channels))
-

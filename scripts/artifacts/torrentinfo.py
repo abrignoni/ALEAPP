@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0631,W0702,W0718
 __artifacts_v2__ = {
     "get_torrentinfo": {
         "name": "torrentinfo",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "download",
     }
 }
-# pylint: disable=W0611,W0613,W0631,W0702,W0718
-
 
 import bencoding
 import hashlib

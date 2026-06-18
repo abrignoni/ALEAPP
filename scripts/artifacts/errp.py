@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0611,W0613,W1309,W1514
 __artifacts_v2__ = {
     "get_errp": {
         "name": "Errp",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
     }
 }
-# pylint: disable=E0606,W0611,W0613,W1309,W1514
-
 
 import os
 from scripts.artifact_report import ArtifactHtmlReport

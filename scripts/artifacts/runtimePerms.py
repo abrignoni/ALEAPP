@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0613
 __artifacts_v2__ = {
     "get_runtimePerms": {
         "name": "runtimePerms",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=E0606,W0613
-
 
 import xml.etree.ElementTree as ET 
 

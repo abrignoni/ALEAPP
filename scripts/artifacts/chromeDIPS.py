@@ -14,6 +14,13 @@ __artifacts_v2__ = {
     }
 }
 
+# Module Description: Parses Chromium DIPS (Detect Incidental Party State)
+# Author: @KevinPagano3
+# Date: 2023-04-07
+# Artifact version: 0.0.1
+# Requirements: none
+# Thanks to Ryan Benson for awareness https://github.com/obsidianforensics/hindsight/pull/146/commits/015ee189c97c0a4e48deb59568dfe4f536ace8aa
+
 import os
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, get_next_unused_name, open_sqlite_db_readonly

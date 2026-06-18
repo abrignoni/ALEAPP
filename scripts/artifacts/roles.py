@@ -1,3 +1,4 @@
+# pylint: disable=E0601,E0606,W0611,W0613
 __artifacts_v2__ = {
     "get_roles": {
         "name": "roles",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "package",
     }
 }
-# pylint: disable=E0601,E0606,W0611,W0613
-
 
 import xml.etree.ElementTree as ET 
 

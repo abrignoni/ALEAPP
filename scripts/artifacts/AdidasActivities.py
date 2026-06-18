@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0702,W1309,W1514
 __artifacts_v2__ = {
     "get_adidas_activities": {
         "name": "Adidas Activities",
@@ -6,16 +7,19 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-24",
         "last_update_date": "2023-03-24",
         "requirements": "Python 3.7 or higher, json, polyline, folium",
-        "category": "Adidas Running",
+        "category": "Adidas-Running",
         "notes": "",
         "paths": ('*/com.runtastic.android/databases/db*',),
         "output_types": None,
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0718,W1514
 
-
+# Get Information relative to the user activities that are present in the database (db) from the Adidas Running app, the activities are stored the table (session)
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher, json, polyline, folium
 import json
 import os
 import sqlite3
@@ -28,7 +32,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, check_raw_fields, get_raw_fields, check_internet_connection
 
 
-def get_adidas_activities(files_found, report_folder, _seeker, _wrap_text):
+def get_adidas_activities(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Adidas Activities")
     use_network = check_internet_connection()
     if use_network:
@@ -92,7 +96,7 @@ def get_adidas_activities(files_found, report_folder, _seeker, _wrap_text):
                 # logfunc(f"Polyline: {poly}")
                 try:
                     coordinates = polyline.decode(poly)
-                except Exception:
+                except:
                     logfunc(f"Polyline: {poly} could not be decoded")
                     poly = None
                     break
@@ -100,10 +104,10 @@ def get_adidas_activities(files_found, report_folder, _seeker, _wrap_text):
                 place_lon = []
                 if use_network:
                     if os.name == 'nt':
-                        f = open(report_folder + "\\" + str(row[0], encoding='utf-8') + ".xlsx", "w")
+                        f = open(report_folder + "\\" + str(row[0]) + ".xlsx", "w")
                         workbook = xlsxwriter.Workbook(report_folder + "\\" + str(row[0]) + ".xlsx")
                     else:
-                        f = open(report_folder + "/" + str(row[0], encoding='utf-8') + ".xlsx", "w")
+                        f = open(report_folder + "/" + str(row[0]) + ".xlsx", "w")
                         workbook = xlsxwriter.Workbook(report_folder + "/" + str(row[0]) + ".xlsx")
                     worksheet = workbook.add_worksheet()
                     rowE = 0
@@ -231,11 +235,11 @@ def get_adidas_activities(files_found, report_folder, _seeker, _wrap_text):
                 # remove extra indentation
                 kml = kml.replace("    ", "")
                 if os.name == 'nt':
-                    with open(report_folder + '\\' + str(row[0], encoding='utf-8') + '.kml', 'w') as f:
+                    with open(report_folder + '\\' + str(row[0]) + '.kml', 'w') as f:
                         f.write(kml)
                         f.close()
                 else:
-                    with open(report_folder + '/' + str(row[0], encoding='utf-8') + '.kml', 'w') as f:
+                    with open(report_folder + '/' + str(row[0]) + '.kml', 'w') as f:
                         f.write(kml)
                         f.close()
 
@@ -271,10 +275,10 @@ def get_adidas_activities(files_found, report_folder, _seeker, _wrap_text):
             report.add_map(htmlMap)
         report.end_artifact_report()
 
-        tsvname = 'Adidas - Activities'
+        tsvname = f'Adidas - Activities'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = 'Adidas - Activities'
+        tlactivity = f'Adidas - Activities'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
@@ -283,5 +287,3 @@ def get_adidas_activities(files_found, report_folder, _seeker, _wrap_text):
     if use_network:
         conn.close()
     db.close()
-
-

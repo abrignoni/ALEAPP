@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_googlemapaudio": {
         "name": "Googlemapaudio",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
-# pylint: disable=W0611,W0613,W1309
-
 
 from re import fullmatch
 from datetime import datetime

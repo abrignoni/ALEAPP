@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0718,W1309
 __artifacts_v2__ = {
     "get_rdd_wifi": {
         "name": "VerizonRDD-WIFI",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "wifi",
     }
 }
-# pylint: disable=W0611,W0613,W0718,W1309
 
+# Module Description: Parses Verizon RDD Wifi Data
+# Author: John Hyla
+# Date: 2023-07-07
+# Artifact version: 0.0.1
+# Requirements: none
 
 import os
 import sqlite3
@@ -72,4 +77,3 @@ def get_rdd_wifi(files_found, report_folder, seeker, wrap_text):
         db.close()
     
     return
-

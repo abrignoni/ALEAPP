@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613
 __artifacts_v2__ = {
     "googlevoice_accounts": {
         "name": "Google Voice - User Accounts",
@@ -52,8 +53,6 @@ __artifacts_v2__ = {
         "artifact_icon": "user",
     }
 }
-# pylint: disable=W0612,W0613
-
 
 import blackboxprotobuf
 import os

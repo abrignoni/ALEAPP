@@ -1,3 +1,4 @@
+# pylint: disable=E1101,W0401,W0612,W0613,W0614,W0631,W0718,W1309
 __artifacts_v2__ = {
     "get_notificationHistory": {
         "name": "Android Notification History",
@@ -15,9 +16,6 @@ __artifacts_v2__ = {
         "output_types": None,
     }
 }
-# pylint: disable=E1101,W0401,W0612,W0613,W0614,W0631,W0718,W1309
-
-
 
 import xml.etree.ElementTree as ET
 from datetime import *

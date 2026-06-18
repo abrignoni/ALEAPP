@@ -1,3 +1,4 @@
+# pylint: disable=E0601,E0606,W0612,W0613,W0622,W1309,W1514
 __artifacts_v2__ = {
     "get_map_activities": {
         "name": "MapWalkActivities",
@@ -13,9 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
-# pylint: disable=E0601,E0606,W0612,W0613,W0622,W1309,W1514
 
-
+# Get Information related to the activities of the user from the Map My Walk app
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-25
+# Version: 1.0
+# Requirements: Python 3.7 or higher, folium
 import datetime
 import json
 import os
@@ -287,4 +291,3 @@ def get_map_activities(files_found, report_folder, seeker, wrap_text):
     if use_network:
         conn.close()
     db.close()
-

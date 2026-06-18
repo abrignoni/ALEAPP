@@ -1,3 +1,4 @@
+# pylint: disable=E0606,E1120,E1123,W0611,W0613,W0702,W0718
 __artifacts_v2__ = {
     "get_chatpgt2": {
         "name": "ChatGPT",
@@ -14,8 +15,6 @@ __artifacts_v2__ = {
         "artifact_icon": "loader",
     }
 }
-# pylint: disable=E0606,E1120,E1123,W0611,W0613,W0702,W0718
-
 
 import sqlite3
 import textwrap

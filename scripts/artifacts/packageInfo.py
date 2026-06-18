@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613,W0631,W1309,W1514
 __artifacts_v2__ = {
     "get_package_info": {
         "name": "package_info",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "package",
     }
 }
-# pylint: disable=W0612,W0613,W0631,W1309,W1514
-
 
 import datetime
 import os

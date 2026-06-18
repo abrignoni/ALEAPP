@@ -1,3 +1,4 @@
+# pylint: disable=E0606,E1101,W0120,W0611,W0613,W1514
 __artifacts_v2__ = {
     "get_vaulty_info": {
         "name": "vaulty_info",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "lock",
     }
 }
-# pylint: disable=E0606,E1101,W0120,W0611,W0613,W1514
-
 
 import xmltodict
 from hashlib import md5

@@ -1,8 +1,3 @@
-# Android Samsung Notes App (com.samsung.android.app.notes)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# Tested Version: 4.4.30.91
-
-
 __artifacts_v2__ = {
   
     "snotes": {
@@ -23,6 +18,9 @@ __artifacts_v2__ = {
 
 }
 
+# Android Samsung Notes App (com.samsung.android.app.notes)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# Tested Version: 4.4.30.91
 import os
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, media_to_html
 

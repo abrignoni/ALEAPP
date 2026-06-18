@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0631,W1309
 __artifacts_v2__ = {
     "get_wellbeing": {
         "name": "Digital Wellbeing",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "heart",
     }
 }
-# pylint: disable=W0611,W0613,W0631,W1309
-
 
 import os
 import sqlite3

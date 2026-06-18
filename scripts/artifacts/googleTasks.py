@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0611,W0613
 __artifacts_v2__ = {
     "get_googleTasks": {
         "name": "GoogleTasks",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "file-text",
     }
 }
-# pylint: disable=E0606,W0611,W0613
-
 
 import os
 import textwrap

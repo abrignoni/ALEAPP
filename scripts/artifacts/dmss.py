@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_dmss": {
         "name": "Dahua Technology (DMSS)",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "terminal",
     }
 }
-# pylint: disable=E0606,W0611,W0613,W1309
-
 
 """"
 Developed by Evangelos Dragonas (@theAtropos4n6)

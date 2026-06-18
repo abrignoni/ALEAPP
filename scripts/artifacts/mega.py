@@ -1,3 +1,4 @@
+# pylint: disable=W0311,W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_mega": {
         "name": "mega",
@@ -13,8 +14,13 @@ __artifacts_v2__ = {
         "artifact_icon": "download",
     }
 }
-# pylint: disable=W0311,W0611,W0613,W1309
 
+# MEGA
+# Author:  Kevin Pagano (@KevinPagano3)
+# Website: stark4n6.com
+# Date 2021-01-31
+# Version: 0.1
+# Requirements:  None
 
 import json
 import os

@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_garmin_sleep": {
         "name": "GarminSleep",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0613,W1309
 
+# Get Information relative to the sleep data in the database cache-database from the table sleep_detail in the Garmin Connect app
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -82,4 +87,3 @@ def get_garmin_sleep(files_found, report_folder, seeker, wrap_text):
         logfunc('No Garmin Sleep data available')
 
     db.close()
-

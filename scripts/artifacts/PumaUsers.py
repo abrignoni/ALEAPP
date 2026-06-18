@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_puma_users": {
         "name": "PumaUsers",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "user",
     }
 }
-# pylint: disable=W0613,W1309
 
+# Get Information related to the users table in the Puma Trac database
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-25
+# Version: 1.0
+# Requirements: Python 3.7 or higher
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -71,4 +76,3 @@ def get_puma_users(files_found, report_folder, seeker, wrap_text):
         logfunc('No Puma Users data available')
 
     db.close()
-

@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0631
 __artifacts_v2__ = {
     "clipboard": {
         "name": "Clipboard Data",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "clipboard",
     }
 }
-# pylint: disable=W0613,W0631
-
 
 import os
 import time

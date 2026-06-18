@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
     "get_chrome": {
         "name": "Chrome",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
     }
 }
-# pylint: disable=W0613,W0718
-
 
 import os
 import textwrap

@@ -1,3 +1,4 @@
+# pylint: disable=W0125,W0126,W0404,W0611,W0612,W0613,W0718,W1309
 __artifacts_v2__ = {
     "get_browserCachechrome": {
         "name": "browserCachechrome",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
     }
 }
-# pylint: disable=W0125,W0126,W0404,W0611,W0612,W0613,W0718,W1309
-
 
 import datetime
 import email

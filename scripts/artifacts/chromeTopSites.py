@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0702
 __artifacts_v2__ = {
     "get_chromeTopSites": {
         "name": "ChromeTopSites",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
     }
 }
-# pylint: disable=W0611,W0613,W0702
-
 
 import os
 import sqlite3

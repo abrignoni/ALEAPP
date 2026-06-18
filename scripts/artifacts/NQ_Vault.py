@@ -284,4 +284,3 @@ def get_NQVault(files_found, report_folder, seeker, wrap_text):
             return
     else:
         logfunc('No Database DB Found or no hashed PIN present.')
-

@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_nike_notifications": {
         "name": "NikeNotifications",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0613,W1309
 
+# Get Information relative to the notifications stored in the database of the Nike Run Club Mobile application
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-18
+# Version: 1.0
+# Requirements: Python 3.7 or higher
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -78,4 +83,3 @@ def get_nike_notifications(files_found, report_folder, seeker, wrap_text):
         logfunc('No Nike Notifications data available')
 
     db.close()
-

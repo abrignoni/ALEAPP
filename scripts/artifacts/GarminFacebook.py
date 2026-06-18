@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309,W1514
 __artifacts_v2__ = {
     "get_garminFB": {
         "name": "GarminFacebook USES INTERNET",
@@ -13,9 +14,13 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0613,W1309,W1514
 
-
+# Get Information relative to user Facebook account from the XML file in shared_prefs and tries to use the access token to get the user's profile picture
+# USES INTERNET CONNECTION
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher, ElementTree, json and datetime, http.client
 import datetime
 import http.client
 import json
@@ -127,4 +132,3 @@ def get_garminFB(files_found, report_folder, seeker, wrap_text):
             timeline(report_folder, tlactivity, data_list, data_headers)
         else:
             logfunc("No Garmin Facebook data found")
-

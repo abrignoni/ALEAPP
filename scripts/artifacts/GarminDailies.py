@@ -1,3 +1,4 @@
+# pylint: disable=W0311,W0613,W1309
 __artifacts_v2__ = {
     "get_garmin_dailies": {
         "name": "GarminDailies",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0311,W0613,W1309
 
+# Get Information from the table user_daily_summary from the cache-database in the Garmin Connect App
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
@@ -76,4 +81,3 @@ def get_garmin_dailies(files_found, report_folder, seeker, wrap_text):
         logfunc('No Garmin Dailies data available')
 
     db.close()
-

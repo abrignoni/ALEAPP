@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0401,W0611,W0613,W0614,W0622,W0702,W1309
 __artifacts_v2__ = {
     "get_googleMapsGmm": {
         "name": "Google Maps GMM",
@@ -14,8 +15,6 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
-# pylint: disable=E0606,W0401,W0611,W0613,W0614,W0622,W0702,W1309
-
 
 import os
 import sqlite3

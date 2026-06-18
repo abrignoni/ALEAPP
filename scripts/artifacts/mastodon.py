@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0311,W0611,W0612,W0613,W0631,W1309
 __artifacts_v2__ = {
     "get_mastodon": {
         "name": "mastodon",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=E0606,W0311,W0611,W0612,W0613,W0631,W1309
 
+# Module Description: Parses Mastodon timeline, notifications and searches
+# Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
+# Date: 2022-12-07
+# Artifact version: 0.0.3
+# Requirements: BeautifulSoup
 
 import datetime
 import json

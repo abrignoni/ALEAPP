@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0611,W0613,W0631
 __artifacts_v2__ = {
     "get_tikTok": {
         "name": "tikTok",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "users",
     }
 }
-# pylint: disable=E0606,W0611,W0613,W0631
-
 
 from os.path import dirname, join
 import sqlite3

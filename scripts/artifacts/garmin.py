@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613
 __artifacts_v2__ = {
     "get_garmin": {
         "name": "Garmin",
@@ -13,8 +14,11 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=W0611,W0613
 
+# Module Description: Parses the Garmin app for activities, connections and notifications
+# Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
+# Date: 2023-01-18
+# Artifact version: 0.0.1
 
 import calendar
 import os

@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_kijijiRecentSearches": {
         "name": "kijijiRecentSearches",
@@ -13,9 +14,21 @@ __artifacts_v2__ = {
         "artifact_icon": "search",
     }
 }
-# pylint: disable=W0613,W1309
 
-
+# Kijiji Local Recent Searches
+# Author:  Terry Chabot (Krypterry)
+# Version: 1.0.0
+# Kijiji App Version Tested: v17.5.0b172 (2022-05-06)
+# Requirements:  None
+#
+#   Description:
+#   Obtains search terms entered by the local user, potentially including GPS location.
+#
+#   Additional Info:
+#       Kijiji.ca is a Canadian online classified advertising website and part of eBay Classifieds Group, with over 16 million unique visitors per month.
+#
+#       Kijiji, May 2022 <https://help.kijiji.ca/helpdesk/basics/what-is-kijiji>
+#       Wikipedia - The Free Encyclopedia, May 2022, <https://en.wikipedia.org/wiki/Kijiji>
 import sqlite3
 
 from scripts.artifact_report import ArtifactHtmlReport

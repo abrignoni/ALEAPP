@@ -1,3 +1,4 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "knuddels_chats": {
         "name": "Knuddels - Chat Messages",
@@ -14,8 +15,6 @@ __artifacts_v2__ = {
         "artifact_icon": "message-circle",
     }
 }
-# pylint: disable=W0613
-
 
 import re
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records

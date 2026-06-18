@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_samsungSmartThings": {
         "name": "samsungSmartThings",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
     }
 }
-# pylint: disable=W0611,W0613,W1309
 
+# Samsung SmartThings
+# Author: Kevin Pagano (@KevinPagno3)
+# Date: 2022-06-13
+# Artifact version: 0.0.1
+# Requirements: none
 
 import sqlite3
 import textwrap

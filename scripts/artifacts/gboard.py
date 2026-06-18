@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0612,W0613,W0622
 __artifacts_v2__ = {
     "get_gboardCache": {
         "name": "GboardCache",
@@ -13,8 +14,9 @@ __artifacts_v2__ = {
         "artifact_icon": "chrome",
     }
 }
-# pylint: disable=W0611,W0612,W0613,W0622
 
+# Update 2023-05-01 from @KevinPagano3 (https://startme.stark4n6.com)
+# Added support for parsing gboard_clipboard.db database
 
 import blackboxprotobuf
 import os

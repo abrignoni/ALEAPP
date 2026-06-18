@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0631
 __artifacts_v2__ = {
     "get_urluser": {
         "name": "ULR User Prefs",
@@ -14,7 +15,6 @@ __artifacts_v2__ = {
         "output_types": None,
     }
 }
-# pylint: disable=W0611,W0613,W0631
 
 import json
 import xml.etree.ElementTree as ET

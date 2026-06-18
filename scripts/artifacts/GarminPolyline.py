@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613,W1309,W1514
 __artifacts_v2__ = {
     "get_garmin_polyline": {
         "name": "GarminPolyline",
@@ -13,9 +14,13 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0612,W0613,W1309,W1514
 
-
+# Get GPS data from the table 'activity_polyline' and activity_details
+# The script uses polyline to decode the GPS data and folium to plot the GPS data on a map
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-02-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher, folium and polyline, datetime
 import datetime
 import os
 import sqlite3
@@ -277,4 +282,3 @@ def get_garmin_polyline(files_found, report_folder, seeker, wrap_text):
     if use_network:
         conn.close()
     db.close()
-

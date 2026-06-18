@@ -1,3 +1,4 @@
+# pylint: disable=W0401,W0611,W0612,W0613,W0614,W1309
 __artifacts_v2__ = {
     "get_Life360": {
         "name": "Life360",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
-# pylint: disable=W0401,W0611,W0612,W0613,W0614,W1309
-
 
 from datetime import *
 import json

@@ -1,3 +1,4 @@
+# pylint: disable=W0108,W0613,W1309
 __artifacts_v2__ = {
     "get_mega_transfers": {
         "name": "mega_transfers",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "download",
     }
 }
-# pylint: disable=W0108,W0613,W1309
-
 
 import sqlite3
 import base64

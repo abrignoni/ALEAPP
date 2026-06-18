@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W1309
 __artifacts_v2__ = {
     "get_groupMe": {
         "name": "GroupMe",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0613,W1309
 
+# GroupMe
+# Author:  Josh Hickman (josh@thebinaryhick.blog)
+# Date 2021-02-XX
+# Version: 0.1
+# Requirements:  None
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly

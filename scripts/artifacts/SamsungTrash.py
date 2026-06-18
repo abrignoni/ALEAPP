@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613
 __artifacts_v2__ = {
     "samsungTrash": {
         "name": "Samsung Trash",
@@ -17,8 +18,6 @@ __artifacts_v2__ = {
         "artifact_icon": "trash-2",
     }
 }
-# pylint: disable=W0612,W0613
-
 
 import inspect
 from pathlib import Path

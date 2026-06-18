@@ -1,3 +1,4 @@
+# pylint: disable=E0601,W0613,W0631,W1309,W1310,W1514
 __artifacts_v2__ = {
     "get_gps": {
         "name": "Strava",
@@ -13,9 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
-# pylint: disable=E0601,W0613,W0631,W1309,W1310,W1514
 
-
+# Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-03-24
+# Version: 1.0
+# Requirements: Python 3.7 or higher, folium and polyline, fitdecode, datetime
 from datetime import datetime
 import warnings
 import os

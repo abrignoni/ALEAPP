@@ -1,11 +1,3 @@
-# Android Thunderbird App (net.thunderbird.android)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-#
-# Tested with the following versions:
-# 2025-10-27: Android 16, App: 13.0
-
-# Requirements: re, json
-
 __artifacts_v2__ = {
 
     
@@ -40,6 +32,13 @@ __artifacts_v2__ = {
 
 }
 
+# Android Thunderbird App (net.thunderbird.android)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+#
+# Tested with the following versions:
+# 2025-10-27: Android 16, App: 13.0
+
+# Requirements: re, json
 import re
 import json
 

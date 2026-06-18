@@ -1,3 +1,4 @@
+# pylint: disable=E0602,W0611,W0612,W0613
 __artifacts_v2__ = {
     "Turbo_Battery": {
         "name": "Turbo - Phone Battery",
@@ -26,8 +27,6 @@ __artifacts_v2__ = {
         "artifact_icon": "bluetooth"
     }
 }
-# pylint: disable=E0602,W0611,W0612,W0613
-
 
 import sqlite3
 import textwrap

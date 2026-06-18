@@ -15,7 +15,6 @@ __artifacts_v2__ = {
     }
 }
 
-
 import xmltodict
 import xml.etree.ElementTree as etree
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, abxread, checkabx

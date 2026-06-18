@@ -1,10 +1,3 @@
-# Tested with the following versions:
-# 2024-08-16: Android 14, App: 4.1.966
-# 2025-02-07: Android 16, App: 4.1.1166
-
-# Requirements:  json, xml
-
-
 __artifacts_v2__ = {
 
     
@@ -46,11 +39,12 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square"
     }
 }
-# pylint: disable=W0109
 
+# Tested with the following versions:
+# 2024-08-16: Android 14, App: 4.1.966
+# 2025-02-07: Android 16, App: 4.1.1166
 
-
-
+# Requirements:  json, xml
 import json
 import xml.etree.ElementTree as ET
 

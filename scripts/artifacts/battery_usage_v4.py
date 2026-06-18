@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0631,W1309
 __artifacts_v2__ = {
     "get_battery_usage_v4": {
         "name": "battery_usage_v4",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "battery",
     }
 }
-# pylint: disable=W0611,W0613,W0631,W1309
-
 
 import sqlite3
 import textwrap

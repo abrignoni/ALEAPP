@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W1309
 __artifacts_v2__ = {
     "get_googleMessages": {
         "name": "GoogleMessages",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0611,W0613,W1309
 
+# Google Messages
+# Author:  Josh Hickman (josh@thebinaryhick.blog)
+# Date 2021-01-30
+# Version: 0.1
+# Requirements:  None
 
 import os
 import sqlite3

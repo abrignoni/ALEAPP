@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0613,W0622,W1309
 __artifacts_v2__ = {
     "get_badoo_chat": {
         "name": "BadooChat",
@@ -13,17 +14,19 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0612
 
-
+# Get Information related to the Chats of the user with other users from the Badoo app (com.badoo.mobile)
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-05-03
+# Version: 1.0
+# Requirements: Python 3.7 or higher, json
 import json
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_badoo_chat(files_found, report_folder, _seeker, _wrap_text):
-    typeM = None
+def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Badoo Conections")
     files_found = [x for x in files_found if not x.endswith('-journal')]
     file_found = str(files_found[0])
@@ -47,7 +50,7 @@ def get_badoo_chat(files_found, report_folder, _seeker, _wrap_text):
         data_list = []
 
         for row in all_rows:
-            msg_id = row[0]
+            id = row[0]
             gender = row[1]
             if (gender == 0):
                 gender_text = "Male"
@@ -71,7 +74,7 @@ def get_badoo_chat(files_found, report_folder, _seeker, _wrap_text):
             work = row[6]
             education = row[7]
             encrypted_user_id = row[8]
-            cursor.execute('''
+            cursor.execute(f'''
                                         Select sender_id, recipient_id, datetime("created_timestamp"/1000,'unixepoch'), payload, payload_type
                                         from message
                                         where sender_id = '{encrypted_user_id}' or recipient_id = '{encrypted_user_id}'
@@ -84,19 +87,19 @@ def get_badoo_chat(files_found, report_folder, _seeker, _wrap_text):
                 for message in messages:
                     text = message[3]
                     text = json.loads(text)
-                    msg_type = message[4]
+                    type = message[4]
                     # Check if text exists
-                    if msg_type == 'TEXT':
+                    if type == 'TEXT':
                         message_text = text['text']
                         typeM = 'text'
-                    elif msg_type == 'QUESTION_GAME':
+                    elif type == 'QUESTION_GAME':
                         message_text = text['text']
                         if 'answer_own' in text:
                             message_text = message_text + ';Own Answer:' + text['answer_own']
                         if 'answer_other' in text:
                             message_text = message_text + ';Other Answer:' + text['answer_other']
                         typeM = 'question'
-                    elif msg_type == 'INSTANT_VIDEO' or msg_type == 'AUDIO' or msg_type == 'IMAGE':
+                    elif type == 'INSTANT_VIDEO' or type == 'AUDIO' or type == 'IMAGE':
                         message_text = text['url']
                         typeM = 'url'
 
@@ -110,9 +113,9 @@ def get_badoo_chat(files_found, report_folder, _seeker, _wrap_text):
                 chat = {'name': user_name, 'messages': message_list}
                 chat = json.dumps(chat)
                 report.add_chat_invisble(encrypted_user_id, chat)
-                button = '<button msg_type="button" class="btn btn-primary" onclick="createChat(\'' + str(encrypted_user_id) + '\', \'' + str(user_image_url) + '\')">Open Chat</button>'
+                button = f'<button type="button" class="btn btn-primary" onclick="createChat(\'' + str(encrypted_user_id) + '\', \'' + str(user_image_url) + '\')">Open Chat</button>'
             else:
-                button = '<button msg_type="button" class="btn btn-primary" disabled>Open Chat</button>'
+                button = '<button type="button" class="btn btn-primary" disabled>Open Chat</button>'
             data_list.append((id, gender_text, user_name, user_image, age, photo_urls, work, education, encrypted_user_id, button))
         # Filter by date
         table_id = "BadooChat"
@@ -122,14 +125,13 @@ def get_badoo_chat(files_found, report_folder, _seeker, _wrap_text):
         report.add_chat()
         report.end_artifact_report()
 
-        tsvname = 'Badoo - Chat'
+        tsvname = f'Badoo - Chat'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = 'Badoo - Chat'
+        tlactivity = f'Badoo - Chat'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
         logfunc('No Badoo Chat data available')
 
     db.close()
-

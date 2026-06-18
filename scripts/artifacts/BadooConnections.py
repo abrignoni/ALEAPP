@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0622,W1309
 __artifacts_v2__ = {
     "get_badoo_conn": {
         "name": "BadooConnections",
@@ -13,14 +14,18 @@ __artifacts_v2__ = {
         "artifact_icon": "users",
     }
 }
-# pylint: disable=W0612
 
+# Get Information related to possible connections (messages, views etc) of the user with other users from the Badoo app (com.badoo.mobile)
+# Author: Fabian Nunes {fabiannunes12@gmail.com}
+# Date: 2023-05-03
+# Version: 1.0
+# Requirements: Python 3.7 or higher
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
 
 
-def get_badoo_conn(files_found, report_folder, _seeker, _wrap_text):
+def get_badoo_conn(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Badoo Conections")
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     file_found = str(files_found[0])
@@ -43,7 +48,7 @@ def get_badoo_conn(files_found, report_folder, _seeker, _wrap_text):
         data_list = []
 
         for row in all_rows:
-            conn_id = row[0]
+            id = row[0]
             name = row[1]
             gender = row[2]
             origin = row[3]
@@ -56,14 +61,13 @@ def get_badoo_conn(files_found, report_folder, _seeker, _wrap_text):
         report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id, html_escape=False)
         report.end_artifact_report()
 
-        tsvname = 'Badoo - Connections'
+        tsvname = f'Badoo - Connections'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        tlactivity = 'Badoo - Connections'
+        tlactivity = f'Badoo - Connections'
         timeline(report_folder, tlactivity, data_list, data_headers)
 
     else:
         logfunc('No Badoo Connection data available')
 
     db.close()
-

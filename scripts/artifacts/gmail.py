@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0622,W1309
 __artifacts_v2__ = {
     "get_gmailActive": {
         "name": "GmailActive",
@@ -13,8 +14,13 @@ __artifacts_v2__ = {
         "artifact_icon": "mail",
     }
 }
-# pylint: disable=W0611,W0613,W0622,W1309
 
+# gmailActive: Get gmail account information
+# Author: Joshua James {joshua@dfirscience.org}
+# Date: 2021-11-08
+# Artifact version: 0.0.1
+# Android version tested: 11
+# Requirements: none
 
 import xml.etree.ElementTree as ET
 

@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613,W0622,W0702,W0718
 __artifacts_v2__ = {
     "get_snapchat": {
         "name": "snapchat",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0612,W0613,W0622,W0702,W0718
-
 
 import bcrypt
 import xml.etree.ElementTree as ET

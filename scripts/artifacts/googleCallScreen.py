@@ -1,3 +1,4 @@
+# pylint: disable=W0109,W0611,W0612,W0613,W1309
 __artifacts_v2__ = {
     "get_googleCallScreen": {
         "name": "GoogleCallScreen",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "phone",
     }
 }
-# pylint: disable=W0109,W0611,W0612,W0613,W1309
-
 
 import blackboxprotobuf
 import os

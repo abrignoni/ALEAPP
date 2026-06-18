@@ -1,3 +1,4 @@
+# pylint: disable=W0311,W0401,W0612,W0613,W0614,W0622,W0702,W1309
 __artifacts_v2__ = {
     "get_chatgpt": {
         "name": "ChatGPT",
@@ -16,8 +17,6 @@ __artifacts_v2__ = {
         "output_types": None,
     }
 }
-# pylint: disable=W0311,W0401,W0612,W0613,W0614,W0622,W0702,W1309
-
 
 import xml.etree.ElementTree as ET
 from datetime import *

@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0631
 __artifacts_v2__ = {
     "get_burnerSubscription": {
         "name": "Burner: Second Phone Number",
@@ -15,8 +16,6 @@ __artifacts_v2__ = {
         "function": "get_burnerSubscription"
     }
 }
-# pylint: disable=W0611,W0613,W0631
-
 
 import sqlite3
 

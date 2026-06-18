@@ -1,3 +1,4 @@
+# pylint: disable=W0401,W0611,W0613,W0614,W0621,W1309,W1514
 __artifacts_v2__ = {
     "get_offlinePages": {
         "name": "pages",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
-# pylint: disable=W0401,W0611,W0613,W0614,W0621,W1309,W1514
-
 
 from datetime import *
 import email

@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0631,W1309
 __artifacts_v2__ = {
     "get_pkgPredictions": {
         "name": "pkgPredictions",
@@ -13,8 +14,12 @@ __artifacts_v2__ = {
         "artifact_icon": "package",
     }
 }
-# pylint: disable=W0611,W0613,W0631,W1309
 
+# Package Predictions - Parses Samsung package prediction details
+# Author:  Kevin Pagano (https://startme.stark4n6.com)
+# Date 2023-05-01
+# Version: 0.1
+# Requirements:  None
 
 import sqlite3
 import textwrap

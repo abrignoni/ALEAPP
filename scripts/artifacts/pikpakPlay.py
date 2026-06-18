@@ -1,3 +1,4 @@
+# pylint: disable=E0602,W0611,W0613,W0631
 __artifacts_v2__ = {
     "get_pikpakPlay": {
         "name": "PikPak Play",
@@ -13,8 +14,6 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
     }
 }
-# pylint: disable=E0602,W0611,W0613,W0631
-
 
 import sqlite3
 import os
