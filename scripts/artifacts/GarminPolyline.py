@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
+# pylint: disable=W0612,W0613,W1309,W1514
+
 
 import datetime
 import os

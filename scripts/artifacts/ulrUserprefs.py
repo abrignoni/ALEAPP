@@ -14,6 +14,8 @@ __artifacts_v2__ = {
         "output_types": None,
     }
 }
+# pylint: disable=W0611,W0613,W0631
+
 import json
 import xml.etree.ElementTree as ET
 from scripts.artifact_report import ArtifactHtmlReport

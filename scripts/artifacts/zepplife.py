@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "heart",
     }
 }
+# pylint: disable=E1121,W0613,W0718
+
 
 from datetime import datetime, timezone
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly

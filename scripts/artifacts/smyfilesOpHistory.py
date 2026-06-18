@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0702,W1309
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 import scripts.artifacts.artGlobals as aG
@@ -18,6 +19,7 @@ __artifacts_v2__ = {
         "artifact_icon": "clock",
     }
 }
+
 
 # database locations found at
 # /data/data/com.sec.android.app.myfiles/databases/OperationHistory.db

@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
+# pylint: disable=W0611,W0612,W0613,W0631,W0702,W1309,W1404,W1514,W4701
+
 
 import os
 import sys

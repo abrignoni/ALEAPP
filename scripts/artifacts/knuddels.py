@@ -14,6 +14,8 @@ __artifacts_v2__ = {
         "artifact_icon": "message-circle",
     }
 }
+# pylint: disable=W0613
+
 
 import re
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records

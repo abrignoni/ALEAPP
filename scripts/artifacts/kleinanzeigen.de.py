@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0311,W0611,W0612,W0613
 # kleinanzeigen.de App
 # Author:  Bruno Fischer (@BrunoFischerGermany)
 # Version: 1.0.0
@@ -285,3 +286,4 @@ __artifacts_v2__ = {
         "artifact_icon": "shopping-bag",
     }
 }
+

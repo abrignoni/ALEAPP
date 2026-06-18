@@ -25,6 +25,8 @@ __artifacts_v2__ = {
         "artifact_icon": "clipboard",
     }
 }
+# pylint: disable=W0311,W0401,W0612,W0613,W0614,W0622,W1309
+
 import os
 from datetime import *
 from PIL import Image

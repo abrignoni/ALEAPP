@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "calendar",
     }
 }
+# pylint: disable=E0606,W0611,W0612,W0613
+
 
 import zlib
 import sqlite3

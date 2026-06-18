@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
     }
 }
+# pylint: disable=W0613,W0718
+
 
 import os
 import textwrap

@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "battery",
     }
 }
+# pylint: disable=W0613,W0631,W1309
+
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly

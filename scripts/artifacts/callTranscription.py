@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "phone"
     }
 }
+# pylint: disable=E0606,W0401,W0612,W0613,W0614
+
 
 import blackboxprotobuf
 from pathlib import Path

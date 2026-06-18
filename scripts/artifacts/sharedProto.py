@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
     }
 }
+# pylint: disable=W0105,W0611,W0612,W0613,W0631,W0702,W1309
+
 import pathlib
 import sqlite3
 import textwrap

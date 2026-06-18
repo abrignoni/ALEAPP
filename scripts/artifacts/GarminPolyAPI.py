@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
+# pylint: disable=E0601,E0606,W0613,W0631,W1309,W1514
+
 
 import datetime
 import json

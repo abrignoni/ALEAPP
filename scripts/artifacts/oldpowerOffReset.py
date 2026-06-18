@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "battery",
     }
 }
+# pylint: disable=W0611,W0613,W1309,W1514
+
 
 from datetime import datetime
 import os

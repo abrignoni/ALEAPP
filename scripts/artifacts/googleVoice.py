@@ -52,6 +52,8 @@ __artifacts_v2__ = {
         "artifact_icon": "user",
     }
 }
+# pylint: disable=W0612,W0613
+
 
 import blackboxprotobuf
 import os

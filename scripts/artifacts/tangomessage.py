@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
+# pylint: disable=W0107,W0611,W0613,W0631,W0702,W0718,W1309
+
 
 import sqlite3
 import base64

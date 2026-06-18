@@ -50,6 +50,8 @@ __artifacts_v2__ = {
         "artifact_icon": "map-pin",
     }
 }
+# pylint: disable=W0718
+
 
 import os
 import folium

@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "video",
     }
 }
+# pylint: disable=W0311,W0611,W0613,W1309
+
 
 """"
 Developed by Evangelos D. (@theAtropos4n6)

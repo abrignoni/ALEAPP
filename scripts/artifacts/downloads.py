@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "download",
     }
 }
+# pylint: disable=W0613
+
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 

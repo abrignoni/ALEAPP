@@ -12,6 +12,8 @@ __artifacts_v2__ = {
         "artifact_icon": "users",
     }
 }
+# pylint: disable=W0611,W0612,W0613,W1309
+
 
 import sqlite3
 import os

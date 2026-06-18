@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
+# pylint: disable=W0613,W1309,W1514
+
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv

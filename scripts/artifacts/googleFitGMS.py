@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "activity",
     }
 }
+# pylint: disable=W0611,W0613
+
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
 

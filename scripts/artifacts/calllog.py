@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "phone",
     }
 }
+# pylint: disable=W0611,W0613,W0631,W1309
+
 
 import sqlite3
 

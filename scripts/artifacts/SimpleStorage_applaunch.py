@@ -14,6 +14,8 @@ __artifacts_v2__ = {
         "artifact_icon": "loader",
     }
 }
+# pylint: disable=W0613
+
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records, convert_ts_human_to_utc, convert_utc_human_to_timezone
 

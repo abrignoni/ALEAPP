@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "search",
     }
 }
+# pylint: disable=W0611,W0613,W0631
+
 
 import sqlite3
 import json 

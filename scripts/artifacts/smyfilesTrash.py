@@ -1,3 +1,4 @@
+# pylint: disable=E0606,W0611,W0613,W0622,W1309
 import shutil
 
 from scripts.artifact_report import ArtifactHtmlReport
@@ -21,6 +22,7 @@ __artifacts_v2__ = {
         "artifact_icon": "trash-2",
     }
 }
+
 
 # example filepaths
 # /data/media/0/Android/data/com.sec.android.app.myfiles/files/trash/%.'ar74b%a$&7rcrGZ-Y.5$QT2/1639144040510/storage/emulated/0/Download/.!%#@$/Untitled.mov

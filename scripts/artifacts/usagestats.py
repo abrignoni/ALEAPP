@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "battery",
     }
 }
+# pylint: disable=E0606,E1101,W0311,W0613,W0702,W1309
+
 
 import glob
 import json

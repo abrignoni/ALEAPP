@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "database",
     }
 }
+# pylint: disable=W0612,W0613,W0702,W0718
+
 
 """
 Copyright 2022, CCL Forensics

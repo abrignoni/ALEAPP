@@ -27,6 +27,8 @@ __artifacts_v2__ = {
         "artifact_icon": "mail",
     }
 }
+# pylint: disable=W0611,W0612,W0613,W1309
+
 
 import datetime
 import json

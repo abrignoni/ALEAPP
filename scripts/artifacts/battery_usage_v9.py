@@ -37,6 +37,8 @@ __artifacts_v2__ = {
         "artifact_icon": "battery",
     }
 }
+# pylint: disable=W0311,W0611,W0612,W0613,W0702,W1309
+
 
 import re
 import blackboxprotobuf

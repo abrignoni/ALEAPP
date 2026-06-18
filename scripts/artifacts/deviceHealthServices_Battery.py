@@ -26,6 +26,8 @@ __artifacts_v2__ = {
         "artifact_icon": "bluetooth"
     }
 }
+# pylint: disable=E0602,W0611,W0612,W0613
+
 
 import sqlite3
 import textwrap

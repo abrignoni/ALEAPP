@@ -14,6 +14,8 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
+# pylint: disable=W0611,W0613
+
 
 """
 Copyright 2022, CCL Forensics

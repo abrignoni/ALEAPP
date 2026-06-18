@@ -39,6 +39,8 @@ __artifacts_v2__ = {
         "artifact_icon": "wifi"
     },
 }
+# pylint: disable=E1121,W0613,W0718
+
 
 from datetime import datetime, timezone, timedelta
 from scripts.ilapfuncs import open_sqlite_db_readonly, logfunc, artifact_processor, convert_unix_ts_to_utc

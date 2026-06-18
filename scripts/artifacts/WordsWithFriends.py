@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
+# pylint: disable=W0611,W0613,W1309
+
 
 import sqlite3
 import textwrap

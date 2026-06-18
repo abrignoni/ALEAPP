@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "wifi",
     }
 }
+# pylint: disable=W0611,W0613,W1309
+
 
 import struct
 import xml.etree.ElementTree as ET

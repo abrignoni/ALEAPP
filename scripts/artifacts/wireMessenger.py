@@ -37,6 +37,8 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
+# pylint: disable=E0606,W0107,W0120,W0613
+
 
 #get the modules required
 import re

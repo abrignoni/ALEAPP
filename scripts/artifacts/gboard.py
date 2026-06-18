@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "chrome",
     }
 }
+# pylint: disable=W0611,W0612,W0613,W0622
+
 
 import blackboxprotobuf
 import os

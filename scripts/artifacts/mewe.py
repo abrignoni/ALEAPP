@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     }
 }
+# pylint: disable=W0613,W0702
+
 
 import xml.etree.ElementTree as ET
 

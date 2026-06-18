@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "image",
     }
 }
+# pylint: disable=W0613,W1309
+
 
 import os
 import shutil

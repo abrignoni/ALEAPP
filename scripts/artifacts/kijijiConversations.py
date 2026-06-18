@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
     }
 }
+# pylint: disable=W0613,W1309
+
 
 import sqlite3
 import json

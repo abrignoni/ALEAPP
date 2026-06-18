@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
     }
 }
+# pylint: disable=E0602,W0404,W0611,W0612,W0613,W1309
+
 
 import os
 import datetime

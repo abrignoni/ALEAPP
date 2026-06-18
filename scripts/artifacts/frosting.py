@@ -12,7 +12,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "package"
     }
-}    
+}
+# pylint: disable=W0613
+    
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
 

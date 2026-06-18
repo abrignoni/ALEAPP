@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "package",
     }
 }
+# pylint: disable=E0606,W0611,W0613,W0631,W1309,W1514
+
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly

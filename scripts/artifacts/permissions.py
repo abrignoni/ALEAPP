@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "settings",
     }
 }
+# pylint: disable=W0613,W1309
+
 
 import xml.etree.ElementTree as ET 
 

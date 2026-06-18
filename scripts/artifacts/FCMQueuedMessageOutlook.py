@@ -42,6 +42,8 @@ __artifacts_v2__ = {
         "artifact_icon": "database",
     }
 }
+# pylint: disable=W0613
+
 
 __version__ = "0.2"
 __description__ = """

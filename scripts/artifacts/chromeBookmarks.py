@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
     }
 }
+# pylint: disable=E0601,W0611,W0612,W0613,W1514
+
 
 import datetime
 import json

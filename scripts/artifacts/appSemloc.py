@@ -14,6 +14,8 @@ __artifacts_v2__ = {
         "output_types": None,
     }
 }
+# pylint: disable=W0401,W0611,W0612,W0613,W0614,W0631
+
 import pathlib
 import json
 import blackboxprotobuf

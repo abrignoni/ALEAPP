@@ -49,6 +49,8 @@ __artifacts_v2__ = {
         "artifact_icon": "database",
     }
 }
+# pylint: disable=W0613
+
 
 import pathlib
 from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator

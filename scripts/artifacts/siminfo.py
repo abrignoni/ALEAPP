@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "artifact_icon": "info",
     }
 }
+# pylint: disable=W0311,W0611,W0612,W0613,W0702
+
 
 import glob
 import json
