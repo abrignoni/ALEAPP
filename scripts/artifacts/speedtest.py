@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db',),
-        "output_types": None,
+        "output_types": "all",
         "artifact_icon": "loader"
     },
 
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
-        "output_types": None,
+        "output_types": "all",
         "artifact_icon": "map-pin"
     },
 
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "category": "Speedtest",
         "notes": "",
         "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
-        "output_types": None,
+        "output_types": "all",
         "artifact_icon": "wifi"
     },
 }
