@@ -22,7 +22,7 @@ import re
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, get_next_unused_name, open_sqlite_db_readonly, lava_process_artifact, lava_insert_sqlite_data, artifact_processor
+from scripts.ilapfuncs import logfunc, get_next_unused_name, open_sqlite_db_readonly, lava_process_artifact, lava_insert_sqlite_data, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
 
 
@@ -111,7 +111,7 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
                 if password_enc:
                     password = decrypt(password_enc).decode("utf-8", 'replace')
                 valid_date = get_valid_date(row[2], row[3])
-                data_list.append((valid_date, row[0], password, row[4], row[5]))
+                data_list.append((convert_human_ts_to_utc(valid_date), row[0], password, row[4], row[5]))
 
             report_name = f'{browser_name} - Login Data'
             report = ArtifactHtmlReport(report_name)

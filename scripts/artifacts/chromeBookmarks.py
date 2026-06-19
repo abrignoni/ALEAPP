@@ -65,7 +65,7 @@ def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
                                     for index in range(len(valueb)):
                                         url = valueb[index].get('url', '')
                                         dateadd = valueb[index].get('date_added', '')
-                                        dateaddconv = datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=int(dateadd))
+                                        dateaddconv = datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(microseconds=int(dateadd))
                                         name = valueb[index].get('name', '')
                                         typed = valueb[index].get('type', '')
                                         children_items.append((url, dateaddconv, name, typed))

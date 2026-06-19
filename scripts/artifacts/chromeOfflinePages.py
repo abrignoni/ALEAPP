@@ -19,7 +19,7 @@ import os
 import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, get_next_unused_name, open_sqlite_db_readonly, lava_process_artifact, lava_insert_sqlite_data, artifact_processor
+from scripts.ilapfuncs import logfunc, get_next_unused_name, open_sqlite_db_readonly, lava_process_artifact, lava_insert_sqlite_data, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
 
 
@@ -66,9 +66,9 @@ def get_chromeOfflinePages(files_found, report_folder, seeker, wrap_text):
             data_list = []
             for row in all_rows:
                 if wrap_text:
-                    data_list.append((row[0],row[1],(textwrap.fill(row[2], width=75)),row[3],row[4],row[5],row[6]))
+                    data_list.append((convert_human_ts_to_utc(row[0]),convert_human_ts_to_utc(row[1]),(textwrap.fill(row[2], width=75)),row[3],row[4],row[5],row[6]))
                 else:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+                    data_list.append((convert_human_ts_to_utc(row[0]),convert_human_ts_to_utc(row[1]),row[2],row[3],row[4],row[5],row[6]))
 
             report_name = f'{browser_name} - Offline Pages'
             report = ArtifactHtmlReport(report_name)
