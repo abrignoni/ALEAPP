@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W0702,W1309
+# pylint: disable=W0613,W0702
 __artifacts_v2__ = {
     "get_smyfilesStored": {
         "name": "smyfilesStored",
@@ -10,23 +10,21 @@ __artifacts_v2__ = {
         "category": "My Files",
         "notes": "",
         "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "file",
-        "function": "get_smyfilesStored",
     }
 }
 
-import sqlite3
-import textwrap
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
-def get_smyfilesStored(files_found, report_folder, seeker, text_wrap):
-    
-    file_found = str(files_found[0])
+@artifact_processor
+def get_smyfilesStored(files_found, report_folder, seeker, wrap_text):
+
+    source_path = str(files_found[0])
+    all_rows = []
     try:
-        db = open_sqlite_db_readonly(file_found)
+        db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
         cursor.execute('''
         SELECT
@@ -36,16 +34,15 @@ def get_smyfilesStored(files_found, report_folder, seeker, text_wrap):
         size,
         datetime(latest /1000, "unixepoch")
         from FileCache
-        where path is not NULL 
+        where path is not NULL
         ''')
-    
+
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
     except:
-        usageentries = 0
-    
+        all_rows = []
+
     try:
-        db = open_sqlite_db_readonly(file_found)
+        db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
         cursor.execute('''
         SELECT
@@ -55,32 +52,22 @@ def get_smyfilesStored(files_found, report_folder, seeker, text_wrap):
             size,
             datetime(latest /1000, "unixepoch")
             from FileCache
-            where _data is not NULL 
+            where _data is not NULL
         ''')
-        
+
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
     except:
-        usageentries = 0
+        all_rows = []
 
-    if usageentries > 0:
-        report = ArtifactHtmlReport('My Files DB - Stored Files')
-        report.start_artifact_report(report_folder, 'My Files DB - Stored Files')
-        report.add_script()
-        data_headers = ('Timestamp','Storage','Path','Size','Latest' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4]))
+    data_list = []
+    for row in all_rows:
+        data_list.append((row[0],row[1],row[2],row[3],row[4]))
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'my files db - stored files'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'My Files DB - Stored Files'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No My Files DB Stored data available')
-    
-    db.close()
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'Storage',
+        'Path',
+        'Size',
+        ('Latest', 'datetime'),
+    )
+    return data_headers, data_list, source_path
