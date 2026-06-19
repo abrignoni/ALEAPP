@@ -46,7 +46,7 @@ import socket
 import datetime
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, device_info, checkabx, abxread
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, device_info, checkabx, abxread, convert_human_ts_to_utc
 
 
 @artifact_processor
@@ -106,7 +106,7 @@ def get_protonvpn_connection_history(files_found, report_folder, seeker, wrap_te
             for entry in log_entries:
                 initial_connect = entry.find('to:')
                 if initial_connect != -1:
-                    timestamp = entry[:entry.find('|')-1].split('.')[0].replace('T', ' ')
+                    timestamp = convert_human_ts_to_utc(entry[:entry.find('|')-1].split('.')[0].replace('T', ' '))
                     try:
                         server_hostname = regex.search(entry)[0]
                         server_ip = socket.gethostbyname(server_hostname)
