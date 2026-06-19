@@ -1,4 +1,4 @@
-# pylint: disable=E0602,W0611,W0613,W0631
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_pikpakDownloads": {
         "name": "PikPak Downloads",
@@ -10,60 +10,45 @@ __artifacts_v2__ = {
         "category": "PikPak",
         "notes": "",
         "paths": ('*/com.pikcloud.pikpak/databases/pikpak_downloads.db*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "download",
-        "function": "get_pikpakDownloads",
     }
 }
 
-import sqlite3
-import os
+import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
+
+
+@artifact_processor
 def get_pikpakDownloads(files_found, report_folder, seeker, wrap_text):
-    
+
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
         if file_found.endswith('.db'):
+            source_path = file_found
             break
-            
-    db = open_sqlite_db_readonly(file_found)
-    cursor = db.cursor()
-    cursor.execute('''
-    SELECT
-    datetime(create_time/1000, 'unixepoch'),
-    datetime(lastmod/1000, 'unixepoch'),
-    title,
-    _data,
-    uri
-    from xl_downloads
-    ''')
 
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    data_list = []  
-    
-    if usageentries > 0:
+    data_list = []
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
+        cursor = db.cursor()
+        cursor.execute('''
+            SELECT create_time, lastmod, title, _data, uri
+            from xl_downloads
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
+
         for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4]))
+            data_list.append((_ms_to_utc(row[0]), _ms_to_utc(row[1]), row[2], row[3], row[4]))
 
-        description = 'PikPak Downloads'
-        report = ArtifactHtmlReport('PikPak Downloads')
-        report.start_artifact_report(report_folder, 'PikPak Downloads', description)
-        report.add_script()
-        data_headers = ('Create Time', 'Modify Time','Title', 'Local Storage', 'URL')
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = 'PikPak Downloads'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'PikPak Downloads'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No PikPak Downloads data available')
-    
+    data_headers = (('Create Time', 'datetime'), ('Modify Time', 'datetime'), 'Title', 'Local Storage', 'URL')
+    return data_headers, data_list, source_path
