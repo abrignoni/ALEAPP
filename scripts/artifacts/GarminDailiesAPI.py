@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-28",
         "last_update_date": "2023-02-28",
         "requirements": "Python 3.7 or higher, json",
-        "category": "Garmin-API",
+        "category": "Garmin",
         "notes": "",
         "paths": ('*/garmin.api/daily*',),
         "output_types": None,
