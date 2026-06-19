@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-27",
         "last_update_date": "2023-04-27",
         "requirements": "none",
-        "category": "Google Maps Temp Voice Guidance",
+        "category": "Google Maps Voice Guidance",
         "notes": "",
         "paths": ('*/com.google.android.apps.maps/app_tts-temp/**',),
         "output_types": None,

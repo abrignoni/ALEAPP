@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-05-13",
         "last_update_date": "2022-05-13",
         "requirements": "None",
-        "category": "Kijiji Conversations",
+        "category": "Kijiji",
         "notes": "",
         "paths": ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*',),
         "output_types": None,
