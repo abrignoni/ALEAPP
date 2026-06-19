@@ -47,6 +47,9 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | BadooChat |
 | BadooConnections |
 | Cello |
+| ChessComFriends |
+| ChessComGames |
+| ChessComMessages |
 | ChessWithFriends |
 | Deepseek_ChatInfo |
 | Deepseek_ChatMessages |
