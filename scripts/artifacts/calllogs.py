@@ -1,4 +1,4 @@
-# pylint: disable=W0613
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
     "get_calllogs": {
         "name": "Call Logs",
