@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_ChessComGames": {
         "name": "Chess.com Games",
@@ -10,53 +10,50 @@ __artifacts_v2__ = {
         "category": "Chess.com",
         "notes": "",
         "paths": ('*/com.chess/databases/chess-database*', '*/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "grid",
-        "function": "get_ChessComGames",
     }
 }
 
-import sqlite3
-import textwrap
+import datetime
 import xml.etree.ElementTree as ET
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+
+@artifact_processor
 def get_ChessComGames(files_found, report_folder, seeker, wrap_text):
-    
-    title = "Chess.com Games"
 
     # Username
     username = "None"
-    session_file = list(filter(lambda x: "xml" in x, files_found))[0]
-    sesh_tree = ET.parse(session_file)
-    sesh_root = sesh_tree.getroot()
-    sesh_strings = sesh_root.findall("string")
-    for item in sesh_strings:
-        key = item.attrib.get("name")
-        if key == "pref_username":
-            username = item.text
+    session_files = [str(x) for x in files_found if str(x).endswith('.xml')]
+    if session_files:
+        sesh_root = ET.parse(session_files[0]).getroot()
+        for item in sesh_root.findall("string"):
+            if item.attrib.get("name") == "pref_username":
+                username = item.text
 
     # Chess database
-    db_filepath = list(filter(lambda x: "chess-database" in x, files_found))[0]
-    conn = sqlite3.connect(db_filepath)
-    c = conn.cursor()
-    sql = f"""SELECT datetime(daily_games.game_start_time, 'unixepoch') AS "First Move", datetime(daily_games.timestamp, 'unixepoch') AS "Last Move", daily_games.game_id AS "Game ID", daily_games.white_username AS "White", daily_games.black_username AS "Black", CASE daily_games.is_opponent_friend WHEN 1 THEN "Friend" WHEN 0 THEN "User" ELSE "ERROR" END AS "Friend Status", daily_games.result_message AS "Result" FROM daily_games WHERE daily_games.white_username = "{username}" OR daily_games.black_username = "{username}" ORDER BY daily_games.timestamp"""
-    c.execute(sql)
-    results = c.fetchall()
-    conn.close()
+    source_path = [str(x) for x in files_found if "chess-database" in str(x)][0]
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    cursor.execute('''
+        SELECT daily_games.game_start_time, daily_games.timestamp, daily_games.game_id,
+               daily_games.white_username, daily_games.black_username,
+               CASE daily_games.is_opponent_friend WHEN 1 THEN "Friend" WHEN 0 THEN "User" ELSE "ERROR" END,
+               daily_games.result_message
+        FROM daily_games
+        WHERE daily_games.white_username = ? OR daily_games.black_username = ?
+        ORDER BY daily_games.timestamp
+    ''', (username, username))
+    all_rows = cursor.fetchall()
+    db.close()
 
-    # Data results
-    data_headers = ('First Move', 'Last Move', 'Game ID', 'White', 'Black', 'Friend Status', 'Result')
-    data_list = results
-    
-    # Reporting
-    description = "Chess.com Games"
-    report = ArtifactHtmlReport(title)
-    report.start_artifact_report(report_folder, title, description)
-    report.add_script()
-    report.write_artifact_data_table(data_headers, data_list, db_filepath, html_escape=False)
-    report.end_artifact_report()
-    
-    tsv(report_folder, data_headers, data_list, title)
+    data_list = []
+    for row in all_rows:
+        first_move = datetime.datetime.fromtimestamp(int(row[0]), datetime.timezone.utc) if row[0] else ''
+        last_move = datetime.datetime.fromtimestamp(int(row[1]), datetime.timezone.utc) if row[1] else ''
+        data_list.append((first_move, last_move, row[2], row[3], row[4], row[5], row[6]))
+
+    data_headers = (('First Move', 'datetime'), ('Last Move', 'datetime'), 'Game ID', 'White', 'Black', 'Friend Status', 'Result')
+    return data_headers, data_list, source_path
