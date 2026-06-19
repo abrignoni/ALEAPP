@@ -1,4 +1,4 @@
-# pylint: disable=E0601,E0606,W0611,W0613
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_roles": {
         "name": "roles",
@@ -10,68 +10,53 @@ __artifacts_v2__ = {
         "category": "App Roles",
         "notes": "",
         "paths": ('*/system/users/*/roles.xml', '*/misc_de/*/apexdata/com.android.permission/roles.xml'),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",
-        "function": "get_roles",
     }
 }
 
-import xml.etree.ElementTree as ET 
+import xml.etree.ElementTree as ET
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import artifact_processor, logfunc, is_platform_windows
 
+
+@artifact_processor
 def get_roles(files_found, report_folder, seeker, wrap_text):
-    
-    run = 0
-    slash = '\\' if is_platform_windows() else '/' 
-    
+
+    slash = '\\' if is_platform_windows() else '/'
+    data_list = []
+    source_path = ''
+
     for file_found in files_found:
         file_found = str(file_found)
-        
-        data_list = []
-        run = run + 1
-        err = 0
-        
-        
+
         parts = file_found.split(slash)
+        ver = ''
         if 'mirror' in parts:
-            user = 'mirror'
+            continue
         elif 'users' in parts:
             user = parts[-2]
             ver = 'Android 10'
         elif 'misc_de' in parts:
             user = parts[-4]
             ver = 'Android 11'
-        
-        if user == 'mirror':
-            continue
         else:
-            try:
-                ET.parse(file_found)
-            except ET.ParseError:
-                print('Parse error - Non XML file.') #change to logfunc
-                err = 1
-                
-            if err == 0:
-                tree = ET.parse(file_found)
-                root = tree.getroot()
+            continue
 
-                for elem in root:
-                    holder = ''
-                    role = elem.attrib['name']
-                    for subelem in elem:
-                        holder = subelem.attrib['name']
-                        
-                    data_list.append((role, holder))
-                
-                if len(data_list) > 0:
-                    report = ArtifactHtmlReport('App Roles')
-                    report.start_artifact_report(report_folder, f'{ver} Roles_{user}')
-                    report.add_script()
-                    data_headers = ('Role', 'Holder')
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    
-                    tsvname = f'App Roles_{user}'
-                    tsv(report_folder, data_headers, data_list, tsvname)
+        try:
+            tree = ET.parse(file_found)
+        except ET.ParseError:
+            logfunc('Parse error - Non XML file.')
+            continue
+
+        source_path = file_found
+        root = tree.getroot()
+        for elem in root:
+            holder = ''
+            role = elem.attrib['name']
+            for subelem in elem:
+                holder = subelem.attrib['name']
+            data_list.append((ver, user, role, holder))
+
+    data_headers = ('Android Version', 'User', 'Role', 'Holder')
+    return data_headers, data_list, source_path
