@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
         "requirements": "Python 3.7 or higher",
-        "category": "Garmin-Cache",
+        "category": "Garmin",
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": None,

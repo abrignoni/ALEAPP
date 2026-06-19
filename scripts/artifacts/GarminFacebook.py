@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
         "requirements": "Python 3.7 or higher, ElementTree, json and datetime, http.client",
-        "category": "Garmin-SharedPrefs",
+        "category": "Garmin",
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/com.facebook*',),
         "output_types": None,
