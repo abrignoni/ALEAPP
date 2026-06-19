@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_setupWizardinfo": {
         "name": "setupWizardinfo",
@@ -10,48 +10,34 @@ __artifacts_v2__ = {
         "category": "Wipe & Setup",
         "notes": "",
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "info",
-        "function": "get_setupWizardinfo",
     }
 }
 
-import os
 import datetime
 import xml.etree.ElementTree as ET
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
 
+from scripts.ilapfuncs import artifact_processor
+
+
+@artifact_processor
 def get_setupWizardinfo(files_found, report_folder, seeker, wrap_text):
 
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('setup_wizard_info.xml'):
-            continue # Skip all other files
-        
-        data_list = []
-        tree = ET.parse(file_found)
-        root = tree.getroot()
-        
+            continue  # Skip all other files
+
+        source_path = file_found
+        root = ET.parse(file_found).getroot()
         for elem in root:
             item = elem.attrib
             if item['name'] == 'suw_finished_time_ms':
-                timestamp = (datetime.datetime.utcfromtimestamp(int(item['value'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                timestamp = datetime.datetime.fromtimestamp(int(item['value']) / 1000, datetime.timezone.utc)
                 data_list.append((timestamp, item['name']))
-        
-        if data_list:
-            report = ArtifactHtmlReport('Setup_Wizard_Info.xml')
-            report.start_artifact_report(report_folder, 'Setup_Wizard_Info.xml')
-            report.add_script()
-            data_headers = ('Timestamp','Name')
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Setup_Wizard_Info XML data'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Setup_Wizard_Info XML data'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Setup_Wizard_Info XML data available')
-            
+
+    data_headers = (('Timestamp', 'datetime'), 'Name')
+    return data_headers, data_list, source_path
