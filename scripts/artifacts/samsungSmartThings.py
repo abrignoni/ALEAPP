@@ -21,7 +21,7 @@ __artifacts_v2__ = {
 # Artifact version: 0.0.1
 # Requirements: none
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
 
 @artifact_processor
@@ -51,7 +51,7 @@ def get_samsungSmartThings(files_found, report_folder, seeker, wrap_text):
 
         all_rows = cursor.fetchall()
         for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+            data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6]))
         db.close()
 
     data_headers = (

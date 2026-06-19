@@ -17,7 +17,7 @@ __artifacts_v2__ = {
 
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor
+from scripts.ilapfuncs import artifact_processor, convert_human_ts_to_utc
 
 
 @artifact_processor
@@ -40,6 +40,6 @@ def get_vaulty_files(files_found, report_folder, seeker, wrap_text):
         'Original Path',
         'Vault Path',
     )
-    data_list = results
+    data_list = [(r[0], convert_human_ts_to_utc(r[1]), convert_human_ts_to_utc(r[2]), r[3], r[4]) for r in results]
 
     return data_headers, data_list, db_filepath

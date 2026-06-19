@@ -24,7 +24,7 @@ __artifacts_v2__ = {
 
 import json
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
 
 @artifact_processor
@@ -66,7 +66,7 @@ def get_mega(files_found, report_folder, seeker, wrap_text):
                 chat_message = chat_contents[0:]
                 chat_message = (str(chat_message)[2:-1])
 
-                data_list.append((row[0],row[1],row[2],chat_message,attachment_name))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],chat_message,attachment_name))
 
             elif row[2] == 'Attachment':
                 json_contents = row[3]
@@ -77,9 +77,9 @@ def get_mega(files_found, report_folder, seeker, wrap_text):
 
                 attachment_name = json_export[0]['name']
 
-                data_list.append((row[0],row[1],row[2],chat_message,attachment_name))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],chat_message,attachment_name))
             else:
-                data_list.append((row[0],row[1],row[2],chat_message,attachment_name))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],chat_message,attachment_name))
 
         db.close()
 
