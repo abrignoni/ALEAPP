@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_smanagerLow": {
         "name": "smanagerLow",
@@ -10,55 +10,38 @@ __artifacts_v2__ = {
         "category": "App Interaction",
         "notes": "",
         "paths": ('*/com.samsung.android.sm/databases/lowpowercontext-system-db',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "package",
-        "function": "get_smanagerLow",
     }
 }
 
-import sqlite3
-import textwrap
+import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
+
+
+@artifact_processor
 def get_smanagerLow(files_found, report_folder, seeker, wrap_text):
-    
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
+
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''
-    SELECT 
-    datetime(start_time /1000, "unixepoch"),
-    datetime(end_time /1000, "unixepoch"),
-    id,
-    package_name,
-    uploaded,
-    datetime(created_at /1000, "unixepoch"),
-    datetime(modified_at /1000, "unixepoch")
-    from usage_log
+        SELECT start_time, end_time, id, package_name, uploaded, created_at, modified_at
+        FROM usage_log
     ''')
-
     all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Samsung Smart Manager - Usage')
-        report.start_artifact_report(report_folder, 'Samsung Smart Manager - Usage')
-        report.add_script()
-        data_headers = ('Start Time','End Time','ID','Package Name', 'Uploaded?', 'Created', 'Modified' )
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'samsung smart manager - usage'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Samsung Smart Manager - Usage'
-        timeline(report_folder, tlactivity, data_list, data_headers) 
-    else:
-        logfunc('No Samsung Smart Manager - Usage data available')
-    
     db.close()
+
+    data_list = []
+    for row in all_rows:
+        data_list.append((_ms_to_utc(row[0]), _ms_to_utc(row[1]), row[2], row[3], row[4], _ms_to_utc(row[5]), _ms_to_utc(row[6])))
+
+    data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'), 'ID', 'Package Name', 'Uploaded?', ('Created', 'datetime'), ('Modified', 'datetime'))
+    return data_headers, data_list, source_path
