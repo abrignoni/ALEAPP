@@ -100,7 +100,7 @@ def get_imo_messages(files_found, report_folder, seeker, wrap_text):
                     else:
                         attachmentPath = attachmentLocalPath
 
-                timestamp = datetime.datetime.utcfromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
+                timestamp = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc)
                 data_list.append((timestamp, from_id, to_id, row[2],  row[4], row[5], attachmentPath))
             db.close()
 

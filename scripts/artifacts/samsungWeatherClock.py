@@ -41,7 +41,7 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
 
 def _weatherclock_db(files_found):
@@ -84,7 +84,7 @@ def get_samsungWeatherClockInfo(files_found, report_folder, seeker, wrap_text):
         ''')
         all_rows = cursor.fetchall()
         for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15]))
+            data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],convert_human_ts_to_utc(row[8]),convert_human_ts_to_utc(row[9]),convert_human_ts_to_utc(row[10]),row[11],row[12],row[13],row[14],row[15]))
         db.close()
 
     data_headers = (
@@ -118,7 +118,7 @@ def get_samsungWeatherClockDaily(files_found, report_folder, seeker, wrap_text):
         ''')
         all_rows = cursor.fetchall()
         for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
+            data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
         db.close()
 
     data_headers = (
@@ -152,7 +152,7 @@ def get_samsungWeatherClockHourly(files_found, report_folder, seeker, wrap_text)
         ''')
         all_rows = cursor.fetchall()
         for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]))
+            data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]))
         db.close()
 
     data_headers = (
