@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_ChessComMessages": {
         "name": "ChessComMessages",
@@ -10,41 +10,33 @@ __artifacts_v2__ = {
         "category": "Chess.com",
         "notes": "",
         "paths": ('*/com.chess/databases/chess-database*',),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "message-square",
-        "function": "get_ChessComMessages",
     }
 }
 
-import sqlite3
-import textwrap
+import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+
+@artifact_processor
 def get_ChessComMessages(files_found, report_folder, seeker, wrap_text):
-    
-    title = "Chess.com Messages"
 
-    # Chess database
-    db_filepath = str(files_found[0])
-    conn = sqlite3.connect(db_filepath)
-    c = conn.cursor()
-    sql = """SELECT datetime(messages.created_at, 'unixepoch') AS Sent, messages.conversation_id AS Conversation, messages.sender_username AS Sender, messages.content AS Message FROM messages"""
-    c.execute(sql)
-    results = c.fetchall()
-    conn.close()
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    cursor.execute('''
+        SELECT messages.created_at, messages.conversation_id, messages.sender_username, messages.content
+        FROM messages
+    ''')
+    all_rows = cursor.fetchall()
+    db.close()
 
-    # Data results
-    data_headers = ('Sent', 'Conversation', 'Sender', 'Message')
-    data_list = results
-    
-    # Reporting
-    description = "Chess.com Messages"
-    report = ArtifactHtmlReport(title)
-    report.start_artifact_report(report_folder, title, description)
-    report.add_script()
-    report.write_artifact_data_table(data_headers, data_list, db_filepath, html_escape=False)
-    report.end_artifact_report()
-    
-    tsv(report_folder, data_headers, data_list, title)
+    data_list = []
+    for row in all_rows:
+        sent = datetime.datetime.fromtimestamp(int(row[0]), datetime.timezone.utc) if row[0] else ''
+        data_list.append((sent, row[1], row[2], row[3]))
+
+    data_headers = (('Sent', 'datetime'), 'Conversation', 'Sender', 'Message')
+    return data_headers, data_list, source_path

@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_ChessComAccount": {
         "name": "Chess.com Account",
@@ -10,58 +10,54 @@ __artifacts_v2__ = {
         "category": "Chess.com",
         "notes": "",
         "paths": ('*/com.chess/shared_prefs/com.chess.app.login_credentials.xml', '*/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "grid",
-        "function": "get_ChessComAccount",
     }
 }
 
-import sqlite3
-import textwrap
-import xml.etree.ElementTree as ET
 import datetime
+import xml.etree.ElementTree as ET
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor
 
+
+@artifact_processor
 def get_ChessComAccount(files_found, report_folder, seeker, wrap_text):
-    
-    title = "Chess.com Account"
 
-    # Data results
-    data_headers = ('Key', 'Value')
     data_list = []
+    source_path = ''
+
+    credentials_file = ''
+    session_file = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if file_found.endswith('login_credentials.xml'):
+            credentials_file = file_found
+        elif file_found.endswith('session_preferences.xml'):
+            session_file = file_found
 
     # Login credentials
-    credentials_file = str(files_found[0])
-    cred_tree = ET.parse(credentials_file)
-    cred_root = cred_tree.getroot()
-    cred_strings = cred_root.findall("string")
-    for item in cred_strings:
-        key = item.attrib.get("name")
-        value = item.text
-        if key in ["pref_username_or_email", "pref_password"]:
-            data_list.append([key, value])
+    if credentials_file:
+        source_path = credentials_file
+        cred_root = ET.parse(credentials_file).getroot()
+        for item in cred_root.findall("string"):
+            key = item.attrib.get("name")
+            value = item.text
+            if key in ["pref_username_or_email", "pref_password"]:
+                data_list.append((key, value))
 
-    # Session 
-    session_file = str(files_found[1])
-    sesh_tree = ET.parse(session_file)
-    sesh_root = sesh_tree.getroot()
-    sesh_strings = sesh_root.findall("string")
-    for item in sesh_strings:
-        key = item.attrib.get("name")
-        value = item.text
-        if key in ["pref_username", "pref_email", "pref_member_since"]:
-            if key == "pref_member_since":
-                value = datetime.datetime.utcfromtimestamp(int(value)).isoformat(sep=" ", timespec="seconds")
-            data_list.append([key, value])
+    # Session
+    if session_file:
+        if not source_path:
+            source_path = session_file
+        sesh_root = ET.parse(session_file).getroot()
+        for item in sesh_root.findall("string"):
+            key = item.attrib.get("name")
+            value = item.text
+            if key in ["pref_username", "pref_email", "pref_member_since"]:
+                if key == "pref_member_since" and value:
+                    value = datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc).isoformat(sep=" ", timespec="seconds")
+                data_list.append((key, value))
 
-    # Reporting
-    description = "Chess.com Account"
-    report = ArtifactHtmlReport(title)
-    report.start_artifact_report(report_folder, title, description)
-    report.add_script()
-    report.write_artifact_data_table(data_headers, data_list, credentials_file, html_escape=False)
-    report.end_artifact_report()
-    
-    tsv(report_folder, data_headers, data_list, title)
+    data_headers = ('Key', 'Value')
+    return data_headers, data_list, source_path
