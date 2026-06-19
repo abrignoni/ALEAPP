@@ -71,7 +71,7 @@ def get_package_info(files_found, report_folder, seeker, wrap_text):
             xlmstring = (etree.tostring(tree.getroot()).decode())
             doc = xmltodict.parse(xlmstring)
         else:
-            with open(file_found) as fd:
+            with open(file_found, encoding='utf-8', errors='replace') as fd:
                 doc = xmltodict.parse(fd.read())
 
         package_dict = doc.get('packages', {}).get('package', {})
