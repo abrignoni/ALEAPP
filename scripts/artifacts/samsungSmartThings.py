@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_samsungSmartThings": {
         "name": "samsungSmartThings",
@@ -10,9 +10,8 @@ __artifacts_v2__ = {
         "category": "Samsung SmartThings",
         "notes": "",
         "paths": ('*/com.samsung.android.oneconnect/databases/QcDB.db*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "file",
-        "function": "get_samsungSmartThings",
     }
 }
 
@@ -22,20 +21,20 @@ __artifacts_v2__ = {
 # Artifact version: 0.0.1
 # Requirements: none
 
-import sqlite3
-import textwrap
-import scripts.artifacts.artGlobals
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
+@artifact_processor
 def get_samsungSmartThings(files_found, report_folder, seeker, wrap_text):
-    
+    data_list = []
+    source_path = ''
+
     for file_found in files_found:
         file_found = str(file_found)
-        if not file_found.endswith('QcDb.db'):
-            continue # Skip all other files
-    
+        if not file_found.endswith('QcDB.db'):
+            continue  # Skip all other files
+
+        source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -51,26 +50,17 @@ def get_samsungSmartThings(files_found, report_folder, seeker, wrap_text):
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Samsung SmartThings - Quick Connect')
-            report.start_artifact_report(report_folder, 'Samsung SmartThings - Quick Connect')
-            report.add_script()
-            data_headers = ('Connection Timestamp','Device Name','Device Type','Net Type','Wifi P2P MAC','Bluetooth MAC','Bluetooth (LE) MAC') 
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Samsung SmartThings - Quick Connect'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Samsung SmartThings - Quick Connect'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Samsung SmartThings - Quick Connect data available')
-        
+        for row in all_rows:
+            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
         db.close()
-        
+
+    data_headers = (
+        ('Connection Timestamp', 'datetime'),
+        'Device Name',
+        'Device Type',
+        'Net Type',
+        'Wifi P2P MAC',
+        'Bluetooth MAC',
+        'Bluetooth (LE) MAC',
+    )
+    return data_headers, data_list, source_path
