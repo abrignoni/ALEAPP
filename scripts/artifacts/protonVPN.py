@@ -83,7 +83,7 @@ def get_protonvpn_device_info(files_found, report_folder, seeker, wrap_text):
                         device_info("ProtonVPN", "Country", elem.text, source_path)
 
                     if (elem.attrib.get('name')) == 'ipAddressCheckTimestamp':
-                        timestamp = datetime.datetime.utcfromtimestamp(int(elem.attrib.get("value"))/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
+                        timestamp = datetime.datetime.fromtimestamp(int(elem.attrib.get("value"))/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S.%f')
                         device_info("ProtonVPN", "Last IP Check Time", timestamp, source_path)
 
     data_headers = ('Key', 'Value')

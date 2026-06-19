@@ -23,7 +23,7 @@ from scripts.ilapfuncs import artifact_processor
 
 
 def timestampcalc(timevalue):
-    timestamp = (datetime.datetime.utcfromtimestamp(int(timevalue)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+    timestamp = datetime.datetime.fromtimestamp(int(timevalue)/1000, datetime.timezone.utc)
     return timestamp
 
 

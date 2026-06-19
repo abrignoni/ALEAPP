@@ -76,8 +76,8 @@ def get_textnow_call_logs(files_found, report_folder, seeker, wrap_text):
                     phone_number_to = row[0]
                 else:
                     phone_number_from = row[0]
-                starttime = datetime.datetime.utcfromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')
-                endtime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
+                starttime = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc)
+                endtime = datetime.datetime.fromtimestamp(int(row[2]), datetime.timezone.utc)
                 data_list.append((starttime, endtime, phone_number_from, phone_number_to, row[1]))
 
             db.close()
@@ -145,7 +145,7 @@ def get_textnow_messages(files_found, report_folder, seeker, wrap_text):
                 all_rows = []
 
             for row in all_rows:
-                sendtime = datetime.datetime.utcfromtimestamp(int(row[5])).strftime('%Y-%m-%d %H:%M:%S')
+                sendtime = datetime.datetime.fromtimestamp(int(row[5]), datetime.timezone.utc)
 
                 data_list.append((sendtime, row[7], row[0], row[1], row[2], row[3], row[4],  row[6]))
 

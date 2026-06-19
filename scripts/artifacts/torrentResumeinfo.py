@@ -25,7 +25,7 @@ from scripts.ilapfuncs import artifact_processor
 
 
 def timestampcalc(timevalue):
-    timestamp = (datetime.datetime.utcfromtimestamp(int(timevalue)).strftime('%Y-%m-%d %H:%M:%S'))
+    timestamp = (datetime.datetime.fromtimestamp(int(timevalue), datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))
     return timestamp
 
 
