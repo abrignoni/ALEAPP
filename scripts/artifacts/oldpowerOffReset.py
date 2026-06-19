@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W1309,W1514
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_oldpowerOffReset": {
         "name": "oldpowerOffReset",
@@ -10,47 +10,35 @@ __artifacts_v2__ = {
         "category": "Power Events",
         "notes": "",
         "paths": ('*/log/power_off_reset_reason.txt', '*/log/power_off_reset_reason_backup.txt'),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "battery",
-        "function": "get_oldpowerOffReset",
     }
 }
 
-from datetime import datetime
 import os
-from pathlib import Path
+from datetime import datetime, timezone
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import artifact_processor
 
+
+@artifact_processor
 def get_oldpowerOffReset(files_found, report_folder, seeker, wrap_text):
     data_list = []
+    source_path = ''
     for file_found in files_found:
-    
+        source_path = os.path.dirname(file_found)
         filename = os.path.basename(file_found)
-        location = os.path.dirname(file_found)
-    
-        with open(file_found, 'r') as f:
+
+        with open(file_found, 'r', encoding='utf-8') as f:
             for line in f:
                 if '/' in line and len(line) == 18:
                     fecha = line.strip()
-                    fecha = (datetime.strptime(fecha,'%y/%m/%d %H:%M:%S'))
-                    
+                    fecha = datetime.strptime(fecha, '%y/%m/%d %H:%M:%S').replace(tzinfo=timezone.utc)
+
                     reason = next(f)
-                    reason = reason.split(':')[1].replace('\n','')
-                    
+                    reason = reason.split(':')[1].replace('\n', '')
+
                     data_list.append((fecha, reason, filename))
-    
-    if len(data_list) > 0:
-        report = ArtifactHtmlReport('Power Off Reset')
-        report.start_artifact_report(report_folder, f'Power Off Reset')
-        report.add_script()
-        data_headers = ('Timestamp', 'Reason', 'Filename')
-        report.write_artifact_data_table(data_headers, data_list, location)
-        report.end_artifact_report()
-        
-        tsvname = f'Power Off Reset'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-    else:
-        logfunc(f'Power Off Reset file available')
+
+    data_headers = (('Timestamp', 'datetime'), 'Reason', 'Filename')
+    return data_headers, data_list, source_path
