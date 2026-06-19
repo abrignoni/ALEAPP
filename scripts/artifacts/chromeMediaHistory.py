@@ -44,7 +44,7 @@ __artifacts_v2__ = {
 import os
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, get_next_unused_name, open_sqlite_db_readonly, lava_process_artifact, lava_insert_sqlite_data, artifact_processor
+from scripts.ilapfuncs import logfunc, get_next_unused_name, open_sqlite_db_readonly, lava_process_artifact, lava_insert_sqlite_data, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
 
 
@@ -92,7 +92,7 @@ def get_chromeMediaHistorySessions(files_found, report_folder, seeker, wrap_text
             report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
             data_list = []
             for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
 
             report_name = f'{browser_name} - Media History - Sessions'
             report = ArtifactHtmlReport(report_name)
@@ -151,7 +151,7 @@ def get_chromeMediaHistoryPlaybacks(files_found, report_folder, seeker, wrap_tex
             report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
             data_list = []
             for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6]))
 
             report_name = f'{browser_name} - Media History - Playbacks'
             report = ArtifactHtmlReport(report_name)
@@ -201,7 +201,7 @@ def get_chromeMediaHistoryOrigins(files_found, report_folder, seeker, wrap_text)
             report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
             data_list = []
             for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3]))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3]))
 
             report_name = f'{browser_name} - Media History - Origins'
             report = ArtifactHtmlReport(report_name)
