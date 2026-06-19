@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W0631
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_burnerSubscription": {
         "name": "Burner: Second Phone Number",
@@ -10,34 +10,41 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Burner",
         "notes": "",
-        "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*'),
-        "output_types": None,
+        "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*',),
+        "output_types": "standard",
         "artifact_icon": "credit-card",
-        "function": "get_burnerSubscription"
     }
 }
 
-import sqlite3
+import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
+
+
+@artifact_processor
 def get_burnerSubscription(files_found, report_folder, seeker, wrap_text):
-    
+
     data_list = []
-    
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
-        if file_found.endswith('burnerDatabase.db'):
-            db = open_sqlite_db_readonly(file_found)
-            #SQL QUERY TIME!
-            cursor = db.cursor()
-            cursor.execute('''
+        if not file_found.endswith('burnerDatabase.db'):
+            continue
+
+        source_path = file_found
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        cursor.execute('''
             SELECT
             json_extract(SubscriptionEntity.value, '$.burnerIds') as 'User ID',
-            datetime(json_extract(SubscriptionEntity.value, '$.creationDate')/1000, 'unixepoch') as 'Date Created',
-            datetime(json_extract(SubscriptionEntity.value, '$.renewalDate')/1000, 'unixepoch') as 'Renewal Date',
+            json_extract(SubscriptionEntity.value, '$.creationDate') as 'Date Created',
+            json_extract(SubscriptionEntity.value, '$.renewalDate') as 'Renewal Date',
             json_extract(SubscriptionEntity.value, '$.sku') as 'SKU',
             json_extract(SubscriptionEntity.value, '$.store') as 'Store',
             CASE json_extract(SubscriptionEntity.value, '$.trial')
@@ -47,33 +54,12 @@ def get_burnerSubscription(files_found, report_folder, seeker, wrap_text):
             END as Trial,
             json_extract(SubscriptionEntity.value, '$.state') as 'State'
             FROM SubscriptionEntity
-            ''')
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-               
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-            db.close()
-                    
-        else:
-            continue
-        
-    if data_list:
-        description = 'Burner: Second Phone Number'
-        report = ArtifactHtmlReport('Burner Subscription Information')
-        report.start_artifact_report(report_folder, 'Burner Subscription', description)
-        report.add_script()
-        data_headers = ('User ID','Timestamp','Renewal Date','SKU','Store','Trial','State')
-        report.write_artifact_data_table(data_headers, data_list, file_found,html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Burner Subscription'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'Burner Subscription'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    
-    else:
-        logfunc('No Burner data available')
+        for row in all_rows:
+            data_list.append((row[0], _ms_to_utc(row[1]), _ms_to_utc(row[2]), row[3], row[4], row[5], row[6]))
+
+    data_headers = ('User ID', ('Timestamp', 'datetime'), ('Renewal Date', 'datetime'), 'SKU', 'Store', 'Trial', 'State')
+    return data_headers, data_list, source_path
