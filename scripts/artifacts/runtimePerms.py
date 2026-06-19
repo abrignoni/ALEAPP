@@ -1,4 +1,4 @@
-# pylint: disable=E0606,W0613
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_runtimePerms": {
         "name": "runtimePerms",
@@ -10,72 +10,52 @@ __artifacts_v2__ = {
         "category": "Permissions",
         "notes": "",
         "paths": ('*/system/users/*/runtime-permissions.xml', '*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml'),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "activity",
-        "function": "get_runtimePerms",
     }
 }
 
-import xml.etree.ElementTree as ET 
+import xml.etree.ElementTree as ET
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import artifact_processor, logfunc, is_platform_windows
 
+
+@artifact_processor
 def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
-    
-    run = 0
-    slash = '\\' if is_platform_windows() else '/' 
-    
+
+    slash = '\\' if is_platform_windows() else '/'
+    data_list = []
+    source_path = ''
+
     for file_found in files_found:
         file_found = str(file_found)
-        
-        data_list = []
-        run = run + 1
-        err = 0
-        
-        
+
         parts = file_found.split(slash)
         if 'mirror' in parts:
-            user = 'mirror'
+            continue
         elif 'system' in parts:
             user = parts[-2]
         elif 'misc_de' in parts:
             user = parts[-4]
-        
-        if user == 'mirror':
-            continue
         else:
-            try:
-                ET.parse(file_found)
-            except ET.ParseError:
-                logfunc('Parse error - Non XML file.') 
-                err = 1
-                
-            if err == 0:
-                tree = ET.parse(file_found)
-                root = tree.getroot()
+            continue
 
-                for elem in root:
-                    #print(elem.tag)
-                    usagetype = elem.tag
-                    name = elem.attrib['name']
-                    #print("Usage type: "+usagetype)
-                    #print('name')
-                    for subelem in elem:
-                        permission = subelem.attrib['name']
-                        granted = subelem.attrib['granted']
-                        flags = subelem.attrib['flags']
-                        
-                        data_list.append((usagetype, name, permission, granted, flags))
-    
-                if len(data_list) > 0:
-                    report = ArtifactHtmlReport('Runtime Permissions')
-                    report.start_artifact_report(report_folder, f'Runtime Permissions_{user}')
-                    report.add_script()
-                    data_headers = ('Type', 'Name', 'Permission', 'Granted?','Flag')
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    
-                    tsvname = f'Runtime Permissions_{user}'
-                    tsv(report_folder, data_headers, data_list, tsvname)
-                
+        try:
+            tree = ET.parse(file_found)
+        except ET.ParseError:
+            logfunc('Parse error - Non XML file.')
+            continue
+
+        source_path = file_found
+        root = tree.getroot()
+        for elem in root:
+            usagetype = elem.tag
+            name = elem.attrib['name']
+            for subelem in elem:
+                permission = subelem.attrib['name']
+                granted = subelem.attrib['granted']
+                flags = subelem.attrib['flags']
+                data_list.append((user, usagetype, name, permission, granted, flags))
+
+    data_headers = ('User', 'Type', 'Name', 'Permission', 'Granted?', 'Flag')
+    return data_headers, data_list, source_path
