@@ -15,9 +15,28 @@ __artifacts_v2__ = {
     }
 }
 
+import re
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc, is_platform_windows
+
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
 
 
 @artifact_processor
@@ -40,14 +59,8 @@ def get_runtimePerms(files_found, report_folder, seeker, wrap_text):
         else:
             continue
 
-        try:
-            tree = ET.parse(file_found)
-        except ET.ParseError:
-            logfunc('Parse error - Non XML file.')
-            continue
-
         source_path = file_found
-        root = tree.getroot()
+        root = _parse_xml(file_found)
         for elem in root:
             usagetype = elem.tag
             name = elem.attrib['name']
