@@ -29,9 +29,9 @@ def honorMediaLibrary(context):
 
     query = '''
     SELECT
-        date_added                              AS date_added_ts,
-        date_modified                           AS date_modified_ts,
-        datetaken                               AS date_taken_ts,
+        date_added                              AS added_timestamp,
+        date_modified                           AS modified_timestamp,
+        datetaken                               AS taken_timestamp,
         _data                                   AS path,
         title                                   AS title,
         _display_name                           AS display_name,
@@ -48,7 +48,7 @@ def honorMediaLibrary(context):
             WHEN recycleFlag = 0 THEN NULL
             ELSE 'Yes (flag = ' || recycleFlag || ')'
         END                                     AS recycled,
-        NULLIF(recycledTime, 0)                 AS recycled_time_ts,
+        NULLIF(recycledTime, 0)                 AS recycled_timestamp,
         sourcePath                              AS source_file_path,
         sourceFileName                          AS source_file_name
     FROM gallery_media
@@ -57,9 +57,9 @@ def honorMediaLibrary(context):
     records = get_sqlite_db_records(source_path, query)
     for record in records:
         data_list.append((
-            convert_unix_ts_to_utc(record[0]),  #date_added_ts
-            convert_unix_ts_to_utc(record[1]),  #date_modified_ts
-            convert_unix_ts_to_utc(record[2]),  #date_taken_ts
+            convert_unix_ts_to_utc(record[0]),  #added_timestamp
+            convert_unix_ts_to_utc(record[1]),  #modified_timestamp
+            convert_unix_ts_to_utc(record[2]),  #taken_timestamp
             record[3],                          #path
             record[4],                          #title
             record[5],                          #display_name
@@ -72,7 +72,7 @@ def honorMediaLibrary(context):
             record[12],                         #resolution
             record[13],                         #md5
             record[14],                         #recycled
-            convert_unix_ts_to_utc(record[15]), #recycled_time_ts
+            convert_unix_ts_to_utc(record[15]), #recycled_timestamp
             record[16],                         #source_file_path
             record[17],                         #source_file_name
         ))
