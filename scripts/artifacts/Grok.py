@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
     "grok_generatedvideos": {
         "name": "Grok - Videos",
@@ -29,20 +30,37 @@ __artifacts_v2__ = {
 
 import os
 import datetime
-import inspect
+import re
 from pathlib import Path
 import sqlite3
 import xml.etree.ElementTree as ET
 import json
 
-from scripts.ilapfuncs import artifact_processor, is_platform_windows, check_in_media, open_sqlite_db_readonly, get_sqlite_db_records, get_file_path, media_to_html, is_platform_windows, logfunc
+from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
 
 @artifact_processor
 def grok_generatedvideos(files_found, report_folder, seeker, wrap_text):
-    artifact_info = inspect.stack()[0]
     data_list = []
 
     db_path = None
+    source_path = ''
     meta_tables = []
     index_tables = []
 
@@ -154,11 +172,9 @@ def grok_generatedvideos(files_found, report_folder, seeker, wrap_text):
                 extracted_ts = ""
 
         # Lookup DB metadata by name
-        length_val = ""
         db_last_touch_utc = ""
         if filename in exo_meta:
-            length_raw, last_touch_raw = exo_meta[filename]
-            length_val = str(length_raw)
+            _, last_touch_raw = exo_meta[filename]
 
             try:
                 ts2 = int(last_touch_raw)
@@ -196,7 +212,7 @@ def grok_generatedvideos(files_found, report_folder, seeker, wrap_text):
                 media_item
             ))
 
-    for name, (length_raw, last_touch_raw) in exo_meta.items():
+    for name, (_, last_touch_raw) in exo_meta.items():
         if name in exo_files_present:
             continue 
 
@@ -267,11 +283,6 @@ def grok_generatedvideos(files_found, report_folder, seeker, wrap_text):
 
 @artifact_processor
 def grok_useraccount(files_found, report_folder, seeker, wrap_text):
-    import os
-    import xml.etree.ElementTree as ET
-    import json
-    from pathlib import Path
-
     data_list = []
     source_path = ""
 
@@ -288,11 +299,7 @@ def grok_useraccount(files_found, report_folder, seeker, wrap_text):
         if not os.path.isfile(source_path):
             continue
 
-        try:
-            tree = ET.parse(source_path)
-            root = tree.getroot()
-        except Exception:
-            continue 
+        root = _parse_xml(source_path)
 
         filename = Path(source_path).name
         path = source_path
