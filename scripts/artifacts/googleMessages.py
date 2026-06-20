@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_googleMessages": {
         "name": "GoogleMessages",
@@ -10,37 +10,32 @@ __artifacts_v2__ = {
         "category": "Google Messages",
         "notes": "",
         "paths": ('*/com.google.android.apps.messaging/databases/bugle_db*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "message-square",
-        "function": "get_googleMessages",
     }
 }
 
-# Google Messages
-# Author:  Josh Hickman (josh@thebinaryhick.blog)
-# Date 2021-01-30
-# Version: 0.1
-# Requirements:  None
+import datetime
 
-import os
-import sqlite3
-import textwrap
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
 
+@artifact_processor
 def get_googleMessages(files_found, report_folder, seeker, wrap_text):
-    
+
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('bugle_db'):
-            continue # Skip all other files
-        
+            continue  # Skip all other files
+
+        source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
         SELECT
-        datetime(parts.timestamp/1000,'unixepoch') AS "Timestamp (UTC)",
+        parts.timestamp,
         parts.content_type AS "Message Type",
         conversations.name AS "Other Participant/Conversation Name",
         participants.display_destination AS "Message Sender",
@@ -55,29 +50,14 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         JOIN messages ON messages._id=parts.message_id
         JOIN participants ON participants._id=messages.sender_id
         JOIN conversations ON conversations._id=parts.conversation_id
-        ORDER BY "Timestamp (UTC)" ASC
+        ORDER BY parts.timestamp ASC
         ''')
-
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Google Messages')
-            report.start_artifact_report(report_folder, 'Google Messages')
-            report.add_script()
-            data_headers = ('Message Timestamp (UTC)','Message Type','Other Participant/Conversation Name','Message Sender','Message','Attachment Byte Size','Attachment Location') 
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Google Messages'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Google Messages'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Google Messages data available')
-        
         db.close()
+
+        for row in all_rows:
+            timestamp = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
+            data_list.append((timestamp, row[1], row[2], row[3], row[4], row[5], row[6]))
+
+    data_headers = (('Message Timestamp', 'datetime'), 'Message Type', 'Other Participant/Conversation Name', ('Message Sender', 'phonenumber'), 'Message', 'Attachment Byte Size', 'Attachment Location')
+    return data_headers, data_list, source_path
