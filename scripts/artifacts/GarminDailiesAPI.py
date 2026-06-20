@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0631,W1309,W1514
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_dailies_api": {
         "name": "GarminDailiesAPI",
@@ -10,65 +10,82 @@ __artifacts_v2__ = {
         "category": "Garmin",
         "notes": "",
         "paths": ('*/garmin.api/daily*',),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "activity",
-        "function": "get_dailies_api",
     }
 }
 
-# Get Information related to the Daily summaries from the Garmin API using the JSON file extracted
-# Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-28
-# Version: 1.0
-# Requirements: Python 3.7 or higher, json
+# Requires extracting Garmin API data using https://github.com/labcif/Garmin-Connect-API-Extractor
 
 import json
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv
+from scripts.ilapfuncs import artifact_processor, logfunc
+
+# (field, header) pairs - duplicates from the original list removed so LAVA column names stay unique
+FIELDS = [
+    ('calendarDate', 'Calendar Date'),
+    ('totalKilocalories', 'Total Kilocalories'),
+    ('activeKilocalories', 'Active Kilocalories'),
+    ('bmrKilocalories', 'BMR Kilocalories'),
+    ('wellnessActiveKilocalories', 'Wellness Active Kilocalories'),
+    ('burnedKilocalories', 'Burned Kilocalories'),
+    ('consumedKilocalories', 'Consumed Kilocalories'),
+    ('remainingKilocalories', 'Remaining Kilocalories'),
+    ('totalSteps', 'Total Steps'),
+    ('totalDistanceMeters', 'Total Distance Meters'),
+    ('wellnessDistanceMeters', 'Wellness Distance Meters'),
+    ('highlyActiveSeconds', 'Highly Active Seconds'),
+    ('activeSeconds', 'Active Seconds'),
+    ('moderateIntensityMinutes', 'Moderate Intensity Minutes'),
+    ('floorsAscendedInMeters', 'Floors Ascended In Meters'),
+    ('floorsDescendedInMeters', 'Floors Descended In Meters'),
+    ('minHeartRate', 'Min Heart Rate'),
+    ('maxHeartRate', 'Max Heart Rate'),
+    ('restingHeartRate', 'Resting Heart Rate'),
+    ('lastSevenDaysAvgRestingHeartRate', 'Last Seven Days Avg Resting Heart Rate'),
+    ('averageStressLevel', 'Average Stress Level'),
+    ('maxStressLevel', 'Max Stress Level'),
+    ('stressDuration', 'Stress Duration'),
+    ('restStressDuration', 'Rest Stress Duration'),
+    ('activityStressDuration', 'Activity Stress Duration'),
+    ('uncategorizedStressDuration', 'Uncategorized Stress Duration'),
+    ('totalStressDuration', 'Total Stress Duration'),
+    ('lowStressDuration', 'Low Stress Duration'),
+    ('mediumStressDuration', 'Medium Stress Duration'),
+    ('highStressDuration', 'High Stress Duration'),
+    ('stressPercentage', 'Stress Percentage'),
+    ('restStressPercentage', 'Rest Stress Percentage'),
+    ('activityStressPercentage', 'Activity Stress Percentage'),
+    ('uncategorizedStressPercentage', 'Uncategorized Stress Percentage'),
+    ('lowStressPercentage', 'Low Stress Percentage'),
+    ('mediumStressPercentage', 'Medium Stress Percentage'),
+    ('highStressPercentage', 'High Stress Percentage'),
+    ('bodyBatteryChargedValue', 'Body Battery Charged Value'),
+    ('bodyBatteryDrainedValue', 'Body Battery Drained Value'),
+    ('bodyBatteryHighestValue', 'Body Battery Highest Value'),
+    ('bodyBatteryLowestValue', 'Body Battery Lowest Value'),
+    ('bodyBatteryMostRecentValue', 'Body Battery Most Recent Value'),
+    ('averageSpo2', 'Average Spo2'),
+    ('latestSpo2', 'Latest Spo2'),
+]
 
 
+@artifact_processor
 def get_dailies_api(files_found, report_folder, seeker, wrap_text):
-    fields = ['calendarDate', 'totalKilocalories', 'activeKilocalories', 'bmrKilocalories', 'wellnessActiveKilocalories', 'burnedKilocalories', 'consumedKilocalories', 'remainingKilocalories',
-                'totalSteps', 'totalDistanceMeters', 'wellnessDistanceMeters', 'highlyActiveSeconds', 'activeSeconds', 'moderateIntensityMinutes', 'floorsAscendedInMeters', 'floorsDescendedInMeters',
-                'floorsAscendedInMeters', 'floorsDescendedInMeters', 'minHeartRate', 'maxHeartRate', 'restingHeartRate', 'lastSevenDaysAvgRestingHeartRate', 'averageStressLevel', 'maxStressLevel',
-                'stressDuration', 'stressDuration', 'restStressDuration', 'activityStressDuration', 'uncategorizedStressDuration', 'totalStressDuration', 'lowStressDuration', 'mediumStressDuration',
-                'highStressDuration', 'stressPercentage', 'restStressPercentage', 'activityStressPercentage', 'uncategorizedStressPercentage', 'lowStressPercentage', 'mediumStressPercentage',
-                'highStressPercentage', 'bodyBatteryChargedValue', 'bodyBatteryDrainedValue', 'bodyBatteryHighestValue', 'bodyBatteryLowestValue', 'bodyBatteryMostRecentValue', 'averageSpo2', 'latestSpo2']
     logfunc("Processing data for Dailies API")
-    logfunc("Processing data for Dailies API")
-    report = ArtifactHtmlReport('Dailies API')
-    report.start_artifact_report(report_folder, 'Dailies API')
-    report.add_script()
-    data_headers = ('Calendar Date', 'Total Kilocalories', 'Active Kilocalories', 'BMR Kilocalories', 'Wellness Active Kilocalories', 'Burned Kilocalories', 'Consumed Kilocalories', 'Remaining Kilocalories',
-                        'Total Steps', 'Total Distance Meters', 'Wellness Distance Meters', 'Highly Active Seconds', 'Active Seconds', 'Moderate Intensity Minutes', 'Floors Ascended In Meters', 'Floors Descended In Meters',
-                        'Floors Ascended In Meters', 'Floors Descended In Meters', 'Min Heart Rate', 'Max Heart Rate', 'Resting Heart Rate', 'Last Seven Days Avg Resting Heart Rate', 'Average Stress Level', 'Max Stress Level',
-                        'Stress Duration', 'Stress Duration', 'Rest Stress Duration', 'Activity Stress Duration', 'Uncategorized Stress Duration', 'Total Stress Duration', 'Low Stress Duration', 'Medium Stress Duration',
-                        'High Stress Duration', 'Stress Percentage', 'Rest Stress Percentage', 'Activity Stress Percentage', 'Uncategorized Stress Percentage', 'Low Stress Percentage', 'Medium Stress Percentage',
-                        'High Stress Percentage', 'Body Battery Charged Value', 'Body Battery Drained Value', 'Body Battery Highest Value', 'Body Battery Lowest Value', 'Body Battery Most Recent Value',
-                        'Average Spo2', 'Latest Spo2')
     data_list = []
-    # file = str(files_found[0])
+    source_path = ''
     for file in files_found:
         file = str(file)
+        source_path = file
         logfunc("Processing file: " + file)
-        # Open JSON file
-        with open(file, "r") as f:
+        with open(file, "r", encoding='utf-8', errors='replace') as f:
             data = json.load(f)
 
         if len(data) > 0:
-            data_row = []
-            logfunc("Found Garmin Daily File")
-            # Get calendar date
-            for field in fields:
-                if data['UserDailySummary']['payload'][field] is not None:
-                    data_row.append(data['UserDailySummary']['payload'][field])
-                else:
-                    data_row.append('N/A')
-            data_list.append((row for row in data_row))
-    report.filter_by_date('GarminDailyAPI', 0)
-    report.write_artifact_data_table(data_headers, data_list, file, html_escape=False, table_id='GarminDailyAPI')
-    report.end_artifact_report()
-    tsvname = f'Garmin Log'
-    tsv(report_folder, data_headers, data_list, tsvname)
+            payload = data['UserDailySummary']['payload']
+            data_row = [payload[field] if payload.get(field) is not None else 'N/A' for field, _ in FIELDS]
+            data_list.append(tuple(data_row))
+
+    data_headers = tuple(header for _, header in FIELDS)
+    return data_headers, data_list, source_path

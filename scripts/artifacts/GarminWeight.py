@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_garmin_weight": {
         "name": "GarminWeight",
@@ -10,73 +10,35 @@ __artifacts_v2__ = {
         "category": "Garmin",
         "notes": "",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "activity",
-        "function": "get_garmin_weight",
     }
 }
 
-# Get Information relative to the weight data in the database cache-database from the table weight in the Garmin Connect app
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 
+@artifact_processor
 def get_garmin_weight(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Garmin Weight")
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
-
-    #This query is retreiving the data from the table weight, which contains the weight data for the user
+    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')]
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''
-        Select
-        samplePk,
-        datetime("date"/1000,'unixepoch'),
-        weight
+        Select samplePk, "date", weight
         from weight
     ''')
-
     all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        logfunc(f"Found {usageentries} weight entries")
-        report = ArtifactHtmlReport('Weight')
-        report.start_artifact_report(report_folder, 'Weight')
-        report.add_script()
-        data_headers = ('samplePk', 'Date', 'Weight')
-        data_list = []
-        date = []
-        weight = []
-
-        for row in all_rows:
-            data_list.append((row[0], row[1], row[2]))
-            # get only the date from the datetime
-            date.append(row[1].split(' ')[0])
-            # convert weight in kg
-            weight.append(row[2] / 1000)
-
-
-
-        table_id = "GarminWeight"
-        report.filter_by_date(table_id, 1)
-        report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id)
-        report.add_chart()
-        report.add_chart_script("myChart", "bar", weight, date, "Weight over time", "Weight (kg)", "Date")
-        report.end_artifact_report()
-
-        tsvname = f'Garmin - Weight'
-        tsv(report_folder, data_headers, data_list, tsvname)
-
-        tlactivity = f'Garmin - Weight'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-
-    else:
-        logfunc('No Garmin Weight data available')
-
     db.close()
+    logfunc(f"Found {len(all_rows)} weight entries")
+
+    data_list = []
+    for row in all_rows:
+        date = datetime.datetime.fromtimestamp(int(row[1]) / 1000, datetime.timezone.utc) if row[1] else ''
+        data_list.append((row[0], date, row[2]))
+
+    data_headers = ('samplePk', ('Date', 'datetime'), 'Weight')
+    return data_headers, data_list, source_path
