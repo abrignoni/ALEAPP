@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W0622,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_gmailActive": {
         "name": "GmailActive",
@@ -10,58 +10,26 @@ __artifacts_v2__ = {
         "category": "Gmail",
         "notes": "",
         "paths": ('*/com.google.android.gm/shared_prefs/Gmail.xml',),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "mail",
-        "function": "get_gmailActive",
     }
 }
 
-# gmailActive: Get gmail account information
-# Author: Joshua James {joshua@dfirscience.org}
-# Date: 2021-11-08
-# Artifact version: 0.0.1
-# Android version tested: 11
-# Requirements: none
-
 import xml.etree.ElementTree as ET
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import artifact_processor, logfunc
 
-class keyboard_event:
-    def __init__(self, id, app, text, textbox_name, textbox_id, event_date, start_date='', end_date=''):
-        self.id = id
-        self.app = app
-        self.text = text
-        self.textbox_name = textbox_name
-        self.textbox_id = textbox_id
-        self.event_date = event_date
-        self.start_date = start_date
-        self.end_date = end_date
 
+@artifact_processor
 def get_gmailActive(files_found, report_folder, seeker, wrap_text):
-    #logfunc("If you can read this, the module is working!")
-    #logfunc(files_found)
-    activeAccount = ''
-    file_found = str(files_found[0])
-    xmlTree = ET.parse(file_found)
-    root = xmlTree.getroot()
+
+    data_list = []
+    source_path = str(files_found[0])
+    root = ET.parse(source_path).getroot()
     for child in root:
         if child.attrib['name'] == "active-account":
             logfunc("Active gmail account found: " + child.text)
-            activeAccount = child.text
+            data_list.append((child.text,))
 
-    if activeAccount != '':
-        report = ArtifactHtmlReport('Gmail - Active')
-        report.start_artifact_report(report_folder, 'Gmail - Active')
-        report.add_script()
-        data_headers = ('Active Gmail Address','') # final , needed for table formatting
-        data_list = []
-        data_list.append((activeAccount, ''))# We only expect one active account
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-            
-        tsvname = f'Gmail - Active'
-        tsv(report_folder, data_headers, data_list, tsvname)
-    else:
-        logfunc('No active Gmail account found')
+    data_headers = ('Active Gmail Address',)
+    return data_headers, data_list, source_path
