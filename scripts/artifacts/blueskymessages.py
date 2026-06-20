@@ -1,7 +1,7 @@
 # pylint: disable=W0611,W0613,W0631,W0702,W1309
 __artifacts_v2__ = {
     "get_blueskymessages": {
-        "name": "Bluesky",
+        "name": "Bluesky - Messages",
         "description": "Bluesky Messages",
         "author": "Alexis Brignoni",
         "creation_date": "2024-11-19",

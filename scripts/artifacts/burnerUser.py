@@ -1,7 +1,7 @@
 # pylint: disable=W0613
 __artifacts_v2__ = {
     "get_burnerUser": {
-        "name": "Burner: Second Phone Number",
+        "name": "Burner - User",
         "description": "Parses Burner User Information",
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
         "version": "0.0.1",

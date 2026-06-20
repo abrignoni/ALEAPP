@@ -1,7 +1,7 @@
 # pylint: disable=W0613
 __artifacts_v2__ = {
     "get_blueskysearches": {
-        "name": "Bluesky",
+        "name": "Bluesky - Searches",
         "description": "User generated searches",
         "author": "DFIRcon 2025 Miami",
         "creation_date": "2024-11-15",
