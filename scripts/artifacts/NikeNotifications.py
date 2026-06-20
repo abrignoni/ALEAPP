@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_nike_notifications": {
         "name": "NikeNotifications",
@@ -10,77 +10,38 @@ __artifacts_v2__ = {
         "category": "Nike-Run",
         "notes": "",
         "paths": ('*/com.nike.plusgps/databases/ns_inbox.db*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "activity",
-        "function": "get_nike_notifications",
     }
 }
 
-# Get Information relative to the notifications stored in the database of the Nike Run Club Mobile application
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-18
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 
+@artifact_processor
 def get_nike_notifications(files_found, report_folder, seeker, wrap_text):
-    logfunc("Processing data for Nike Notifications")
-    files_found = [x for x in files_found if not x.endswith('-journal')]
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
 
+    files_found = [x for x in files_found if not str(x).endswith('-journal')]
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''
-        Select
-        _id,
-        sender_user_id,
-        sender_app_id,
-         datetime("notification_timestamp"/1000,'unixepoch'), 
-        notification_type,
-        message, 
-        read,
-        deleted
+        Select _id, sender_user_id, sender_app_id, notification_timestamp,
+               notification_type, message, read, deleted
         from inbox
     ''')
-
     all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        logfunc(f"Found {usageentries} notifications")
-        report = ArtifactHtmlReport('Nike - Notifications')
-        report.start_artifact_report(report_folder, 'Nike - Notifications')
-        report.add_script()
-        data_headers = ('ID', 'Sender User ID', 'Sender App ID', 'Notification Timestamp', 'Notification Type', 'Message', 'Read', 'Deleted')
-        data_list = []
-        for row in all_rows:
-            read = row[6]
-            if read == 0:
-                read = 'No'
-            else:
-                read = 'Yes'
-            deleted = row[7]
-            if deleted == 0:
-                deleted = 'No'
-            else:
-                deleted = 'Yes'
-
-            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], read, deleted))
-
-        table_id = "nike_notifications"
-        report.filter_by_date(table_id, 1)
-        report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id)
-        report.end_artifact_report()
-
-        tsvname = f'Notifications'
-        tsv(report_folder, data_headers, data_list, tsvname)
-
-        tlactivity = f'Notifications'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-
-    else:
-        logfunc('No Nike Notifications data available')
-
     db.close()
+    logfunc(f"Found {len(all_rows)} notifications")
+
+    data_list = []
+    for row in all_rows:
+        timestamp = datetime.datetime.fromtimestamp(int(row[3]) / 1000, datetime.timezone.utc) if row[3] else ''
+        read = 'No' if row[6] == 0 else 'Yes'
+        deleted = 'No' if row[7] == 0 else 'Yes'
+        data_list.append((row[0], row[1], row[2], timestamp, row[4], row[5], read, deleted))
+
+    data_headers = ('ID', 'Sender User ID', 'Sender App ID', ('Notification Timestamp', 'datetime'), 'Notification Type', 'Message', 'Read', 'Deleted')
+    return data_headers, data_list, source_path

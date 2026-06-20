@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W0631
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_burnerUser": {
         "name": "Burner: Second Phone Number",
@@ -10,63 +10,44 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Burner",
         "notes": "",
-        "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*'),
-        "output_types": None,
+        "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*',),
+        "output_types": "standard",
         "artifact_icon": "user",
-        "function": "get_burnerUser"
     }
 }
 
-import sqlite3
+import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+
+@artifact_processor
 def get_burnerUser(files_found, report_folder, seeker, wrap_text):
-    
+
     data_list = []
-    
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
-        if file_found.endswith('burnerDatabase.db'):
-            db = open_sqlite_db_readonly(file_found)
-            #SQL QUERY TIME!
-            cursor = db.cursor()
-            cursor.execute('''
+        if not file_found.endswith('burnerDatabase.db'):
+            continue
+
+        source_path = file_found
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        cursor.execute('''
             SELECT
-            datetime(json_extract(BurnerEntity.value, '$.dateCreated')/1000, 'unixepoch') as  'Date Created', 
+            json_extract(BurnerEntity.value, '$.dateCreated') as 'Date Created',
             id as 'User ID',
             json_extract(BurnerEntity.value, '$.phoneNumberId') as 'Phone Number',
             json_extract(BurnerEntity.value, '$.autoReplyText') as 'Auto Reply Message'
             FROM BurnerEntity
-            ''')
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-               
-                    data_list.append((row[0],row[1],row[2],row[3]))
-            db.close()
-                    
-        else:
-            continue
-        
-    if data_list:
-        description = 'Burner: Second Phone Number'
-        report = ArtifactHtmlReport('Burner User Information')
-        report.start_artifact_report(report_folder, 'Burner User', description)
-        report.add_script()
-        data_headers = ('Timestamp','User ID','Phone Number','Auto Reply Message')
-        report.write_artifact_data_table(data_headers, data_list, file_found,html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Burner User'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'Burner User'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    
-    else:
-        logfunc('No Burner data available')
+        for row in all_rows:
+            created = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
+            data_list.append((created, row[1], row[2], row[3]))
+
+    data_headers = (('Timestamp', 'datetime'), 'User ID', ('Phone Number', 'phonenumber'), 'Auto Reply Message')
+    return data_headers, data_list, source_path
