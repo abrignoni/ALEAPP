@@ -175,6 +175,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | mastodon |
 | meetme |
 | mega |
+| mega_transfers |
 | mewe |
 | pSettings |
 | pikpakCloudlist |
