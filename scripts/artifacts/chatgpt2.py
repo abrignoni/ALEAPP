@@ -1,7 +1,7 @@
 # pylint: disable=E0606,E1120,E1123,W0611,W0613,W0702,W0718
 __artifacts_v2__ = {
     "get_chatpgt2": {
-        "name": "ChatGPT",
+        "name": "ChatGPT - Conversations",
         "description": "Android ChatGPT conversations",
         "author": "Alexis Brignoni",
         "creation_date": "2025-07-08",

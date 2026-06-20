@@ -1,7 +1,7 @@
 # pylint: disable=W0613,W0718
 __artifacts_v2__ = {
     "get_chrome": {
-        "name": "Chrome - Web History",
+        "name": "Web History",
         "description": "Parses Web History from Chromium based browsers",
         "author": "",
         "creation_date": "2020-03-19",
@@ -14,7 +14,7 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
     },
     "get_chromeWebVisits": {
-        "name": "Chrome - Web Visits",
+        "name": "Web Visits",
         "description": "Parses Web Visits from Chromium based browsers",
         "author": "",
         "creation_date": "2020-03-19",
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
     },
     "get_chromeSearchTerms": {
-        "name": "Chrome - Search Terms",
+        "name": "Search Terms",
         "description": "Parses Search Terms from Chromium based browsers",
         "author": "",
         "creation_date": "2020-03-19",
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
         "artifact_icon": "search",
     },
     "get_chromeDownloads": {
-        "name": "Chrome - Downloads",
+        "name": "Downloads",
         "description": "Parses Downloads from Chromium based browsers",
         "author": "",
         "creation_date": "2020-03-19",
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "artifact_icon": "download",
     },
     "get_chromeKeywordSearchTerms": {
-        "name": "Chrome - Keyword Search Terms",
+        "name": "Keyword Search Terms",
         "description": "Parses Keyword Search Terms from Chromium based browsers",
         "author": "",
         "creation_date": "2020-03-19",
