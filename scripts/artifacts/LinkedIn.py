@@ -46,9 +46,28 @@ __artifacts_v2__ = {
 
 # Requirements:  json, xml
 import json
+import re
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, logfunc
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
+
 
 @artifact_processor
 def linkedin_account(files_found, _report_folder, _seeker, _wrap_text):
@@ -56,8 +75,7 @@ def linkedin_account(files_found, _report_folder, _seeker, _wrap_text):
     # Get data from xml into a dict to work with
     xml_dict = {}
     with open(files_found[0], 'rb') as xml_file:
-        tree = ET.parse(xml_file)
-        root = tree.getroot()
+        root = _parse_xml(xml_file)
         for elem in root:
             name = elem.attrib.get('name')
 

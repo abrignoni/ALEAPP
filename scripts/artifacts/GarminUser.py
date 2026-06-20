@@ -20,6 +20,7 @@ __artifacts_v2__ = {
 # Date: 2023-02-24
 # Version: 1.0
 # Requirements: Python 3.7 or higher and ElementTree
+import re
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc
@@ -33,6 +34,24 @@ def remove_whitespace_from_xml_first_line(xml_file):
     lines[0] = '<?xml version=\'1.0\' encoding=\'utf-8\' standalone=\'yes\' ?>\n'
     with open(xml_file, 'w', encoding='utf-8') as f:
         f.writelines(lines)
+
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
 
 
 @artifact_processor
@@ -52,8 +71,7 @@ def get_garminUP(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing file: " + source_path)
     # File is not well formatted, remove first element from first line
     remove_whitespace_from_xml_first_line(source_path)
-    tree = ET.parse(source_path)
-    root = tree.getroot()
+    root = _parse_xml(source_path)
     for child in root:
         for i in attribute:
             if child.attrib["name"] == i:
