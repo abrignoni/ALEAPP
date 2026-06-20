@@ -1,7 +1,7 @@
-# pylint: disable=W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
-    "get_permissions": {
-        "name": "permissions",
+    "get_permissions_trees": {
+        "name": "Permission Trees",
         "description": "",
         "author": "",
         "creation_date": "2021-01-28",
@@ -10,101 +10,103 @@ __artifacts_v2__ = {
         "category": "Permissions",
         "notes": "",
         "paths": ('*/system/packages.xml',),
-        "output_types": None,
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "settings",
-        "function": "get_permissions",
+    },
+    "get_permissions_list": {
+        "name": "Permissions",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-01-28",
+        "last_update_date": "2021-01-28",
+        "requirements": "none",
+        "category": "Permissions",
+        "notes": "",
+        "paths": ('*/system/packages.xml',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "settings",
+    },
+    "get_permissions_packages": {
+        "name": "Package and Shared User",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-01-28",
+        "last_update_date": "2021-01-28",
+        "requirements": "none",
+        "category": "Permissions",
+        "notes": "",
+        "paths": ('*/system/packages.xml',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "settings",
     }
 }
 
-import xml.etree.ElementTree as ET 
+import xml.etree.ElementTree as ET
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, abxread, checkabx
+from scripts.ilapfuncs import artifact_processor, logfunc, is_platform_windows, abxread, checkabx
 
-def get_permissions(files_found, report_folder, seeker, wrap_text):
-    
-    slash = '\\' if is_platform_windows() else '/' 
-    
+
+def _iter_roots(files_found):
+    '''Yield (root, file_found) for each non-mirror packages.xml that parses.'''
+    slash = '\\' if is_platform_windows() else '/'
     for file_found in files_found:
         file_found = str(file_found)
-        
-        data_list_permission_trees = []
-        data_list_permissions = []
-        data_list_packages_su = []
-        err = 0
-        user = ''
-        
-        parts = file_found.split(slash)
-        if 'mirror' in parts:
-            user = 'mirror'
-        
-        if user == 'mirror':
+        if 'mirror' in file_found.split(slash):
             continue
-        else:
-            try:
-                if (checkabx(file_found)):
-                    multi_root = False
-                    tree = abxread(file_found, multi_root)
-                else:
-                    tree = ET.parse(file_found)
-                
-            except ET.ParseError:
-                logfunc('Parse error - Non XML file.') 
-                err = 1
-                
-            if err == 0:
-                root = tree.getroot()
-                
-                for elem in root:
-                    #print('TAG LVL 1 '+ elem.tag, elem.attrib)
-                    #role = elem.attrib['name']
-                    #print()
-                    if elem.tag == 'permission-trees':
-                        for subelem in elem:
-                            #print(elem.tag +' '+ subelem.tag, subelem.attrib)
-                            data_list_permission_trees.append((subelem.attrib.get('name', ''), subelem.attrib.get('package', '')))
-                    elif elem.tag == 'permissions':
-                        for subelem in elem:
-                            data_list_permissions.append((subelem.attrib.get('name', ''), subelem.attrib.get('package', ''), subelem.attrib.get('protection', '')))
-                            #print(elem.tag +' '+ subelem.tag, subelem.attrib)
-                    else:
-                        for subelem in elem:
-                            if subelem.tag == 'perms':
-                                for sub_subelem in subelem:
-                                    #print(elem.tag, elem.attrib['name'], sub_subelem.attrib['name'], sub_subelem.attrib['granted'] )
-                                    
-                                    
-                                    data_list_packages_su.append((elem.tag, elem.attrib.get('name', ''), sub_subelem.attrib.get('name', ''), sub_subelem.attrib.get('granted', '')))
-    
-                if len(data_list_permission_trees) > 0:
-                    report = ArtifactHtmlReport('Permission Trees')
-                    report.start_artifact_report(report_folder, f'Permission Trees')
-                    report.add_script()
-                    data_headers = ('Name', 'Package')
-                    report.write_artifact_data_table(data_headers, data_list_permission_trees, file_found)
-                    report.end_artifact_report()
-                    
-                    tsvname = f'Permission Trees'
-                    tsv(report_folder, data_headers, data_list_permission_trees, tsvname)
-                    
-                if len(data_list_permissions) > 0:
-                    report = ArtifactHtmlReport('Permissions')
-                    report.start_artifact_report(report_folder, f'Permissions')
-                    report.add_script()
-                    data_headers = ('Name', 'Package', 'Protection')
-                    report.write_artifact_data_table(data_headers, data_list_permissions, file_found)
-                    report.end_artifact_report()
-                    
-                    tsvname = f'Permissions'
-                    tsv(report_folder, data_headers, data_list_permissions, tsvname)
-                
-                if len(data_list_packages_su) > 0:
-                    report = ArtifactHtmlReport('Package and Shared User')
-                    report.start_artifact_report(report_folder, f'Package and Shared User')
-                    report.add_script()
-                    data_headers = ('Type', 'Package', 'Permission', 'Granted?')
-                    report.write_artifact_data_table(data_headers, data_list_packages_su, file_found)
-                    report.end_artifact_report()
-                    
-                    tsvname = f'Permissions - Packages and Shared User'
-                    tsv(report_folder, data_headers, data_list_packages_su, tsvname)
+        try:
+            if (checkabx(file_found)):
+                tree = abxread(file_found, False)
+            else:
+                tree = ET.parse(file_found)
+        except ET.ParseError:
+            logfunc('Parse error - Non XML file.')
+            continue
+        yield tree.getroot(), file_found
+
+
+@artifact_processor
+def get_permissions_trees(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for root, file_found in _iter_roots(files_found):
+        source_path = file_found
+        for elem in root:
+            if elem.tag == 'permission-trees':
+                for subelem in elem:
+                    data_list.append((subelem.attrib.get('name', ''), subelem.attrib.get('package', '')))
+
+    data_headers = ('Name', 'Package')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_permissions_list(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for root, file_found in _iter_roots(files_found):
+        source_path = file_found
+        for elem in root:
+            if elem.tag == 'permissions':
+                for subelem in elem:
+                    data_list.append((subelem.attrib.get('name', ''), subelem.attrib.get('package', ''), subelem.attrib.get('protection', '')))
+
+    data_headers = ('Name', 'Package', 'Protection')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_permissions_packages(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for root, file_found in _iter_roots(files_found):
+        source_path = file_found
+        for elem in root:
+            if elem.tag in ('permission-trees', 'permissions'):
+                continue
+            for subelem in elem:
+                if subelem.tag == 'perms':
+                    for sub_subelem in subelem:
+                        data_list.append((elem.tag, elem.attrib.get('name', ''), sub_subelem.attrib.get('name', ''), sub_subelem.attrib.get('granted', '')))
+
+    data_headers = ('Type', 'Package', 'Permission', 'Granted?')
+    return data_headers, data_list, source_path
