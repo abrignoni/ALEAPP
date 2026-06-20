@@ -16,14 +16,33 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import re
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor, abxread, checkabx
+from scripts.ilapfuncs import artifact_processor, abxread, checkabx, logfunc
 
 
 def timestampcalc(timevalue):
     timestamp = (datetime.datetime.fromtimestamp(int(timevalue)/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))
     return timestamp
+
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
 
 
 @artifact_processor
@@ -37,11 +56,10 @@ def get_bittorrentClientpref(files_found, report_folder, seeker, wrap_text):
         # check if file is abx
         if (checkabx(file_found)):
             multi_root = False
-            tree = abxread(file_found, multi_root)
+            root = abxread(file_found, multi_root).getroot()
         else:
-            tree = ET.parse(file_found)
+            root = _parse_xml(file_found)
 
-        root = tree.getroot()
 
         for elem in root:
             key = elem.attrib['name']
