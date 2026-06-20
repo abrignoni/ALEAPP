@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
-        "category": "Device Info",
+        "category": "Device Information",
         "notes": "",
         "paths": ('*/com.google.android.gsf/databases/googlesettings.db*',),
         "output_types": ['html', 'tsv', 'lava'],

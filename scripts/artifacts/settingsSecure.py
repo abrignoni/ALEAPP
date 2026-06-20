@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-04-02",
         "last_update_date": "2020-04-02",
         "requirements": "none",
-        "category": "Device Info",
+        "category": "Device Information",
         "notes": "",
         "paths": ('*/system/users/*/settings_secure.xml',),
         "output_types": ['html', 'tsv', 'lava'],
