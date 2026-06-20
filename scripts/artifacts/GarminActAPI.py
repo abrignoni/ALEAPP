@@ -1,144 +1,75 @@
-# pylint: disable=W0613,W0631,W1309,W1514
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_act_api": {
         "name": "GarminActAPI",
-        "description": "Get the activities from the Garmin API using the JSON extracted from the Garmin API",
+        "description": "Get Information related to activities from the Garmin API using the JSON file extracted",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
         "requirements": "Python 3.7 or higher, json",
         "category": "Garmin",
         "notes": "",
-        "paths": ('*/garmin.api/activities*',),
-        "output_types": None,
+        "paths": ('*/garmin.api/activity*',),
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "activity",
-        "function": "get_act_api",
     }
 }
 
-# Get the activities from the Garmin API using the JSON extracted from the Garmin API
-# Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher, json
+# Requires extracting Garmin API data using https://github.com/labcif/Garmin-Connect-API-Extractor
+
 import json
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv
+from scripts.ilapfuncs import artifact_processor, logfunc
 
 
+def _round2(value):
+    return round(float(value), 2) if value is not None else 0
+
+
+@artifact_processor
 def get_act_api(files_found, report_folder, seeker, wrap_text):
-
     logfunc("Processing data for Garmin Activity API")
-    report = ArtifactHtmlReport('Activity API')
-    report.start_artifact_report(report_folder, 'Activity API')
-    report.add_script()
-    data_headers = (
-    'Activity ID', 'Start Time GMT', 'Activity Name', 'Description', 'Activity Type Key', 'Distance (m)', 'Duration (s)',
-    'Elevation Gain', 'Elevation Loss', 'Average Speed', 'Max Speed', 'Start Latitude',
-    'Start Longitude', 'Owner ID', 'Owner Name','Owner Profile Image URL Large', 'Calories', 'Average HR', 'Max HR',
-    'Steps', 'vO2MaxValue')
-
     data_list = []
-    #file = str(files_found[0])
+    source_path = ''
     for file in files_found:
         file = str(file)
+        source_path = file
         logfunc("Processing file: " + file)
-        activity_date = ''
-        activity_json = []
-        #Open JSON file
-        # if decode error, try to decode with utf-8-sig
         try:
-            with open(file, "r") as f:
+            with open(file, "r", encoding="utf-8") as f:
                 data = json.load(f)
         except UnicodeDecodeError:
             with open(file, "r", encoding="latin-1") as f:
                 data = json.load(f)
 
-        if len(data) > 0:
-            logfunc("Found Garmin Activity file")
-            # Get Activity ID
-            for data in data:
-                activity_id = data['activityId']
-                # Get Start Time GMT
-                start_time_gmt = data['startTimeGMT']
-                # Get Activity Name
-                activity_name = data['activityName']
-                # Get Description
-                description = data['description']
-                # Get Activity Type Key
-                activity_type_key = data['activityType']['typeKey']
-                # Get Distance
-                distance = round(float(data['distance']), 2)
-                # Get Duration
-                duration = round(float(data['duration']), 2)
-                # Get Elevation Gain
-                if data['elevationGain'] is None:
-                    elevation_gain = 0
-                else:
-                    elevation_gain = round(float(data['elevationGain']), 2)
-                # Get Elevation Loss
-                if data['elevationLoss'] is None:
-                    elevation_loss = 0
-                else:
-                    elevation_loss = round(float(data['elevationLoss']), 2)
-                # Get Average Speed
-                if data['averageSpeed'] is None:
-                    average_speed = 0
-                else:
-                    average_speed = round(float(data['averageSpeed']), 2)
-                # Get Max Speed
-                if data['maxSpeed'] is None:
-                    max_speed = 0
-                else:
-                    max_speed = round(float(data['maxSpeed']), 2)
-                # Get Start Latitude
-                if data['startLatitude'] is None:
-                    start_latitude = 0
-                else:
-                    start_latitude = round(float(data['startLatitude']), 2)
-                # Get Start Longitude
-                if data['startLongitude'] is None:
-                    start_longitude = 0
-                else:
-                    start_longitude = round(float(data['startLongitude']), 2)
-                # Get Owner ID
-                owner_id = data['ownerId']
-                # Get Owner Name
-                owner_name = data['ownerFullName']
-                # Get Owner Profile Image URL Large
-                owner_profile_image_url_large = data['ownerProfileImageUrlLarge']
-                # Get Calories
-                calories = data['calories']
-                # Get Average HR
-                average_hr = data['averageHR']
-                # Get Max HR
-                max_hr = data['maxHR']
-                # Get Steps
-                steps = data['steps']
-                # Get vO2MaxValue
-                vO2MaxValue = data['vO2MaxValue']
+        for item in data:
+            data_list.append((
+                item['activityId'],
+                item['startTimeGMT'],
+                item['activityName'],
+                item['description'],
+                item['activityType']['typeKey'],
+                _round2(item['distance']),
+                _round2(item['duration']),
+                _round2(item['elevationGain']),
+                _round2(item['elevationLoss']),
+                _round2(item['averageSpeed']),
+                _round2(item['maxSpeed']),
+                _round2(item['startLatitude']),
+                _round2(item['startLongitude']),
+                item['ownerId'],
+                item['ownerFullName'],
+                item['ownerProfileImageUrlLarge'],
+                item['calories'],
+                item['averageHR'],
+                item['maxHR'],
+                item['steps'],
+                item['vO2MaxValue'],
+            ))
 
-                # extract date from startTimeGMT
-                current_date = start_time_gmt.split(' ')[0]
-                if current_date != activity_date:
-                    activity_json.append({
-                        'date': current_date,
-                        'total': 1,
-                    })
-                    activity_date = current_date
-                else:
-                    # Change the total of the last element of the list
-                    activity_json[-1]['total'] += 1
-
-                data_list.append((activity_id, start_time_gmt, activity_name, description, activity_type_key, distance, duration,
-                elevation_gain, elevation_loss, average_speed, max_speed, start_latitude, start_longitude, owner_id, owner_name,
-                owner_profile_image_url_large, calories, average_hr, max_hr, steps, vO2MaxValue))
-
-    report.add_heat_map(json.dumps(activity_json))
-    report.filter_by_date('GarminActAPI', 1)
-    report.write_artifact_data_table(data_headers, data_list, file, html_escape=False, table_id='GarminActAPI')
-    report.end_artifact_report()
-    tsvname = f'Garmin Log'
-    tsv(report_folder, data_headers, data_list, tsvname)
+    data_headers = (
+        'Activity ID', 'Start Time GMT', 'Activity Name', 'Description', 'Activity Type Key', 'Distance (m)',
+        'Duration (s)', 'Elevation Gain', 'Elevation Loss', 'Average Speed', 'Max Speed', 'Start Latitude',
+        'Start Longitude', 'Owner ID', 'Owner Name', 'Owner Profile Image URL Large', 'Calories', 'Average HR',
+        'Max HR', 'Steps', 'vO2MaxValue')
+    return data_headers, data_list, source_path
