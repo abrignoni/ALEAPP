@@ -18,7 +18,39 @@ __artifacts_v2__ = {
 import re
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor, logdevinfo, is_platform_windows, abxread, checkabx
+from scripts.ilapfuncs import artifact_processor, logfunc, logdevinfo, is_platform_windows, abxread, checkabx
+
+# Characters that are invalid in XML 1.0 (raw control chars) and cause "not well-formed (invalid token)"
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+# A bare '&' not already part of a valid entity
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_root(file_found):
+    '''Return the XML root, tolerating ABX, Android-11 rootless files, and invalid XML tokens.
+
+    settings_secure.xml occasionally contains raw control characters or unescaped
+    ampersands inside setting values, which make a plain ET.parse() raise
+    "not well-formed (invalid token)". We recover by sanitizing the text; if it is
+    still unparseable the file is skipped (None) rather than erroring the artifact.
+    '''
+    if (checkabx(file_found)):
+        return abxread(file_found, True).getroot()
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = f.read()
+        xml = INVALID_XML_CHARS.sub('', xml)
+        xml = BARE_AMPERSAND.sub('&amp;', xml)
+        # Android 11 stores these without a single enclosing root element
+        if '<root>' not in xml:
+            xml = re.sub(r"(<\?xml[^>]+\?>)", r"\1<root>", xml) + "</root>"
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'settingsSecure: skipping unparseable {file_found}: {ex}')
+            return None
 
 
 @artifact_processor
@@ -39,16 +71,9 @@ def get_settingsSecure(files_found, report_folder, seeker, wrap_text):
         if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
             continue  # Skip mirror, it should be duplicate data
 
-        if (checkabx(file_found)):
-            multi_root = True
-            root = abxread(file_found, multi_root).getroot()
-        else:
-            try:
-                root = ET.parse(file_found).getroot()
-            except ET.ParseError:  # Fix for android 11 invalid XML file (no root element present)
-                with open(file_found, encoding='utf-8', errors='replace') as f:
-                    xml = f.read()
-                    root = ET.fromstring(re.sub(r"(<\?xml[^>]+\?>)", r"\1<root>", xml) + "</root>")
+        root = _parse_root(file_found)
+        if root is None:
+            continue
 
         source_path = file_found
         for setting in root.iter('setting'):
