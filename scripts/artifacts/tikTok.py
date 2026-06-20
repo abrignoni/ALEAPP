@@ -1,7 +1,7 @@
-# pylint: disable=E0606,W0611,W0613,W0631
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_tikTok": {
-        "name": "tikTok",
+        "name": "TikTok - Messages",
         "description": "",
         "author": "",
         "creation_date": "2021-03-02",
@@ -10,104 +10,98 @@ __artifacts_v2__ = {
         "category": "TikTok",
         "notes": "",
         "paths": ('*_im.db*', '*db_im_xx*'),
-        "output_types": None,
+        "output_types": "standard",
+        "artifact_icon": "message-square",
+    },
+    "get_tikTok_contacts": {
+        "name": "TikTok - Contacts",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-02",
+        "last_update_date": "2021-03-02",
+        "requirements": "none",
+        "category": "TikTok",
+        "notes": "",
+        "paths": ('*_im.db*', '*db_im_xx*'),
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
-        "function": "get_tikTok",
     }
 }
 
-from os.path import dirname, join
-import sqlite3
+import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
-def get_tikTok(files_found, report_folder, seeker, wrap_text):
-    data_list = []
-    data_list1 = []
-    
+def _tiktok_dbs(files_found):
+    maindb = attachdb = ''
     for file_found in files_found:
         file_found = str(file_found)
-
         if file_found.endswith('_im.db'):
             maindb = file_found
-        if file_found.endswith('db_im_xx'):
+        elif file_found.endswith('db_im_xx'):
             attachdb = file_found
+    return maindb, attachdb
 
-    db = open_sqlite_db_readonly(maindb)
-    cursor = db.cursor()
-    cursor.execute(f"ATTACH DATABASE '{attachdb}' as db_im_xx;")
-    cursor.execute('''
-        select
-        datetime(created_time/1000, 'unixepoch', 'localtime') as created_time,
-        UID,
-        UNIQUE_ID,
-        NICK_NAME,
-        json_extract(content, '$.text') as message,
-        json_extract(content,'$.display_name') as links_gifs_display_name,
-        json_extract(content, '$.url.url_list[0]') as links_gifs_urls,
-        read_status,
+
+@artifact_processor
+def get_tikTok(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    maindb, attachdb = _tiktok_dbs(files_found)
+    source_path = maindb
+    if maindb and attachdb:
+        db = open_sqlite_db_readonly(maindb)
+        cursor = db.cursor()
+        cursor.execute(f"ATTACH DATABASE '{attachdb}' as db_im_xx;")
+        cursor.execute('''
+            select
+            created_time,
+            UID,
+            UNIQUE_ID,
+            NICK_NAME,
+            json_extract(content, '$.text') as message,
+            json_extract(content,'$.display_name') as links_gifs_display_name,
+            json_extract(content, '$.url.url_list[0]') as links_gifs_urls,
+            read_status,
             case when read_status = 0 then 'Not read'
                 when read_status = 1 then 'Read'
                 else read_status
-            end
-        local_info
-        from db_im_xx.SIMPLE_USER, msg
-        where UID = sender and json_valid(content) = 1 order by created_time
+            end local_info
+            from db_im_xx.SIMPLE_USER, msg
+            where UID = sender and json_valid(content) = 1 order by created_time
         ''')
+        all_rows = cursor.fetchall()
+        db.close()
 
-    all_rows = cursor.fetchall()
-    
-    if len(all_rows) > 0:
         for row in all_rows:
+            timestamp = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
+            data_list.append((timestamp, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
 
-            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
+    data_headers = (('Timestamp', 'datetime'), 'UID', 'Unique ID', 'Nickname', 'Message', 'Link GIF Name',
+                    'Link GIF URL', 'Read?', 'Local Info')
+    return data_headers, data_list, source_path
 
-        report = ArtifactHtmlReport('TikTok Messages')
-        report.start_artifact_report(report_folder, 'TikTok - Messages')
-        report.add_script()
-        data_headers = ('Timestamp','UID','Unique ID','Nickname','Message','Link GIF Name','Link GIF URL','Read?','Local Info')
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
 
-        tsvname = 'Tiktok Messages'
-        tsv(report_folder, data_headers, data_list, tsvname)
-
-        tlactivity = 'TikTok Messages'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No TikTok messages available')
-
-    cursor.execute('''
-        select
-        UID,
-        NICK_NAME,
-        UNIQUE_ID,
-        INITIAL_LETTER,
-        json_extract(AVATAR_THUMB, '$.url_list[0]') as avatarURL,
-        FOLLOW_STATUS 
-        from SIMPLE_USER
+@artifact_processor
+def get_tikTok_contacts(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    maindb, attachdb = _tiktok_dbs(files_found)
+    source_path = maindb
+    if maindb and attachdb:
+        db = open_sqlite_db_readonly(maindb)
+        cursor = db.cursor()
+        cursor.execute(f"ATTACH DATABASE '{attachdb}' as db_im_xx;")
+        cursor.execute('''
+            select UID, NICK_NAME, UNIQUE_ID, INITIAL_LETTER,
+            json_extract(AVATAR_THUMB, '$.url_list[0]') as avatarURL,
+            FOLLOW_STATUS
+            from db_im_xx.SIMPLE_USER
         ''')
-    
-    all_rows1 = cursor.fetchall()
-    
-    if len(all_rows) > 0:
-        for row in all_rows1:
-            
-            data_list1.append((row[0], row[1], row[2], row[3], row[4], row[5]))
-            
-        report = ArtifactHtmlReport('TikTok Contacts')
-        report.start_artifact_report(report_folder, 'TikTok - Contacts')
-        report.add_script()
-        data_headers1 = ('UID','Nickname','Unique ID','Initial Letter','Avatar URL','Follow Status')
-        report.write_artifact_data_table(data_headers1, data_list1, file_found)
-        report.end_artifact_report()
-        
-        tsvname = 'TikTok Contacts'
-        tsv(report_folder, data_headers1, data_list1, tsvname)
-        
-    else:
-        logfunc('No TikTok Contacts available')
-    
-    db.close()
+        all_rows = cursor.fetchall()
+        db.close()
+
+        for row in all_rows:
+            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5]))
+
+    data_headers = ('UID', 'Nickname', 'Unique ID', 'Initial Letter', 'Avatar URL', 'Follow Status')
+    return data_headers, data_list, source_path
