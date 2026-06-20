@@ -29,9 +29,9 @@ def honorMediaLibrary(context):
 
     query = '''
     SELECT
-        date_added                              AS date_added,
-        date_modified                           AS date_modified,
-        datetaken                               AS date_taken,
+        date_added                              AS date_added_ts,
+        date_modified                           AS date_modified_ts,
+        datetaken                               AS date_taken_ts,
         _data                                   AS path,
         title                                   AS title,
         _display_name                           AS display_name,
@@ -48,7 +48,7 @@ def honorMediaLibrary(context):
             WHEN recycleFlag = 0 THEN NULL
             ELSE 'Yes (flag = ' || recycleFlag || ')'
         END                                     AS recycled,
-        NULLIF(recycledTime, 0)                 AS recycled_time,
+        NULLIF(recycledTime, 0)                 AS recycled_time_ts,
         sourcePath                              AS source_file_path,
         sourceFileName                          AS source_file_name
     FROM gallery_media
@@ -57,9 +57,9 @@ def honorMediaLibrary(context):
     records = get_sqlite_db_records(source_path, query)
     for record in records:
         data_list.append((
-            convert_unix_ts_to_utc(record[0]),  #date_added
-            convert_unix_ts_to_utc(record[1]),  #date_modified
-            convert_unix_ts_to_utc(record[2]),  #date_taken
+            convert_unix_ts_to_utc(record[0]),  #date_added_ts
+            convert_unix_ts_to_utc(record[1]),  #date_modified_ts
+            convert_unix_ts_to_utc(record[2]),  #date_taken_ts
             record[3],                          #path
             record[4],                          #title
             record[5],                          #display_name
@@ -72,15 +72,15 @@ def honorMediaLibrary(context):
             record[12],                         #resolution
             record[13],                         #md5
             record[14],                         #recycled
-            convert_unix_ts_to_utc(record[15]), #recycled_time
+            convert_unix_ts_to_utc(record[15]), #recycled_time_ts
             record[16],                         #source_file_path
             record[17],                         #source_file_name
         ))
 
     data_headers = (
-        ('Date Added', 'datetime'),
-        ('Date Modified', 'datetime'),
-        ('Date Taken', 'datetime'),
+        ('Added Timestamp', 'datetime'),
+        ('Modified Timestamp', 'datetime'),
+        ('Taken Timestamp', 'datetime'),
         'Path',
         'Title',
         'Display Name',
@@ -93,7 +93,7 @@ def honorMediaLibrary(context):
         'Resolution',
         'MD5',
         'Recycled?',
-        ('Recycled Time', 'datetime'),
+        ('Recycled Timestamp', 'datetime'),
         'Source File Path',
         'Source File Name',
     )
