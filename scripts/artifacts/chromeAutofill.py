@@ -1,8 +1,8 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
     "get_chromeAutofill": {
-        "name": "Chrome Autofill",
-        "description": "Parses Chrome autofill data",
+        "name": "Chrome Autofill - Entries",
+        "description": "Parses Chrome autofill entries",
         "author": "",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
@@ -10,154 +10,171 @@ __artifacts_v2__ = {
         "category": "Chromium",
         "notes": "",
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "globe",
-        "function": "get_chromeAutofill",
+    },
+    "get_chromeAutofillProfiles": {
+        "name": "Chrome Autofill - Profiles",
+        "description": "Parses Chrome autofill profiles",
+        "author": "",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2020-03-19",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
+        "output_types": "standard",
+        "artifact_icon": "globe",
     }
 }
 
+import datetime
 import os
-import sqlite3
-import textwrap
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
-
+from scripts.ilapfuncs import logfunc, get_next_unused_name, lava_process_artifact, lava_insert_sqlite_data, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
 
+
+def _seconds_to_utc(value):
+    if value in (None, 0, ''):
+        return ''
+    return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+
+
+def _browser_for(file_found):
+    browser_name = get_browser_name(file_found)
+    if file_found.find('app_sbrowser') >= 0:
+        browser_name = 'Browser'
+    return browser_name
+
+
+def _emit_report(report_folder, report_name, data_headers, data_list, file_found,
+                 lava_data_headers, module_name):
+    report = ArtifactHtmlReport(report_name)
+    report_path = os.path.join(report_folder, f'{report_name}.temphtml')
+    report_path = get_next_unused_name(report_path)[:-9]  # remove .temphtml
+    report.start_artifact_report(report_folder, os.path.basename(report_path))
+    report.add_script()
+    report.write_artifact_data_table(data_headers, data_list, file_found)
+    report.end_artifact_report()
+
+    table_name, object_columns, column_map = lava_process_artifact(
+        "Chromium", module_name, report_name, lava_data_headers, len(data_list))
+    lava_insert_sqlite_data(table_name, data_list, object_columns, lava_data_headers, column_map)
+
+
+@artifact_processor
 def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
-    
+    all_data = []
+    data_headers = ['Date Created', 'Field', 'Value', 'Date Last Used', 'Count']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    lava_data_headers[3] = (lava_data_headers[3], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
     for file_found in files_found:
         file_found = str(file_found)
-        if not os.path.basename(file_found) == 'Web Data': # skip -journal and other files
+        if not os.path.basename(file_found) == 'Web Data':  # skip -journal and other files
             continue
-        browser_name = get_browser_name(file_found)
-        if file_found.find('app_sbrowser') >= 0:
-            browser_name = 'Browser'
-        elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
-            continue # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data??
+        if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
+            continue  # Skip mirror, it should be duplicate data
+
+        browser_name = _browser_for(file_found)
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-
         columns = [i[1] for i in cursor.execute('PRAGMA table_info(autofill)')]
+
         if 'date_created' in columns:
-            cursor.execute(f'''
-            select
-                datetime(date_created, 'unixepoch'),
-                name,
-                value,
-                datetime(date_last_used, 'unixepoch'),
-                count
-            from autofill
-            ''')
-
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport(f'{browser_name} - Autofill - Entries')
-                #check for existing and get next name for report file, so report from another file does not get overwritten
-                report_path = os.path.join(report_folder, f'{browser_name} - Autofill - Entries.temphtml')
-                report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-                report.start_artifact_report(report_folder, os.path.basename(report_path))
-                report.add_script()
-                data_headers = ('Date Created','Field','Value','Date Last Used','Count')
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4]))
-
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'{browser_name} - Autofill - Entries'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'{browser_name} - Autofill - Entries'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc(f'No {browser_name} - Autofill - Entries data available')
-                
+            cursor.execute('select date_created, name, value, date_last_used, count from autofill')
+            rows = cursor.fetchall()
+            data_list = [(_seconds_to_utc(r[0]), r[1], r[2], _seconds_to_utc(r[3]), r[4]) for r in rows]
         else:
-            cursor.execute(f'''
-            select
-                datetime(autofill_dates.date_created, 'unixepoch'),
-                autofill.name,
-                autofill.value,
-                autofill.count
-            from autofill
-            join autofill_dates on autofill_dates.pair_id = autofill.pair_id
+            cursor.execute('''
+                select autofill_dates.date_created, autofill.name, autofill.value, autofill.count
+                from autofill
+                join autofill_dates on autofill_dates.pair_id = autofill.pair_id
             ''')
+            rows = cursor.fetchall()
+            data_list = [(_seconds_to_utc(r[0]), r[1], r[2], '', r[3]) for r in rows]
+        db.close()
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport(f'{browser_name} - Autofill - Entries')
-                #check for existing and get next name for report file, so report from another file does not get overwritten
-                report_path = os.path.join(report_folder, f'{browser_name} - Autofill - Entries.temphtml')
-                report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-                report.start_artifact_report(report_folder, os.path.basename(report_path))
-                report.add_script()
-                data_headers = ('Date Created','Field','Value','Count')
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3]))
+        if len(data_list) > 0:
+            _emit_report(report_folder, f'{browser_name} - Autofill - Entries', data_headers, data_list,
+                         file_found, lava_data_headers, "get_chromeAutofill")
+            all_data.extend([row + (browser_name,) for row in data_list])
+        else:
+            logfunc(f'No {browser_name} - Autofill - Entries data available')
 
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'{browser_name} - Autofill - Entries'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'{browser_name} - Autofill - Entries'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc(f'No {browser_name} - Autofill - Entries data available')
-        
-        cursor.execute(f'''
-        select
-            datetime(date_modified, 'unixepoch'),
-            autofill_profiles.guid,
-            autofill_profile_names.first_name,
-            autofill_profile_names.middle_name,
-            autofill_profile_names.last_name,
-            autofill_profile_emails.email,
-            autofill_profile_phones.number,
-            autofill_profiles.company_name,
-            autofill_profiles.street_address,
-            autofill_profiles.city,
-            autofill_profiles.state,
-            autofill_profiles.zipcode,
-            datetime(use_date, 'unixepoch'),
-            autofill_profiles.use_count
-        from autofill_profiles
-        inner join autofill_profile_emails ON autofill_profile_emails.guid = autofill_profiles.guid
-        inner join autofill_profile_phones ON autofill_profiles.guid = autofill_profile_phones.guid
-        inner join autofill_profile_names ON autofill_profile_phones.guid = autofill_profile_names.guid
-        ''')
+    return all_data_headers, all_data, report_file
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Autofill - Profiles')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Autofill - Profiles.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Date Modified','GUID','First Name','Middle Name','Last Name','Email','Phone Number','Company Name','Address','City','State','Zip Code','Date Last Used','Use Count')
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Autofill - Profiles'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Autofill - Profiles'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+@artifact_processor
+def get_chromeAutofillProfiles(files_found, report_folder, seeker, wrap_text):
+    all_data = []
+    data_headers = ['Date Modified', 'GUID', 'First Name', 'Middle Name', 'Last Name', 'Email',
+                    'Phone Number', 'Company Name', 'Address', 'City', 'State', 'Zip Code',
+                    'Date Last Used', 'Use Count']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    lava_data_headers[6] = (lava_data_headers[6], 'phonenumber')
+    lava_data_headers[12] = (lava_data_headers[12], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not os.path.basename(file_found) == 'Web Data':  # skip -journal and other files
+            continue
+        if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
+            continue  # Skip mirror, it should be duplicate data
+
+        browser_name = _browser_for(file_found)
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        try:
+            cursor.execute('''
+                select
+                    date_modified,
+                    autofill_profiles.guid,
+                    autofill_profile_names.first_name,
+                    autofill_profile_names.middle_name,
+                    autofill_profile_names.last_name,
+                    autofill_profile_emails.email,
+                    autofill_profile_phones.number,
+                    autofill_profiles.company_name,
+                    autofill_profiles.street_address,
+                    autofill_profiles.city,
+                    autofill_profiles.state,
+                    autofill_profiles.zipcode,
+                    use_date,
+                    autofill_profiles.use_count
+                from autofill_profiles
+                inner join autofill_profile_emails ON autofill_profile_emails.guid = autofill_profiles.guid
+                inner join autofill_profile_phones ON autofill_profiles.guid = autofill_profile_phones.guid
+                inner join autofill_profile_names ON autofill_profile_phones.guid = autofill_profile_names.guid
+            ''')
+            rows = cursor.fetchall()
+        except Exception as e:
+            logfunc(str(e))
+            rows = []
+        db.close()
+
+        data_list = []
+        for r in rows:
+            data_list.append((_seconds_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8],
+                              r[9], r[10], r[11], _seconds_to_utc(r[12]), r[13]))
+
+        if len(data_list) > 0:
+            _emit_report(report_folder, f'{browser_name} - Autofill - Profiles', data_headers, data_list,
+                         file_found, lava_data_headers, "get_chromeAutofillProfiles")
+            all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Autofill - Profiles data available')
-        
-        db.close()
+
+    return all_data_headers, all_data, report_file
