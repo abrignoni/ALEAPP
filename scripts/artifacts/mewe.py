@@ -33,6 +33,11 @@ import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+# Module-level constants (kept for backwards-compatibility; snapchat.py imports APP_NAME)
+APP_NAME = 'MeWe'
+DB_NAME = 'app_database'
+SGSESSION_FILE = 'SGSession.xml'
+
 CHAT_MESSAGES_QUERY = '''
     SELECT
         createdAt,
@@ -56,7 +61,7 @@ def get_mewe_chat(files_found, report_folder, seeker, wrap_text):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not file_found.endswith('app_database'):
+        if not file_found.endswith(DB_NAME):
             continue
 
         source_path = file_found
@@ -85,7 +90,7 @@ def get_mewe_session(files_found, report_folder, seeker, wrap_text):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not file_found.endswith('SGSession.xml'):
+        if not file_found.endswith(SGSESSION_FILE):
             continue
 
         source_path = file_found
