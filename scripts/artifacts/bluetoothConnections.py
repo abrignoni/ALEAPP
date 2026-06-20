@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0612,W0613,W0702,W1309,W1514
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_bluetoothConnections": {
         "name": "Bluetooth Connections",
@@ -10,104 +10,79 @@ __artifacts_v2__ = {
         "category": "Bluetooth Connections",
         "notes": "",
         "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
-        "output_types": None,
-        "artifact_icon": "wifi",
-        "function": "get_bluetoothConnections",
+        "output_types": "standard",
+        "artifact_icon": "bluetooth",
+    },
+    "get_bluetoothAdapter": {
+        "name": "Bluetooth Adapter Information",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-06-23",
+        "last_update_date": "2021-06-23",
+        "requirements": "none",
+        "category": "Bluetooth Connections",
+        "notes": "",
+        "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "bluetooth",
     }
 }
 
-import csv
 import datetime
-import os
 import re
-import scripts.artifacts.artGlobals 
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, logdevinfo, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import artifact_processor
 
+MAC_RE = re.compile(r'(\[[0-9a-f]{2}(?::[0-9a-f]{2}){5}\])', re.IGNORECASE)
+
+
+@artifact_processor
 def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
     data_list = []
-    file_found = str(files_found[0])
-    
-    name_value = ''
-    timestamp_value = ''
-    linkkey_value = ''
-    macaddrf = ''
+    source_path = str(files_found[0])
+
+    name_value = timestamp_value = linkkey_value = macaddrf = ''
     first_round = True
-    
-    with open(file_found, "r") as f:
-        for line in f: 
-            
-            p = re.compile(r'(\[[0-9a-f]{2}(?::[0-9a-f]{2}){5}\])', re.IGNORECASE)
-            macaddr = re.findall(p, line)
-            if macaddr:
-                try:
-                    if first_round == True:
-                        first_round = False
-                    else:
-                        data_list.append((timestamp_value, name_value, macaddrf, linkkey_value))
-                        name_value = ''
-                        timestamp_value = ''
-                        linkkey_value = ''
-                    macaddrf = macaddr[0].strip('[]')
-                    macaddrf = macaddrf.upper()
-                except:
-                    pass
-                
+    with open(source_path, "r", encoding='utf-8', errors='replace') as f:
+        for line in f:
+            if re.findall(MAC_RE, line):
+                if first_round:
+                    first_round = False
+                else:
+                    data_list.append((timestamp_value, name_value, macaddrf, linkkey_value))
+                    name_value = timestamp_value = linkkey_value = ''
+                macaddrf = re.findall(MAC_RE, line)[0].strip('[]').upper()
+
             splits = line.split(' = ')
-                
+            if len(splits) < 2:
+                continue
             if splits[0] == 'Name':
-                key = 'Name'
                 name_value = splits[1].strip()
-                
-            if splits[0] == 'Timestamp':
-                key = 'Timestamp'
-                timestamp_value = splits[1].strip()
-                timestamp_value = datetime.datetime.utcfromtimestamp(int(timestamp_value)).strftime('%Y-%m-%d %H:%M:%S')
-                
-            if splits[0] == 'LinkKey':
-                key = 'LinkKey'
+            elif splits[0] == 'Timestamp':
+                ts = splits[1].strip()
+                timestamp_value = datetime.datetime.fromtimestamp(int(ts), datetime.timezone.utc) if ts else ''
+            elif splits[0] == 'LinkKey':
                 linkkey_value = splits[1].strip()
-    
-    data_list.append((timestamp_value, name_value, macaddrf, linkkey_value))
-        
-    if len(data_list) > 0:
-        report = ArtifactHtmlReport('Bluetooth Connections')
-        report.start_artifact_report(report_folder, f'Bluetooth Connections')
-        report.add_script()
-        data_headers = ('First Connected Timestamp','Device Name','MAC Address','Link Key')
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Bluetooth Connections'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Bluetooth Connections'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc(f'No Bluetooth Connections data available')
-   
+
+    if not first_round:  # at least one device was parsed
+        data_list.append((timestamp_value, name_value, macaddrf, linkkey_value))
+
+    data_headers = (('First Connected Timestamp', 'datetime'), 'Device Name', 'MAC Address', 'Link Key')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_bluetoothAdapter(files_found, report_folder, seeker, wrap_text):
     data_list = []
-    with open(file_found, "r") as f:
-        for line in f: 
-            
-            p = re.compile(r'(\[[0-9a-f]{2}(?::[0-9a-f]{2}){5}\])', re.IGNORECASE)
-            macaddr = re.findall(p, line)
-            if macaddr:
-                break
-            if '=' in line:
+    source_path = str(files_found[0])
+
+    with open(source_path, "r", encoding='utf-8', errors='replace') as f:
+        for line in f:
+            if re.findall(MAC_RE, line):
+                break  # adapter info is the block before the first device
+            if ' = ' in line:
                 splits = line.split(' = ')
                 data_list.append((splits[0], splits[1].strip()))
-                
-    if len(data_list) > 0:
-        report = ArtifactHtmlReport('Bluetooth Adapter Information')
-        report.start_artifact_report(report_folder, f'Bluetooth Adapter Information')
-        report.add_script()
-        data_headers = ('Key','Value')
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Bluetooth Adapter Information'
-        tsv(report_folder, data_headers, data_list, tsvname)
-    else:
-        logfunc(f'No Bluetooth Adapter Information data available')
+
+    data_headers = ('Key', 'Value')
+    return data_headers, data_list, source_path
