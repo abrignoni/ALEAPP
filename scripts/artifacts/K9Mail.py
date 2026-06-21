@@ -155,5 +155,5 @@ def get_k9mail_messages(files_found, report_folder, seeker, wrap_text):
                 'Yes' if row[0] == 1 else 'No', 'Yes' if row[11] == 1 else 'No', 'Yes' if row[12] == 1 else 'No',
                 'Yes' if row[13] == 1 else 'No', 'Yes' if row[14] == 1 else 'No', header))
 
-    data_headers = ('Account', ('Date Sent', 'datetime'), 'Folder', 'Subject', 'Message Preview', 'From', 'To', 'CC', 'BCC', 'Reply To', '# of Attachments', 'Content', ('Date Received', 'datetime'), 'Deleted', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Header')
+    data_headers = ('Account', ('Date Sent', 'datetime'), 'Folder', 'Subject', 'Message Preview', 'From Address', 'To Address', 'CC', 'BCC', 'Reply To', '# of Attachments', 'Content', ('Date Received', 'datetime'), 'Deleted', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Header')
     return data_headers, data_list, source_path
