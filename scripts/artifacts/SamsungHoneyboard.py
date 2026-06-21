@@ -25,16 +25,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip',),
         "output_types": "standard",
         "artifact_icon": "clipboard",
-        "html_columns": ['Thumbnail'],
     }
 }
 
 import datetime
+import io
 import os
 
 from PIL import Image, UnidentifiedImageError
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, media_to_html
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_embedded_media
 
 
 def _ms_to_utc(value):
@@ -85,20 +85,22 @@ def get_honeyboard_screenshot(files_found, report_folder, seeker, wrap_text):
         if dirname == "remote_send":
             continue
 
+        # clip files are extensionless image blobs; decode to PNG bytes and
+        # register them as embedded media so LAVA handles the thumbnail/media store
         try:
             img = Image.open(file_found)
+            buf = io.BytesIO()
+            img.save(buf, format='PNG')
         except (UnidentifiedImageError, OSError) as ex:
             logfunc(f'Could not open Honeyboard clip as image: {file_found} ({ex})')
             continue
 
-        newfilename = f'{dirname}_{os.path.basename(file_found)}.png'
-        savepath = os.path.join(report_folder, newfilename)
-        img.save(savepath, 'png')
-        thumb = media_to_html(savepath, (savepath,), report_folder)
+        name = f'{dirname}_{os.path.basename(file_found)}.png'
+        thumb = check_in_embedded_media(file_found, buf.getvalue(), name)
 
         modifiedtime = _sec_to_utc(os.path.getmtime(file_found))
         data_list.append((modifiedtime, thumb, file_found))
         source_path = os.path.dirname(os.path.dirname(file_found))
 
-    data_headers = (('File Modified Time', 'datetime'), 'Thumbnail', 'Screenshot Path')
+    data_headers = (('File Modified Time', 'datetime'), ('Thumbnail', 'media'), 'Screenshot Path')
     return data_headers, data_list, source_path
