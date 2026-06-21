@@ -36,7 +36,7 @@ This document outlines the various device information collected by LEAPP modules
 | Model: {value} | build |
 | SDK: {value} | build |
 | SIM Display Name: {row[2]} | siminfo |
-| SIM Number & IMSI: {row[0]} - {row1} | siminfo |
+| SIM Number & IMSI: {row[0]} - {imsi} | siminfo |
 | Version release: {value} | build |
 <!-- LOGDEVINFO_END -->
 
