@@ -10,7 +10,6 @@ __artifacts_v2__ = {
         "category": "Notes",
         "notes": "",
         "output_types": ["standard"],
-        "html_columns": ["Media"],
         "paths": (  '*/com.samsung.android.app.notes/databases/sdoc.db*',
                     '*/user/*/com.samsung.android.app.notes/SDocData/*/media/*'),
         "artifact_icon": "edit"
@@ -22,10 +21,10 @@ __artifacts_v2__ = {
 # Author:  Marco Neumann (kalinko@be-binary.de)
 # Tested Version: 4.4.30.91
 import os
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, media_to_html
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, check_in_media
 
 @artifact_processor
-def snotes(files_found, report_folder, _seeker, _wrap_text):
+def snotes(files_found, _report_folder, _seeker, _wrap_text):
 
     main_db = ''
     medias = []
@@ -74,7 +73,7 @@ def snotes(files_found, report_folder, _seeker, _wrap_text):
         media = []
         for media_path in medias:
             if os.path.basename(file_path) in media_path:
-                media.append(media_to_html(os.path.basename(media_path), medias, report_folder))
+                media.append(check_in_media(media_path, os.path.basename(media_path)))
 
         data_list.append((  created,
                             last_modified,
@@ -98,7 +97,7 @@ def snotes(files_found, report_folder, _seeker, _wrap_text):
                         ('First Opened Time', 'datetime'),
                         ('Second Opened Time', 'datetime'),
                         ('Last Opened Time', 'datetime'),
-                        'Media'
+                        ('Media', 'media')
                     )
 
     return data_headers, data_list, files_found[0]
