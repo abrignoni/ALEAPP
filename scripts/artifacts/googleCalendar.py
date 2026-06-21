@@ -1,165 +1,104 @@
-# pylint: disable=E0606,W0611,W0612,W0613
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_calendar": {
-        "name": "Calendar",
-        "description": "Parses provider calendars and events",
+        "name": "Calendar - Events",
+        "description": "Parses provider calendar events",
         "author": "@KevinPagano3",
         "creation_date": "2023-01-06",
         "last_update_date": "2023-01-06",
         "requirements": "none",
         "category": "Calendar",
         "notes": "",
-        "paths": ('*/data/com.google.android.calendar/databases/cal_v2a*','*/com.android.providers.calendar/databases/calendar.db*'),
-        "output_types": None,
+        "paths": ('*/com.android.providers.calendar/databases/calendar.db*',),
+        "output_types": "standard",
         "artifact_icon": "calendar",
-        "function": "get_calendar",
+    },
+    "get_calendar_calendars": {
+        "name": "Calendar - Calendars",
+        "description": "Parses provider calendars",
+        "author": "@KevinPagano3",
+        "creation_date": "2023-01-06",
+        "last_update_date": "2023-01-06",
+        "requirements": "none",
+        "category": "Calendar",
+        "notes": "",
+        "paths": ('*/com.android.providers.calendar/databases/calendar.db*',),
+        "output_types": "standard",
+        "artifact_icon": "calendar",
     }
 }
 
-import zlib
+import datetime
 import sqlite3
-import blackboxprotobuf
-from datetime import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-def get_calendar(files_found, report_folder, seeker, wrap_text):
-    
-    data_list_events = []
-    data_list_calendars = []
-    
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _calendar_db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-
         if file_found.endswith('calendar.db'):
-            calendarDB = file_found
-            source_calendarDB = file_found.replace(seeker.data_folder, '')
-            
-            db = open_sqlite_db_readonly(calendarDB)
-    
-            #Get provider calendar events
-            cursor = db.cursor()
-            cursor.execute('''
-            select
-            datetime(Events.dtstart/1000,'unixepoch') as "Event Start Timestamp",
-            datetime(Events.dtend/1000,'unixepoch') as "Event End Timestamp",
-            Events.eventTimezone,
-            Events.title,
-            Events.description,
-            Events.eventLocation,
-            Events._sync_id,
-            Events.organizer,
-            Calendars.calendar_displayName,
-            case Events.allDay
-                when 0 then ''
-                when 1 then 'Yes'
-            end,
-            case Events.hasAlarm
-                when 0 then ''
-                when 1 then 'Yes'
-            end
-            from Events
-            left join Calendars on Calendars._id = Events.calendar_id
-            ''')
+            return file_found
+    return ''
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    event_start = row[0]
-                    if event_start is None:
-                        pass
-                    else:
-                        event_start = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_start),'UTC')
 
-                    event_end = row[1]
-                    if event_end is None:
-                        pass
-                    else:
-                        event_end = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_end),'UTC')
-                
-                    data_list_events.append((event_start,event_end,row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10], calendarDB))
-                    
-            # Get provider calendars
-            cursor = db.cursor()
-            cursor.execute('''
-            select
-            case
-                when cal_sync8 is NULL then ''
-                else datetime(cal_sync8/1000,'unixepoch')
-            end,
-            name,
-            calendar_displayName,
-            account_name,
-            account_type,
-            case visible
-                when 0 then 'No'
-                when 1 then 'Yes'
-            end,
-            calendar_location,
-            calendar_timezone,
-            ownerAccount,
-            case isPrimary
-                when 0 then ''
-                when 1 then 'Yes'
-            end,
-            calendar_color,
-            calendar_color_index
-            from Calendars
-            ''')
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
+    db.close()
+    return rows
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    cal_sync = row[0]
-                    if cal_sync == "":
-                        pass
-                    else:
-                        cal_sync = convert_utc_human_to_timezone(convert_ts_human_to_utc(cal_sync),'UTC')
-                    
-                    data_list_calendars.append((cal_sync,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11], calendarDB))       
-                
-        if file_found.endswith('cal_v2a'):
-            g_calendarDB = file_found
-            source_g_calendarDB = file_found.replace(seeker.data_folder, '')
 
-        else:
-            continue # Skip all other files
-        
-    if data_list_events:
-        description = 'Calendar - Events'
-        report = ArtifactHtmlReport('Calendar - Events')
-        report.start_artifact_report(report_folder, 'Calendar - Events', description)
-        report.add_script()
-        data_headers = ('Event Start Timestamp','Event End Timestamp','Event Timezone','Title','Description','Event Location','Sync ID','Organizer','Calendar Display Name','All Day Event','Has Alarm','Source')
-        report.write_artifact_data_table(data_headers, data_list_events, source_calendarDB,html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Calendar - Events'
-        tsv(report_folder, data_headers, data_list_events, tsvname)
-        
-        tlactivity = 'Calendar - Events'
-        timeline(report_folder, tlactivity, data_list_events, data_headers)
-    
-    else:
-        logfunc('No Calendar - Events data available')
-        
-    if data_list_calendars:
-        description = 'Calendar - Calendars'
-        report = ArtifactHtmlReport('Calendar - Calendars')
-        report.start_artifact_report(report_folder, 'Calendar - Calendars', description)
-        report.add_script()
-        data_headers = ('Created Timestamp','Calendar Name','Calendar Display Name','Account Name','Account Type','Visible','Calendar Location','Timezone','Owner Account','Is Primary','Color','Color Index','Source')
-        report.write_artifact_data_table(data_headers, data_list_calendars, source_calendarDB,html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Calendar - Calendars'
-        tsv(report_folder, data_headers, data_list_calendars, tsvname)
-        
-        tlactivity = 'Calendar - Calendars'
-        timeline(report_folder, tlactivity, data_list_calendars, data_headers)
-    
-    else:
-        logfunc('No Calendar - Calendars data available')
+@artifact_processor
+def get_calendar(files_found, report_folder, seeker, wrap_text):
+    source_path = _calendar_db(files_found)
+    rows = _run(source_path, '''
+        SELECT Events.dtstart, Events.dtend, Events.eventTimezone, Events.title, Events.description,
+        Events.eventLocation, Events._sync_id, Events.organizer, Calendars.calendar_displayName,
+        CASE Events.allDay WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,
+        CASE Events.hasAlarm WHEN 0 THEN '' WHEN 1 THEN 'Yes' END
+        FROM Events LEFT JOIN Calendars ON Calendars._id = Events.calendar_id
+    ''')
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10])
+                 for r in rows]
+    data_headers = (
+        ('Event Start Timestamp', 'datetime'), ('Event End Timestamp', 'datetime'), 'Event Timezone',
+        'Title', 'Description', 'Event Location', 'Sync ID', 'Organizer', 'Calendar Display Name',
+        'All Day Event', 'Has Alarm')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_calendar_calendars(files_found, report_folder, seeker, wrap_text):
+    source_path = _calendar_db(files_found)
+    rows = _run(source_path, '''
+        SELECT cal_sync8, name, calendar_displayName, account_name, account_type,
+        CASE visible WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' END,
+        calendar_location, calendar_timezone, ownerAccount,
+        CASE isPrimary WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,
+        calendar_color, calendar_color_index
+        FROM Calendars
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11])
+                 for r in rows]
+    data_headers = (
+        ('Created Timestamp', 'datetime'), 'Calendar Name', 'Calendar Display Name', 'Account Name',
+        'Account Type', 'Visible', 'Calendar Location', 'Timezone', 'Owner Account', 'Is Primary',
+        'Color', 'Color Index')
+    return data_headers, data_list, source_path
