@@ -1,131 +1,104 @@
-# pylint: disable=W0311,W0401,W0612,W0613,W0614,W0622,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Honeyboard_Clipboard": {
         "name": "Samsung Honeyboard - Clipboard History",
-        "description": "Parses the text clipboard History.",
+        "description": "Parses the text clipboard history.",
         "author": "@segumarc",
         "creation_date": "2024-05-30",
         "last_update_date": "2024-05-30",
         "requirements": "",
         "category": "Clipboard",
-        "notes": ".",
-        "paths": ('*/com.samsung.android.honeyboard/databases/ClipItem*'),
-        "output_types": None,
+        "notes": "",
+        "paths": ('*/com.samsung.android.honeyboard/databases/ClipItem*',),
+        "output_types": "standard",
         "artifact_icon": "clipboard",
-        "function": "get_Honeyboard_Clipboard",
     },
     "get_honeyboard_screenshot": {
         "name": "Samsung Honeyboard - Clipboard Screenshot",
-        "description": "Parses the Samsung honeyboard clipboard Screenshot.",
+        "description": "Parses the Samsung Honeyboard clipboard screenshots.",
         "author": "@segumarc",
         "creation_date": "2024-05-30",
         "last_update_date": "2024-05-30",
         "requirements": "",
         "category": "Clipboard",
-        "notes": ".",
-        "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip'),
-        "output_types": None,
+        "notes": "",
+        "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip',),
+        "output_types": "standard",
         "artifact_icon": "clipboard",
-        "function": "get_honeyboard_screenshot",
+        "html_columns": ['Thumbnail'],
     }
 }
 
+import datetime
 import os
-from datetime import *
-from PIL import Image
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, media_to_html, convert_utc_human_to_timezone
+from PIL import Image, UnidentifiedImageError
+
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, media_to_html
 
 
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _sec_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+@artifact_processor
 def get_Honeyboard_Clipboard(files_found, report_folder, seeker, wrap_text):
-    logfunc("Processing data for Samsung Honeyboard - Clipboard History")
- 
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     data_list = []
-    for file_found in files_found:
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
-            SELECT time_stamp, id, type, text, caller_app_uid
-            FROM clip_table
-        ''')
-        data_rows = cursor.fetchall()
-        for row in data_rows:
-                timestamp = row[0]
-                id = row[1]
-                type = row[2]
-                text = row[3]
-                caller_app_uid = row[4]
-                timestamp = datetime.fromtimestamp(timestamp/1000, tz=timezone.utc)
-                timestamp = convert_utc_human_to_timezone(timestamp, 'UTC')
-                data_list.append((timestamp,id,type,text,caller_app_uid))
-        
-        if len(data_list):
-            logfunc(f"Found {len(data_rows)} Samsung Honeyboard - Clipboard History")
-
-            description = f"Samsung Honeyboard - Clipboard History"
-            report = ArtifactHtmlReport('Samsung Honeyboard - Clipboard History')
-            report.start_artifact_report(report_folder, 'Samsung Honeyboard - Clipboard History', description)
-            report.add_script()
-            data_headers = ('Timestamp', 'ID', 'Type', 'Clipboard Content', 'Application UID')                         
-            tableID = 'SamsungHoneyboard_ClipboardHistory'
-
-            report.write_artifact_data_table(data_headers, data_list, ','.join(files_found))
-            report.end_artifact_report()
-
-            tsvname = f'Samsung Honeyboard - Clipboard Historys'
-            tsv(report_folder, data_headers, data_list, tsvname)
-
-            tlactivity = f'Samsung Honeyboard - Clipboard History'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No entries found for Samsung Honeyboard - Clipboard History.')
-
-        db.close()
-
-def get_honeyboard_screenshot(files_found, report_folder, seeker, wrap_text):
-    logfunc("Processing data for Samsung Honeyboard - Clipboard Screenshot")
-    data_list = []
-
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
-        modifiedtime = os.path.getmtime(file_found)
-        modifiedtime = (datetime.utcfromtimestamp(int(modifiedtime)).strftime('%Y-%m-%d %H:%M:%S'))
-        
-        filename = os.path.basename(file_found)
+        if file_found.endswith('wal') or file_found.endswith('shm'):
+            continue
+        source_path = file_found
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        cursor.execute('SELECT time_stamp, id, type, text, caller_app_uid FROM clip_table')
+        for row in cursor.fetchall():
+            data_list.append((_ms_to_utc(row[0]), row[1], row[2], row[3], row[4]))
+        db.close()
+
+    data_headers = (('Timestamp', 'datetime'), 'ID', 'Type', 'Clipboard Content', 'Application UID')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_honeyboard_screenshot(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
         dirname = os.path.basename(os.path.dirname(file_found))
-        
         if dirname == "remote_send":
             continue
 
-        newfilename = dirname + '_' + filename + '.png'
+        try:
+            img = Image.open(file_found)
+        except (UnidentifiedImageError, OSError) as ex:
+            logfunc(f'Could not open Honeyboard clip as image: {file_found} ({ex})')
+            continue
+
+        newfilename = f'{dirname}_{os.path.basename(file_found)}.png'
         savepath = os.path.join(report_folder, newfilename)
+        img.save(savepath, 'png')
+        thumb = media_to_html(savepath, (savepath,), report_folder)
 
-        img = Image.open(file_found) 
-        img.save(savepath,'png')
-        medialist = (savepath,)
-        thumb = media_to_html(savepath, medialist, report_folder)
-        
+        modifiedtime = _sec_to_utc(os.path.getmtime(file_found))
         data_list.append((modifiedtime, thumb, file_found))
-        path_to_files = os.path.dirname(os.path.dirname(file_found))
+        source_path = os.path.dirname(os.path.dirname(file_found))
 
-
-    if data_list:
-        description = 'Samsung Honeyboard - Clipboard Screenshots'
-        report = ArtifactHtmlReport('Samsung Honeyboard - Clipboard Screenshots')
-        report.start_artifact_report(report_folder, 'Samsung Honeyboard - Clipboard Screenshots', description)
-        report.add_script()
-        data_headers = ('File Modified Time','Thumbnail','Screenshot Path' )
-        report.write_artifact_data_table(data_headers, data_list, path_to_files, html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Samsung Honeyboard - Clipboard Screenshots'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Samsung Honeyboard - Clipboard Screenshots'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No Samsung Honeyboard - Clipboard Screenshots data available')
-        
+    data_headers = (('File Modified Time', 'datetime'), 'Thumbnail', 'Screenshot Path')
+    return data_headers, data_list, source_path
