@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "HONOR",
         "notes": "",
-        "paths": ('*/com.hihonor.medialibrary/databases/gallery.db',),
+        "paths": ('*/com.hihonor.medialibrary/databases/gallery.db*',),
         "output_types": "standard",
         "artifact_icon": "file"
     }
