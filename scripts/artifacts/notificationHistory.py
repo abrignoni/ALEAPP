@@ -28,7 +28,7 @@ __artifacts_v2__ = {
         "artifact_icon": "toggle-right",
     },
     "get_notificationHistory_snoozed": {
-        "name": "Android Notification History - Snoozed Notifications",
+        "name": "Android Notification History - Snoozed",
         "description": "Notifications the user chose to snooze for a specific time interval (notification_policy.xml).",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
