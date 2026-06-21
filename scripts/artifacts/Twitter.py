@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W0631,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Twitter": {
         "name": "twitter",
@@ -10,75 +10,39 @@ __artifacts_v2__ = {
         "category": "Twitter",
         "notes": "",
         "paths": ('*/com.twitter.android/databases/*-search.db*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "users",
-        "function": "get_Twitter",
     }
 }
 
-# Twitter Searches
-# Author:  Kevin Pagano (https://startme.stark4n6.com)
-# Date 2023-04-26
-# Version: 0.1
-# Requirements:  None
+import datetime
 
-import sqlite3
-import textwrap
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen
 
+@artifact_processor
 def get_Twitter(files_found, report_folder, seeker, wrap_text):
-    
+    source_path = ''
     for file_found in files_found:
-        file_found = str(file_found)  
+        file_found = str(file_found)
         if file_found.endswith('-search.db'):
+            source_path = file_found
             break
-        else:
-            continue # Skip all other files
-            
-    db = open_sqlite_db_readonly(file_found)
-    
-    cursor = db.cursor()
-    cursor.execute('''
-    select
-    datetime(time/1000,'unixepoch'),
-    name,
-    query,
-    query_id,
-    user_search_suggestion,
-    topic_search_suggestion,
-    latitude,
-    longitude,
-    radius,
-    location,
-    priority,
-    score
-    from search_queries
-    ''')
-    
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Twitter - Searches')
-        report.start_artifact_report(report_folder, 'Twitter - Searches')
-        report.add_script()
-        data_headers = ('Timestamp','Name','Query','Query ID','User Search Suggestion','Topic Search Suggestion','Latitude','Longitude','Radius','Location','Priority','Score')
-        
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11]))
-            
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Twitter - Searches'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Twitter - Searches'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-        
-    else:
-        logfunc('No Twitter - Searches data available')
-        
-    db.close()
+
+    data_list = []
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
+        cursor = db.cursor()
+        cursor.execute('''
+            select time, name, query, query_id, user_search_suggestion, topic_search_suggestion,
+            latitude, longitude, radius, location, priority, score
+            from search_queries
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
+        for r in all_rows:
+            timestamp = datetime.datetime.fromtimestamp(int(r[0]) / 1000, datetime.timezone.utc) if r[0] else ''
+            data_list.append((timestamp, r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11]))
+
+    data_headers = (('Timestamp', 'datetime'), 'Name', 'Query', 'Query ID', 'User Search Suggestion', 'Topic Search Suggestion', 'Latitude', 'Longitude', 'Radius', 'Location', 'Priority', 'Score')
+    return data_headers, data_list, source_path
