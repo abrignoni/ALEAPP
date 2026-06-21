@@ -33,6 +33,7 @@ __artifacts_v2__ = {
         "description": "Parses messages and call history for Wire Messenger",
         "author": "@cf-eglendye",
         "creation_date": "2024-04-24",
+        "last_update_date": "2024-04-24",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35",
