@@ -14,8 +14,8 @@ __artifacts_v2__ = {
         "artifact_icon": "message-circle",
     },
     "get_chatgpt_conversations": {
-        "name": "ChatGPT - Messages",
-        "description": "User messages with ChatGPT (older DBMessage.messageNode schema; see chatgpt2 for the newer DBMessageChunk schema)",
+        "name": "ChatGPT - Messages (Legacy)",
+        "description": "User messages with ChatGPT, older DBMessage.messageNode schema (see ChatGPT - Conversations / chatgpt2 for the newer DBMessageChunk schema)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
         "last_update_date": "2024-07-09",
