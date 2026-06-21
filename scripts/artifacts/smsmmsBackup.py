@@ -1,7 +1,7 @@
 # pylint: disable=W0613
 __artifacts_v2__ = {
     "get_mms_from_backup": {
-        "name": "SMS & MMS Backup - MMS",
+        "name": "SMS and MMS Backup - MMS",
         "description": "MMS messages recovered from backup.ab telephony backup files",
         "author": "",
         "creation_date": "2024-08-15",
@@ -14,7 +14,7 @@ __artifacts_v2__ = {
         "artifact_icon": "message-square",
     },
     "get_sms_from_backup": {
-        "name": "SMS & MMS Backup - SMS",
+        "name": "SMS and MMS Backup - SMS",
         "description": "SMS messages recovered from backup.ab telephony backup files",
         "author": "",
         "creation_date": "2024-08-15",
