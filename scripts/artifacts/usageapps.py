@@ -85,5 +85,5 @@ def get_usageapps(files_found, report_folder, seeker, wrap_text):
             data_list.append((_ms_to_utc(row[0]), deleted, bundleid, row[3], usage, str(values)))
 
     data_headers = (
-        ('Timestamp', 'datetime'), 'Deleted?', 'BundleID', 'From', 'From in Proto', 'Proto Full')
+        ('Timestamp', 'datetime'), 'Deleted?', 'BundleID', 'Generated From', 'From in Proto', 'Proto Full')
     return data_headers, data_list, source_path
