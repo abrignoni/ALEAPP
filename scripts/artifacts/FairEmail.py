@@ -54,7 +54,7 @@ __artifacts_v2__ = {
 # Requirements: os
 import os
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, media_to_html
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, check_in_media
 
 
 @artifact_processor
@@ -126,7 +126,7 @@ def get_fair_mail_contacts(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
+def get_fair_mail_messages(files_found, _report_folder, _seeker, _wrap_text):
     
     # Get the different files found and store their pathes in corresponding lists to work with them
     main_db = ''
@@ -220,18 +220,18 @@ def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
             for att_path in attachments:
                 for att_id in row[19].split(','):
                     if str(att_id) in os.path.basename(att_path):
-                        attachment.append(media_to_html(os.path.basename(att_path), attachments, report_folder))
+                        attachment.append(check_in_media(att_path, os.path.basename(att_path)))
         infrastructure = row[18]
         for path in messages:
             try:
                 if int(os.path.basename(path)) == message_id:
-                    content = media_to_html(str(message_id), messages, report_folder)
+                    content = check_in_media(path, os.path.basename(path))
                     
             except ValueError:
                 continue
 
         data_list.append((received, sent, stored, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, preview, content, seen, attachment, infrastructure))
 
-    data_headers = ('Date Received', 'Date Sent', 'Date Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Preview', 'Content', 'Seen', 'Attachments', 'Infrastructure')
+    data_headers = ('Date Received', 'Date Sent', 'Date Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Preview', ('Content', 'media'), 'Seen', ('Attachments', 'media'), 'Infrastructure')
 
     return data_headers, data_list, main_db
