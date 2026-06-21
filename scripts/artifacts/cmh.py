@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_cmh": {
         "name": "cmh",
@@ -10,65 +10,47 @@ __artifacts_v2__ = {
         "category": "Samsung_CMH",
         "notes": "",
         "paths": ('*/cmh.db',),
-        "output_types": None,
+        "output_types": "all",
         "artifact_icon": "file",
-        "function": "get_cmh",
     }
 }
 
-import glob
-import json
-import os
-import shutil
-import sqlite3
+import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
+
+
+def _sec_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+    return ''
+
+
+@artifact_processor
 def get_cmh(files_found, report_folder, seeker, wrap_text):
-
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''
-    SELECT
-    datetime(images.datetaken /1000, "unixepoch") as datetaken,
-    datetime(images.date_added, "unixepoch") as dateadded,
-    datetime(images.date_modified, "unixepoch") as datemodified,
-    images.title,
-    images.bucket_display_name,
-    images.latitude,
-    images.longitude,
-    location_view.address_text,
-    location_view.uri,
-    images._data,
-    images.isprivate
-    FROM images
-    left join location_view
-    on location_view._id = images._id
+        SELECT
+        images.datetaken, images.date_added, images.date_modified, images.title,
+        images.bucket_display_name, images.latitude, images.longitude,
+        location_view.address_text, location_view.uri, images._data, images.isprivate
+        FROM images
+        left join location_view on location_view._id = images._id
     ''')
     all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Samsung CMH')
-        report.start_artifact_report(report_folder, f'Geodata')
-        report.add_script()
-        data_headers = ('Timestamp', 'Date Added', 'Date Modified', 'Title', 'Bucket Name', 'Latitude', 'Longitude','Address', 'URI', 'Data Location', 'Is Private')
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Samsung CMH Geodata'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Samsung CMH Geodata'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-        
-        kmlactivity = 'Samsung CMH Geodata'
-        kmlgen(report_folder, kmlactivity, data_list, data_headers)
-        
-    else:
-        logfunc(f'No Samsung_CMH_GeoData available')    
     db.close()
+
+    data_list = []
+    for r in all_rows:
+        data_list.append((_ms_to_utc(r[0]), _sec_to_utc(r[1]), _sec_to_utc(r[2]), r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10]))
+
+    data_headers = (('Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), 'Title', 'Bucket Name', 'Latitude', 'Longitude', 'Address', 'URI', 'Data Location', 'Is Private')
+    return data_headers, data_list, source_path
