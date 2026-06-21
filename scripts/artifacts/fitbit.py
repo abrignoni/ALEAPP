@@ -18,6 +18,7 @@ __artifacts_v2__ = {
         "description": "Parses User DB and Passive Stats DB from Pixel Watch/Wear OS",
         "author": "Ganeshbs17",
         "creation_date": "2026-01-12",
+        "last_update_date": "2026-01-12",
         "requirements": "none",
         "category": "Fitbit",
         "notes": "Specific to Pixel Watch/Wear OS",
