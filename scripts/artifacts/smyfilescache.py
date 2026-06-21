@@ -1,117 +1,73 @@
-# pylint: disable=W0611,W0613,W0631,W0702,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_smyfilescache": {
-        "name": "smyfilescache",
-        "description": "",
+        "name": "My Files Cache",
+        "description": "Media cached by Samsung My Files (FileCache.db) with the cached thumbnails",
         "author": "",
         "creation_date": "2022-06-23",
         "last_update_date": "2022-06-23",
         "requirements": "none",
         "category": "My Files",
         "notes": "",
-        "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*', '*/com.sec.android.app.myfiles/cache/*.*'),
-        "output_types": None,
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*',
+                  '*/com.sec.android.app.myfiles/cache/*.*'),
+        "output_types": "standard",
         "artifact_icon": "file",
-        "function": "get_smyfilescache",
     }
 }
 
+import datetime
+import os
 import sqlite3
-import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, media_to_html
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
 
-def get_smyfilescache(files_found, report_folder, seeker, text_wrap):
-    
-    is_windows = is_platform_windows()
-    splitter = '\\' if is_windows else '/'
-    
+# FileCache schema varies by version: newer uses date_modified/_data, older uses date/path
+SQL_VARIANTS = (
+    'SELECT date_modified, _index, _data, size, latest FROM FileCache',
+    'SELECT date, _index, path, size, latest FROM FileCache',
+)
+
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+@artifact_processor
+def get_smyfilescache(files_found, report_folder, seeker, wrap_text):
+    jpg_by_name = {os.path.basename(str(f)): str(f) for f in files_found if str(f).endswith('.jpg')}
+
+    db_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
         if file_found.endswith('.db'):
+            db_path = file_found
             break
-        
-    db = open_sqlite_db_readonly(file_found)
-    cursor = db.cursor()
-    try:
-        cursor.execute('''
-        SELECT
-        datetime(date_modified /1000, 'unixepoch'),
-        _index,
-        _data,
-        size,
-        datetime(latest /1000, 'unixepoch')
-        from FileCache
-        ''')
-    
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-    except:
-        usageentries = 0
-        
-    if usageentries > 0:
-        
-        data_list = []
-        for row in all_rows:
-            thumb = media_to_html(splitter + str(row[1]) + '.jpg', files_found, report_folder)
-            
-            data_list.append((row[0], thumb, row[1], row[2], row[3], row[4]))
-            
-        report = ArtifactHtmlReport('My Files DB - Cache Media')
-        report.start_artifact_report(report_folder, 'My Files DB - Cache Media')
-        report.add_script()
-        data_headers = ('Timestamp Modified','Media','Media Cache ID','Path','Size','Latest' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = f'My Files DB - Cache Media'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'My Files DB - Cache Media'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No My Files DB Stored data available')
-    
-    try:
-        cursor.execute('''
-        SELECT
-        datetime(date /1000, 'unixepoch'),
-        _index,
-        path,
-        size,
-        datetime(latest /1000, 'unixepoch')
-        from FileCache
-        ''')
-        
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-    except:
-        usageentries = 0
-        
-    if usageentries > 0:
-        
-        data_list = []
-        for row in all_rows:
-            thumb = media_to_html(splitter + str(row[1]) + '.jpg', files_found, report_folder)
-            
-            data_list.append((row[0], thumb, row[1], row[2], row[3], row[4]))
-            
-        report = ArtifactHtmlReport('My Files DB - Cache Media')
-        report.start_artifact_report(report_folder, 'My Files DB - Cache Media')
-        report.add_script()
-        data_headers = ('Timestamp Modified','Media','Media Cache ID','Path','Size','Latest' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = f'My Files DB - Cache Media'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'My Files DB - Cache Media'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No My Files DB Stored data available')
-        
-    
-    db.close()
+
+    data_list = []
+    if db_path:
+        db = open_sqlite_db_readonly(db_path)
+        cursor = db.cursor()
+        rows = []
+        for sql in SQL_VARIANTS:
+            try:
+                cursor.execute(sql)
+                rows = cursor.fetchall()
+                break
+            except sqlite3.Error:
+                continue
+        for row in rows:
+            jpg = jpg_by_name.get(f'{row[1]}.jpg')
+            thumb = check_in_media(jpg, f'{row[1]}.jpg') if jpg else ''
+            data_list.append((_ms_to_utc(row[0]), thumb, row[1], row[2], row[3], _ms_to_utc(row[4])))
+        db.close()
+
+    data_headers = (
+        ('Timestamp Modified', 'datetime'), ('Media', 'media'), 'Media Cache ID', 'Path', 'Size',
+        ('Latest', 'datetime'))
+    return data_headers, data_list, db_path
