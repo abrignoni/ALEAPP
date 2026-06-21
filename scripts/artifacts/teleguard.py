@@ -1,200 +1,166 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_teleguard": {
-        "name": "Teleguard",
-        "description": "",
+        "name": "Teleguard - Messages",
+        "description": "Teleguard messenger messages",
         "author": "",
         "creation_date": "2024-01-09",
         "last_update_date": "2024-01-09",
         "requirements": "none",
         "category": "Teleguard",
         "notes": "",
-        "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*', '*/data/ch.swisscows.messenger.teleguardapp/cache/**'),
-        "output_types": None,
-        "artifact_icon": "file",
-        "function": "get_teleguard",
+        "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',
+                  '*/data/ch.swisscows.messenger.teleguardapp/cache/**'),
+        "output_types": "standard",
+        "artifact_icon": "message-square",
+    },
+    "get_teleguard_posts": {
+        "name": "Teleguard - Posts",
+        "description": "Teleguard channel posts",
+        "author": "",
+        "creation_date": "2024-01-09",
+        "last_update_date": "2024-01-09",
+        "requirements": "none",
+        "category": "Teleguard",
+        "notes": "",
+        "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
+        "output_types": "standard",
+        "artifact_icon": "file-text",
+    },
+    "get_teleguard_contacts": {
+        "name": "Teleguard - Contacts",
+        "description": "Teleguard contacts with avatars",
+        "author": "",
+        "creation_date": "2024-01-09",
+        "last_update_date": "2024-01-09",
+        "requirements": "none",
+        "category": "Teleguard",
+        "notes": "",
+        "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
+        "output_types": "standard",
+        "artifact_icon": "users",
+    },
+    "get_teleguard_channels": {
+        "name": "Teleguard - Channels",
+        "description": "Teleguard channels",
+        "author": "",
+        "creation_date": "2024-01-09",
+        "last_update_date": "2024-01-09",
+        "requirements": "none",
+        "category": "Teleguard",
+        "notes": "",
+        "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
+        "output_types": "standard",
+        "artifact_icon": "radio",
     }
 }
 
-import sqlite3
+import datetime
 import json
-import base64
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, media_to_html
+import os
+import sqlite3
 
-def get_teleguard(files_found, report_folder, seeker, wrap_text):
-    
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media, check_in_embedded_media
+
+
+def _str_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S').replace(tzinfo=datetime.timezone.utc)
+    except (ValueError, TypeError):
+        return ''
+
+
+def _db(files_found):
     for file_found in files_found:
+        file_found = str(file_found)
         if file_found.endswith('teleguard_database.db'):
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-                SELECT
-                datetime(createDate/1000, 'unixepoch'),
-                datetime(userTime/1000, 'unixepoch'),
-                type,
-                sender,
-                receiver,
-                content,
-                metadata,
-                status,
-                isEdited
-                from messages
-            ''')
+            return file_found
+    return ''
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport('Teleguard Messages')
-                report.start_artifact_report(report_folder, 'Teleguard Messages')
-                report.add_script()
-                data_headers = ('Timestamp', 'User Time', 'Type', 'Sender','Receiver','Content','Media','Status','Is Edited?')
-                data_list = []
-                for row in all_rows:
-                    if row[2] == 'MEDIA':
-                        mediainfo = row[6]
-                        mediainfo = json.loads(mediainfo)
-                        mediafiles = mediainfo.get('files','')
-                        if mediafiles != '':
-                            thumb = ''
-                            for key, values in mediafiles.items():
-                                #print(key,values)
-                                thumb = thumb + media_to_html(key, files_found, report_folder)
-                                thumb = thumb + f'<br>{values}</br><b></br>'
-                        else:
-                            thumb = ''
-                    else:
-                        thumb = row[6]
-                            
-                    
-                    
-                    data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], thumb, row[7], row[8]))
-        
-                report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-                report.end_artifact_report()
-                
-                tsvname = f'Teleguard Messages'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = 'Teleguard Messages'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc('No Teleguard Messages data available')
-        
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-                SELECT
-                datetime(createDate/1000, 'unixepoch'),
-                channelId,
-                header,
-                content,
-                type,
-                localStatus,
-                viewsCount,
-                likesCount,
-                dislikesCount,
-                metadata,
-                media
-                from posts
-            ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
-                    
-                report = ArtifactHtmlReport('Teleguard Posts')
-                report.start_artifact_report(report_folder, 'Teleguard Posts')
-                report.add_script()
-                data_headers = ('Timestamp', 'Channel ID', 'Header', 'Content','Type','Local Status','Views Count','Likes Count','Dislikes Count', 'Metadata', 'Media')
-                
-                report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-                report.end_artifact_report()
-                
-                tsvname = f'Teleguard Posts'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = 'Teleguard Posts'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc('No Teleguard Posts available')
-                
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-                SELECT
-                datetime(lastActivityTime/1000, 'unixepoch'),
-                serverId,
-                alias,
-                type,
-                color,
-                avatar,
-                options,
-                info,
-                datetime(lastVisitTime/1000, 'unixepoch'),
-                personalId
-                from contacts
-            ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                data_list = []
-                for row in all_rows:
-                    if row[5] is not None:
-                        avatar = row[5]
-                        encoded_avatar = base64.b64encode(avatar).decode("utf-8")
-                        avatar = f'<img src="data:image/jpeg;base64,{encoded_avatar}" alt="image"width="300">'
-                    else:
-                        avatar = row[5]
-                        
-                    data_list.append((row[0], row[1], row[2], row[3], row[4], avatar, row[6], row[7], row[8], row[9]))
-                    
-                report = ArtifactHtmlReport('Teleguard Contacts')
-                report.start_artifact_report(report_folder, 'Teleguard Contacts')
-                report.add_script()
-                data_headers = ('Last Activity Timestamp', 'Server ID', 'Alias', 'Type','Color','Avatar','Options','Info','Last Visit Time', 'Personal ID')
-                
-                report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-                report.end_artifact_report()
-                
-                tsvname = f'Teleguard Contacts'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = 'Teleguard Contacts'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc('No Teleguard Contacts available')
-                
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-                SELECT *
-                from
-                channels
-            ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11]))
-                    
-                report = ArtifactHtmlReport('Teleguard Channels')
-                report.start_artifact_report(report_folder, 'Teleguard Channels')
-                report.add_script()
-                data_headers = ('ID', 'Alias', 'Description', 'Category','Color','Avatar ID','Subscribers Count','Admin','Posts Count', 'Is Deleted', 'Language','Type')
-                
-                report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-                report.end_artifact_report()
-                
-                tsvname = f'Teleguard Channels'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-            else:
-                logfunc('No Teleguard Channels available')
+
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
     db.close()
+    return rows
+
+
+@artifact_processor
+def get_teleguard(files_found, report_folder, seeker, wrap_text):
+    source_path = _db(files_found)
+    rows = _run(source_path, '''
+        SELECT datetime(createDate/1000,'unixepoch'), datetime(userTime/1000,'unixepoch'),
+        type, sender, receiver, content, metadata, status, isEdited
+        FROM messages
+    ''')
+    data_list = []
+    for row in rows:
+        media_refs = []
+        if row[2] == 'MEDIA' and row[6]:
+            try:
+                files = json.loads(row[6]).get('files', {})
+            except (ValueError, TypeError):
+                files = {}
+            for key in files:
+                match = next((str(f) for f in files_found if key in str(f)), None)
+                if match:
+                    media_refs.append(check_in_media(match, os.path.basename(match)))
+        data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3], row[4], row[5],
+                          media_refs if media_refs else '', row[6], row[7], row[8]))
+
+    data_headers = (('Timestamp', 'datetime'), ('User Time', 'datetime'), 'Type', 'Sender', 'Receiver',
+                    'Content', ('Media', 'media'), 'Metadata', 'Status', 'Is Edited?')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_teleguard_posts(files_found, report_folder, seeker, wrap_text):
+    source_path = _db(files_found)
+    rows = _run(source_path, '''
+        SELECT datetime(createDate/1000,'unixepoch'), channelId, header, content, type, localStatus,
+        viewsCount, likesCount, dislikesCount, metadata, media
+        FROM posts
+    ''')
+    data_list = [(_str_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10]) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Channel ID', 'Header', 'Content', 'Type', 'Local Status',
+                    'Views Count', 'Likes Count', 'Dislikes Count', 'Metadata', 'Media')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_teleguard_contacts(files_found, report_folder, seeker, wrap_text):
+    source_path = _db(files_found)
+    rows = _run(source_path, '''
+        SELECT datetime(lastActivityTime/1000,'unixepoch'), serverId, alias, type, color, avatar, options,
+        info, datetime(lastVisitTime/1000,'unixepoch'), personalId
+        FROM contacts
+    ''')
+    data_list = []
+    for r in rows:
+        avatar = ''
+        if r[5] is not None:
+            avatar = check_in_embedded_media(source_path, r[5], f'{r[1]}_avatar.jpg',
+                                             force_type='image/jpeg', force_extension='jpg')
+        data_list.append((_str_to_utc(r[0]), r[1], r[2], r[3], r[4], avatar, r[6], r[7], _str_to_utc(r[8]), r[9]))
+
+    data_headers = (('Last Activity Timestamp', 'datetime'), 'Server ID', 'Alias', 'Type', 'Color',
+                    ('Avatar', 'media'), 'Options', 'Info', ('Last Visit Time', 'datetime'), 'Personal ID')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_teleguard_channels(files_found, report_folder, seeker, wrap_text):
+    source_path = _db(files_found)
+    rows = _run(source_path, 'SELECT * FROM channels')
+    data_headers = ('ID', 'Alias', 'Description', 'Category', 'Color', 'Avatar ID', 'Subscribers Count',
+                    'Admin', 'Posts Count', 'Is Deleted', 'Language', 'Type')
+    return data_headers, [tuple(r)[:12] for r in rows], source_path
