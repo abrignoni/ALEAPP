@@ -1,8 +1,8 @@
-# pylint: disable=W0611,W0612,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_appLockerfishingnet": {
         "name": "App Locker",
-        "description": "",
+        "description": "Decrypts media hidden by the App Locker / Calculator vault (.privacy_safe, AES-CBC)",
         "author": "",
         "creation_date": "2021-12-14",
         "last_update_date": "2021-12-14",
@@ -10,94 +10,60 @@ __artifacts_v2__ = {
         "category": "Encrypting Media Apps",
         "notes": "",
         "paths": ('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*'),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "image",
-        "function": "get_appLockerfishingnet",
     }
 }
 
-import sys
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import unpad
-import scripts.filetype as filetype
-import shutil
-from os.path import isfile, join, basename, dirname, getsize, abspath
+import os
 from pathlib import Path
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, media_to_html
 
+from Crypto.Cipher import AES
+
+import scripts.filetype as filetype
+from scripts.ilapfuncs import artifact_processor, logfunc, check_in_media, check_in_embedded_media
+
+# Known hardcoded key/IV used by this vault
+STANDARD_KEY = '526e7934384e693861506a59436e5549'
+STANDARD_IV = '526e7934384e693861506a59436e5549'
+
+
+@artifact_processor
 def get_appLockerfishingnet(files_found, report_folder, seeker, wrap_text):
-    
-    
     data_list = []
-    
-    ## Known constants
-    standardKey = '526e7934384e693861506a59436e5549'
-    standardIV = '526e7934384e693861506a59436e5549'
-    
-    
-    
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
-        filesize = (getsize(file_found))
-        
-        if not isfile(file_found):
+        if not os.path.isfile(file_found) or os.path.getsize(file_found) == 0:
             continue
-        filename = basename(file_found)
-        if filename.startswith('~'):
+        filename = os.path.basename(file_found)
+        if filename.startswith('~') or filename.startswith('._'):
             continue
-        if filename.startswith('._'):
-            continue
-        
-        if filesize > 0:
-            mimetype = filetype.guess_mime(file_found)
-            
-            ext = filetype.guess(file_found)
-            if ext is None:
-                #decrypt & add extension
-                #Ecryption algo
-                cipher = AES.new(bytes.fromhex(standardKey), AES.MODE_CBC, bytes.fromhex(standardIV))
-                try:
-                    with open (file_found, 'rb') as target:
-                        decryptedData = cipher.decrypt(target.read())
-                        fileExtension = filetype.guess(decryptedData)
-                        
-                    with open (join(report_folder, basename(file_found)) , 'wb') as decryptedFile:
-                        decryptedFile.write(decryptedData)
-                        decryptedFile.close()
-                    decrypted = 'True'
-                except ValueError as e:
-                    logfunc(f'Error on {file_found}: {e}')
-                    shutil.copy2(file_found, join(report_folder, basename(file_found)))
-                    decrypted = 'False'
-                
-            else:
-                #print(ext.extension)
-                shutil.copy2(file_found, join(report_folder, basename(file_found)))
-                decrypted = 'Not encrypted'
-        
-            tolink = []
-            pathdec = join(report_folder, basename(file_found))
-            tolink.append(pathdec)
-            thumb = media_to_html(pathdec, tolink, report_folder)
-            filename = basename(file_found)
-                       
-            data_list.append((thumb, filename, decrypted, file_found))
-                            
-                        
-        if data_list:
-            report = ArtifactHtmlReport('Calculator Locker')
-            report.start_artifact_report(report_folder, 'Calculator Locker')
-            report.add_script()
-            data_headers = ('Media', 'Filename', 'Decrypted?','Full Path')
-            maindirectory = str(Path(file_found).parents[1])
-            report.write_artifact_data_table(data_headers, data_list, maindirectory, html_no_escape=['Media'])
-            report.end_artifact_report()
-            
-            tsvname = f'Calculator Locker data'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            
+        source_path = str(Path(file_found).parents[1])
+
+        if filetype.guess(file_found) is not None:
+            # already a recognizable (unencrypted) media file
+            thumb = check_in_media(file_found, filename)
+            decrypted = 'Not encrypted'
         else:
-            logfunc('No Calculator Locker data available')
+            # not recognizable -> assume encrypted, decrypt with the known key/IV
+            try:
+                with open(file_found, 'rb') as target:
+                    data = AES.new(bytes.fromhex(STANDARD_KEY), AES.MODE_CBC,
+                                   bytes.fromhex(STANDARD_IV)).decrypt(target.read())
+                kind = filetype.guess(data)
+                if kind:
+                    thumb = check_in_embedded_media(file_found, data, f'{filename}.{kind.extension}',
+                                                    force_type=kind.mime, force_extension=kind.extension)
+                else:
+                    thumb = check_in_embedded_media(file_found, data, filename)
+                decrypted = 'True'
+            except ValueError as ex:
+                logfunc(f'Error decrypting {file_found}: {ex}')
+                thumb = check_in_media(file_found, filename)
+                decrypted = 'False'
+
+        data_list.append((thumb, filename, decrypted, file_found))
+
+    data_headers = (('Media', 'media'), 'Filename', 'Decrypted?', 'Full Path')
+    return data_headers, data_list, source_path
