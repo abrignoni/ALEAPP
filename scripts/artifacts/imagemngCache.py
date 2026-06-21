@@ -1,8 +1,8 @@
-# pylint: disable=W0611,W0613,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_imagemngCache": {
-        "name": "ImagemngCache",
-        "description": "else:",
+        "name": "Image Manager Cache",
+        "description": "Cached images from app image_manager_disk_cache (Glide) and .cnt cache files",
         "author": "",
         "creation_date": "2022-03-05",
         "last_update_date": "2022-03-05",
@@ -10,42 +10,39 @@ __artifacts_v2__ = {
         "category": "Image Manager Cache",
         "notes": "",
         "paths": ('*/cache/image_manager_disk_cache/*.*', '*/*.cnt'),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "image",
-        "function": "get_imagemngCache",
     }
 }
 
 import datetime
-from os.path import isfile, isdir, join, basename, dirname, getsize, abspath, getmtime
+import os
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, media_to_html, timeline
+from scripts.ilapfuncs import artifact_processor, check_in_media
 
+
+def _sec_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+@artifact_processor
 def get_imagemngCache(files_found, report_folder, seeker, wrap_text):
     data_list = []
-    
+    source_path = ''
     for file_found in files_found:
-        if isdir(file_found):
+        file_found = str(file_found)
+        if os.path.isdir(file_found):
             continue
-        #else:
-        filename = basename(file_found)
-        thumb = media_to_html(filename, files_found, report_folder)
-        last_modified_date = datetime.datetime.utcfromtimestamp(getmtime(file_found))
-        data_list.append((last_modified_date, thumb, filename, file_found))
-    
-    if len(data_list) > 0:
-        report = ArtifactHtmlReport('Image Manager Cache')
-        report.start_artifact_report(report_folder, f'Image Manager Cache')
-        report.add_script()
-        data_headers = ('Timestamp Last Modified', 'Media', 'Filename', 'Source File')
-        report.write_artifact_data_table(data_headers, data_list, 'See paths in report', html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = f'Image Manager Cache'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'Image Manager Cache'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc(f'No Image Manager Cache files available')
+        filename = os.path.basename(file_found)
+        source_path = os.path.dirname(file_found)
+        media = check_in_media(file_found, filename)
+        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename, file_found))
+
+    data_headers = (
+        ('Timestamp Last Modified', 'datetime'), ('Media', 'media'), 'Filename', 'Source File')
+    return data_headers, data_list, source_path
