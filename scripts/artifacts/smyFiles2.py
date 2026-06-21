@@ -1,155 +1,104 @@
-# pylint: disable=W0611,W0613,W0631,W0702,W1309
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_smyFiles2": {
-        "name": "smyFiles2",
-        "description": "",
+        "name": "My Files - Download History (FileInfo)",
+        "description": "Download history recorded by Samsung My Files (FileInfo.db)",
         "author": "",
         "creation_date": "2020-12-17",
         "last_update_date": "2020-12-17",
         "requirements": "none",
         "category": "My Files",
         "notes": "",
-        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db', '*/com.sec.android.app.myfiles/cache/*.*'),
-        "output_types": None,
-        "artifact_icon": "file",
-        "function": "get_smyFiles2",
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db',),
+        "output_types": "standard",
+        "artifact_icon": "download",
+    },
+    "get_smyFiles2_gdrive": {
+        "name": "My Files - Google Drive",
+        "description": "Google Drive entries cached by Samsung My Files (FileInfo.db) with thumbnails",
+        "author": "",
+        "creation_date": "2020-12-17",
+        "last_update_date": "2020-12-17",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db',
+                  '*/com.sec.android.app.myfiles/cache/*.*'),
+        "output_types": "standard",
+        "artifact_icon": "cloud",
     }
 }
 
+import datetime
+import os
 import sqlite3
-import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, media_to_html
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
 
-def get_smyFiles2(files_found, report_folder, seeker, wrap_text):
-    
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _db_path(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-        
-        print(file_found)
-        if file_found.endswith('.db'):
-            break
-        
-    db = open_sqlite_db_readonly(file_found)
+        if file_found.endswith('FileInfo.db'):
+            return file_found
+    return ''
+
+
+def _rows(db_path, sql):
+    if not db_path:
+        return []
+    db = open_sqlite_db_readonly(db_path)
     cursor = db.cursor()
     try:
-        cursor.execute('''
-        select 
-        datetime(date_modified / 1000, 'unixepoch'),
-        name,
-        path,
-        is_hidden,
-        is_trashed,
-        _source,
-        _description
-        from download_history
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-    except:
-        usageentries = 0
-        
-    if usageentries > 0:
-        report = ArtifactHtmlReport('My Files DB - Download History')
-        report.start_artifact_report(report_folder, 'My Files DB - Download History')
-        report.add_script()
-        # data_headers = ('Timestamp','Name','Full Path','Is Hidden','Trashed?', 'Source', 'Description', 'From S Browser?' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_headers = ('Timestamp','Name','Full Path','Is Hidden','Trashed?', 'Source', 'Description')
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'My Files db - Download History'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'My Files DB - Download History'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No My Files DB Download History data available')
-        
-    try:        
-        cursor.execute('''
-        select 
-        datetime(date_modified / 1000, 'unixepoch'),
-        datetime(recent_date / 1000, 'unixepoch'),
-        name,
-        path,
-        is_hidden,
-        is_trashed,
-        _source,
-        _description
-        from recent_files
-        ''')
-        
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-    except:
-        usageentries = 0
-        
-    if usageentries > 0:
-        report = ArtifactHtmlReport('My Files DB - Recent Files')
-        report.start_artifact_report(report_folder, 'My Files DB - Recent Files')
-        report.add_script()
-        data_headers = ('Timestamp','Recent Date','Name','Full Path','Is Hidden','Trashed?', 'Source', 'Description', 'From S Browser?' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
-            
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'My Files db - Recent Files'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'My Files DB - Recent Files'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No My Files DB Recent Files data available')
-    
-    
-    try:        
-        cursor.execute('''
-        SELECT
-        datetime(date_modified/1000,'unixepoch'),
-        file_id,
-        _data,
-        size,
-        mime_type,
-        is_trashed,
-        is_hidden,
-        weblink
-        from googledrive
-        ''')
-        
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-    except:
-        usageentries = 0
-        
-    if usageentries > 0:
-        report = ArtifactHtmlReport('My Files DB - Google Drive')
-        report.start_artifact_report(report_folder, 'My Files DB - Google Drive')
-        report.add_script()
-        data_headers = ('Date Modified','Thumbnail','File ID','Data','Size','MIME Type','Trashed?', 'Hidden?', 'Weblink' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            thumb = media_to_html(row[1], files_found, report_folder)
-            data_list.append((row[0],thumb,row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
-            
-        report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = f'My Files db - Google Drive'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'My Files DB - Google Drive'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No My Files DB Google Drive data available')
-        
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
     db.close()
+    return rows
+
+
+@artifact_processor
+def get_smyFiles2(files_found, report_folder, seeker, wrap_text):
+    db_path = _db_path(files_found)
+    rows = _rows(db_path, '''
+        SELECT date_modified, name, path, is_hidden, is_trashed, _source, _description
+        FROM download_history
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
+    data_headers = (
+        ('Timestamp', 'datetime'), 'Name', 'Full Path', 'Is Hidden', 'Trashed?', 'Source', 'Description')
+    return data_headers, data_list, db_path
+
+
+@artifact_processor
+def get_smyFiles2_gdrive(files_found, report_folder, seeker, wrap_text):
+    cache = [str(f) for f in files_found if '/cache/' in str(f).replace('\\', '/')]
+    cache_by_name = {os.path.basename(f): f for f in cache}
+    cache_by_stem = {os.path.splitext(os.path.basename(f))[0]: f for f in cache}
+
+    db_path = _db_path(files_found)
+    rows = _rows(db_path, '''
+        SELECT date_modified, file_id, _data, size, mime_type, is_trashed, is_hidden, weblink
+        FROM googledrive
+    ''')
+    data_list = []
+    for r in rows:
+        fid = str(r[1])
+        path = cache_by_name.get(fid) or cache_by_name.get(f'{fid}.jpg') or cache_by_stem.get(fid)
+        thumb = check_in_media(path, os.path.basename(path)) if path else ''
+        data_list.append((_ms_to_utc(r[0]), thumb, r[1], r[2], r[3], r[4], r[5], r[6], r[7]))
+
+    data_headers = (
+        ('Date Modified', 'datetime'), ('Thumbnail', 'media'), 'File ID', 'Data', 'Size', 'MIME Type',
+        'Trashed?', 'Hidden?', 'Weblink')
+    return data_headers, data_list, db_path
