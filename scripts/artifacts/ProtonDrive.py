@@ -1,3 +1,4 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "protondrive_useraccount": {
         "name": "Proton Drive - User Account",
@@ -27,11 +28,9 @@ __artifacts_v2__ = {
     }   
 }
 
-import os
-import datetime
 from pathlib import Path
 
-from scripts.ilapfuncs import artifact_processor, is_platform_windows, check_in_media, open_sqlite_db_readonly, get_sqlite_db_records, get_file_path, media_to_html, is_platform_windows, logfunc
+from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
 @artifact_processor
 def protondrive_useraccount(files_found, report_folder, seeker, wrap_text):
@@ -42,7 +41,7 @@ def protondrive_useraccount(files_found, report_folder, seeker, wrap_text):
             with open(path, "rb") as f:
                 header = f.read(16)
             return header == b"SQLite format 3\x00"
-        except Exception:
+        except OSError:
             return False
 
     source_path = None
@@ -55,8 +54,8 @@ def protondrive_useraccount(files_found, report_folder, seeker, wrap_text):
             break
 
     if not source_path:
-         return (), [], "db-drive not found"
-                       
+        return (), [], "db-drive not found"
+
     query = '''
             SELECT
                 UserEntity.userId AS 'User ID',
@@ -95,7 +94,7 @@ def protondrive_fileinfo(files_found, report_folder, seeker, wrap_text):
             with open(path, "rb") as f:
                 header = f.read(16)
             return header == b"SQLite format 3\x00"
-        except Exception:
+        except OSError:
             return False
 
     source_path = None
@@ -146,9 +145,7 @@ def protondrive_fileinfo(files_found, report_folder, seeker, wrap_text):
 
     for row in db_records:
         link_id             = row[0]
-        share_id            = row[1]
         user_id             = row[2]
-        parent_id           = row[3]
         type_val            = row[4]
         name                = row[5]
         state_val           = row[6]

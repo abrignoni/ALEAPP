@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0631
 __artifacts_v2__ = {
     "duckduckgo_bookmarks": {
         "name": "DuckDuckGo - Bookmarks",
@@ -119,13 +120,11 @@ __artifacts_v2__ = {
     },
 }
 
-import inspect   
-import sqlite3
 import json
 import datetime
 import pathlib
 from pathlib import Path
-from scripts.ilapfuncs import artifact_processor, is_platform_windows, check_in_media, open_sqlite_db_readonly, does_column_exist_in_db, get_sqlite_db_records, get_file_path, media_to_html, is_platform_windows, logfunc
+from scripts.ilapfuncs import artifact_processor, check_in_media, does_column_exist_in_db, get_sqlite_db_records, get_file_path
 from scripts.ccl import ccl_leveldb
 
 @artifact_processor
@@ -281,10 +280,6 @@ def duckduckgo_history(files_found, report_folder, seeker, wrap_text):
     
 @artifact_processor
 def duckduckgo_opentabs(files_found, report_folder, seeker, wrap_text):
-    import inspect
-    from pathlib import Path
-
-    artifact_info = inspect.stack()[0]
     data_list = []
     source_path = get_file_path(files_found, 'app.db')  
     thumb_lookup = {}
@@ -395,7 +390,7 @@ def duckduckgo_downloads(files_found, report_folder, seeker, wrap_text):
             with open(path, "rb") as f:
                 header = f.read(16)
             return header == b"SQLite format 3\x00"
-        except Exception:
+        except OSError:
             return False
 
     source_path = None
@@ -408,8 +403,8 @@ def duckduckgo_downloads(files_found, report_folder, seeker, wrap_text):
             break
 
     if not source_path:
-         return (), [], "c not found"
-            
+        return (), [], "c not found"
+
     query = '''
         SELECT
             downloads.downloadId AS "Download ID",
@@ -442,7 +437,6 @@ def duckduckgo_downloads(files_found, report_folder, seeker, wrap_text):
 
 @artifact_processor
 def duckduckgo_thumbnails(files_found, report_folder, seeker, wrap_text):
-    artifact_info = inspect.stack()[0]
     data_list = []
 
     for source_path in files_found:
@@ -467,8 +461,7 @@ def duckduckgo_thumbnails(files_found, report_folder, seeker, wrap_text):
             continue
         filename = (media_path.name)
         utctime = int(media_path.stem)
-        filepath = str(media_path.parents[1])
-        
+
         timestamp = (datetime.datetime.utcfromtimestamp(utctime/1000).strftime('%Y-%m-%d %H:%M:%S'))
         media_item = check_in_media(file_found, filename)
 
@@ -483,7 +476,6 @@ def duckduckgo_thumbnails(files_found, report_folder, seeker, wrap_text):
 
 @artifact_processor
 def duckduckgo_duckai(files_found, report_folder, seeker, wrap_text):
-    from datetime import datetime
     data_list = []
 
     duckchats = "_https://duckduckgo.com savedAIChats"
@@ -495,9 +487,9 @@ def duckduckgo_duckai(files_found, report_folder, seeker, wrap_text):
         ts = ts.rstrip("Z")
 
         try:
-            dt = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f")
+            dt = datetime.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f")
         except ValueError:
-            dt = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S")
+            dt = datetime.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S")
 
         return dt.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -544,7 +536,7 @@ def duckduckgo_duckai(files_found, report_folder, seeker, wrap_text):
     for in_db_dir in source_path:
         try:
             leveldb_records = ccl_leveldb.RawLevelDb(in_db_dir)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             continue 
 
         for record in leveldb_records.iterate_records_raw():
@@ -560,7 +552,7 @@ def duckduckgo_duckai(files_found, report_folder, seeker, wrap_text):
             json_text = decode_json_bytes(record_value_raw)
             try:
                 parsed = json.loads(json_text)
-            except Exception:
+            except ValueError:
                 continue
 
             chats = parsed.get("chats", [])
