@@ -1,243 +1,82 @@
-# pylint: disable=E0601,E0606,W0613,W0631,W1309,W1514
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
     "get_poly_api": {
-        "name": "GarminPolyAPI",
-        "description": "Get GPS coordinates from Garmin API related to activities",
+        "name": "Garmin - API Activities",
+        "description": "GPS coordinates from the Garmin Connect API activity_details JSON",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
-        "requirements": "Python 3.7 or higher, json and datetime",
+        "requirements": "none",
         "category": "Garmin",
-        "notes": "",
+        "notes": "Requires data extracted from the Garmin Connect API. Interactive folium map and "
+                 "online reverse-geocoding removed; route shown as an offline image (media) + a "
+                 "downloadable route KML.",
         "paths": ('*/garmin.api/activity_details*',),
-        "output_types": None,
+        "output_types": "all",
         "artifact_icon": "activity",
-        "function": "get_poly_api",
     }
 }
 
-# Get GPS coordinates from Garmin API related to activities
-# Requires to have extracted the information from the Garmin API using the script in the url: https://github.com/labcif/Garmin-Connect-API-Extractor
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher, json and datetime
 import datetime
 import json
-import os
-import sqlite3
 
-import folium
-import xlsxwriter
-
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, check_raw_fields, get_raw_fields, check_internet_connection
+from scripts.geo_utils import render_gps_track_png, build_track_kml
+from scripts.ilapfuncs import artifact_processor, check_in_embedded_media, logfunc
 
 
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+@artifact_processor
 def get_poly_api(files_found, report_folder, seeker, wrap_text):
-
-    logfunc("Processing data for Polyline API")
-    use_network = check_internet_connection()
-    if use_network:
-        conn = sqlite3.connect('coordinates.db')
-        c = conn.cursor()
-        c.execute(
-            '''CREATE TABLE IF NOT EXISTS raw_fields (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_time TIMESTAMP DATETIME DEFAULT 
-            CURRENT_TIMESTAMP, latitude text, longitude text, road text, city text, postcode text, country text)''')
-
-    report = ArtifactHtmlReport('Polyline API')
-    report.start_artifact_report(report_folder, 'Polyline API')
-    report.add_script()
-    # report.filter_by_date('GarminActAPI', 1, 1)
-    data_headers = ('Activity ID', 'Start Time', 'End Time', 'Start Coordinates', 'End Coordinates', 'Coordinates KML', 'Coordiantes Excel', 'Button')
     data_list = []
-    html_map = []
-    #file = str(files_found[0])
-    for file in files_found:
-        file = str(file)
-        logfunc("Processing file: " + file)
-        #Open JSON file
-        with open(file, "r") as f:
-            data = json.load(f)
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        source_path = file_found
+        try:
+            with open(file_found, 'r', encoding='utf-8') as handle:
+                data = json.load(handle)
+        except (ValueError, OSError, UnicodeDecodeError) as exc:
+            logfunc(f'Garmin API: could not read {file_found}: {exc}')
+            continue
+        if not isinstance(data, dict):
+            continue
 
-        if len(data) > 0:
+        activity_id = data.get('activityId')
+        poly = (data.get('geoPolylineDTO') or {}).get('polyline') or []
+        coords = [(p['lat'], p['lon']) for p in poly
+                  if isinstance(p, dict) and 'lat' in p and 'lon' in p]
+        if not coords:
+            continue
+        start_t = _ms_to_utc(poly[0].get('time')) if poly else ''
+        end_t = _ms_to_utc(poly[-1].get('time')) if poly else ''
+        start_lat, start_lon = coords[0]
+        end_lat, end_lon = coords[-1]
+        subtitle = start_t.strftime('%Y-%m-%d %H:%M UTC') if start_t else ''
+        title = f'Garmin activity {activity_id}'
 
-            logfunc("Found Garmin Presistent file")
-            # Get Activity ID
+        route_map = ''
+        png = render_gps_track_png(coords, title=title, subtitle=subtitle)
+        if png:
+            route_map = check_in_embedded_media(file_found, png, f'{activity_id}_route.png',
+                                                force_type='image/png', force_extension='png') or ''
+        route_kml = ''
+        kml = build_track_kml(coords, name=title)
+        if kml:
+            route_kml = check_in_embedded_media(file_found, kml, f'{activity_id}_route.kml',
+                                                force_type='application/vnd.google-earth.kml+xml',
+                                                force_extension='kml') or ''
+        data_list.append((activity_id, start_t, end_t, start_lat, start_lon, end_lat, end_lon,
+                          route_map, route_kml))
 
-            activity_id = data['activityId']
-            # Get polyline array
-            polyline = data['geoPolylineDTO']['polyline']
-            place_lat = []
-            place_lon = []
-            coordinates = []
-            i = 0
-            for geo in polyline:
-                if i == 0:
-                    # convert unix timestamp to datetime
-                    start_time = datetime.datetime.utcfromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
-                    start = '[' + str(geo['lat']) + ', ' + str(geo['lon']) + ']'
-                    place_lat.append(geo['lat'])
-                    place_lon.append(geo['lon'])
-                    m = folium.Map(location=[geo['lat'], geo['lon']], zoom_start=10, max_zoom=19)
-                    i += 1
-                # last point
-                elif i == len(polyline) - 1:
-                    # convert unix timestamp to datetime
-                    end_time = datetime.datetime.utcfromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
-                    end = '[' + str(geo['lat']) + ', ' + str(geo['lon']) + ']'
-                    place_lat.append(geo['lat'])
-                    place_lon.append(geo['lon'])
-                    i += 1
-                else:
-                    if len(place_lat) > 0 and abs(place_lat[-1] - geo['lat']) < 0.0002 and abs(
-                            place_lon[-1] - geo['lat']) < 0.0002:
-                        continue
-                    else:
-                        place_lat.append(geo['lat'])
-                        place_lon.append(geo['lon'])
-                    i += 1
-                time = datetime.datetime.utcfromtimestamp(geo['time'] / 1000).strftime('%Y-%m-%d')
-                coordinates.append([geo['lat'], geo['lon'], time])
-
-            points = []
-            for i in range(len(place_lat)):
-                points.append([place_lat[i], place_lon[i]])
-
-            for index, lat in enumerate(place_lat):
-                # Start point
-                if index == 0:
-                    folium.Marker([lat, place_lon[index]],
-                                    popup=(('Start Location\nActivity ID \n' + str(activity_id)).format(index)),
-                                    icon=folium.Icon(color='blue', icon='flag', prefix='fa')).add_to(m)
-                # last point
-                elif index == len(place_lat) - 1:
-                    folium.Marker([lat, place_lon[index]],
-                                    popup=(('End Location\nActivity ID \n' + str(activity_id)).format(index)),
-                                    icon=folium.Icon(color='red', icon='flag', prefix='fa')).add_to(m)
-
-            if use_network:
-                # Create an excel file with the coordinates
-                if os.name == 'nt':
-                    f = open(report_folder + "\\" + str(activity_id) + ".xlsx", "w")
-                    workbook = xlsxwriter.Workbook(report_folder + "\\" + str(activity_id) + ".xlsx")
-                else:
-                    f = open(report_folder + "/" + str(activity_id) + ".xlsx", "w")
-                    workbook = xlsxwriter.Workbook(report_folder + "/" + str(activity_id) + ".xlsx")
-                worksheet = workbook.add_worksheet()
-                rowE = 0
-                col = 0
-                worksheet.write(rowE, col, "Timestamp")
-                worksheet.write(rowE, col + 1, "Latitude")
-                worksheet.write(rowE, col + 2, "Longitude")
-                worksheet.write(rowE, col + 3, "Road")
-                worksheet.write(rowE, col + 4, "City")
-                worksheet.write(rowE, col + 5, "Postcode")
-                worksheet.write(rowE, col + 6, "Country")
-                rowE += 1
-                for coordinate in coordinates:
-                    lat = float(coordinate[0])
-                    lon = float(coordinate[1])
-                    lat = round(lat, 3)
-                    lon = round(lon, 3)
-                    worksheet.write(rowE, col, coordinate[2])
-                    worksheet.write(rowE, col + 1, lat)
-                    worksheet.write(rowE, col + 2, lon)
-                    location = check_raw_fields(lat, lon, c)
-                    if location is None:
-                        logfunc('Getting coordinates data from API might take some time')
-                        location = get_raw_fields(lat, lon, c, conn)
-                        for key, value in location.items():
-                            if key == "road":
-                                worksheet.write(rowE, col + 3, value)
-                            elif key == "city":
-                                worksheet.write(rowE, col + 4, value)
-                            elif key == "postcode":
-                                worksheet.write(rowE, col + 5, value)
-                            elif key == "country":
-                                worksheet.write(rowE, col + 6, value)
-                    else:
-                        logfunc('Getting coordinate data from database')
-                        worksheet.write(rowE, col + 3, location[4])
-                        worksheet.write(rowE, col + 4, location[5])
-                        worksheet.write(rowE, col + 5, location[6])
-                        worksheet.write(rowE, col + 6, location[7])
-                    rowE += 1
-                workbook.close()
-            # Create polyline
-            folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(m)
-            # Save the map to an HTML file
-            title = 'Garmin_Polyline_Map_' + str(activity_id)
-            if os.name == 'nt':
-                m.save(report_folder + '\\' + title + '.html')
-            else:
-                m.save(report_folder + '/' + title + '.html')
-            html_map.append('<iframe id="' + str(activity_id) + '" src="Garmin-API/' + title + '.html" width="100%" height="500" class="map" hidden></iframe>')
-            #save coords to a kml file
-            kml = """
-                    <?xml version="1.0" encoding="UTF-8"?>
-                    <kml xmlns="http://www.opengis.net/kml/2.2">
-                    <Document>
-                    <name>Coordinates</name>
-                    <description>Coordinates</description>
-                    <Style id="yellowLineGreenPoly">
-                        <LineStyle>
-                            <color>7f00ffff</color>
-                            <width>4</width>
-                        </LineStyle>
-                        <PolyStyle>
-                            <color>7f00ff00</color>
-                        </PolyStyle>
-                    </Style>
-                    <Placemark>
-                        <name>Absolute Extruded</name>
-                        <description>Transparent green wall with yellow outlines</description>
-                        <styleUrl>#yellowLineGreenPoly</styleUrl>
-                        <LineString>
-                            <extrude>1</extrude>
-                            <tessellate>1</tessellate>
-                            <altitudeMode>clampedToGround</altitudeMode>
-                            <coordinates>
-                            """
-            for i in range(len(place_lat)):
-                kml += str(place_lon[i]) + ',' + str(place_lat[i]) + ',0 '
-            kml = kml[:-1]
-            kml += """
-                            </coordinates>
-                        </LineString>
-                    </Placemark>
-                    </Document>
-                    </kml>
-                    """
-            # remove the first space
-            kml = kml[1:]
-            # remove last line
-            kml = kml[:-1]
-            # remove extra indentation
-            kml = kml.replace("    ", "")
-            if os.name == 'nt':
-                with open(report_folder + '\\' + str(activity_id) + '.kml', 'w') as f:
-                    f.write(kml)
-                    f.close()
-            else:
-                with open(report_folder + '/' + str(activity_id) + '.kml', 'w') as f:
-                    f.write(kml)
-                    f.close()
-            if use_network:
-                data_list.append((activity_id, start_time, end_time, start, end, '<a href=Garmin-API/'+str(activity_id)+'.kml class="badge badge-light" target="_blank">'+str(activity_id)+'.kml</a>', '<a href=Garmin-API/'+str(activity_id)+'.xlsx class="badge badge-light" target="_blank">'+str(activity_id)+'.xlsx</a>', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(activity_id)+'\')">Show Map</button>'))
-            else:
-                data_list.append((activity_id, start_time, end_time, start, end, str(activity_id)+'.kml', 'N/A', '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\''+str(activity_id)+'\')">Show Map</button>'))
-
-    report.filter_by_date('GarminPolyAPI', 1)
-    report.write_artifact_data_table(data_headers, data_list, file, html_escape=False, table_id='GarminPolyAPI')
-    # Add the map to the report
-    report.add_section_heading('Garmin Polyline Map')
-    for htmlMap in html_map:
-        report.add_map(htmlMap)
-    report.end_artifact_report()
-
-    tsvname = f'Garmin Log'
-    tsv(report_folder, data_headers, data_list, tsvname)
-
-    if use_network:
-        conn.close()
+    data_headers = ('Activity ID', ('Start Time', 'datetime'), ('End Time', 'datetime'), 'Latitude',
+                    'Longitude', 'End Latitude', 'End Longitude', ('Route Map', 'media'),
+                    ('Route KML', 'media'))
+    return data_headers, data_list, source_path
