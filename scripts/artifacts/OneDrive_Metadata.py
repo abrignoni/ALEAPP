@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W0631,W0718
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_onedrive": {
         "name": "OneDrive Metadata",
@@ -8,133 +8,120 @@ __artifacts_v2__ = {
         "last_update_date": "2025-04-17",
         "requirements": "none",
         "category": "Cloud Storage",
-        "notes": "",
+        "notes": "Inline base64 image previews replaced with checked-in media; cached image streams are "
+                 "shown in the Preview (media) column, other types are summarised in Preview Info.",
         "paths": ('*/com.microsoft.skydrive/files/QTMetadata.db*'),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "cloud",
-        "function": "get_onedrive",
     }
 }
 
-import sqlite3
+import datetime
 import os
 import mimetypes
-import base64
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, tsv, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_embedded_media
 
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _find_cached_file(seeker, stream_path):
+    """Locate the cached stream file in the extraction by matching its path tail."""
+    stream_path_norm = os.path.normpath(stream_path).lower().lstrip(os.sep)
+    stream_path_tail = os.path.join(*stream_path_norm.split(os.sep)[-6:]).replace('\\', '/')
+    for match in seeker.search(f'*{os.path.basename(stream_path)}'):
+        match_path_norm = os.path.normpath(str(match)).lower().replace('\\', '/')
+        if stream_path_tail in match_path_norm:
+            return match
+    return None
+
+
+def _build_preview(found_file, extension):
+    """Return (media_ref, info_text) for a cached stream file. Images are checked in as media."""
+    ext = (extension or '').lower().lstrip('.')
+    guessed_mime = mimetypes.types_map.get(f'.{ext}') if ext else None
+    try:
+        with open(found_file, 'rb') as f:
+            data = f.read()
+    except OSError as e:
+        return '', f'Error reading file: {e}'
+
+    if guessed_mime and guessed_mime.startswith('image'):
+        ref = check_in_embedded_media(str(found_file), data, name=os.path.basename(str(found_file)),
+                                      force_type=guessed_mime, force_extension=ext) or ''
+        return ref, 'Image' if ref else f'image ({len(data)} bytes)'
+    if guessed_mime and guessed_mime.startswith('text'):
+        return '', data.decode('utf-8', errors='ignore')[:300]
+    if guessed_mime:
+        return '', f'{guessed_mime} ({len(data)} bytes)'
+    return '', f'Unknown file type ({len(data)} bytes)'
+
+
+@artifact_processor
 def get_onedrive(files_found, report_folder, seeker, wrap_text):
     data_list = []
+    source = ''
 
     for file_found in files_found:
         file_found = str(file_found)
 
         if file_found.endswith('QTMetadata.db'):
+            source = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
 
             cursor.execute('''
-            SELECT 
-                datetime(items.itemDate/1000,'unixepoch') AS Item_Date,
+            SELECT
+                items.itemDate,
                 items._id,
                 items.extension,
                 items.name,
                 items.ownerName,
-                items.sha1Hash, 
+                items.sha1Hash,
                 stream_cache.parentID,
                 stream_cache.stream_location
             FROM
                 items
-            LEFT JOIN 
+            LEFT JOIN
                 stream_cache
             ON items._id = stream_cache.parentID
-            ORDER BY Item_Date ASC;
+            ORDER BY items.itemDate ASC;
             ''')
 
-            all_rows = cursor.fetchall()
-            if all_rows:
-                for row in all_rows:
-                    timestamp = row[0]
-                    item_id = row[1]
-                    extension = row[2] or ''
-                    name = row[3]
-                    owner = row[4]
-                    sha1 = row[5]
-                    parent_id = row[6]
-                    stream_path = row[7]
-                    preview = ''
+            for row in cursor.fetchall():
+                item_date = _ms_to_utc(row[0])
+                item_id = row[1]
+                extension = row[2] or ''
+                name = row[3]
+                owner = row[4]
+                sha1 = row[5]
+                parent_id = row[6]
+                stream_path = row[7]
 
-                    if stream_path:
-                        # Normalize for matching
-                        stream_path_norm = os.path.normpath(stream_path).lower().lstrip(os.sep)
-                        stream_path_tail = os.path.join(*stream_path_norm.split(os.sep)[-6:]).replace('\\', '/')
-
-                        matches = seeker.search(f'*{os.path.basename(stream_path)}')
-                        found_file = None
-
-                        for match in matches:
-                            match_path_norm = os.path.normpath(str(match)).lower().replace('\\', '/')
-                            if stream_path_tail in match_path_norm:
-                                found_file = match
-                                break
-
-                        if found_file:
-                            guessed_mime = mimetypes.types_map.get(f".{extension.lower().lstrip('.')}", None)
-
-                            try:
-                                with open(found_file, 'rb') as f:
-                                    data = f.read()
-
-                                if guessed_mime:
-                                    if guessed_mime.startswith('image'):
-                                        b64img = base64.b64encode(data).decode('utf-8')
-                                        preview = (
-                                            f'<img src="data:{guessed_mime};base64,{b64img}" height="100" '
-                                            f'style="border: 1px solid #ccc; border-radius: 6px;" />'
-                                        )
-                                    elif guessed_mime.startswith('text'):
-                                        text = data.decode('utf-8', errors='ignore')[:300]
-                                        preview = f'<pre>{text}</pre>'
-                                    else:
-                                        preview = f"<i>{guessed_mime} ({len(data)} bytes)</i>"
-                                else:
-                                    preview = f"<i>Unknown file type ({len(data)} bytes)</i>"
-
-                            except Exception as e:
-                                preview = f"<i>Error rendering file: {e}</i>"
-                        else:
-                            preview = "<i>File not found in ZIP/TAR</i>"
+                preview_ref = ''
+                preview_info = ''
+                if stream_path:
+                    found_file = _find_cached_file(seeker, stream_path)
+                    if found_file:
+                        preview_ref, preview_info = _build_preview(found_file, extension)
                     else:
-                        preview = "<i>No stream path provided</i>"
+                        preview_info = 'File not found in extraction'
+                else:
+                    preview_info = 'No stream path provided'
 
-                    data_list.append((
-                        timestamp,
-                        item_id,
-                        extension,
-                        name,
-                        owner,
-                        sha1,
-                        parent_id,
-                        stream_path,
-                        preview
-                    ))
+                data_list.append((item_date, item_id, extension, name, owner, sha1, parent_id,
+                                  stream_path, preview_ref, preview_info))
             db.close()
 
-    if data_list:
-        description = 'OneDrive Metadata'
-        report = ArtifactHtmlReport('OneDrive Metadata')
-        report.start_artifact_report(report_folder, 'OneDrive Metadata', description)
-        report.add_script()
-        data_headers = (
-            'Item Date', 'ID', 'Extension', 'File or Folder Name', 'Owner Name',
-            'Sha1 Hash', 'Parent ID', 'Stream Location', 'Preview')
-        report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-        report.end_artifact_report()
+    data_headers = (
+        ('Item Date', 'datetime'), 'ID', 'Extension', 'File or Folder Name', 'Owner Name',
+        'Sha1 Hash', 'Parent ID', 'Stream Location', ('Preview', 'media'), 'Preview Info')
 
-        tsvname = 'OneDrive Metadata'
-        tsv(report_folder, data_headers[:-1], [row[:-1] for row in data_list], tsvname)
-
-        timeline(report_folder, 'OneDrive Metadata', data_list, data_headers)
-    else:
-        logfunc('No OneDrive Metadata data available')
+    return data_headers, data_list, source
