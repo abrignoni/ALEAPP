@@ -15,10 +15,7 @@ __artifacts_v2__ = {
     }
 }
 
-import os
-
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, get_next_unused_name, open_sqlite_db_readonly, lava_process_artifact, lava_insert_sqlite_data, artifact_processor
+from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor
 from scripts.artifacts.chrome import get_browser_name
 
 
@@ -61,21 +58,6 @@ def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_te
             data_list = []
             for row in all_rows:
                 data_list.append((row[0],row[1],row[2],row[3]))
-
-            report_name = f'{browser_name} - Network Action Predictor'
-            report = ArtifactHtmlReport(report_name)
-            report_path = os.path.join(report_folder, f'{report_name}.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9]  # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-
-            category = "Chromium"
-            module_name = "get_chromeNetworkActionPredictor"
-            table_name, object_columns, column_map = lava_process_artifact(
-                category, module_name, report_name, lava_data_headers, len(data_list))
-            lava_insert_sqlite_data(table_name, data_list, object_columns, lava_data_headers, column_map)
 
             data_list = [row + (browser_name,) for row in data_list]
             all_data.extend(data_list)
