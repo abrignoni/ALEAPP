@@ -20,7 +20,7 @@ import datetime
 
 import fitdecode
 
-from scripts.geo_utils import render_gps_track_png
+from scripts.geo_utils import render_gps_track_png, build_track_kml
 from scripts.ilapfuncs import artifact_processor, logfunc, check_in_embedded_media
 
 _SEMI_TO_DEG = 180.0 / 2 ** 31
@@ -79,15 +79,31 @@ def get_gps(files_found, report_folder, seeker, wrap_text):
 
         start_lat = coordinates[0][0] if coordinates else ''
         start_lon = coordinates[0][1] if coordinates else ''
+        name = sport or 'activity'
+        caption_bits = []
+        if start_time:
+            caption_bits.append(start_time.strftime('%Y-%m-%d %H:%M UTC'))
+        if total_distance_km != '':
+            caption_bits.append(f'{total_distance_km} km')
+        if total_minutes != '':
+            caption_bits.append(f'{total_minutes} min')
+
         route_map = ''
-        png = render_gps_track_png(coordinates)
+        png = render_gps_track_png(coordinates, title=str(sport).title() if sport else 'Activity',
+                                   subtitle='  -  '.join(caption_bits))
         if png:
-            route_map = check_in_embedded_media(file_found, png, f'{sport or "activity"}_route.png',
+            route_map = check_in_embedded_media(file_found, png, f'{name}_route.png',
                                                 force_type='image/png', force_extension='png') or ''
+        route_kml = ''
+        kml = build_track_kml(coordinates, name=f'{name} {start_time}')
+        if kml:
+            route_kml = check_in_embedded_media(file_found, kml, f'{name}_route.kml',
+                                                force_type='application/vnd.google-earth.kml+xml',
+                                                force_extension='kml') or ''
         data_list.append((sport, start_time, end_time, total_minutes, total_distance_km,
-                          start_lat, start_lon, route_map))
+                          start_lat, start_lon, route_map, route_kml))
 
     data_headers = ('Activity Type', ('Start Time', 'datetime'), ('End Time', 'datetime'),
                     'Total Time (minutes)', 'Total Distance (km)', 'Latitude', 'Longitude',
-                    ('Route Map', 'media'))
+                    ('Route Map', 'media'), ('Route KML', 'media'))
     return data_headers, data_list, source_path
