@@ -31,8 +31,7 @@ __artifacts_v2__ = {
 import datetime
 import os
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, get_next_unused_name, lava_process_artifact, lava_insert_sqlite_data, artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
 
 
@@ -47,21 +46,6 @@ def _browser_for(file_found):
     if file_found.find('app_sbrowser') >= 0:
         browser_name = 'Browser'
     return browser_name
-
-
-def _emit_report(report_folder, report_name, data_headers, data_list, file_found,
-                 lava_data_headers, module_name):
-    report = ArtifactHtmlReport(report_name)
-    report_path = os.path.join(report_folder, f'{report_name}.temphtml')
-    report_path = get_next_unused_name(report_path)[:-9]  # remove .temphtml
-    report.start_artifact_report(report_folder, os.path.basename(report_path))
-    report.add_script()
-    report.write_artifact_data_table(data_headers, data_list, file_found)
-    report.end_artifact_report()
-
-    table_name, object_columns, column_map = lava_process_artifact(
-        "Chromium", module_name, report_name, lava_data_headers, len(data_list))
-    lava_insert_sqlite_data(table_name, data_list, object_columns, lava_data_headers, column_map)
 
 
 @artifact_processor
@@ -103,8 +87,6 @@ def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
         db.close()
 
         if len(data_list) > 0:
-            _emit_report(report_folder, f'{browser_name} - Autofill - Entries', data_headers, data_list,
-                         file_found, lava_data_headers, "get_chromeAutofill")
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Autofill - Entries data available')
@@ -171,8 +153,6 @@ def get_chromeAutofillProfiles(files_found, report_folder, seeker, wrap_text):
                               r[9], r[10], r[11], _seconds_to_utc(r[12]), r[13]))
 
         if len(data_list) > 0:
-            _emit_report(report_folder, f'{browser_name} - Autofill - Profiles', data_headers, data_list,
-                         file_found, lava_data_headers, "get_chromeAutofillProfiles")
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Autofill - Profiles data available')
