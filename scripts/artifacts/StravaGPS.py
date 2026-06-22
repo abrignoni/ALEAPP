@@ -1,285 +1,93 @@
-# pylint: disable=E0601,W0613,W0631,W1309,W1310,W1514
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
     "get_gps": {
-        "name": "Strava",
-        "description": "Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities",
+        "name": "Strava - Activities",
+        "description": "GPS activities decoded from Strava FIT files (com.strava/files/activities)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-24",
         "last_update_date": "2023-03-24",
-        "requirements": "Python 3.7 or higher, folium and polyline, fitdecode, datetime",
+        "requirements": "fitdecode",
         "category": "Strava",
-        "notes": "",
+        "notes": "Interactive folium map and online reverse-geocoding removed; the route is rendered "
+                 "as an offline image (media) and the activity start point is emitted as KML.",
         "paths": ('*/com.strava/files*',),
-        "output_types": None,
+        "output_types": "all",
         "artifact_icon": "activity",
-        "function": "get_gps",
     }
 }
 
-# Get GPS coordinates from Strava FIT files stored in the public folder: /Android/data/com.strava/files/activities
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher, folium and polyline, fitdecode, datetime
-from datetime import datetime
-import warnings
-import os
-import sqlite3
+import datetime
 
-import folium
 import fitdecode
-import xlsxwriter
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, check_raw_fields, get_raw_fields, check_internet_connection
+from scripts.geo_utils import render_gps_track_png
+from scripts.ilapfuncs import artifact_processor, logfunc, check_in_embedded_media
 
-
-def suppress_fitdecode_warnings(message, category, filename, lineno, file=None, line=None):
-    if category == UserWarning and 'fitdecode' in message.args[0]:
-        return
-    else:
-        return message, category, filename, lineno, file, line
+_SEMI_TO_DEG = 180.0 / 2 ** 31
 
 
-# Set the filter function as the default warning filter
-warnings.showwarning = suppress_fitdecode_warnings
+def _to_utc(value):
+    if not isinstance(value, datetime.datetime):
+        return ''
+    if value.tzinfo is None:
+        return value.replace(tzinfo=datetime.timezone.utc)
+    return value.astimezone(datetime.timezone.utc)
 
 
+@artifact_processor
 def get_gps(files_found, report_folder, seeker, wrap_text):
-    logfunc("Processing data for Strava FIT Files")
-    use_network = check_internet_connection()
-    if use_network:
-        conn = sqlite3.connect('coordinates.db')
-        c = conn.cursor()
-        c.execute(
-            '''CREATE TABLE IF NOT EXISTS raw_fields (id INTEGER PRIMARY KEY AUTOINCREMENT, stored_time TIMESTAMP DATETIME DEFAULT 
-            CURRENT_TIMESTAMP, latitude text, longitude text, road text, city text, postcode text, country text)''')
-    report = ArtifactHtmlReport('Strava')
-    report.start_artifact_report(report_folder, 'Strava')
-    report.add_script()
-    # report.filter_by_date('GarminActAPI', 1, 1)
-    data_headers = (
-    'Activity Type', 'Start Time', 'End Time', 'Total Time (minutes)', 'Total Distance (km)', 'Coordinates KML', 'Coordinates Excel', 'Button')
     data_list = []
-    html_map = []
-    act = 1
-    files_found = [x for x in files_found if x.endswith('fit')]
-    # file = str(files_found[0])
-    for file in files_found:
-        file = str(file)
-        logfunc("Processing file: " + file)
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not file_found.endswith('fit'):
+            continue
+        source_path = file_found
         coordinates = []
-        coordinatesE = []
-        # Decode FIT file
-        with fitdecode.FitReader(file) as fit:
-            logfunc("Found Strava FIT file")
-            for frame in fit:
-                if frame.frame_type == fitdecode.FIT_FRAME_DATAMESG:
-                    if frame.name == 'record':
-                        # Check if the record message contains the position_lat
-                        # and position_long fields.
-                        if frame.has_field('position_lat') and frame.has_field('position_long'):
-                            lat = frame.get_value('position_lat')
-                            lon = frame.get_value('position_long')
-                            timestamp = frame.get_value('timestamp')
-                            timestamp = timestamp.timestamp()
-                            # convert from UNIX timestamp to UTC
-                            timestamp = datetime.utcfromtimestamp(timestamp)
-                            timestamp = str(timestamp)
-                            # convert from semicircles to degrees
-                            lat = lat * (180.0 / 2 ** 31)
-                            lon = lon * (180.0 / 2 ** 31)
-                            # round to 5 decimal places
-                            lat = round(lat, 5)
-                            lon = round(lon, 5)
-                            coordinates.append([lat, lon])
-                            coordinatesE.append([lat, lon, timestamp])
+        sport = ''
+        start_time = ''
+        end_time = ''
+        total_minutes = ''
+        total_distance_km = ''
+        try:
+            with fitdecode.FitReader(file_found) as fit:
+                for frame in fit:
+                    if frame.frame_type != fitdecode.FIT_FRAME_DATAMESG:
+                        continue
+                    if (frame.name == 'record' and frame.has_field('position_lat')
+                            and frame.has_field('position_long')):
+                        lat = frame.get_value('position_lat') * _SEMI_TO_DEG
+                        lon = frame.get_value('position_long') * _SEMI_TO_DEG
+                        coordinates.append([round(lat, 5), round(lon, 5)])
                     elif frame.name == 'session':
-                        if frame.has_field('total_elapsed_time'):
-                            total_elapsed_time = frame.get_value('total_elapsed_time')
-                            # convert to minutes
-                            total_elapsed_time_m = total_elapsed_time / 60
-                            total_elapsed_time_m = int(total_elapsed_time_m)
+                        elapsed = (frame.get_value('total_elapsed_time')
+                                   if frame.has_field('total_elapsed_time') else None)
+                        if elapsed is not None:
+                            total_minutes = int(elapsed / 60)
                         if frame.has_field('start_time'):
-                            start_time = frame.get_value('start_time')
-                            # convert from FIT timestamp to UNIX timestamp
-                            start_time_u = start_time.timestamp()
-                            # add seconds to the UNIX timestamp
-                            end_time = start_time_u + total_elapsed_time
-                            # convert from UNIX timestamp to UTC
-                            start_time = datetime.utcfromtimestamp(start_time_u)
-                            end_time = datetime.utcfromtimestamp(end_time)
+                            st = frame.get_value('start_time')
+                            start_time = _to_utc(st)
+                            if elapsed is not None and isinstance(st, datetime.datetime):
+                                end_time = _to_utc(st + datetime.timedelta(seconds=elapsed))
                         if frame.has_field('sport'):
                             sport = frame.get_value('sport')
                         if frame.has_field('total_distance'):
-                            total_distance = frame.get_value('total_distance')
-                            # convert from m to km
-                            total_distance = total_distance / 1000
-                            total_distance = round(total_distance, 2)
-        # Generate HTML file with the map and the route using Folium
-        place_lat = []
-        place_lon = []
-        m = folium.Map(location=[coordinates[0][0], coordinates[0][1]], zoom_start=10, max_zoom=19)
+                            total_distance_km = round(frame.get_value('total_distance') / 1000, 2)
+        except Exception as exc:
+            logfunc(f'Strava: could not read {file_found}: {exc}')
+            continue
 
-        for coordinate in coordinates:
-            # if points are to close, skip
-            if len(place_lat) > 0 and abs(place_lat[-1] - coordinate[0]) < 0.0001 and abs(
-                    place_lon[-1] - coordinate[1]) < 0.0001:
-                continue
-            else:
-                place_lat.append(coordinate[0])
-                place_lon.append(coordinate[1])
+        start_lat = coordinates[0][0] if coordinates else ''
+        start_lon = coordinates[0][1] if coordinates else ''
+        route_map = ''
+        png = render_gps_track_png(coordinates)
+        if png:
+            route_map = check_in_embedded_media(file_found, png, f'{sport or "activity"}_route.png',
+                                                force_type='image/png', force_extension='png') or ''
+        data_list.append((sport, start_time, end_time, total_minutes, total_distance_km,
+                          start_lat, start_lon, route_map))
 
-        points = []
-        for i in range(len(place_lat)):
-            points.append([place_lat[i], place_lon[i]])
-
-            # Add points to map
-            for index, lat in enumerate(place_lat):
-                # Start point
-                if index == 0:
-                    folium.Marker([lat, place_lon[index]], popup=('Start Location\n'.format(index)),
-                                  icon=folium.Icon(color='blue', icon='flag', prefix='fa')).add_to(m)
-                # last point
-                elif index == len(place_lat) - 1:
-                    folium.Marker([lat, place_lon[index]], popup=(('End Location\n').format(index)),
-                                  icon=folium.Icon(color='red', icon='flag', prefix='fa')).add_to(m)
-                # middle points
-
-        if use_network:
-            # Create an excel file with the coordinates
-            if os.name == 'nt':
-                f = open(report_folder + "\\" + str(act) + ".xlsx", "w")
-                workbook = xlsxwriter.Workbook(report_folder + "\\" + str(act) + ".xlsx")
-            else:
-                f = open(report_folder + "/" + str(act) + ".xlsx", "w")
-                workbook = xlsxwriter.Workbook(report_folder + "/" + str(act) + ".xlsx")
-            worksheet = workbook.add_worksheet()
-            rowE = 0
-            col = 0
-            worksheet.write(rowE, col, "Timestamp")
-            worksheet.write(rowE, col + 1, "Latitude")
-            worksheet.write(rowE, col + 2, "Longitude")
-            worksheet.write(rowE, col + 3, "Road")
-            worksheet.write(rowE, col + 4, "City")
-            worksheet.write(rowE, col + 5, "Postcode")
-            worksheet.write(rowE, col + 6, "Country")
-            rowE += 1
-
-            for coordinate in coordinatesE:
-                # coordinate = str(coordinate)
-                # round to 5 decimal cases
-                lat = round(coordinate[0], 3)
-                lon = round(coordinate[1], 3)
-                worksheet.write(rowE, col, coordinate[2])
-                worksheet.write(rowE, col + 1, lat)
-                worksheet.write(rowE, col + 2, lon)
-                location = check_raw_fields(lat, lon, c)
-                if location is None:
-                    logfunc('Getting coordinates data from API might take some time')
-                    location = get_raw_fields(lat, lon, c, conn)
-                    for key, value in location.items():
-                        if key == "road":
-                            worksheet.write(rowE, col + 3, value)
-                        elif key == "city":
-                            worksheet.write(rowE, col + 4, value)
-                        elif key == "postcode":
-                            worksheet.write(rowE, col + 5, value)
-                        elif key == "country":
-                            worksheet.write(rowE, col + 6, value)
-                else:
-                    logfunc('Getting coordinate data from database')
-                    worksheet.write(rowE, col + 3, location[4])
-                    worksheet.write(rowE, col + 4, location[5])
-                    worksheet.write(rowE, col + 5, location[6])
-                    worksheet.write(rowE, col + 6, location[7])
-                rowE += 1
-            workbook.close()
-        # Create polyline
-        folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(m)
-        # Save the map to an HTML file
-        title = 'Strava_Activity_' + str(act)
-        if os.name == 'nt':
-            m.save(report_folder + '\\' + title + '.html')
-        else:
-            m.save(report_folder + '/' + title + '.html')
-        html_map.append('<iframe id="' + str(
-            act) + '" src="Strava/' + title + '.html" width="100%" height="500" class="map" hidden></iframe>')
-        # save coords to a kml file
-        kml = """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <kml xmlns="http://www.opengis.net/kml/2.2">
-                <Document>
-                <name>Coordinates</name>
-                <description>Coordinates</description>
-                <Style id="yellowLineGreenPoly">
-                    <LineStyle>
-                        <color>7f00ffff</color>
-                        <width>4</width>
-                    </LineStyle>
-                    <PolyStyle>
-                        <color>7f00ff00</color>
-                    </PolyStyle>
-                </Style>
-                <Placemark>
-                    <name>Absolute Extruded</name>
-                    <description>Transparent green wall with yellow outlines</description>
-                    <styleUrl>#yellowLineGreenPoly</styleUrl>
-                    <LineString>
-                        <extrude>1</extrude>
-                        <tessellate>1</tessellate>
-                        <altitudeMode>clampedToGround</altitudeMode>
-                        <coordinates>
-                        """
-        for coordinate in coordinates:
-            kml += str(coordinate[1]) + "," + str(coordinate[0]) + ",0 \n"
-        kml = kml[:-1]
-        kml += """
-                        </coordinates>
-                    </LineString>
-                </Placemark>
-                </Document>
-                </kml>
-                """
-        # remove the first space
-        kml = kml[1:]
-        # remove last line
-        kml = kml[:-1]
-        # remove extra indentation
-        kml = kml.replace("    ", "")
-        if os.name == 'nt':
-            with open(report_folder + '\\' + str(act) + '.kml', 'w') as f:
-                f.write(kml)
-                f.close()
-        else:
-            with open(report_folder + '/' + str(act) + '.kml', 'w') as f:
-                f.write(kml)
-                f.close()
-        if use_network:
-            data_list.append((sport, start_time, end_time, total_elapsed_time_m, total_distance, '<a href=Strava/' + str(
-                act) + '.kml class="badge badge-light" target="_blank">' + str(act) + '.kml</a>', '<a href=Strava/' + str(
-                act) + '.xlsx class="badge badge-light" target="_blank">' + str(act) + '.xlsx</a>',
-                              '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\'' + str(
-                                  act) + '\')">Show Map</button>'))
-        else:
-            data_list.append(
-                (sport, start_time, end_time, total_elapsed_time_m, total_distance, '<a href=Strava/' + str(
-                    act) + '.kml class="badge badge-light" target="_blank">' + str(act) + '.kml</a>',
-                 'N/A',
-                 '<button type="button" class="btn btn-light btn-sm" onclick="openMap(\'' + str(
-                     act) + '\')">Show Map</button>'))
-        act += 1
-
-    report.filter_by_date('Strava', 1)
-    report.write_artifact_data_table(data_headers, data_list, file, html_escape=False, table_id='Strava')
-    # Add the map to the report
-    report.add_section_heading('Strava')
-    for htmlMap in html_map:
-        report.add_map(htmlMap)
-    report.end_artifact_report()
-
-    tsvname = f'Strava Log'
-    tsv(report_folder, data_headers, data_list, tsvname)
-
-    if use_network:
-        conn.close()
+    data_headers = ('Activity Type', ('Start Time', 'datetime'), ('End Time', 'datetime'),
+                    'Total Time (minutes)', 'Total Distance (km)', 'Latitude', 'Longitude',
+                    ('Route Map', 'media'))
+    return data_headers, data_list, source_path
