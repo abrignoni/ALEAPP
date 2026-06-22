@@ -111,11 +111,26 @@ def get_teleguard(files_found, report_folder, seeker, wrap_text):
             except (ValueError, TypeError):
                 files = {}
             for key in files:
-                match = next((str(f) for f in files_found if key in str(f)), None)
+                # The metadata key is a path fragment: TeleGuard stores each item
+                # under cache/<key>/<file>, so match by substring. Require an actual
+                # file so the cache/<key> directory itself is never matched -- a
+                # directory makes check_in_media return None, and a None -> null in
+                # the serialized media list makes the LAVA viewer show a broken-media
+                # marker and crash on hover (the HTML report silently skips it).
+                match = next((str(f) for f in files_found
+                              if os.path.isfile(str(f)) and key in str(f)), None)
                 if match:
-                    media_refs.append(check_in_media(match, os.path.basename(match)))
+                    ref = check_in_media(match, os.path.basename(match))
+                    if ref:
+                        media_refs.append(ref)
+        if len(media_refs) == 1:
+            media_cell = media_refs[0]
+        elif media_refs:
+            media_cell = media_refs
+        else:
+            media_cell = ''
         data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3], row[4], row[5],
-                          media_refs if media_refs else '', row[6], row[7], row[8]))
+                          media_cell, row[6], row[7], row[8]))
 
     data_headers = (('Timestamp', 'datetime'), ('User Time', 'datetime'), 'Type', 'Sender', 'Receiver',
                     'Content', ('Media', 'media'), 'Metadata', 'Status', 'Is Edited?')
