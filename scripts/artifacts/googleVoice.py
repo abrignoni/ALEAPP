@@ -61,6 +61,15 @@ import struct
 import inspect
 from scripts.ilapfuncs import artifact_processor, get_binary_file_content, open_sqlite_db_readonly, does_table_exist_in_db, check_in_media
 
+
+def _decode_text(value):
+    '''Message body (protobuf field 10) is normally bytes, but can be a nested message
+    (dict) for structured/MMS content. Decode bytes; otherwise stringify so the record
+    still parses instead of raising AttributeError on .decode.'''
+    if isinstance(value, bytes):
+        return value.decode('utf-8', 'replace')
+    return str(value)
+
 @artifact_processor
 def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Account Number', 'Full Name', 'Email Address', 'Linked Phone Number', 'Current Google Voice Number')
@@ -453,7 +462,7 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                             # Message
                             message_content = ""
                             if '10' in message[0]:
-                                message_content = message[0]['10'].decode('utf-8')
+                                message_content = _decode_text(message[0]['10'])
 
                             # Image
                             if "MMS" in message_content:
