@@ -213,19 +213,34 @@ def get_fair_mail_messages(files_found, _report_folder, _seeker, _wrap_text):
         seen = row[16]
         # check if the mail has attachments, if yes - add them
         # Also inline Attachemts are linked
-        if row[19] is None:
-            attachment = 0
-        else:
-            attachment = []
+        attachment = ''
+        if row[19] is not None:
+            # Require an actual file so a matched directory is never passed to
+            # check_in_media (which returns None for a directory), and only append a
+            # truthy ref so no None lands in the media list -- a None serialized to
+            # null in the json.dumps'd media cell crashes the LAVA viewer on hover.
+            attachment_refs = []
             for att_path in attachments:
+                if not os.path.isfile(att_path):
+                    continue
                 for att_id in row[19].split(','):
                     if str(att_id) in os.path.basename(att_path):
-                        attachment.append(check_in_media(att_path, os.path.basename(att_path)))
+                        ref = check_in_media(att_path, os.path.basename(att_path))
+                        if ref:
+                            attachment_refs.append(ref)
+            if len(attachment_refs) == 1:
+                attachment = attachment_refs[0]
+            elif attachment_refs:
+                attachment = attachment_refs
         infrastructure = row[18]
         for path in messages:
+            if not os.path.isfile(path):
+                continue
             try:
                 if int(os.path.basename(path)) == message_id:
-                    content = check_in_media(path, os.path.basename(path))
+                    ref = check_in_media(path, os.path.basename(path))
+                    if ref:
+                        content = ref
                     
             except ValueError:
                 continue

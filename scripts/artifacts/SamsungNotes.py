@@ -70,10 +70,22 @@ def snotes(files_found, _report_folder, _seeker, _wrap_text):
         last_opened = convert_unix_ts_to_utc(int(row[8])/1000)
         file_path = row[9]
 
-        media = []
+        # Require an actual file so a matched directory is never passed to
+        # check_in_media (which returns None for a directory), and only keep truthy
+        # refs so no None lands in the media list -- a None serialized to null in
+        # the json.dumps'd media cell crashes the LAVA viewer on hover.
+        media_refs = []
         for media_path in medias:
-            if os.path.basename(file_path) in media_path:
-                media.append(check_in_media(media_path, os.path.basename(media_path)))
+            if os.path.isfile(media_path) and os.path.basename(file_path) in media_path:
+                ref = check_in_media(media_path, os.path.basename(media_path))
+                if ref:
+                    media_refs.append(ref)
+        if len(media_refs) == 1:
+            media = media_refs[0]
+        elif media_refs:
+            media = media_refs
+        else:
+            media = ''
 
         data_list.append((  created,
                             last_modified,
