@@ -1,135 +1,94 @@
-# pylint: disable=W0613,W1309,W1514
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_garminFB": {
-        "name": "GarminFacebook USES INTERNET",
-        "description": "Get Information relative to user Facebook account from the XML file in shared_prefs and tries to use the access token to get the user's profile picture",
+        "name": "Garmin - Facebook Account",
+        "description": "Cached Facebook account data (token, profile) from the Garmin Connect shared_prefs XML",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
-        "requirements": "Python 3.7 or higher, ElementTree, json and datetime, http.client",
+        "requirements": "none",
         "category": "Garmin",
-        "notes": "",
+        "notes": "Parses on-device cached data only; the original's live Facebook Graph API lookup was removed.",
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/com.facebook*',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "activity",
-        "function": "get_garminFB",
     }
 }
 
-# Get Information relative to user Facebook account from the XML file in shared_prefs and tries to use the access token to get the user's profile picture
-# USES INTERNET CONNECTION
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher, ElementTree, json and datetime, http.client
 import datetime
-import http.client
 import json
 import xml.etree.ElementTree as ET
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline
+from scripts.ilapfuncs import artifact_processor, logfunc
+
+_ATTRIBUTES = ("com.facebook.AccessTokenManager.CachedAccessToken",
+               "com.facebook.ProfileManager.CachedProfile",
+               "anonymousAppDeviceGUID",
+               "com.facebook.sdk.AutoInitEnabled")
+_TS_KEYS = ("last_refresh", "data_access_expiration_time", "expires_at")
 
 
-# remove whitespace from xml first line
-def remove_whitespace_from_xml_first_line(xml_file):
-    with open(xml_file, 'r') as f:
-        lines = f.readlines()
-    # replace first line with <?xml version='1.0' encoding='utf-8' standalone='yes' ?>
-    lines[0] = '<?xml version=\'1.0\' encoding=\'utf-8\' standalone=\'yes\' ?>\n'
-    with open(xml_file, 'w') as f:
-        f.writelines(lines)
+def _fb_ts(value):
+    try:
+        v = int(value)
+    except (ValueError, TypeError):
+        return str(value)
+    try:
+        dt = (datetime.datetime.fromtimestamp(v / 1000, datetime.timezone.utc)
+              if len(str(abs(v))) == 13
+              else datetime.datetime.fromtimestamp(v, datetime.timezone.utc))
+        return dt.strftime('%Y-%m-%d %H:%M:%S UTC')
+    except (ValueError, OverflowError, OSError):
+        return str(value)
 
 
+def _s(value):
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, ensure_ascii=False)
+    return value
+
+
+@artifact_processor
 def get_garminFB(files_found, report_folder, seeker, wrap_text):
-    # Dictionary to store the user information
-    user_info = {}
-    token = ""
-    user_id = 0
-    # Attributes to be extracted from the xml file
-    attribute = ["com.facebook.AccessTokenManager.CachedAccessToken", "com.facebook.ProfileManager.CachedProfile",
-                 "anonymousAppDeviceGUID", "com.facebook.sdk.AutoInitEnabled"]
-
-    logfunc("Processing data for Facebook XML")
-    # Loop through the files found
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        logfunc("Processing file: " + file_found)
-        # remove_whitespace_from_xml_first_line(file)
-        tree = ET.parse(file_found)
-        root = tree.getroot()
+        source_path = file_found
+        try:
+            root = ET.parse(file_found).getroot()
+        except (ET.ParseError, OSError, ValueError) as exc:
+            logfunc(f'Garmin Facebook: could not parse {file_found}: {exc}')
+            continue
+
+        user_info = {}
         for child in root:
-            for i in attribute:
-                if child.attrib["name"] == i:
-                    # Does the attribute have a value?
-                    if "value" in child.attrib:
-                        user_info[i] = child.attrib["value"]
-                    else:
-                        # Does the attribute have text?
-                        if child.text:
-                            user_info[i] = child.text
+            name = child.attrib.get("name")
+            if name in _ATTRIBUTES:
+                if "value" in child.attrib:
+                    user_info[name] = child.attrib["value"]
+                elif child.text:
+                    user_info[name] = child.text
 
-        if len(user_info) > 0:
-            logfunc("Found Facebook XML")
-            report = ArtifactHtmlReport('Facebook Data')
-            report.start_artifact_report(report_folder, 'Facebook Data')
-            report.add_script()
-            data_headers = ('Name', 'Value')
-            data_list = []
-            for key, value in user_info.items():
-                if key == "com.facebook.AccessTokenManager.CachedAccessToken":
-                    access_token = json.loads(value)
-                    for k, v in access_token.items():
-                        #if v  is a timestamp
-                        if k == "token":
-                            token = v
-                        elif k == "user_id":
-                            user_id = v
-                        if k == "last_refresh" or k == "data_access_expiration_time" or k == "expires_at":
-                            #check if the timestamp is in milliseconds
-                            if len(str(v)) == 13:
-                                v = datetime.datetime.utcfromtimestamp(v / 1000.0)
-                            else:
-                                v = datetime.datetime.utcfromtimestamp(v)
-                        data_list.append((k, v))
-                elif key == "com.facebook.ProfileManager.CachedProfile":
-                    profile = json.loads(value)
-                    for k, v in profile.items():
-                        data_list.append((k, v))
-                else:
+        for key, value in user_info.items():
+            if key == "com.facebook.AccessTokenManager.CachedAccessToken":
+                try:
+                    token_obj = json.loads(value)
+                except (ValueError, TypeError):
                     data_list.append((key, value))
-            report.write_artifact_data_table(data_headers, data_list, file_found)
+                    continue
+                for k, v in token_obj.items():
+                    data_list.append((k, _fb_ts(v) if k in _TS_KEYS else _s(v)))
+            elif key == "com.facebook.ProfileManager.CachedProfile":
+                try:
+                    profile = json.loads(value)
+                except (ValueError, TypeError):
+                    data_list.append((key, value))
+                    continue
+                for k, v in profile.items():
+                    data_list.append((k, _s(v)))
+            else:
+                data_list.append((key, _s(value)))
 
-            # Create table with data from facebook api
-            if token != "" and user_id != 0:
-                logfunc("Getting Facebook data from API")
-                conn = http.client.HTTPSConnection("graph.facebook.com")
-                payload = ''
-                headers = {}
-                conn.request("GET",
-                             "/" + str(user_id) + "?fields=id,name,email,picture,friends&access_token=" + token,
-                             payload, headers)
-                res = conn.getresponse()
-                data = res.read()
-                data = json.loads(data)
-                data_headers = ('Name', 'Value')
-                data_list = []
-                for k, v in data.items():
-                    if k == "picture":
-                        # Get url from picture withouth the brackets
-                        url = v["data"]["url"]
-                        data_list.append(("picture", '<img src="'+url+'" alt="'+url+'" width="50" height="50">'))
-                    elif k == "friends":
-                        data_list.append(("friends", v["summary"]["total_count"]))
-                    else:
-                        data_list.append((k, v))
-                report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-
-            report.end_artifact_report()
-            tsvname = f'Garmin - Facebook'
-            tsv(report_folder, data_headers, data_list, tsvname)
-
-            tlactivity = f'Garmin - Facebook'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc("No Garmin Facebook data found")
+    data_headers = ('Name', 'Value')
+    return data_headers, data_list, source_path
