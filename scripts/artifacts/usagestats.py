@@ -10,23 +10,33 @@ __artifacts_v2__ = {
         "category": "Usage Stats",
         "notes": "",
         "paths": ('*/system/usagestats/*', '*/system_ce/*/usagestats*'),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "battery",
-        "function": "get_usagestats",
     }
 }
 
+import datetime
 import glob
 import json
 import os
 import scripts.artifacts.usagestats_pb.usagestatsservice_pb2 as usagestatsservice_pb2
 import scripts.artifacts.usagestats_pb.usagestatsservice_v2_pb2 as usagestatsservice_v2_pb2
 import sqlite3
-import xml.etree.ElementTree as ET  
+import xml.etree.ElementTree as ET
 
 from enum import IntEnum
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+from scripts.ilapfuncs import artifact_processor, logfunc, is_platform_windows
+
+
+def _str_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.strptime(str(value), '%Y-%m-%d %H:%M:%S').replace(
+            tzinfo=datetime.timezone.utc)
+    except (ValueError, TypeError):
+        return ''
+
 
 # Event types referenced from core\java\android\app\usage\UsageEvents.java
 
@@ -68,7 +78,7 @@ class EventType(IntEnum):
 
 class EventFlag(IntEnum):
     FLAG_IS_PACKAGE_INSTANT_APP = 1
-    
+
     def __str__(self):
         return self.name
 
@@ -92,7 +102,6 @@ def ReadUsageStatsV2PbFile(input_path):
 
     with open (input_path, 'rb') as f:
         stats_ob.ParseFromString(f.read())
-        #print(stats_ob)
         return stats_ob
 
 def AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages):
@@ -115,7 +124,6 @@ def AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages):
             alc = abs(usagestat_ob.app_launch_count)
 
         datainsert = ('packages', finalt, tac, '', '', '', alc, pkg, '' , '' , sourced, '')
-        #print(datainsert)
         cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
                         'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
     #configurations
@@ -133,9 +141,8 @@ def AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages):
             tac = abs(conf.total_time_active_ms)
         fullatti_str = str(conf.config)
         datainsert = (usagetype, finalt, tac, '', '', '', '', '', '', '', sourced, fullatti_str)
-        #print(datainsert)
         cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)                            
+                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
     #event-log
     usagetype = 'event-log'
     for event in stats_ob.event_log:
@@ -167,7 +174,6 @@ def ReadUsageStatsPbFile(input_path):
 
     with open (input_path, 'rb') as f:
         stats.ParseFromString(f.read())
-        #print(stats)
         return stats
 
 def AddEntriesToDb(sourced, file_name_int, stats, db):
@@ -190,7 +196,6 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
             alc = abs(usagestat.app_launch_count)
 
         datainsert = ('packages', finalt, tac, '', '', '', alc, pkg, '' , '' , sourced, '')
-        #print(datainsert)
         cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
                         'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
     #configurations
@@ -208,9 +213,8 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
             tac = abs(conf.total_time_active_ms)
         fullatti_str = str(conf.config)
         datainsert = (usagetype, finalt, tac, '', '', '', '', '', '', '', sourced, fullatti_str)
-        #print(datainsert)
         cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)                            
+                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
     #event-log
     usagetype = 'event-log'
     for event in stats.event_log:
@@ -236,45 +240,54 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
 
     db.commit()
 
+@artifact_processor
 def get_usagestats(files_found, report_folder, seeker, wrap_text):
 
-    logfunc ('Android Usagestats XML & Protobuf Parser')
-    logfunc ('By: @AlexisBrignoni & @SwiftForensics')
-    logfunc ('Web: abrignoni.com & swiftforensics.com')
-    
-    slash = '\\' if is_platform_windows() else '/' 
+    logfunc('Android Usagestats XML & Protobuf Parser')
+
+    slash = '\\' if is_platform_windows() else '/'
 
     uids_processed = set()
+    data_list = []
+    source = ''
 
     for file_found in files_found:
         file_found = str(file_found)
         parts = file_found.split(slash)
-        if os.path.isdir(file_found): # filter for directory only. 
+        if os.path.isdir(file_found): # filter for directory only.
             # Target = .../system/usagestats/0  <-- Android <= 10
             # Target = .../system_ce/0/usagestats  <-- Android = 11
             if len(parts) > 2 and parts[-2] == 'usagestats' and parts[-3] == 'system':
                 uid = parts[-1]
                 try:
-                    uid_int = int(uid)
-                    # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
-                    if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
-                        continue
-                    process_usagestats(file_found, uid, report_folder, 1)
+                    int(uid)
                 except ValueError:
-                    pass # uid was not a number
+                    continue # uid was not a number
+                # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
+                if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
+                    continue
+                source = source or file_found
+                data_list.extend(process_usagestats(file_found, uid, report_folder, 1))
             elif len(parts) > 3 and parts[-1] == 'usagestats' and parts[-3] == 'system_ce':
                 uid = parts[-2]
                 try:
                     uid_int = int(uid)
-                    if uid_int in uids_processed:
-                        continue
-                    uids_processed.add(uid_int)
-                    # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
-                    if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
-                        continue
-                    process_usagestats(file_found, uid, report_folder, 2)
                 except ValueError:
-                    pass # uid was not a number
+                    continue # uid was not a number
+                if uid_int in uids_processed:
+                    continue
+                uids_processed.add(uid_int)
+                # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
+                if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
+                    continue
+                source = source or file_found
+                data_list.extend(process_usagestats(file_found, uid, report_folder, 2))
+
+    data_headers = ('User (UID)', ('Last Time Active', 'datetime'), 'Usage Type',
+                    'Time Active in Msecs', 'Time Active in Secs',
+                    ('Last Time Service Used', 'datetime'), ('Last Time Visible', 'datetime'),
+                    'Total Time Visible', 'App Launch Count', 'Package', 'Types', 'Class', 'Source')
+    return data_headers, data_list, source
 
 def add_xml_or_v1_usagestats_to_db(folder, db):
     '''Process usagestats xml files or version 1 of protobuf files'''
@@ -287,7 +300,7 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
             file_name = os.path.basename(filename)
             #Test if xml is well formed
             if file_name == 'version':
-                continue    
+                continue
             else:
                 if 'daily' in filename:
                     sourced = 'daily'
@@ -297,16 +310,16 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
                     sourced = 'monthly'
                 elif 'yearly' in filename:
                     sourced = 'yearly'
-                
+
                 try:
                     file_name_int = int(file_name)
-                except: 
+                except:
                     logfunc('Invalid filename: ')
                     logfunc(filename)
                     logfunc('')
                     err = 1
                     ferr = 1
-                
+
                 try:
                     ET.parse(filename)
                 except ET.ParseError:
@@ -319,104 +332,69 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
                         logfunc(filename)
                         logfunc('')
                         err = 1
-                        #print(filename)
                     if stats:
                         if ferr == 1:
                           ferr = 0
                           continue
                         else:
-                          #print('Processing - '+filename)
-                          #print('')
                           AddEntriesToDb(sourced, file_name_int, stats, db)
                           continue
-                
+
                 if err == 1:
                     err = 0
                     continue
                 else:
                     tree = ET.parse(filename)
                     root = tree.getroot()
-                    print('Processing: '+filename)
-                    print('')
                     for elem in root:
-                        #print(elem.tag)
                         usagetype = elem.tag
-                        #print("Usage type: "+usagetype)
                         if usagetype == 'packages':
                             for subelem in elem:
-                                #print(subelem.attrib)
                                 fullatti_str = json.dumps(subelem.attrib)
-                                #print(subelem.attrib['lastTimeActive'])
                                 time1 = subelem.attrib['lastTimeActive']
                                 time1 = int(time1)
                                 if time1 < 0:
                                     finalt = abs(time1)
                                 else:
                                     finalt = file_name_int + time1
-                                #print('final time: ')
-                                #print(finalt)
-                                #print(subelem.attrib['package'])
                                 pkg = (subelem.attrib['package'])
-                                #print(subelem.attrib['timeActive'])
                                 tac = (subelem.attrib['timeActive'])
-                                #print(subelem.attrib['lastEvent'])
                                 alc = (subelem.attrib.get('appLaunchCount', ''))
                                 #insert in database
                                 cursor = db.cursor()
                                 datainsert = (usagetype, finalt, tac, '', '', '', alc, pkg, '', '', sourced, fullatti_str,)
-                                #print(datainsert)
                                 cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
                                                'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
                                 db.commit()
-                        
+
                         elif usagetype == 'configurations':
                             for subelem in elem:
                                 fullatti_str = json.dumps(subelem.attrib)
-                                #print(subelem.attrib['lastTimeActive'])
                                 time1 = subelem.attrib['lastTimeActive']
                                 time1 = int(time1)
                                 if time1 < 0:
                                     finalt = abs(time1)
                                 else:
                                     finalt = file_name_int + time1
-                                #print('final time: ')
-                                #print(finalt)
-                                #print(subelem.attrib['timeActive'])
                                 tac = (subelem.attrib['timeActive'])
-                                #print(subelem.attrib)
                                 #insert in database
                                 cursor = db.cursor()
                                 datainsert = (usagetype, finalt, tac, '', '', '', '', '', '', '', sourced, fullatti_str,)
-                                #print(datainsert)
                                 cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                                               'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)                            
-                                #datainsert = (usagetype, finalt, tac, '' , '' , '' , sourced, fullatti_str,)
-                                #cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?)', datainsert)
+                                               'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
                                 db.commit()
-                
+
                         elif usagetype == 'event-log':
                             for subelem in elem:
-                                #print(subelem.attrib['time'])
                                 time1 = subelem.attrib['time']
                                 time1 = int(time1)
                                 if time1 < 0:
                                     finalt = abs(time1)
                                 else:
                                     finalt = file_name_int + time1
-                                
-                                #time1 = subelem.attrib['time']
-                                #finalt = file_name_int + int(time1)
-                                #print('final time: ')
-                                #print(finalt)
-                                #print(subelem.attrib['package'])
                                 pkg = (subelem.attrib['package'])
-                                #print(subelem.attrib['type'])
                                 tipes = (subelem.attrib['type'])
-                                #print(subelem.attrib)
                                 fullatti_str = json.dumps(subelem.attrib)
-                                #add variable for type conversion from number to text explanation
-                                #print(subelem.attrib['fs'])
-                                #classy = subelem.attrib['class']
                                 if 'class' in subelem.attrib:
                                     classy = subelem.attrib['class']
                                     cursor = db.cursor()
@@ -426,13 +404,12 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
                                     db.commit()
                                 else:
                                 #insert in database
+                                    datainsert = (usagetype, finalt, '' , '' , '', '', '', pkg , tipes , '' , sourced, fullatti_str,)
                                     cursor = db.cursor()
                                     cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
                                                'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
-                                    datainsert = (usagetype, finalt, '' , '' , '', '', '', pkg , tipes , '' , sourced, fullatti_str,)
-                                    #cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?)', datainsert)
                                     db.commit()
-                                    
+
 def add_v2_usagestats_to_db(folder, db):
     '''Process usagestats version 2 protobuf files'''
     mappings_path = os.path.join(folder, 'mappings')
@@ -443,17 +420,15 @@ def add_v2_usagestats_to_db(folder, db):
         mappings.ParseFromString(f.read())
         for package in mappings.packages_map:
             if package.HasField('package_token'):
-                #print(f'package_token = {package.package_token}')
                 packages[package.package_token] = package.strings
             else:
                 logfunc('No package_token, mapping may be problematic!')
-        #print(mappings)
 
     for filepath in glob.iglob(os.path.join(folder, '**'), recursive=True):
         if os.path.isfile(filepath): # filter dirs
             file_name = os.path.basename(filepath)
             if file_name in ('version', 'migrated', 'mappings'):
-                continue    
+                continue
 
             if 'daily' in filepath:
                 sourced = 'daily'
@@ -463,10 +438,10 @@ def add_v2_usagestats_to_db(folder, db):
                 sourced = 'monthly'
             elif 'yearly' in filepath:
                 sourced = 'yearly'
-            
+
             try:
                 file_name_int = int(file_name)
-            except: 
+            except:
                 logfunc('Invalid filename at {filename}')
                 continue
 
@@ -479,13 +454,10 @@ def add_v2_usagestats_to_db(folder, db):
 
 def process_usagestats(folder, uid, report_folder, version):
 
-    processed = 0
-    
-    #Create sqlite databases
-    db = sqlite3.connect(os.path.join(report_folder, 'usagestats_{}.db'.format(uid)))
+    # In-memory working database; the parsed rows are returned to the framework
+    # for rendering as one consolidated table across all users.
+    db = sqlite3.connect(':memory:')
     cursor = db.cursor()
-
-    #Create table usagedata.
 
     cursor.execute('''
         CREATE TABLE data(usage_type TEXT, lastime INTEGER, timeactive INTEGER,
@@ -505,7 +477,7 @@ def process_usagestats(folder, uid, report_folder, version):
     #query for reporting
     # Types mentioned here: UsageEvents.Event in platform_frameworks_base\api\current.txt
     cursor.execute('''
-    select 
+    select
     case lastime WHEN '' THEN ''
      ELSE datetime(lastime/1000, 'UNIXEPOCH')
     end as lasttimeactive,
@@ -516,7 +488,7 @@ def process_usagestats(folder, uid, report_folder, version):
      ELSE datetime(last_time_service_used/1000, 'UNIXEPOCH')
     end last_time_service_used,
     case last_time_visible  WHEN '' THEN ''
-     ELSE datetime(last_time_visible/1000, 'UNIXEPOCH') 
+     ELSE datetime(last_time_visible/1000, 'UNIXEPOCH')
     end last_time_visible,
     total_time_visible,
     app_launch_count,
@@ -548,43 +520,11 @@ def process_usagestats(folder, uid, report_folder, version):
     ''')
     all_rows = cursor.fetchall()
 
-    report = ArtifactHtmlReport('Usagestats')
-    report.start_artifact_report(report_folder, f'UsageStats_{uid}')
-    report.add_script()
-    data_headers = ('Last Time Active','Usage Type','Time Active in Msecs', 'Time Active in Secs', 
-                    'Last Time Service Used', 'Last Time Visible', 'Total Time Visible', 'App Launch Count', 
-                    'Package', 'Types', 'Class', 'Source')
     data_list = []
-
     for row in all_rows:
-        usage_type = str(row[1])
-        lasttimeactive = str(row[0])
-        time_Active_in_msecs = str(row[2])
-        timeactive_in_secs = str(row[3])
-        last_time_service_used = str(row[4])
-        last_time_visible = str(row[5])
-        total_time_visible = str(row[6])
-        app_launch_count = str(row[7])
-        package = str(row[8])
-        types = str(row[9])
-        classs = str(row[10])
-        source = str(row[11])
+        data_list.append((uid, _str_to_utc(row[0]), row[1], row[2], row[3], _str_to_utc(row[4]),
+                          _str_to_utc(row[5]), row[6], row[7], row[8], row[9], row[10], row[11]))
 
-        data_list.append((lasttimeactive, usage_type, time_Active_in_msecs,
-                timeactive_in_secs, last_time_service_used, 
-                last_time_visible, total_time_visible,
-                app_launch_count, package, types, classs, source))
-        processed = processed + 1
-
-    report.write_artifact_data_table(data_headers, data_list, folder)
-    report.end_artifact_report()
-    
-    tsvname = f'usagestats'
-    tsv(report_folder, data_headers, data_list, tsvname)
-    
-    tlactivity = f'Usagestats'
-    timeline(report_folder, tlactivity, data_list, data_headers)
-
-    logfunc(f'Records processed for user {uid}: {processed}')
+    logfunc(f'Records processed for user {uid}: {len(data_list)}')
     db.close()
-    
+    return data_list
