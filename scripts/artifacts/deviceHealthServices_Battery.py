@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0612,W0613,W0718
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
     "Turbo_Battery": {
         "name": "Turbo - Phone Battery",
@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Device Health Services",
         "notes": "",
-        "paths": ('*/com.google.android.apps.turbo/databases/turbo.db*'),
+        "paths": ('*/com.google.android.apps.turbo/databases/turbo.db*',),
         "output_types": "all",
         "artifact_icon": "battery-charging"
     },
@@ -22,18 +22,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Device Health Services",
         "notes": "",
-        "paths": ('*/com.google.android.apps.turbo/databases/bluetooth.db*'),
+        "paths": ('*/com.google.android.apps.turbo/databases/bluetooth.db*',),
         "output_types": "all",
         "artifact_icon": "bluetooth"
     }
 }
 
-import sqlite3
-import textwrap
 import os
 
-from packaging import version
-from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
