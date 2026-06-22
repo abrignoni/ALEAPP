@@ -18,7 +18,7 @@ __artifacts_v2__ = {
 import os
 import time
 
-from scripts.ilapfuncs import artifact_processor, media_to_html
+from scripts.ilapfuncs import artifact_processor, check_in_media
 
 def triage_text(file_found):
     output = ''
@@ -57,18 +57,18 @@ def clipboard(files_found, report_folder, seeker, wrap_text):
                     if file_found.endswith('clip'):
                         pass
                     else:
-                        thumb = media_to_html(file_found, files_found, report_folder)
+                        media = check_in_media(file_found, name=os.path.basename(file_found)) or ''
                         path = file_found
                         modtime = os.path.getmtime(file_found)
                         modtime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modtime))
-                        data_list.append((modtime, thumb, path))
+                        data_list.append((modtime, '', media, path))
                 else:
                     #print('Outside of Matching')
                     path = file_found
                     textdata = triage_text(file_found)
                     modtime = os.path.getmtime(file_found)
                     modtime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modtime))
-                    data_list.append((modtime, textdata, path))
-    
-    data_headers = (('Modified Time','datetime'), 'Data', 'Path')
+                    data_list.append((modtime, textdata, '', path))
+
+    data_headers = (('Modified Time','datetime'), 'Data', ('Media','media'), 'Path')
     return data_headers, data_list, file_found

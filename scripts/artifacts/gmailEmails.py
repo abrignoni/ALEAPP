@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0631,W0612,W0622
 __artifacts_v2__ = {
     "gmailEmails": {
         "name": "Gmail - App Emails",
@@ -46,7 +47,7 @@ import blackboxprotobuf
 import os
 from datetime import datetime
 
-from scripts.ilapfuncs import open_sqlite_db_readonly, media_to_html, get_sqlite_db_records, artifact_processor
+from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor
 
 @artifact_processor
 def gmailEmails(files_found, report_folder, seeker, wrap_text):
@@ -168,11 +169,11 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                     for attachpath in files_found:
                         if attachhash in attachpath:
                             if attachpath.endswith(attachname):
-                                attachment = media_to_html(attachpath, files_found, report_folder)
-                    
+                                attachment = check_in_media(attachpath, name=attachname) or ''
+
                 data_list.append((timestamp,serverid,messagehtml,attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,bigTopDataDB))
 
-    data_headers = (('Timestamp','datetime'),'Email ID','Message','Attachment','Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
+    data_headers = (('Timestamp','datetime'),'Email ID','Message',('Attachment','media'),'Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
     return data_headers, data_list, 'See source file(s) below:'
 
 @artifact_processor      
