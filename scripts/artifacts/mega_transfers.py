@@ -16,17 +16,26 @@ __artifacts_v2__ = {
 }
 
 import base64
+import binascii
 import datetime
+import sqlite3
 
 from Crypto.Cipher import AES
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
 
 DIRECTION = {"0": "Download", "1": "Upload", "2": "Download"}
 STATE = {
     "0": "None", "1": "Queued", "2": "Active", "3": "Paused", "4": "Retrying",
     "5": "Completing", "6": "Completed", "7": "Cancelled", "8": "Failed",
 }
+
+
+def _ms_to_utc(value):
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, TypeError, OverflowError, OSError):
+        return ''
 
 
 def decrypt(cell):
@@ -41,25 +50,40 @@ def decrypt(cell):
 
 @artifact_processor
 def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
-
-    source_path = str(files_found[0])
-    db = open_sqlite_db_readonly(source_path)
-    cursor = db.cursor()
-    cursor.execute('''
-        SELECT transfertimestamp, transferpath, transferfilename, transfersize,
-               transfertype, transferstate, transferoriginalpath
-        FROM completedtransfers
-    ''')
-    results = cursor.fetchall()
-    db.close()
-
     data_list = []
-    for r in results:
-        decrypted = [decrypt(x) for x in r]
-        decrypted[0] = datetime.datetime.fromtimestamp(int(decrypted[0]) / 1000, datetime.timezone.utc)
-        decrypted[4] = DIRECTION.get(decrypted[4], decrypted[4])
-        decrypted[5] = STATE.get(decrypted[5], decrypted[5])
-        data_list.append(decrypted)
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not file_found.endswith('megapreferences'):
+            continue
+        source_path = file_found
+        db = open_sqlite_db_readonly(file_found)
+        try:
+            cursor = db.cursor()
+            cursor.execute('''
+                SELECT transfertimestamp, transferpath, transferfilename, transfersize,
+                       transfertype, transferstate, transferoriginalpath
+                FROM completedtransfers
+            ''')
+            results = cursor.fetchall()
+        except sqlite3.Error as exc:
+            # megapreferences isn't always a valid sqlite db (encrypted/other format) --
+            # skip it instead of aborting the whole artifact ("file is not a database")
+            logfunc(f'Mega transfers: could not read {file_found}: {exc}')
+            results = []
+        finally:
+            db.close()
+
+        for r in results:
+            try:
+                decrypted = [decrypt(x) for x in r]
+            except (binascii.Error, ValueError, TypeError, IndexError, UnicodeDecodeError) as exc:
+                logfunc(f'Mega transfers: could not decrypt a row: {exc}')
+                continue
+            decrypted[0] = _ms_to_utc(decrypted[0])
+            decrypted[4] = DIRECTION.get(decrypted[4], decrypted[4])
+            decrypted[5] = STATE.get(decrypted[5], decrypted[5])
+            data_list.append(decrypted)
 
     data_headers = (('Timestamp', 'datetime'), 'Mega Folder', 'Filename', 'Size', 'Direction', 'State', 'Transfer Path')
     return data_headers, data_list, source_path
