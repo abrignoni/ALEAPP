@@ -1,913 +1,396 @@
+# pylint: disable=W0613,W0718
+_PATHS_PHONE_ACT = ('*/com.fitbit.FitbitMobile/databases/activity_db*',)
+_PATHS_PHONE_DEV = ('*/com.fitbit.FitbitMobile/databases/device_database*',)
+_PATHS_PHONE_EX = ('*/com.fitbit.FitbitMobile/databases/exercise_db*',)
+_PATHS_PHONE_HR = ('*/com.fitbit.FitbitMobile/databases/heart_rate_db*',)
+_PATHS_PHONE_SLEEP = ('*/com.fitbit.FitbitMobile/databases/sleep*',)
+_PATHS_PHONE_SOCIAL = ('*/com.fitbit.FitbitMobile/databases/social_db*',)
+_PATHS_PHONE_MOBILE = ('*/com.fitbit.FitbitMobile/databases/mobile_track_db*',)
+_PATHS_USER = ('*/com.fitbit.FitbitMobile/databases/user.db*',)
+_PATHS_PASSIVE = ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',)
+
+
+def _art(name, desc, paths, icon='activity', outtypes='standard'):
+    return {"name": name, "description": desc, "author": "@AlexisBrignoni / @segumarc / Ganeshbs17",
+            "creation_date": "2021-04-23", "last_update_date": "2026-01-12", "requirements": "none",
+            "category": "Fitbit", "notes": "", "paths": paths, "output_types": outtypes,
+            "artifact_icon": icon}
+
+
 __artifacts_v2__ = {
-    "get_fitbit": {
-        "name": "Fitbit Smartphone Data",
-        "description": "Parses Fitbit activities from Android Smartphone app",
-        "author": "@AlexisBrignoni",
-        "creation_date": "2021-04-23",
-        "last_update_date": "2021-04-23",
-        "requirements": "none",
-        "category": "Fitbit",
-        "notes": "Updated 2023-12-12 by @segumarc",
-        "paths": ('*/com.fitbit.FitbitMobile/databases/activity_db*','*/com.fitbit.FitbitMobile/databases/device_database*','*/com.fitbit.FitbitMobile/databases/exercise_db*','*/com.fitbit.FitbitMobile/databases/heart_rate_db*','*/com.fitbit.FitbitMobile/databases/sleep*','*/com.fitbit.FitbitMobile/databases/social_db*','*/com.fitbit.FitbitMobile/databases/mobile_track_db*'),
-        "output_types": None,
-        "artifact_icon": "activity",
-        "function": "get_fitbit",
-    },
-    "get_fitbit_wearos": {
-        "name": "Fitbit Wear OS Data",
-        "description": "Parses User DB and Passive Stats DB from Pixel Watch/Wear OS",
-        "author": "Ganeshbs17",
-        "creation_date": "2026-01-12",
-        "last_update_date": "2026-01-12",
-        "requirements": "none",
-        "category": "Fitbit",
-        "notes": "Specific to Pixel Watch/Wear OS",
-        "paths": ('*/com.fitbit.FitbitMobile/databases/user.db*', '*/com.fitbit.FitbitMobile/databases/passive_stats.db*'),
-        "output_types": None,
-        "artifact_icon": "activity",
-        "function": "get_fitbit_wearos",
-    }
+    "get_fitbit_activity": _art("Fitbit - Activity", "Activity log (phone)", _PATHS_PHONE_ACT),
+    "get_fitbit_device": _art("Fitbit - Device Info", "Paired device info (phone)", _PATHS_PHONE_DEV, "watch"),
+    "get_fitbit_exercise": _art("Fitbit - Exercise GPS", "Exercise GPS trackpoints (phone)", _PATHS_PHONE_EX, "map-pin", "all"),
+    "get_fitbit_routes": _art("Fitbit - Exercise Routes", "Per-session exercise route map (phone)", _PATHS_PHONE_EX, "map"),
+    "get_fitbit_heart": _art("Fitbit - Heart Rate Summary", "Daily heart-rate summary (phone)", _PATHS_PHONE_HR, "heart"),
+    "get_fitbit_sleep_detail": _art("Fitbit - Sleep Detail", "Sleep level data (phone)", _PATHS_PHONE_SLEEP, "moon"),
+    "get_fitbit_sleep_summary": _art("Fitbit - Sleep Summary", "Sleep log summary (phone)", _PATHS_PHONE_SLEEP, "moon"),
+    "get_fitbit_friends": _art("Fitbit - Friends", "Friends (phone)", _PATHS_PHONE_SOCIAL, "users"),
+    "get_fitbit_user": _art("Fitbit - User Profile", "User profile (phone)", _PATHS_PHONE_SOCIAL, "user"),
+    "get_fitbit_steps": _art("Fitbit - Steps", "Pedometer minute data (phone)", _PATHS_PHONE_MOBILE, "activity"),
+    "get_fitbit_wearos_profile": _art("Fitbit - User Profile (Wear OS)", "User profile (Wear OS)", _PATHS_USER, "user"),
+    "get_fitbit_wearos_activity": _art("Fitbit - Activity History (Wear OS)", "Activity/workout history (Wear OS)", _PATHS_USER),
+    "get_fitbit_wearos_daily": _art("Fitbit - Daily Activity (Wear OS)", "Daily sedentary summary (Wear OS)", _PATHS_USER),
+    "get_fitbit_wearos_hourly": _art("Fitbit - Hourly Steps (Wear OS)", "Hourly steps from JSON (Wear OS)", _PATHS_USER),
+    "get_fitbit_wearos_sleep_logs": _art("Fitbit - Sleep Logs (Wear OS)", "Sleep session logs (Wear OS)", _PATHS_USER, "moon"),
+    "get_fitbit_wearos_workouts": _art("Fitbit - Workouts (Wear OS)", "Workout summaries (Wear OS)", _PATHS_PASSIVE),
+    "get_fitbit_wearos_gps": _art("Fitbit - GPS Trackpoints (Wear OS)", "GPS trackpoints (Wear OS)", _PATHS_PASSIVE, "map-pin", "all"),
+    "get_fitbit_wearos_gps_route": _art("Fitbit - GPS Route (Wear OS)", "Offline GPS route map (Wear OS)", _PATHS_PASSIVE, "map"),
+    "get_fitbit_wearos_hr": _art("Fitbit - Heart Rate Stats (Wear OS)", "Heart-rate stats (Wear OS)", _PATHS_PASSIVE, "heart"),
+    "get_fitbit_wearos_pace": _art("Fitbit - Live Pace (Wear OS)", "Live pace during workouts (Wear OS)", _PATHS_PASSIVE),
+    "get_fitbit_wearos_sleep": _art("Fitbit - Sleep (Wear OS)", "Local sleep periods (Wear OS)", _PATHS_PASSIVE, "moon"),
+    "get_fitbit_wearos_azm": _art("Fitbit - Active Zones (Wear OS)", "Active zone minutes (Wear OS)", _PATHS_PASSIVE, "heart"),
+    "get_fitbit_wearos_splits": _art("Fitbit - Workout Splits (Wear OS)", "Workout split metrics (Wear OS)", _PATHS_PASSIVE),
+    "get_fitbit_wearos_opaque_hr": _art("Fitbit - Opaque HR (Wear OS)", "Raw heart-rate readings (Wear OS)", _PATHS_PASSIVE, "heart"),
 }
 
-# Module Description: Parses Fitbit data from Android (Phone) and Wear OS (Watch)
-
+import datetime
 import json
-import folium 
-import os
+import sqlite3
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, kmlgen, timeline, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
-def get_fitbit(files_found, report_folder, _seeker, _wrap_text):
-    
-    file_found_activity = ''
-    file_found_device = ''
-    file_found_exercise = ''
-    file_found_heart = ''
-    file_found_sleep = ''
-    file_found_social = ''
-    file_found_mobile = ''
+from scripts.geo_utils import render_gps_track_png, build_track_kml
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_embedded_media
 
-    data_list_activity = []
-    data_list_devices = []
-    data_list_exercises = []
-    data_list_heart = []
-    data_list_sleep_detail = []
-    data_list_sleep_summary = []
-    data_list_friends = []
-    data_list_user = []
-    data_list_steps = []
-    
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _find(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
-        
-        if file_found.endswith('activity_db'):
-            file_found_activity = file_found
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            datetime("LOG_DATE"/1000, 'unixepoch'),
-            datetime("TIME_CREATED"/1000, 'unixepoch'),
-            NAME,
-            LOG_TYPE,
-            ACTIVE_DURATION,
-            SPEED,
-            PACE,
-            ELEVATION_GAIN,
-            AVERAGE_HEART_RATE,
-            DISTANCE,
-            DISTANCE_UNIT,
-            DURATION,
-            DURATION/60,
-            STEPS,
-            DETAILS_TYPE,
-            CALORIES,
-            MANUAL_CALORIES_POPULATED,
-            SOURCE_NAME,
-            SOURCE_TYPE,
-            HAS_GPS,
-            SWIM_LENGTHS,
-            POOL_LENGTH,
-            POOL_LENGTH_UNIT,
-            VERY_ACTIVE_MINUTES,
-            MODERATELY_ACTIVE_MINUTES,
-            FAT_BURN_HEART_RATE_ZONE,
-            CARDIO_HEART_RATE_ZONE,
-            PEAK_HEART_RATE_ZONE
-            FROM ACTIVITY_LOG_ENTRY
-            ''')
-    
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    log_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
-                    time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[1]),'UTC')
-                    data_list_activity.append((log_date,time_create,row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24],row[25],row[26],row[27],file_found))
-            db.close() 
+        if file_found.endswith(suffix):
+            return file_found
+    return ''
 
-        if file_found.endswith('device_database'):
-            file_found_device = file_found
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            datetime(core_device.lastsynctime/1000, 'unixepoch') AS "Device Last Sync (UTC)",
-            core_device.deviceName AS "Device Name",
-            core_device.bleMacAddress AS "Bluetooth MAC Address",
-            core_device.batteryPercent AS "Battery Percent",
-            core_device.deviceType AS "Device Type"
-            FROM core_device
-            ''')
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    last_sync = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
-                    data_list_devices.append((last_sync,row[1],row[2],row[3],row[4],file_found))
-            db.close()
-            
-        if file_found.endswith('exercise_db'):
-            file_found_exercise = file_found
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            Select DISTINCT(SESSION_ID)
-            from EXERCISE_EVENT
-            ''')
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    sessionID = row[0]
-                    cursor.execute(f'''
-                    Select
-                    datetime(TIME/1000,'unixepoch'),
-                    LABEL,
-                    LATITUDE,
-                    LONGITUDE,
-                    ACCURACY,
-                    ALTITUDE,
-                    SPEED,
-                    PACE,
-                    SESSION_ID
-                    from EXERCISE_EVENT
-                    where SESSION_ID = "{sessionID}" 
-                    ''')
-                    all_rows_exercise = cursor.fetchall()
-                    usageentries_all = len(all_rows_exercise)
-                    if usageentries_all > 0:
-                        data_list_current = []
-                        data_headers = ('Timestamp','Label','Latitude','Longitude','Accuracy','Altitude','Speed','Pace','Session_ID','Source')
-                        for row_exercise in all_rows_exercise:
-                            timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(row_exercise[0]),'UTC')
-                            data_list_exercises.append((timestamp,row_exercise[1],row_exercise[2],row_exercise[3],row_exercise[4],row_exercise[5],row_exercise[6],row_exercise[7],row_exercise[8],file_found))
-                            data_list_current.append((timestamp,row_exercise[1],row_exercise[2],row_exercise[3],row_exercise[4],row_exercise[5],row_exercise[6],row_exercise[7],row_exercise[8],file_found))
-                        
-                        kmlactivity = f'Fitbit Map - Session ID {sessionID}'
-                        kmlgen(report_folder, kmlactivity, data_list_current, data_headers)
-                        
-                        data_list_current = []
-            db.close()
-            
-        if file_found.endswith('heart_rate_db'):
-            file_found_heart = file_found
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            datetime("DATE_TIME"/1000, 'unixepoch'),
-            AVERAGE_HEART_RATE,
-            RESTING_HEART_RATE
-            FROM HEART_RATE_DAILY_SUMMARY
-            ''')
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    date_time = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
-                    data_list_heart.append((date_time,row[1],row[2],file_found))
-            db.close()
-            
-        if file_found.endswith('sleep'):
-            file_found_sleep = file_found
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            datetime("DATE_TIME"/1000, 'unixepoch'),
-            SECONDS,
-            LEVEL_STRING,
-            LOG_ID
-            FROM SLEEP_LEVEL_DATA
-            ''')
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
+    db.close()
+    return rows
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    date_time = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
-                    data_list_sleep_detail.append((date_time,row[1],row[2],row[3],file_found))
-            
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            datetime("DATE_OF_SLEEP"/1000, 'unixepoch'),
-            datetime("START_TIME"/1000, 'unixepoch'),
-            SYNC_STATUS_STRING,
-            DURATION,
-            DURATION/60000,
-            MINUTES_AFTER_WAKEUP,
-            MINUTES_ASLEEP,
-            MINUTES_AWAKE,
-            MINUTES_TO_FALL_ASLEEP,
-            LOG_ID
-            FROM
-            SLEEP_LOG
-            ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    date_of_sleep = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
-                    start_time = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[1]),'UTC')
-                    data_list_sleep_summary.append((date_of_sleep,start_time,row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],file_found))
-            db.close()
-                
-        if file_found.endswith('social_db'):
-            file_found_social = file_found
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            OWNING_USER_ID,
-            ENCODED_ID,
-            DISPLAY_NAME,
-            AVATAR_URL,
-            FRIEND,
-            CHILD
-            FROM FRIEND
-            ''')
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    data_list_friends.append((row[0],row[1],row[2],row[3],row[4],row[5],file_found))
+def _route_media(source, coords, title, subtitle, base):
+    route_map = ''
+    png = render_gps_track_png(coords, title=title, subtitle=subtitle)
+    if png:
+        route_map = check_in_embedded_media(source, png, f'{base}.png', force_type='image/png',
+                                            force_extension='png') or ''
+    route_kml = ''
+    kml = build_track_kml(coords, name=base)
+    if kml:
+        route_kml = check_in_embedded_media(source, kml, f'{base}.kml',
+                                            force_type='application/vnd.google-earth.kml+xml',
+                                            force_extension='kml') or ''
+    return route_map, route_kml
 
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            datetime("LAST_UPDATED"/1000, 'unixepoch'),
-            DISPLAY_NAME,
-            FULL_NAME,
-            ABOUT_ME,
-            AVATAR_URL,
-            COVER_PHOTO_URL,
-            CITY,
-            STATE,
-            COUNTRY,
-            datetime("JOINED_DATE"/1000, 'unixepoch'),
-            datetime("DATE_OF_BIRTH"/1000, 'unixepoch'),
-            HEIGHT,
-            WEIGHT,
-            GENDER,
-            COACH
-            FROM USER_PROFILE
-            ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    last_updated = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
-                    joined_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[9]),'UTC')
-                    dob_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[10]),'UTC')
-                    data_list_user.append((last_updated,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],joined_date,dob_date,row[11],row[12],row[13],row[14],file_found))
-            db.close()
-    
-        if file_found.endswith('mobile_track_db'):
-            file_found_mobile = file_found
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            datetime("TIMESTAMP"/1000, 'unixepoch'),
-            STEPS_COUNT,
-            METS_COUNT,
-            datetime("TIME_CREATED"/1000, 'unixepoch'),
-            datetime("TIME_UPDATED"/1000, 'unixepoch')
-            FROM PEDOMETER_MINUTE_DATA
-            ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
-                    time_created = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[3]),'UTC')
-                    time_updated = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[4]),'UTC')
-                    data_list_steps.append((timestamp,row[1],row[2],time_created,time_updated,file_found))
-            db.close()
-    
-        else:
+
+@artifact_processor
+def get_fitbit_activity(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'activity_db')
+    rows = _run(src, '''SELECT LOG_DATE, TIME_CREATED, NAME, LOG_TYPE, ACTIVE_DURATION, SPEED, PACE,
+        ELEVATION_GAIN, AVERAGE_HEART_RATE, DISTANCE, DISTANCE_UNIT, DURATION, DURATION/60, STEPS,
+        DETAILS_TYPE, CALORIES, MANUAL_CALORIES_POPULATED, SOURCE_NAME, SOURCE_TYPE, HAS_GPS,
+        SWIM_LENGTHS, POOL_LENGTH, POOL_LENGTH_UNIT, VERY_ACTIVE_MINUTES, MODERATELY_ACTIVE_MINUTES,
+        FAT_BURN_HEART_RATE_ZONE, CARDIO_HEART_RATE_ZONE, PEAK_HEART_RATE_ZONE FROM ACTIVITY_LOG_ENTRY''')
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1])) + tuple(r[2:]) + (src,) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), ('Time Created', 'datetime'), 'Name', 'Log Type',
+                    'Active Duration', 'Speed', 'Pace', 'Elevation Gain', 'Avg Heart Rate', 'Distance',
+                    'Distance Unit', 'Duration', 'Duration in Minutes', 'Steps', 'Details Type',
+                    'Calories', 'Manual Calories Populated', 'Source Name', 'Source Type', 'Has GPS',
+                    'Swim Lengths', 'Pool Length', 'Pool Length Unit', 'Very Active Minutes',
+                    'Moderately Active Minutes', 'Fat Burn HR Zone', 'Cardio HR Zone', 'Peak HR Zone',
+                    'Source File')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_device(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'device_database')
+    rows = _run(src, '''SELECT lastsynctime, deviceName, bleMacAddress, batteryPercent, deviceType
+        FROM core_device''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], src) for r in rows]
+    data_headers = (('Last Synced Timestamp', 'datetime'), 'Device Name', 'Bluetooth MAC Address',
+                    'Battery Percentage', 'Device Type', 'Source File')
+    return data_headers, data_list, src
+
+
+def _phone_gps_rows(src):
+    return _run(src, '''SELECT TIME, LABEL, LATITUDE, LONGITUDE, ACCURACY, ALTITUDE, SPEED, PACE,
+        SESSION_ID FROM EXERCISE_EVENT ORDER BY SESSION_ID, TIME''')
+
+
+@artifact_processor
+def get_fitbit_exercise(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'exercise_db')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], src)
+                 for r in _phone_gps_rows(src)]
+    data_headers = (('Timestamp', 'datetime'), 'Label', 'Latitude', 'Longitude', 'Accuracy',
+                    'Altitude', 'Speed', 'Pace', 'Session ID', 'Source File')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_routes(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'exercise_db')
+    sessions = {}
+    for r in _phone_gps_rows(src):
+        if r[2] and r[3]:
+            sessions.setdefault(r[8], []).append((r[2], r[3], r[0]))
+    data_list = []
+    for session_id, pts in sessions.items():
+        coords = [(p[0], p[1]) for p in pts]
+        start = _ms_to_utc(pts[0][2])
+        end = _ms_to_utc(pts[-1][2])
+        title = f'Fitbit session {session_id}'
+        subtitle = start.strftime('%Y-%m-%d %H:%M UTC') if start else ''
+        route_map, route_kml = _route_media(src, coords, title, subtitle, f'{session_id}_route')
+        data_list.append((session_id, len(coords), start, end, coords[0][0], coords[0][1],
+                          route_map, route_kml))
+    data_headers = ('Session ID', 'Points', ('Start Time', 'datetime'), ('End Time', 'datetime'),
+                    'Latitude', 'Longitude', ('Route Map', 'media'), ('Route KML', 'media'))
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_heart(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'heart_rate_db')
+    rows = _run(src, 'SELECT DATE_TIME, AVERAGE_HEART_RATE, RESTING_HEART_RATE FROM HEART_RATE_DAILY_SUMMARY')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], src) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Avg Heart Rate', 'Resting Heart Rate', 'Source File')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_sleep_detail(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'sleep')
+    rows = _run(src, 'SELECT DATE_TIME, SECONDS, LEVEL_STRING, LOG_ID FROM SLEEP_LEVEL_DATA')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], src) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Seconds', 'Level', 'Log ID', 'Source File')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_sleep_summary(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'sleep')
+    rows = _run(src, '''SELECT DATE_OF_SLEEP, START_TIME, SYNC_STATUS_STRING, DURATION, DURATION/60000,
+        MINUTES_AFTER_WAKEUP, MINUTES_ASLEEP, MINUTES_AWAKE, MINUTES_TO_FALL_ASLEEP, LOG_ID FROM SLEEP_LOG''')
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], src)
+                 for r in rows]
+    data_headers = (('Timestamp', 'datetime'), ('Start Time', 'datetime'), 'Sync Status',
+                    'Duration (ms)', 'Duration (min)', 'Minutes After Wakeup', 'Minutes Asleep',
+                    'Minutes Awake', 'Minutes to Fall Asleep', 'Log ID', 'Source File')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_friends(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'social_db')
+    rows = _run(src, 'SELECT OWNING_USER_ID, ENCODED_ID, DISPLAY_NAME, AVATAR_URL, FRIEND, CHILD FROM FRIEND')
+    data_list = [(r[0], r[1], r[2], r[3], r[4], r[5], src) for r in rows]
+    data_headers = ('Owning User ID', 'Encoded ID', 'Display Name', 'Avatar URL', 'Friend', 'Child',
+                    'Source File')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_user(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'social_db')
+    rows = _run(src, '''SELECT LAST_UPDATED, DISPLAY_NAME, FULL_NAME, ABOUT_ME, AVATAR_URL,
+        COVER_PHOTO_URL, CITY, STATE, COUNTRY, JOINED_DATE, DATE_OF_BIRTH, HEIGHT, WEIGHT, GENDER, COACH
+        FROM USER_PROFILE''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], _ms_to_utc(r[9]),
+                  _ms_to_utc(r[10]), r[11], r[12], r[13], r[14], src) for r in rows]
+    data_headers = (('Last Updated', 'datetime'), 'Display Name', 'Full Name', 'About Me', 'Avatar URL',
+                    'Cover Photo URL', 'City', 'State', 'Country', ('Joined Date', 'datetime'),
+                    ('Date of Birth', 'datetime'), 'Height', 'Weight', 'Gender', 'Coach', 'Source File')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_steps(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'mobile_track_db')
+    rows = _run(src, '''SELECT TIMESTAMP, STEPS_COUNT, METS_COUNT, TIME_CREATED, TIME_UPDATED
+        FROM PEDOMETER_MINUTE_DATA''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], _ms_to_utc(r[3]), _ms_to_utc(r[4]), src) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Steps Count', 'Mets Count', ('Time Created', 'datetime'),
+                    ('Time Updated', 'datetime'), 'Source File')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_wearos_profile(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'user.db')
+    rows = _run(src, '''SELECT fullName, displayName, email, gender, dateOfBirth, height, weight,
+        memberSince, userId FROM FitbitProfileEntity''')
+    data_list = [tuple(r) for r in rows]
+    data_headers = ('Full Name', 'Display Name', 'Email', 'Gender', 'DOB', 'Height', 'Weight',
+                    'Member Since', 'User ID')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_wearos_activity(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'user.db')
+    rows = _run(src, '''SELECT startTime, name, duration/1000/60, distance, distanceUnit, steps,
+        calories, averageHeartRate, elevationGain, activeZoneMinutes, logId FROM ActivityExerciseEntity
+        ORDER BY startTime DESC''')
+    data_list = [(_ms_to_utc(r[0]),) + tuple(r[1:]) for r in rows]
+    data_headers = (('Start Time', 'datetime'), 'Activity Name', 'Duration (min)', 'Distance', 'Unit',
+                    'Steps', 'Calories', 'Avg HR', 'Elevation', 'AZM', 'Log ID')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_wearos_daily(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'user.db')
+    rows = _run(src, '''SELECT date, totalMinutesMoving, totalMinutesSedentary, longestDuration,
+        longestStart FROM SedentaryDataEntity ORDER BY date DESC''')
+    data_list = [tuple(r) for r in rows]
+    data_headers = ('Date', 'Total Moving Mins', 'Total Sedentary Mins',
+                    'Longest Sedentary Duration (min)', 'Longest Sedentary Start Time')
+    return data_headers, data_list, src
+
+
+@artifact_processor
+def get_fitbit_wearos_hourly(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'user.db')
+    data_list = []
+    for r in _run(src, 'SELECT date, hourlyData FROM SedentaryDataEntity ORDER BY date DESC'):
+        if not r[1]:
             continue
- 
-    if data_list_activity:
-        report = ArtifactHtmlReport('Fitbit Activity')
-        report.start_artifact_report(report_folder, 'Fitbit Activity')
-        report.add_script()
-        data_headers = ('Timestamp','Time Created','Name','Log Type','Active Duration','SPEED','Pace','Elevation Gain','Avg Heart Rate','Distance','Distance Unit','Duration', 'Duration in Minutes','Steps','Details Type','Calories','Manual Calories Populated','Source Name','Source Type','Has GPS','Swim Lengths','Pool Length','Pool Length Unit','Very Active Minutes','Moderately Active Minutes','Fat Burn Heart Rate Zone','Cardio Heart Rate Zone','Peak Heart Rate Zone','Source File') 
-        report.write_artifact_data_table(data_headers, data_list_activity, file_found_activity)
-        report.end_artifact_report()
-        
-        tsvname = 'Fitbit Activity'
-        tsv(report_folder, data_headers, data_list_activity, tsvname)
-        
-        tlactivity = 'Fitbit Activity'
-        timeline(report_folder, tlactivity, data_list_activity, data_headers)
-    else:
-        logfunc('No Fitbit Activity data available')
-        
-    if data_list_devices:
-        report = ArtifactHtmlReport('Fitbit Device Info')
-        report.start_artifact_report(report_folder, 'Fitbit Device Info')
-        report.add_script()
-        data_headers = ('Last Synced Timestamp','Device Name','Bluetooth MAC Address','Battery Percentage','Device Type','Source File') 
-        
-        report.write_artifact_data_table(data_headers, data_list_devices, file_found_device)
-        report.end_artifact_report()
-        
-        tsvname = 'Fitbit Device Info'
-        tsv(report_folder, data_headers, data_list_devices, tsvname)
-        
-        tlactivity = 'Fitbit Device Info'
-        timeline(report_folder, tlactivity, data_list_devices, data_headers)
-    else:
-        logfunc('No Fitbit Device Info data available')
-    
-    if data_list_exercises:
-        report = ArtifactHtmlReport('Fitbit Exercise')
-        report.start_artifact_report(report_folder, 'Fitbit Exercise')
-        report.add_script()
-        data_headers = ('Timestamp','Label','Latitude','Longitude','Accuracy','Altitude','Speed','Pace','Session_ID','Source File')
-        
-        report.write_artifact_data_table(data_headers, data_list_exercises, file_found_exercise)
-        report.end_artifact_report()
-        
-        tsvname = 'Fitbit Exercise'
-        tsv(report_folder, data_headers, data_list_exercises, tsvname)
-        
-        tlactivity = 'Fitbit Exercise'
-        timeline(report_folder, tlactivity, data_list_exercises, data_headers)
-    else:
-        logfunc('No Fitbit - Exercise data available')
-        
-    if data_list_heart:
-        report = ArtifactHtmlReport('Fitbit Heart Rate Summary')
-        report.start_artifact_report(report_folder, 'Fitbit Heart Rate Summary')
-        report.add_script()
-        data_headers = ('Timestamp','Avg. Heart Rate','Resting Heart Rate','Source File')
-        
-        report.write_artifact_data_table(data_headers, data_list_heart, file_found_heart)
-        report.end_artifact_report()
-        
-        tsvname = 'Fitbit Heart Rate Summary'
-        tsv(report_folder, data_headers, data_list_heart, tsvname)
-        
-        tlactivity = 'Fitbit Heart Rate Summary'
-        timeline(report_folder, tlactivity, data_list_heart, data_headers)
-    else:
-        logfunc('No Fitbit Heart Rate Summary data available')
-                
-    if data_list_sleep_detail:
-        report = ArtifactHtmlReport('Fitbit Sleep Detail')
-        report.start_artifact_report(report_folder, 'Fitbit Sleep Detail')
-        report.add_script()
-        data_headers = ('Timestamp','Seconds','Level','Log ID','Source File') 
+        try:
+            entries = json.loads(r[1]).get('hourlyData', [])
+        except (ValueError, TypeError):
+            continue
+        for entry in entries:
+            time_str = entry.get('dateTime', '')
+            data_list.append((f'{r[0]} {time_str}', r[0], time_str, entry.get('steps', '0')))
+    data_headers = ('Full Timestamp', 'Date', 'Time', 'Steps')
+    return data_headers, data_list, src
 
-        report.write_artifact_data_table(data_headers, data_list_sleep_detail, file_found_sleep)
-        report.end_artifact_report()
-        
-        tsvname = 'Fitbit Sleep Detail'
-        tsv(report_folder, data_headers, data_list_sleep_detail, tsvname)
-        
-        tlactivity = 'Fitbit Sleep Detail'
-        timeline(report_folder, tlactivity, data_list_sleep_detail, data_headers)
-    else:
-        logfunc('No Fitbit Sleep Detail data available')
-        
-    if data_list_sleep_summary:
-        report = ArtifactHtmlReport('Fitbit Sleep Summary')
-        report.start_artifact_report(report_folder, 'Fitbit Sleep Summary')
-        report.add_script()
-        data_headers = ('Timestamp','Start Time','Sync Status','Duration in Milliseconds','Duration in Minutes', 'Minutes After Wakeup', 'Minutes Asleep', 'Minutes Awake', 'Minutes to Fall Asleep', 'Log ID', 'Source File') 
-        
-        report.write_artifact_data_table(data_headers, data_list_sleep_summary, file_found_sleep)
-        report.end_artifact_report()
-        
-        tsvname = 'Fitbit Sleep Summary'
-        tsv(report_folder, data_headers, data_list_sleep_summary, tsvname)
-    else:
-        logfunc('No Fitbit Sleep Summary data available')
-    
-    if data_list_friends:
-        report = ArtifactHtmlReport('Fitbit Friends')
-        report.start_artifact_report(report_folder, 'Fitbit Friends')
-        report.add_script()
-        data_headers = ('Owning UserID','Encoded ID','Display Name','Avatar URL','Friend','Child','Source File') 
 
-        report.write_artifact_data_table(data_headers, data_list_friends, file_found_social)
-        report.end_artifact_report()
-        
-        tsvname = 'Fitbit Friends'
-        tsv(report_folder, data_headers, data_list_friends, tsvname)
-        
-    else:
-        logfunc('No Fitbit Friend data available')
-      
-    if data_list_user:
-        report = ArtifactHtmlReport('Fitbit User Profile')
-        report.start_artifact_report(report_folder, 'Fitbit User Profile')
-        report.add_script()
-        data_headers = ('Last Updated','Display Name','Full Name','About Me','Avatar URL', 'Cover Photo URL', 'City', 'State', 'Country', 'Joined Date','Date of Birth','Height','Weight','Gender','Coach','Source File') 
-        
-        report.write_artifact_data_table(data_headers, data_list_user, file_found_social)
-        report.end_artifact_report()
-        
-        tsvname = 'Fitbit User Profile'
-        tsv(report_folder, data_headers, data_list_user, tsvname)
-        
-        tlactivity = 'Fitbit User Profile'
-        timeline(report_folder, tlactivity, data_list_user, data_headers)
-        
-    else:
-        logfunc('No Fitbit User Profile data available')
-        
-    if data_list_steps:
-        report = ArtifactHtmlReport('Fitbit Steps')
-        report.start_artifact_report(report_folder, 'Fitbit Steps')
-        report.add_script()
-        data_headers = ('Timestamp','Steps Count','Mets Count','Time Created','Time Updated','Source File') 
-        
-        report.write_artifact_data_table(data_headers, data_list_steps, file_found_mobile)
-        report.end_artifact_report()
-        
-        tsvname = 'Fitbit Steps'
-        tsv(report_folder, data_headers, data_list_steps, tsvname)
-        
-        tlactivity = 'Fitbit Steps'
-        timeline(report_folder, tlactivity, data_list_steps, data_headers)
-        
-    else:
-        logfunc('No Fitbit Steps data available')
+@artifact_processor
+def get_fitbit_wearos_sleep_logs(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'user.db')
+    rows = _run(src, '''SELECT startTime, endTime, dateOfSleep, minutesAsleep, minutesAwake,
+        minutesToFallAsleep, minutesAfterWakeup, type, isMainSleep FROM FitbitSleepDateEntity
+        ORDER BY startTime DESC''')
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1])) + tuple(r[2:]) for r in rows]
+    data_headers = (('Sleep Start', 'datetime'), ('Sleep End', 'datetime'), 'Date of Sleep',
+                    'Mins Asleep', 'Mins Awake', 'Time to Fall Asleep', 'Time After Wakeup', 'Type',
+                    'Is Main Sleep')
+    return data_headers, data_list, src
 
-# pylint: disable=broad-exception-caught
-def get_fitbit_wearos(files_found, report_folder, _seeker, _wrap_text):
-    
-    for file_found in files_found:
-        file_found = str(file_found)
-        
-        # --- PROCESS USER.DB ---
-        if file_found.endswith('user.db'):
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
 
-            # 1. User Profile
-            try:
-                cursor.execute('''
-                SELECT
-                    fullName,
-                    displayName,
-                    email,
-                    gender,
-                    dateOfBirth,
-                    height,
-                    weight,
-                    memberSince,
-                    userId
-                FROM FitbitProfileEntity
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - User Profile (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - User Profile (Wear OS)','User account details including Display Name, DOB, Gender, and Join Date. Parsed from FitbitProfileEntity table.')
-                    report.add_script()
-                    data_headers = ('Full Name', 'Display Name', 'Email', 'Gender', 'DOB', 'Height', 'Weight', 'Member Since', 'User ID')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - User Profile (Wear OS)')
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Profile: {e}')
+@artifact_processor
+def get_fitbit_wearos_workouts(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'passive_stats.db')
+    rows = _run(src, '''SELECT time, sessionId, exerciseTypeId, totalDistanceMm/1000000.0, steps,
+        caloriesBurned, avgHeartRate, elevationGainFt FROM ExerciseSummaryEntity ORDER BY time DESC''')
+    data_list = [(_ms_to_utc(r[0]),) + tuple(r[1:]) for r in rows]
+    data_headers = (('Start Time', 'datetime'), 'Session ID', 'Activity Type ID', 'Distance (km)',
+                    'Steps', 'Calories', 'Avg HR', 'Elevation (ft)')
+    return data_headers, data_list, src
 
-            # 2. Activity / Workout History
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(startTime/1000, 'unixepoch') as "Start Time",
-                    name as "Activity Name",
-                    duration/1000/60 as "Duration (Mins)",
-                    distance,
-                    distanceUnit,
-                    steps,
-                    calories,
-                    averageHeartRate,
-                    elevationGain,
-                    activeZoneMinutes,
-                    logId
-                FROM ActivityExerciseEntity
-                ORDER BY startTime DESC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Activity History (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Activity History (Wear OS)', 'Log of exercises and activities including duration, distance, and calories. Parsed from ActivityExerciseEntity table.')
-                    report.add_script()
-                    data_headers = ('Start Time', 'Activity Name', 'Duration (Mins)', 'Distance', 'Unit', 'Steps', 'Calories', 'Avg HR', 'Elevation', 'AZM', 'Log ID')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Activity History (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Activity History (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Activity History: {e}')
 
-            # 3. DAILY Summaries
-            try:
-                cursor.execute('''
-                SELECT
-                    date,
-                    totalMinutesMoving,
-                    totalMinutesSedentary,
-                    longestDuration as "Longest Sedentary Duration",
-                    longestStart as "Longest Sedentary Start Time"
-                FROM SedentaryDataEntity
-                ORDER BY date DESC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Daily Activity (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Daily Activity (Wear OS)','Daily summary of total minutes moved vs. sedentary minutes. Parsed from SedentaryDataEntity table.')
-                    report.add_script()
-                    data_headers = ('Date', 'Total Moving Mins', 'Total Sedentary Mins', 'Longest Sedentary Duration (Mins)', 'Longest Sedentary Start Time')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3], row[4]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Daily Activity (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Daily Activity (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Daily Summaries: {e}')
+def _wearos_gps_rows(src):
+    return _run(src, '''SELECT time, latitude, longitude, altitude, speed, bearing,
+        estimatedPositionError FROM ExerciseGpsEntity ORDER BY time ASC''')
 
-            # 4. HOURLY Steps (Flattened JSON)
-            try:
-                cursor.execute('''
-                SELECT
-                    date,
-                    hourlyData
-                FROM SedentaryDataEntity
-                ORDER BY date DESC
-                ''')
-                all_rows = cursor.fetchall()
-                hourly_data_list = []
-                for row in all_rows:
-                    date_str = row[0]
-                    json_data = row[1]
-                    if json_data:
-                        try:
-                            parsed_json = json.loads(json_data)
-                            hourly_list = parsed_json.get('hourlyData', [])
-                            for hour_entry in hourly_list:
-                                time_str = hour_entry.get('dateTime', '')
-                                steps_str = hour_entry.get('steps', '0')
-                                full_timestamp = f"{date_str} {time_str}"
-                                hourly_data_list.append((full_timestamp, date_str, time_str, steps_str))
-                        except ValueError:
-                            pass
-                if len(hourly_data_list) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Hourly Steps (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Hourly Steps (Wear OS)','Granular hourly step counts parsed from JSON blobs stored in the SedentaryDataEntity table.')
-                    report.add_script()
-                    data_headers = ('Full Timestamp', 'Date', 'Time', 'Steps')
-                    report.write_artifact_data_table(data_headers, hourly_data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, hourly_data_list, 'Fitbit - Hourly Steps (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Hourly Steps (Wear OS)', hourly_data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Hourly Steps: {e}')
 
-            # 5. Sleep Logs
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(startTime/1000, 'unixepoch') as "Sleep Start",
-                    datetime(endTime/1000, 'unixepoch') as "Sleep End",
-                    dateOfSleep,
-                    minutesAsleep,
-                    minutesAwake,
-                    minutesToFallAsleep,
-                    minutesAfterWakeup,
-                    type as "Sleep Type",
-                    isMainSleep
-                FROM FitbitSleepDateEntity
-                ORDER BY startTime DESC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Sleep Logs (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Sleep Logs (Wear OS)','Main sleep session logs including start/end times and sleep stages. Parsed from FitbitSleepDateEntity table.')
-                    report.add_script()
-                    data_headers = ('Sleep Start', 'Sleep End', 'Date of Sleep', 'Mins Asleep', 'Mins Awake', 'Time to Fall Asleep', 'Time After Wakeup', 'Type', 'Is Main Sleep')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Sleep Logs (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Sleep Logs (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Sleep Logs: {e}')
-            
-            db.close()
+@artifact_processor
+def get_fitbit_wearos_gps(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'passive_stats.db')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[6]) for r in _wearos_gps_rows(src)]
+    data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Speed',
+                    'Est. Error')
+    return data_headers, data_list, src
 
-        # --- PROCESS PASSIVE_STATS.DB ---
-        elif file_found.endswith('passive_stats.db'):
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
 
-            # 1. Exercise Summaries
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(time/1000, 'unixepoch') as "Start Time",
-                    sessionId,
-                    exerciseTypeId as "Activity Type ID",
-                    totalDistanceMm / 1000000.0 as "Distance (KM)",
-                    steps,
-                    caloriesBurned,
-                    avgHeartRate,
-                    elevationGainFt
-                FROM ExerciseSummaryEntity
-                ORDER BY time DESC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Workouts (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Workouts (Wear OS)','Workout summaries including steps, calories etc. Parsed from ExerciseSummaryEntity table.')
-                    report.add_script()
-                    data_headers = ('Start Time', 'Session ID', 'Activity Type ID', 'Distance (KM)', 'Steps', 'Calories', 'Avg HR', 'Elevation (ft)')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Workouts (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Workouts (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Workouts: {e}')
+@artifact_processor
+def get_fitbit_wearos_gps_route(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'passive_stats.db')
+    rows = _wearos_gps_rows(src)
+    coords = [(r[1], r[2]) for r in rows if r[1] and r[2]]
+    data_list = []
+    if coords:
+        start = _ms_to_utc(rows[0][0])
+        end = _ms_to_utc(rows[-1][0])
+        subtitle = start.strftime('%Y-%m-%d %H:%M UTC') if start else ''
+        route_map, route_kml = _route_media(src, coords, 'Fitbit Wear OS GPS route', subtitle,
+                                             'wearos_gps_route')
+        data_list.append((len(coords), start, end, coords[0][0], coords[0][1], route_map, route_kml))
+    data_headers = ('Points', ('Start Time', 'datetime'), ('End Time', 'datetime'), 'Latitude',
+                    'Longitude', ('Route Map', 'media'), ('Route KML', 'media'))
+    return data_headers, data_list, src
 
-            # 2. Exercise GPS
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(time/1000, 'unixepoch') as "Timestamp",
-                    latitude,
-                    longitude,
-                    altitude,
-                    speed,
-                    bearing,
-                    estimatedPositionError
-                FROM ExerciseGpsEntity
-                ORDER BY time ASC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    # 1. Generate the standard text report first
-                    report = ArtifactHtmlReport('Fitbit - GPS Trackpoints (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - GPS Trackpoints (Wear OS)', 'GPS Coordinates. <b><a href="Fitbit/Fitbit_GPS_Map.html" target="_blank">click here to open in new tab</a></b>')
-                    report.add_script()
 
-                    data_headers = ('Timestamp', 'Latitude', 'Longitude', 'Altitude', 'Speed', 'Est. Error')
-                    data_list = []
-                    points = []
+@artifact_processor
+def get_fitbit_wearos_hr(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'passive_stats.db')
+    rows = _run(src, 'SELECT startTime, endTime, value, accuracy FROM HeartRateStatEntity ORDER BY startTime DESC')
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3]) for r in rows]
+    data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'), 'BPM', 'Accuracy')
+    return data_headers, data_list, src
 
-                    for row in all_rows:
-                        # Add to text report
-                        data_list.append((row[0], row[1], row[2], row[3], row[4], row[6]))
-                        
-                        # Add to Map Points (Filter out valid 0.0 or nulls if needed)
-                        if row[1] and row[2]:
-                            points.append((row[1], row[2]))
 
-                    # ---------------------------------------------------------
-                    # MAP GENERATION (Folium)
-                    # ---------------------------------------------------------
-                    if len(points) > 0:
-                        try:
-                            # Center map on the first point
-                            m = folium.Map(location=points[0], zoom_start=13, tiles='OpenStreetMap')
-                            
-                            # Add the route line
-                            folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(m)
-                            
-                            # Add Start/End markers
-                            folium.Marker(points[0], popup='Start', icon=folium.Icon(color='green', icon='play')).add_to(m)
-                            folium.Marker(points[-1], popup='End', icon=folium.Icon(color='red', icon='stop')).add_to(m)
+@artifact_processor
+def get_fitbit_wearos_pace(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'passive_stats.db')
+    rows = _run(src, 'SELECT timeSeconds, sessionId, statType, value FROM LivePaceEntity ORDER BY timeSeconds DESC')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3]) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Session ID', 'Stat Type', 'Value')
+    return data_headers, data_list, src
 
-                            # Save HTML map to the report folder
-                            map_filename = 'Fitbit_GPS_Map.html'
-                            map_path = os.path.join(report_folder, map_filename)
-                            m.save(map_path)
-                            
-                            logfunc(f'Map generated: {map_path}')
-                        except Exception as e:
-                            logfunc(f'Error generating map: {str(e)}')
-                    # ---------------------------------------------------------
 
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    
-                    # --- START: INJECT IFRAME AT BOTTOM ---
-                    if len(points) > 0:
-                        report.add_section_heading('Interactive Map Preview')
-                        report.add_map('<iframe src="Fitbit/Fitbit_GPS_Map.html" width="100%" height="600" class="map"></iframe>')
-                    # --- END: INJECT IFRAME AT BOTTOM ---
+@artifact_processor
+def get_fitbit_wearos_sleep(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'passive_stats.db')
+    rows = _run(src, '''SELECT sleepStartTime, sleepEndTime, (sleepEndTime-sleepStartTime)/1000/60
+        FROM LocalSleepPeriodsEntity ORDER BY sleepStartTime DESC''')
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2]) for r in rows]
+    data_headers = (('Sleep Start', 'datetime'), ('Sleep End', 'datetime'), 'Duration (min)')
+    return data_headers, data_list, src
 
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - GPS Trackpoints (Wear OS)')
-                    timeline(report_folder, 'Fitbit - GPS Trackpoints (Wear OS)', data_list, data_headers)
-                    kmlgen(report_folder, 'Fitbit_GPS_WearOS', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit GPS: {e}')
 
-            # 3. Heart Rate Stats
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(startTime/1000, 'unixepoch') as "Start Time",
-                    datetime(endTime/1000, 'unixepoch') as "End Time",
-                    value as "BPM",
-                    accuracy
-                FROM HeartRateStatEntity
-                ORDER BY startTime DESC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Heart Rate Stats (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Heart Rate Stats (Wear OS)','Heart rate statistics (BPM). Parsed from HeartRateStatEntity table.')
-                    report.add_script()
-                    data_headers = ('Start Time', 'End Time', 'BPM', 'Accuracy')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Heart Rate Stats (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Heart Rate Stats (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit HR Stats: {e}')
+@artifact_processor
+def get_fitbit_wearos_azm(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'passive_stats.db')
+    rows = _run(src, 'SELECT startTime, endTime, activeZone, value, lastBpm FROM PassiveAzmEntity ORDER BY startTime DESC')
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4]) for r in rows]
+    data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'), 'Zone ID', 'Points', 'Last BPM')
+    return data_headers, data_list, src
 
-            # 4. Live Pace
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(timeSeconds/1000, 'unixepoch') as "Timestamp",
-                    sessionId,
-                    statType,
-                    value
-                FROM LivePaceEntity
-                ORDER BY timeSeconds DESC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Live Pace (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Live Pace (Wear OS)','Live pace statistics during workouts. Parsed from LivePaceEntity table.')
-                    report.add_script()
-                    data_headers = ('Timestamp', 'Session ID', 'Stat Type', 'Value')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Live Pace (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Live Pace (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Live Pace: {e}')
 
-            # 5. Sleep Periods
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(sleepStartTime/1000, 'unixepoch') as "Sleep Start",
-                    datetime(sleepEndTime/1000, 'unixepoch') as "Sleep End",
-                    (sleepEndTime - sleepStartTime)/1000/60 as "Duration (Mins)"
-                FROM LocalSleepPeriodsEntity
-                ORDER BY sleepStartTime DESC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Sleep (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Sleep (Wear OS)', 'Raw sleep periods detected by device. Parsed from LocalSleepPeriodsEntity table.')
-                    report.add_script()
-                    data_headers = ('Sleep Start', 'Sleep End', 'Duration (Mins)')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Sleep (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Sleep (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Sleep: {e}')
+@artifact_processor
+def get_fitbit_wearos_splits(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'passive_stats.db')
+    rows = _run(src, '''SELECT time, sessionId, avgPaceMilliSecPerKm/1000/60.0, avgHeartRate, steps,
+        caloriesBurned FROM ExerciseSplitAnnotationEntity ORDER BY time ASC''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5]) for r in rows]
+    data_headers = (('Split Time', 'datetime'), 'Session ID', 'Avg Pace (Min/Km)', 'Avg HR', 'Steps',
+                    'Calories')
+    return data_headers, data_list, src
 
-            # 6. Active Zone Minutes
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(startTime/1000, 'unixepoch') as "Start Time",
-                    datetime(endTime/1000, 'unixepoch') as "End Time",
-                    activeZone,
-                    value as "Points",
-                    lastBpm
-                FROM PassiveAzmEntity
-                ORDER BY startTime DESC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Active Zones (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Active Zones (Wear OS)','Minutes spent in elevated heart rate zones (Fat Burn = 1x, Cardio/Peak = 2x). Indicates physical exertion intensity. Parsed from PassiveAzmEntity table.')
-                    report.add_script()
-                    data_headers = ('Start Time', 'End Time', 'Zone ID', 'Points', 'Last BPM')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3], row[4]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Active Zones (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Active Zones (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit AZM: {e}')
 
-            # 7. Exercise Splits
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(time/1000, 'unixepoch') as "Split Time",
-                    sessionId,
-                    avgPaceMilliSecPerKm / 1000 / 60.0 as "Avg Pace (Min/Km)",
-                    avgHeartRate,
-                    steps,
-                    caloriesBurned
-                FROM ExerciseSplitAnnotationEntity
-                ORDER BY time ASC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Workout Splits (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Workout Splits (Wear OS)','Performance metrics (Pace, HR, Steps). Parsed from ExerciseSplitAnnotationEntity table.')
-                    report.add_script()
-                    data_headers = ('Split Time', 'Session ID', 'Avg Pace (Min/Km)', 'Avg HR', 'Steps', 'Calories')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2], row[3], row[4], row[5]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Workout Splits (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Workout Splits (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Splits: {e}')
-
-            # 8. Opaque HR
-            try:
-                cursor.execute('''
-                SELECT
-                    datetime(timestamp/1000, 'unixepoch') as "Timestamp",
-                    baseHeartRate as "Base HR",
-                    confidence as "Confidence (0-3)"
-                FROM OpaqueHeartRateEntity
-                ORDER BY timestamp DESC
-                ''')
-                all_rows = cursor.fetchall()
-                if len(all_rows) > 0:
-                    report = ArtifactHtmlReport('Fitbit - Opaque HR (Wear OS)')
-                    report.start_artifact_report(report_folder, 'Fitbit - Opaque HR (Wear OS)','Raw heart rate sensor readings. Parsed from OpaqueHeartRateEntity table.')
-                    report.add_script()
-                    data_headers = ('Timestamp', 'Base HR', 'Confidence')
-                    data_list = []
-                    for row in all_rows:
-                        data_list.append((row[0], row[1], row[2]))
-                    report.write_artifact_data_table(data_headers, data_list, file_found)
-                    report.end_artifact_report()
-                    tsv(report_folder, data_headers, data_list, 'Fitbit - Opaque HR (Wear OS)')
-                    timeline(report_folder, 'Fitbit - Opaque HR (Wear OS)', data_list, data_headers)
-            except Exception as e:
-                logfunc(f'Error parsing Fitbit Opaque HR: {e}')
-
-            db.close()
+@artifact_processor
+def get_fitbit_wearos_opaque_hr(files_found, report_folder, seeker, wrap_text):
+    src = _find(files_found, 'passive_stats.db')
+    rows = _run(src, 'SELECT timestamp, baseHeartRate, confidence FROM OpaqueHeartRateEntity ORDER BY timestamp DESC')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2]) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Base HR', 'Confidence')
+    return data_headers, data_list, src
