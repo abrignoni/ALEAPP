@@ -18,10 +18,8 @@ __artifacts_v2__ = {
 # Thanks to Ryan Benson for awareness https://github.com/obsidianforensics/hindsight/pull/146/commits/015ee189c97c0a4e48deb59568dfe4f536ace8aa
 
 import datetime
-import os
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, get_next_unused_name, lava_process_artifact, lava_insert_sqlite_data, artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
 
 
@@ -104,24 +102,6 @@ def get_chromeDIPS(files_found, report_folder, seeker, wrap_text):
                               _webkit_to_utc(row[7]), _webkit_to_utc(row[8])))
 
         if len(data_list) > 0:
-            description = 'DIPS - Incidental parties are sites without meaningful user interactions, such as bounce trackers'
-            report_name = f'{browser_name} - Detect Incidental Party State'
-            report = ArtifactHtmlReport(report_name)
-            report_path = os.path.join(report_folder, f'{report_name}.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9]  # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path), description)
-            report.add_script()
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-
-            # Per-browser LAVA table
-            category = "Chromium"
-            module_name = "get_chromeDIPS"
-            table_name, object_columns, column_map = lava_process_artifact(
-                category, module_name, report_name, lava_data_headers, len(data_list))
-            lava_insert_sqlite_data(table_name, data_list, object_columns, lava_data_headers, column_map)
-
-            # Add the browser name column and accumulate for the combined output
             data_list = [row + (browser_name,) for row in data_list]
             all_data.extend(data_list)
         else:

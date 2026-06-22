@@ -19,8 +19,7 @@ import datetime
 import json
 import os
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, get_next_unused_name, lava_process_artifact, lava_insert_sqlite_data, artifact_processor
+from scripts.ilapfuncs import logfunc, artifact_processor
 from scripts.artifacts.chrome import get_browser_name
 
 
@@ -76,24 +75,6 @@ def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
                                 children_items = list()
 
         if len(data_list) > 0:
-            report_name = f'{browser_name} - Bookmarks'
-            report = ArtifactHtmlReport(report_name)
-            # check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{report_name}.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9]  # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-
-            # Per-browser LAVA table
-            category = "Chromium"
-            module_name = "get_chromeBookmarks"
-            table_name, object_columns, column_map = lava_process_artifact(
-                category, module_name, report_name, lava_data_headers, len(data_list))
-            lava_insert_sqlite_data(table_name, data_list, object_columns, lava_data_headers, column_map)
-
-            # Add the browser name column and accumulate for the combined output
             data_list = [row + (browser_name,) for row in data_list]
             all_data.extend(data_list)
         else:
