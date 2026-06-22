@@ -1,8 +1,8 @@
-# pylint: disable=W0611,W0612,W0613,W0631,W0702,W1309,W1404,W1514,W4701
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_likee": {
-        "name": "LIKEE Location",
-        "description": "",
+        "name": "LIKEE - User Location",
+        "description": "Address/location text recovered from LIKEE *_location.kv files",
         "author": "",
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
@@ -10,195 +10,118 @@ __artifacts_v2__ = {
         "category": "LIKEE",
         "notes": "",
         "paths": ('*/video.like/files/*/*location.kv',),
-        "output_types": None,
+        "output_types": "standard",
         "artifact_icon": "map-pin",
-        "function": "get_likee",
     },
-    "get_likee_db": {
-        "name": "LIKEE Databases",
-        "description": "",
+    "get_likee_users": {
+        "name": "LIKEE - Users",
+        "description": "LIKEE user search history (like_pub.db)",
         "author": "",
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
         "requirements": "none",
         "category": "LIKEE",
         "notes": "",
-        "paths": ('*/video.like/databases/*.db',),
-        "output_types": None,
-        "artifact_icon": "map-pin",
-        "function": "get_likee_db",
+        "paths": ('*/video.like/databases/like_pub.db*',),
+        "output_types": "standard",
+        "artifact_icon": "users",
+    },
+    "get_likee_messages": {
+        "name": "LIKEE - Messages",
+        "description": "LIKEE messages (message_u*.db)",
+        "author": "",
+        "creation_date": "2024-05-20",
+        "last_update_date": "2024-05-20",
+        "requirements": "none",
+        "category": "LIKEE",
+        "notes": "",
+        "paths": ('*/video.like/databases/*.db*',),
+        "output_types": "standard",
+        "artifact_icon": "message-square",
     }
 }
 
-import os
-import sys
-import re
+import datetime
 import itertools
-import unicodedata
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import (
-    logfunc,
-    tsv,
-    timeline,
-    is_platform_windows,
-    open_sqlite_db_readonly,
-)
-from pathlib import Path
+import os
+import re
+import sqlite3
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+
+_CONTROL_RE = re.compile('[%s]' % re.escape(
+    ''.join(map(chr, itertools.chain(range(0x00, 0x20), range(0x7F, 0xA0))))))
 
 
-def remove_control_chars(s):
-    all_chars = (chr(i) for i in range(sys.maxunicode))
-    categories = {"Cc"}
-    control_chars = "".join(
-        c for c in all_chars if unicodedata.category(c) in categories
-    )
-    control_chars = "".join(
-        map(chr, itertools.chain(range(0x00, 0x20), range(0x7F, 0xA0)))
-    )
-    control_char_re = re.compile("[%s]" % re.escape(control_chars))
-    return control_char_re.sub("", s)
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
 
 
-def get_likee(files_found, report_folder, seeker, wrap_text):
-    src_likee_location = ""
-    data_list = []
-
-    for file_found in files_found:
-        file_name = str(file_found)
-        journalName = os.path.basename(file_found)
-        outputpath = os.path.join(report_folder, journalName + ".txt")
-        level2, level1 = os.path.split(outputpath)
-        level2 = os.path.split(level2)[1]
-        final = level2 + "/" + level1
-        if file_name.endswith("_location.kv"):
-            src_likee_location = str(file_found)
-            src_likee_location = file_found.replace(seeker.data_folder, "")
-            with open(outputpath, "w") as w:
-                f = open(file_found, "r", errors="ignore")
-                Lines = f.readlines()
-                for line in Lines:
-                    if "address" in line:
-                        line_encode = line.encode("utf-8", errors="ignore")
-                        line_decode = line_encode.decode()
-                        dstring1 = (line_decode[: line.find("address", 0, 6)]).replace(
-                            "\uFFFD" "\u2660", " "
-                        )
-                        loc_out = remove_control_chars(dstring1)
-                        w.write(loc_out)
-
-        out = (
-            f'<a href="{final}" style = "color:blue" target="_blank">{journalName}</a>'
-        )
-        data_list.append((out, file_found))
-
-        report = ArtifactHtmlReport("Likee User Location")
-        report.start_artifact_report(report_folder, "Likee User Location")
-        report.add_script()
-        data_headers = ["Artifact", "Location"]
-        report.write_artifact_data_table(
-            data_headers, data_list, file_found, html_escape=False
-        )
-        report.end_artifact_report()
-
-
-def get_likee_db(files_found, report_folder, seeker, wrap_text):
-
-    src_likee_pub = ""
-    src_likee_msg = ""
-    likee_pub_db = ""
-    likee_msg_db = ""
-    db1_data_list = []
-    db2_data_list = []
-
-    for file_found in files_found:
-        file_name = str(file_found)
-        ustring = "like_pub.db"
-        if ustring in file_name:
-            likee_pub_db = str(file_found)
-            src_likee_pub = file_found.replace(seeker.data_folder, "")
-
-        mstring = "message_u"
-        if mstring in file_name:
-            likee_msg_db = str(file_found)
-            src_likee_msg = file_found.replace(seeker.data_folder, "")
-            db2_data_list.append(str(file_found))
-
-    db = open_sqlite_db_readonly(likee_pub_db)
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     try:
-        cursor.execute(
-            """
-                    SELECT
-                        UI.history_user_name,UI.history_user_bigo_id,UI.history_user_uid
-                    FROM user_search_history as UI
-                        """
-        )
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-
-    except:
-        usageentries = 0
-
-    if usageentries > 0:
-        report = ArtifactHtmlReport("Likee Users")
-        report.start_artifact_report(report_folder, "Likee Users")
-        report.add_script()
-        db1_data_headers = ("Users", "Username", "User ID")
-        db1_data_list = []
-        for row in all_rows:
-            db1_data_list.append((row[0], row[1], row[2]))
-
-        report.write_artifact_data_table(
-            db1_data_headers, db1_data_list, src_likee_pub, html_escape=False
-        )
-        report.end_artifact_report()
-
-        tsvname = f"Likee User Info"
-        tsv(report_folder, db1_data_headers, db1_data_list, tsvname, src_likee_pub)
-
-    else:
-        logfunc("No user info found")
-
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
     db.close()
+    return rows
 
-    for likee_msg_db in db2_data_list:
-        db = open_sqlite_db_readonly(likee_msg_db)
-        cursor = db.cursor()
 
+@artifact_processor
+def get_likee(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not file_found.endswith('_location.kv'):
+            continue
+        source_path = file_found
+        location_text = ''
         try:
-            cursor.execute(
-                """
-                SELECT
-                    messages.uid,messages.content,
-                    datetime(messages.time/1000, 'unixepoch')
-                FROM messages
-                """
-            )
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
+            with open(file_found, 'r', errors='ignore', encoding='utf-8') as handle:
+                for line in handle:
+                    if 'address' in line:
+                        cleaned = line[:line.find('address', 0, 6)].replace('\uFFFD\u2660', ' ')
+                        location_text += _CONTROL_RE.sub('', cleaned)
+        except OSError:
+            pass
+        data_list.append((os.path.basename(file_found), location_text, file_found))
 
-        except:
-            usageentries = 0
+    data_headers = ('File', 'Location Data', 'Source')
+    return data_headers, data_list, source_path
 
-        if usageentries > 0:
-            report = ArtifactHtmlReport("Likee Messages")
-            report.start_artifact_report(report_folder, "Likee Messages")
-            report.add_script()
-            db2_data_headers = ("User ID", "Message Content", "Timestamp")
-            db2_data_list = []
-            for row in all_rows:
-                db2_data_list.append((row[0], row[1], row[2]))
 
-            report.write_artifact_data_table(
-                db2_data_headers, db2_data_list, src_likee_msg, html_escape=False
-            )
-            report.end_artifact_report()
+@artifact_processor
+def get_likee_users(files_found, report_folder, seeker, wrap_text):
+    source_path = next((str(f) for f in files_found if 'like_pub.db' in str(f)
+                        and not str(f).endswith(('-wal', '-shm'))), '')
+    rows = _run(source_path, '''
+        SELECT history_user_name, history_user_bigo_id, history_user_uid FROM user_search_history
+    ''')
+    data_headers = ('Users', 'Username', 'User ID')
+    return data_headers, [tuple(r) for r in rows], source_path
 
-            tsvname = f"Likee Messages"
-            tsv(report_folder, db2_data_headers, db2_data_list, tsvname, src_likee_msg)
 
-        else:
-            logfunc("No Message data found" + (str(file_found)))
+@artifact_processor
+def get_likee_messages(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if 'message_u' not in file_found or file_found.endswith(('-wal', '-shm')):
+            continue
+        source_path = file_found
+        for row in _run(file_found, 'SELECT uid, content, time FROM messages'):
+            data_list.append((row[0], row[1], _ms_to_utc(row[2])))
 
-        db.close()
+    data_headers = ('User ID', 'Message Content', ('Timestamp', 'datetime'))
+    return data_headers, data_list, source_path
