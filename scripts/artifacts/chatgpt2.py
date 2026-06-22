@@ -21,7 +21,6 @@ import textwrap
 import json
 from datetime import datetime, timezone
 from collections import defaultdict
-from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 @artifact_processor
