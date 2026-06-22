@@ -121,8 +121,10 @@ def gmailIMAPEmails(files_found, _report_folder, _seeker, _wrap_text):
                     if (row_a[4] is None):
                         # Received Attachment */data/com.google.android.gm/databases/*.db_att/*.*
                         for rAttach in attachRecv_list:
-                            if (((os.path.basename(rAttach)) == f'{attachmentID}') and ((os.path.basename(os.path.dirname(rAttach))) == f'{accountID}.db_att')):
-                                AttachmentPaths.append(check_in_media(rAttach, row_a[2]))
+                            if (os.path.isfile(rAttach) and ((os.path.basename(rAttach)) == f'{attachmentID}') and ((os.path.basename(os.path.dirname(rAttach))) == f'{accountID}.db_att')):
+                                ref = check_in_media(rAttach, row_a[2])
+                                if ref:
+                                    AttachmentPaths.append(ref)
                     else:
                         # Sent Attachment /data/com.google.android.gm/cache/*.attachment
                         uri = row_a[4]
@@ -137,10 +139,22 @@ def gmailIMAPEmails(files_found, _report_folder, _seeker, _wrap_text):
                             fileName = os.path.basename(filePath).replace(":", "_")
                             
                             for sAttach in attachSent_list:
-                                if ((os.path.basename(sAttach)) == fileName):
-                                    AttachmentPaths.append(check_in_media(sAttach, row_a[2]))
+                                if (os.path.isfile(sAttach) and ((os.path.basename(sAttach)) == fileName)):
+                                    ref = check_in_media(sAttach, row_a[2])
+                                    if ref:
+                                        AttachmentPaths.append(ref)
                            
-            data_list.append((row[0], row[1], row[2], tBody, hBody, row[3], row[4], row[5], row[6], row[7], row[8], row[9], AttachmentPaths, row[11], emailProviderDB))
+            # Collapse to a bare ref for a single attachment, list for several, and
+            # '' when none resolved -- mirrors the other media artifacts. The None
+            # guards above keep any unresolved ref (which the LAVA viewer chokes on)
+            # out of the list.
+            if len(AttachmentPaths) == 1:
+                attachment_cell = AttachmentPaths[0]
+            elif AttachmentPaths:
+                attachment_cell = AttachmentPaths
+            else:
+                attachment_cell = ''
+            data_list.append((row[0], row[1], row[2], tBody, hBody, row[3], row[4], row[5], row[6], row[7], row[8], row[9], attachment_cell, row[11], emailProviderDB))
 
     data_headers = (('Timestamp','datetime'),'_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Recipient','Reply To','Subject Line','Mailed By','Signed by', 'Read', 'AttachmentFlag', ('Attachments', 'media'), 'Mailbox Folder', 'Source File')
     return data_headers, data_list, 'See source file(s) below:'
