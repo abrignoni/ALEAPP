@@ -161,19 +161,22 @@ def get_fcm_dump_instagram(files_found, report_folder, seeker, wrap_text):
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.instagram.android', []):
-        fecha, origfile, datos = data[0], data[1], data[4]
+        fecha, origfile, fcm_key, datos = data[0], data[1], data[2], data[4]
         try:
             datos = json.loads(datos)
         except Exception:
             pass
         if isinstance(datos, dict):
             if 'collapse_key' in datos:
-                data_list.append((_to_utc(fecha), origfile, datos['collapse_key'],
-                                  datos.get('m'), datos.get('s'), datos.get('u')))
+                ntype = datos['collapse_key']
             elif 'c' in datos:
-                data_list.append((_to_utc(fecha), origfile, datos['c'],
-                                  datos.get('m'), datos.get('s'), datos.get('u')))
-    data_headers = (('Timestamp', 'datetime'), 'Originating File', 'Data', 'M', 'S', 'U')
+                ntype = datos['c']
+            else:
+                continue
+            data_list.append((_to_utc(fecha), origfile, ntype, datos.get('m'), datos.get('s'),
+                              datos.get('u'), fcm_key, datos.get('PushNotifID'), datos.get('ig')))
+    data_headers = (('Timestamp', 'datetime'), 'Originating File', 'Data', 'M', 'S', 'U',
+                    'FCM Key', 'Push Notification ID', 'IG Endpoint')
     return data_headers, data_list, source
 
 
