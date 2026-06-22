@@ -72,9 +72,7 @@ import os
 import re
 import urllib.parse
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, get_next_unused_name, open_sqlite_db_readonly, does_column_exist_in_db, \
-    lava_process_artifact, lava_insert_sqlite_data, artifact_processor
+from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, does_column_exist_in_db, artifact_processor
 
 
 def get_browser_name(file_name):
@@ -118,20 +116,6 @@ def _history_files(files_found):
         yield file_found, browser_name
 
 
-def _emit(report_folder, report_name, data_headers, data_list, file_found, lava_data_headers, module_name):
-    report = ArtifactHtmlReport(report_name)
-    report_path = os.path.join(report_folder, f'{report_name}.temphtml')
-    report_path = get_next_unused_name(report_path)[:-9]  # remove .temphtml
-    report.start_artifact_report(report_folder, os.path.basename(report_path))
-    report.add_script()
-    report.write_artifact_data_table(data_headers, data_list, file_found)
-    report.end_artifact_report()
-
-    table_name, object_columns, column_map = lava_process_artifact(
-        "Chromium", module_name, report_name, lava_data_headers, len(data_list))
-    lava_insert_sqlite_data(table_name, data_list, object_columns, lava_data_headers, column_map)
-
-
 @artifact_processor
 def get_chrome(files_found, report_folder, seeker, wrap_text):
     all_data = []
@@ -155,8 +139,6 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
 
         data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
         if data_list:
-            _emit(report_folder, f'{browser_name} - Web History', data_headers, data_list, file_found,
-                  lava_data_headers, "get_chrome")
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Web History data available')
@@ -221,8 +203,6 @@ def get_chromeWebVisits(files_found, report_folder, seeker, wrap_text):
 
         data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
         if data_list:
-            _emit(report_folder, f'{browser_name} - Web Visits', data_headers, data_list, file_found,
-                  lava_data_headers, "get_chromeWebVisits")
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Web Visits data available')
@@ -258,8 +238,6 @@ def get_chromeSearchTerms(files_found, report_folder, seeker, wrap_text):
             data_list.append((_webkit_to_utc(r[3]), search, r[0], r[1], r[2]))
 
         if data_list:
-            _emit(report_folder, f'{browser_name} - Search Terms', data_headers, data_list, file_found,
-                  lava_data_headers, "get_chromeSearchTerms")
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Search Terms data available')
@@ -372,8 +350,6 @@ def get_chromeDownloads(files_found, report_folder, seeker, wrap_text):
                               r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10]))
 
         if data_list:
-            _emit(report_folder, f'{browser_name} - Downloads', data_headers, data_list, file_found,
-                  lava_data_headers, "get_chromeDownloads")
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Downloads data available')
@@ -404,8 +380,6 @@ def get_chromeKeywordSearchTerms(files_found, report_folder, seeker, wrap_text):
 
         data_list = [(_webkit_to_utc(r[4]), r[1], r[3]) for r in rows]
         if data_list:
-            _emit(report_folder, f'{browser_name} - Keyword Search Terms', data_headers, data_list, file_found,
-                  lava_data_headers, "get_chromeKeywordSearchTerms")
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Keyword Search Terms data available')
