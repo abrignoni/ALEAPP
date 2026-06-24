@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_offlinePages": {
         "name": "Offline Pages (MHTML)",
@@ -23,7 +22,8 @@ from scripts.ilapfuncs import artifact_processor, check_in_media
 
 
 @artifact_processor
-def get_offlinePages(files_found, report_folder, seeker, wrap_text):
+def get_offlinePages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_paths = []
     for file_found in files_found:
@@ -38,8 +38,8 @@ def get_offlinePages(files_found, report_folder, seeker, wrap_text):
             mime_date = message['Date']
 
         media = check_in_media(file_found, os.path.basename(file_found))
-        data_list.append((timestamp, media, web_source, subject, mime_date, file_found))
+        data_list.append((timestamp, media, web_source, subject, mime_date, context.get_relative_path(file_found)))
 
     data_headers = (
         ('Timestamp', 'datetime'), ('File', 'media'), 'Web Source', 'Subject', 'MIME Date', 'Source in Extraction')
-    return data_headers, data_list, ', '.join(source_paths)
+    return data_headers, data_list, ', '.join(context.get_relative_path(p) for p in source_paths)
