@@ -14,18 +14,18 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import logfunc, artifact_processor
+from scripts.ilapfuncs import artifact_processor
 
 @artifact_processor
-def powerOffReset(files_found, report_folder, seeker, wrap_text):
-    
+def powerOffReset(context):
+    files_found = context.get_files_found()
     data_list = []
     pattern = 'REASON:'
     
     for file_found in files_found:
         file_found = str(file_found)
             
-        with open(file_found, "r") as f:
+        with open(file_found, "r", encoding="utf-8") as f:
             data = f.readlines()
             for line in data:
                 if pattern in line:
@@ -47,7 +47,7 @@ def powerOffReset(files_found, report_folder, seeker, wrap_text):
                     reason_split = entry[3].split(": ")
                     reason = reason_split[1]
                     
-                    data_list.append((timestamp1,timezone,action,reason, file_found))
+                    data_list.append((timestamp1,timezone,action,reason, context.get_relative_path(file_found)))
                 else:
                     continue
 

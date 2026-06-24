@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "Turbo_Battery": {
         "name": "Turbo - Phone Battery",
@@ -33,7 +33,8 @@ import os
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
-def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
+def Turbo_Battery(context):
+    files_found = context.get_files_found()
     source_file_turbo = ''
     turbo_db = ''
     data_list = []
@@ -77,7 +78,7 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
                             timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), row[4])
                         except Exception:
                             pass
-                    data_list.append((timestamp,row[1],row[2],row[3],row[4],file_found))
+                    data_list.append((timestamp,row[1],row[2],row[3],row[4],context.get_relative_path(file_found)))
             
             db.close()
             
@@ -86,7 +87,8 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_file_turbo
             
 @artifact_processor
-def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):
+def Turbo_Bluetooth(context):
+    files_found = context.get_files_found()
     source_file_bluetooth = ''
     data_list = []
 
@@ -120,7 +122,7 @@ def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):
                             timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), row[5])
                         except Exception:
                             pass
-                    data_list.append((timestamp,row[1],row[2],row[3],row[4],row[5],file_found))
+                    data_list.append((timestamp,row[1],row[2],row[3],row[4],row[5],context.get_relative_path(file_found)))
             db.close()
 
     data_headers = (('Timestamp','datetime'),'BT Device MAC Address','BT Device ID','Battery Level','Volume Level','Timezone','Source')
