@@ -1,4 +1,3 @@
-# pylint: disable=W0612,W0613
 __artifacts_v2__ = {
     "samsungTrash": {
         "name": "Samsung Trash",
@@ -19,16 +18,14 @@ __artifacts_v2__ = {
     }
 }
 
-import inspect
 from pathlib import Path
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, convert_unix_ts_to_utc, get_sqlite_db_records
 
 
 @artifact_processor
-def samsungTrash(files_found, report_folder, seeker, _wrap_text):
-    artifact_info = inspect.stack()[0]
-
+def samsungTrash(context):
+    files_found = context.get_files_found()
     query = """
         SELECT
             _id [File ID],
@@ -88,7 +85,7 @@ def samsungTrash(files_found, report_folder, seeker, _wrap_text):
                 row[7],   # package context of deletion
                 row[8],   # user_id of deletion
                 row[11],  # extra with JSON oinside - addtional info not parsed atm.
-                file_found
+                context.get_relative_path(file_found)
             ))
 
     data_headers = (

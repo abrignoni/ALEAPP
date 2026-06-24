@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_imagemngCache": {
         "name": "Image Manager Cache",
@@ -31,7 +30,8 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_imagemngCache(files_found, report_folder, seeker, wrap_text):
+def get_imagemngCache(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -41,8 +41,8 @@ def get_imagemngCache(files_found, report_folder, seeker, wrap_text):
         filename = os.path.basename(file_found)
         source_path = os.path.dirname(file_found)
         media = check_in_media(file_found, filename)
-        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename, file_found))
+        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename, context.get_relative_path(file_found)))
 
     data_headers = (
         ('Timestamp Last Modified', 'datetime'), ('Media', 'media'), 'Filename', 'Source File')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
