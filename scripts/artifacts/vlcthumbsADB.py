@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_vlcthumbsADB": {
         "name": "VLC Thumbnails (ADB)",
@@ -45,7 +44,8 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_vlcthumbsADB(files_found, report_folder, seeker, wrap_text):
+def get_vlcthumbsADB(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -55,14 +55,15 @@ def get_vlcthumbsADB(files_found, report_folder, seeker, wrap_text):
         filename = Path(file_found).name
         source_path = str(Path(file_found).parents[1])
         media = check_in_media(file_found, filename)
-        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename, file_found))
+        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename, context.get_relative_path(file_found)))
 
     data_headers = (('Modified Timestamp', 'datetime'), ('Thumbnail', 'media'), 'Filename', 'Location')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_vlcthumbsADB_medialib(files_found, report_folder, seeker, wrap_text):
+def get_vlcthumbsADB_medialib(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -72,7 +73,7 @@ def get_vlcthumbsADB_medialib(files_found, report_folder, seeker, wrap_text):
         filename = Path(file_found).name
         source_path = str(Path(file_found).parents[1])
         media = check_in_media(file_found, filename)
-        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename, file_found))
+        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename, context.get_relative_path(file_found)))
 
     data_headers = (('Modified Timestamp', 'datetime'), ('Thumbnail', 'media'), 'Filename', 'Location')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)

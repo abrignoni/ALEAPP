@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_quicksearch_recent": {
         "name": "Google Quick Search Recent",
@@ -63,7 +63,8 @@ def _recursive_bytes_to_str(obj):
 
 
 @artifact_processor
-def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
+def get_quicksearch_recent(context):
+    files_found = context.get_files_found()
     account_name = ''
     screenshots = {}
     pb_files = []
@@ -107,8 +108,8 @@ def get_quicksearch_recent(files_found, report_folder, seeker, wrap_text):
             screenshot = check_in_media(screenshots[name], name) if name in screenshots else ''
             _recursive_bytes_to_str(item)
             data_list.append((_ms_to_utc(item.get('timestamp1')), search_query, screenshot,
-                              json.dumps(item, ensure_ascii=False), file_found))
+                              json.dumps(item, ensure_ascii=False), context.get_relative_path(file_found)))
 
     data_headers = (('Timestamp', 'datetime'), 'Search Query', ('Screenshot', 'media'),
                     'Protobuf Data', 'Source File')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)

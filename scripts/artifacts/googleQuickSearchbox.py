@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_quicksearch": {
         "name": "Google Quick Search Queries",
@@ -93,7 +93,8 @@ def _parse_session(values):
 
 
 @artifact_processor
-def get_quicksearch(files_found, report_folder, seeker, wrap_text):
+def get_quicksearch(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -113,7 +114,7 @@ def get_quicksearch(files_found, report_folder, seeker, wrap_text):
             response = check_in_embedded_media(file_found, mp3_data, name,
                                                force_type='audio/mpeg', force_extension='mp3')
         data_list.append((_read_unix_time(os.path.getmtime(file_found)), session_type,
-                          ', '.join(queries), response, file_found))
+                          ', '.join(queries), response, context.get_relative_path(file_found)))
 
     data_headers = (('File Timestamp', 'datetime'), 'Type', 'Queries', ('Response', 'media'), 'Source File')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
