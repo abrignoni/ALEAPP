@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "knuddels_chats": {
         "name": "Knuddels - Chat Messages",
@@ -20,7 +19,8 @@ import re
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
 @artifact_processor
-def knuddels_chats(files_found, report_folder, seeker, wrap_text):
+def knuddels_chats(context):
+    files_found = context.get_files_found()
     data_list = []
 
     for file_found in files_found:
@@ -47,7 +47,7 @@ def knuddels_chats(files_found, report_folder, seeker, wrap_text):
             for row in db_records:
                 db_name = str(file_found).split("databases")[1].split("knuddels")[1]
                 # Store conversation keys as strings to ensure unique filtering, as the same ID might exist in a different database
-                data_list.append((row[0], row[1], row[2], "chat_" + str(row[3]) + "_" + db_name, file_found, row[4], row[5])) 
+                data_list.append((row[0], row[1], row[2], "chat_" + str(row[3]) + "_" + db_name, context.get_relative_path(file_found), row[4], row[5])) 
 
     data_headers = ("Timestamp", "User Name", "Message", "Conversation Key", "Source File", "Thread Table UID", "Users Table UID")
     return data_headers, data_list, "See source file(s) below:"            
