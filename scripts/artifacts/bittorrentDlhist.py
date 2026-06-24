@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_bittorrentDlhist": {
         "name": "bittorrentDlhist",
@@ -28,8 +27,8 @@ def timestampcalc(timevalue):
 
 
 @artifact_processor
-def get_bittorrentDlhist(files_found, report_folder, seeker, wrap_text):
-
+def get_bittorrentDlhist(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -45,7 +44,7 @@ def get_bittorrentDlhist(files_found, report_folder, seeker, wrap_text):
                     time = timestampcalc(x[b'a'])
                     filename = x[b'n'].decode()
                     filepath = x[b's'].decode()
-                data_list.append((time,filename,filepath,textwrap.fill(file_found.strip(), width=25)))
+                data_list.append((time,filename,filepath,textwrap.fill(context.get_relative_path(file_found).strip(), width=25)))
 
     data_headers = (
         ('Record Timestamp', 'datetime'),
@@ -53,4 +52,4 @@ def get_bittorrentDlhist(files_found, report_folder, seeker, wrap_text):
         'Download File Path',
         'Source File',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
