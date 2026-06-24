@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_walStrings": {
         "name": "walStrings",
@@ -31,7 +30,9 @@ ascii_chars_re = re.compile(f'[{printable_chars_for_re}]' + '{4,}')
 
 
 @artifact_processor
-def get_walStrings(files_found, report_folder, seeker, wrap_text):
+def get_walStrings(context):
+    files_found = context.get_files_found()
+    report_folder = context.get_report_folder()
     x = 1
     data_list = []
     for file_found in files_found:
@@ -57,7 +58,7 @@ def get_walStrings(files_found, report_folder, seeker, wrap_text):
 
         if unique_items:
             out = f'<a href="{final}" style = "color:blue" target="_blank">{journalName}</a>'
-            data_list.append((out, file_found))
+            data_list.append((out, context.get_relative_path(file_found)))
         else:
             try:
                 os.remove(outputpath)  # delete empty file
