@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_dmss": {
         "name": "Dahua CCTV - Channels",
@@ -166,7 +165,8 @@ def _iot_dbs(files_found):
 
 
 @artifact_processor
-def get_dmss(files_found, report_folder, seeker, wrap_text):
+def get_dmss(context):
+    files_found = context.get_files_found()
     source_path = _find_db(files_found, 'devicechannel.db')
     rows = _run(source_path, '''
         SELECT devices.devicename, num, name,
@@ -174,22 +174,24 @@ def get_dmss(files_found, report_folder, seeker, wrap_text):
         FROM channels LEFT JOIN devices ON did = devices.id
     ''')
     data_headers = ('Device Name', 'Channel No.', 'Channel Name', 'Favorite')
-    return data_headers, [tuple(r) for r in rows], source_path
+    return data_headers, [tuple(r) for r in rows], context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_dmss_info(files_found, report_folder, seeker, wrap_text):
+def get_dmss_info(context):
+    files_found = context.get_files_found()
     source_path = _find_db(files_found, 'devicechannel.db')
     rows = _run(source_path, '''
         SELECT devicename, channelcount, uid, ip, port, username, password FROM devices
     ''')
     data_headers = ('Name/IP', 'Channels', 'UID', 'IP (Enc.)', 'Port (Enc.)',
                     'Username (Enc.)', 'Password (Enc.)')
-    return data_headers, [tuple(r) for r in rows], source_path
+    return data_headers, [tuple(r) for r in rows], context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_dmss_sensors(files_found, report_folder, seeker, wrap_text):
+def get_dmss_sensors(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path, account in _iot_dbs(files_found):
@@ -199,11 +201,12 @@ def get_dmss_sensors(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Account', 'Device Name', 'Device Model', 'Device SN', 'Device Type', 'Alarm State',
                     'Battery Percent', 'Associated Hub SN', 'Disable Delay', 'Enable Delay', 'Full Day Alarm',
                     'Sensitivity', 'Capabilities', 'Tamper Status', 'Version')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_dmss_cloud(files_found, report_folder, seeker, wrap_text):
+def get_dmss_cloud(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path, account in _iot_dbs(files_found):
@@ -213,11 +216,12 @@ def get_dmss_cloud(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Account', 'Device Name', 'Device Model', 'Channels', 'Online', 'Shared Enabled',
                     'Receive Share From', 'Send Share To', 'Username', 'Abilities', 'Capabilities', 'Port',
                     'RTSP Port', 'App Version')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_dmss_notifications(files_found, report_folder, seeker, wrap_text):
+def get_dmss_notifications(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path, account in _iot_dbs(files_found):
@@ -226,11 +230,12 @@ def get_dmss_notifications(files_found, report_folder, seeker, wrap_text):
             data_list.append((account, _ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8]))
     data_headers = ('Account', ('Timestamp', 'datetime'), 'Device Reported Time', 'Area Name', 'Nickname',
                     'Device Name', 'Alarm Device ID', 'Alarm Message ID', 'Alarm Notification', 'Checked')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_dmss_media(files_found, report_folder, seeker, wrap_text):
+def get_dmss_media(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -245,7 +250,7 @@ def get_dmss_media(files_found, report_folder, seeker, wrap_text):
             continue
         source_path = os.path.dirname(file_found)
         media = check_in_media(file_found, file_name)
-        data_list.append((file_found, file_name, media))
+        data_list.append((context.get_relative_path(file_found), file_name, media))
 
     data_headers = ('File Path', 'File Name', ('File Content', 'media'))
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
