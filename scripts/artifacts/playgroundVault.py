@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_playgroundVault": {
         "name": "Playground Vault",
@@ -55,7 +54,8 @@ def _find_key(files_found):
 
 
 @artifact_processor
-def get_playgroundVault(files_found, report_folder, seeker, wrap_text):
+def get_playgroundVault(context):
+    files_found = context.get_files_found()
     key = _find_key(files_found)
     data_list = []
     source_path = ''
@@ -90,7 +90,7 @@ def get_playgroundVault(files_found, report_folder, seeker, wrap_text):
 
             match = re.search(r'(?:EIF|EVF)(\d+)', filename)
             enctimestamp = _ms_to_utc(match.group(1)) if match else ''
-            data_list.append((thumb, filename, enctimestamp, file_found))
+            data_list.append((thumb, filename, enctimestamp, context.get_relative_path(file_found)))
 
     data_headers = (('Media', 'media'), 'Filename', ('Encrypted On Timestamp', 'datetime'), 'Full Path')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
