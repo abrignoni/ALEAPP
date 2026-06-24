@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0631
+# pylint: disable=W0631
 __artifacts_v2__ = {
     "duckduckgo_bookmarks": {
         "name": "DuckDuckGo - Bookmarks",
@@ -128,7 +128,8 @@ from scripts.ilapfuncs import artifact_processor, check_in_media, does_column_ex
 from scripts.ccl import ccl_leveldb
 
 @artifact_processor
-def duckduckgo_bookmarks(files_found, report_folder, seeker, wrap_text):
+def duckduckgo_bookmarks(context):
+    files_found = context.get_files_found()
     data_list = []
     for source_path in files_found:
         source_path = str(source_path)
@@ -197,10 +198,11 @@ def duckduckgo_bookmarks(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Entity ID','Deleted','Folder Path','Title','URL', ('Last Modified','datetime')) 
     data_list = get_sqlite_db_records(source_path, query)        
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
     
 @artifact_processor
-def duckduckgo_favorites(files_found, report_folder, seeker, wrap_text):
+def duckduckgo_favorites(context):
+    files_found = context.get_files_found()
     data_list = []
     for source_path in files_found:
         source_path = str(source_path)
@@ -244,10 +246,11 @@ def duckduckgo_favorites(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Entity ID','Title','URL') 
     data_list = get_sqlite_db_records(source_path, query)        
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
     
 @artifact_processor
-def duckduckgo_history(files_found, report_folder, seeker, wrap_text):
+def duckduckgo_history(context):
+    files_found = context.get_files_found()
     data_list = []
     for source_path in files_found:
         source_path = str(source_path)
@@ -276,10 +279,11 @@ def duckduckgo_history(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Visit ID','URL','Title',('Visit Date (Local)','datetime'),'History Type','Search Query') 
     data_list = get_sqlite_db_records(source_path, query)        
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
     
 @artifact_processor
-def duckduckgo_opentabs(files_found, report_folder, seeker, wrap_text):
+def duckduckgo_opentabs(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = get_file_path(files_found, 'app.db')  
     thumb_lookup = {}
@@ -355,10 +359,11 @@ def duckduckgo_opentabs(files_found, report_folder, seeker, wrap_text):
         ('Cached Tab Preview','media')
     )
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 @artifact_processor
-def duckduckgo_fireproof(files_found, report_folder, seeker, wrap_text):
+def duckduckgo_fireproof(context):
+    files_found = context.get_files_found()
     data_list = []
     for source_path in files_found:
         source_path = str(source_path)
@@ -379,10 +384,11 @@ def duckduckgo_fireproof(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Fireproof Site',) 
     data_list = get_sqlite_db_records(source_path, query)        
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
     
 @artifact_processor
-def duckduckgo_downloads(files_found, report_folder, seeker, wrap_text):
+def duckduckgo_downloads(context):
+    files_found = context.get_files_found()
     data_list = []
 
     def is_sqlite_db(path):
@@ -433,10 +439,11 @@ def duckduckgo_downloads(files_found, report_folder, seeker, wrap_text):
 
     data_headers = ('Download ID','Download Status','File Name','Size (Bytes)','Download Path',('Download Date (Local)', 'datetime'))   
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 @artifact_processor
-def duckduckgo_thumbnails(files_found, report_folder, seeker, wrap_text):
+def duckduckgo_thumbnails(context):
+    files_found = context.get_files_found()
     data_list = []
 
     for source_path in files_found:
@@ -468,14 +475,15 @@ def duckduckgo_thumbnails(files_found, report_folder, seeker, wrap_text):
         if media_item:
             tab_status = 'Open' if filename in open_preview_files else 'Closed'
 
-            data_list.append((tab_status, timestamp, media_item, filename, str(file_found)))
+            data_list.append((tab_status, timestamp, media_item, filename, context.get_relative_path(str(file_found))))
 
     data_headers = ('Tab Status',('Timestamp','datetime'),('Thumbnail','media'),'File Name','Location')
 
     return data_headers, data_list, 'See source path(s) below'
 
 @artifact_processor
-def duckduckgo_duckai(files_found, report_folder, seeker, wrap_text):
+def duckduckgo_duckai(context):
+    files_found = context.get_files_found()
     data_list = []
 
     duckchats = "_https://duckduckgo.com savedAIChats"
@@ -604,7 +612,8 @@ def duckduckgo_duckai(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, 'See source path(s) below'
 
 @artifact_processor
-def duckduckgo_cookies(files_found, report_folder, seeker, wrap_text):
+def duckduckgo_cookies(context):
+    files_found = context.get_files_found()
     data_list = []
     for source_path in files_found:
         source_path = str(source_path)
@@ -646,5 +655,5 @@ def duckduckgo_cookies(files_found, report_folder, seeker, wrap_text):
 
     data_headers = (('Last Accessed','datetime'),'Host','Name','Value',('Creation Time','datetime'),('Expiry','datetime'),'Path')   
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
