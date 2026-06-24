@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_browserCachefirefox": {
         "name": "Firefox Browser Cache",
@@ -34,7 +33,8 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_browserCachefirefox(files_found, report_folder, seeker, wrap_text):
+def get_browserCachefirefox(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -72,9 +72,9 @@ def get_browserCachefirefox(files_found, report_folder, seeker, wrap_text):
             name = f'{filename}.{ext}' if ext else filename
             media = check_in_media(file_found, name)
 
-        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), filename, mime, media, url, file_found))
+        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), filename, mime, media, url, context.get_relative_path(file_found)))
 
     data_headers = (
         ('Timestamp Modified', 'datetime'), 'Filename', 'Mime Type', ('Cached File', 'media'),
         'Source URL', 'Source')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_likee": {
         "name": "LIKEE - User Location",
@@ -77,7 +76,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_likee(files_found, report_folder, seeker, wrap_text):
+def get_likee(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -94,25 +94,27 @@ def get_likee(files_found, report_folder, seeker, wrap_text):
                         location_text += _CONTROL_RE.sub('', cleaned)
         except OSError:
             pass
-        data_list.append((os.path.basename(file_found), location_text, file_found))
+        data_list.append((os.path.basename(file_found), location_text, context.get_relative_path(file_found)))
 
     data_headers = ('File', 'Location Data', 'Source')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_likee_users(files_found, report_folder, seeker, wrap_text):
+def get_likee_users(context):
+    files_found = context.get_files_found()
     source_path = next((str(f) for f in files_found if 'like_pub.db' in str(f)
                         and not str(f).endswith(('-wal', '-shm'))), '')
     rows = _run(source_path, '''
         SELECT history_user_name, history_user_bigo_id, history_user_uid FROM user_search_history
     ''')
     data_headers = ('Users', 'Username', 'User ID')
-    return data_headers, [tuple(r) for r in rows], source_path
+    return data_headers, [tuple(r) for r in rows], context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_likee_messages(files_found, report_folder, seeker, wrap_text):
+def get_likee_messages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -124,4 +126,4 @@ def get_likee_messages(files_found, report_folder, seeker, wrap_text):
             data_list.append((row[0], row[1], _ms_to_utc(row[2])))
 
     data_headers = ('User ID', 'Message Content', ('Timestamp', 'datetime'))
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_NQVault": {
         "name": "NQ Vault Decrypted PINs",
@@ -118,15 +117,16 @@ def _load_db(files_found):
 
 
 @artifact_processor
-def get_NQVault(files_found, report_folder, seeker, wrap_text):
-    _, enc_pins, db_path = _load_db(files_found)
+def get_NQVault(context):
+    _, enc_pins, db_path = _load_db(context.get_files_found())
     data_list = [(encoded_pin, brute_force_pin(encoded_pin)) for encoded_pin in enc_pins]
     data_headers = ('Encrypted PIN', 'Decrypted PIN')
-    return data_headers, data_list, db_path
+    return data_headers, data_list, context.get_relative_path(db_path)
 
 
 @artifact_processor
-def get_NQVault_media(files_found, report_folder, seeker, wrap_text):
+def get_NQVault_media(context):
+    files_found = context.get_files_found()
     dict_of_file_info, enc_pins, db_path = _load_db(files_found)
     pin_xor = {pin: (raw_pin_to_xor_key(brute_force_pin(pin)), brute_force_pin(pin)) for pin in enc_pins}
 
@@ -160,11 +160,11 @@ def get_NQVault_media(files_found, report_folder, seeker, wrap_text):
 
             encrypted_file_name = Path(info['vault_filepath']).stem + '.bin'
             data_list.append((thumb, info['old_filename'], info['old_filepath'], encrypted_file_name,
-                              file_found, info['timestamp'], info['vid_length'], info['resolution'],
+                              context.get_relative_path(file_found), info['timestamp'], info['vid_length'], info['resolution'],
                               info['alb_name'], info['prev_alb_name'], pin_code, info['password_id']))
 
     data_headers = (
         ('Media', 'media'), 'Original Filename', 'Original Filepath', 'Encrypted Filename', 'Full Path',
         ('Timestamp', 'datetime'), 'Video Length', 'File Resolution', 'Album Name', 'Previous Album Name',
         'Password', 'Password Hash')
-    return data_headers, data_list, db_path
+    return data_headers, data_list, context.get_relative_path(db_path)
