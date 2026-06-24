@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Honeyboard_Clipboard": {
         "name": "Samsung Honeyboard - Clipboard History",
@@ -56,7 +55,8 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_Honeyboard_Clipboard(files_found, report_folder, seeker, wrap_text):
+def get_Honeyboard_Clipboard(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -72,11 +72,12 @@ def get_Honeyboard_Clipboard(files_found, report_folder, seeker, wrap_text):
         db.close()
 
     data_headers = (('Timestamp', 'datetime'), 'ID', 'Type', 'Clipboard Content', 'Application UID')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_honeyboard_screenshot(files_found, report_folder, seeker, wrap_text):
+def get_honeyboard_screenshot(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -99,8 +100,8 @@ def get_honeyboard_screenshot(files_found, report_folder, seeker, wrap_text):
         thumb = check_in_embedded_media(file_found, buf.getvalue(), name)
 
         modifiedtime = _sec_to_utc(os.path.getmtime(file_found))
-        data_list.append((modifiedtime, thumb, file_found))
+        data_list.append((modifiedtime, thumb, context.get_relative_path(file_found)))
         source_path = os.path.dirname(os.path.dirname(file_found))
 
     data_headers = (('File Modified Time', 'datetime'), ('Thumbnail', 'media'), 'Screenshot Path')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
