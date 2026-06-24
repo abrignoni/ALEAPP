@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "ornetbrowser_bookmarks": {
         "name": "Ornet Browser - Bookmarks",
@@ -158,7 +158,8 @@ def _parse_xml(file_found):
             return ET.Element('empty')
 
 @artifact_processor
-def ornetbrowser_bookmarks(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_bookmarks(context):
+    files_found = context.get_files_found()
     data_list = []
     
     def is_sqlite_db(path):
@@ -200,10 +201,11 @@ def ornetbrowser_bookmarks(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Bookmark ID','Title','URL','Bookmark Folder') 
     data_list = get_sqlite_db_records(source_path, query)        
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
     
 @artifact_processor
-def ornetbrowser_favorites(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_favorites(context):
+    files_found = context.get_files_found()
     data_list = []
     
     def is_sqlite_db(path):
@@ -241,10 +243,11 @@ def ornetbrowser_favorites(files_found, report_folder, seeker, wrap_text):
     data_headers = ('ID','URL','Title') 
     data_list = get_sqlite_db_records(source_path, query)        
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
     
 @artifact_processor
-def ornetbrowser_history(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_history(context):
+    files_found = context.get_files_found()
     data_list = []
     
     def is_sqlite_db(path):
@@ -283,10 +286,11 @@ def ornetbrowser_history(files_found, report_folder, seeker, wrap_text):
     data_headers = ('ID','URL','Title',('Visit Date (Local)','datetime')) 
     data_list = get_sqlite_db_records(source_path, query)        
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
     
 @artifact_processor
-def ornetbrowser_opentabs(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_opentabs(context):
+    files_found = context.get_files_found()
 
     data_list = []
 
@@ -363,11 +367,12 @@ def ornetbrowser_opentabs(files_found, report_folder, seeker, wrap_text):
         ('Cached Tab Preview', 'media')
     )
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def ornetbrowser_frequents(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_frequents(context):
+    files_found = context.get_files_found()
     data_list = []
     
     def is_sqlite_db(path):
@@ -408,10 +413,11 @@ def ornetbrowser_frequents(files_found, report_folder, seeker, wrap_text):
     data_headers = ('URL','Title','Visit Count') 
     data_list = get_sqlite_db_records(source_path, query)        
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
     
 @artifact_processor
-def ornetbrowser_downloads(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_downloads(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for source_path in files_found:
@@ -447,10 +453,11 @@ def ornetbrowser_downloads(files_found, report_folder, seeker, wrap_text):
 
     data_headers = ('Download ID','Download Status','File Name','Download URL','Downloaded Bytes','Total Bytes',('Download Date', 'datetime'),'Download Path',)   
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 @artifact_processor
-def ornetbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_thumbnails(context):
+    files_found = context.get_files_found()
     data_list = []
 
     for file_found in files_found:
@@ -464,14 +471,15 @@ def ornetbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
         media_item = check_in_media(file_found, filename)
 
         if media_item:
-            data_list.append((timestamp, media_item, filename, str(file_found)))
+            data_list.append((timestamp, media_item, filename, context.get_relative_path(str(file_found))))
 
     data_headers = (('Timestamp','datetime'),('Thumbnail','media'),'File Name','Location')
 
     return data_headers, data_list, 'See source path(s) below'
 
 @artifact_processor
-def ornetbrowser_searchhistory(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_searchhistory(context):
+    files_found = context.get_files_found()
     data_list = []
     
     def is_sqlite_db(path):
@@ -510,10 +518,11 @@ def ornetbrowser_searchhistory(files_found, report_folder, seeker, wrap_text):
     data_headers = ('id','Search Query') 
     data_list = get_sqlite_db_records(source_path, query)        
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 @artifact_processor
-def ornetbrowser_cookies(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_cookies(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for source_path in files_found:
@@ -547,10 +556,11 @@ def ornetbrowser_cookies(files_found, report_folder, seeker, wrap_text):
 
     data_headers = (('Last Accessed','datetime'),('Creation Time','datetime'),'Host','Name','Value',('Expiry','datetime'),'Path')   
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 @artifact_processor
-def ornetbrowser_usageinfo(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_usageinfo(context):
+    files_found = context.get_files_found()
 
     usage_keys = {
         "currentTab",
@@ -590,8 +600,8 @@ def ornetbrowser_usageinfo(files_found, report_folder, seeker, wrap_text):
                 except Exception:
                     pass 
 
-            data_list.append((key_name, value_out, filename, path))
+            data_list.append((key_name, value_out, filename, context.get_relative_path(path)))
 
     data_headers = ("Key", "Value", "File Name", "Path")
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
