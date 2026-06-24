@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Cello": {
         "name": "Cello - Google Drive",
@@ -32,7 +31,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_Cello(files_found, report_folder, seeker, wrap_text):
+def get_Cello(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -72,10 +72,10 @@ def get_Cello(files_found, report_folder, seeker, wrap_text):
                     media_ref = check_in_media(blob, r[1] or '') or ''
             data_list.append((_ms_to_utc(r[0]), r[1], _ms_to_utc(r[2]), _ms_to_utc(r[3]),
                               _ms_to_utc(r[4]), _ms_to_utc(r[5]), r[6], 'Yes' if is_offline else 'No',
-                              r[7], r[8], r[9], r[10], media_ref, file_found))
+                              r[7], r[8], r[9], r[10], media_ref, context.get_relative_path(file_found)))
 
     data_headers = (('Created Date', 'datetime'), 'File Name', ('Modified Date', 'datetime'),
                     ('Shared with User Date', 'datetime'), ('Modified by User Date', 'datetime'),
                     ('Viewed by User Date', 'datetime'), 'Mime Type', 'Offline', 'Quota Size',
                     'Folder', 'User is Owner', 'Deleted', ('Offline File', 'media'), 'Source File')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)

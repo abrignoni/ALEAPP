@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_chatgpt": {
         "name": "ChatGPT - Conversations Metadata",
@@ -176,7 +175,8 @@ def _is_image(file_path):
 
 
 @artifact_processor
-def get_chatgpt(files_found, report_folder, seeker, wrap_text):
+def get_chatgpt(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -202,11 +202,12 @@ def get_chatgpt(files_found, report_folder, seeker, wrap_text):
 
     data_headers = ('Account', ('Creation Date', 'datetime'), ('Modification Date', 'datetime'), 'Title',
                     'Custom Instructions', 'Model', 'ID', 'Conversation ID', 'Remote ID')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_chatgpt_conversations(files_found, report_folder, seeker, wrap_text):
+def get_chatgpt_conversations(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -242,11 +243,12 @@ def get_chatgpt_conversations(files_found, report_folder, seeker, wrap_text):
     data_headers = ('Account', ('Message Date', 'datetime'), 'Message ID', 'Conversation ID', 'Title', 'Role',
                     'Content', 'Role Name', 'Attachments', 'Model', 'Complete', 'Blocked', 'Flagged',
                     'Interrupted', 'User System Message', 'Voice Message')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_chatgpt_user(files_found, report_folder, seeker, wrap_text):
+def get_chatgpt_user(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -260,11 +262,12 @@ def get_chatgpt_user(files_found, report_folder, seeker, wrap_text):
                               _sec_to_utc(info.get('created', 0)), info.get('picture', '')))
 
     data_headers = ('User-ID', 'Email', 'Name', ('Account Creation Time', 'datetime'), 'Picture')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_chatgpt_accountstatus(files_found, report_folder, seeker, wrap_text):
+def get_chatgpt_accountstatus(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -282,11 +285,12 @@ def get_chatgpt_accountstatus(files_found, report_folder, seeker, wrap_text):
 
     data_headers = ('Account', 'Account-ID', 'Account-User-ID', 'Subscription Plan', 'Plan Type',
                     'Subscription Purchase Origin', 'Subscription Will Renew', 'Structure', 'Is Deactivated')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_chatgpt_accountuserstate(files_found, report_folder, seeker, wrap_text):
+def get_chatgpt_accountuserstate(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -315,11 +319,12 @@ def get_chatgpt_accountuserstate(files_found, report_folder, seeker, wrap_text):
                     ('Account Creation Time', 'datetime'), 'Subscription Plan', 'Plan Type',
                     'Subscription Purchase Origin', 'Subscription Will Renew', 'Plan Expiration Date',
                     'Structure', 'Is Deactivated', 'Picture')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_chatgpt_custominstructions(files_found, report_folder, seeker, wrap_text):
+def get_chatgpt_custominstructions(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -333,11 +338,12 @@ def get_chatgpt_custominstructions(files_found, report_folder, seeker, wrap_text
                               info.get('about_model_message', '')))
 
     data_headers = ('Are Enabled', 'About User Message', 'About Model Message')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_chatgpt_usersettings(files_found, report_folder, seeker, wrap_text):
+def get_chatgpt_usersettings(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -354,11 +360,12 @@ def get_chatgpt_usersettings(files_found, report_folder, seeker, wrap_text):
 
     data_headers = ('Chat History Disabled', 'Seen Custom Instructions Intro', 'Seen Voice Intro',
                     'Seen Voice Selection')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_chatgpt_analytics(files_found, report_folder, seeker, wrap_text):
+def get_chatgpt_analytics(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -387,11 +394,12 @@ def get_chatgpt_analytics(files_found, report_folder, seeker, wrap_text):
 
     data_headers = ('User-ID', 'Anonymous-ID', 'Email', 'Device-ID', 'Workspace-ID', 'Account Has Plus',
                     'Plan Type', 'Has Active Subscription', 'App Version')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def get_chatgpt_media(files_found, report_folder, seeker, wrap_text):
+def get_chatgpt_media(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -402,7 +410,7 @@ def get_chatgpt_media(files_found, report_folder, seeker, wrap_text):
             continue
         name = os.path.basename(file_found)
         source_path = str(Path(file_found).parents[1])
-        data_list.append((check_in_media(file_found, name), name, file_found))
+        data_list.append((check_in_media(file_found, name), name, context.get_relative_path(file_found)))
 
     data_headers = (('Thumbnail', 'media'), 'Filename', 'Location')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
