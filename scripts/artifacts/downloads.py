@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "downloads": {
         "name": "Native Downloads",
@@ -18,8 +17,8 @@ __artifacts_v2__ = {
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
-def downloads(files_found, report_folder, seeker, wrap_text):
-    
+def downloads(context):
+    files_found = context.get_files_found()
     data_list = []
     
     for file_found in files_found:
@@ -64,7 +63,7 @@ def downloads(files_found, report_folder, seeker, wrap_text):
                     else:
                         last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),'UTC')
                 
-                    data_list.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],file_found))
+                    data_list.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],context.get_relative_path(file_found)))
             db.close()
                     
         else:

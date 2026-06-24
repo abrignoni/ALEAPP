@@ -14,10 +14,11 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
-def googleCast(files_found, report_folder, seeker, wrap_text):
+def googleCast(context):
+    files_found = context.get_files_found()
     data_list = []
     
     for file_found in files_found:
@@ -78,7 +79,7 @@ def googleCast(files_found, report_folder, seeker, wrap_text):
                     else:
                         last_discovered_ble = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_discovered_ble),'UTC')
                 
-                    data_list.append((last_published,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],last_discovered,last_discovered_ble,file_found))
+                    data_list.append((last_published,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],last_discovered,last_discovered_ble,context.get_relative_path(file_found)))
             db.close()
         else:
             continue # Skip all other files
