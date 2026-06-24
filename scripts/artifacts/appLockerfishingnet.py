@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_appLockerfishingnet": {
         "name": "App Locker",
@@ -29,7 +28,8 @@ STANDARD_IV = '526e7934384e693861506a59436e5549'
 
 
 @artifact_processor
-def get_appLockerfishingnet(files_found, report_folder, seeker, wrap_text):
+def get_appLockerfishingnet(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -63,7 +63,7 @@ def get_appLockerfishingnet(files_found, report_folder, seeker, wrap_text):
                 thumb = check_in_media(file_found, filename)
                 decrypted = 'False'
 
-        data_list.append((thumb, filename, decrypted, file_found))
+        data_list.append((thumb, filename, decrypted, context.get_relative_path(file_found)))
 
     data_headers = (('Media', 'media'), 'Filename', 'Decrypted?', 'Full Path')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
