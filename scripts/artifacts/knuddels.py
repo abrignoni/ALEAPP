@@ -67,6 +67,7 @@ __artifacts_v2__ = {
 import os
 import re
 import codecs
+import sqlite3
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from urllib.parse import unquote_plus
@@ -97,7 +98,7 @@ def rot13(text):
         return ""
     try:
         return codecs.decode(text, "rot_13")
-    except Exception:
+    except (TypeError, UnicodeError):
         return text
 
 
@@ -107,7 +108,7 @@ def parse_shared_prefs_xml(path):
         return result
     try:
         root = ET.parse(path).getroot()
-    except Exception:
+    except (ET.ParseError, OSError):
         return result
     for elem in root:
         name = elem.get("name")
@@ -153,8 +154,7 @@ def reconstruct_gif_urls(message):
 
 
 @artifact_processor
-def knuddels_chats(context):
-    files_found = context.get_files_found()
+def knuddels_chats(files_found, _report_folder, _seeker, _wrap_text):
     data_list = []
 
     db_files, image_files = [], []
@@ -243,7 +243,7 @@ def knuddels_chats(context):
 
 
 @artifact_processor
-def knuddels_contacts(files_found, report_folder, seeker, wrap_text):
+def knuddels_contacts(files_found, _report_folder, _seeker, _wrap_text):
     data_list = []
 
     for file_found in files_found:
@@ -304,7 +304,7 @@ def knuddels_contacts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def knuddels_account(files_found, report_folder, seeker, wrap_text):
+def knuddels_account(files_found, _report_folder, _seeker, _wrap_text):
     prefs_by_instance = {}
     db_files = []
     for f in files_found:
@@ -371,7 +371,7 @@ def knuddels_account(files_found, report_folder, seeker, wrap_text):
             rows = get_sqlite_db_records(db, "SELECT max(timestamp) FROM thread")
             if rows and rows[0] and rows[0][0]:
                 last_msg = ms_to_utc(rows[0][0])
-        except Exception:
+        except sqlite3.Error:
             pass
 
         info = active.get(instance)
