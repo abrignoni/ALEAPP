@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         'artifact_icon': 'battery-charging'
     },
     'Life360_Drive_Events': {
-        'name': 'Life360 Drive Events',
+        'name': 'Life360 Drive Events (EventStore)',
         'description': 'Parses Life360 Drive Events (EventStore)',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',

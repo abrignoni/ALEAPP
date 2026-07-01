@@ -14,7 +14,7 @@ __artifacts_v2__ = {
         'artifact_icon': 'map-pin'
     },
     'Life360_DriveEvents': {
-        'name': 'Life360 Drive Events',
+        'name': 'Life360 Drive Events (DriveBladeDB)',
         'description': 'Parses Life360 Drive Events (DriveBladeDB)',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
