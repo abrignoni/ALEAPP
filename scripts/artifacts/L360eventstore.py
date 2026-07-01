@@ -40,7 +40,7 @@ __artifacts_v2__ = {
     },
     'Life360_Drive_Events': {
         'name': 'Life360 Drive Events',
-        'description': 'Parses Life360 Drive Events',
+        'description': 'Parses Life360 Drive Events (EventStore)',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
         'last_update_date': '2026-06-30',
