@@ -10,6 +10,10 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 |----------------|
 | DuckDuckGo |
 | FairEmail |
+| L360circlesettings |
+| L360memberscircles |
+| L360petprofile |
+| L360user |
 | LinkedIn |
 | OrnetBrowser |
 | ProtonDrive |
@@ -74,6 +78,10 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | GarminWeight |
 | HideX |
 | K9Mail |
+| L360driveblade |
+| L360eventstore |
+| L360noshowalerts |
+| L360places |
 | Life360 |
 | MMWActivities |
 | MMWUsers |
