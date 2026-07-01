@@ -14,7 +14,6 @@ __artifacts_v2__ = {
     }
 }
 
-from datetime import datetime, timezone
 from scripts.ilapfuncs import (
     artifact_processor,
     get_file_path,
@@ -46,7 +45,7 @@ def Life360_User(context):
 
             data_list.append((record[0], record[1]))
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f'Error processing Life360 User: {e}')
 
     data_headers = ('Key', 'Value')

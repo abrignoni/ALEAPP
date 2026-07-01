@@ -64,7 +64,7 @@ def Life360_MemberCircles(context):
 
             data_list.append((created_timestamp, updated_timestamp, record[2], record[3], record[4], record[5], record[6], record[7], record[8], record[9], second_created_timestamp,second_updated_timestamp, record[12]))
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f'Error processing Life360 MemberCircles: {e}')
 
     data_headers = (('Created Timestamp', 'datetime'), ('Updated Timestamp', 'datetime'), 'Member ID', 'First Name', 'Last Name', 'Email', 'Phone Number', 'Avatar', 'Admin', 'Role', ('Circle Created Timestamp', 'datetime'), ('Circle Updated Timestamp', 'datetime'), 'Circle Name')

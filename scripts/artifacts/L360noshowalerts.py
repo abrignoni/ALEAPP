@@ -17,7 +17,6 @@ __artifacts_v2__ = {
 
 import datetime
 import struct
-import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
 
@@ -111,8 +110,8 @@ def _parse_leaf_page(page_data, page_offset=0):
             ptr = struct.unpack('>H', page_data[8 + i * 2: 10 + i * 2])[0]
             cell = page_data[ptr:]
 
-            payload_len, pos = _read_varint(cell, 0)
-            rowid, pos = _read_varint(cell, pos)
+            _, pos = _read_varint(cell, 0)
+            _, pos = _read_varint(cell, pos)
 
             header_start = pos
             header_size, pos = _read_varint(cell, pos)
@@ -133,7 +132,7 @@ def _parse_leaf_page(page_data, page_offset=0):
             if record.get('id'):
                 record['_cell_offset'] = page_offset + ptr
                 records.append(record)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             continue
 
     return records
@@ -176,7 +175,7 @@ def _recover_from_wal(wal_path, data_page_num=4):
                     record['_wal_offset'] = record.get('_cell_offset', '')
                     recovered.append(record)
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f'Life360_NoShowAlerts WAL parse error: {e}')
 
     return recovered
@@ -224,7 +223,7 @@ def Life360_NoShowAlerts(context):
                     'Live', '', ''
                 ))
             db.close()
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logfunc(f'Life360_NoShowAlerts DB error: {e}')
 
     # --- Deleted records recovered from WAL ---

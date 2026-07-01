@@ -14,7 +14,6 @@ __artifacts_v2__ = {
     }
 }
 
-from datetime import datetime, timezone
 from scripts.ilapfuncs import (
     artifact_processor,
     get_file_path,
@@ -60,7 +59,7 @@ def Life360_CircleSettings(context):
 
             data_list.append((record[0], record[1], record[2], record[3], record[4], record[5], record[6], record[7], record[8], record[9], record[10], record[11], record[12], record[13], record[14]))
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f'Error processing Life360 CircleSettings: {e}')
 
     data_headers = ('Circle ID', 'App Features', 'App Features ID', 'Collision Alerts Push', 'Collision Alerts SMS', 'Customer Support', 'Data Breach Detection', 'Driver Reports', 'Location History', 'Place Alerts', 'Plan', 'SOS Alerts Push', 'SOS Alerts SMS', 'TileGPS Activation', 'Uber One')

@@ -32,7 +32,7 @@ __artifacts_v2__ = {
 import datetime
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 def _ms_to_utc(value):
