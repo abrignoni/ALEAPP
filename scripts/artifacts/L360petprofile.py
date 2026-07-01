@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/PetProfileRoomDatabase*',),
         'output_types': 'standard',
-        'artifact_icon': 'github'
+        'artifact_icon': 'smile'
     }
 }
 
