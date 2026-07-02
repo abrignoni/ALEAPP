@@ -154,7 +154,8 @@ def reconstruct_gif_urls(message):
 
 
 @artifact_processor
-def knuddels_chats(files_found, _report_folder, _seeker, _wrap_text):
+def knuddels_chats(context):
+    files_found = context.get_files_found()
     data_list = []
 
     db_files, image_files = [], []
@@ -239,17 +240,23 @@ def knuddels_chats(files_found, _report_folder, _seeker, _wrap_text):
         'Thread Table UID',
         'Users Table UID',
     )
-    return data_headers, data_list, "See source file(s) below:"
+    
+    db_count = len(db_files)
+    source_note = f"{db_count} Knuddels database{'s' if db_count != 1 else ''} - see Source File column"
+    return data_headers, data_list, source_note
 
 
 @artifact_processor
-def knuddels_contacts(files_found, _report_folder, _seeker, _wrap_text):
+def knuddels_contacts(context):
+    files_found = context.get_files_found()
     data_list = []
+    db_count = 0
 
     for file_found in files_found:
         file_found = str(file_found)
         if guess_mime(file_found) != 'application/x-sqlite3':
             continue
+        db_count += 1
 
         query = '''
         SELECT
@@ -300,11 +307,13 @@ def knuddels_contacts(files_found, _report_folder, _seeker, _wrap_text):
         'Distance',
         'Source File',
     )
-    return data_headers, data_list, "See source file(s) below:"
+    source_note = f"{db_count} Knuddels database{'s' if db_count != 1 else ''} - see Source File column"
+    return data_headers, data_list, source_note
 
 
 @artifact_processor
-def knuddels_account(files_found, _report_folder, _seeker, _wrap_text):
+def knuddels_account(context):
+    files_found = context.get_files_found()
     prefs_by_instance = {}
     db_files = []
     for f in files_found:
@@ -406,4 +415,6 @@ def knuddels_account(files_found, _report_folder, _seeker, _wrap_text):
         ('Last Message', 'datetime'),
         'Source File',
     )
-    return data_headers, data_list, ''
+    db_count = len(db_files)
+    source_note = f"{db_count} Knuddels database{'s' if db_count != 1 else ''} - see Source File column"
+    return data_headers, data_list, source_note
