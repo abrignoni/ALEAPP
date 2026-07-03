@@ -5,16 +5,27 @@ __artifacts_v2__ = {
         "description": "Parses Discord chat messages from the kv-storage key-value store",
         "author": "",
         "creation_date": "2023-09-18",
-        "last_update_date": "2023-09-18",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "Discord Chats",
         "notes": "",
         "paths": ('*/data/com.discord/files/kv-storage/*/a*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Channel ID",
+                "textColumn": "Content",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Timestamp",
+                "senderColumn": "Username"
+            }
+        },
     }
 }
 
+import re
 import sys
 import json
 
@@ -42,6 +53,9 @@ def get_discordChats(files_found, report_folder, seeker, wrap_text):
             break # Skip all other files
 
     source_path = str(file_found)
+    # local account id is part of the kv-storage path
+    account_match = re.search(r'@account\.(\d+)', source_path)
+    account_id = account_match.group(1) if account_match else ''
     db = open_sqlite_db_readonly(file_found)
     cursor = db.cursor()
     cursor.execute('''
@@ -62,6 +76,7 @@ def get_discordChats(files_found, report_folder, seeker, wrap_text):
         channelid = (data['channelId'])
         dataid = (data['id'])
         username = (data['message']['author']['username'])
+        sender_id = str(data['message']['author'].get('id', ''))
         content = (data['message']['content'])
         attachments = (data['message']['attachments'])
         if len(attachments) > 0:
@@ -76,7 +91,11 @@ def get_discordChats(files_found, report_folder, seeker, wrap_text):
         avatar = (data['message']['author']['avatar'])
         editedtimestamp = (data['message']['edited_timestamp'])
 
-        data_list.append((datatimestamp,channelid,dataid,username,content,attachementfilename,attachementurl,attachmentproxyurl,mentions,mentionroles,pinned,avatar,editedtimestamp))
+        if account_id and sender_id:
+            direction = 'Outgoing' if sender_id == account_id else 'Incoming'
+        else:
+            direction = ''
+        data_list.append((datatimestamp,channelid,dataid,username,content,attachementfilename,attachementurl,attachmentproxyurl,mentions,mentionroles,pinned,avatar,editedtimestamp,sender_id,account_id,direction))
 
     db.close()
 
@@ -94,5 +113,8 @@ def get_discordChats(files_found, report_folder, seeker, wrap_text):
         'Pinned',
         'Avatar',
         ('Edited Timestamp', 'datetime'),
+        'Sender ID',
+        'Account ID',
+        'Direction',
     )
     return data_headers, data_list, source_path
