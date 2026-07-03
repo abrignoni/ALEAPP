@@ -5,13 +5,24 @@ __artifacts_v2__ = {
         "description": "SMS messages from mmssms.db (incl. LG extended types and Samsung spam_sms)",
         "author": "",
         "creation_date": "2020-03-10",
-        "last_update_date": "2020-03-10",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "SMS & MMS",
         "notes": "",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Thread ID",
+                "textColumn": "Body",
+                "directionColumn": "Type",
+                "directionSentValue": "Sent",
+                "timeColumn": "Date",
+                "senderColumn": "Address",
+                "sentMessageStaticLabel": "Local User"
+            }
+        },
     },
     "get_sms_mms_mms": {
         "name": "MMS Messages",

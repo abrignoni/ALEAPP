@@ -57,13 +57,25 @@ __artifacts_v2__ = {
         "description": "Extracts individual messages from the message database",
         "author": "@BrunoFischerGermany",
         "creation_date": "2024-04-13",
-        "last_update_date": "2024-04-13",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "kleinanzeigen.de App",
         "notes": "",
         "paths": ('*com.ebay.kleinanzeigen/databases/messageBoxDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Counterparty",
+                "conversationLabelColumn": "Counterparty",
+                "textColumn": "Message Text",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Timestamp",
+                "senderColumn": "Counterparty",
+                "sentMessageStaticLabel": "Local User"
+            }
+        },
     }
 }
 

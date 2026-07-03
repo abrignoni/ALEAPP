@@ -18,13 +18,23 @@ __artifacts_v2__ = {
         "description": "",
         "author": "",
         "creation_date": "2021-03-15",
-        "last_update_date": "2021-03-15",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "Skype",
         "notes": "",
         "paths": ('*/com.skype.raider/databases/live*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Thread ID",
+                "textColumn": "Content",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Send Time",
+                "senderColumn": "From ID"
+            }
+        },
     },
     "get_skype_contacts": {
         "name": "Skype - Contacts",

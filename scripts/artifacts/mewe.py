@@ -5,13 +5,24 @@ __artifacts_v2__ = {
         "description": "",
         "author": "",
         "creation_date": "2021-11-10",
-        "last_update_date": "2021-11-10",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "MeWe",
         "notes": "",
         "paths": ('*/com.mewe/databases/app_database',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Thread Id",
+                "conversationLabelColumn": "Thread Name",
+                "textColumn": "Message Text",
+                "directionColumn": "Message Direction",
+                "directionSentValue": "Sent",
+                "timeColumn": "Timestamp",
+                "senderColumn": "User Name"
+            }
+        },
     },
     "get_mewe_session": {
         "name": "MeWe - SGSession",

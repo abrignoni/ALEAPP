@@ -18,13 +18,25 @@ __artifacts_v2__ = {
         "description": "Burner calls and text messages",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-05",
-        "last_update_date": "2021-02-05",
+        "last_update_date": "2026-07-03",
         "requirements": "None",
         "category": "Burner",
         "notes": "",
         "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Other Party Number",
+                "conversationLabelColumn": "Other Party Contact Name",
+                "textColumn": "Message",
+                "directionColumn": "Communication Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Communication Time",
+                "senderColumn": "Other Party Contact Name",
+                "sentMessageStaticLabel": "Local User"
+            }
+        },
     }
 }
 

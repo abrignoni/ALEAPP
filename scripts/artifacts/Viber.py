@@ -31,13 +31,23 @@ __artifacts_v2__ = {
         "description": "",
         "author": "",
         "creation_date": "2020-12-24",
-        "last_update_date": "2020-12-24",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "Viber",
         "notes": "",
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Thread ID",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Message Date",
+                "senderColumn": "From Phone Number"
+            }
+        },
     },
     "get_Viber_additional": {
         "name": "Viber - Additional",
