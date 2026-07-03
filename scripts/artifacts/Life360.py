@@ -5,13 +5,23 @@ __artifacts_v2__ = {
         "description": "Parses Life360 chat messages (messaging.db)",
         "author": "@KevinPagano3",
         "creation_date": "2024-01-17",
-        "last_update_date": "2024-01-17",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "Life360",
         "notes": "",
         "paths": ('*/com.life360.android.safetymapd/databases/messaging.db*',),
         "output_types": "all",
         "artifact_icon": "message-circle",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Thread ID",
+                "textColumn": "Message",
+                "directionColumn": "Message Sent",
+                "directionSentValue": "Yes",
+                "timeColumn": "Timestamp",
+                "senderColumn": "Sender Name"
+            }
+        },
     },
     "get_Life360_places": {
         "name": "Life360 - Places",

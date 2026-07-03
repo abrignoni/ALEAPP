@@ -5,26 +5,48 @@ __artifacts_v2__ = {
         "description": "MMS messages recovered from backup.ab telephony backup files",
         "author": "",
         "creation_date": "2024-08-15",
-        "last_update_date": "2024-08-15",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "SMS & MMS from backup.ab",
         "notes": "",
         "paths": ('*/com.android.providers.telephony/d_f/*_backup',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Recipients",
+                "textColumn": "Body",
+                "directionColumn": "Message Box",
+                "directionSentValue": "Sent",
+                "timeColumn": "Date",
+                "senderColumn": "Recipients",
+                "sentMessageStaticLabel": "Local User"
+            }
+        },
     },
     "get_sms_from_backup": {
         "name": "SMS and MMS Backup - SMS",
         "description": "SMS messages recovered from backup.ab telephony backup files",
         "author": "",
         "creation_date": "2024-08-15",
-        "last_update_date": "2024-08-15",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "SMS & MMS from backup.ab",
         "notes": "",
         "paths": ('*/com.android.providers.telephony/d_f/*_backup',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Address",
+                "textColumn": "Body",
+                "directionColumn": "Direction",
+                "directionSentValue": "Sent",
+                "timeColumn": "Date",
+                "senderColumn": "Address",
+                "sentMessageStaticLabel": "Local User"
+            }
+        },
     }
 }
 
@@ -42,6 +64,8 @@ slash = '\\' if is_platform_windows() else '/'
 EPOCH = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
 
 MMS_BOX = {'0': 'All messages', '1': 'Inbox', '2': 'Sent', '3': 'Drafts', '4': 'Outbox', '5': 'Failed'}
+# Telephony.Sms type values stored in the backup XML
+SMS_TYPE = {'1': 'Received', '2': 'Sent', '3': 'Draft', '4': 'Outbox', '5': 'Failed', '6': 'Queued'}
 
 
 def ReadUnixTimeMs(unix_time):
@@ -128,7 +152,8 @@ def get_sms_from_backup(files_found, report_folder, seeker, wrap_text):
             data_list.append((
                 ReadUnixTimeMs(sms.get('date', 0)), ReadUnixTimeMs(sms.get('date_sent', 0)),
                 sms.get('read', ''), sms.get('type', ''), body,
-                ', '.join(sms.get('recipients', [])), sms.get('address', ''), sms.get('status', '')))
+                ', '.join(sms.get('recipients', [])), sms.get('address', ''), sms.get('status', ''),
+                SMS_TYPE.get(sms.get('type', ''), sms.get('type', ''))))
 
-    data_headers = (('Date', 'datetime'), ('Date sent', 'datetime'), 'Read', 'Type', 'Body', 'recipients', ('Address', 'phonenumber'), 'Status')
+    data_headers = (('Date', 'datetime'), ('Date sent', 'datetime'), 'Read', 'Type', 'Body', 'recipients', ('Address', 'phonenumber'), 'Status', 'Direction')
     return data_headers, data_list, source_path

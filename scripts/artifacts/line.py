@@ -18,13 +18,23 @@ __artifacts_v2__ = {
         "description": "",
         "author": "",
         "creation_date": "2021-03-15",
-        "last_update_date": "2021-03-15",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "Line",
         "notes": "",
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Thread ID",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Start Time",
+                "senderColumn": "From ID"
+            }
+        },
     },
     "get_line_calls": {
         "name": "Line - Call Logs",
