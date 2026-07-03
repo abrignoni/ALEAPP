@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "description": "MMS messages and attachments from mmssms.db",
         "author": "",
         "creation_date": "2020-03-10",
-        "last_update_date": "2020-03-10",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "SMS & MMS",
         "notes": "",
@@ -38,6 +38,18 @@ __artifacts_v2__ = {
                   '*/com.android.providers.telephony/parts/*'),
         "output_types": "standard",
         "artifact_icon": "image",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Thread ID",
+                "textColumn": "Body",
+                "directionColumn": "Direction",
+                "directionSentValue": "Sent",
+                "timeColumn": "Date",
+                "senderColumn": "From Address",
+                "sentMessageStaticLabel": "Local User",
+                "mediaColumn": "Media"
+            }
+        },
     }
 }
 
@@ -64,7 +76,7 @@ _LG_EXTENDED_TYPES = '''
 '''
 
 _MMS_QUERY = '''
-    SELECT pdu._id as mms_id, thread_id, pdu.date as date, pdu.date_sent as date_sent, read,
+    SELECT pdu._id as mms_id, thread_id, pdu.date as date, pdu.date_sent as date_sent, read, pdu.msg_box as msg_box,
         (SELECT address FROM addr WHERE pdu._id=addr.msg_id and addr.type=0x89) as "FROM",
         (SELECT address FROM addr WHERE pdu._id=addr.msg_id and addr.type=0x97) as "TO",
         (SELECT address FROM addr WHERE pdu._id=addr.msg_id and addr.type=0x82) as "CC",
@@ -73,6 +85,10 @@ _MMS_QUERY = '''
     FROM pdu LEFT JOIN part ON part.mid=pdu._id
     ORDER BY pdu._id, date, part_id
 '''
+
+
+# Telephony.Mms msg_box values; wording mirrors the SMS type CASE
+_MMS_BOX_DIRECTION = {1: 'Received', 2: 'Sent', 3: 'Draft', 4: 'Outbox'}
 
 
 def _ms_to_utc(value):
@@ -154,10 +170,11 @@ def get_sms_mms_mms(files_found, report_folder, seeker, wrap_text):
                     body = str(data_path)
             else:
                 body = r['text'] or ''
+            direction = _MMS_BOX_DIRECTION.get(r['msg_box'], r['msg_box'])
             data_list.append((_sec_to_utc(r['date']), r['mms_id'], r['thread_id'],
                               _sec_to_utc(r['date_sent']), r['read'], r['FROM'], r['TO'], r['CC'],
-                              r['BCC'], body, media_ref))
+                              r['BCC'], body, media_ref, direction))
 
     data_headers = (('Date', 'datetime'), 'MSG ID', 'Thread ID', ('Date Sent', 'datetime'), 'Read',
-                    'From Address', 'To Address', 'Cc', 'Bcc', 'Body', ('Media', 'media'))
+                    'From Address', 'To Address', 'Cc', 'Bcc', 'Body', ('Media', 'media'), 'Direction')
     return data_headers, data_list, source_path
