@@ -26,7 +26,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.linkedin.android/databases/messenger-sdk*'),
         "output_types": "standard",
         "data_views": {
-            "chat": {
+            "conversation": {
                 "directionSentValue": 1,
                 "conversationDiscriminatorColumn": "Conversation Urn",
                 "textColumn": "Message",
