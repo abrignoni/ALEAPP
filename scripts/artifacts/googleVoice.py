@@ -44,13 +44,24 @@ __artifacts_v2__ = {
         "description": "Parses Google Voice Messages",
         "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
         "creation_date": "2025-10-22",
-        "last_update_date": "2025-11-5",
+        "last_update_date": "2026-07-03",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
         "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/Photo MMS images/*', '*/data/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Conversation ID",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Timestamp",
+                "senderColumn": "Sender",
+                "mediaColumn": "Image"
+            }
+        },
     }
 }
 

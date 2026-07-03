@@ -18,13 +18,23 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger chat messages (msys_database)",
         "author": "Kevin Pagano",
         "creation_date": "2021-03-03",
-        "last_update_date": "2021-03-03",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Thread Key",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Message Timestamp",
+                "senderColumn": "Sender"
+            }
+        },
     },
     "get_fb_msys_calls": {
         "name": "Facebook Messenger - Calls (msys_database)",
@@ -164,6 +174,16 @@ def get_fb_msys_chats(files_found, report_folder, seeker, wrap_text):
         if 'msys_database_' not in file_found:
             continue
         source = source or file_found
+        # local account uid from the threads_db2-uid file (fetched via paths)
+        fb_uid = ''
+        for uid_file in files_found:
+            if str(uid_file).endswith('threads_db2-uid'):
+                try:
+                    with open(str(uid_file), 'r', encoding='utf-8', errors='replace') as dat:
+                        fb_uid = next((line.strip() for line in dat if line.strip()), '')
+                except OSError:
+                    fb_uid = ''
+                break
         rel = _src(file_found, seeker)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
@@ -196,16 +216,20 @@ def get_fb_msys_chats(files_found, report_folder, seeker, wrap_text):
         ORDER BY messages.timestamp_ms ASC
         ''')
         for row in rows:
+            if fb_uid and row[2] is not None:
+                direction = 'Outgoing' if str(row[2]) == fb_uid else 'Incoming'
+            else:
+                direction = ''
             data_list.append((_str_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5], row[6],
                               row[7], row[8], row[9], row[10], row[11], _str_to_utc(row[12]), row[13],
-                              row[14], rel))
+                              row[14], rel, direction))
         db.close()
 
     data_headers = (('Message Timestamp', 'datetime'), 'Sender', 'Sender ID', 'Thread Key', 'Message',
                     'Snippet', 'Call/Location Information', 'Attachment Name', 'Attachment Type',
                     'Attachment URL', 'Location Lat/Long', 'Reaction',
                     ('Reaction Timestamp', 'datetime'), 'Is Admin Message', 'Message ID',
-                    'Source File')
+                    'Source File', 'Direction')
     return data_headers, data_list, source
 
 

@@ -44,7 +44,7 @@ __artifacts_v2__ = {
         "description": "WhatsApp 1:1 messages (modern msgstore.db schema)",
         "author": "",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "",
@@ -53,13 +53,25 @@ __artifacts_v2__ = {
                   '*/Android/media/com.whatsapp/WhatsApp/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Other Participant WA User Name",
+                "textColumn": "Message",
+                "directionColumn": "Message Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Message Timestamp",
+                "senderColumn": "Other Participant WA User Name",
+                "sentMessageStaticLabel": "Local User",
+                "mediaColumn": "Media"
+            }
+        },
     },
     "get_whatsapp_group_messages": {
         "name": "WhatsApp - Group Messages",
         "description": "WhatsApp group messages (modern msgstore.db schema)",
         "author": "",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "",
@@ -68,6 +80,17 @@ __artifacts_v2__ = {
                   '*/Android/media/com.whatsapp/WhatsApp/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Conversation Name",
+                "textColumn": "Message",
+                "directionColumn": "Message Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Message Timestamp",
+                "senderColumn": "Sending Party",
+                "mediaColumn": "Media"
+            }
+        },
     },
     "get_whatsapp_group_details": {
         "name": "WhatsApp - Group Details",

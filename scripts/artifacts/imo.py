@@ -18,13 +18,24 @@ __artifacts_v2__ = {
         "description": "",
         "author": "",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "IMO",
         "notes": "",
         "paths": ('*/com.imo.android.imous/databases/imofriends.db*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Chat Partner",
+                "textColumn": "Last Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Timestamp",
+                "senderColumn": "Chat Partner",
+                "sentMessageStaticLabel": "Local User"
+            }
+        },
     }
 }
 
@@ -101,7 +112,7 @@ def get_imo_messages(files_found, report_folder, seeker, wrap_text):
                         attachmentPath = attachmentLocalPath
 
                 timestamp = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc)
-                data_list.append((timestamp, from_id, to_id, row[2],  row[4], row[5], attachmentPath))
+                data_list.append((timestamp, from_id, to_id, row[2],  row[4], row[5], attachmentPath, row[0]))
             db.close()
 
     data_headers = (
@@ -112,5 +123,6 @@ def get_imo_messages(files_found, report_folder, seeker, wrap_text):
         'Direction',
         'Message Read',
         'Attachment',
+        'Chat Partner',
     )
     return data_headers, data_list, source_path
