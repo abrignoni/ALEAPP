@@ -5,13 +5,24 @@ __artifacts_v2__ = {
         "description": "Google Messages",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-01-30",
-        "last_update_date": "2021-01-30",
+        "last_update_date": "2026-07-03",
         "requirements": "None",
         "category": "Google Messages",
         "notes": "",
         "paths": ('*/com.google.android.apps.messaging/databases/bugle_db*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Conversation ID",
+                "conversationLabelColumn": "Other Participant/Conversation Name",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Message Timestamp",
+                "senderColumn": "Message Sender"
+            }
+        },
     }
 }
 
@@ -44,7 +55,9 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         WHEN parts.file_size_bytes=-1 THEN "N/A"
         ELSE parts.file_size_bytes
         END AS "Attachment Byte Size",
-        parts.local_cache_path AS "Attachment Location"
+        parts.local_cache_path AS "Attachment Location",
+        parts.conversation_id AS "Conversation ID",
+        CASE WHEN participants.sub_id != -2 THEN 'Outgoing' ELSE 'Incoming' END AS "Direction"
         FROM
         parts
         JOIN messages ON messages._id=parts.message_id
@@ -57,7 +70,7 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
 
         for row in all_rows:
             timestamp = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
-            data_list.append((timestamp, row[1], row[2], row[3], row[4], row[5], row[6]))
+            data_list.append((timestamp, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
 
-    data_headers = (('Message Timestamp', 'datetime'), 'Message Type', 'Other Participant/Conversation Name', ('Message Sender', 'phonenumber'), 'Message', 'Attachment Byte Size', 'Attachment Location')
+    data_headers = (('Message Timestamp', 'datetime'), 'Message Type', 'Other Participant/Conversation Name', ('Message Sender', 'phonenumber'), 'Message', 'Attachment Byte Size', 'Attachment Location', 'Conversation ID', 'Direction')
     return data_headers, data_list, source_path

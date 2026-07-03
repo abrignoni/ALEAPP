@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Google Chat messages (dynamite.db)",
         "author": "Josh Hickman & Alexis Brignoni",
         "creation_date": "2021-02-05",
-        "last_update_date": "2021-02-05",
+        "last_update_date": "2026-07-03",
         "requirements": "blackboxprotobuf",
         "category": "Google Chat",
         "notes": "",
@@ -14,6 +14,17 @@ __artifacts_v2__ = {
                   '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Group ID",
+                "conversationLabelColumn": "Group Name",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Message Timestamp",
+                "senderColumn": "Sender"
+            }
+        },
     },
     "get_googleChat_groups": {
         "name": "Google Chat - Groups",
@@ -64,6 +75,7 @@ __artifacts_v2__ = {
 
 import datetime
 import os
+import re
 import sqlite3
 
 import blackboxprotobuf
@@ -139,19 +151,32 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text):
     for source_path in _dbs(files_found):
         rows = _run(source_path, '''
             SELECT topic_messages.create_time, Groups.name, users.name, topic_messages.text_body,
-                   topic_messages.annotation
+                   topic_messages.annotation, topic_messages.group_id, topic_messages.creator_id
             FROM topic_messages
             JOIN Groups on Groups.group_id=topic_messages.group_id
             JOIN users ON users.user_id=topic_messages.creator_id
             ORDER BY topic_messages.create_time ASC
         ''')
+        # the account email is in the db path (user_accounts/<email>/dynamite.db);
+        # resolve it to the gaia id via the users table of the same db
+        owner_id = ''
+        email_match = re.search(r'user_accounts/([^/]+)/dynamite\.db', source_path.replace('\\', '/'))
+        if email_match:
+            email_sql = email_match.group(1).replace("'", "''")
+            owner_rows = _run(source_path, f"SELECT user_id FROM users WHERE email = '{email_sql}'")
+            if owner_rows:
+                owner_id = str(owner_rows[0][0])
         for r in rows:
             ann = _parse_annotation(r[4])
-            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3]) + ann + (source_path,))
+            if owner_id and r[6] is not None:
+                direction = 'Outgoing' if str(r[6]) == owner_id else 'Incoming'
+            else:
+                direction = ''
+            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3]) + ann + (source_path, r[5], direction))
 
     data_headers = (('Message Timestamp', 'datetime'), 'Group Name', 'Sender', 'Message',
                     'Meeting Code', 'Meeting URL', 'Meeting Sender', 'Meeting Sender Profile Pic URL',
-                    'Filename', 'File Type', 'Width', 'Height', 'Source File')
+                    'Filename', 'File Type', 'Width', 'Height', 'Source File', 'Group ID', 'Direction')
     return data_headers, data_list, source_path
 
 
