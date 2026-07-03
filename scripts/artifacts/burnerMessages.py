@@ -6,13 +6,25 @@ __artifacts_v2__ = {
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
         "version": "0.0.1",
         "creation_date": "2024-02-15",
-        "last_update_date": "2024-02-15",
+        "last_update_date": "2026-07-02",
         "requirements": "none",
         "category": "Burner",
         "notes": "",
         "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Contact",
+                "conversationLabelColumn": "Contact",
+                "textColumn": "Message Text",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Timestamp",
+                "senderColumn": "Contact",
+                "sentMessageStaticLabel": "Local User"
+            }
+        },
     }
 }
 
