@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Teleguard messenger messages",
         "author": "",
         "creation_date": "2024-01-09",
-        "last_update_date": "2024-01-09",
+        "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "Teleguard",
         "notes": "",
@@ -13,6 +13,17 @@ __artifacts_v2__ = {
                   '*/data/ch.swisscows.messenger.teleguardapp/cache/**'),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Chat ID",
+                "textColumn": "Content",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Timestamp",
+                "senderColumn": "Sender",
+                "mediaColumn": "Media"
+            }
+        },
     },
     "get_teleguard_posts": {
         "name": "Teleguard - Posts",
@@ -99,9 +110,16 @@ def get_teleguard(files_found, report_folder, seeker, wrap_text):
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT datetime(createDate/1000,'unixepoch'), datetime(userTime/1000,'unixepoch'),
-        type, sender, receiver, content, metadata, status, isEdited
+        type, sender, receiver, content, metadata, status, isEdited, chatId
         FROM messages
     ''')
+    # local account id lives in the service table ('user' row) of the same db
+    owner_id = ''
+    for (svc_data,) in _run(source_path, "SELECT data FROM service WHERE id = 'user'"):
+        try:
+            owner_id = (json.loads(svc_data) or {}).get('serverId', '')
+        except (ValueError, TypeError):
+            owner_id = ''
     data_list = []
     for row in rows:
         media_refs = []
@@ -129,11 +147,16 @@ def get_teleguard(files_found, report_folder, seeker, wrap_text):
             media_cell = media_refs
         else:
             media_cell = ''
+        if owner_id and row[3]:
+            direction = 'Outgoing' if row[3] == owner_id else 'Incoming'
+        else:
+            direction = ''
         data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3], row[4], row[5],
-                          media_cell, row[6], row[7], row[8]))
+                          media_cell, row[6], row[7], row[8], direction, row[9]))
 
     data_headers = (('Timestamp', 'datetime'), ('User Time', 'datetime'), 'Type', 'Sender', 'Receiver',
-                    'Content', ('Media', 'media'), 'Metadata', 'Status', 'Is Edited?')
+                    'Content', ('Media', 'media'), 'Metadata', 'Status', 'Is Edited?', 'Direction',
+                    'Chat ID')
     return data_headers, data_list, source_path
 
 
