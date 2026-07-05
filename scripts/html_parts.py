@@ -34,9 +34,6 @@ page_header = \
         <link rel="stylesheet" href="_elements/MDB-Free_4.13.0/css/addons/datatables.min.css" rel="stylesheet">
         <link href="_elements/timeline/css/timeline.min.css" rel="stylesheet" />
 
-        <!-- Icons -->
-        <!--script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script-->
-        <script src="_elements/feather.min.js"></script>
     </head>
     <body>
 """
@@ -59,66 +56,12 @@ body_start = \
 """
 body_sidebar_setup = \
 """
-            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <nav class="col-md-2 d-none d-md-block bg-dark sidebar">
                 <div class="sidebar-sticky" id="sidebar_id">
                     <ul class="nav flex-column">
 """
 # The 'active' class must be set only for the current page, it will highlight that entry in blue
 #   class="nav-link active"
-# Below is sample data, use own generated data!
-body_sidebar_dynamic_data = \
-"""
-                        <h6 class="sidebar-heading justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            Saved reports
-                        </h6>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="home"></span> Report Home
-                            </a>
-                        </li>
-                        <h6 class="sidebar-heading justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            Recent Activity
-                        </h6>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="activity"></span> RecentActivity_0
-                            </a>
-                        </li>
-                        <h6 class="sidebar-heading justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            Script Logs
-                        </h6>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="archive"></span> Processed Files Log
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="archive"></span> Screen Output
-                            </a>
-                        </li>
-                        <h6 class="sidebar-heading justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            Usage Stats
-                        </h6>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="bar-chart-2"></span> UsageStats_0
-                            </a>
-                        </li>
-                        <h6 class="sidebar-heading justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            Wellbeing
-                        </h6>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="layers"></span> Events
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="user"></span> Wellbeing Account
-                            </a>
-                        </li>
-"""
 body_sidebar_dynamic_data_placeholder = '<!--__INSERT-NAV-BAR-DATA-HERE__-->'
 body_sidebar_trailer = \
 """
@@ -181,7 +124,7 @@ r"""
 """
 # tabs code for Case information in index.html
 # Variables are {case_table_code}, {script_run_log}, {processed_file_list}
-tabs_code = \
+tabs_nav = \
 """
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
@@ -196,14 +139,32 @@ tabs_code = \
         <li class="nav-item">
             <a class="nav-link" id="files-list-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Processed files list</a>
         </li>
+"""
+tabs_nav_with_lava = tabs_nav + \
+"""
+        <li class="nav-item">
+            <a class="nav-link" id="lava-tab" data-toggle="tab" href="#lava-only" role="tab" aria-controls="lava" aria-selected="false">LAVA only artifacts</a>
+        </li>
+"""
+tabs_contents = \
+"""
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="case" role="tabpanel" aria-labelledby="case-tab"><br />{}</div>
         <div class="tab-pane fade" id="device" role="tabpanel" aria-labelledby="device-tab"><br />{}</div>
         <div class="tab-pane fade text-monospace" id="run" role="tabpanel" aria-labelledby="script-run-tab"><br />{}</div>
         <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="profile-tab"><br />{}</div>
+"""
+tabs_code_with_lava = tabs_nav_with_lava + tabs_contents + \
+"""
+        <div class="tab-pane fade" id="lava-only" role="tabpanel" aria-labelledby="lava-tab"><br />{}</div>
     </div>
 """
+tabs_code = tabs_nav + tabs_contents + \
+"""
+    </div>
+"""
+
 # thank you note , at bottom of index.html
 thank_you_note = \
 """
@@ -289,14 +250,10 @@ body_end = \
     <!-- Garmin Functions -->
     <script type="text/javascript" src="_elements/garmin-functions.js"></script>
     <script type="text/javascript" src="_elements/chat.js"></script>
-    <script>
-        feather.replace()
-    </script>
 """
 nav_bar_script = \
 """
     <script>
-        feather.replace();
         var element = document.getElementById("sidebar_id");
         var searchParams = new URLSearchParams(window.location.search);
         if (searchParams.has('navpos')) {
