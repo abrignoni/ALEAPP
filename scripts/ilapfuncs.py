@@ -11,7 +11,7 @@ import shutil
 import sqlite3
 import sys
 
-from datetime import *
+from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote
@@ -71,13 +71,13 @@ class GuiWindow:
     window_handle = None  # static variable
 
     @staticmethod
-    def SetProgressBar(n, total):
+    def SetProgressBar(n, total):  # pylint: disable=unused-argument
         if GuiWindow.window_handle:
             progress_bar = GuiWindow.window_handle.nametowidget('progress_bar_frame.progress_bar')
             progress_bar.config(value=n)
 
 class MediaItem():
-    def __init__(self, id):
+    def __init__(self, id):  # pylint: disable=redefined-builtin
         self.id = id
         self.source_path = ""
         self.extraction_path = ""
@@ -98,7 +98,7 @@ class MediaItem():
         self.is_embedded = media_info[7]
 
 class MediaReferences():
-    def __init__(self, id):
+    def __init__(self, id):  # pylint: disable=redefined-builtin
         self.id = id
         self.media_item_id = ""
         self.module_name = ""
@@ -116,7 +116,7 @@ class MediaReferences():
 def logfunc(message=""):
     def redirect_logs(string):
         _console_write(string)
-        log_text.insert('end', string)
+        log_text.insert('end', string)  # pylint: disable=used-before-assignment
         log_text.see('end')
         log_text.update()
 
@@ -141,7 +141,7 @@ def get_media_header_info(data_headers):
             media_header_info[index] = style
     return media_header_info
 
-def check_output_types(type, output_types):
+def check_output_types(type, output_types):  # pylint: disable=redefined-builtin
     if type in output_types or type == output_types or 'all' in output_types or 'all' == output_types:
         return True
     elif type != 'kml' and ('standard' in output_types or 'standard' == output_types):
@@ -457,6 +457,10 @@ def artifact_processor(func):
 
         if not source_path:
             logfunc("No source_path provided")
+        else:
+            # Report extraction-relative paths, never the examiner's local filesystem
+            source_path = '\n'.join(
+                Context.get_relative_path(p) for p in str(source_path).split('\n'))
 
         if len(data_list):
             if isinstance(data_list, tuple):
@@ -564,7 +568,7 @@ def get_file_path(files_found, filename, skip=False):
                 continue
             if Path(file_found).match(filename):
                 return file_found
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f"Error: {str(e)}")
     return None        
 
@@ -583,7 +587,7 @@ def get_file_path_list_checking_uid(files_found, filename, position , skip=False
                 except ValueError:
                     pass
         return files_found_list
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f"Error: {str(e)}")
     return files_found_list        
 
@@ -596,7 +600,7 @@ def get_txt_file_content(file_path):
         logfunc(f"Error: File not found at {file_path}")
     except PermissionError:
         logfunc(f"Error: Permission denied when trying to read {file_path}")
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
     return []
 
@@ -608,7 +612,7 @@ def get_binary_file_content(file_path):
         logfunc(f"Error: File not found at {file_path}")
     except PermissionError:
         logfunc(f"Error: Permission denied when trying to read {file_path}")
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
     return bytes()
 
@@ -703,7 +707,6 @@ def does_column_exist_in_db(path, table_name, col_name):
                 return True
     except sqlite3.Error as ex:
         logfunc(f"Query error, query={query} Error={str(ex)}")
-        pass
     return False
 
 def does_table_exist_in_db(path, table_name):
@@ -713,7 +716,7 @@ def does_table_exist_in_db(path, table_name):
         try:
             query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"
             cursor = db.execute(query)
-            for row in cursor:
+            for _ in cursor:
                 return True
         except sqlite3.Error as ex:
             logfunc(f"Query error, query={query} Error={str(ex)}")
@@ -726,14 +729,14 @@ def does_view_exist_in_db(path, table_name):
         try:
             query = f"SELECT name FROM sqlite_master WHERE type='view' AND name='{table_name}'"
             cursor = db.execute(query)
-            for row in cursor:
+            for _ in cursor:
                 return True
         except sqlite3.Error as ex:
             logfunc(f"Query error, query={query} Error={str(ex)}")
     return False
 
 
-def tsv(report_folder, data_headers, data_list, tsvname, source_file=None):
+def tsv(report_folder, data_headers, data_list, tsvname, source_file=None):  # pylint: disable=unused-argument
     report_folder = report_folder.rstrip('/')
     report_folder = report_folder.rstrip('\\')
     report_folder_base = os.path.dirname(os.path.dirname(report_folder))
@@ -908,6 +911,7 @@ def media_to_html(media_path, files_found, report_folder):
     return thumb
 
 
+# pylint: disable-next=pointless-string-statement
 """
 Copyright 2021, CCL Forensics
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -1017,7 +1021,7 @@ def device_info(category, label, value, source_file=""):
     try:
         frame = inspect.stack()[1]
         func_name = frame.function
-    except:
+    except:  # pylint: disable=bare-except
         func_name = 'unknown'
     
     values = identifiers.get(category, {})
@@ -1082,10 +1086,10 @@ def convert_time_obj_to_utc(ts):
 
 def convert_utc_human_to_timezone(utc_time, time_offset): 
     #fetch the timezone information
-    timezone = pytz.timezone(time_offset)
+    tz_info = pytz.timezone(time_offset)
     
     #convert utc to timezone
-    timezone_time = utc_time.astimezone(timezone)
+    timezone_time = utc_time.astimezone(tz_info)
     
     #return the converted value
     return timezone_time
@@ -1136,9 +1140,9 @@ def abxread(in_path,
     import typing
     import xml.etree.ElementTree as etree
 
-    __version__ = "0.2.0"
-    __description__ = "Python module to convert Android ABX binary XML files"
-    __contact__ = "Alex Caithness"
+    __version__ = "0.2.0"  # pylint: disable=unused-variable
+    __description__ = "Python module to convert Android ABX binary XML files"  # pylint: disable=unused-variable
+    __contact__ = "Alex Caithness"  # pylint: disable=unused-variable
 
     # See: base/core/java/com/android/internal/util/BinaryXmlSerializer.java
 
@@ -1464,10 +1468,10 @@ def check_raw_fields(latitude, longitude, c):
 def check_internet_connection():
     try:
         geolocator = Nominatim(user_agent="check_internet_connection")
-        location = geolocator.reverse("39.7495, 8.8077")  # Leiria coordinates
+        geolocator.reverse("39.7495, 8.8077")  # Leiria coordinates
         logfunc("Internet connection is available.")
         return True
-    except:
+    except:  # pylint: disable=bare-except
         logfunc("Internet connection is not available.")
         return False
     
