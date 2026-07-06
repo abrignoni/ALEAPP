@@ -81,6 +81,7 @@ import sqlite3
 import blackboxprotobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.context import Context
 
 
 def _us_to_utc(value):
@@ -172,7 +173,7 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text):
                 direction = 'Outgoing' if str(r[6]) == owner_id else 'Incoming'
             else:
                 direction = ''
-            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3]) + ann + (source_path, r[5], direction))
+            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3]) + ann + (Context.get_relative_path(source_path), r[5], direction))
 
     data_headers = (('Message Timestamp', 'datetime'), 'Group Name', 'Sender', 'Message',
                     'Meeting Code', 'Meeting URL', 'Meeting Sender', 'Meeting Sender Profile Pic URL',
@@ -192,7 +193,7 @@ def get_googleChat_groups(files_found, report_folder, seeker, wrap_text):
             ORDER BY Groups.create_time ASC
         ''')
         for r in rows:
-            data_list.append((_us_to_utc(r[0]), r[1], r[2], _us_to_utc(r[3]), source_path))
+            data_list.append((_us_to_utc(r[0]), r[1], r[2], _us_to_utc(r[3]), Context.get_relative_path(source_path)))
 
     data_headers = (('Group Created Time', 'datetime'), 'Group Name', 'Group Creator',
                     ('Group Last Viewed', 'datetime'), 'Source File')
@@ -210,7 +211,7 @@ def get_googleChat_drafts(files_found, report_folder, seeker, wrap_text):
             LEFT JOIN Groups on drafts.group_id = Groups.group_id
         ''')
         for r in rows:
-            data_list.append((r[0], r[1], r[2], r[3], r[4], source_path))
+            data_list.append((r[0], r[1], r[2], r[3], r[4], Context.get_relative_path(source_path)))
 
     data_headers = ('Group ID', 'Topic ID', 'Message', 'Group Name', 'Group Type', 'Source File')
     return data_headers, data_list, source_path
@@ -226,7 +227,7 @@ def get_googleChat_users(files_found, report_folder, seeker, wrap_text):
             FROM users
         ''')
         for r in rows:
-            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], source_path))
+            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], Context.get_relative_path(source_path)))
 
     data_headers = (('Last Updated Time', 'datetime'), 'User ID', 'Name', 'Email', 'Avatar URL',
                     'Dasher Customer ID', 'Source File')

@@ -43,6 +43,7 @@ import re
 import json
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.context import Context
 
 def _map_uuid_to_account(file):
     # Helper method to get the mapping of the uuid to the set up accounts
@@ -185,7 +186,7 @@ def thunderbird_messages(files_found, _report_folder, _seeker, _wrap_text):
             content = row[14]
 
 
-            data_list.append((sent, stored, account, sender, receiver, cc, bcc, subject, preview, content, attachments, read, flagged, answered, forwarded, folder, str(file)))
+            data_list.append((sent, stored, account, sender, receiver, cc, bcc, subject, preview, content, attachments, read, flagged, answered, forwarded, folder, Context.get_relative_path(str(file))))
 
     data_headers = ( 'Timestamp Sent', 'Timestamp Stored', 'Account', 'Sender', 'Receiver', 'CC', 'BCC', 'Subject', 'Preview', 'Content', 'Attachments', 'Read?', 'Flagged?', 'Answered?', 'Forwarded?', 'Folder Name', 'Source File')
 

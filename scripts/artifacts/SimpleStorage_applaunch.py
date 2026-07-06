@@ -17,6 +17,7 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.context import Context
 
 @artifact_processor
 def SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text):
@@ -49,7 +50,7 @@ def SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text):
             pass
         else:
             time_launched = convert_utc_human_to_timezone(convert_ts_human_to_utc(time_launched),'UTC')
-        data_list.append((time_launched,record[1],record[2], source_path))
+        data_list.append((time_launched,record[1],record[2], Context.get_relative_path(source_path)))
  
     data_headers = (('App Launched Timestamp','datetime'),'App Name','Launched From', 'Source File')
     return data_headers, data_list, 'See source file(s) below'

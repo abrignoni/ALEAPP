@@ -70,6 +70,7 @@ from datetime import datetime, timezone
 from urllib.parse import unquote_plus
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, check_in_media
+from scripts.context import Context
 from scripts.filetype import guess_mime
 
 SNAP_START = "\u00b0>{Snap}"
@@ -218,7 +219,7 @@ def knuddels_chats(context):
             data_list.append((
                 timestamp, nickname, message, msg_type, media_cell, gif_cell,
                 snap_expired, participants,
-                conversation_key, from_me, file_found, message_id, sender, user_id,
+                conversation_key, from_me, Context.get_relative_path(file_found), message_id, sender, user_id,
             ))
 
     data_headers = (
@@ -287,7 +288,7 @@ def knuddels_contacts(context):
                 ms_to_utc(lastactivetime),
                 profileimagehidden,
                 distance,
-                file_found,
+                Context.get_relative_path(file_found),
             ))
 
     data_headers = (
@@ -354,7 +355,7 @@ def knuddels_account(context):
         }
 
     def active_row(nickname, info, last_msg, extra_sources):
-        sources = " | ".join(extra_sources + info.get("sources", []))
+        sources = " | ".join(Context.get_relative_path(s) for s in extra_sources + info.get("sources", []))
         return (
             nickname, "Yes", info["alias"], info["age"], info["gender"], info["uuid"],
             info["autologin"], info["isloggedin"], info["pw"], info["pw_dec"],
@@ -387,7 +388,7 @@ def knuddels_account(context):
         else:
             data_list.append((
                 nickname, "No", "", "", "", "", "", "", "", "",
-                "", "", "", "", last_msg, db,
+                "", "", "", "", last_msg, Context.get_relative_path(db),
             ))
 
     for instance, info in active.items():
