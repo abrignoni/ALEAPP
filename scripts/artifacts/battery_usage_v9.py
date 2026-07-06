@@ -35,6 +35,7 @@ import sqlite3
 import blackboxprotobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.context import Context
 
 _STATUS = {2: 'Charging', 3: 'Discharging', 5: 'Fully charged'}
 _HEALTH = {1: 'Unknown', 2: 'Good', 3: 'Overheat', 4: 'Dead', 5: 'Over Voltage',
@@ -135,7 +136,7 @@ def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text):
             _STATUS.get(_as_int(info.get('2')), 'Unknown'),    # Battery Status
             _HEALTH.get(_as_int(info.get('3')), 'None'),       # Battery Health
             _txt(proto.get('13')),                             # Drain Type
-            source_path))
+            Context.get_relative_path(source_path)))
 
     data_headers = (('Timestamp', 'datetime'), 'Application', 'Package Name', 'Hidden',
                     'Boot Timestamp', 'Timezone', 'Total Power', 'Consumed Power',
@@ -154,7 +155,7 @@ def get_app_usage_events(files_found, report_folder, seeker, wrap_text):
         packageName, taskRootPackageName, instanceId
         FROM AppUsageEventEntity
     ''')
-    data_list = [(r[0], r[1], _ms_to_utc(r[2]), r[3], r[4], r[5], r[6], source_path) for r in rows]
+    data_list = [(r[0], r[1], _ms_to_utc(r[2]), r[3], r[4], r[5], r[6], Context.get_relative_path(source_path)) for r in rows]
     data_headers = ('uid', 'userId', ('Timestamp', 'datetime'), 'App Usage Event Type',
                     'Package Name', 'Root Package Name', 'Instance Id', 'Source File')
     return data_headers, data_list, source_path

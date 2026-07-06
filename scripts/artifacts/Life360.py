@@ -69,6 +69,7 @@ import json
 import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.context import Context
 
 
 def _sec_to_utc(value):
@@ -166,7 +167,7 @@ def get_Life360_chat_messages(files_found, report_folder, seeker, wrap_text):
         for row in rows:
             data_list.append((_sec_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5], row[6],
                               row[7], row[8], row[9], row[10], row[11], row[12], _sec_to_utc(row[13]),
-                              source))
+                              Context.get_relative_path(source)))
         db.close()
 
     data_headers = (('Timestamp', 'datetime'), 'Thread ID', 'Sender ID', 'Sender Name', 'Message',
@@ -185,7 +186,7 @@ def get_Life360_places(files_found, report_folder, seeker, wrap_text):
         cursor = db.cursor()
         for row in _q(cursor, '''SELECT name, latitude, longitude, radius, source, source_id, owner_id
                 FROM places'''):
-            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], source))
+            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], Context.get_relative_path(source)))
         db.close()
 
     data_headers = ('Place Name', 'Latitude', 'Longitude', 'Radius (m)', 'Places Source', 'Source ID',
@@ -201,7 +202,7 @@ def get_Life360_locations(files_found, report_folder, seeker, wrap_text):
         for e in _ble_events(source):
             data_list.append((e['time'], e['lat'], e['lon'], e['alt'], e['speed'], e['course'],
                               e['bearing'], e['vert'], e['hor'], e['lmode'], e['bssid'], e['ssid'],
-                              e['id'], source))
+                              e['id'], Context.get_relative_path(source)))
 
     data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Speed (mps)',
                     'Course', 'Bearing', 'Vertical Accuracy (+/- m)', 'Horizontal Accuracy (+/- m)',
@@ -216,7 +217,7 @@ def get_Life360_device_battery(files_found, report_folder, seeker, wrap_text):
     data_list = []
     if source:
         for e in _ble_events(source):
-            data_list.append((e['time'], e['battery'], e['charging'], source))
+            data_list.append((e['time'], e['battery'], e['charging'], Context.get_relative_path(source)))
 
     data_headers = (('Timestamp', 'datetime'), 'Device Battery (%)', 'Charging', 'Source File')
     return data_headers, data_list, source
