@@ -13,7 +13,7 @@ __artifacts_v2__ = {
                   '*/com.google.android.apps.dynamite/databases/dynamite.db*',
                   '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Group ID",

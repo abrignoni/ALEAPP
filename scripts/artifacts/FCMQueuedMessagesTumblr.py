@@ -32,7 +32,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     },
     "get_fcm_tumblr_flagged": {
         "name": "FCM - Tumblr Flagged Posts",

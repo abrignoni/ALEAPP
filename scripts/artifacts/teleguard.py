@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',
                   '*/data/ch.swisscows.messenger.teleguardapp/cache/**'),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Chat ID",

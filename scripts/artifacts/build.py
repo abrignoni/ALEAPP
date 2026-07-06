@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/vendor/build.prop',),
         "output_types": ['html', 'tsv', 'lava'],
-        "artifact_icon": "info",
+        "artifact_icon": "info-circle",
     }
 }
 

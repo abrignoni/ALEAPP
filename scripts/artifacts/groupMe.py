@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.groupme.android/databases/groupme.db',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     }
 }
 

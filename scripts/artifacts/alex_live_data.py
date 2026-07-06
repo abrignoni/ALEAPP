@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "bar-chart-2"
+        "artifact_icon": "chart-bar"
     },
     "alex_live_bt_bonded": {
         "name": "Dumpsys - BTM Bonded Devices",
@@ -89,7 +89,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "watch"
+        "artifact_icon": "device-watch"
     },
     "alex_live_role": {
         "name": "Dumpsys - Role (Default Apps)",
@@ -104,7 +104,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "check-circle"
+        "artifact_icon": "circle-check"
     },
     "alex_live_account": {
         "name": "Dumpsys - Accounts",

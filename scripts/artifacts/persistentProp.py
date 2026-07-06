@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/property/persistent_properties',),
         "output_types": "standard",
-        "artifact_icon": "info",
+        "artifact_icon": "info-circle",
     }
 }
 

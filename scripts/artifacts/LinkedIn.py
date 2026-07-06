@@ -36,7 +36,7 @@ __artifacts_v2__ = {
                 "conversationLabelColumn": "Conversation Label"
             }
         },
-        "artifact_icon": "message-square"
+        "artifact_icon": "message"
     }
 }
 

@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "all",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     },
     "get_googlePhotos_remote": {
         "name": "Google Photos - Remote Media",
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "all",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     },
     "get_googlePhotos_shared": {
         "name": "Google Photos - Shared Media",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     },
     "get_googlePhotos_folders": {
         "name": "Google Photos - Backed Up Folders",
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.photos/databases/disk_cache*',
                   '*/com.google.android.apps.photos/cache/glide_cache/*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     },
     "get_googlePhotos_trash": {
         "name": "Google Photos - Local Trash",
@@ -78,7 +78,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.photos/databases/local_trash.db*',
                   '*/com.google.android.apps.photos/files/trash_files/*'),
         "output_types": "standard",
-        "artifact_icon": "trash-2",
+        "artifact_icon": "trash",
     }
 }
 

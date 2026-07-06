@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "bar-chart-2"
+        "artifact_icon": "chart-bar"
     }
 }
 
@@ -22,7 +22,7 @@ from scripts.ilapfuncs import artifact_processor, \
 
 
 @artifact_processor
-def usagestatsVersion(files_found, report_folder, seeker, wrap_text):
+def usagestatsVersion(files_found, _report_folder, _seeker, _wrap_text):
     source_path = get_file_path(files_found, "version")
     data_list = []
 

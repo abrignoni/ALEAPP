@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/session"),
         "output_types": [ "all" ],
-        "artifact_icon": "navigation-2"
+        "artifact_icon": "navigation"
     },
     "waze_track_gps_quality": {
         "name": "Waze - Track GPS Quality",
@@ -49,7 +49,7 @@ __artifacts_v2__ = {
                   "*/com.waze/waze_log.txt",
                   "*/com.waze/*spdlog.logdata.gz"),
         "output_types": [ "all" ],
-        "artifact_icon": "navigation-2"
+        "artifact_icon": "navigation"
     },
     "waze_search_history": {
         "name": "Waze - Search History",

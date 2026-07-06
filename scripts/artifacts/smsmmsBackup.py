@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.providers.telephony/d_f/*_backup',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Recipients",
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.providers.telephony/d_f/*_backup',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Address",

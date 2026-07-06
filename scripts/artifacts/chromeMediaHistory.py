@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     },
     "get_chromeMediaHistoryPlaybacks": {
         "name": "Media History - Playbacks",
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     },
     "get_chromeMediaHistoryOrigins": {
         "name": "Media History - Origins",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

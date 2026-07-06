@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.chess/shared_prefs/com.chess.app.login_credentials.xml', '*/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
         "output_types": ['html', 'tsv', 'lava'],
-        "artifact_icon": "grid",
+        "artifact_icon": "layout-grid",
     }
 }
 

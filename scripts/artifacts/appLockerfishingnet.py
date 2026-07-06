@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

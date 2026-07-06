@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     },
     "get_emulatedSmeta_files": {
         "name": "Emulated Storage Metadata - Files",

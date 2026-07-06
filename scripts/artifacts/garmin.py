@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*',),
         "output_types": "standard",
-        "artifact_icon": "watch",
+        "artifact_icon": "device-watch",
     },
     "get_garmin_weather": {
         "name": "Garmin - Weather",

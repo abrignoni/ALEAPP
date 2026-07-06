@@ -19,7 +19,7 @@ def _art(name, desc, paths, icon='activity', outtypes='standard'):
 
 __artifacts_v2__ = {
     "get_fitbit_activity": _art("Fitbit - Activity", "Activity log (phone)", _PATHS_PHONE_ACT),
-    "get_fitbit_device": _art("Fitbit - Device Info", "Paired device info (phone)", _PATHS_PHONE_DEV, "watch"),
+    "get_fitbit_device": _art("Fitbit - Device Info", "Paired device info (phone)", _PATHS_PHONE_DEV, "device-watch"),
     "get_fitbit_exercise": _art("Fitbit - Exercise GPS", "Exercise GPS trackpoints (phone)", _PATHS_PHONE_EX, "map-pin", "all"),
     "get_fitbit_routes": _art("Fitbit - Exercise Routes", "Per-session exercise route map (phone)", _PATHS_PHONE_EX, "map"),
     "get_fitbit_heart": _art("Fitbit - Heart Rate Summary", "Daily heart-rate summary (phone)", _PATHS_PHONE_HR, "heart"),

@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.videolan.vlc/files/medialib/*.jpg',),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     },
     "get_vlcThumbs_data": {
         "name": "VLC Thumbnail Data",
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.videolan.vlc/files/medialib/*.jpg', '*/org.videolan.vlc/app_db/vlc_media.db*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

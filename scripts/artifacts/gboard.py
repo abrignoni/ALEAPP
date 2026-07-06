@@ -25,7 +25,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db',),
         "output_types": "standard",
-        "artifact_icon": "chrome",
+        "artifact_icon": "brand-chrome",
     },
     "get_gboardCache_sessions": {
         "name": "Gboard - Sessions",
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcachev3.db',),
         "output_types": "standard",
-        "artifact_icon": "chrome",
+        "artifact_icon": "brand-chrome",
     }
 }
 

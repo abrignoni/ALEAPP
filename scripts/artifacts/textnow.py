@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.enflick.android.TextNow/databases/textnow_data.db*',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     },
     "get_textnow_contacts": {
         "name": "Text Now - Contacts",

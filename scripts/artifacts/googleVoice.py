@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "voicemail",
+        "artifact_icon": "record-mail",
     },
     "googlevoice_messages": {
         "name": "Google Voice - Messages",

@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
         "paths": ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/private_thumbnails/*.0'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "image"
+        "artifact_icon": "photo"
     },
     "torbrowser_bookmarks": {
         "name": "Tor Browser - Bookmarks",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
         "paths": ('*/org.torproject.torbrowser/shared_prefs/fenix_preferences.xml'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "info"
+        "artifact_icon": "info-circle"
     },
 }
 

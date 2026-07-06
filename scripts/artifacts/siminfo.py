@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/user_de/*/com.android.providers.telephony/databases/telephony.db',),
         "output_types": "standard",
-        "artifact_icon": "info",
+        "artifact_icon": "info-circle",
     }
 }
 

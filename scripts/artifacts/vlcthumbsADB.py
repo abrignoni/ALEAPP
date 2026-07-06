@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.videolan.vlc/ef/medialib/thumbnails/*.*',),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     },
     "get_vlcthumbsADB_medialib": {
         "name": "VLC Media Lib (ADB)",
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.videolan.vlc/ef/medialib/*.*',),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/cache/image_manager_disk_cache/*.*', '*/*.cnt'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

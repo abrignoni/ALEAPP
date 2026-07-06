@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.chess/databases/chess-database*',),
         "output_types": ['html', 'tsv', 'lava'],
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     }
 }
 

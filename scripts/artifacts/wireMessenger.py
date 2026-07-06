@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     },
     "get_wire_contacts": {
         "name": "Wire Contacts",
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     },
     "get_wire_messages": {
         "name": "Wire Messages",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "notes": "Tested on: Android 13 Wire v.3.81.35",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     }
 }
 

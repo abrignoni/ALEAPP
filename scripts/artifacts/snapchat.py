@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
-        "output_types": "standard", "artifact_icon": "message-square",
+        "output_types": "standard", "artifact_icon": "message",
     },
     "get_snapchat_memories": {
         "name": "Snapchat - Memories",
@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
-        "output_types": "standard", "artifact_icon": "image",
+        "output_types": "standard", "artifact_icon": "photo",
     },
     "get_snapchat_meo": {
         "name": "Snapchat - MEO My Eyes Only",
@@ -47,7 +47,7 @@ __artifacts_v2__ = {
         "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
-        "output_types": "all", "artifact_icon": "image",
+        "output_types": "all", "artifact_icon": "photo",
     },
     "get_snapchat_identity": {
         "name": "Snapchat - Identity Persistent Store",
@@ -63,7 +63,7 @@ __artifacts_v2__ = {
         "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/shared_prefs/LoginSignupStore.xml',),
-        "output_types": "standard", "artifact_icon": "log-in",
+        "output_types": "standard", "artifact_icon": "login-2",
     }
 }
 

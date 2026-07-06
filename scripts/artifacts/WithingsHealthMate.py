@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
-        "artifact_icon": "message-square"
+        "artifact_icon": "message"
     },
     "healthmate_contacts": {
         "name": "Health Mate - Contacts",

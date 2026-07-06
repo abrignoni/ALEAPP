@@ -1,5 +1,4 @@
 import json
-import html
 #import markdown
 
 from datetime import datetime, timezone
@@ -21,7 +20,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db'),
         "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "html_columns": ["Message Content"]
     }
 }
@@ -47,27 +46,27 @@ def extract_content_from_fragments(fragments):
         
         #HTML conversion removed because LAVA will support markdown.
         #HTML escape not allowed do to possible avenue for injection attacks
-        '''' 
-        full_text = html.unescape(full_text)
+        # '''' 
+        # full_text = html.unescape(full_text)
 
-        rendered_html = markdown.markdown(
-            full_text,
-            extensions=[
-                "extra",
-                "nl2br",
-                "sane_lists"
-            ]
-        )
-        '''
+        # rendered_html = markdown.markdown(
+            # full_text,
+            # extensions=[
+                # "extra",
+                # "nl2br",
+                # "sane_lists"
+            # ]
+        # )
+        # '''
 
         return full_text
 
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         return (str(fragments))
 
 
 @artifact_processor
-def deepseek_chat_messages(files_found, report_folder, seeker, wrap_text):
+def deepseek_chat_messages(files_found, _report_folder, _seeker, _wrap_text):
 
     data_headers = (
         ('Timestamp', 'datetime'),
@@ -144,7 +143,7 @@ def deepseek_chat_messages(files_found, report_folder, seeker, wrap_text):
                                     tz=timezone.utc
                                 ).strftime('%Y-%m-%d %H:%M:%S')
 
-                            except Exception:
+                            except Exception:  # pylint: disable=broad-exception-caught
 
                                 inserted_at_utc = str(inserted_at)
 
@@ -152,14 +151,14 @@ def deepseek_chat_messages(files_found, report_folder, seeker, wrap_text):
                             fragments
                         )
                         
-                        '''
-                        chat_html = f
-                        <div class="chat-message">
-                            <div class="chat-content">
-                                {content}
-                            </div>
-                        </div>
-                        '''
+                        # '''
+                        # chat_html = f
+                        # <div class="chat-message">
+                            # <div class="chat-content">
+                                # {content}
+                            # </div>
+                        # </div>
+                        # '''
 
                         data_list.append((
                             lava_timestamp,
@@ -169,10 +168,10 @@ def deepseek_chat_messages(files_found, report_folder, seeker, wrap_text):
                             content
                         ))
 
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-exception-caught
                     print(f"Error processing table {table_name}: {e}")
 
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             print(f"Error processing database {source_path}: {e}")
 
         finally:

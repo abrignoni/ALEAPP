@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
         "output_types": "all",
-        "artifact_icon": "bar-chart"
+        "artifact_icon": "chart-bar-popular"
     },
     "sdhms_temperature": {
         "name": "SDHMS Temperature Logs",
