@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "notes": "Legacy schema only; modern databases are covered by the One To One / Group Messages artifacts.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     },
     "get_whatsapp_one_to_one_messages": {
         "name": "WhatsApp - One To One Messages",
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
                   '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*',
                   '*/Android/media/com.whatsapp/WhatsApp/Media/*'),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Other Participant WA User Name",
@@ -79,7 +79,7 @@ __artifacts_v2__ = {
                   '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*',
                   '*/Android/media/com.whatsapp/WhatsApp/Media/*'),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Conversation Name",

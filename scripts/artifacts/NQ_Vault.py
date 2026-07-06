@@ -25,7 +25,7 @@ __artifacts_v2__ = {
         "paths": ('*/emulated/0/Android/data/com.netqin.ps/files/Documents/SystemAndroid/Data/322w465ay423xy11',
                   '*/SystemAndroid/Data/**', '/media/0/SystemAndroid/Data/322w465ay423xy11'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

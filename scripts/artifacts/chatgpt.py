@@ -101,7 +101,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('**/com.openai.chatgpt/shared_prefs/analytics-android-oai.xml',),
         "output_types": "standard",
-        "artifact_icon": "bar-chart-2",
+        "artifact_icon": "chart-bar",
     },
     "get_chatgpt_media": {
         "name": "ChatGPT - Media Uploads",
@@ -114,7 +114,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('**/com.openai.chatgpt/cache/files/*',),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

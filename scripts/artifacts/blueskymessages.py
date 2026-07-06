@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*',
                   '*/xyz.blueskyweb.app/cache/http-cache/*.*'),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     },
     "get_blueskymessages_actors": {
         "name": "Bluesky - Actors",

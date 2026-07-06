@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite', '*/data/com.zynga.chess.googleplay/db/wf_database.sqlite'),
         "output_types": ['html', 'tsv', 'lava'],
-        "artifact_icon": "grid",
+        "artifact_icon": "layout-grid",
     }
 }
 

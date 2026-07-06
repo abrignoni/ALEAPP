@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread ID",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
                   '*/com.android.providers.telephony/app_parts/*',
                   '*/com.android.providers.telephony/parts/*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread ID",

@@ -21,7 +21,7 @@ __artifacts_v2__ = {
             '*/Android/data/com.random.chat.app/files/Music/RandoChat/*'
             ),
         'output_types': 'standard',
-        'artifact_icon': 'message-square',
+        'artifact_icon': 'message',
         "html_columns": ["Media File"]
     },
     'randochat_account': {

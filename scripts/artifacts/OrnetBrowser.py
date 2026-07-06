@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase','*/com.ornet.torbrowser/cache/tabPreviews/*/*.jpg'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "book-open"
+        "artifact_icon": "book"
     },
         "ornetbrowser_frequents": {
         "name": "Ornet Browser - Frequents",
@@ -90,7 +90,7 @@ __artifacts_v2__ = {
         "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
         "paths": ('*/com.ornet.torbrowser/cache/tabPreviews/*/*.jpg','*//comcom.ornet.torbrowser/databases/AppDatabase'),
         "output_types": ["html", "tsv", "timeline", "lava"],
-        "artifact_icon": "image"
+        "artifact_icon": "photo"
     },
         "ornetbrowser_searchhistory": {
         "name": "Ornet Browser - Search History",
@@ -129,7 +129,7 @@ __artifacts_v2__ = {
         "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
         "paths": ('*/com.ornet.torbrowser/shared_prefs/com.ornet.torbrowser_preferences.xml'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "info"
+        "artifact_icon": "info-circle"
     }
 }
 

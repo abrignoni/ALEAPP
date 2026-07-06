@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/com.sideline.phone.number/databases/textfree*'),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     }
 }
 

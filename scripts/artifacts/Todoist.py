@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.todoist/databases/database.db*',),
         "output_types": "standard",
-        "artifact_icon": "check-square",
+        "artifact_icon": "square-check",
     },
     "get_Todoist_notes": {
         "name": "Todoist - Notes",

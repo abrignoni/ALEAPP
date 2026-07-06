@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread Key",
@@ -73,7 +73,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     },
     "get_fb_threads_calls": {
         "name": "Facebook Messenger - Calls (threads_db2)",

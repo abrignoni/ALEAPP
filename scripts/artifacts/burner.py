@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Other Party Number",

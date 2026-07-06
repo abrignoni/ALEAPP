@@ -14,7 +14,7 @@ __artifacts_v2__ = {
             "*/storage/*/Android/.Trash/*",
         ),
         "output_types": "standard",
-        "artifact_icon": "trash-2",
+        "artifact_icon": "trash",
     }
 }
 

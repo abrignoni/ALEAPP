@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml',),
         "output_types": ['html', 'tsv', 'lava'],
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

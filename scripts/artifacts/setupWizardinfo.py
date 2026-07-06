@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml',),
         "output_types": "standard",
-        "artifact_icon": "info",
+        "artifact_icon": "info-circle",
     }
 }
 

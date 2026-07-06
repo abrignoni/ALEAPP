@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.zynga.words/db/wf_database.sqlite',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     }
 }
 

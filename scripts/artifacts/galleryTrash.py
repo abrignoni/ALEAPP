@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.sec.android.gallery3d/databases/local.db*',
                   '*/data/com.sec.android.gallery3d/files/.Trash/**'),
         "output_types": "all",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

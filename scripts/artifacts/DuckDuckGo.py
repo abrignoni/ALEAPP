@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*','*/com.duckduckgo.mobile.android/cache/tabPreviews/*/*.jpg'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "book-open"
+        "artifact_icon": "book"
     },
         "duckduckgo_fireproof": {
         "name": "DuckDuckGo - FireProof Sites",
@@ -90,7 +90,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.duckduckgo.mobile.android/cache/tabPreviews/*/*.jpg','*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "timeline", "lava"],
-        "artifact_icon": "image"
+        "artifact_icon": "photo"
     },
         "duckduckgo_duckai": {
         "name": "DuckDuckGo - Duck AI",
@@ -103,7 +103,7 @@ __artifacts_v2__ = {
         "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
         "paths": ('*com.duckduckgo.mobile.android/app_webview/Default/Local Storage/leveldb/*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "message-square"
+        "artifact_icon": "message"
     },
         "duckduckgo_cookies": {
         "name": "DuckDuckGo - Cookies",

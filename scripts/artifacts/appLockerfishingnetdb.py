@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/.privacy_safe/db/privacy_safe.db',),
         "output_types": ['html', 'tsv', 'lava'],
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

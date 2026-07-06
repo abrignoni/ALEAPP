@@ -18,7 +18,7 @@ __artifacts_v2__ = {
             '*/com.planetromeo.android.app/databases/planetromeo-room.db.*' 
             ),
         'output_types': 'standard',
-        'artifact_icon': 'message-square'
+        'artifact_icon': 'message'
     },
     'romeo_dating_contacts': {
         'name': 'Romeo Dating App Contacts',

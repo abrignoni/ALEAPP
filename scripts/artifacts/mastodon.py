@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
     },
     "get_mastodon_accounts": {
         "name": "Mastodon - Account Details",

@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

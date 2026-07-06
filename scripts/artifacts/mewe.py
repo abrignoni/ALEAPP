@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.mewe/databases/app_database',),
         "output_types": "standard",
-        "artifact_icon": "message-square",
+        "artifact_icon": "message",
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread Id",

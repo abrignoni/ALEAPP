@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml', '*/applocker/vault/*'),
         "output_types": "standard",
-        "artifact_icon": "image",
+        "artifact_icon": "photo",
     }
 }
 

@@ -14,7 +14,7 @@ __artifacts_v2__ = {
             '*/data/com.beint.zangi/databases/*',
             '*/data/com.beint.zangi/files/zangi/*'),
         'output_types': 'standard',
-        'artifact_icon': 'message-square',
+        'artifact_icon': 'message',
         'data_views': {
             'conversation': {
                 'conversationDiscriminatorColumn': 'Chat-ID',
