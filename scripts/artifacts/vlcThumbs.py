@@ -1,81 +1,87 @@
-import os
-import shutil
-
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly, media_to_html
-
-
-def get_vlcThumbs(files_found, report_folder, seeker, wrap_text):
-    data_list = []
-    for file_found in files_found:
-        file_found = str(file_found)
-        
-        data_file_real_path = file_found
-        shutil.copy2(data_file_real_path, report_folder)
-        data_file_name = os.path.basename(data_file_real_path)
-        thumb = f'<img src="{report_folder}/{data_file_name}"></img>'
-        
-        data_list.append((data_file_name, thumb))
-    
-    path_to_files = os.path.dirname(data_file_real_path)
-    
-    description = 'VLC Thumbnails'
-    report = ArtifactHtmlReport('VLC Thumbnails')
-    report.start_artifact_report(report_folder, 'VLC Thumbnails', description)
-    report.add_script()
-    data_headers = ('Filename', 'Thumbnail' )
-    report.write_artifact_data_table(data_headers, data_list, path_to_files, html_escape=False)
-    report.end_artifact_report()
-    
-    tsvname = 'VLC Thumbnails'
-    tsv(report_folder, data_headers, data_list, tsvname)
-    
-    data_list = []
-    for file_found in files_found:
-        file_found = str(file_found)
-        
-        if file_found.endswith('vlc_media.db'):
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            datetime(last_played_date, 'unixepoch' ),
-            datetime(insertion_date, 'unixepoch' ),
-            id_media,
-            filename,
-            play_count,
-            is_favorite
-            FROM media
-            ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            
-            if usageentries > 0:
-                for row in all_rows:
-                    
-                    thumb = media_to_html(f'medialib/{row[2]}.jpg', files_found, report_folder)
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],thumb))
-                
-                report = ArtifactHtmlReport('VLC Thumbnail Data')
-                report.start_artifact_report(report_folder, 'VLC Thumbnail Data')
-                report.add_script()
-                data_headers = ('Last Played', 'Insertion Date','ID Media', 'Filename', 'Play Count', 'Is favorite', 'Thumbnail') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-                report.write_artifact_data_table(data_headers, data_list, path_to_files, html_no_escape=['Thumbnail'])
-                report.end_artifact_report()
-                
-                tsvname = f'VLC Thumbnail Data'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'VLC Thumbnail Data'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-    
-__artifacts__ = {
-        "VLC Thumbs": (
-                "VLC",
-                ('*/org.videolan.vlc/files/medialib/*.jpg', '*/org.videolan.vlc/app_db/vlc_media.db*'),
-                get_vlcThumbs)
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_vlcThumbs": {
+        "name": "VLC Thumbnails",
+        "description": "Thumbnail images cached by VLC in the medialib folder",
+        "author": "",
+        "creation_date": "2021-03-01",
+        "last_update_date": "2021-03-01",
+        "requirements": "none",
+        "category": "VLC",
+        "notes": "",
+        "paths": ('*/org.videolan.vlc/files/medialib/*.jpg',),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+    },
+    "get_vlcThumbs_data": {
+        "name": "VLC Thumbnail Data",
+        "description": "VLC media library entries (play count, dates) with their cached thumbnails",
+        "author": "",
+        "creation_date": "2021-03-01",
+        "last_update_date": "2021-03-01",
+        "requirements": "none",
+        "category": "VLC",
+        "notes": "",
+        "paths": ('*/org.videolan.vlc/files/medialib/*.jpg', '*/org.videolan.vlc/app_db/vlc_media.db*'),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+    }
 }
 
-        
-        
+import datetime
+import os
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+
+
+def _sec_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+@artifact_processor
+def get_vlcThumbs(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not file_found.endswith('.jpg'):
+            continue
+        source_path = os.path.dirname(file_found)
+        name = os.path.basename(file_found)
+        data_list.append((name, check_in_media(file_found, name)))
+
+    data_headers = ('Filename', ('Thumbnail', 'media'))
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_vlcThumbs_data(files_found, report_folder, seeker, wrap_text):
+    jpg_by_name = {os.path.basename(str(f)): str(f) for f in files_found if str(f).endswith('.jpg')}
+    data_list = []
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not file_found.endswith('vlc_media.db'):
+            continue
+        source_path = file_found
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        cursor.execute('''
+            SELECT last_played_date, insertion_date, id_media, filename, play_count, is_favorite
+            FROM media
+        ''')
+        for row in cursor.fetchall():
+            jpg = jpg_by_name.get(f'{row[2]}.jpg')
+            thumb = check_in_media(jpg, f'{row[2]}.jpg') if jpg else ''
+            data_list.append((_sec_to_utc(row[0]), _sec_to_utc(row[1]), row[2], row[3], row[4], row[5], thumb))
+        db.close()
+
+    data_headers = (
+        ('Last Played', 'datetime'), ('Insertion Date', 'datetime'), 'ID Media', 'Filename',
+        'Play Count', 'Is Favorite', ('Thumbnail', 'media'))
+    return data_headers, data_list, source_path

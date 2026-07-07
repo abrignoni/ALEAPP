@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
     "torbrowser_thumbnails": {
         "name": "Tor Browser Tab Thumnails",
@@ -10,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
         "paths": ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/private_thumbnails/*.0'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "image"
+        "artifact_icon": "photo"
     },
     "torbrowser_bookmarks": {
         "name": "Tor Browser - Bookmarks",
@@ -36,21 +37,37 @@ __artifacts_v2__ = {
         "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
         "paths": ('*/org.torproject.torbrowser/shared_prefs/fenix_preferences.xml'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "info"
+        "artifact_icon": "info-circle"
     },
 }
 
 import os
 import datetime
-import inspect
+import re
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor, is_platform_windows, check_in_media, open_sqlite_db_readonly, get_sqlite_db_records, get_file_path, media_to_html, is_platform_windows, logfunc
+from scripts.ilapfuncs import artifact_processor, check_in_media, get_sqlite_db_records, logfunc
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
 
 @artifact_processor
 def torbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
-    artifact_info = inspect.stack()[0]
     data_list = []
 
     for file_found in files_found:
@@ -79,6 +96,7 @@ def torbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
 @artifact_processor
 def torbrowser_bookmarks(files_found, report_folder, seeker, wrap_text):
     data_list = []
+    source_path = ''
     for source_path in files_found:
         source_path = str(source_path)
         if source_path.endswith('.sqlite'):
@@ -108,7 +126,7 @@ def torbrowser_bookmarks(files_found, report_folder, seeker, wrap_text):
     db_records = get_sqlite_db_records(source_path, query)
 
     for row in db_records:
-        id              = row[0]
+        bookmark_id     = row[0]
         parent_folder   = row[1]
         title           = row[2]
         url             = row[3]
@@ -116,7 +134,7 @@ def torbrowser_bookmarks(files_found, report_folder, seeker, wrap_text):
         added_date      = row[5]
         last_modified   = row[6]
 
-        data_list.append((id,parent_folder,title,url,description,added_date,last_modified))
+        data_list.append((bookmark_id,parent_folder,title,url,description,added_date,last_modified))
 
     data_headers = ('Bookmark ID', 'Parent Folder', 'Title', 'URL', 'Description', ('Date Added','datetime'),('Last Modified','datetime')) 
     data_list = get_sqlite_db_records(source_path, query)        
@@ -142,11 +160,7 @@ def torbrowser_usageinfo(files_found, report_folder, seeker, wrap_text):
         if not os.path.isfile(source_path):
             continue
 
-        try:
-            tree = ET.parse(source_path)
-            root = tree.getroot()
-        except Exception:
-            continue 
+        root = _parse_xml(source_path)
 
         filename = Path(source_path).name
         path = source_path

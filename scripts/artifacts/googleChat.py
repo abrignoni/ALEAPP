@@ -1,215 +1,234 @@
-# Google Chat Messages & Group Information
-# Author:  Josh Hickman (josh@thebinaryhick.blog) & Alexis Brignoni (https://linqapp.com/abrignoni)
-# Date 2021-02-05
-# Version: 0.2
-# Requirements:  blackboxprotobuf
-# Updated 2023-04-13 by Kevin Pagano (https://startme.stark4n6.com)
-# Fix path, add Drafts and User details
+# pylint: disable=W0613,W0718
+__artifacts_v2__ = {
+    "get_googleChat": {
+        "name": "Google Chat - Messages",
+        "description": "Google Chat messages (dynamite.db)",
+        "author": "Josh Hickman & Alexis Brignoni",
+        "creation_date": "2021-02-05",
+        "last_update_date": "2026-07-03",
+        "requirements": "blackboxprotobuf",
+        "category": "Google Chat",
+        "notes": "",
+        "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*',
+                  '*/com.google.android.apps.dynamite/databases/dynamite.db*',
+                  '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
+        "output_types": "standard",
+        "artifact_icon": "message",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Group ID",
+                "conversationLabelColumn": "Group Name",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Message Timestamp",
+                "senderColumn": "Sender"
+            }
+        },
+    },
+    "get_googleChat_groups": {
+        "name": "Google Chat - Groups",
+        "description": "Google Chat group information (dynamite.db)",
+        "author": "Josh Hickman & Alexis Brignoni",
+        "creation_date": "2021-02-05",
+        "last_update_date": "2021-02-05",
+        "requirements": "none",
+        "category": "Google Chat",
+        "notes": "",
+        "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*',
+                  '*/com.google.android.apps.dynamite/databases/dynamite.db*',
+                  '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
+        "output_types": "standard",
+        "artifact_icon": "users",
+    },
+    "get_googleChat_drafts": {
+        "name": "Google Chat - Drafts",
+        "description": "Google Chat draft messages (dynamite.db)",
+        "author": "Josh Hickman & Alexis Brignoni",
+        "creation_date": "2021-02-05",
+        "last_update_date": "2021-02-05",
+        "requirements": "none",
+        "category": "Google Chat",
+        "notes": "",
+        "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*',
+                  '*/com.google.android.apps.dynamite/databases/dynamite.db*',
+                  '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
+        "output_types": "standard",
+        "artifact_icon": "edit",
+    },
+    "get_googleChat_users": {
+        "name": "Google Chat - Users",
+        "description": "Google Chat users (dynamite.db)",
+        "author": "Josh Hickman & Alexis Brignoni",
+        "creation_date": "2021-02-05",
+        "last_update_date": "2021-02-05",
+        "requirements": "none",
+        "category": "Google Chat",
+        "notes": "",
+        "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*',
+                  '*/com.google.android.apps.dynamite/databases/dynamite.db*',
+                  '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
+        "output_types": "standard",
+        "artifact_icon": "user",
+    }
+}
 
+import datetime
 import os
+import re
 import sqlite3
-import textwrap
+
 import blackboxprotobuf
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.context import Context
 
+
+def _us_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _d(value):
+    return value.decode('utf-8', 'replace') if isinstance(value, bytes) else value
+
+
+def _dbs(files_found):
+    return [str(f) for f in files_found if os.path.basename(str(f)) == 'dynamite.db']
+
+
+def _run(source_path, sql):
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
+    db.close()
+    return rows
+
+
+def _parse_annotation(blob):
+    '''Returns (meeting_code, meeting_url, meeting_sender, meeting_pic, filename, filetype, width, height).'''
+    blank = ('',) * 8
+    if not blob:
+        return blank
+    try:
+        values = blackboxprotobuf.decode_message(blob)
+    except Exception:
+        return blank
+    try:  # image attachment
+        v = values[0]['1']['10']
+        return ('', '', '', '', _d(v.get('3')), _d(v.get('4')), v['5']['1'], v['5']['2'])
+    except (KeyError, TypeError, AttributeError, IndexError):
+        pass
+    try:  # meeting (plain)
+        v = values[0]['1']['12']['1']
+        return (_d(v['3']), _d(v['2']), '', '', '', '', '', '')
+    except (KeyError, TypeError, AttributeError, IndexError):
+        pass
+    try:  # meeting with sender name
+        v = values[0]['1'][0]['12']['1']
+        return (_d(v['3']), _d(v['6']['16']['1']), _d(v['6']['16']['2']), '', '', '', '', '')
+    except (KeyError, TypeError, AttributeError, IndexError):
+        pass
+    try:  # meeting (sender variant)
+        v = values[0]['1'][0]['12']['1']
+        return (_d(v['3']), _d(v['2']), '', '', '', '', '', '')
+    except (KeyError, TypeError, AttributeError, IndexError):
+        pass
+    return blank
+
+
+@artifact_processor
 def get_googleChat(files_found, report_folder, seeker, wrap_text):
-    identifier = 0
-    for file_found in files_found:
-        file_found = str(file_found)
-        #logfunc(f'{file_found}')
-        if os.path.basename(file_found) == 'dynamite.db':
-            
-            #if file_found.endswith('dynamite.db'):
-                #break
-            #else:
-                #continue # Skip all other files
-            identifier = identifier + 1
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-            datetime(topic_messages.create_time/1000000,'unixepoch') AS "Message Time (UTC)",
-            Groups.name AS "Group Name",
-            users.name AS "Sender",
-            topic_messages.text_body AS "Message",
-            topic_messages.annotation AS "Message Attachment"
-            FROM
-            topic_messages
+    data_list = []
+    source_path = ''
+    for source_path in _dbs(files_found):
+        rows = _run(source_path, '''
+            SELECT topic_messages.create_time, Groups.name, users.name, topic_messages.text_body,
+                   topic_messages.annotation, topic_messages.group_id, topic_messages.creator_id
+            FROM topic_messages
             JOIN Groups on Groups.group_id=topic_messages.group_id
             JOIN users ON users.user_id=topic_messages.creator_id
-            ORDER BY "Message Time (UTC)" ASC
-            ''')
-    
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            data_list = []
-            if usageentries > 0:
-                for x in all_rows:
-                    values = blackboxprotobuf.decode_message(x[4])
-                    if x[4] == b'':
-                        data_list.append((x[0], x[1], x[2], x[3], '', '', '', '','','','',''))
-                    else:
-                        #images section
-                        try:
-                            item11 = (values[0]['1']['10'].get('3').decode('utf-8'))
-                            item12 = (values[0]['1']['10'].get('4').decode('utf-8'))
-                            item13 = (values[0]['1']['10']['5']['1'])
-                            item14 = (values[0]['1']['10']['5']['2'])
-                            data_list.append((x[0], x[1], x[2], x[3], '', '', '', '', item11, item12, item13, item14))
-                            continue
-                        except:
-                            pass
-                        #meeting plain section
-                        try:
-                            item8 = (values[0]['1']['12']['1']['1'].decode('utf-8'))
-                            item9 = (values[0]['1']['12']['1']['3'].decode('utf-8'))
-                            item10 = (values[0]['1']['12']['1']['2'].decode('utf-8'))
-                            data_list.append((x[0], x[1], x[2], x[3], item9, item10, '', '','','','',''))
-                            continue
-                        except:
-                            pass
-                            
-                        #meeting with sender name
-                        try:
-                            item4 = (values[0]['1'][0]['12']['1']['1'].decode('utf-8'))
-                            item5 = (values[0]['1'][0]['12']['1']['3'].decode('utf-8'))
-                            item6 = (values[0]['1'][0]['12']['1']['6']['16']['1'].decode('utf-8'))
-                            item7 = (values[0]['1'][0]['12']['1']['6']['16']['2'].decode('utf-8'))
-                            data_list.append((x[0], x[1], x[2], x[3], item5, item6, item7, '','','','',''))
-                            continue
-                        except:
-                            pass
-                            
-                        try:
-                            item1 = (values[0]['1'][0]['12']['1']['1'].decode('utf-8'))
-                            item2 = (values[0]['1'][0]['12']['1']['3'].decode('utf-8'))
-                            item3 = (values[0]['1'][0]['12']['1']['2'].decode('utf-8'))
-                            data_list.append((x[0], x[1], x[2], x[3], item2, item3, '','','','','',''))
-                        except:
-                            pass
-                        
-            if usageentries > 0:
-                report = ArtifactHtmlReport(f'Google Chat - Messages {identifier}')
-                report.start_artifact_report(report_folder, f'Google Chat - Messages {identifier}')
-                report.add_script()
-                data_headers = ('Message Timestamp (UTC)','Group Name','Sender','Message','Meeting Code', 'Meeting URL','Meeting Sender','Meeting Sender Profile Pic URL','Filename','File Type','Width','Height')
-    
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'Google Chat - Messages {identifier}'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'Google Chat - Messages {identifier}'
-                timeline(report_folder, tlactivity, data_list, data_headers)
+            ORDER BY topic_messages.create_time ASC
+        ''')
+        # the account email is in the db path (user_accounts/<email>/dynamite.db);
+        # resolve it to the gaia id via the users table of the same db
+        owner_id = ''
+        email_match = re.search(r'user_accounts/([^/]+)/dynamite\.db', source_path.replace('\\', '/'))
+        if email_match:
+            email_sql = email_match.group(1).replace("'", "''")
+            owner_rows = _run(source_path, f"SELECT user_id FROM users WHERE email = '{email_sql}'")
+            if owner_rows:
+                owner_id = str(owner_rows[0][0])
+        for r in rows:
+            ann = _parse_annotation(r[4])
+            if owner_id and r[6] is not None:
+                direction = 'Outgoing' if str(r[6]) == owner_id else 'Incoming'
             else:
-                logfunc(f'No Google Chat - Messages data available {identifier}')
-    
-            cursor.execute('''
-            SELECT
-            datetime(Groups.create_time/1000000,'unixepoch') AS "Group Created Time (UTC)",
-            Groups.name AS "Group Name",
-            users.name AS "Group Creator",
-            datetime(Groups.last_view_time/1000000,'unixepoch') AS "Time Group Last Viewed (UTC)"
-            FROM
-            Groups
+                direction = ''
+            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3]) + ann + (Context.get_relative_path(source_path), r[5], direction))
+
+    data_headers = (('Message Timestamp', 'datetime'), 'Group Name', 'Sender', 'Message',
+                    'Meeting Code', 'Meeting URL', 'Meeting Sender', 'Meeting Sender Profile Pic URL',
+                    'Filename', 'File Type', 'Width', 'Height', 'Source File', 'Group ID', 'Direction')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_googleChat_groups(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for source_path in _dbs(files_found):
+        rows = _run(source_path, '''
+            SELECT Groups.create_time, Groups.name, users.name, Groups.last_view_time
+            FROM Groups
             JOIN users ON users.user_id=Groups.creator_id
-            ORDER BY "Group Created Time (UTC)" ASC
-            ''')
-    
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport(f'Google Chat - Group Information {identifier}')
-                report.start_artifact_report(report_folder, f'Google Chat - Group Information {identifier}')
-                report.add_script()
-                data_headers = ('Group Created Time (UTC)','Group Name','Group Creator','Time Group Last Viewed (UTC)') 
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3]))
-    
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'Google Chat - Group Information {identifier}'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'Google Chat - Group Information {identifier}'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc(f'No Google Chat - Group Information data available {identifier}')
-                
-            cursor.execute('''
-            select
-            drafts.group_id,
-            drafts.topic_id,
-            drafts.text,
-            Groups.name,
-            drafts.group_type
-            from drafts
-            left join Groups on drafts.group_id = Groups.group_id
-            ''')
-    
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport(f'Google Chat - Drafts {identifier}')
-                report.start_artifact_report(report_folder, f'Google Chat - Drafts {identifier}')
-                report.add_script()
-                data_headers = ('Group ID','Topic ID','Message','Group Name','Group Type') 
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4]))
-    
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'Google Chat - Drafts {identifier}'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-            else:
-                logfunc(f'No Google Chat - Drafts data available {identifier}')
-                
-            cursor.execute('''
-            select
-            datetime(last_updated_time_micros/1000000,'unixepoch'),
-            user_id,
-            name,
-            email,
-            avatar_url,
-            dasher_customer_id
-            from users
-            ''')
-    
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport(f'Google Chat - Users {identifier}')
-                report.start_artifact_report(report_folder, f'Google Chat - Users {identifier}')
-                report.add_script()
-                data_headers = ('Last Updated Time (UTC)','User ID','Name','Email','Avatar URL','Dasher Customer ID') 
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5]))
-    
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'Google Chat - Users {identifier}'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'Google Chat - Users {identifier}'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc(f'No Google Chat - Users data available {identifier}')
-        else:
-            pass
-    db.close
-__artifacts__ = {
-        "GoogleChat": (
-                "Google Chat",
-                ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*','*/com.google.android.apps.dynamite/databases/dynamite.db*','*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
-                get_googleChat)
-}
+            ORDER BY Groups.create_time ASC
+        ''')
+        for r in rows:
+            data_list.append((_us_to_utc(r[0]), r[1], r[2], _us_to_utc(r[3]), Context.get_relative_path(source_path)))
+
+    data_headers = (('Group Created Time', 'datetime'), 'Group Name', 'Group Creator',
+                    ('Group Last Viewed', 'datetime'), 'Source File')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_googleChat_drafts(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for source_path in _dbs(files_found):
+        rows = _run(source_path, '''
+            SELECT drafts.group_id, drafts.topic_id, drafts.text, Groups.name, drafts.group_type
+            FROM drafts
+            LEFT JOIN Groups on drafts.group_id = Groups.group_id
+        ''')
+        for r in rows:
+            data_list.append((r[0], r[1], r[2], r[3], r[4], Context.get_relative_path(source_path)))
+
+    data_headers = ('Group ID', 'Topic ID', 'Message', 'Group Name', 'Group Type', 'Source File')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_googleChat_users(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for source_path in _dbs(files_found):
+        rows = _run(source_path, '''
+            SELECT last_updated_time_micros, user_id, name, email, avatar_url, dasher_customer_id
+            FROM users
+        ''')
+        for r in rows:
+            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], Context.get_relative_path(source_path)))
+
+    data_headers = (('Last Updated Time', 'datetime'), 'User ID', 'Name', 'Email', 'Avatar URL',
+                    'Dasher Customer ID', 'Source File')
+    return data_headers, data_list, source_path

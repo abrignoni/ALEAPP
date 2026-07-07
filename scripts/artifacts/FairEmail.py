@@ -1,14 +1,3 @@
-# FairCode FairEmail App (eu.faircode.email)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-# 
-# Tested with the following versions:
-# 2024-04-20: Android 14, App: 1.2178
-
-# Requirements: os
-
-
-
-
 __artifacts_v2__ = {
 
     
@@ -16,7 +5,6 @@ __artifacts_v2__ = {
         "name": "FairEmail - Accounts",
         "description": "FairEmail Accounts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.2",
         "creation_date": "2025-03-08",
         "last_update_date": "2025-11-15",
         "requirements": "none",
@@ -31,7 +19,6 @@ __artifacts_v2__ = {
         "name": "FairEmail - Contacts",
         "description": "FairEmail Contacts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.2",
         "creation_date": "2025-03-08",
         "last_update_date": "2025-11-15",
         "requirements": "none",
@@ -46,7 +33,6 @@ __artifacts_v2__ = {
         "name": "FairEmail - Messages",
         "description": "FairEmail Messages",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2025-11-16",
         "last_update_date": "2025-11-16",
         "requirements": "os",
@@ -59,9 +45,16 @@ __artifacts_v2__ = {
     }
 }
 
+# FairCode FairEmail App (eu.faircode.email)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+# 
+# Tested with the following versions:
+# 2024-04-20: Android 14, App: 1.2178
+
+# Requirements: os
 import os
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, media_to_html
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, check_in_media
 
 
 @artifact_processor
@@ -133,7 +126,7 @@ def get_fair_mail_contacts(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
+def get_fair_mail_messages(files_found, _report_folder, _seeker, _wrap_text):
     
     # Get the different files found and store their pathes in corresponding lists to work with them
     main_db = ''
@@ -220,25 +213,40 @@ def get_fair_mail_messages(files_found, report_folder, _seeker, _wrap_text):
         seen = row[16]
         # check if the mail has attachments, if yes - add them
         # Also inline Attachemts are linked
-        if row[19] is None:
-            attachment = 0
-        else:
-            attachment = []
+        attachment = ''
+        if row[19] is not None:
+            # Require an actual file so a matched directory is never passed to
+            # check_in_media (which returns None for a directory), and only append a
+            # truthy ref so no None lands in the media list -- a None serialized to
+            # null in the json.dumps'd media cell crashes the LAVA viewer on hover.
+            attachment_refs = []
             for att_path in attachments:
+                if not os.path.isfile(att_path):
+                    continue
                 for att_id in row[19].split(','):
                     if str(att_id) in os.path.basename(att_path):
-                        attachment.append(media_to_html(os.path.basename(att_path), attachments, report_folder))
+                        ref = check_in_media(att_path, os.path.basename(att_path))
+                        if ref:
+                            attachment_refs.append(ref)
+            if len(attachment_refs) == 1:
+                attachment = attachment_refs[0]
+            elif attachment_refs:
+                attachment = attachment_refs
         infrastructure = row[18]
         for path in messages:
+            if not os.path.isfile(path):
+                continue
             try:
                 if int(os.path.basename(path)) == message_id:
-                    content = media_to_html(str(message_id), messages, report_folder)
+                    ref = check_in_media(path, os.path.basename(path))
+                    if ref:
+                        content = ref
                     
             except ValueError:
                 continue
 
         data_list.append((received, sent, stored, account, folder, address_from, name_from, address_to, name_to, address_cc, name_cc, address_bcc, name_bcc, return_path, subject, preview, content, seen, attachment, infrastructure))
 
-    data_headers = ('Date Received', 'Date Sent', 'Date Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Preview', 'Content', 'Seen', 'Attachments', 'Infrastructure')
+    data_headers = ('Date Received', 'Date Sent', 'Date Stored', 'Mail Account', 'Folder', 'Sender Address', 'Sender Name', 'Recipient Address', 'Recipient Name', 'CC Address', 'CC Name', 'BCC Address', 'BCC Name', 'Return Path', 'Subject', 'Preview', ('Content', 'media'), 'Seen', ('Attachments', 'media'), 'Infrastructure')
 
     return data_headers, data_list, main_db

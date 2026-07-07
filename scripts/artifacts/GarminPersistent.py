@@ -1,3 +1,20 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_presisted": {
+        "name": "Garmin - Persistent",
+        "description": "Get Information stored in the Garmin Persistent json file",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher, json and datetime",
+        "category": "Garmin",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/files/PersistedInstallation*',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "activity",
+    }
+}
+
 # Get Information stored in the Garmin Persistent json file
 # Author: Fabian Nunes {fabiannunes12@gmail.com}
 # Date: 2023-02-24
@@ -6,52 +23,35 @@
 import datetime
 import json
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv
+from scripts.ilapfuncs import artifact_processor, logfunc
 
 
+@artifact_processor
 def get_presisted(files_found, report_folder, seeker, wrap_text):
     # Dictionary to store the user information
     user_info = {}
-    # Attributes to be extracted from the xml file
+    # Attributes to be extracted from the json file
     attribute = ["Fid", "AuthToken", "RefreshToken", "TokenCreationEpochInSecs", "ExpiresInSecs"]
 
     logfunc("Processing data for Garmin Presistent file")
-    file = str(files_found[0])
-    logfunc("Processing file: " + file)
-    #Open JSON file
-    with open(file, "r") as f:
+    source_path = str(files_found[0])
+    logfunc("Processing file: " + source_path)
+    # Open JSON file
+    with open(source_path, "r", encoding='utf-8') as f:
         data = json.load(f)
-        #Get the user information
+        # Get the user information
         for i in attribute:
             if i in data:
-                if(i == "TokenCreationEpochInSecs"):
-                    user_info[i] = str(data[i]) + " (" + str(datetime.datetime.utcfromtimestamp(data[i])) + ")"
-                elif(i == "ExpiresInSecs"):
-                    user_info[i] = str(data[i]) + " (" + str(datetime.datetime.utcfromtimestamp(data[i] + data["TokenCreationEpochInSecs"])) + ")"
+                if i == "TokenCreationEpochInSecs":
+                    user_info[i] = str(data[i]) + " (" + str(datetime.datetime.fromtimestamp(data[i], datetime.timezone.utc).replace(tzinfo=None)) + ")"
+                elif i == "ExpiresInSecs":
+                    user_info[i] = str(data[i]) + " (" + str(datetime.datetime.fromtimestamp(data[i] + data["TokenCreationEpochInSecs"], datetime.timezone.utc).replace(tzinfo=None)) + ")"
                 else:
                     user_info[i] = data[i]
 
-    if len(user_info) > 0:
-        logfunc("Found Garmin Presistent file")
-        report = ArtifactHtmlReport('Persistent')
-        report.start_artifact_report(report_folder, 'Persistent')
-        report.add_script()
-        data_headers = ('Name', 'Value')
-        data_list = []
-        for key, value in user_info.items():
-            data_list.append((key, value))
-        report.write_artifact_data_table(data_headers, data_list, file)
-        report.end_artifact_report()
-        tsvname = f'Garmin Log'
-        tsv(report_folder, data_headers, data_list, tsvname)
-    else:
-        logfunc("No Garmin Presistent data found")
+    data_list = []
+    for key, value in user_info.items():
+        data_list.append((key, value))
 
-
-__artifacts__ = {
-    "GarminPresistent": (
-        "Garmin-Files",
-        ('*/com.garmin.android.apps.connectmobile/files/PersistedInstallation*'),
-        get_presisted)
-}
+    data_headers = ('Name', 'Value')
+    return data_headers, data_list, source_path

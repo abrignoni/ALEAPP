@@ -1,35 +1,39 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
-    "keepNotes": {
+    "get_keepNotes": {
         "name": "Google Keep Notes",
         "description": "Parses Google Keep Notes",
         "author": "Heather Charpentier",
-        "version": "0.0.1",
-        "date": "2024-12-02",
+        "creation_date": "2024-12-02",
+        "last_update_date": "2024-12-02",
         "requirements": "none",
         "category": "Google Keep Notes",
         "notes": "",
-        "paths": ('*/data/com.google.android.keep/databases/keep.db*'),
-        "function": "get_keepNotes"
+        "paths": ('*/data/com.google.android.keep/databases/keep.db*',),
+        "output_types": "standard",
+        "artifact_icon": "file-text",
     }
 }
 
-import sqlite3
-import datetime
 import os
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
+
+@artifact_processor
 def get_keepNotes(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
         filename = os.path.basename(file_found)
 
         if filename.endswith('keep.db'):
+            source_path = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
-            SELECT 
+            SELECT
                 datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
                 datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
                 datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
@@ -41,26 +45,16 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
             ''')
 
             all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
+            for row in all_rows:
+                data_list.append((convert_human_ts_to_utc(row[0]), convert_human_ts_to_utc(row[1]), convert_human_ts_to_utc(row[2]), row[3], row[4], row[5]))
+            db.close()
 
-            if usageentries > 0:
-                data_list = []
-                for row in all_rows:
-                    data_list.append(row)
-
-                report = ArtifactHtmlReport('Google Keep Notes')
-                report.start_artifact_report(report_folder, 'Google Keep Notes')
-                report.add_script()
-                data_headers = ('Time Created', 'Time Last Updated', 'User Edited Timestamp', 'Title', 'Text', 'Last Modifier Email')
-                report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-                report.end_artifact_report()
-
-                tsvname = 'Google Keep Notes'
-                tsv(report_folder, data_headers, data_list, tsvname)
-
-                tlactivity = 'Google Keep Notes'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-
-            else:
-                logfunc('No Google Keep Notes data available')
-
+    data_headers = (
+        ('Time Created', 'datetime'),
+        ('Time Last Updated', 'datetime'),
+        ('User Edited Timestamp', 'datetime'),
+        'Title',
+        'Text',
+        'Last Modifier Email',
+    )
+    return data_headers, data_list, source_path

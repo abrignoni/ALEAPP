@@ -1,206 +1,148 @@
-""""
-Developed by Evangelos D. (@theAtropos4n6)
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_hikvision": {
+        "name": "Hikvision - CCTV Channels",
+        "description": "Available CCTV record channels from the Hik-Connect app",
+        "author": "Evangelos Dragonas (@theAtropos4n6)",
+        "creation_date": "2023-03-23",
+        "last_update_date": "2023-03-23",
+        "requirements": "none",
+        "category": "Hikvision",
+        "notes": "",
+        "paths": ('*/com.connect.enduser/databases/database.hik*',),
+        "output_types": "standard",
+        "artifact_icon": "video",
+    },
+    "get_hikvision_info": {
+        "name": "Hikvision - CCTV Info",
+        "description": "Information about the connected CCTV system from the Hik-Connect app",
+        "author": "Evangelos Dragonas (@theAtropos4n6)",
+        "creation_date": "2023-03-23",
+        "last_update_date": "2023-03-23",
+        "requirements": "none",
+        "category": "Hikvision",
+        "notes": "",
+        "paths": ('*/com.connect.enduser/databases/database.hik*',),
+        "output_types": "standard",
+        "artifact_icon": "video",
+    },
+    "get_hikvision_activity": {
+        "name": "Hikvision - CCTV Activity",
+        "description": "User interaction with the Hik-Connect app (may indicate remote live view / playback)",
+        "author": "Evangelos Dragonas (@theAtropos4n6)",
+        "creation_date": "2023-03-23",
+        "last_update_date": "2023-03-23",
+        "requirements": "none",
+        "category": "Hikvision",
+        "notes": "",
+        "paths": ('*/com.connect.enduser/databases/ezvizlog.db',),
+        "output_types": "standard",
+        "artifact_icon": "video",
+    },
+    "get_hikvision_media": {
+        "name": "Hikvision - User Created Media",
+        "description": "Media files the user created while viewing CCTV footage in the Hik-Connect app",
+        "author": "Evangelos Dragonas (@theAtropos4n6)",
+        "creation_date": "2023-03-23",
+        "last_update_date": "2023-03-23",
+        "requirements": "none",
+        "category": "Hikvision",
+        "notes": "",
+        "paths": ('*/com.connect.enduser/databases/image.db*', '*/0/Pictures/Hik-Connect Album/*'),
+        "output_types": "standard",
+        "artifact_icon": "video",
+    }
+}
 
-Research for this artifact was conducted by Evangelos Dragonas, Costas Lambrinoudakis and Michael Kotsis. 
-For more information read their research paper here: Link_to_be_uploaded
-
-Updated:23-03-2023
-
-Hikvision is a well-known app that is used to remotely access/operate CCTV systems. Currently the following information can be interpreted:
-
--Hikvision - CCTV Channels: retrieves info for the available CCTV record channels 
--Hikvision - CCTV Info: Information about the CCTV system
--Hikvision - CCTV Activity: User Interaction with the app. Unfortunately it is not easy to attribute user actions but indirectly can indicate remote live view/play back from CCTV footage.
--Hikvision - User Created Media: The media files the user created while viewing footage from the CCTV
-
-"""
-import sqlite3
+import datetime
 import os
-import textwrap
+import sqlite3
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly,media_to_html
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
 
-def get_hikvision(files_found, report_folder, seeker, wrap_text):
-    separator = '/'
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _db(files_found, db_name):
     for file_found in files_found:
         file_found = str(file_found)
-        file_name = os.path.basename(file_found)
-        if file_name == 'database.hik':
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            
-            #CCTV Available Channels
-            cursor.execute('''
-                select 
-                nDeviceID,
-                nChannelNo,
-                chChannelName,
-                case  nEnable
-                    when '0' then 'Disabled'
-                    when '1' then 'Enabled'
-                end
-                from channelinfo  
-                ''')
+        if os.path.basename(file_found) == db_name:
+            return file_found
+    return ''
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport('Hikvision - CCTV Channels')
-                report.start_artifact_report(report_folder, 'Hikvision - CCTV Channels')
-                report.add_script()
-                data_headers = ('Device ID','Channel No.','Channel Name','Status') 
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3]))
 
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'Hikvision - CCTV Channels'
-                tsv(report_folder, data_headers, data_list, tsvname)
-            
-            else:
-                logfunc(f'No Hikvision - CCTV Channels data available')
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
+    db.close()
+    return rows
 
-            #CCTV Info
-            cursor.execute('''
-                select 
-                nDeviceID,
-                chDeviceName,
-                chDeviceSerialNo,
-                nDevicePort,
-                nChannelNum,
-                nStartChan,
-                nIPChannelNum,
-                nStartIPChan,
-                chDDNSAddress,
-                nDDNSPort
 
-                from deviceinfo
-            ''')
+@artifact_processor
+def get_hikvision(files_found, report_folder, seeker, wrap_text):
+    source_path = _db(files_found, 'database.hik')
+    rows = _run(source_path, '''
+        SELECT nDeviceID, nChannelNo, chChannelName,
+        CASE nEnable WHEN '0' THEN 'Disabled' WHEN '1' THEN 'Enabled' END
+        FROM channelinfo
+    ''')
+    data_headers = ('Device ID', 'Channel No.', 'Channel Name', 'Status')
+    return data_headers, [tuple(r) for r in rows], source_path
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport('Hikvision - CCTV Info')
-                report.start_artifact_report(report_folder, 'Hikvision - CCTV Info')
-                report.add_script()
-                data_headers = ('ID','Name/IP','Serial Number','Port','Channels','1st Channel',' IP Channels','1st IP Channel','DDNS Address','DDNS Port') 
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]))
 
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'Hikvision - CCTV Info'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-            else:
-                logfunc(f'No Hikvision - CCTV Info data available')
-            db.close()
+@artifact_processor
+def get_hikvision_info(files_found, report_folder, seeker, wrap_text):
+    source_path = _db(files_found, 'database.hik')
+    rows = _run(source_path, '''
+        SELECT nDeviceID, chDeviceName, chDeviceSerialNo, nDevicePort, nChannelNum, nStartChan,
+        nIPChannelNum, nStartIPChan, chDDNSAddress, nDDNSPort
+        FROM deviceinfo
+    ''')
+    data_headers = ('ID', 'Name/IP', 'Serial Number', 'Port', 'Channels', '1st Channel',
+                    'IP Channels', '1st IP Channel', 'DDNS Address', 'DDNS Port')
+    return data_headers, [tuple(r) for r in rows], source_path
 
-        if file_name == 'ezvizlog.db':
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            
-            #CCTV Activity
-            cursor.execute('''
-                SELECT
-                datetime(time/1000,'unixepoch'),
-                datetime(time/1000,'unixepoch','localtime'),
-                systemName as 'Record Type',
-                content
-                FROM event 
-                ''')
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport('Hikvision - CCTV Activity')
-                report.start_artifact_report(report_folder, 'Hikvision - CCTV Activity')
-                report.add_script()
-                data_headers = ('Timestamp (UTC)','Timestamp (Local)','Record Type','Activity') 
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3]))
+@artifact_processor
+def get_hikvision_activity(files_found, report_folder, seeker, wrap_text):
+    source_path = _db(files_found, 'ezvizlog.db')
+    rows = _run(source_path, 'SELECT time, systemName, content FROM event')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2]) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Record Type', 'Activity')
+    return data_headers, data_list, source_path
 
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'Hikvision - CCTV Activity'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'Hikvision - CCTV Activity'
-                timeline(report_folder, tlactivity, data_list, data_headers)
-            else:
-                logfunc(f'No Hikvision - CCTV Activity data available')
-            
-            db.close()
 
-        if file_name == 'image.db':
-                    db = open_sqlite_db_readonly(file_found)
-                    cursor = db.cursor()
-                    
-                    #CCTV - User Created Media
-                    cursor.execute('''
-                        select
-                        datetime(createdTime/1000,'unixepoch'),
-                        cameraID,
-                        deviceID,
-                        case type
-                            when '0' then 'Image'
-                            when '1' then 'Video'
-                        end as 'Media Type',
-                        filePath,
-                        thumbPath,
-                        user,
-                        folderName,
-                        videoStartTime,
-                        videoStopTime
+@artifact_processor
+def get_hikvision_media(files_found, report_folder, seeker, wrap_text):
+    files_by_name = {os.path.basename(str(f)): str(f) for f in files_found}
+    source_path = _db(files_found, 'image.db')
+    rows = _run(source_path, '''
+        SELECT createdTime, cameraID, deviceID,
+        CASE type WHEN '0' THEN 'Image' WHEN '1' THEN 'Video' END,
+        filePath, thumbPath, user, folderName, videoStartTime, videoStopTime
+        FROM images
+    ''')
+    data_list = []
+    for r in rows:
+        media = check_in_media(files_by_name.get(os.path.basename(r[4])), os.path.basename(r[4])) if r[4] else ''
+        thumb = check_in_media(files_by_name.get(os.path.basename(r[5])), os.path.basename(r[5])) if r[5] else ''
+        data_list.append((_ms_to_utc(r[0]), r[1], r[2], r[3], media, thumb, r[6], r[7], r[8], r[9]))
 
-                        from images 
-                        ''')
-
-                    all_rows = cursor.fetchall()
-                    usageentries = len(all_rows)
-                    if usageentries > 0:
-                        report = ArtifactHtmlReport('Hikvision - User Created Media')
-                        report.start_artifact_report(report_folder, 'Hikvision - User Created Media')
-                        report.add_script()
-                        data_headers = ('Creation Timestamp (UTC)','Camera ID','Device ID','Type','File Path','Thumbnail Path','User','Folder Name','Video Start Time','Video End Time') 
-                        data_list = []
-                        for row in all_rows:
-                            if row[4] is not None:
-                                mediaident = row[4].split(separator)[-1]
-                                media = media_to_html(mediaident, files_found, report_folder)
-                            else:
-                                media = row[4]
-                            if row[5] is not None:
-                                thumbident = row[5].split(separator)[-1]
-                                thumb = media_to_html(thumbident, files_found, report_folder)
-                            else:
-                                thumb = row[5]
-                            data_list.append((row[0],row[1],row[2],row[3],media,thumb,row[6],row[7],row[8],row[9]))
-
-                        report.write_artifact_data_table(data_headers, data_list, file_found,html_escape = False)
-                        report.end_artifact_report()
-                        
-                        tsvname = f'Hikvision - User Created Media'
-                        tsv(report_folder, data_headers, data_list, tsvname)
-                        
-                        tlactivity = f'Hikvision - User Created Media'
-                        timeline(report_folder, tlactivity, data_list, data_headers)
-                    else:
-                        logfunc(f'No Hikvision - User Created Media data available')
-
-                    db.close()
-
-__artifacts__ = {
-        "hikvision": (
-                "Hikvision",
-                ('*/com.connect.enduser/databases/database.hik*','*/com.connect.enduser/databases/ezvizlog.db',
-                 '*/com.connect.enduser/databases/image.db*','*/0/Pictures/Hik-Connect Album/*'),
-                get_hikvision)
-}
+    data_headers = (
+        ('Creation Timestamp', 'datetime'), 'Camera ID', 'Device ID', 'Type', ('File', 'media'),
+        ('Thumbnail', 'media'), 'User', 'Folder Name', 'Video Start Time', 'Video End Time')
+    return data_headers, data_list, source_path

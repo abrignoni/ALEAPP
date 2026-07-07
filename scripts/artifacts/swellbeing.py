@@ -1,22 +1,43 @@
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_swellbeing": {
+        "name": "swellbeing",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-05-21",
+        "last_update_date": "2020-05-21",
+        "requirements": "none",
+        "category": "Digital Wellbeing",
+        "notes": "",
+        "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
+        "output_types": "standard",
+        "artifact_icon": "battery",
+    }
+}
 
+import datetime
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+
+
+@artifact_processor
 def get_swellbeing(files_found, report_folder, seeker, wrap_text):
 
     data_list = []
-    
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('dwbCommon.db'):
-            continue # Skip all other files
-        
+            continue  # Skip all other files
+
+        source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
         SELECT
-        datetime(usageEvents.timeStamp/1000, "UNIXEPOCH") as timestamps,
+        usageEvents.timeStamp,
         usageEvents.eventId,
-        foundPackages.name, 
+        foundPackages.name,
         usageEvents.eventType,
         CASE
         when usageEvents.eventType=1 THEN 'ACTIVITY_RESUMED'
@@ -41,34 +62,12 @@ def get_swellbeing(files_found, report_folder, seeker, wrap_text):
         FROM usageEvents
         INNER JOIN foundPackages ON usageEvents.pkgId=foundPackages.pkgId
         ''')
-
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0: 
-            for row in all_rows:
-                data_list.append((row[0], row[1], row[2], row[3], row[4], file_found))
         db.close()
-        
-    if data_list:
-        report = ArtifactHtmlReport('Samsung Digital Wellbeing - Events')
-        report.start_artifact_report(report_folder, 'Samsung Digital Wellbeing - Events')
-        report.add_script()
-        data_headers = ('Timestamp','Event ID','Package Name','Event Type','Event Type Description','Source File')
-        
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Samsung Digital Wellbeing - Events'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Samsung Digital Wellbeing - Events'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No Samsung Digital Wellbeing - Events data available')
 
-__artifacts__ = {
-        "swellbeing": (
-                "Digital Wellbeing",
-                ('*/com.samsung.android.forest/databases/dwbCommon.db*'),
-                get_swellbeing)
-}
+        for row in all_rows:
+            timestamp = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
+            data_list.append((timestamp, row[1], row[2], row[3], row[4]))
+
+    data_headers = (('Timestamp', 'datetime'), 'Event ID', 'Package Name', 'Event Type', 'Event Type Description')
+    return data_headers, data_list, source_path

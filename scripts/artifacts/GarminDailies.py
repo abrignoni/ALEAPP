@@ -1,74 +1,87 @@
-# Get Information from the table user_daily_summary from the cache-database in the Garmin Connect App
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_garmin_dailies": {
+        "name": "GarminDailies",
+        "description": "Get Information from the table user_daily_summary from the cache-database in the Garmin Connect App",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2023-02-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Garmin",
+        "notes": "",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
+        "output_types": "standard",
+        "artifact_icon": "activity",
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+
+# (column, header) pairs - duplicates from the original query/headers removed so LAVA column names stay unique
+FIELDS = [
+    ('calendarDate', 'Calendar Date'),
+    ('totalKilocalories', 'Total Kilocalories'),
+    ('activeKilocalories', 'Active Kilocalories'),
+    ('bmrKilocalories', 'BMR Kilocalories'),
+    ('wellnessActiveKilocalories', 'Wellness Active Kilocalories'),
+    ('burnedKilocalories', 'Burned Kilocalories'),
+    ('consumedKilocalories', 'Consumed Kilocalories'),
+    ('remainingKilocalories', 'Remaining Kilocalories'),
+    ('totalSteps', 'Total Steps'),
+    ('totalDistanceMeters', 'Total Distance Meters'),
+    ('wellnessDistanceMeters', 'Wellness Distance Meters'),
+    ('highlyActiveSeconds', 'Highly Active Seconds'),
+    ('activeSeconds', 'Active Seconds'),
+    ('moderateIntensityMinutes', 'Moderate Intensity Minutes'),
+    ('floorsAscendedInMeters', 'Floors Ascended In Meters'),
+    ('floorsDescendedInMeters', 'Floors Descended In Meters'),
+    ('minHeartRate', 'Min Heart Rate'),
+    ('maxHeartRate', 'Max Heart Rate'),
+    ('restingHeartRate', 'Resting Heart Rate'),
+    ('lastSevenDaysAvgRestingHeartRate', 'Last Seven Days Avg Resting Heart Rate'),
+    ('averageStressLevel', 'Average Stress Level'),
+    ('maxStressLevel', 'Max Stress Level'),
+    ('stressDuration', 'Stress Duration'),
+    ('restStressDuration', 'Rest Stress Duration'),
+    ('activityStressDuration', 'Activity Stress Duration'),
+    ('uncategorizedStressDuration', 'Uncategorized Stress Duration'),
+    ('totalStressDuration', 'Total Stress Duration'),
+    ('lowStressDuration', 'Low Stress Duration'),
+    ('mediumStressDuration', 'Medium Stress Duration'),
+    ('highStressDuration', 'High Stress Duration'),
+    ('stressPercentage', 'Stress Percentage'),
+    ('restStressPercentage', 'Rest Stress Percentage'),
+    ('activityStressPercentage', 'Activity Stress Percentage'),
+    ('uncategorizedStressPercentage', 'Uncategorized Stress Percentage'),
+    ('lowStressPercentage', 'Low Stress Percentage'),
+    ('mediumStressPercentage', 'Medium Stress Percentage'),
+    ('highStressPercentage', 'High Stress Percentage'),
+    ('bodyBatteryChargedValue', 'Body Battery Charged Value'),
+    ('bodyBatteryDrainedValue', 'Body Battery Drained Value'),
+    ('bodyBatteryHighestValue', 'Body Battery Highest Value'),
+    ('bodyBatteryLowestValue', 'Body Battery Lowest Value'),
+    ('bodyBatteryMostRecentValue', 'Body Battery Most Recent Value'),
+    ('hydrationValueInML', 'Hydration Value In ML'),
+    ('averageSpo2', 'Average Spo2'),
+    ('latestSpo2', 'Latest Spo2'),
+]
 
 
+@artifact_processor
 def get_garmin_dailies(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Garmin User Dailies")
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
-
-    # SQL query for obtaining data from the table user_daily_summary
+    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')]
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
-    cursor.execute('''
-    SELECT 
-    calendarDate, totalKilocalories, activeKilocalories, bmrKilocalories, wellnessActiveKilocalories, burnedKilocalories, consumedKilocalories, remainingKilocalories,
-    totalSteps, totalDistanceMeters, wellnessDistanceMeters, highlyActiveSeconds, activeSeconds, moderateIntensityMinutes, floorsAscendedInMeters, floorsDescendedInMeters, floorsAscendedInMeters,
-    floorsDescendedInMeters, minHeartRate, maxHeartRate, restingHeartRate, lastSevenDaysAvgRestingHeartRate, averageStressLevel, maxStressLevel, stressDuration,stressDuration, restStressDuration, activityStressDuration,
-    uncategorizedStressDuration, totalStressDuration, lowStressDuration, mediumStressDuration, highStressDuration, stressPercentage, restStressPercentage, activityStressPercentage, uncategorizedStressPercentage,
-    lowStressPercentage, mediumStressPercentage, highStressPercentage, bodyBatteryChargedValue, bodyBatteryDrainedValue, bodyBatteryHighestValue, bodyBatteryLowestValue, bodyBatteryMostRecentValue, hydrationValueInML,
-    averageSpo2, latestSpo2
-    from user_daily_summary
+    cursor.execute(f'''
+        SELECT {", ".join(col for col, _ in FIELDS)}
+        from user_daily_summary
     ''')
-
     all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        logfunc(f"Found {usageentries} entries")
-        report = ArtifactHtmlReport('Dailies')
-        report.start_artifact_report(report_folder, 'Dailies')
-        report.add_script()
-        data_headers = ('Calendar Date', 'Total Kilocalories', 'Active Kilocalories', 'BMR Kilocalories', 'Wellness Active Kilocalories', 'Burned Kilocalories', 'Consumed Kilocalories', 'Remaining Kilocalories',
-                        'Total Steps', 'Total Distance Meters', 'Wellness Distance Meters', 'Highly Active Seconds', 'Active Seconds', 'Moderate Intensity Minutes', 'Floors Ascended In Meters', 'Floors Descended In Meters',
-                        'Floors Ascended In Meters', 'Floors Descended In Meters', 'Min Heart Rate', 'Max Heart Rate', 'Resting Heart Rate', 'Last Seven Days Avg Resting Heart Rate', 'Average Stress Level', 'Max Stress Level',
-                        'Stress Duration', 'Stress Duration', 'Rest Stress Duration', 'Activity Stress Duration', 'Uncategorized Stress Duration', 'Total Stress Duration', 'Low Stress Duration', 'Medium Stress Duration',
-                        'High Stress Duration', 'Stress Percentage', 'Rest Stress Percentage', 'Activity Stress Percentage', 'Uncategorized Stress Percentage', 'Low Stress Percentage', 'Medium Stress Percentage',
-                        'High Stress Percentage', 'Body Battery Charged Value', 'Body Battery Drained Value', 'Body Battery Highest Value', 'Body Battery Lowest Value', 'Body Battery Most Recent Value', 'Hydration Value In ML',
-                        'Average Spo2', 'Latest Spo2')
-        data_list = []
-        for row in all_rows:
-           data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22],
-                            row[23], row[24], row[25], row[26], row[27], row[28], row[29], row[30], row[31], row[32], row[33], row[34], row[35], row[36], row[37], row[38], row[39], row[40], row[41], row[42], row[43], row[44],
-                            row[45], row[46], row[47]))
-
-        # Added feature to allow the user to sort the data by the selected collumns and with the ID of the table
-        table_id = 'Garmin_Dailies'
-        report.filter_by_date(table_id, 0)
-
-        report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id)
-        report.end_artifact_report()
-
-        tsvname = f'Garmin - Dailies'
-        tsv(report_folder, data_headers, data_list, tsvname)
-
-        tlactivity = f'Garmin - Dailies'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-
-    else:
-        logfunc('No Garmin Dailies data available')
-
     db.close()
+    logfunc(f"Found {len(all_rows)} entries")
 
-
-__artifacts__ = {
-    "GarminDailies": (
-        "Garmin-Cache",
-        ('*/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-        get_garmin_dailies)
-}
+    data_list = [tuple(row) for row in all_rows]
+    data_headers = tuple(header for _, header in FIELDS)
+    return data_headers, data_list, source_path

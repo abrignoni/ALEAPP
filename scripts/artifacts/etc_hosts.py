@@ -1,14 +1,31 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_etc_hosts": {
+        "name": "Etc_hosts",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-10-09",
+        "last_update_date": "2020-10-09",
+        "requirements": "none",
+        "category": "Etc Hosts",
+        "notes": "",
+        "paths": ('*/system/etc/hosts',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "file",
+    }
+}
+
 import codecs
-import csv
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows
+from scripts.ilapfuncs import artifact_processor
 
+
+@artifact_processor
 def get_etc_hosts(files_found, report_folder, seeker, wrap_text):
     data_list = []
-    file_found = str(files_found[0])
-    
-    with codecs.open(file_found, 'r', 'utf-8-sig') as csvfile:
+    source_path = str(files_found[0])
+
+    with codecs.open(source_path, 'r', 'utf-8-sig') as csvfile:
         for row in csvfile:
             sline = '\t'.join(row.split())
             sline = sline.split('\t')
@@ -16,27 +33,9 @@ def get_etc_hosts(files_found, report_folder, seeker, wrap_text):
             sline_two = sline[1]
             if (sline_one == '127.0.0.1' and sline_two == 'localhost') or \
                 (sline_one == '::1' and sline_two == 'ip6-localhost'):
-                pass # Skipping the defaults, so only anomaly entries are seen
+                pass  # Skipping the defaults, so only anomaly entries are seen
             else:
-                 data_list.append((sline_one, sline_two))
+                data_list.append((sline_one, sline_two))
 
-    if len(data_list) > 0:
-        report = ArtifactHtmlReport('Etc Hosts')
-        report.start_artifact_report(report_folder, f'Etc Hosts')
-        report.add_script()
-        data_headers = ('IP Address', 'Hostname')
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Etc Hosts'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-    else:
-        logfunc(f'No etc hosts file available, or nothing significant found.')
-        
-__artifacts__ = {
-        "Etc_hosts": (
-                "Etc Hosts",
-                ('*/system/etc/hosts'),
-                get_etc_hosts)
-}
+    data_headers = ('IP Address', 'Hostname')
+    return data_headers, data_list, source_path

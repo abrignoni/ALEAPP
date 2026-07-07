@@ -1,3 +1,4 @@
+# pylint: disable=W0613
 """
 Copyright 2022, CCL Forensics
 
@@ -19,142 +20,146 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+__artifacts_v2__ = {
+    "get_fcm_tumblr": {
+        "name": "FCM - Tumblr Messages",
+        "description": "Tumblr message notifications from fcm_queued_messages.ldb (com.tumblr)",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
+        "creation_date": "2022-01-01",
+        "last_update_date": "2022-01-01",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": "standard",
+        "artifact_icon": "message",
+    },
+    "get_fcm_tumblr_flagged": {
+        "name": "FCM - Tumblr Flagged Posts",
+        "description": "Tumblr flagged-post / appeal notifications from fcm_queued_messages.ldb",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
+        "creation_date": "2022-01-01",
+        "last_update_date": "2022-01-01",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": "standard",
+        "artifact_icon": "flag",
+    },
+    "get_fcm_tumblr_notifications": {
+        "name": "FCM - Tumblr Notifications",
+        "description": "Tumblr general (deeplink) notifications from fcm_queued_messages.ldb",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
+        "creation_date": "2022-01-01",
+        "last_update_date": "2022-01-01",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": "standard",
+        "artifact_icon": "bell",
+    },
+    "get_fcm_tumblr_logs": {
+        "name": "FCM - Tumblr Logs",
+        "description": "Tumblr logging_data push records from fcm_queued_messages.ldb",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
+        "creation_date": "2022-01-01",
+        "last_update_date": "2022-01-01",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": "standard",
+        "artifact_icon": "file-text",
+    }
+}
 
+import datetime
 import json
 import pathlib
+
 from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
-from scripts.artifact_report import ArtifactHtmlReport
-import scripts.ilapfuncs
+from scripts.ilapfuncs import artifact_processor, logfunc
 
-__version__ = "1.1"
-__description__ = """
-Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms related to com.tumblr"""
-__contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
+_CACHE = {}
+_FLAG_LABELS = {"post_flagged": "Post Flagged", "appeal_verdict_granted": "Appeal granted",
+                "appeal_verdict_denied": "Appeal denied"}
 
 
-def get_fcm_instagram(files_found, report_folder, seeker, wrap_text):
-    # we only need the input data dirs not every matching file
-    in_dirs = set(pathlib.Path(x).parent for x in files_found)
+def _to_utc(value):
+    if isinstance(value, datetime.datetime):
+        if value.tzinfo is None:
+            return value.replace(tzinfo=datetime.timezone.utc)
+        return value.astimezone(datetime.timezone.utc)
+    return value if value else ''
 
-    message_headers = ["Timestamp", "fcm_key", "Title", "Body", "Notification", "Recipient", "Uuid", "Unread Count"]
-    message_rows = []
-    flagged_post_headers = ["Timestamp", "fcm_key", "Blog Name", "Post ID", "Type"]
-    flagged_post_rows = []
-    notification_headers = ["Timestamp", "fcm_key", "Notification"]
-    notification_rows = []
-    log_headers = ["Timestamp", "fcm_key", "Push ID", "Push Type"]
-    log_rows = []
 
-    # blog_names = set()
-
+def _load(files_found):
+    key = tuple(sorted(str(f) for f in files_found))
+    if key in _CACHE:
+        return _CACHE[key]
+    in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)
+    source = " ".join(str(x) for x in in_dirs)
+    messages, flagged, notifications, logs = [], [], [], []
     for in_db_path in in_dirs:
-        with FcmIterator(in_db_path) as record_iterator:
-            for rec in record_iterator:
-                if rec.package == "com.tumblr":
-                    for key, value in rec.key_values.items():
-                        if key == "logging_data":
-                            value_obj = json.loads(value)
-                            log_rows.append([rec.timestamp, rec.key, value_obj["push_id"], value_obj["push_type"]])
-                        elif key == "google.c.sender.id":
-                            pass
-                        elif key == "message":
-                            value_obj = json.loads(value)
-                            message_type = value_obj.get("type")
-                            if message_type is None:
-                                if "check_for_notifications" in value_obj:
-                                    continue
-                                else:
-                                    print(value)
-                                    raise ValueError(f"Unknown untyped message")
-
-                            if message_type == "Message":
-                                conv_id = value_obj["conversation"]["id"]
-
-                                message_rows.append([
-                                    rec.timestamp, rec.key, value_obj["title"], value_obj["body"],
-                                    value_obj["notification"], value_obj["recipient"], value_obj["uuid"],
-                                    value_obj["conversation"]["unread"]
-                                ])
-
-                            elif message_type == "NewPost":
-                                pass
-                            elif message_type == "DEEPLINK_CATEGORY":
-                                notification_rows.append([rec.timestamp, rec.key, value_obj["body"]])
-                            elif message_type == "post_flagged":
-                                flagged_post_rows.append(
-                                    [rec.timestamp, rec.key, value_obj["to_tumblelog_name"],
-                                     value_obj["post_id"], "Post Flagged"])
-                            elif message_type == "appeal_verdict_granted":
-                                flagged_post_rows.append(
-                                    [rec.timestamp, rec.key, value_obj["to_tumblelog_name"],
-                                     value_obj["post_id"], "Appeal granted"])
-                            elif message_type == "appeal_verdict_denied":
-                                flagged_post_rows.append(
-                                    [rec.timestamp, rec.key, value_obj["to_tumblelog_name"],
-                                     value_obj["post_id"], "Appeal denied"])
-                            else:
-                                raise ValueError(f"Unknown message type: {message_type}")
-
-                        elif key == "blog_name":
-                            # blog_names.add(value)  # I think this is a blog managed by the local use, but need to check
-                            pass
-                        elif key == "check_for_notifications":
-                            pass  # just returns true when notifications are checked... maybe useful in niche situations?
-                        else:
-                            raise ValueError("Unknown key - contact R&D")
+        try:
+            with FcmIterator(in_db_path) as record_iterator:
+                for rec in record_iterator:
+                    if rec.package != "com.tumblr":
+                        continue
+                    ts = _to_utc(rec.timestamp)
+                    for k, value in rec.key_values.items():
+                        try:
+                            if k == "logging_data":
+                                vo = json.loads(value)
+                                logs.append((ts, rec.key, vo.get("push_id"), vo.get("push_type")))
+                            elif k == "message":
+                                vo = json.loads(value)
+                                mtype = vo.get("type")
+                                if mtype == "Message":
+                                    messages.append((ts, rec.key, vo.get("title"), vo.get("body"),
+                                                     vo.get("notification"), vo.get("recipient"),
+                                                     vo.get("uuid"),
+                                                     (vo.get("conversation") or {}).get("unread")))
+                                elif mtype == "DEEPLINK_CATEGORY":
+                                    notifications.append((ts, rec.key, vo.get("body")))
+                                elif mtype in _FLAG_LABELS:
+                                    flagged.append((ts, rec.key, vo.get("to_tumblelog_name"),
+                                                    vo.get("post_id"), _FLAG_LABELS[mtype]))
+                                # NewPost / untyped / unknown types are ignored
+                        except (KeyError, ValueError, TypeError) as exc:
+                            logfunc(f"Tumblr FCM: could not parse '{k}' record: {exc}")
+        except Exception as exc:  # pylint: disable=W0718
+            logfunc(f"Tumblr FCM: error reading {in_db_path}: {exc}")
+    _CACHE[key] = (messages, flagged, notifications, logs, source)
+    return _CACHE[key]
 
 
-    # write reports
-    source_files = " ".join(str(x) for x in in_dirs)
+@artifact_processor
+def get_fcm_tumblr(files_found, report_folder, seeker, wrap_text):
+    messages, _flagged, _notifications, _logs, source = _load(files_found)
+    data_headers = (('Timestamp', 'datetime'), 'FCM Key', 'Title', 'Body', 'Notification',
+                    'Recipient', 'Uuid', 'Unread Count')
+    return data_headers, messages, source
 
-    def make_report(title, name, headers, rows):
-        report = ArtifactHtmlReport(title)
-        report_name = name
-        report.start_artifact_report(report_folder, report_name)
-        report.add_script()
 
-        report.write_artifact_data_table(headers, rows, source_files)
-        report.end_artifact_report()
+@artifact_processor
+def get_fcm_tumblr_flagged(files_found, report_folder, seeker, wrap_text):
+    _messages, flagged, _notifications, _logs, source = _load(files_found)
+    data_headers = (('Timestamp', 'datetime'), 'FCM Key', 'Blog Name', 'Post ID', 'Type')
+    return data_headers, flagged, source
 
-        scripts.ilapfuncs.tsv(report_folder, headers, rows, report_name, source_files)
-        scripts.ilapfuncs.timeline(report_folder, report_name, rows, headers)
 
-    if message_rows:
-        make_report(
-            "Tumblr Message Notifications (Firebase Cloud Messaging Queued Messages)",
-            "FCM-Tumblr Message Notifications",
-            message_headers,
-            message_rows
-        )
-    else:
-        scripts.ilapfuncs.logfunc("No FCM Tumblr message notifications found")
+@artifact_processor
+def get_fcm_tumblr_notifications(files_found, report_folder, seeker, wrap_text):
+    _messages, _flagged, notifications, _logs, source = _load(files_found)
+    data_headers = (('Timestamp', 'datetime'), 'FCM Key', 'Notification')
+    return data_headers, notifications, source
 
-    if flagged_post_rows:
-        make_report(
-            "Tumblr Flagged Post Notifications (Firebase Cloud Messaging Queued Messages)",
-            "FCM-Tumblr Flagged Post Notifications",
-            flagged_post_headers,
-            flagged_post_rows
-        )
-    else:
-        scripts.ilapfuncs.logfunc("No FCM Tumblr flagged post notifications found")
 
-    if notification_rows:
-        make_report(
-            "Tumblr General Notifications (Firebase Cloud Messaging Queued Messages)",
-            "FCM-Tumblr General Notifications",
-            notification_headers,
-            notification_rows
-        )
-    else:
-        scripts.ilapfuncs.logfunc("No FCM Tumblr general notifications found")
-
-    if log_rows:
-        make_report(
-            "Tumblr Log Notifications (Firebase Cloud Messaging Queued Messages)",
-            "FCM-Tumblr Log Notifications",
-            log_headers,
-            log_rows
-        )
-    else:
-        scripts.ilapfuncs.logfunc("No FCM Tumblr log notifications found")
+@artifact_processor
+def get_fcm_tumblr_logs(files_found, report_folder, seeker, wrap_text):
+    _messages, _flagged, _notifications, logs, source = _load(files_found)
+    data_headers = (('Timestamp', 'datetime'), 'FCM Key', 'Push ID', 'Push Type')
+    return data_headers, logs, source

@@ -1,3 +1,4 @@
+# pylint: disable=W0613
 """
 Copyright 2022, CCL Forensics
 
@@ -19,36 +20,49 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+__artifacts_v2__ = {
+    "get_fcm_skype": {
+        "name": "FCM - Skype and Teams Messages",
+        "description": "Skype (com.skype.raider) and Teams (com.microsoft.teams) message/call notifications from fcm_queued_messages.ldb",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
+        "creation_date": "2022-01-01",
+        "last_update_date": "2022-01-01",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": "standard",
+        "artifact_icon": "message",
+    },
+    "get_fcm_skype_notifications": {
+        "name": "FCM - Skype and Teams Notifications",
+        "description": "Skype/Teams other (e.g. missed-chat-reminder) notifications from fcm_queued_messages.ldb",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
+        "creation_date": "2022-01-01",
+        "last_update_date": "2022-01-01",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": "standard",
+        "artifact_icon": "bell",
+    }
+}
 
-import pathlib
-import sys
 import datetime
-import json
-import typing
 import html
+import html.entities
+import json
+import pathlib
 import re
 import urllib.parse
-from html.parser import HTMLParser
-import html.entities
 import xml.etree.ElementTree as etree
+from html.parser import HTMLParser
+
 from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
-from scripts.artifact_report import ArtifactHtmlReport
-import scripts.ilapfuncs
+from scripts.ilapfuncs import artifact_processor, logfunc
 
-
-__version__ = "0.4.0"
-__description__ = """
-Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms related to com.skype.raider or 
-com.microsoft.teams"""
-__contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
-
-
-def prepare_main_args(package: str, input_dir, output_dir):
-    if package == "com.skype.raider":
-        return [input_dir, output_dir, "-s"]
-    elif package == "com.microsoft.teams":
-        return [input_dir, output_dir, "-t"]
-    raise ValueError(f"Unexpected package: {package}")
+_APP_IDS = {"com.skype.raider": "Skype", "com.microsoft.teams": "Teams"}
 
 
 class JustGetTextParser(HTMLParser):
@@ -60,7 +74,7 @@ class JustGetTextParser(HTMLParser):
         self._text_list.append(data)
 
     def handle_entityref(self, name: str) -> None:
-        self._text_list.append(html.entities.name2codepoint[name])
+        self._text_list.append(chr(html.entities.name2codepoint[name]))
 
     def handle_charref(self, name: str) -> None:
         if name.startswith('x'):
@@ -69,7 +83,7 @@ class JustGetTextParser(HTMLParser):
             c = chr(int(name))
         self._text_list.append(c)
 
-    def handle_starttag(self, tag: str, attrs: list[tuple]) -> None:
+    def handle_starttag(self, tag: str, attrs: list) -> None:
         if tag in ("div", "p"):
             self._text_list.append("\n")
         elif tag == "img":
@@ -79,66 +93,45 @@ class JustGetTextParser(HTMLParser):
                     break
 
 
-MESSAGE_TYPES = {
-    "200": "Message",
-    "201": "Message",
-    "302": "Message",  # with (url?) attachment?
-    "305": "Message",  # with (video?) attachment?
-    "306": "Message",  # with (generic file) attachments?
-}
-
-CALL_TYPES = {
-    "107": "Call",
-}
-
-MISSED_CALL_TYPES = {
-    "110": "MissedCall"
-}
-
-USER_TYPES = {
-    "801": "User Details",  # invite?
-    "802": "User Details",  # invite?
-    "803": "User Details",  # invite?
-}
-
-NOTIFICATION_TYPES = {
-    "404": "Missed chat reminder"
-}
-
-OTHER_TYPES = {
-    "6": "Unknown",
-    "115": "Unknown",  # something like a status change maybe?
-    "116": "Unknown",  # something like a status change maybe?
-    "117": "Unknown",  # something like a status change maybe?
-    "308": "User status change",  # I think
-    "601": "Unknown - related to encryption key?",
-    "1304": "Unknown",  # Something to do with groups?
-    "1306": "Unknown",
-    "1400": "Unknown"
-}
-
+MESSAGE_TYPES = {"200": "Message", "201": "Message", "302": "Message", "305": "Message", "306": "Message"}
+CALL_TYPES = {"107": "Call"}
+MISSED_CALL_TYPES = {"110": "MissedCall"}
+NOTIFICATION_TYPES = {"404": "Missed chat reminder"}
+OTHER_TYPES = {"6": "Unknown", "115": "Unknown", "116": "Unknown", "117": "Unknown",
+               "308": "User status change", "601": "Unknown - related to encryption key?",
+               "1304": "Unknown", "1306": "Unknown", "1400": "Unknown"}
+USER_TYPES = {"801": "User Details", "802": "User Details", "803": "User Details"}
 KNOWN_TYPES = MESSAGE_TYPES | CALL_TYPES | MISSED_CALL_TYPES | USER_TYPES | NOTIFICATION_TYPES | OTHER_TYPES
 
 STARTS_WITH_NUMBER = re.compile(r"^\d{1,2}:")
-
 EPOCH = datetime.datetime(1970, 1, 1)
 
 
-def unix_ms(ms: int):
-    return EPOCH + datetime.timedelta(milliseconds=ms)
+def unix_ms(ms):
+    return EPOCH + datetime.timedelta(milliseconds=int(ms))
 
 
-def make_metadata_field(
-        payload: dict, fields: dict[str, str], converters: dict[str, typing.Callable[[typing.Any], typing.Any]]):
+def _to_utc(value):
+    if isinstance(value, datetime.datetime):
+        if value.tzinfo is None:
+            return value.replace(tzinfo=datetime.timezone.utc)
+        return value.astimezone(datetime.timezone.utc)
+    return value if value else ''
+
+
+def _clean(text):
+    '''Flatten the HTML-oriented content to plain text for LAVA/TSV.'''
+    return html.unescape(str(text).replace('<em>', '').replace('</em>', ''))
+
+
+def make_metadata_field(payload: dict, fields: dict, converters: dict):
     result = []
     for field_name, key in fields.items():
         value = payload.get(key)
         if not value:
             continue
-
         value = converters.get(field_name, lambda x: x)(value)
         result.append(f"{field_name}: {value}")
-
     return result
 
 
@@ -146,224 +139,125 @@ def process_content(content: str):
     if content.startswith("<URIObject"):
         content_ele = etree.fromstring(content)
         result = [
-            etree.tostring(content_ele, encoding="utf-8", method="text").decode("utf-8"),
-            "",
-            f"<em>URI: {content_ele.get('uri')}</em>",
-            f"<em>Doc ID: {content_ele.get('doc_id')}</em>",
-            f"<em>Type: {content_ele.get('type')}</em>"
-        ]
-
+            etree.tostring(content_ele, encoding="utf-8", method="text").decode("utf-8"), "",
+            f"URI: {content_ele.get('uri')}", f"Doc ID: {content_ele.get('doc_id')}",
+            f"Type: {content_ele.get('type')}"]
         fs_ele = content_ele.find("FileSize")
         og_name = content_ele.find("OriginalName")
         if fs_ele is not None:
-            result.append(f"<em>File Size: {fs_ele.get('v')}</em>")
+            result.append(f"File Size: {fs_ele.get('v')}")
         if og_name is not None:
-            result.append(f"<em>Original Name: {og_name.get('v')}</em>")
+            result.append(f"Original Name: {og_name.get('v')}")
         result.append("")
-        result.append(html.escape(html.unescape(content), quote=False))
+        result.append(html.unescape(content))
         return result
-    elif content.startswith("<div"):
+    if content.startswith("<div"):
         chunks = []
-        parser = JustGetTextParser(chunks)
-        parser.feed(content)
+        JustGetTextParser(chunks).feed(content)
         text = "".join(chunks).strip()
-
-        result = [
-            "<em>Text Content:</em>",
-            *text.splitlines(keepends=False),
-            "",
-            "<em>Original Data:</em>",
-            html.escape(html.unescape(content), quote=False)
-        ]
-        return result
-    elif content.startswith("<addmember"):
+        return ["Text Content:", *text.splitlines(keepends=False), "", "Original Data:",
+                html.unescape(content)]
+    if content.startswith("<addmember"):
         content_ele = etree.fromstring(content)
-        result = [
-            f"<em>Event Time: {unix_ms(int(content_ele.find('eventtime').text))}</em>",
-            f"<em>Initiator: {content_ele.find('initiator').text}</em>",
-            ""
-        ]
-        result.extend(f"<em>Target participant: {x.text}</em>" for x in content_ele.findall('target'))
+        result = [f"Event Time: {unix_ms(content_ele.find('eventtime').text)}",
+                  f"Initiator: {content_ele.find('initiator').text}", ""]
+        result.extend(f"Target participant: {x.text}" for x in content_ele.findall('target'))
         result.append("")
-        result.append(html.escape(html.unescape(content), quote=False))
+        result.append(html.unescape(content))
         return result
-    elif content.startswith("<deletemember"):
+    if content.startswith("<deletemember"):
         content_ele = etree.fromstring(content)
-        result = [
-            f"<em>Event Time: {unix_ms(int(content_ele.find('eventtime').text))}</em>",
-            f"<em>Initiator: {content_ele.find('initiator').text}</em>",
-        ]
-        result.extend(f"<em>Removed participant: {x.text}</em>" for x in content_ele.findall('target'))
+        result = [f"Event Time: {unix_ms(content_ele.find('eventtime').text)}",
+                  f"Initiator: {content_ele.find('initiator').text}"]
+        result.extend(f"Removed participant: {x.text}" for x in content_ele.findall('target'))
         result.append("")
-        result.append(html.escape(html.unescape(content), quote=False))
+        result.append(html.unescape(content))
         return result
-    else:
-        return html.escape(html.unescape(content), quote=False)
+    return html.unescape(content)
 
 
-def get_fcm_skype(files_found, report_folder, seeker, wrap_text, mode):
-    if mode == "s":
-        app_name = "Skype"
-        app_id = "com.skype.raider"
-        print("Skype mode")
-    elif mode == "t":
-        app_name = "Teams"
-        app_id = "com.microsoft.teams"
-        print("Teams mode")
-    else:
-        raise ValueError(f"Mode '{mode}' not understood.")
+_CACHE = {}
 
-    message_table_header = [
-        "FCM Timestamp", "Original Timestamp", "Conversation ID", "Recipient", "From", "Content", "Metadata"]
-    notification_table_header = ["Timestamp", "Title", "Message", "Recipient", "Link"]
 
-    # in Teams missed calls don't have a conversation ID but the call that was missed does, so we can look them up later
+def _load(files_found):
+    key = tuple(sorted(str(f) for f in files_found))
+    if key in _CACHE:
+        return _CACHE[key]
+    in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)
+    source = " ".join(str(x) for x in in_dirs)
     call_id_to_conversation = {}
-    unknown_event_types = set()
-    message_rows = []
-    notification_rows = []
-
-    # we only need the input data dirs not every matching file
-    in_dirs = set(pathlib.Path(x).parent for x in files_found)
+    messages, notifications = [], []
     for in_db_path in in_dirs:
-        with FcmIterator(in_db_path) as record_iterator:
-            for rec in record_iterator:
-                if rec.package == app_id:
-                    if rec.key_values["eventType"] not in KNOWN_TYPES:
-                        unknown_event_types.add(rec.key_values["eventType"])
+        try:
+            with FcmIterator(in_db_path) as record_iterator:
+                for rec in record_iterator:
+                    app_name = _APP_IDS.get(rec.package)
+                    if not app_name:
                         continue
-
-                    event_type = rec.key_values["eventType"]
-                    recipient_id = rec.key_values.get("recipientId")
-
-                    if event_type in CALL_TYPES:
-                        conversation_id = rec.key_values["convoId"]
-                        call_id_to_conversation[rec.key_values["callId"]] = conversation_id
-
-                        from_details = [rec.key_values["callerId"]]
-                        if display_name := rec.key_values.get("displayName"):
-                            from_details.insert(0, urllib.parse.unquote(display_name))
-
-                        metadata = make_metadata_field(
-                            rec.key_values,
-                            {
-                                "Is video call?": "videoCall",
-                                "Participant ID": "participantId"
-                            },
-                            {}
-                        )
-                        metadata.insert(0, f"FCM Key: {rec.key}")
-
-                        message_rows.append([
-                            rec.timestamp,
-                            rec.key_values.get("pnhTime"),  # Teams doesn't always have this.
-                            conversation_id,
-                            recipient_id,
-                            "\n".join(from_details),
-                            "<em>Call</em>",
-                            "\n".join(metadata)
-                        ])
-
-                    elif event_type in MISSED_CALL_TYPES:
-                        conversation_id = rec.key_values.get("conversationId")
-                        if conversation_id is None:
-                            conversation_id = call_id_to_conversation[rec.key_values["callId"]]
-
-                        message_rows.append([
-                            rec.timestamp,
-                            rec.key_values.get("pnhTime"),  # Teams doesn't always have this
-                            conversation_id,
-                            recipient_id,
-                            rec.key_values.get("callerMri", conversation_id),
-                            "<em>Missed Call Notification</em>",
-                            f"Reason: {rec.key_values['reason']}"
-                        ])
-
-                    elif event_type in MESSAGE_TYPES:
-                        conversation_id = rec.key_values["conversationId"]
-                        # trim the number at the start for the lookup, so it can be used consistently with calls
-                        conversation_id = STARTS_WITH_NUMBER.sub("", conversation_id, 1)
-                        payload = json.loads(rec.key_values["rawPayload"])
-                        metadata = make_metadata_field(
-                            payload,
-                            {
-                                "ID": "id",
-                                "Client Message ID": "clientmessageid",
-                                "Thread Topic": "threadtopic",
-                                "Conversation Link": "conversationLink",
-                                "Message type": "messagetype",
-                                "Content type": "contenttype",
-                             },
-                            {}
-                        )
-                        metadata.insert(0, f"FCM Key: {rec.key}")
-                        from_details = [payload["from"]]
-                        if display_name := payload.get("imdisplayname"):
-                            from_details.insert(0, display_name)
-
-                        content = process_content(payload["content"])
-                        if isinstance(content, list):
-                            content = "\n".join(content)
-
-                        message_rows.append([
-                            rec.timestamp,
-                            payload["originalarrivaltime"],
-                            conversation_id,
-                            recipient_id,
-                            "\n".join(from_details),
-                            content,
-                            "\n".join(metadata)
-                        ])
-                    elif event_type in NOTIFICATION_TYPES:
-                        # ["Timestamp", "Title", "Message", "Recipient", "Link"]
-                        notification_rows.append([
-                            rec.timestamp,
-                            rec.key_values["title"],
-                            rec.key_values["msg"],
-                            rec.key_values["recipientId"],
-                            rec.key_values["link"]
-                        ])
-
-    if message_rows:
-        report = ArtifactHtmlReport(f"{app_name} Message Notifications (Firebase Cloud Messaging Queued Messages)")
-        report_name = f"FCM-{app_name} Message Notifications"
-        report.start_artifact_report(report_folder, report_name)
-        report.add_script()
-
-        source_files = " ".join(str(x) for x in in_dirs)
-
-        report.write_artifact_data_table(message_table_header, message_rows, source_files, html_escape=False)
-        report.end_artifact_report()
-
-        scripts.ilapfuncs.tsv(report_folder, message_table_header, message_rows, report_name, source_files)
-        scripts.ilapfuncs.timeline(report_folder, report_name, message_rows, message_table_header)
-    else:
-        scripts.ilapfuncs.logfunc(f"No FCM {app_name} message notifications found")
-
-    if notification_rows:
-        report = ArtifactHtmlReport(f"{app_name} Other Notifications (Firebase Cloud Messaging Queued Messages)")
-        report_name = f"FCM-{app_name} Other Notifications"
-        report.start_artifact_report(report_folder, report_name)
-        report.add_script()
-
-        source_files = " ".join(str(x) for x in in_dirs)
-
-        report.write_artifact_data_table(notification_table_header, notification_rows, source_files, html_escape=False)
-        report.end_artifact_report()
-
-        scripts.ilapfuncs.tsv(report_folder, notification_table_header, notification_rows, report_name, source_files)
-        scripts.ilapfuncs.timeline(report_folder, report_name, notification_rows, notification_table_header)
-    else:
-        scripts.ilapfuncs.logfunc(f"No FCM {app_name} other notifications found")
+                    try:
+                        event_type = rec.key_values.get("eventType")
+                        if event_type not in KNOWN_TYPES:
+                            continue
+                        recipient_id = rec.key_values.get("recipientId")
+                        ts = _to_utc(rec.timestamp)
+                        if event_type in CALL_TYPES:
+                            conversation_id = rec.key_values["convoId"]
+                            call_id_to_conversation[rec.key_values["callId"]] = conversation_id
+                            from_details = [rec.key_values["callerId"]]
+                            if display_name := rec.key_values.get("displayName"):
+                                from_details.insert(0, urllib.parse.unquote(display_name))
+                            metadata = make_metadata_field(
+                                rec.key_values,
+                                {"Is video call?": "videoCall", "Participant ID": "participantId"}, {})
+                            metadata.insert(0, f"FCM Key: {rec.key}")
+                            messages.append((ts, app_name, rec.key_values.get("pnhTime"), conversation_id,
+                                             recipient_id, "\n".join(from_details), "Call", "\n".join(metadata)))
+                        elif event_type in MISSED_CALL_TYPES:
+                            conversation_id = rec.key_values.get("conversationId") or \
+                                call_id_to_conversation.get(rec.key_values.get("callId"))
+                            messages.append((ts, app_name, rec.key_values.get("pnhTime"), conversation_id,
+                                             recipient_id, rec.key_values.get("callerMri", conversation_id),
+                                             "Missed Call Notification", f"Reason: {rec.key_values.get('reason')}"))
+                        elif event_type in MESSAGE_TYPES:
+                            conversation_id = STARTS_WITH_NUMBER.sub("", rec.key_values["conversationId"], 1)
+                            payload = json.loads(rec.key_values["rawPayload"])
+                            metadata = make_metadata_field(
+                                payload,
+                                {"ID": "id", "Client Message ID": "clientmessageid", "Thread Topic": "threadtopic",
+                                 "Conversation Link": "conversationLink", "Message type": "messagetype",
+                                 "Content type": "contenttype"}, {})
+                            metadata.insert(0, f"FCM Key: {rec.key}")
+                            from_details = [payload["from"]]
+                            if display_name := payload.get("imdisplayname"):
+                                from_details.insert(0, display_name)
+                            content = process_content(payload["content"])
+                            if isinstance(content, list):
+                                content = "\n".join(content)
+                            messages.append((ts, app_name, payload.get("originalarrivaltime"), conversation_id,
+                                             recipient_id, "\n".join(from_details), _clean(content),
+                                             "\n".join(metadata)))
+                        elif event_type in NOTIFICATION_TYPES:
+                            notifications.append((ts, app_name, rec.key_values.get("title"),
+                                                  rec.key_values.get("msg"), rec.key_values.get("recipientId"),
+                                                  rec.key_values.get("link")))
+                    except (KeyError, ValueError, TypeError, json.JSONDecodeError, etree.ParseError) as exc:
+                        logfunc(f"Skype/Teams FCM: could not parse {rec.package} record: {exc}")
+        except Exception as exc:  # pylint: disable=W0718
+            logfunc(f"Skype/Teams FCM: error reading {in_db_path}: {exc}")
+    _CACHE[key] = (messages, notifications, source)
+    return _CACHE[key]
 
 
-__artifacts__ = {
-    "FCM_Skype": (
-        "Firebase Cloud Messaging",
-        ('*/fcm_queued_messages.ldb/*'),
-        lambda a, b, c, d: get_fcm_skype(a, b, c, d, "s")),
-    "FCM_Teams": (
-        "Firebase Cloud Messaging",
-        ('*/fcm_queued_messages.ldb/*'),
-        lambda a, b, c, d: get_fcm_skype(a, b, c, d, "t"))
-}
+@artifact_processor
+def get_fcm_skype(files_found, report_folder, seeker, wrap_text):
+    messages, _notifications, source = _load(files_found)
+    data_headers = (('FCM Timestamp', 'datetime'), 'App', 'Original Timestamp', 'Conversation ID',
+                    'Recipient', 'Sender', 'Content', 'Metadata')
+    return data_headers, messages, source
+
+
+@artifact_processor
+def get_fcm_skype_notifications(files_found, report_folder, seeker, wrap_text):
+    _messages, notifications, source = _load(files_found)
+    data_headers = (('Timestamp', 'datetime'), 'App', 'Title', 'Message', 'Recipient', 'Link')
+    return data_headers, notifications, source

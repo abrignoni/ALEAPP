@@ -1,174 +1,110 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
-    "AirGuard": {
-        "name": "AirGuard",
-        "description": "Parses the AirGuard AirTag app",
+    "get_airGuard": {
+        "name": "AirGuard AirTag Tracker",
+        "description": "Parses tracker detections from the AirGuard AirTag app",
         "author": "@AlexisBrignoni",
-        "version": "0.0.2",
-        "date": "2022-01-08",
+        "creation_date": "2022-01-08",
+        "last_update_date": "2022-01-08",
         "requirements": "none",
         "category": "AirTags",
         "notes": "",
-        "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*'),
-        "function": "get_airGuard"
+        "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*',),
+        "output_types": "all",
+        "artifact_icon": "shield",
+    },
+    "get_airGuard_scans": {
+        "name": "AirGuard AirTag Scans",
+        "description": "Parses scan history from the AirGuard AirTag app",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2022-01-08",
+        "last_update_date": "2022-01-08",
+        "requirements": "none",
+        "category": "AirTags",
+        "notes": "",
+        "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*',),
+        "output_types": "standard",
+        "artifact_icon": "search",
     }
 }
 
+import datetime
 import sqlite3
-import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, kmlgen, does_table_exist_in_db, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, does_table_exist_in_db
 
-def get_airGuard(files_found, report_folder, seeker, wrap_text):
-    
-    data_list_scans = []
-    data_list_tracker = []
-    
+
+def _iso_to_utc(value):
+    if value is None:
+        return ''
+    text = str(value)
+    if not text or text == 'None':
+        return ''
+    try:
+        parsed = datetime.datetime.fromisoformat(text.replace('Z', '+00:00'))
+    except (ValueError, TypeError):
+        return ''
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=datetime.timezone.utc)
+    return parsed.astimezone(datetime.timezone.utc)
+
+
+def _attd_db(files_found):
     for file_found in files_found:
-        file_name = str(file_found)
-        
+        file_found = str(file_found)
         if file_found.endswith('attd_db'):
-            db = open_sqlite_db_readonly(file_found)
-            location_table_exists = does_table_exist_in_db(file_found, 'location')
-            cursor = db.cursor()
-            if location_table_exists:
-                cursor.execute('''
-                SELECT
-                device.lastSeen AS "Last Time Device Seen",
-                beacon.receivedAt AS "Time (Local)",
-                beacon.deviceAddress AS "Device MAC Address",
-                location.latitude AS "Latitude",
-                location.longitude as "Longitude",
-                beacon.rssi AS "Signal Strength (RSSI)",
-                device.deviceType AS "Device Type",
-                device.firstDiscovery AS "First Time Device Seen",
-                device.lastNotificationSent as "Last Time User Notified"
-                FROM
-                beacon
-                LEFT JOIN device on device.address = beacon.deviceAddress
-                LEFT JOIN location on location.locationId = beacon.locationId
-                ''')
-            else:    
-                cursor.execute('''
-                SELECT
-                device.lastSeen AS "Last Time Device Seen",
-                beacon.receivedAt AS "Time (Local)",
-                beacon.deviceAddress AS "Device MAC Address",
-                beacon.latitude AS "Latitude",
-                beacon.longitude as "Longitude",
-                beacon.rssi AS "Signal Strength (RSSI)",
-                device.deviceType AS "Device Type",
-                device.firstDiscovery AS "First Time Device Seen",
-                device.lastNotificationSent as "Last Time User Notified"
-                FROM
-                beacon
-                LEFT JOIN device on device.address=beacon.deviceAddress
-                ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    last_time_dev_seen = str(row[0]).replace("T", " ")
-                    if last_time_dev_seen is None or last_time_dev_seen == 'None':
-                        pass
-                    else:
-                        last_time_dev_seen = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_time_dev_seen),'UTC')
-                    
-                    time_local = str(row[1]).replace("T", " ")
-                    if time_local is None or time_local == 'None':
-                        pass
-                    else:
-                        time_local = convert_utc_human_to_timezone(convert_ts_human_to_utc(time_local),'UTC')
-                    
-                    first_time_dev_seen = str(row[7]).replace("T", " ")
-                    if first_time_dev_seen is None or first_time_dev_seen == 'None':
-                        pass
-                    else:
-                        first_time_dev_seen = convert_utc_human_to_timezone(convert_ts_human_to_utc(first_time_dev_seen),'UTC')
-                        
-                    last_time_user_notified = str(row[8]).replace("T", " ")
-                    if last_time_user_notified is None or last_time_user_notified == 'None':
-                        pass
-                    else:
-                        last_time_user_notified = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_time_user_notified),'UTC')
+            return file_found
+    return ''
 
-                    data_list_tracker.append((last_time_dev_seen,time_local,row[2],row[3],row[4],row[5],row[6],first_time_dev_seen,last_time_user_notified,file_found))
-            
-            cursor = db.cursor()
-            cursor.execute('''   
-            SELECT
-            startDate,
-            endDate,
-            duration AS "Duration (Seconds)",
-            noDevicesFound,
-            CASE isManual
-                WHEN 0 THEN 'No'
-                WHEN 1 THEN 'Yes'
-            END,
-            scanMode
-            FROM scan
-            ''')
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    start_scan_ts = str(row[0]).replace("T", " ")
-                    if start_scan_ts is None or start_scan_ts == 'None':
-                        pass
-                    else:
-                        start_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(start_scan_ts),'UTC')
-                    
-                    end_scan_ts = str(row[1]).replace("T", " ")
-                    if end_scan_ts is None or end_scan_ts == 'None':
-                        pass
-                    else:
-                        end_scan_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(end_scan_ts),'UTC')
-                    
-                    data_list_scans.append((start_scan_ts,end_scan_ts,row[2],row[3],row[4],row[5],file_found))
-            db.close()
-  
-        else:
-            continue # Skip all other files
-        
-    if data_list_tracker:        
-        report = ArtifactHtmlReport('AirGuard AirTag Tracker')
-        report.start_artifact_report(report_folder, 'AirGuard AirTag Tracker')
-        report.add_script()
-        data_headers = ('Last Time Device Seen','Time (Local)','Device MAC Address','Latitude','Longitude','Signal Strength (RSSI)','Device Type','First Time Device Seen','Last Time User Notified','Source File')
-        data_headers_kml = ('Timestamp','Time (Local)','Device MAC Address','Latitude','Longitude','Signal Strength (RSSI)','Device Type','First Time Device Seen','Last Time User Notified','Source File')
-        
-        report.write_artifact_data_table(data_headers, data_list_tracker, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'AirGuard AirTag Tracker'
-        tsv(report_folder, data_headers, data_list_tracker, tsvname)
-        
-        tlactivity = f'AirGuard AirTag Tracker'
-        timeline(report_folder, tlactivity, data_list_tracker, data_headers)
-        
-        kmlactivity = 'AirGuard AirTag Tracker'
-        kmlgen(report_folder, kmlactivity, data_list_tracker, data_headers_kml)
-        
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
+    db.close()
+    return rows
+
+
+@artifact_processor
+def get_airGuard(files_found, report_folder, seeker, wrap_text):
+    source_path = _attd_db(files_found)
+    # Older databases keep latitude/longitude on the beacon table; newer ones use a location table
+    if source_path and does_table_exist_in_db(source_path, 'location'):
+        coords = 'location.latitude, location.longitude'
+        coord_join = 'LEFT JOIN location ON location.locationId = beacon.locationId'
     else:
-        logfunc('No AirGuard AirTag Tracker data available')
-        
-    if data_list_scans:
-        report = ArtifactHtmlReport('AirGuard AirTag Scans')
-        report.start_artifact_report(report_folder, 'AirGuard AirTag Scans')
-        report.add_script()
-        data_headers = ('Start Scan Timestamp','End Scan Timestamp','Duration (Seconds)','Devices Found','Manual Scan?','Scan Mode','Source File') 
-        data_headers_kml = ('Timestamp','End Scan Timestamp','Duration (Seconds)','Devices Found','Manual Scan?','Scan Mode','Source File') 
+        coords = 'beacon.latitude, beacon.longitude'
+        coord_join = ''
+    rows = _run(source_path, f'''
+        SELECT device.lastSeen, beacon.receivedAt, beacon.deviceAddress, {coords}, beacon.rssi,
+        device.deviceType, device.firstDiscovery, device.lastNotificationSent
+        FROM beacon
+        LEFT JOIN device ON device.address = beacon.deviceAddress
+        {coord_join}
+    ''')
+    data_list = [(_iso_to_utc(r[0]), _iso_to_utc(r[1]), r[2], r[3], r[4], r[5], r[6],
+                  _iso_to_utc(r[7]), _iso_to_utc(r[8])) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), ('Received Time', 'datetime'), 'Device MAC Address',
+                    'Latitude', 'Longitude', 'Signal Strength (RSSI)', 'Device Type',
+                    ('First Time Device Seen', 'datetime'), ('Last Time User Notified', 'datetime'))
+    return data_headers, data_list, source_path
 
-        report.write_artifact_data_table(data_headers, data_list_scans, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'AirGuard AirTag Scans'
-        tsv(report_folder, data_headers, data_list_scans, tsvname)
-        
-        tlactivity = f'AirGuard AirTag Scans'
-        timeline(report_folder, tlactivity, data_list_scans, data_headers)
-        
-    else:
-        logfunc('No AirGuard AirTag Scans data available')
+
+@artifact_processor
+def get_airGuard_scans(files_found, report_folder, seeker, wrap_text):
+    source_path = _attd_db(files_found)
+    rows = _run(source_path, '''
+        SELECT startDate, endDate, duration, noDevicesFound,
+        CASE isManual WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' END, scanMode
+        FROM scan
+    ''')
+    data_list = [(_iso_to_utc(r[0]), _iso_to_utc(r[1]), r[2], r[3], r[4], r[5]) for r in rows]
+    data_headers = (('Start Scan Timestamp', 'datetime'), ('End Scan Timestamp', 'datetime'),
+                    'Duration (Seconds)', 'Devices Found', 'Manual Scan?', 'Scan Mode')
+    return data_headers, data_list, source_path

@@ -1,14 +1,32 @@
-import sqlite3
-import textwrap
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_HideX": {
+        "name": "HideX",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-10-12",
+        "last_update_date": "2021-10-12",
+        "requirements": "none",
+        "category": "GroupMe",
+        "notes": "",
+        "paths": ('*/com.flatfish.cal.privacy/databases/hidex.db*',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "message",
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
+
+@artifact_processor
 def get_HideX(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
+
         if file_found.endswith('hidex.db'):
+            source_path = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -22,31 +40,10 @@ def get_HideX(files_found, report_folder, seeker, wrap_text):
             FROM p_lock_app
             ''')
 
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('HideX - Locked Apps')
-        report.start_artifact_report(report_folder, 'HideX - Locked Apps')
-        report.add_script()
-        data_headers = ('ID','Package Name','Is Active') 
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2]))
+            all_rows = cursor.fetchall()
+            for row in all_rows:
+                data_list.append((row[0],row[1],row[2]))
+            db.close()
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'HideX'
-        tsv(report_folder, data_headers, data_list, tsvname)
-
-    else:
-        logfunc('No HideX data available')
-    
-    db.close()
-
-__artifacts__ = {
-        "HideX": (
-                "GroupMe",
-                ('*/com.flatfish.cal.privacy/databases/hidex.db*'),
-                get_HideX)
-}
+    data_headers = ('ID', 'Package Name', 'Is Active')
+    return data_headers, data_list, source_path

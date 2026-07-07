@@ -1,101 +1,82 @@
-# Get Information related to users from the Adidas Running app stored in user.db
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-03-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_adidas_user": {
+        "name": "AdidasUser",
+        "description": "Get Information related to users from the Adidas Running app stored in user.db",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-03-24",
+        "last_update_date": "2023-03-24",
+        "requirements": "Python 3.7 or higher",
+        "category": "Adidas-Running",
+        "notes": "",
+        "paths": ('*com.runtastic.android/databases/user.db*',),
+        "output_types": "standard",
+        "artifact_icon": "user",
+        "html_columns": ['Image'],
+    }
+}
+
 import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
+
+
+@artifact_processor
 def get_adidas_user(files_found, report_folder, seeker, wrap_text):
     logfunc("Processing data for Adidas User")
-    files_found = [x for x in files_found if not x.endswith('-journal')]
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
-
-    # Get information from the table device_sync_audit
+    files_found = [x for x in files_found if not str(x).endswith('-journal')]
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''
         Select *
         from userProperty
     ''')
-
     all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        logfunc(f"Found {usageentries} entries in user.db")
-        report = ArtifactHtmlReport('User')
-        report.start_artifact_report(report_folder, 'Adidas User')
-        report.add_script()
-        data_headers = ('ID', 'Name', 'Height', 'Weight', 'Country', 'Gender', 'Email', 'Created At', 'Image', 'My Fitness Pal', 'Garmin Connect', 'Polar', 'LastSync')
-        data_list = []
-        for row in all_rows:
-            if row[2] == 'userId':
-                user_id = row[1]
-            if row[2] == 'FirstName':
-                name = row[1]
-            if row[2] == 'LastName':
-                name = name + ' ' + row[1]
-            if row[2] == 'Height':
-                height = row[1]
-            if row[2] == 'Weight':
-                weight = row[1]
-            if row[2] == 'CountryCode':
-                country = row[1]
-            if row[2] == 'Gender':
-                gender = row[1]
-            if row[2] == 'EMail':
-                email = row[1]
-            if row[2] == 'createdAt':
-                created_at = row[1]
-                #convert from timestamp to date
-                created_at = int(created_at)
-                created_at = datetime.datetime.utcfromtimestamp(created_at/1000).strftime('%Y-%m-%d %H:%M:%S')
-            if row[2] == 'AvatarUrl':
-                image = row[1]
-            if row[2] == 'MY_FITNESS_PAL_CONNECTED':
-                if row[1] == 'true':
-                    my_fitness_pal = 'Connected'
-                else:
-                    my_fitness_pal = 'Not Connected'
-            if row[2] == 'isGarminConnected':
-                if row[1] == 'true':
-                    garmin_connect = 'Connected'
-                else:
-                    garmin_connect = 'Not Connected'
-            if row[2] == 'isPolarConnected':
-                if row[1] == 'true':
-                    polar = 'Connected'
-                else:
-                    polar = 'Not Connected'
-            if row[2] == 'lastV3SessionSyncAtLocalTime':
-                last_sync = row[1]
-                #convert from timestamp to date
-                last_sync = int(last_sync)
-                last_sync = datetime.datetime.utcfromtimestamp(last_sync/1000).strftime('%Y-%m-%d %H:%M:%S')
-        data_list.append((user_id, name, height, weight, country, gender, email, created_at, '<img src="'+image+'" alt="'+image+'" width="50" height="50">', my_fitness_pal, garmin_connect, polar, last_sync))
-
-        table_id = "AdidasUser"
-        report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id, html_escape=False)
-        report.end_artifact_report()
-
-        tsvname = f'Adidas - User'
-        tsv(report_folder, data_headers, data_list, tsvname)
-
-        tlactivity = f'Adidas - User'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-
-    else:
-        logfunc('No Adidas User data available')
-
     db.close()
 
+    user_id = name = height = weight = country = gender = email = ''
+    created_at = image = my_fitness_pal = garmin_connect = polar = last_sync = ''
+    for row in all_rows:
+        key = row[2]
+        val = row[1]
+        if key == 'userId':
+            user_id = val
+        elif key == 'FirstName':
+            name = val
+        elif key == 'LastName':
+            name = (name + ' ' + val).strip()
+        elif key == 'Height':
+            height = val
+        elif key == 'Weight':
+            weight = val
+        elif key == 'CountryCode':
+            country = val
+        elif key == 'Gender':
+            gender = val
+        elif key == 'EMail':
+            email = val
+        elif key == 'createdAt':
+            created_at = _ms_to_utc(val)
+        elif key == 'AvatarUrl':
+            image = val
+        elif key == 'MY_FITNESS_PAL_CONNECTED':
+            my_fitness_pal = 'Connected' if val == 'true' else 'Not Connected'
+        elif key == 'isGarminConnected':
+            garmin_connect = 'Connected' if val == 'true' else 'Not Connected'
+        elif key == 'isPolarConnected':
+            polar = 'Connected' if val == 'true' else 'Not Connected'
+        elif key == 'lastV3SessionSyncAtLocalTime':
+            last_sync = _ms_to_utc(val)
 
-__artifacts__ = {
-    "AdidasUser": (
-        "Adidas-Running",
-        ('*com.runtastic.android/databases/user.db*'),
-        get_adidas_user)
-}
+    image_html = f'<img src="{image}" alt="{image}" width="50" height="50">' if image else ''
+    data_list = [(user_id, name, height, weight, country, gender, email, created_at, image_html, my_fitness_pal, garmin_connect, polar, last_sync)]
+
+    data_headers = ('ID', 'Name', 'Height', 'Weight', 'Country', 'Gender', 'Email', ('Created At', 'datetime'), 'Image', 'My Fitness Pal', 'Garmin Connect', 'Polar', ('LastSync', 'datetime'))
+    return data_headers, data_list, source_path

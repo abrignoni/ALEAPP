@@ -1,3 +1,21 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "fcm_outlook": {
+        "name": "FCM-Outlook Notifications",
+        "description": "Outlook Notifications from FCM",
+        "author": "Alex Caithness & @jfhyla",
+        "creation_date": "2022-07-28",
+        "last_update_date": "2022-07-28",
+        "last_updated": "2025-07-31",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ("*/fcm_queued_messages.ldb/*"),
+        "output_types": "standard",  # or ["html", "tsv", "timeline", "lava"]
+        "artifact_icon": "database",
+    }
+}
+
 """
 Copyright 2022, CCL Forensics
 
@@ -25,24 +43,6 @@ SOFTWARE.
 import json
 import pathlib
 from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
-
-__artifacts_v2__ = {
-    "fcm_outlook": {
-        "name": "FCM-Outlook Notifications",
-        "description": "Outlook Notifications from FCM",
-        "author": "Alex Caithness & @jfhyla",
-        "version": "0.2.1",
-        "creation_date": "2022-07-28",
-        "last_updated": "2025-07-31",
-        "requirements": "none",
-        "category": "Firebase Cloud Messaging",
-        "notes": "",
-        "paths": ("*/fcm_queued_messages.ldb/*"),
-        "output_types": "standard",  # or ["html", "tsv", "timeline", "lava"]
-        "artifact_icon": "database",
-    }
-}
-
 __version__ = "0.2"
 __description__ = """
 Reads records from the fcm_queued_messages.ldb leveldb in com.google.android.gms related to 

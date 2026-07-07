@@ -1,66 +1,49 @@
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
-    "Bumble": {
-        "name": "Bumble",
-        "description": "Parses Bumble chats, matches and user details",
-        "author": "@KevinPagano3",
-        "version": "0.0.1",
-        "date": "2022-11-07",
-        "requirements": "none",
-        "category": "Bumble",
-        "paths": ('*/com.bumble.app/databases/ChatComDatabase*','*/com.bumble.app/files/c2V0dGluZ3M='),
-        "function": "get_bumble"
+    "get_bumble": {
+        "name": "Bumble - User Settings",
+        "description": "Bumble local user details from the settings protobuf",
+        "author": "@KevinPagano3", "creation_date": "2022-11-07", "last_update_date": "2022-11-07",
+        "requirements": "none", "category": "Bumble",
+        "paths": ('*/com.bumble.app/files/c2V0dGluZ3M=',),
+        "output_types": "standard", "artifact_icon": "user",
+    },
+    "get_bumble_messages": {
+        "name": "Bumble - Chat Messages",
+        "description": "Bumble chat messages",
+        "author": "@KevinPagano3", "creation_date": "2022-11-07", "last_update_date": "2026-07-03",
+        "requirements": "none", "category": "Bumble",
+        "paths": ('*/com.bumble.app/databases/ChatComDatabase*', '*/com.bumble.app/files/c2V0dGluZ3M='),
+        "output_types": "standard", "artifact_icon": "message",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Conversation ID",
+                "textColumn": "Message Text",
+                "directionColumn": "Message Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Created Timestamp",
+                "senderColumn": "Sender Name"
+            }
+        },
+    },
+    "get_bumble_matches": {
+        "name": "Bumble - Matches",
+        "description": "Bumble matches / conversations",
+        "author": "@KevinPagano3", "creation_date": "2022-11-07", "last_update_date": "2022-11-07",
+        "requirements": "none", "category": "Bumble",
+        "paths": ('*/com.bumble.app/databases/ChatComDatabase*',),
+        "output_types": "standard", "artifact_icon": "users",
     }
 }
 
+import datetime
 import sqlite3
-import os
-import shutil
-import textwrap
+
 import blackboxprotobuf
 
-from packaging import version
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-def get_bumble(files_found, report_folder, seeker, wrap_text):
-    
-    source_file_settings = ''
-    source_file_chat_db = ''
-    settings_file = ''
-    chat_db = ''
-    user_name = ''
-    user_email = ''
-    user_phone = ''
-    user_id = ''
-    user_age = ''
-    user_birthdate = ''
-    city = ''
-    country = ''
-    user_occupation = ''
-    user_education = ''
-    user_aboutme = ''   
-    data_list = []
-    
-    for file_found in files_found:
-    
-        file_found = str(file_found)
-        file_name = os.path.basename(file_found)
-        if file_name == 'ChatComDatabase': # skip -journal and other files
-            chat_db = file_found
-            source_file_chat_db = file_found.replace(seeker.data_folder, '')
-            continue
-
-        elif file_name.endswith('='):
-            settings_file = file_found
-            source_file_settings = file_found.replace(seeker.data_folder, '')
-            continue
-    
-    if settings_file != '':
-        with open(settings_file, 'rb') as f:
-
-            pb = f.read()
-            message = blackboxprotobuf.decode_message(pb)
-            types = {'0': {'name': '', 'type': 'int'},
+_TYPES = {'0': {'name': '', 'type': 'int'},
           '1': {'name': '', 'type': 'int'},
           '2': {'message_typedef': {'1': {'message_typedef': {'1': {'message_typedef': {'1': {'name': '',
                                                                                               'type': 'int'},
@@ -529,121 +512,140 @@ def get_bumble(files_found, report_folder, seeker, wrap_text):
                 'name': '',
                 'type': 'message'},
           '482': {'name': '', 'type': 'fixed64'}}
-            
-            values, types = blackboxprotobuf.decode_message(pb, types)
-            
-            user_name = values['2']['1'][2]['2-1']['2']['user_name']
-            user_email = values['2']['1'][2]['2-1']['2']['user_email']
-            user_phone = values['2']['1'][2]['2-1']['2']['100']['2'][0]['phone_number']
-            user_id = values['2']['1'][2]['2-1']['2']['user_id']
-            user_age = values['2']['1'][2]['2-1']['2']['user_age']
-            user_birthdate = values['2']['1'][2]['2-1']['2']['user_birthdate']
-            city = values['2']['1'][2]['2-1']['2']['93']['city_full']
-            country = values['2']['1'][2]['2-1']['2']['91']['country_full']
-            user_occupation = values['2']['1'][2]['2-1']['2']['490'][0]['4']
-            user_education = values['2']['1'][2]['2-1']['2']['490'][1]['4']
-            user_aboutme = values['2']['1'][2]['2-1']['2']['490'][3]['4']
-            
-            data_list.append((user_name,user_email,user_phone,user_id,user_age,user_birthdate,city,country,user_occupation,user_education,user_aboutme))
 
-        if len(data_list) > 0:
-            report = ArtifactHtmlReport('Bumble - User Settings')
-            report.start_artifact_report(report_folder, 'Bumble - User Settings')
-            report.add_script()
-            data_headers = ('User Name','Email','Phone','ID','Age','Birthdate','City','Country','Occupation','Education','About') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-            
-            report.write_artifact_data_table(data_headers, data_list, source_file_settings)
-            report.end_artifact_report()
-            
-            tsvname = f'Bumble - User Settings'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-        else:
-            logfunc('No Bumble - User Settings data available')
-    
-    db = open_sqlite_db_readonly(chat_db)
+_SETTINGS_CACHE = {}
+
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _txt(value):
+    if isinstance(value, bytes):
+        return value.decode('utf-8', 'replace')
+    return value if value is not None else ''
+
+
+def _g(data, *keys):
+    for k in keys:
+        try:
+            data = data[k]
+        except (KeyError, IndexError, TypeError):
+            return ''
+    return data
+
+
+def _settings_file(files_found):
+    return next((str(f) for f in files_found if str(f).endswith('=')), '')
+
+
+def _chat_db(files_found):
+    return next((str(f) for f in files_found if str(f).endswith('ChatComDatabase')), '')
+
+
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
-    cursor.execute('''
-    SELECT
-    datetime(message.created_timestamp/1000,'unixepoch') as 'Created Timestamp',
-    datetime(message.modified_timestamp/1000,'unixepoch') as 'Modified Timestamp',
-    message.sender_id,
-    message.recipient_id,
-    json_extract(message.payload, '$.text'),
-    json_extract(message.payload, '$.url'),
-    message.payload_type,
-    case message.is_incoming
-        when 0 then 'Outgoing'
-        when 1 then 'Incoming'
-    end as 'Message Direction',
-    message.conversation_id as 'Conversation ID',
-    message.id as 'Message ID',
-    conversation_info.user_name
-    from message
-    left join conversation_info on conversation_info.user_id = message.conversation_id
-    ''')
-
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Bumble - Chat Messages')
-        report.start_artifact_report(report_folder, 'Bumble - Chat Messages')
-        report.add_script()
-        data_headers = ('Created Timestamp','Modified Timestamp','Sender ID','Sender Name','Recipient ID','Recipient Name','Message Text','Message URL','Message Type','Message Direction','Conversation ID','Message ID') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            time_create = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[0]),'UTC')
-            time_mod = convert_utc_human_to_timezone(convert_ts_human_to_utc(row[1]),'UTC')
-            if row[7] == 'Outgoing':
-                data_list.append((time_create,time_mod,row[2],str(user_name + ' (local user)'),row[3],row[10],row[4],row[5],row[6],row[7],row[8],row[9]))
-            else:
-                data_list.append((time_create,time_mod,row[2],row[10],row[3],str(user_name + ' (local user)'),row[4],row[5],row[6],row[7],row[8],row[9]))
-
-        report.write_artifact_data_table(data_headers, data_list, source_file_chat_db)
-        report.end_artifact_report()
-        
-        tsvname = f'Bumble - Chat Messages'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-    else:
-        logfunc('No Bumble - Chat Messages data available')
-        
-    cursor.execute('''
-    SELECT 
-    user_name,
-    age,
-    gender,
-    case game_mode
-        when 0 then 'Bumble Date'
-        when 1 then 'Bumble Friends'
-        when 5 then 'Bumble Bizz'
-    end,
-    user_image_url,
-    user_id,
-    encrypted_user_id
-    FROM conversation_info 
-    ORDER BY user_id
-    ''')
-
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Bumble - Matches')
-        report.start_artifact_report(report_folder, 'Bumble - Matches')
-        report.add_script()
-        data_headers = ('User Name','Age','Gender','Mode','Profile Image URL','User ID','Encrypted User ID') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-
-        report.write_artifact_data_table(data_headers, data_list, source_file_chat_db)
-        report.end_artifact_report()
-        
-        tsvname = f'Bumble - Matches'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-    else:
-        logfunc('No Bumble - Matches data available')    
-    
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
     db.close()
+    return rows
 
+
+def _parse_settings(files_found):
+    key = tuple(sorted(str(f) for f in files_found))
+    if key in _SETTINGS_CACHE:
+        return _SETTINGS_CACHE[key]
+    info = {}
+    sf = _settings_file(files_found)
+    if sf:
+        try:
+            with open(sf, 'rb') as handle:
+                values, _ = blackboxprotobuf.decode_message(handle.read(), _TYPES)
+            base = _g(values, '2', '1', 2, '2-1', '2')
+            if isinstance(base, dict):
+                info = {
+                    'user_name': _txt(base.get('user_name')),
+                    'user_email': _txt(base.get('user_email')),
+                    'user_phone': _txt(_g(base, '100', '2', 0, 'phone_number')),
+                    'user_id': _txt(base.get('user_id')),
+                    'user_age': base.get('user_age', ''),
+                    'user_birthdate': _txt(base.get('user_birthdate')),
+                    'city': _txt(_g(base, '93', 'city_full')),
+                    'country': _txt(_g(base, '91', 'country_full')),
+                    'user_occupation': _txt(_g(base, '490', 0, '4')),
+                    'user_education': _txt(_g(base, '490', 1, '4')),
+                    'user_aboutme': _txt(_g(base, '490', 3, '4')),
+                }
+        except Exception:
+            info = {}
+    _SETTINGS_CACHE[key] = (info, sf)
+    return _SETTINGS_CACHE[key]
+
+
+@artifact_processor
+def get_bumble(files_found, report_folder, seeker, wrap_text):
+    info, source_path = _parse_settings(files_found)
+    data_list = []
+    if info:
+        data_list.append((info['user_name'], info['user_email'], info['user_phone'], info['user_id'],
+                          info['user_age'], info['user_birthdate'], info['city'], info['country'],
+                          info['user_occupation'], info['user_education'], info['user_aboutme']))
+    data_headers = ('User Name', 'Email', 'Phone', 'ID', 'Age', 'Birthdate', 'City', 'Country',
+                    'Occupation', 'Education', 'About')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_bumble_messages(files_found, report_folder, seeker, wrap_text):
+    info, _settings = _parse_settings(files_found)
+    user_name = info.get('user_name', '') if info else ''
+    local = f'{user_name} (local user)' if user_name else '(local user)'
+    source_path = _chat_db(files_found)
+    rows = _run(source_path, """
+        SELECT message.created_timestamp, message.modified_timestamp, message.sender_id,
+               message.recipient_id, json_extract(message.payload, '$.text'),
+               json_extract(message.payload, '$.url'), message.payload_type,
+               CASE message.is_incoming WHEN 0 THEN 'Outgoing' WHEN 1 THEN 'Incoming' END,
+               message.conversation_id, message.id, conversation_info.user_name
+        FROM message
+        LEFT JOIN conversation_info ON conversation_info.user_id = message.conversation_id
+    """)
+    data_list = []
+    for r in rows:
+        if r[7] == 'Outgoing':
+            sender_name, recipient_name = local, r[10]
+        else:
+            sender_name, recipient_name = r[10], local
+        data_list.append((_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], sender_name, r[3], recipient_name,
+                          r[4], r[5], r[6], r[7], r[8], r[9]))
+    data_headers = (('Created Timestamp', 'datetime'), ('Modified Timestamp', 'datetime'), 'Sender ID',
+                    'Sender Name', 'Recipient ID', 'Recipient Name', 'Message Text', 'Message URL',
+                    'Message Type', 'Message Direction', 'Conversation ID', 'Message ID')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_bumble_matches(files_found, report_folder, seeker, wrap_text):
+    source_path = _chat_db(files_found)
+    rows = _run(source_path, """
+        SELECT user_name, age, gender,
+               CASE game_mode WHEN 0 THEN 'Bumble Date' WHEN 1 THEN 'Bumble Friends'
+                    WHEN 5 THEN 'Bumble Bizz' END,
+               user_image_url, user_id, encrypted_user_id
+        FROM conversation_info ORDER BY user_id
+    """)
+    data_list = [(r[0], r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
+    data_headers = ('User Name', 'Age', 'Gender', 'Mode', 'Profile Image URL', 'User ID',
+                    'Encrypted User ID')
+    return data_headers, data_list, source_path

@@ -1,22 +1,73 @@
-import os
-import sqlite3
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_chromeMediaHistorySessions": {
+        "name": "Media History - Sessions",
+        "description": "Parses Media History playback sessions from Chromium Based Browsers",
+        "author": "",
+        "creation_date": "2021-01-26",
+        "last_update_date": "2021-01-26",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+    },
+    "get_chromeMediaHistoryPlaybacks": {
+        "name": "Media History - Playbacks",
+        "description": "Parses Media History playbacks from Chromium Based Browsers",
+        "author": "",
+        "creation_date": "2021-01-26",
+        "last_update_date": "2021-01-26",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+    },
+    "get_chromeMediaHistoryOrigins": {
+        "name": "Media History - Origins",
+        "description": "Parses Media History origins from Chromium Based Browsers",
+        "author": "",
+        "creation_date": "2021-01-26",
+        "last_update_date": "2021-01-26",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+    }
+}
+
+from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
 
-def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
 
+def _media_history_files(files_found):
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('Media History'):
-            continue # Skip all other files
-
+            continue  # Skip all other files
         browser_name = get_browser_name(file_found)
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
         elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
-            continue # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data??
-        
+            continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
+        yield file_found, browser_name
+
+
+@artifact_processor
+def get_chromeMediaHistorySessions(files_found, report_folder, seeker, wrap_text):
+    all_data = []
+    data_headers = ['Last Updated', 'Origin ID', 'URL', 'Position', 'Duration', 'Title', 'Artist', 'Album', 'Source Title']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
+    for file_found, browser_name in _media_history_files(files_found):
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -34,30 +85,33 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Media History - Sessions')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Media History - Sessions.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Last Updated','Origin ID','URL','Position','Duration','Title','Artist','Album','Source Title') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        if len(all_rows) > 0:
+            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
             data_list = []
             for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Media History - Sessions'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Media History - Sessions'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+            data_list = [row + (browser_name,) for row in data_list]
+            all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Media History - Sessions data available')
-        
+        db.close()
+
+    return all_data_headers, all_data, report_file
+
+
+@artifact_processor
+def get_chromeMediaHistoryPlaybacks(files_found, report_folder, seeker, wrap_text):
+    all_data = []
+    data_headers = ['Last Updated', 'ID', 'Origin ID', 'URL', 'Watch Time', 'Has Audio', 'Has Video']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
+    for file_found, browser_name in _media_history_files(files_found):
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
         cursor.execute('''
         select
             datetime(last_updated_time_s-11644473600, 'unixepoch') as last_updated_time_s,
@@ -72,35 +126,38 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
             case has_video
                 when 0 then ''
                 when 1 then 'Yes'
-            end as has_video  
+            end as has_video
         from playback
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Media History - Playbacks')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Media History - Playbacks.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Last Updated','ID','Origin ID','URL','Watch Time','Has Audio','Has Video') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        if len(all_rows) > 0:
+            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
             data_list = []
             for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Media History - Playbacks'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Media History - Playbacks'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+            data_list = [row + (browser_name,) for row in data_list]
+            all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Media History - Playbacks data available')
-        
+        db.close()
+
+    return all_data_headers, all_data, report_file
+
+
+@artifact_processor
+def get_chromeMediaHistoryOrigins(files_found, report_folder, seeker, wrap_text):
+    all_data = []
+    data_headers = ['Last Updated', 'ID', 'Origin', 'Aggregate Watchtime']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
+    for file_found, browser_name in _media_history_files(files_found):
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
         cursor.execute('''
         select
             datetime(last_updated_time_s-11644473600, 'unixepoch') as last_updated_time_s,
@@ -111,35 +168,16 @@ def get_chromeMediaHistory(files_found, report_folder, seeker, wrap_text):
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Media History - Origins')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Media History - Origins.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Last Updated','ID','Origin','Aggregate Watchtime') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+        if len(all_rows) > 0:
+            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
             data_list = []
             for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3]))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Media History - Origins'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Media History - Origins'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+            data_list = [row + (browser_name,) for row in data_list]
+            all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Media History - Origins data available')
-        
         db.close()
 
-__artifacts__ = {
-        "ChromeMediaHistory": (
-                "Chromium",
-                ('*/app_chrome/Default/Media History*','*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*','*/app_webview/Default/Media History*'),
-                get_chromeMediaHistory)
-}
+    return all_data_headers, all_data, report_file

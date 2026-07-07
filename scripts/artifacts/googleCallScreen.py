@@ -1,107 +1,93 @@
-import blackboxprotobuf
+# pylint: disable=W0613,W0718
+__artifacts_v2__ = {
+    "get_googleCallScreen": {
+        "name": "Google Call Screen",
+        "description": "Transcripts and recordings from Google Assistant's Call Screen feature",
+        "author": "",
+        "creation_date": "2021-08-06",
+        "last_update_date": "2021-08-06",
+        "requirements": "none",
+        "category": "Google Call Screen",
+        "notes": "",
+        "paths": ('*/com.google.android.dialer/databases/callscreen_transcripts*',
+                  '*/com.google.android.dialer/files/callscreenrecordings/*.*'),
+        "output_types": "standard",
+        "artifact_icon": "phone",
+    }
+}
+
+import datetime
 import os
-import shutil
-import sqlite3
-import textwrap
-import scripts.artifacts.artGlobals
-from datetime import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+import blackboxprotobuf
 
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+
+PB_TYPES = {'1': {'type': 'message', 'message_typedef': {
+    '1': {'name': 'timestamp1', 'type': 'int'},
+    '2': {'name': '', 'type': 'int'},
+    '3': {'name': 'convo_text', 'type': 'str'},
+    '4': {'name': '', 'type': 'int'},
+    '5': {'name': '', 'type': 'int'},
+    '6': {'name': '', 'type': 'bytes'},
+    '7': {'name': '', 'type': 'int'},
+    '9': {'name': '', 'type': 'int'}}, 'name': ''}}
+
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+@artifact_processor
 def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
-    
-    is_windows = is_platform_windows()
-    slash = '\\' if is_windows else '/'
-    
+    source_path = ''
+    data_list = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('callscreen_transcripts'):
-            continue # Skip all other files
-    
+            continue
+        source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
-        select
-        datetime(lastModifiedMillis/1000,'unixepoch'),
-        audioRecordingFilePath,
-        conversation,
-        id,
-        replace(audioRecordingFilePath, rtrim(audioRecordingFilePath, replace(audioRecordingFilePath, '/', '')), '') as 'File Name'
-        from Transcript
+            SELECT lastModifiedMillis, audioRecordingFilePath, conversation, id,
+            replace(audioRecordingFilePath, rtrim(audioRecordingFilePath, replace(audioRecordingFilePath, '/', '')), '')
+            FROM Transcript
         ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        data_list = []
-        
-        pb_types = {'1': {'type': 'message', 'message_typedef':
-                    {   
-                        '1': {'name': 'timestamp1', 'type': 'int'},
-                        '2': {'name': '', 'type': 'int'},
-                        '3': {'name': 'convo_text', 'type': 'str'},
-                        '4': {'name': '', 'type': 'int'},
-                        '5': {'name': '', 'type': 'int'},
-                        '6': {'name': '', 'type': 'bytes'},
-                        '7': {'name': '', 'type': 'int'},
-                        '9': {'name': '', 'type': 'int'}},
-                    'name': '',
-                    'type': 'message'}}
-        
-        if report_folder[-1] == slash: 
-            folder_name = os.path.basename(report_folder[:-1])
-        else:
-            folder_name = os.path.basename(report_folder)
-        
-        if usageentries > 0:
-            for row in all_rows:
-            
-                lm_ts = row[0]
-                recording_path = row[1]
-                pb = row[2]
-                convo_id = row[3]
-                recording_filename = row[4]
-                audio_clip = ''
-                conversation = ''
-                
-                data, actual_types = blackboxprotobuf.decode_message(pb, pb_types)
-                
-                for x in data['1']:
-    
-                    convo_timestamp = str(datetime.utcfromtimestamp(x['timestamp1']/1000)) + '<br>'
-                    convo_transcript = x['convo_text'] + '<br><br>'
-                    conversation += convo_timestamp + convo_transcript
-                    
-                for match in files_found:
-                    if str(recording_filename) in match:
-                        shutil.copy2(match, report_folder)
-                        audio_clip = f'<audio controls><source src="{folder_name}/{recording_filename}"></audio>'
-                                
-                data_list.append((lm_ts,recording_path,conversation,audio_clip))
-        
-            description = 'Transcripts and recordings from the use of Google Assistant\'s Call Screen feature. '\
-                          'Timestamps found in the Conversation column are in the local timezone offset.'
-            report = ArtifactHtmlReport('Google Call Screen')
-            report.start_artifact_report(report_folder, 'Google Call Screen', description)
-            report.add_script()
-            data_headers = ('Timestamp','Recording File Path','Conversation','Audio') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-
-            report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Audio','Conversation'])
-            report.end_artifact_report()
-            
-            tsvname = f'Google Call Screen'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Google Call Screen'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Google Call Screen data available')
-    
+        rows = cursor.fetchall()
         db.close()
 
-__artifacts__ = {
-        "GoogleCallScreen": (
-                "Google Call Screen",
-                ('*/com.google.android.dialer/databases/callscreen_transcripts*','*/com.google.android.dialer/files/callscreenrecordings/*.*'),
-                get_googleCallScreen)
-}
+        for row in rows:
+            recording_filename = row[4]
+            # Decode the transcript protobuf into a plain-text conversation
+            conversation = ''
+            try:
+                data, _ = blackboxprotobuf.decode_message(row[2], PB_TYPES)
+                messages = data.get('1', [])
+                if isinstance(messages, dict):
+                    messages = [messages]
+                lines = []
+                for message in messages:
+                    msg_time = _ms_to_utc(message.get('timestamp1'))
+                    stamp = msg_time.strftime('%Y-%m-%d %H:%M:%S') if msg_time else ''
+                    lines.append(f"{stamp}: {message.get('convo_text', '')}")
+                conversation = '\n'.join(lines)
+            except Exception:
+                conversation = ''
+
+            # The screened-call audio recording
+            audio = ''
+            if recording_filename:
+                match = next((str(f) for f in files_found if str(recording_filename) in str(f)), None)
+                if match:
+                    audio = check_in_media(match, os.path.basename(match))
+
+            data_list.append((_ms_to_utc(row[0]), row[1], conversation, audio))
+
+    data_headers = (('Timestamp', 'datetime'), 'Recording File Path', 'Conversation', ('Audio', 'media'))
+    return data_headers, data_list, source_path

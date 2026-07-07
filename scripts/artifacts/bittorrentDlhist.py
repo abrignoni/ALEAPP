@@ -1,47 +1,55 @@
+__artifacts_v2__ = {
+    "get_bittorrentDlhist": {
+        "name": "bittorrentDlhist",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-26",
+        "last_update_date": "2023-03-26",
+        "requirements": "none",
+        "category": "BitTorrent",
+        "notes": "",
+        "paths": ('*/dlhistory*.config.bak', '*/dlhistory*.config'),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "download",
+    }
+}
+
 import bencoding
-import hashlib
 import datetime
 import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows 
+from scripts.ilapfuncs import artifact_processor
+
 
 def timestampcalc(timevalue):
-    timestamp = (datetime.datetime.utcfromtimestamp(int(timevalue)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+    timestamp = datetime.datetime.fromtimestamp(int(timevalue)/1000, datetime.timezone.utc)
     return timestamp
 
-def get_bittorrentDlhist(files_found, report_folder, seeker, wrap_text):
 
+@artifact_processor
+def get_bittorrentDlhist(context):
+    files_found = context.get_files_found()
     data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        source_path = file_found
 
         with open(file_found, 'rb') as f:
             decodedDict = bencoding.bdecode(f.read())
-        
+
         for key, value in decodedDict.items():
             if key.decode() == 'records':
                 for x in value:
                     time = timestampcalc(x[b'a'])
                     filename = x[b'n'].decode()
                     filepath = x[b's'].decode()
-                    print(filepath)
-                data_list.append((time,filename,filepath,textwrap.fill(file_found.strip(), width=25)))
+                data_list.append((time,filename,filepath,textwrap.fill(context.get_relative_path(file_found).strip(), width=25)))
 
-    # Reporting
-    title = "BitTorrent Download Info"
-    report = ArtifactHtmlReport(title)
-    report.start_artifact_report(report_folder, title)
-    report.add_script()
-    data_headers = ('Record Timestamp', 'Filename', 'Download File Path', 'Source File')
-    report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Data'])
-    report.end_artifact_report()
-    
-    tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "bittorrentDlhist": (
-        "BitTorrent",
-        ('*/dlhistory*.config.bak','*/dlhistory*.config'),
-        get_bittorrentDlhist)
-}
+    data_headers = (
+        ('Record Timestamp', 'datetime'),
+        'Filename',
+        'Download File Path',
+        'Source File',
+    )
+    return data_headers, data_list, context.get_relative_path(source_path)

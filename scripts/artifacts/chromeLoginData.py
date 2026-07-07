@@ -1,16 +1,32 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_chromeLoginData": {
+        "name": "Login Data",
+        "description": "Parses saved Login Data from Chromium Based Browsers",
+        "author": "",
+        "creation_date": "2020-03-20",
+        "last_update_date": "2020-03-20",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/Login Data*', '*/app_sbrowser/Default/Login Data*', '*/app_opera/Login Data*', '*/app_webview/Default/Login Data*'),
+        "output_types": "standard",
+        "artifact_icon": "key",
+    }
+}
+
 import datetime
 import os
 import re
-import sqlite3
 
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
+from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
 
+
 def decrypt(ciphertxt, key=b"peanuts"):
-    if re.match(rb"^v1[01]",ciphertxt): 
+    if re.match(rb"^v1[01]",ciphertxt):
         ciphertxt = ciphertxt[3:]
     salt = b"saltysalt"
     derived_key = PBKDF2(key, salt, 0x10, 1)
@@ -23,6 +39,7 @@ def decrypt(ciphertxt, key=b"peanuts"):
         logfunc('Exception while decrypting data: ' + str(ex))
         plaintxt = b''
     return plaintxt
+
 
 def get_valid_date(d1, d2):
     '''Returns a valid date based on closest year to now'''
@@ -42,17 +59,27 @@ def get_valid_date(d1, d2):
     else:
         return d2
 
+
+@artifact_processor
 def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
-    
+    all_data = []
+
+    data_headers = ['Created Time', 'Username', 'Password', 'Origin URL', 'Blacklisted by User']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+
+    report_file = 'Unknown'
+
     for file_found in files_found:
         file_found = str(file_found)
-        if not os.path.basename(file_found) == 'Login Data': # skip -journal and other files
+        if not os.path.basename(file_found) == 'Login Data':  # skip -journal and other files
             continue
         browser_name = get_browser_name(file_found)
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
         elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
-            continue # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data??
+            continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
 
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
@@ -60,11 +87,11 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
         SELECT
         username_value,
         password_value,
-        CASE date_created 
-            WHEN "0" THEN "" 
+        CASE date_created
+            WHEN "0" THEN ""
             ELSE datetime(date_created / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
-            END AS "date_created_win_epoch", 
-        CASE date_created WHEN "0" THEN "" 
+            END AS "date_created_win_epoch",
+        CASE date_created WHEN "0" THEN ""
             ELSE datetime(date_created / 1000000 + (strftime('%s', '1970-01-01')), "unixepoch")
             END AS "date_created_unix_epoch",
         origin_url,
@@ -73,15 +100,9 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Login Data')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Login Data.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Created Time','Username','Password','Origin URL','Blacklisted by User', 'Browser Name') 
+        if len(all_rows) > 0:
+            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+
             data_list = []
             for row in all_rows:
                 password = ''
@@ -89,24 +110,13 @@ def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
                 if password_enc:
                     password = decrypt(password_enc).decode("utf-8", 'replace')
                 valid_date = get_valid_date(row[2], row[3])
-                data_list.append( (valid_date, row[0], password, row[4], row[5], browser_name) )
+                data_list.append((convert_human_ts_to_utc(valid_date), row[0], password, row[4], row[5]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Login Data'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Login Data'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+            data_list = [row + (browser_name,) for row in data_list]
+            all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Login Data available')
-        
+
         db.close()
-    
-__artifacts__ = {
-        "ChromeLoginData": (
-                "Chromium",
-                ('*/app_chrome/Default/Login Data*', '*/app_sbrowser/Default/Login Data*', '*/app_opera/Login Data*', '*/app_webview/Default/Login Data*'),
-                get_chromeLoginData)
-}
+
+    return all_data_headers, all_data, report_file

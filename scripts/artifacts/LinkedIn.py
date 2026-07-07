@@ -1,10 +1,3 @@
-# Tested with the following versions:
-# 2024-08-16: Android 14, App: 4.1.966
-# 2025-02-07: Android 16, App: 4.1.1166
-
-# Requirements:  json, xml
-
-
 __artifacts_v2__ = {
 
     
@@ -12,7 +5,6 @@ __artifacts_v2__ = {
         "name": "LinkedIn - Account",
         "description": "Existing account in LinkedIn App. The Public Identifier can be used to visit the public profile on the LinkedIn Website (https://www.linkedin.com/in/[Public Identifier]).",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.1",
         "creation_date": "2025-04-26",
         'last_update_date': '2026-02-07',
         "requirements": "xml, json",
@@ -26,7 +18,6 @@ __artifacts_v2__ = {
         "name": "LinkedIn - Messages",
         "description": "Messages sent and received from LinkedIn App",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.2",
         'creation_date': '2025-04-26',
         'last_update_date': '2026-05-14',
         "requirements": "",
@@ -35,7 +26,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.linkedin.android/databases/messenger-sdk*'),
         "output_types": "standard",
         "data_views": {
-            "chat": {
+            "conversation": {
                 "directionSentValue": 1,
                 "conversationDiscriminatorColumn": "Conversation Urn",
                 "textColumn": "Message",
@@ -45,16 +36,38 @@ __artifacts_v2__ = {
                 "conversationLabelColumn": "Conversation Label"
             }
         },
-        "artifact_icon": "message-square"
+        "artifact_icon": "message"
     }
 }
 
+# Tested with the following versions:
+# 2024-08-16: Android 14, App: 4.1.966
+# 2025-02-07: Android 16, App: 4.1.1166
 
-
+# Requirements:  json, xml
 import json
+import re
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, logfunc
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
+
 
 @artifact_processor
 def linkedin_account(files_found, _report_folder, _seeker, _wrap_text):
@@ -62,8 +75,7 @@ def linkedin_account(files_found, _report_folder, _seeker, _wrap_text):
     # Get data from xml into a dict to work with
     xml_dict = {}
     with open(files_found[0], 'rb') as xml_file:
-        tree = ET.parse(xml_file)
-        root = tree.getroot()
+        root = _parse_xml(xml_file)
         for elem in root:
             name = elem.attrib.get('name')
 

@@ -1,12 +1,27 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_vaulty_files": {
+        "name": "vaulty_files",
+        "description": "Vaulty (com.theronrogers.vaultyfree) media database. Research at https://kibaffo33.data.blog/2022/03/05/decoding-vaulty/",
+        "author": "",
+        "creation_date": "2022-02-23",
+        "last_update_date": "2022-02-23",
+        "requirements": "none",
+        "category": "Vaulty",
+        "notes": "",
+        "paths": ('*/com.theronrogers.vaultyfree/databases/media.db',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "lock",
+    }
+}
+
 import sqlite3
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows 
-from scripts.parse3 import ParseProto
+from scripts.ilapfuncs import artifact_processor, convert_human_ts_to_utc
 
+
+@artifact_processor
 def get_vaulty_files(files_found, report_folder, seeker, wrap_text):
-
-    title = "Vaulty - Files"
 
     # Media database
     db_filepath = str(files_found[0])
@@ -18,22 +33,13 @@ def get_vaulty_files(files_found, report_folder, seeker, wrap_text):
     conn.close()
 
     # Data results
-    data_headers = ('ID', 'Date Created', 'Date Added', 'Original Path', 'Vault Path')
-    data_list = results
-    
-    # Reporting
-    description = "Vaulty (com.theronrogers.vaultyfree) - Research at https://kibaffo33.data.blog/2022/03/05/decoding-vaulty/"
-    report = ArtifactHtmlReport(title)
-    report.start_artifact_report(report_folder, title, description)
-    report.add_script()
-    report.write_artifact_data_table(data_headers, data_list, db_filepath, html_escape=False)
-    report.end_artifact_report()
-    
-    tsv(report_folder, data_headers, data_list, title)
+    data_headers = (
+        'ID',
+        ('Date Created', 'datetime'),
+        ('Date Added', 'datetime'),
+        'Original Path',
+        'Vault Path',
+    )
+    data_list = [(r[0], convert_human_ts_to_utc(r[1]), convert_human_ts_to_utc(r[2]), r[3], r[4]) for r in results]
 
-__artifacts__ = {
-    "vaulty_files": (
-        "Vaulty",
-        ('*/com.theronrogers.vaultyfree/databases/media.db'),
-        get_vaulty_files)
-}
+    return data_headers, data_list, db_filepath

@@ -1,59 +1,55 @@
-import sqlite3
-import os
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_vlcMedia": {
+        "name": "VLC",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-03-01",
+        "last_update_date": "2021-03-01",
+        "requirements": "none",
+        "category": "VLC",
+        "notes": "",
+        "paths": ('*vlc_media.db*',),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly
+import datetime
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
+def _ts_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+    return ''
+
+
+@artifact_processor
 def get_vlcMedia(files_found, report_folder, seeker, wrap_text):
-    
+
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
         if file_found.endswith('vlc_media.db'):
+            source_path = file_found
             break
-            
-    db = open_sqlite_db_readonly(file_found)
-    cursor = db.cursor()
-    cursor.execute('''
-    SELECT
-    datetime(insertion_date, 'unixepoch'),
-    datetime(last_played_date,'unixepoch'),
-    filename,
-    path,
-    is_favorite
-    from Media
-    left join Folder
-    on Media.folder_id = Folder.id_folder
-    ''')
 
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    data_list = []  
-    
-    if usageentries > 0:
+    data_list = []
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
+        cursor = db.cursor()
+        cursor.execute('''
+            SELECT insertion_date, last_played_date, filename, path, is_favorite
+            from Media
+            left join Folder on Media.folder_id = Folder.id_folder
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
+
         for row in all_rows:
-            data_list.append((row[0], row[1], row[2], row[3], row[4]))
+            data_list.append((_ts_to_utc(row[0]), _ts_to_utc(row[1]), row[2], row[3], row[4]))
 
-        description = 'VLC Media List'
-        report = ArtifactHtmlReport('VLC Media List')
-        report.start_artifact_report(report_folder, 'VLC Media List', description)
-        report.add_script()
-        data_headers = ('Insertion Date', 'Last Played Date', 'Filename', 'Path', 'Is Favorite?' )
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = 'VLC Media'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'VLC Media'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No VLC Media data available')
-    
-__artifacts__ = {
-        "VLC": (
-                "VLC",
-                ('*vlc_media.db*'),
-                get_vlcMedia)
-}
+    data_headers = (('Insertion Date', 'datetime'), ('Last Played Date', 'datetime'), 'Filename', 'Path', 'Is Favorite?')
+    return data_headers, data_list, source_path

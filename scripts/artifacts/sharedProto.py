@@ -1,122 +1,82 @@
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
-    "sharedProto": {
+    "get_sharedProto": {
         "name": "Shared Proto Data",
         "description": "Shared Proto data from Samsung Browser",
         "author": "@AlexisBrignoni",
-        "version": "0.0.1",
-        "date": "2024-07-23",
+        "creation_date": "2024-07-23",
+        "last_update_date": "2024-07-23",
         "requirements": "none",
         "category": "Samsung Browser",
         "notes": "",
-        "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*'),
-        "function": "get_sharedProto"
+        "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*',),
+        "output_types": "standard",
+        "artifact_icon": "file",
     }
 }
+
+import datetime
 import pathlib
-import sqlite3
-import textwrap
+
 import blackboxprotobuf
-import traceback
+
 from scripts.ccl import ccl_leveldb
-from datetime import datetime, timedelta
+from scripts.ilapfuncs import artifact_processor, logfunc
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, kmlgen, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
+def _win_to_utc(value):
+    '''Field 16 is milliseconds since the 1601 (Windows FILETIME) epoch.'''
+    try:
+        return (datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc)
+                + datetime.timedelta(seconds=int(value) / 1000))
+    except (ValueError, TypeError, OverflowError, OSError):
+        return ''
+
+
+def _txt(value):
+    if isinstance(value, bytes):
+        return value.decode('utf-8', 'replace')
+    return value if value is not None else ''
+
+
+@artifact_processor
 def get_sharedProto(files_found, report_folder, seeker, wrap_text):
-    
     data_list = []
-
-    in_dirs = set(pathlib.Path(x).parent for x in files_found)
+    source_path = ''
+    in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)
     for in_db_dir in in_dirs:
-        leveldb_records = ccl_leveldb.RawLevelDb(in_db_dir)
-        
+        source_path = str(in_db_dir)
+        try:
+            leveldb_records = ccl_leveldb.RawLevelDb(in_db_dir)
+        except Exception as exc:
+            logfunc(f'Shared Proto: could not open leveldb {in_db_dir}: {exc}')
+            continue
+
         for record in leveldb_records.iterate_records_raw():
-            #print(record.seq, record.user_key, record.value)
-            record_sequence = record.seq
-            record_key = record.user_key
-            record_value = record.value
             origin = str(record.origin_file)
-            
-            p = str(pathlib.Path(origin).parent.name)
-            f = str(pathlib.Path(origin).name)
-            pf = f'{p}/{f}'
-        
-            recordkey = record_key.decode()
-            #print(record_value)
-            protostuff, types = blackboxprotobuf.decode_message(record_value)
-            
-            data = (protostuff.get('1','nodata'))
-            if data == 'nodata':
-                pass
-            else:
-                #print(protostuff)
-                
-                try:
-                    #guid = protostuff['1']['1']
-                    #print(guid.decode())
-                    #print(protostuff)
-                    
-                    urlone = protostuff['1']['4']['1']
-                    if isinstance(urlone, list):
-                        agg = ''
-                        for url in urlone:
-                            
-                            agg = url.decode() + '<br><br>' + agg
-                    else:
-                        agg = urlone.decode()
-                        
-                    domain = protostuff['1']['4']['2']
-                    urltwo = protostuff['1']['4']['4'].decode()
-                    timestamp = protostuff['1']['4'].get('9','')
-                    timestamptwo = protostuff['1']['4'].get('16','')
-                    if timestamptwo != '':
-                        seconds = timestamptwo / 1000
-                        
-                        # Define the epoch start time (January 1, 1601)
-                        epoch_start = datetime(1601, 1, 1)
-                        
-                        # Calculate the final datetime
-                        timestamptwo = epoch_start + timedelta(seconds=seconds)
-                    """
-                    if isinstance(timestamp, bytes):
-                        timestamp = timestamp.decode()
-                        timestamp = timestamp.split(' ')
-                        
-                        year = timestamp[3]
-                        day = timestamp[1]
-                        time = timestamp[4]
-                        month = monthletter(timestamp[2])
-                        timestamp = (f'{year}-{month}-{day} {time}')
-                    else:
-                        pass
-                    """
-                    content = (protostuff['1']['4']['13'].decode())
-                    data_list.append((timestamptwo,timestamp,recordkey,record_sequence,agg,urltwo,domain,content,pf))
-                except:
-                    pass
-                    
-                    
-        
-        
-    if len(data_list) > 0:
-        maindirectory = str(pathlib.Path(in_db_dir).parent)
-        report = ArtifactHtmlReport('Samsung Browser Shared Proto')
-        report.start_artifact_report(report_folder, 'Samsung Browser Shared Proto')
-        report.add_script()
-        data_headers = ('Timestamp','Timestamp B','Record Key','Record Sequence','ULR One','URL Two','Domain','Data','Origin')
-        
-        report.write_artifact_data_table(data_headers, data_list, maindirectory,html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = f'Samsung Browser Shared Proto'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Samsung Browser Shared Proto'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    
-        
-    else:
-        logfunc('No Samsung Browser Shared Proto data available')
-        
-    
+            pf = f'{pathlib.Path(origin).parent.name}/{pathlib.Path(origin).name}'
+            try:
+                record_key = record.user_key.decode('utf-8', 'replace')
+                protostuff, _ = blackboxprotobuf.decode_message(record.value)
+            except Exception:
+                continue
+            outer = protostuff.get('1')
+            if not isinstance(outer, dict) or not isinstance(outer.get('4'), dict):
+                continue
+            four = outer['4']
+            try:
+                urlone = four['1']
+                if isinstance(urlone, list):
+                    agg = '\n'.join(_txt(u) for u in urlone)
+                else:
+                    agg = _txt(urlone)
+                timestamp_b = _txt(four.get('9', ''))
+                timestamp = _win_to_utc(four['16']) if four.get('16') else ''
+                data_list.append((timestamp, timestamp_b, record_key, record.seq, agg,
+                                  _txt(four.get('4')), _txt(four.get('2')), _txt(four.get('13')), pf))
+            except (KeyError, ValueError, TypeError, AttributeError):
+                continue
+
+    data_headers = (('Timestamp', 'datetime'), 'Timestamp B', 'Record Key', 'Record Sequence',
+                    'URL One', 'URL Two', 'Domain', 'Data', 'Origin')
+    return data_headers, data_list, source_path

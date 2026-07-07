@@ -1,17 +1,35 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_firefoxRecentlyClosedTabs": {
+        "name": "Firefox - Recently Closed Tabs",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-12",
+        "last_update_date": "2022-01-12",
+        "requirements": "none",
+        "category": "Firefox",
+        "notes": "",
+        "paths": ('*/org.mozilla.firefox/databases/recently_closed_tabs*',),
+        "output_types": "standard",
+        "artifact_icon": "globe",
+    }
+}
+
 import os
-import sqlite3
-import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
+
+@artifact_processor
 def get_firefoxRecentlyClosedTabs(files_found, report_folder, seeker, wrap_text):
-    
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not os.path.basename(file_found) == 'recently_closed_tabs': # skip -journal and other files
+        if not os.path.basename(file_found) == 'recently_closed_tabs':  # skip -journal and other files
             continue
-        
+
+        source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -23,32 +41,14 @@ def get_firefoxRecentlyClosedTabs(files_found, report_folder, seeker, wrap_text)
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Firefox - Recently Closed Tabs')
-            report.start_artifact_report(report_folder, 'Firefox - Recently Closed Tabs')
-            report.add_script()
-            data_headers = ('Timestamp','Title','URL')
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2]))
+        for row in all_rows:
+            data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Firefox - Recently Closed Tabs'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Firefox - Recently Closed Tabs'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Firefox - Recently Closed Tabs data available')
-        
         db.close()
 
-__artifacts__ = {
-        "FirefoxRecentlyClosedTabs": (
-                "Firefox",
-                ('*/org.mozilla.firefox/databases/recently_closed_tabs*'),
-                get_firefoxRecentlyClosedTabs)
-}
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'Title',
+        'URL',
+    )
+    return data_headers, data_list, source_path

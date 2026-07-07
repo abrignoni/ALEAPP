@@ -5,6 +5,8 @@ __artifacts_v2__ = {
         'author': '@C_Peter',
         'version': '0.0.1',
         'date': '2025-11-20',
+        'creation_date': '2025-11-20',
+        'last_update_date': '2025-11-20',
         'requirements': 'none',
         'category': 'Chats',
         'notes': '',
@@ -12,7 +14,7 @@ __artifacts_v2__ = {
             '*/data/com.beint.zangi/databases/*',
             '*/data/com.beint.zangi/files/zangi/*'),
         'output_types': 'standard',
-        'artifact_icon': 'message-square',
+        'artifact_icon': 'message',
         'data_views': {
             'conversation': {
                 'conversationDiscriminatorColumn': 'Chat-ID',
@@ -29,7 +31,6 @@ __artifacts_v2__ = {
 }
 
 import datetime
-import inspect
 from pathlib import Path
 from scripts.ilapfuncs import artifact_processor, \
     get_sqlite_db_records, \
@@ -37,7 +38,6 @@ from scripts.ilapfuncs import artifact_processor, \
 
 @artifact_processor
 def zangichats(files_found, _report_folder, _seeker, _wrap_text):
-    artifact_info = inspect.stack()[0]
     source_path = ""
     data_list = []
     for file_found in files_found:

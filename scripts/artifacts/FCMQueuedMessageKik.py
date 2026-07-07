@@ -1,3 +1,35 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "fcm_kik": {
+        "name": "FCM-KIK Notifications",
+        "description": "Kik Notifications from FCM",
+        "author": "@jfhyla",
+        "creation_date": "2025-07-31",
+        "last_update_date": "2025-07-31",
+        "last_updated": "2025-07-31",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ("*/fcm_queued_messages.ldb/*"),
+        "output_types": "standard",  # or ["html", "tsv", "timeline", "lava"]
+        "artifact_icon": "database",
+    },
+    "fcm_kik_blanks": {
+        "name": "FCM-KIK Notifications Blanks",
+        "description": "Kik Notifications from FCM",
+        "author": "@jfhyla",
+        "creation_date": "2025-07-31",
+        "last_update_date": "2025-07-31",
+        "last_updated": "2025-07-31",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "",
+        "paths": ("*/fcm_queued_messages.ldb/*"),
+        "output_types": "standard",  # or ["html", "tsv", "timeline", "lava"]
+        "artifact_icon": "database",
+    }
+}
+
 """
 Copyright 2022, CCL Forensics
 
@@ -19,38 +51,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
-__artifacts_v2__ = {
-    "fcm_kik": {
-        "name": "FCM-KIK Notifications",
-        "description": "Kik Notifications from FCM",
-        "author": "@jfhyla",
-        "version": "0.0.1",
-        "creation_date": "2025-07-31",
-        "last_updated": "2025-07-31",
-        "requirements": "none",
-        "category": "Firebase Cloud Messaging",
-        "notes": "",
-        "paths": ("*/fcm_queued_messages.ldb/*"),
-        "output_types": "standard",  # or ["html", "tsv", "timeline", "lava"]
-        "artifact_icon": "database",
-    },
-    "fcm_kik_blanks": {
-        "name": "FCM-KIK Notifications Blanks",
-        "description": "Kik Notifications from FCM",
-        "author": "@jfhyla",
-        "version": "0.0.1",
-        "creation_date": "2025-07-31",
-        "last_updated": "2025-07-31",
-        "requirements": "none",
-        "category": "Firebase Cloud Messaging",
-        "notes": "",
-        "paths": ("*/fcm_queued_messages.ldb/*"),
-        "output_types": "standard",  # or ["html", "tsv", "timeline", "lava"]
-        "artifact_icon": "database",
-    }
-}
-
 import pathlib
 from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.ilapfuncs import artifact_processor

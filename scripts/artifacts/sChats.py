@@ -1,33 +1,35 @@
+# pylint: disable=W0613,W0631
 __artifacts_v2__ = {
-    "sChats": {
+    "get_schats": {
         "name": "Sideline Chats and Calls",
         "description": "Parses Sideline's textfree database",
         "author": "Matt Beers",
-        "version": "0.0.1",
-        "date": "2024-02-08",
+        "creation_date": "2024-02-08",
+        "last_update_date": "2024-02-08",
         "requirements": "none",
         "category": "Chats",
         "notes": "",
         "paths": ('*/data/com.sideline.phone.number/databases/textfree*'),
-        "function": "get_schats"
+        "output_types": "standard",
+        "artifact_icon": "message",
     }
 }
 
-import sqlite3
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
+@artifact_processor
 def get_schats(files_found, report_folder, seeker, wrap_text):
-    
+
     data_list = []
-    
+    source_path = ''
+
     for file_found in files_found:
         file_found = str(file_found)
-        
+
         if file_found.endswith('textfree'):
+            source_path = file_found
             db = open_sqlite_db_readonly(file_found)
-            #SQL QUERY TIME!
             cursor = db.cursor()
             cursor.execute('''
             SELECT
@@ -55,32 +57,19 @@ def get_schats(files_found, report_folder, seeker, wrap_text):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                #    last_mod_date = row[0]
-                #   if last_mod_date is None:
-                #       pass
-                #   else:
-                #       last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),time_offset)
-                
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+                    data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6]))
             db.close()
-                    
+
         else:
             continue
-        
-    if data_list:
-        description = 'Sideline Chats and Calls'
-        report = ArtifactHtmlReport('Sideline Chats')
-        report.start_artifact_report(report_folder, 'Sideline Chats', description)
-        report.add_script()
-        data_headers = ('Timestamp','First Name','Last Name','Method','Message Text','Duration','Phone Number')
-        report.write_artifact_data_table(data_headers, data_list, file_found,html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Sideline Chats'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'Sideline Chats'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    
-    else:
-        logfunc('No Sideline data available')
+
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'First Name',
+        'Last Name',
+        'Method',
+        'Message Text',
+        'Duration',
+        ('Phone Number', 'phonenumber'),
+    )
+    return data_headers, data_list, source_path

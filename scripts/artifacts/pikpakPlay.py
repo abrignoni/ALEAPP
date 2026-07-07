@@ -1,57 +1,49 @@
-import sqlite3
-import os
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_pikpakPlay": {
+        "name": "PikPak Play",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-24",
+        "last_update_date": "2023-03-24",
+        "requirements": "none",
+        "category": "PikPak",
+        "notes": "",
+        "paths": ('*/com.pikcloud.pikpak/databases/greendao.db*',),
+        "output_types": "standard",
+        "artifact_icon": "file",
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import timeline, tsv, is_platform_windows, open_sqlite_db_readonly
+import datetime
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
+@artifact_processor
 def get_pikpakPlay(files_found, report_folder, seeker, wrap_text):
-    
+
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
         if file_found.endswith('greendao.db'):
+            source_path = file_found
             break
-            
-    db = open_sqlite_db_readonly(file_found)
-    cursor = db.cursor()
-    cursor.execute('''
-    SELECT
-    datetime(last_play_timestamp/1000, 'unixepoch'),
-    duration,
-    played_time,
-    max_played_time,
-    name
-    from VIDEO_PLAY_RECORD
-    ''')
 
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    data_list = []  
-    
-    if usageentries > 0:
+    data_list = []
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
+        cursor = db.cursor()
+        cursor.execute('''
+            SELECT last_play_timestamp, duration, played_time, max_played_time, name
+            from VIDEO_PLAY_RECORD
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
+
         for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4]))
+            last_play = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
+            data_list.append((last_play, row[1], row[2], row[3], row[4]))
 
-        description = 'PikPak Play'
-        report = ArtifactHtmlReport('PikPak Play')
-        report.start_artifact_report(report_folder, 'PikPak Play', description)
-        report.add_script()
-        data_headers = ('Last Play Timestamp', 'Duration','Played Time', 'Max Played Time', 'Name')
-        report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Thumbnail Link'])
-        report.end_artifact_report()
-        
-        tsvname = 'PikPak Play'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'PikPak Play'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No PikPak Play data available')
-    
-__artifacts__ = {
-        "PikPak Play": (
-                "PikPak",
-                ('*/com.pikcloud.pikpak/databases/greendao.db*'),
-                get_pikpakPlay)
-}
+    data_headers = (('Last Play Timestamp', 'datetime'), 'Duration', 'Played Time', 'Max Played Time', 'Name')
+    return data_headers, data_list, source_path

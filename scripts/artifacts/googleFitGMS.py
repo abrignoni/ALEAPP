@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "parses the Google Fit database found in com.google.android.gms/databases",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-05",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Google Fit",
         "notes": "This module only parses the Google Fit database found in com.google.android.gms/databases",
@@ -14,10 +14,11 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
+from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
 @artifact_processor
-def googleFitGMS(files_found, report_folder, seeker, wrap_text):
+def googleFitGMS(context):
+    files_found = context.get_files_found()
     data_list = []
     
     for file_found in files_found:
@@ -45,7 +46,7 @@ def googleFitGMS(files_found, report_folder, seeker, wrap_text):
             db_records = get_sqlite_db_records(file_found, query)
 
             for record in db_records:
-                data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],file_found))
+                data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],context.get_relative_path(file_found)))
 
     data_headers = (('Activity Start Time','datetime'),('Activity End Time','datetime'),'Contributing App','Activity Type','Activity Name','Activity Description','Source File') 
     return data_headers, data_list, 'See source file(s) below'

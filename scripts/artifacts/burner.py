@@ -1,116 +1,116 @@
-# Burner
-# Author:  Josh Hickman (josh@thebinaryhick.blog)
-# Date 2021-02-05
-# Version: 0.1
-# Requirements:  None
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_burner": {
+        "name": "Burner - Numbers",
+        "description": "Burner phone number information",
+        "author": "Josh Hickman (josh@thebinaryhick.blog)",
+        "creation_date": "2021-02-05",
+        "last_update_date": "2021-02-05",
+        "requirements": "None",
+        "category": "Burner",
+        "notes": "",
+        "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
+        "output_types": "standard",
+        "artifact_icon": "shield",
+    },
+    "get_burner_communications": {
+        "name": "Burner - Communications",
+        "description": "Burner calls and text messages",
+        "author": "Josh Hickman (josh@thebinaryhick.blog)",
+        "creation_date": "2021-02-05",
+        "last_update_date": "2026-07-03",
+        "requirements": "None",
+        "category": "Burner",
+        "notes": "",
+        "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
+        "output_types": "standard",
+        "artifact_icon": "message",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Other Party Number",
+                "conversationLabelColumn": "Other Party Contact Name",
+                "textColumn": "Message",
+                "directionColumn": "Communication Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Communication Time",
+                "senderColumn": "Other Party Contact Name",
+                "sentMessageStaticLabel": "Local User"
+            }
+        },
+    }
+}
 
-import os
+import datetime
 import sqlite3
-import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-def get_burner(files_found, report_folder, seeker, wrap_text):
-    
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-        #if not file_found.endswith('burners.db'):
-            #continue # Skip all other files
-        
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
-        SELECT
-        datetime(burners.date_created/1000,'unixepoch') AS "Number Creation Time",
-        burners.name AS "Phone Number Name",
-        burners.phone_number_id AS "Number",
-        datetime(burners.last_updated_date/1000,'unixepoch') AS "Number Time Last Updated",
-        datetime(burners.expiration_date/1000,'unixepoch') AS "Number Expiration Time",
-        burners.total_minutes AS "Phone Minutes Allotment",
-        burners.remaining_minutes AS "Phone Minutes Remaining",
-        burners.total_texts AS "Text Message Allotment",
-        burners.remaining_texts AS "Text Messages Remaining"
-        FROM
-        burners
-        ORDER BY "Number Creation Time" ASC
-        ''')
+        if file_found.endswith('burners.db'):
+            return file_found
+    return ''
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            #logfunc(str(all_rows))
-            report = ArtifactHtmlReport('Number Information')
-            report.start_artifact_report(report_folder, 'Number Information')
-            report.add_script()
-            data_headers = ('Number Creation Time','Number Name','Number','Number Time Last Updated','Number Expiration Time','Phone Minutes Allotment','Phone Minutes Remaining','Text Messages Allotment','Text Messages Remaining') 
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Number Information'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Number Information'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Burner Number Information data available')
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
+    db.close()
+    return rows
 
-        cursor = db.cursor()
-        cursor.execute('''
-        SELECT
-        datetime(messages.date_created/1000,'unixepoch') AS "Communication Time",
-        messages.contact_phone_number AS "Other Party Number",
-        contacts.name AS "Other Party Contact Name",
-        CASE
-        WHEN messages.direction=1 THEN "Incoming"
-        WHEN messages.direction=2 THEN "Outgoing"
-        ELSE messages.direction
-        END AS "Communication Direction",
-        CASE
-        WHEN messages.message_type=1 THEN "Call"
-        WHEN messages.message_type=2 THEN "Text Message"
-        ELSE messages.message_type
-        END AS "Communication Type",
-        messages.message AS "Message",
-        messages.asset_url AS "Message Attachment (URL)",
-        messages.duration as "Approximate Call Duration (minutes)"
-        FROM
-        messages
+
+@artifact_processor
+def get_burner(files_found, report_folder, seeker, wrap_text):
+    source_path = _db(files_found)
+    rows = _run(source_path, '''
+        SELECT date_created, name, phone_number_id, last_updated_date, expiration_date,
+        total_minutes, remaining_minutes, total_texts, remaining_texts
+        FROM burners
+        ORDER BY date_created ASC
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], _ms_to_utc(r[3]), _ms_to_utc(r[4]),
+                  r[5], r[6], r[7], r[8]) for r in rows]
+    data_headers = (('Number Creation Time', 'datetime'), 'Number Name', 'Number',
+                    ('Number Time Last Updated', 'datetime'), ('Number Expiration Time', 'datetime'),
+                    'Phone Minutes Allotment', 'Phone Minutes Remaining', 'Text Messages Allotment',
+                    'Text Messages Remaining')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_burner_communications(files_found, report_folder, seeker, wrap_text):
+    source_path = _db(files_found)
+    rows = _run(source_path, '''
+        SELECT messages.date_created, messages.contact_phone_number, contacts.name,
+        CASE WHEN messages.direction=1 THEN 'Incoming' WHEN messages.direction=2 THEN 'Outgoing'
+        ELSE messages.direction END,
+        CASE WHEN messages.message_type=1 THEN 'Call' WHEN messages.message_type=2 THEN 'Text Message'
+        ELSE messages.message_type END,
+        messages.message, messages.asset_url, messages.duration
+        FROM messages
         JOIN contacts ON contacts.phone_number=messages.contact_phone_number
-        ORDER BY "Communication Time" ASC
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Communication Information')
-            report.start_artifact_report(report_folder, 'Communication Information')
-            report.add_script()
-            data_headers = ('Communication Time','Other Party Number','Other Party Contact Name','Communication Direction','Communication Type','Message','Message Attachment (URL)','Approximate Call Duration (minutes)') 
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Communication Information'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Communication Information'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Burner Communication Information data available')
-                
-        db.close()
-        
-__artifacts__ = {
-        "Burner": (
-                "Burner",
-                ('*/com.adhoclabs.burner/databases/burners.db'),
-                get_burner)
-}
+        ORDER BY messages.date_created ASC
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7]) for r in rows]
+    data_headers = (('Communication Time', 'datetime'), 'Other Party Number', 'Other Party Contact Name',
+                    'Communication Direction', 'Communication Type', 'Message',
+                    'Message Attachment (URL)', 'Approximate Call Duration (minutes)')
+    return data_headers, data_list, source_path

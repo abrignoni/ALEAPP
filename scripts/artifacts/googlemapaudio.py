@@ -1,75 +1,58 @@
-from re import fullmatch
-from datetime import datetime
-from pathlib import Path
-from os.path import getsize
-
-
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, media_to_html
-
-def convertGeo(s):
-    length = len(s)
-    if length > 6:
-        return (s[0 : length-6] + "." + s[length-6 : length])
-    else:
-        return (s)
-
-def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
-
-    files_found = list(filter(lambda x: "sbin" not in x, files_found))
-
-    data_headers = ("Timestamp", "Filename", "Audio", "Size")
-    audio_info = []
-    source_dir = ""
-
-    pattern = r"-?\d+_\d+"
-
-    for file_found in files_found:
-
-        name = Path(file_found).name
-
-        match = fullmatch(pattern, name)
-        file_size = getsize(file_found)
-        has_data = file_size > 0
-
-        if match and has_data:
-
-            # Timestamp
-            timestamp = Path(file_found).name.split("_")[1]
-            timestamp_datetime = datetime.utcfromtimestamp(int(timestamp) / 1000)
-            timestamp_str = timestamp_datetime.isoformat(timespec="seconds", sep=" ")
-            
-            # Audio
-            audio = media_to_html(name, files_found, report_folder)
-            
-            # Size
-            file_size_kb = f"{round(file_size / 1024, 2)} kb"
-
-            # Artefacts
-            info = (timestamp_str, name, audio, file_size_kb)
-            audio_info.append(info)
-
-
-    if audio_info:
-
-        source_dir = str(Path(files_found[0]).parent)
-
-        report = ArtifactHtmlReport('Google Maps Voice Guidance')
-        report.start_artifact_report(report_folder, 'Google Maps Voice Guidance')
-        report.add_script()
-
-        report.write_artifact_data_table(data_headers, audio_info, source_dir, html_escape=False)
-        report.end_artifact_report()
-            
-        tsvname = f'Google Map Audio'
-        tsv(report_folder, data_headers, audio_info, tsvname, source_dir)
-            
-    else:
-        logfunc('No Google Audio Locations found')
-            
-__artifacts__ = {
-        "Googlemapaudio": (
-                "Google Maps Voice Guidance",
-                ('*/com.google.android.apps.maps/app_tts-cache/*_*'),
-                get_googlemapaudio)
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_googlemapaudio": {
+        "name": "Google Maps Voice Guidance",
+        "description": "Google Maps text-to-speech voice guidance audio (app_tts-cache)",
+        "author": "",
+        "creation_date": "2021-12-27",
+        "last_update_date": "2021-12-27",
+        "requirements": "none",
+        "category": "Google Maps Voice Guidance",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.maps/app_tts-cache/*_*',),
+        "output_types": "standard",
+        "artifact_icon": "map-pin",
+    }
 }
+
+import datetime
+import os
+import re
+from pathlib import Path
+
+from scripts.ilapfuncs import artifact_processor, check_in_media
+
+NAME_PATTERN = re.compile(r"-?\d+_\d+")
+
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+@artifact_processor
+def get_googlemapaudio(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if 'sbin' in file_found:
+            continue
+        name = Path(file_found).name
+        if not NAME_PATTERN.fullmatch(name):
+            continue
+        file_size = os.path.getsize(file_found)
+        if file_size == 0:
+            continue
+        source_path = os.path.dirname(file_found)
+        # filename is <geo>_<timestamp_ms>
+        timestamp = _ms_to_utc(name.split('_')[1])
+        media = check_in_media(file_found, name)
+        data_list.append((timestamp, media, name, file_size))
+
+    data_headers = (('Timestamp', 'datetime'), ('Audio', 'media'), 'Filename', 'File Size')
+    return data_headers, data_list, source_path

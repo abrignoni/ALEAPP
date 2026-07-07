@@ -21,7 +21,7 @@ __artifacts_v2__ = {
             '*/Android/data/com.random.chat.app/files/Music/RandoChat/*'
             ),
         'output_types': 'standard',
-        'artifact_icon': 'message-square',
+        'artifact_icon': 'message',
         "html_columns": ["Media File"]
     },
     'randochat_account': {
@@ -60,10 +60,10 @@ __artifacts_v2__ = {
 
 import os
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, media_to_html
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, check_in_media
 
 @artifact_processor
-def randochat_messages(files_found, report_folder, _seeker, _wrap_text):
+def randochat_messages(files_found, _report_folder, _seeker, _wrap_text):
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]   
 
 
@@ -113,7 +113,7 @@ def randochat_messages(files_found, report_folder, _seeker, _wrap_text):
             attachment = ''
             for att_path in attachments:
                 if os.path.basename(media_file) in os.path.basename(att_path):
-                    attachment = media_to_html(os.path.basename(att_path), attachments, report_folder)
+                    attachment = check_in_media(att_path, os.path.basename(att_path))
 
         data_list.append((timestamp, content, contact_name, direction, attachment, conv_id, message_id))
     
@@ -121,8 +121,8 @@ def randochat_messages(files_found, report_folder, _seeker, _wrap_text):
                         ('Timestamp', 'datetime'),
                         'Content', 
                         'Contact Username',
-                        'Sent?', 
-                        'Media File',
+                        'Sent?',
+                        ('Media File', 'media'),
                         'Conversation ID',
                         'Message ID'
                     )

@@ -1,140 +1,111 @@
-import sqlite3
-import textwrap
+# pylint: disable=W0613,W0718
+__artifacts_v2__ = {
+    "get_smyFiles": {
+        "name": "My Files - Download History",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-12-17",
+        "last_update_date": "2020-12-17",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/MyFiles*.db*', '*/com.sec.android.app.myfiles/databases/myfiles.db*'),
+        "output_types": "standard",
+        "artifact_icon": "download",
+    },
+    "get_smyFiles_legacy": {
+        "name": "My Files - Download History (Legacy)",
+        "description": "Pre-Android 12 download_history schema",
+        "author": "",
+        "creation_date": "2020-12-17",
+        "last_update_date": "2020-12-17",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/MyFiles*.db*', '*/com.sec.android.app.myfiles/databases/myfiles.db*'),
+        "output_types": "standard",
+        "artifact_icon": "download",
+    },
+    "get_smyFiles_recent": {
+        "name": "My Files - Recent Files (MyFiles DB)",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-12-17",
+        "last_update_date": "2020-12-17",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/MyFiles*.db*', '*/com.sec.android.app.myfiles/databases/myfiles.db*'),
+        "output_types": "standard",
+        "artifact_icon": "file",
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+import datetime
 
-def get_smyFiles(files_found, report_folder, seeker, wrap_text):
-    
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+
+
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
+
+
+def _myfiles_db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-        
         if file_found.endswith('.db'):
-            break
-        
-    db = open_sqlite_db_readonly(file_found)
+            return file_found
+    return ''
+
+
+def _query(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     try:
-        cursor.execute('''
-        select 
-        datetime(mDate / 1000, 'unixepoch'),
-        mName,
-        mFullPath,
-        mIsHidden,
-        mTrashed,
-        _source,
-        _description,
-        _from_s_browser
-        from download_history
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-    except:
-        usageentries = 0
-        
-    if usageentries > 0:
-        report = ArtifactHtmlReport('My Files DB - Download History')
-        report.start_artifact_report(report_folder, 'My Files DB - Download History')
-        report.add_script()
-        data_headers = ('Timestamp','Name','Full Path','Is Hidden','Trashed?', 'Source', 'Description', 'From S Browser?' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
-
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'My Files db - Download History'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'My Files DB - Download History'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No My Files DB Download History data available')
-        
-    try:
-        cursor.execute('''
-        select 
-        datetime(date / 1000, 'unixepoch'),
-        name,
-        size,
-        _data,
-        _source,
-        _description,
-        _from_s_browser
-        from download_history
-        ''')
-        
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-    except:
-        usageentries = 0
-        
-    if usageentries > 0:
-        report = ArtifactHtmlReport('My Files DB - Download History')
-        report.start_artifact_report(report_folder, 'My Files DB - Download History')
-        report.add_script()
-        data_headers = ('Timestamp','Name','Size','Data','Source', 'Description', 'From S Browser?' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-            
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'My Files db - Download History'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'My Files DB - Download History'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No My Files DB Download History pre-Android 12 data available')
-        
-    try:        
-        cursor.execute('''
-        select 
-        datetime(mDate / 1000, 'unixepoch'),
-        mName,
-        mFullPath,
-        mIsHidden,
-        mTrashed,
-        _source,
-        _description,
-        _from_s_browser
-        from recent_files
-        ''')
-        
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-    except:
-        usageentries = 0
-        
-    if usageentries > 0:
-        report = ArtifactHtmlReport('My Files DB - Recent Files')
-        report.start_artifact_report(report_folder, 'My Files DB - Recent Files')
-        report.add_script()
-        data_headers = ('Timestamp','Name','Full Path','Is Hidden','Trashed?', 'Source', 'Description', 'From S Browser?' ) # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
-            
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'My Files db - Recent Files'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'My Files DB - Recent Files'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No My Files DB Recent Files data available')
-
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except Exception as e:
+        logfunc(str(e))
+        rows = []
     db.close()
+    return rows
 
-__artifacts__ = {
-        "smyFiles": (
-                "My Files",
-                ('*/com.sec.android.app.myfiles/databases/MyFiles*.db*','*/com.sec.android.app.myfiles/databases/myfiles.db*'),
-                get_smyFiles)
-}
+
+@artifact_processor
+def get_smyFiles(files_found, report_folder, seeker, wrap_text):
+    source_path = _myfiles_db(files_found)
+    rows = _query(source_path, '''
+        select mDate, mName, mFullPath, mIsHidden, mTrashed, _source, _description, _from_s_browser
+        from download_history
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7]) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Name', 'Full Path', 'Is Hidden', 'Trashed?', 'Source', 'Description', 'From S Browser?')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_smyFiles_legacy(files_found, report_folder, seeker, wrap_text):
+    source_path = _myfiles_db(files_found)
+    rows = _query(source_path, '''
+        select date, name, size, _data, _source, _description, _from_s_browser
+        from download_history
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Name', 'Size', 'Data', 'Source', 'Description', 'From S Browser?')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_smyFiles_recent(files_found, report_folder, seeker, wrap_text):
+    source_path = _myfiles_db(files_found)
+    rows = _query(source_path, '''
+        select mDate, mName, mFullPath, mIsHidden, mTrashed, _source, _description, _from_s_browser
+        from recent_files
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7]) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Name', 'Full Path', 'Is Hidden', 'Trashed?', 'Source', 'Description', 'From S Browser?')
+    return data_headers, data_list, source_path

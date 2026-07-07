@@ -1,177 +1,149 @@
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_googleDuo": {
+        "name": "Google Duo - Call History",
+        "description": "Google Duo / Meet call history",
+        "author": "",
+        "creation_date": "2021-07-28",
+        "last_update_date": "2021-07-28",
+        "requirements": "none",
+        "category": "Google Duo",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*',),
+        "output_types": "standard",
+        "artifact_icon": "phone-call",
+    },
+    "get_googleDuo_contacts": {
+        "name": "Google Duo - Contacts",
+        "description": "Google Duo / Meet contacts",
+        "author": "",
+        "creation_date": "2021-07-28",
+        "last_update_date": "2021-07-28",
+        "requirements": "none",
+        "category": "Google Duo",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*',),
+        "output_types": "standard",
+        "artifact_icon": "users",
+    },
+    "get_googleDuo_notes": {
+        "name": "Google Duo - Notes",
+        "description": "Google Duo / Meet notes (media messages)",
+        "author": "",
+        "creation_date": "2021-07-28",
+        "last_update_date": "2021-07-28",
+        "requirements": "none",
+        "category": "Google Duo",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*',
+                  '*/com.google.android.apps.tachyon/files/media/*.*'),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+    }
+}
+
+import datetime
 import os
-import shutil
 import sqlite3
-import textwrap
-import scripts.artifacts.artGlobals
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
 
-def get_googleDuo(files_found, report_folder, seeker, wrap_text):
-    
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _us_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _tachyon_db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-        if not file_found.endswith('tachyon.db'):
-            continue # Skip all other files
-    
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
-        select
-        datetime(timestamp_usec/1000000, 'unixepoch') as 'Timestamp',
-        substr(self_id, 0,instr(self_id, '|')) as 'Local User',
-        substr(other_id, 0,instr(other_id, '|')) as 'Remote User',
-        duo_users.contact_display_name as 'Contact Name',
-        case activity_type
-            when 1 then 'Call'
-            when 2 then 'Note'
-            when 4 then 'Reaction'
-        end as 'Activity Type',
-        case call_state
-            when 0 then 'Left Message'
-            when 1 then 'Missed Call'
-            when 2 then 'Answered'
-            when 4 then ''
-        end as 'Call Status',
-        case outgoing
-            when 0 then 'Incoming'
-            when 1 then 'Outgoing'
-        end as 'Direction'
-        from activity_history
-        left join duo_users on duo_users.user_id = substr(other_id, 0,instr(other_id, '|'))
-        ''')
+        if file_found.endswith('tachyon.db'):
+            return file_found
+    return ''
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Google Duo - Call History')
-            report.start_artifact_report(report_folder, 'Google Duo - Call History')
-            report.add_script()
-            data_headers = ('Timestamp','Local User','Remote User','Contact Name','Activity Type','Call Status','Direction') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Google Duo - Call History'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Google Duo - Call History'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Google Duo - Call History data available')
-    
-        cursor.execute('''
-        select
-        case system_contact_last_update_millis
-            when 0 then ''
-            else datetime(system_contact_last_update_millis/1000, 'unixepoch')
-        end as 'Last Updated Timestamp',
-        contact_display_name as 'Contact Name',
-        user_id as 'Contact Info',
-        contact_phone_type_custom as 'Contact Label',
-        contact_id as 'Contact ID'
-        from duo_users
-        ORDER by contact_id
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Google Duo - Contacts')
-            report.start_artifact_report(report_folder, 'Google Duo - Contacts')
-            report.add_script()
-            data_headers = ('Last Updated Timestamp','Contact Name','Contact Info','Contact Label','Contact ID') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Google Duo - Contacts'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Google Duo - Contacts'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Google Duo - Contacts data available')
-    
-        cursor.execute('''
-        select
-        case sent_timestamp_millis
-            when 0 then ''
-            else datetime(sent_timestamp_millis/1000,'unixepoch')
-        end as 'Sent Timestamp',
-        case received_timestamp_millis
-            when 0 then ''
-            else datetime(received_timestamp_millis/1000,'unixepoch')
-        end as 'Received Timestamp',
-        case seen_timestamp_millis
-            when 0 then ''
-            else datetime(seen_timestamp_millis/1000,'unixepoch')
-        end as 'Viewed Timestamp',
-        sender_id,
-        recipient_id,
-        content_uri,
-        replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), '') as 'File Name',
-        content_size_bytes,
-        case saved_status
-            when 0 then ''
-            when 1 then 'Yes'
-        end as 'File Saved'
-        from messages
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        data_list = []
-        
-        if usageentries > 0:
-            for row in all_rows:
-            
-                sent_ts = row[0]
-                received_ts = row[1]
-                viewed_ts = row[2]
-                sender_id = row[3]
-                recipient_id = row[4]
-                content_uri = row[5]
-                content_name = row[6]
-                content_size = row[7]
-                file_saved = row[8]
-                thumb = ''
-                
-                for match in files_found:
-                    if content_name in match:
-                        shutil.copy2(match, report_folder)
-                        data_file_name = os.path.basename(match)
-                        thumb = f'<img src="{report_folder}/{data_file_name}" width="300"></img>'
-            
-                data_list.append((row[0],row[1],row[2],row[3],row[4],thumb,row[7],row[8]))
-            
-            report = ArtifactHtmlReport('Google Duo - Notes')
-            report.start_artifact_report(report_folder, 'Google Duo - Notes')
-            report.add_script()
-            data_headers = ('Sent Timestamp','Received Timestamp','Viewed Timestamp','Sender','Recipient','Content','Size','File Saved') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-
-            report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Content'])
-            report.end_artifact_report()
-            
-            tsvname = f'Google Duo - Notes'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Google Duo - Notes'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Google Duo - Notes data available')
-    
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
     db.close()
+    return rows
 
-__artifacts__ = {
-        "googleDuo": (
-                "Google Duo",
-                ('*/com.google.android.apps.tachyon/databases/tachyon.db*','*/com.google.android.apps.tachyon/files/media/*.*'),
-                get_googleDuo)
-}
+
+@artifact_processor
+def get_googleDuo(files_found, report_folder, seeker, wrap_text):
+    source_path = _tachyon_db(files_found)
+    rows = _run(source_path, '''
+        SELECT timestamp_usec, substr(self_id, 0, instr(self_id, '|')),
+        substr(other_id, 0, instr(other_id, '|')), duo_users.contact_display_name,
+        CASE activity_type WHEN 1 THEN 'Call' WHEN 2 THEN 'Note' WHEN 4 THEN 'Reaction' END,
+        CASE call_state WHEN 0 THEN 'Left Message' WHEN 1 THEN 'Missed Call' WHEN 2 THEN 'Answered' WHEN 4 THEN '' END,
+        CASE outgoing WHEN 0 THEN 'Incoming' WHEN 1 THEN 'Outgoing' END
+        FROM activity_history
+        LEFT JOIN duo_users ON duo_users.user_id = substr(other_id, 0, instr(other_id, '|'))
+    ''')
+    data_list = [(_us_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Local User', 'Remote User', 'Contact Name',
+                    'Activity Type', 'Call Status', 'Direction')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_googleDuo_contacts(files_found, report_folder, seeker, wrap_text):
+    source_path = _tachyon_db(files_found)
+    rows = _run(source_path, '''
+        SELECT system_contact_last_update_millis, contact_display_name, user_id,
+        contact_phone_type_custom, contact_id
+        FROM duo_users ORDER BY contact_id
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4]) for r in rows]
+    data_headers = (('Last Updated Timestamp', 'datetime'), 'Contact Name', 'Contact Info',
+                    'Contact Label', 'Contact ID')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_googleDuo_notes(files_found, report_folder, seeker, wrap_text):
+    source_path = _tachyon_db(files_found)
+    rows = _run(source_path, '''
+        SELECT sent_timestamp_millis, received_timestamp_millis, seen_timestamp_millis,
+        sender_id, recipient_id, content_uri,
+        replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), ''),
+        content_size_bytes,
+        CASE saved_status WHEN 0 THEN '' WHEN 1 THEN 'Yes' END
+        FROM messages
+    ''')
+    data_list = []
+    for r in rows:
+        file_name = r[6]
+        content = ''
+        if file_name:
+            match = next((str(f) for f in files_found if file_name in str(f)
+                          and not str(f).endswith('.db')), None)
+            if match:
+                content = check_in_media(match, os.path.basename(match))
+        data_list.append((_ms_to_utc(r[0]), _ms_to_utc(r[1]), _ms_to_utc(r[2]), r[3], r[4], content, r[7], r[8]))
+
+    data_headers = (('Sent Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
+                    ('Viewed Timestamp', 'datetime'), 'Sender', 'Recipient', ('Content', 'media'),
+                    'Size', 'File Saved')
+    return data_headers, data_list, source_path

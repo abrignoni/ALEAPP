@@ -1,19 +1,56 @@
-import os
-import datetime
-import xml.etree.ElementTree as ET
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_atrackerdetect": {
+        "name": "atrackerdetect",
+        "description": "",
+        "author": "",
+        "creation_date": "2022-01-08",
+        "last_update_date": "2022-01-08",
+        "requirements": "none",
+        "category": "AirTags",
+        "notes": "",
+        "paths": ('*/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "alert-triangle",
+    }
+}
 
+import re
+import xml.etree.ElementTree as ET
+
+from scripts.ilapfuncs import artifact_processor, logfunc
+
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
+
+
+@artifact_processor
 def get_atrackerdetect(files_found, report_folder, seeker, wrap_text):
-    data_list=[]
+
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        
-        tree = ET.parse(file_found)
-        root = tree.getroot()
-        
+        source_path = file_found
+        root = _parse_xml(file_found)
+
         for elem in root.iter():
-            attribute = (elem.attrib)
+            attribute = elem.attrib
             if attribute:
                 data = attribute.get('name')
                 if data.startswith('device'):
@@ -21,25 +58,7 @@ def get_atrackerdetect(files_found, report_folder, seeker, wrap_text):
                     desc = data.split('_', 2)[2]
                     data_list.append((desc, mac, elem.text))
                 else:
-                    data_list.append((data, attribute.get('value'),''))
-                                
-        if data_list:
-            report = ArtifactHtmlReport('Apple Tracker Detect Prefs')
-            report.start_artifact_report(report_folder, 'Apple Tracker Detect Prefs')
-            report.add_script()
-            data_headers = ('Key', 'Value', 'Milliseconds from Last Boot Time')
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Apple Tracker Detect Prefs'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-        else:
-            logfunc('No Apple Tracker Detect Prefs data available')
+                    data_list.append((data, attribute.get('value'), ''))
 
-__artifacts__ = {
-        "atrackerdetect": (
-                "AirTags",
-                ('*/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml'),
-                get_atrackerdetect)
-}
+    data_headers = ('Key', 'Value', 'Milliseconds from Last Boot Time')
+    return data_headers, data_list, source_path

@@ -1,15 +1,15 @@
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "Turbo_Battery": {
         "name": "Turbo - Phone Battery",
         "description": "Parses battery percentage for devices from Device Health Services",
         "author": "@stark4n6",
-        "version": "0.0.1",
         "creation_date": "2021-06-29",
         "last_update_date": "2025-03-08",
         "requirements": "none",
         "category": "Device Health Services",
         "notes": "",
-        "paths": ('*/com.google.android.apps.turbo/databases/turbo.db*'),
+        "paths": ('*/com.google.android.apps.turbo/databases/turbo.db*',),
         "output_types": "all",
         "artifact_icon": "battery-charging"
     },
@@ -17,28 +17,24 @@ __artifacts_v2__ = {
         "name": "Turbo - Bluetooth Device Info",
         "description": "Parses bluetooth connected devices from Device Health Services",
         "author": "@stark4n6",
-        "version": "0.0.1",
         "creation_date": "2021-06-29",
         "last_update_date": "2025-03-08",
         "requirements": "none",
         "category": "Device Health Services",
         "notes": "",
-        "paths": ('*/com.google.android.apps.turbo/databases/bluetooth.db*'),
+        "paths": ('*/com.google.android.apps.turbo/databases/bluetooth.db*',),
         "output_types": "all",
         "artifact_icon": "bluetooth"
     }
 }
 
-import sqlite3
-import textwrap
 import os
 
-from packaging import version
-from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
-def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
+def Turbo_Battery(context):
+    files_found = context.get_files_found()
     source_file_turbo = ''
     turbo_db = ''
     data_list = []
@@ -77,11 +73,12 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
             if usageentries > 0:
                 for row in all_rows:
                     timestamp = row[0]
-                    if timestamp is None:
-                        pass
-                    else:
-                        timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
-                    data_list.append((timestamp,row[1],row[2],row[3],row[4],file_found))
+                    if timestamp is not None and row[4]:
+                        try:
+                            timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), row[4])
+                        except Exception:
+                            pass
+                    data_list.append((timestamp,row[1],row[2],row[3],row[4],context.get_relative_path(file_found)))
             
             db.close()
             
@@ -90,41 +87,44 @@ def Turbo_Battery(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_file_turbo
             
 @artifact_processor
-def Turbo_Bluetooth(files_found, report_folder, seeker, wrap_text):     
+def Turbo_Bluetooth(context):
+    files_found = context.get_files_found()
     source_file_bluetooth = ''
-    turbo_db = ''
     data_list = []
 
-    if file_found.lower().endswith('bluetooth.db'):
-        bluetooth_db = str(file_found)
-        source_file_bluetooth = file_found.replace(seeker.directory, '')
-    
-        db = open_sqlite_db_readonly(bluetooth_db)
-        cursor = db.cursor()
-        cursor.execute('''
-        select
-        datetime(timestamp_millis/1000,'unixepoch'),
-        bd_addr,
-        device_identifier,
-        battery_level,
-        volume_level,
-        time_zone
-        from battery_event
-        join device_address on battery_event.device_idx = device_address.device_idx
-        ''')
+    for file_found in files_found:
+        file_found = str(file_found)
+        if file_found.lower().endswith('bluetooth.db'):
+            bluetooth_db = str(file_found)
+            source_file_bluetooth = os.path.basename(file_found)
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            for row in all_rows:
-                timestamp = row[0]
-                if timestamp is None:
-                    pass
-                else:
-                    timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),time_offset)
-                data_list.append((timestamp,row[1],row[2],row[3],row[4],row[5],file_found))
-        db.close()
-        
+            db = open_sqlite_db_readonly(bluetooth_db)
+            cursor = db.cursor()
+            cursor.execute('''
+            select
+            datetime(timestamp_millis/1000,'unixepoch'),
+            bd_addr,
+            device_identifier,
+            battery_level,
+            volume_level,
+            time_zone
+            from battery_event
+            join device_address on battery_event.device_idx = device_address.device_idx
+            ''')
+
+            all_rows = cursor.fetchall()
+            usageentries = len(all_rows)
+            if usageentries > 0:
+                for row in all_rows:
+                    timestamp = row[0]
+                    if timestamp is not None and row[5]:
+                        try:
+                            timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), row[5])
+                        except Exception:
+                            pass
+                    data_list.append((timestamp,row[1],row[2],row[3],row[4],row[5],context.get_relative_path(file_found)))
+            db.close()
+
     data_headers = (('Timestamp','datetime'),'BT Device MAC Address','BT Device ID','Battery Level','Volume Level','Timezone','Source')
 
     return data_headers, data_list, source_file_bluetooth

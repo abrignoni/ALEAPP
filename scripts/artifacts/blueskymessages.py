@@ -1,193 +1,165 @@
+# pylint: disable=W0613,W0718
 __artifacts_v2__ = {
-    "blueskymessages": {
-        "name": "Bluesky",
-        "description": "Bluesky Messages",
+    "get_blueskymessages": {
+        "name": "Bluesky - Messages",
+        "description": "Bluesky direct messages",
         "author": "Alexis Brignoni",
-        "version": "0.0.1",
-        "date": "2024-11-19",
+        "creation_date": "2024-11-19",
+        "last_update_date": "2024-11-19",
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
-        "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*','*/xyz.blueskyweb.app/cache/http-cache/*.*'),
-        "function": "get_blueskymessages"
+        "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*',
+                  '*/xyz.blueskyweb.app/cache/http-cache/*.*'),
+        "output_types": "standard",
+        "artifact_icon": "message",
+    },
+    "get_blueskymessages_actors": {
+        "name": "Bluesky - Actors",
+        "description": "Bluesky actors (accounts) seen in storage and the http-cache",
+        "author": "Alexis Brignoni",
+        "creation_date": "2024-11-19",
+        "last_update_date": "2024-11-19",
+        "requirements": "none",
+        "category": "Bluesky",
+        "notes": "",
+        "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*',
+                  '*/xyz.blueskyweb.app/cache/http-cache/*.*'),
+        "output_types": "standard",
+        "artifact_icon": "users",
     }
 }
-import os
+
+import datetime
 import json
 import sqlite3
-from pathlib import Path 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc,tsv, is_platform_windows,open_sqlite_db_readonly,convert_ts_human_to_utc,timeline,utf8_in_extended_ascii
 
-def get_blueskymessages(files_found, report_folder, seeker, wrap_text):
-    
-    actors_data_list = []
-    messages_data_list = []
-    
-    
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, utf8_in_extended_ascii
+
+_ACTORS_CACHE = {}
+
+
+def _iso_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromisoformat(str(value).replace('Z', '+00:00')).astimezone(
+            datetime.timezone.utc)
+    except (ValueError, TypeError):
+        return ''
+
+
+def _s(value):
+    if value is None:
+        return ''
+    return value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+
+
+def _fix(value):
+    if not value:
+        return ''
+    try:
+        return utf8_in_extended_ascii(value)[1]
+    except Exception:
+        return value
+
+
+def _load_json(file_found):
+    try:
+        with open(file_found, 'r', encoding='utf-8') as handle:
+            return json.load(handle)
+    except (ValueError, OSError, UnicodeDecodeError):
+        return None
+
+
+def _build_actors(files_found):
+    cache_key = tuple(sorted(str(f) for f in files_found))
+    if cache_key in _ACTORS_CACHE:
+        return _ACTORS_CACHE[cache_key]
+    actors = []
+    seen = set()
+
+    def add(row):
+        if row not in seen:
+            seen.add(row)
+            actors.append(row)
+
     for file_found in files_found:
         file_found = str(file_found)
-    
         if file_found.endswith('RKStorage'):
             db = open_sqlite_db_readonly(file_found)
-            #SQL QUERY TIME!
             cursor = db.cursor()
-            cursor.execute('''
-            SELECT VALUE 
-            from catalystLocalStorage where key = 'BSKY_STORAGE'
-            ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            
-            if usageentries > 0:
-                for row in all_rows:
-                    localuser = row[0]
-                    localuser = json.loads(localuser)
-                    createdat = ''
-                    displayname = ''
-                    avatar = ''
-                    viewer = ''
-                    labels =''
-                    description =''
-                    did = (localuser ['session']['accounts'][0]['did'])
-                    handle = (localuser ['session']['accounts'][0]['handle'])
-                    email = (localuser ['session']['accounts'][0]['email'])
-                    source = file_found
-                    actortuple = tuple((createdat,did,handle,displayname,avatar,viewer,labels,description,email,source))
-                    if actortuple in actors_data_list:
-                        pass
-                    else:
-                        actors_data_list.append((actortuple))
-        else:
             try:
-                with open(file_found, 'r',encoding='utf-8') as file:
-                    data = json.load(file)
-                    value = data.get('actors')
-                    if value is not None:
-                        if len(value) > 0:
-                            for items in value:
-                                did = (items['did'])
-                                handle = (items['handle'])
-                                displayname =(items['displayName'])
-                                avatar = (items['avatar'])
-                                viewer = (items['viewer'])
-                                labels = (items['labels'])
-                                createdat = (items['createdAt'])
-                                createdat = createdat.replace('T',' ')
-                                createdat = createdat[:-1]
-                                createdat = convert_ts_human_to_utc(createdat)
-                                description =''
-                                email = ''
-                                source = file_found
-                                actortuple = tuple((createdat,did,handle,displayname,avatar,viewer,labels,description,email,source))
-                                if actortuple in actors_data_list:
-                                    pass
-                                else:
-                                    actors_data_list.append((actortuple))
-                        else:
-                            pass
-                            
-                    didentry = data.get('did')
-                    if didentry is not None:
-                        if len(data) > 1:
-                            did = (data['did'])
-                            handle = (data['handle'])
-                            displayname =(data['displayName'])
-                            displayname = utf8_in_extended_ascii(displayname)[1]
-                            avatar = (data['avatar'])
-                            viewer = (data['viewer'])
-                            labels = (data['labels'])
-                            createdat = (items['createdAt'])
-                            createdat = createdat.replace('T',' ')
-                            createdat = createdat[:-1]
-                            createdat = convert_ts_human_to_utc(createdat)
-                            description = (data['description'])
-                            description = utf8_in_extended_ascii(description)[1]
-                            email = ''
-                            source = file_found
-                            actortuple = tuple((createdat,did,handle,displayname,avatar,viewer,labels,description,email,source))
-                            if actortuple in actors_data_list:
-                                pass
-                            else:
-                                actors_data_list.append((actortuple))
-            except:
-                pass
-    
+                cursor.execute("SELECT value FROM catalystLocalStorage WHERE key = 'BSKY_STORAGE'")
+                rows = cursor.fetchall()
+            except sqlite3.Error:
+                rows = []
+            db.close()
+            for row in rows:
+                try:
+                    account = json.loads(row[0])['session']['accounts'][0]
+                except (ValueError, KeyError, IndexError, TypeError):
+                    continue
+                add(('', account.get('did'), account.get('handle'), '', '', '', '', '', account.get('email')))
+            continue
+
+        data = _load_json(file_found)
+        if not isinstance(data, dict):
+            continue
+        for item in data.get('actors') or []:
+            add((_iso_to_utc(item.get('createdAt')), item.get('did'), item.get('handle'),
+                 _fix(item.get('displayName')), _s(item.get('avatar')), _s(item.get('viewer')),
+                 _s(item.get('labels')), '', ''))
+        if data.get('did') is not None and len(data) > 1:
+            add((_iso_to_utc(data.get('createdAt')), data.get('did'), data.get('handle'),
+                 _fix(data.get('displayName')), _s(data.get('avatar')), _s(data.get('viewer')),
+                 _s(data.get('labels')), _fix(data.get('description')), ''))
+
+    _ACTORS_CACHE[cache_key] = actors
+    return actors
+
+
+@artifact_processor
+def get_blueskymessages_actors(files_found, report_folder, seeker, wrap_text):
+    actors = _build_actors(files_found)
+    source_path = next((str(f) for f in files_found if not str(f).endswith('RKStorage')), '')
+    data_headers = ('Created At', 'DID', 'Handle', 'Display Name', 'Avatar', 'Viewer', 'Labels',
+                    'Description', 'Email')
+    return data_headers, actors, source_path
+
+
+@artifact_processor
+def get_blueskymessages(files_found, report_folder, seeker, wrap_text):
+    actors = _build_actors(files_found)
+    data_list = []
+    seen = set()
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-    
         if file_found.endswith('RKStorage'):
-            pass #Do nothing
-        else:
+            continue
+        data = _load_json(file_found)
+        if not isinstance(data, dict):
+            continue
+        source_path = file_found
+        for message in data.get('messages') or []:
             try:
-                with open(file_found, 'r', encoding='utf-8') as file:
-                    data = json.load(file)
-                    messages = data.get('messages')
-                    if messages is not None:
-                        if len(messages) > 0:
-                            for message in messages:
-                                sentat = (message['sentAt'])
-                                sentat = sentat.replace('T',' ')
-                                sentat= sentat[:-1]
-                                sentat = convert_ts_human_to_utc(sentat)
-                                senderid = (message['sender']['did'])
-                                messageid = (message['id'])
-                                textmessage = (message['text'])
-                                textmessage = utf8_in_extended_ascii(textmessage)[1]
-                                messageusername = ''
-                                actorurl = ''
-                                source = file_found
-                                for actors in actors_data_list:
-                                    
-                                    if senderid == actors[1]:
-                                        
-                                        messageusername = actors[3]
-                                        actorurl = actors[2]
-                                        break
-                                    
-                                messagetuple = tuple((sentat,actorurl,messageusername,textmessage,senderid,messageid,source))
-                                if messagetuple in messages_data_list:
-                                    pass
-                                else:
-                                    messages_data_list.append(messagetuple)
-            except:
-                pass
-                
-    if len(actors_data_list) > 0:
-        report = ArtifactHtmlReport('Bluesky Actors')
-        report.start_artifact_report(report_folder, f'Bluesky Actors')
-        report.add_script()
-        data_headers = ('Created At','Did','Handle','Display Name','Avatar','Viewer','Labels','Description','Email','Source')
-        report.write_artifact_data_table(data_headers, actors_data_list, 'See report')
-        report.end_artifact_report()
-        
-        tsvname = f'Bluesky Actors'
-        tsv(report_folder, data_headers, actors_data_list, tsvname)
-        
-        tlactivity = f'Bluesky Actors'
-        timeline(report_folder, tlactivity, actors_data_list, data_headers)
-        
-        #add timeline
-        
-    else:
-        logfunc(f'No Bluesky Actors data available')
-        
-    if len(messages_data_list) > 0:
-        report = ArtifactHtmlReport('Bluesky Messages')
-        report.start_artifact_report(report_folder, f'Bluesky Messages')
-        report.add_script()
-        data_headers = ('Timestamp Sent','Actor URL','Username','Message','Sender ID','Message ID','Source')
-        report.write_artifact_data_table(data_headers, messages_data_list, 'See report')
-        report.end_artifact_report()
-        
-        tsvname = f'Bluesky Messages'
-        tsv(report_folder, data_headers, messages_data_list, tsvname)
-        
-        tlactivity = f'Bluesky Messages'
-        timeline(report_folder, tlactivity, messages_data_list, data_headers)
-        
-    else:
-        logfunc(f'No Bluesky Messages available')
+                sender_id = message['sender']['did']
+            except (KeyError, TypeError):
+                continue
+            username = ''
+            actor_url = ''
+            for actor in actors:
+                if sender_id == actor[1]:
+                    username = actor[3]
+                    actor_url = actor[2]
+                    break
+            row = (_iso_to_utc(message.get('sentAt')), actor_url, username, _fix(message.get('text')),
+                   sender_id, message.get('id'))
+            if row not in seen:
+                seen.add(row)
+                data_list.append(row)
 
-        
+    data_headers = (('Timestamp Sent', 'datetime'), 'Actor URL', 'Username', 'Message', 'Sender ID',
+                    'Message ID')
+    return data_headers, data_list, source_path

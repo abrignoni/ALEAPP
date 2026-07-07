@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613
 __artifacts_v2__ = {
     "googlevoice_accounts": {
         "name": "Google Voice - User Accounts",
@@ -11,7 +12,6 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/AccountData.pb', '*/data/com.google.android.apps.googlevoice/files/accounts/*/SqliteKeyValueCache:VoiceAccountCache.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
-        "function": "googlevoice_accounts",
     },
     "googlevoice_calls": {
         "name": "Google Voice - Calls",
@@ -25,7 +25,6 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "phone",
-        "function": "googlevoice_calls",
     },
     "googlevoice_voicemails": {
         "name": "Google Voice - Voicemails",
@@ -38,22 +37,31 @@ __artifacts_v2__ = {
         "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "voicemail",
-        "function": "googlevoice_voicemails",
+        "artifact_icon": "record-mail",
     },
     "googlevoice_messages": {
         "name": "Google Voice - Messages",
         "description": "Parses Google Voice Messages",
         "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
         "creation_date": "2025-10-22",
-        "last_update_date": "2025-11-5",
+        "last_update_date": "2026-07-03",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
         "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/Photo MMS images/*', '*/data/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
-        "function": "googlevoice_messages",
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Conversation ID",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Timestamp",
+                "senderColumn": "Sender",
+                "mediaColumn": "Image"
+            }
+        },
     }
 }
 
@@ -63,6 +71,15 @@ import time
 import struct
 import inspect
 from scripts.ilapfuncs import artifact_processor, get_binary_file_content, open_sqlite_db_readonly, does_table_exist_in_db, check_in_media
+
+
+def _decode_text(value):
+    '''Message body (protobuf field 10) is normally bytes, but can be a nested message
+    (dict) for structured/MMS content. Decode bytes; otherwise stringify so the record
+    still parses instead of raising AttributeError on .decode.'''
+    if isinstance(value, bytes):
+        return value.decode('utf-8', 'replace')
+    return str(value)
 
 @artifact_processor
 def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
@@ -456,7 +473,7 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                             # Message
                             message_content = ""
                             if '10' in message[0]:
-                                message_content = message[0]['10'].decode('utf-8')
+                                message_content = _decode_text(message[0]['10'])
 
                             # Image
                             if "MMS" in message_content:

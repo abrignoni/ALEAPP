@@ -1,11 +1,3 @@
-# Android Thunderbird App (net.thunderbird.android)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-#
-# Tested with the following versions:
-# 2025-10-27: Android 16, App: 13.0
-
-# Requirements: re, json
-
 __artifacts_v2__ = {
 
     
@@ -13,7 +5,6 @@ __artifacts_v2__ = {
         "name": "Thunderbird - Accounts",
         "description": "Thunderbird Accounts",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2025-11-18",
         "last_update_date": "2025-11-18",
         "requirements": "re, json",
@@ -28,7 +19,6 @@ __artifacts_v2__ = {
         "name": "Thunderbird - Messages",
         "description": "Thunderbird Messages",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2025-11-20",
         "last_update_date": "2025-11-20",
         "requirements": "re, json",
@@ -42,10 +32,18 @@ __artifacts_v2__ = {
 
 }
 
+# Android Thunderbird App (net.thunderbird.android)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+#
+# Tested with the following versions:
+# 2025-10-27: Android 16, App: 13.0
+
+# Requirements: re, json
 import re
 import json
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.context import Context
 
 def _map_uuid_to_account(file):
     # Helper method to get the mapping of the uuid to the set up accounts
@@ -188,7 +186,7 @@ def thunderbird_messages(files_found, _report_folder, _seeker, _wrap_text):
             content = row[14]
 
 
-            data_list.append((sent, stored, account, sender, receiver, cc, bcc, subject, preview, content, attachments, read, flagged, answered, forwarded, folder, str(file)))
+            data_list.append((sent, stored, account, sender, receiver, cc, bcc, subject, preview, content, attachments, read, flagged, answered, forwarded, folder, Context.get_relative_path(str(file))))
 
     data_headers = ( 'Timestamp Sent', 'Timestamp Stored', 'Account', 'Sender', 'Receiver', 'CC', 'BCC', 'Subject', 'Preview', 'Content', 'Attachments', 'Read?', 'Flagged?', 'Answered?', 'Forwarded?', 'Folder Name', 'Source File')
 

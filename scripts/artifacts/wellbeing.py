@@ -1,38 +1,62 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
-    "wellbeing": {
-        "name": "Digital Wellbeing",
+    "get_wellbeing": {
+        "name": "Digital Wellbeing - Events",
         "description": "Parses Digital Wellbeing events",
         "author": "@AlexisBrignoni",
-        "version": "0.0.1",
-        "date": "2020-02-2",
+        "creation_date": "2020-02-02",
+        "last_update_date": "2020-02-02",
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": "",
-        "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*'),
-        "function": "get_wellbeing"
+        "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*',),
+        "output_types": "standard",
+        "artifact_icon": "heart",
+    },
+    "get_wellbeing_url": {
+        "name": "Digital Wellbeing - URL Events",
+        "description": "Parses Digital Wellbeing URL events",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2020-02-02",
+        "last_update_date": "2020-02-02",
+        "requirements": "none",
+        "category": "Digital Wellbeing",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*',),
+        "output_types": "standard",
+        "artifact_icon": "globe",
     }
 }
 
-import os
-import sqlite3
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+import datetime
 
-def get_wellbeing(files_found, report_folder, seeker, wrap_text):
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-    data_list = []
-    data_list_url = []
 
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
+
+
+def _app_usage_db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-        
         if file_found.endswith('app_usage'):
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT 
-            events._id,
-            datetime(events.timestamp/1000, 'UNIXEPOCH') as timestamps, 
+            return file_found
+    return ''
+
+
+@artifact_processor
+def get_wellbeing(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = _app_usage_db(files_found)
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
+        cursor = db.cursor()
+        cursor.execute('''
+            SELECT
+            events.timestamp,
             packages.package_name,
             case
                 when events.type = 1 THEN 'ACTIVITY_RESUMED'
@@ -40,92 +64,51 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text):
                 when events.type = 12 THEN 'NOTIFICATION'
                 when events.type = 18 THEN 'KEYGUARD_HIDDEN & || Device Unlock'
                 when events.type = 19 THEN 'FOREGROUND_SERVICE_START'
-                when events.type = 20 THEN 'FOREGROUND_SERVICE_STOP' 
+                when events.type = 20 THEN 'FOREGROUND_SERVICE_STOP'
                 when events.type = 23 THEN 'ACTIVITY_STOPPED'
                 when events.type = 26 THEN 'DEVICE_SHUTDOWN'
                 when events.type = 27 THEN 'DEVICE_STARTUP'
                 else events.type
             END as eventtype
-            FROM
-            events INNER JOIN packages ON events.package_id=packages._id 
-            ''')
+            FROM events INNER JOIN packages ON events.package_id=packages._id
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
+        for row in all_rows:
+            data_list.append((_ms_to_utc(row[0]), row[1], row[2]))
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    event_ts = row[1]
-                    if event_ts is None:
-                        pass
-                    else:
-                        event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),'UTC')
-                
-                    data_list.append((event_ts, row[2], row[3], file_found))
-                    
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT 
-            datetime(component_events.timestamp/1000, "UNIXEPOCH") as timestamp,
+    data_headers = (('Timestamp', 'datetime'), 'Package Name', 'Event Type')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_wellbeing_url(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = _app_usage_db(files_found)
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
+        cursor = db.cursor()
+        cursor.execute('''
+            SELECT
+            component_events.timestamp,
             component_events._id,
-            components.package_id, 
-            packages.package_name, 
+            components.package_id,
+            packages.package_name,
             components.component_name as website,
             CASE
-            when component_events.type=1 THEN 'ACTIVITY_RESUMED'
-            when component_events.type=2 THEN 'ACTIVITY_PAUSED'
-            else component_events.type
+                when component_events.type=1 THEN 'ACTIVITY_RESUMED'
+                when component_events.type=2 THEN 'ACTIVITY_PAUSED'
+                else component_events.type
             END as eventType
             FROM component_events
             INNER JOIN components ON component_events.component_id=components._id
             INNER JOIN packages ON components.package_id=packages._id
-            ORDER BY timestamp
-            ''')
+            ORDER BY component_events.timestamp
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
+        for row in all_rows:
+            data_list.append((_ms_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5]))
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    event_ts = row[0]
-                    if event_ts is None:
-                        pass
-                    else:
-                        event_ts = convert_utc_human_to_timezone(convert_ts_human_to_utc(event_ts),'UTC')
-                    data_list_url.append((event_ts, row[1], row[2], row[3], row[4], row[5], file_found))
-            db.close()
-            
-        else:
-            continue # Skip all other files
-        
-    if data_list:
-        report = ArtifactHtmlReport('Digital Wellbeing - Events')
-        report.start_artifact_report(report_folder, 'Events')
-        report.add_script()
-        data_headers = ('Timestamp', 'Package ID', 'Event Type', 'Source File')
-
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Digital Wellbeing - Events'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Digital Wellbeing - Events'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No Digital Wellbeing - Events data available')
-    
-    if data_list_url:
-        report = ArtifactHtmlReport('Digital Wellbeing - URL Events')
-        report.start_artifact_report(report_folder, 'Digital Wellbeing - URL Events')
-        report.add_script()
-        data_headers = ('Timestamp', 'Event ID', 'Package ID', 'Package Name', 'Website', 'Event', 'Source File')
-        
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Digital Wellbeing - URL Events'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Digital Wellbeing - URL Events'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No Digital Wellbeing - URL Events data available')
+    data_headers = (('Timestamp', 'datetime'), 'Event ID', 'Package ID', 'Package Name', 'Website', 'Event')
+    return data_headers, data_list, source_path

@@ -1,32 +1,69 @@
-import os
-import datetime
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_rarlabPreferences": {
+        "name": "rarlabPreferences",
+        "description": "",
+        "author": "",
+        "creation_date": "2023-03-29",
+        "last_update_date": "2023-03-29",
+        "requirements": "none",
+        "category": "RAR Lab Prefs",
+        "notes": "",
+        "paths": ('*/com.rarlab.rar_preferences.xml',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "settings",
+        "html_columns": ['Text'],
+    }
+}
+
 import json
-
+import re
 import xml.etree.ElementTree as ET
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, abxread, checkabx, logdevinfo
 
+from scripts.ilapfuncs import artifact_processor, abxread, checkabx, logfunc
+
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
+
+
+@artifact_processor
 def get_rarlabPreferences(files_found, report_folder, seeker, wrap_text):
     data_list = []
-    
+    source_path = ''
+
     for file_found in files_found:
         file_found = str(file_found)
         if file_found.endswith('com.rarlab.rar_preferences.xml'):
-            
-            #check if file is abx
+            source_path = file_found
+
+            # check if file is abx
             if (checkabx(file_found)):
                 multi_root = False
-                tree = abxread(file_found, multi_root)
+                root = abxread(file_found, multi_root).getroot()
             else:
-                tree = ET.parse(file_found)
-            root = tree.getroot()
-            
+                root = _parse_xml(file_found)
+
             for elem in root.iter():
                 name = elem.attrib.get('name')
                 value = elem.attrib.get('value')
-                text = elem.text 
+                text = elem.text
                 if name is not None:
-                    if name == 'ArcHistory' or name == 'ExtrPathHistory' :
+                    if name == 'ArcHistory' or name == 'ExtrPathHistory':
                         items = json.loads(text)
                         agg = ''
                         for x in items:
@@ -34,25 +71,6 @@ def get_rarlabPreferences(files_found, report_folder, seeker, wrap_text):
                         data_list.append((name,agg,value))
                     else:
                         data_list.append((name,text,value))
-                        
-                    
-        if data_list:
-            report = ArtifactHtmlReport(f'RAR Lab Preferences')
-            report.start_artifact_report(report_folder, f'RAR Lab Preferences')
-            report.add_script()
-            data_headers = ('Key','Text','Value')
-            report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Text'])
-            report.end_artifact_report()
-            
-            tsvname = f'RAR Lab Preferences'
-            tsv(report_folder, data_headers, data_list, tsvname)
 
-        else:
-            logfunc(f'No RAR Lab Preferences data available')
-            
-__artifacts__ = {
-        "rarlabPreferences": (
-                "RAR Lab Prefs",
-                ('*/com.rarlab.rar_preferences.xml'),
-                get_rarlabPreferences)
-}
+    data_headers = ('Key', 'Text', 'Value')
+    return data_headers, data_list, source_path

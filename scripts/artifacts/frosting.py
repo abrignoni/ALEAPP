@@ -1,10 +1,11 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "frosting": {
         "name": "App Updates (Frosting.db)",
         "description": "App updates via the frosting.db",
         "author": "@stark4n6",
         "creation_date": "2022-07-28",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "",
@@ -12,7 +13,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "package"
     }
-}    
+}
+
+    
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
 

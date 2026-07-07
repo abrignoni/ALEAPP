@@ -1,48 +1,42 @@
-import sqlite3
-import textwrap
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_smanagerCrash": {
+        "name": "smanagerCrash",
+        "description": "",
+        "author": "",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "App Interaction",
+        "notes": "",
+        "paths": ('*/com.samsung.android.sm/databases/sm.db',),
+        "output_types": "standard",
+        "artifact_icon": "package",
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+import datetime
 
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+
+
+@artifact_processor
 def get_smanagerCrash(files_found, report_folder, seeker, wrap_text):
-    
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
+
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''
-    SELECT
-    datetime(crash_time / 1000, "unixepoch"),
-    package_name
-    from crash_info
+        SELECT crash_time, package_name
+        FROM crash_info
     ''')
-
     all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Samsung Smart Manager - Crash')
-        report.start_artifact_report(report_folder, 'Samsung Smart Manager - Crash')
-        report.add_script()
-        data_headers = ('Timestamp','Package Name')
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1]))
-
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'samsung smart manager - crash'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Samsung Smart Manager - Crash'
-        timeline(report_folder, tlactivity, data_list, data_headers) 
-    else:
-        logfunc('No Samsung Smart Manager - Crash data available')
-    
     db.close()
 
-__artifacts__ = {
-        "smanagerCrash": (
-                "App Interaction",
-                ('*/com.samsung.android.sm/databases/sm.db'),
-                get_smanagerCrash)
-}
+    data_list = []
+    for row in all_rows:
+        timestamp = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
+        data_list.append((timestamp, row[1]))
+
+    data_headers = (('Timestamp', 'datetime'), 'Package Name')
+    return data_headers, data_list, source_path

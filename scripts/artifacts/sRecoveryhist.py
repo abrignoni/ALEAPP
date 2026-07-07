@@ -1,27 +1,44 @@
-import os
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows
+# pylint: disable=W0613
+__artifacts_v2__ = {
+    "get_sRecoveryhist": {
+        "name": "sRecoveryhist",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-08-15",
+        "last_update_date": "2021-08-15",
+        "requirements": "none",
+        "category": "Wipe & Setup",
+        "notes": "",
+        "paths": ('*/efs/recovery/history',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "file",
+    }
+}
 
+from scripts.ilapfuncs import artifact_processor
+
+
+@artifact_processor
 def get_sRecoveryhist(files_found, report_folder, seeker, wrap_text):
 
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('history'):
-            continue # Skip all other files
-        
-        data_list = []
-        
+            continue  # Skip all other files
+
+        source_path = file_found
         timestamp = wipe = promptwipe = reason = rebootreason = locale = updateorg = updatepkg = reqtime = ''
-        with open(file_found, 'r') as f:
+        with open(file_found, 'r', encoding='utf-8', errors='replace') as f:
             for line in f:
-                #print(line)
                 if line.startswith('+'):
                     if '|' in line:
                         timestamp = line.split('|')
                         timestamp = timestamp[1].strip()
                         timestamp = timestamp.replace('/', '-')
                     else:
-                        timestamp = line.split(':',1)
+                        timestamp = line.split(':', 1)
                         timestamp = timestamp[1].strip()
                         timestamp = timestamp.replace(']', '')
                         timestamp = timestamp.replace('/', '-')
@@ -54,26 +71,6 @@ def get_sRecoveryhist(files_found, report_folder, seeker, wrap_text):
                 if line.startswith('-\n'):
                     data_list.append((timestamp, wipe, promptwipe, reason, rebootreason, locale, reqtime, updateorg, updatepkg))
                     timestamp = wipe = promptwipe = reason = rebootreason = locale = updateorg = updatepkg = reqtime = ''
-                    
-        if data_list:
-            report = ArtifactHtmlReport('Samsung Recovery History')
-            report.start_artifact_report(report_folder, 'Samsung Recovery History')
-            report.add_script()
-            data_headers = ('Timestamp', 'Wipe', 'Promtp & Wipe', 'Reason', 'Reboot Reason', 'Locale', 'Request Timestamp', 'Update ORG', 'Update PKG')
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Samsung Recovery History'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Samsung Recovery History'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Samsung Recovery History data available')
 
-__artifacts__ = {
-        "sRecoveryhist": (
-                "Wipe & Setup",
-                ('*/efs/recovery/history'),
-                get_sRecoveryhist)
-}
+    data_headers = ('Timestamp', 'Wipe', 'Prompt & Wipe', 'Reason', 'Reboot Reason', 'Locale', 'Request Timestamp', 'Update ORG', 'Update PKG')
+    return data_headers, data_list, source_path

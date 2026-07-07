@@ -1,185 +1,141 @@
-# Module Description: Parses Tusky timeline, notifications and searches
-# Author: @KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)
-# Date: 2022-12-12
-# Artifact version: 0.0.1
-# Requirements: BeautifulSoup
+# pylint: disable=W0613,W0718
+__artifacts_v2__ = {
+    "get_tusky": {
+        "name": "Tusky - Timeline",
+        "description": "Parses Tusky timeline",
+        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "creation_date": "2022-12-12",
+        "last_update_date": "2022-12-12",
+        "requirements": "BeautifulSoup",
+        "category": "Tusky",
+        "notes": "",
+        "paths": ('*/com.keylesspalace.tusky/databases/tuskyDB*',),
+        "output_types": "standard",
+        "artifact_icon": "message",
+    },
+    "get_tusky_accounts": {
+        "name": "Tusky - Account Details",
+        "description": "Parses Tusky account details",
+        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "creation_date": "2022-12-12",
+        "last_update_date": "2022-12-12",
+        "requirements": "BeautifulSoup",
+        "category": "Tusky",
+        "notes": "",
+        "paths": ('*/com.keylesspalace.tusky/databases/tuskyDB*',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "user",
+    }
+}
 
 import datetime
 import json
 import os
-import sqlite3
-import textwrap
+
 from bs4 import BeautifulSoup
 
-from packaging import version
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
-def get_tusky(files_found, report_folder, seeker, wrap_text):
-    
+
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
+
+
+def _tusky_db(files_found):
     for file_found in files_found:
-        file_name = str(file_found)
-        
-        if not os.path.basename(file_name) == 'tuskyDB': # skip -journal and other files
-            continue
-          
-        db = open_sqlite_db_readonly(file_name)
-        
-        #Get Tusky user timeline details
+        file_found = str(file_found)
+        if os.path.basename(file_found) == 'tuskyDB':
+            return file_found
+    return ''
+
+
+def _strip_html(value):
+    if not value:
+        return ''
+    return BeautifulSoup(value, 'html.parser').get_text()
+
+
+def _attachment_urls(value):
+    urls = []
+    try:
+        for item in json.loads(value or '[]'):
+            url = item.get('url')
+            if url:
+                urls.append(url)
+    except (ValueError, TypeError):
+        pass
+    return '\n'.join(urls)
+
+
+@artifact_processor
+def get_tusky(files_found, report_folder, seeker, wrap_text):
+    source_path = _tusky_db(files_found)
+    data_list = []
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
-        cursor.execute('''
-        select
-        datetime(TimelineStatusEntity.createdAt/1000,'unixepoch'),
-        TimelineAccountEntity.username,
-        TimelineAccountEntity.displayName,
-        TimelineStatusEntity.url,
-        TimelineStatusEntity.content,
-        TimelineStatusEntity.attachments,
-        TimelineStatusEntity.reblogsCount,
-        TimelineStatusEntity.favouritesCount,
-        TimelineStatusEntity.repliesCount,
-        case TimelineStatusEntity.reblogged
-            when 0 then ""
-            when 1 then "True"
-        end,
-        case TimelineStatusEntity.bookmarked
-            when 0 then ""
-            when 1 then "True"
-        end,
-        case TimelineStatusEntity.favourited
-            when 0 then ""
-            when 1 then "True"
-        end,
-        case TimelineStatusEntity.sensitive
-            when 0 then ""
-            when 1 then "True"
-        end,
-        case TimelineStatusEntity.visibility
-            when 0 then "Unknown"
-            when 1 then "Public"
-            when 4 then "Direct"
-        end as "Visibility",
-        json_extract(TimelineStatusEntity.application, '$.name') as "Application"
-        from TimelineStatusEntity
-        left join TimelineAccountEntity on TimelineAccountEntity.serverId = TimelineStatusEntity.authorServerId
-        where TimelineStatusEntity.createdAt > 0
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            description = 'Timeline details for the current users feed in Tusky'
-            report = ArtifactHtmlReport('Tusky - Timeline')
-            report.start_artifact_report(report_folder, 'Tusky - Timeline')
-            report.add_script()
-            data_headers = ('Timestamp','User Name','Display Name','URL','Text Content','Attachments','Boost Count','Favorite Count','Replies Count','User Boosted?','User Bookmarked?','User Favorited?','Sensitive','Visibility','Application')
-            data_list = []
-            data_list_stripped = []
-            for row in all_rows:
-                data = json.loads(row[5])
-                attachment_list = []
-                attachments = ''
-                #Iterate attachments
-                for x in data:
-                    attachment_item = x.get('url','')
-                    attachment_list.append(attachment_item)
-                    if len(attachment_list) > 0:
-                        attachments = '\n'.join(map(str,attachment_list))
-                    else:
-                        attachments = ''
-                data_list.append((row[0],row[1],row[2],row[3],row[4],attachments,row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14]))
-            
-                soup = ''
-                if str(row[4]).startswith('<p>'):
-                    soup = BeautifulSoup(row[3], 'html.parser').text
-                    
-                data_list_stripped.append((row[0],row[1],row[2],row[3],soup,attachment_list,row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14]))                        
-
-            report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Text Content'])
-            report.end_artifact_report()
-            
-            tsvname = f'Tusky - Timeline'
-            tsv(report_folder, data_headers, data_list_stripped, tsvname)
-            
-            tlactivity = f'Tusky - Timeline'
-            timeline(report_folder, tlactivity, data_list_stripped, data_headers)
-            
-        else:
-            logfunc('Tusky - Timeline data available') 
-
-        cursor = db.cursor()
-        cursor.execute('''
-        select
-        accountId,
-        displayName,
-        username,
-        domain,
-        profilePictureUrl,
-        case notificationsEnabled
-            when 0 then "False"
-            when 1 then "True"
-        end,
-        case notificationsMentioned
-            when 0 then "False"
-            when 1 then "True"
-        end,
-        case notificationsFollowed
-            when 0 then "False"
-            when 1 then "True"
-        end,
-        case notificationsFollowRequested
-            when 0 then "False"
-            when 1 then "True"
-        end,
-        case notificationsReblogged
-            when 0 then "False"
-            when 1 then "True"
-        end,
-        case notificationsFavorited
-            when 0 then "False"
-            when 1 then "True"
-        end,
-        case notificationsPolls
-            when 0 then "False"
-            when 1 then "True"
-        end,
-        tabPreferences,
-        accessToken,
-        clientId,
-        clientSecret
-        from AccountEntity
-        ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            description = 'Account details for the current user in Tusky'
-            report = ArtifactHtmlReport('Tusky - Account Details')
-            report.start_artifact_report(report_folder, 'Tusky - Account Details')
-            report.add_script()
-            data_headers = ('Account ID','Display Name','User Name','Instance','Avatar URL','Notifications Enabled','Mentioned Notifications','Followed Notifications','Follow Requested Notifications','Boost Notifications','Favorited Notifications','Polls Notifications','Tab Preferences','Access Token','Client ID','Client Secret')
-            data_list = []
-            for row in all_rows:
-                    
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Tusky - Account Details'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Tusky - Account Details'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-            
-        else:
-            logfunc('Tusky - Account Details data available')
-        
+        try:
+            cursor.execute('''
+                select
+                TimelineStatusEntity.createdAt,
+                TimelineAccountEntity.username,
+                TimelineAccountEntity.displayName,
+                TimelineStatusEntity.url,
+                TimelineStatusEntity.content,
+                TimelineStatusEntity.attachments,
+                TimelineStatusEntity.reblogsCount,
+                TimelineStatusEntity.favouritesCount,
+                TimelineStatusEntity.repliesCount,
+                case TimelineStatusEntity.reblogged when 0 then "" when 1 then "True" end,
+                case TimelineStatusEntity.bookmarked when 0 then "" when 1 then "True" end,
+                case TimelineStatusEntity.favourited when 0 then "" when 1 then "True" end,
+                case TimelineStatusEntity.sensitive when 0 then "" when 1 then "True" end,
+                case TimelineStatusEntity.visibility when 0 then "Unknown" when 1 then "Public" when 4 then "Direct" end as "Visibility",
+                json_extract(TimelineStatusEntity.application, '$.name') as "Application"
+                from TimelineStatusEntity
+                left join TimelineAccountEntity on TimelineAccountEntity.serverId = TimelineStatusEntity.authorServerId
+                where TimelineStatusEntity.createdAt > 0
+            ''')
+            all_rows = cursor.fetchall()
+        except Exception as e:
+            logfunc(str(e))
+            all_rows = []
         db.close()
 
-__artifacts__ = {
-        "Tusky": (
-                "Tusky",
-                ('*/com.keylesspalace.tusky/databases/tuskyDB*'),
-                get_tusky)
-}
+        for row in all_rows:
+            data_list.append((_ms_to_utc(row[0]), row[1], row[2], row[3], _strip_html(row[4]), _attachment_urls(row[5]),
+                              row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]))
+
+    data_headers = (('Timestamp', 'datetime'), 'User Name', 'Display Name', 'URL', 'Text Content', 'Attachments', 'Boost Count', 'Favorite Count', 'Replies Count', 'User Boosted?', 'User Bookmarked?', 'User Favorited?', 'Sensitive', 'Visibility', 'Application')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_tusky_accounts(files_found, report_folder, seeker, wrap_text):
+    source_path = _tusky_db(files_found)
+    data_list = []
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
+        cursor = db.cursor()
+        try:
+            cursor.execute('''
+                select accountId, displayName, username, domain, profilePictureUrl,
+                case notificationsEnabled when 0 then "False" when 1 then "True" end,
+                case notificationsMentioned when 0 then "False" when 1 then "True" end,
+                case notificationsFollowed when 0 then "False" when 1 then "True" end,
+                case notificationsFollowRequested when 0 then "False" when 1 then "True" end,
+                case notificationsReblogged when 0 then "False" when 1 then "True" end,
+                case notificationsFavorited when 0 then "False" when 1 then "True" end,
+                case notificationsPolls when 0 then "False" when 1 then "True" end,
+                tabPreferences, accessToken, clientId, clientSecret
+                from AccountEntity
+            ''')
+            data_list = cursor.fetchall()
+        except Exception as e:
+            logfunc(str(e))
+        db.close()
+
+    data_headers = ('Account ID', 'Display Name', 'User Name', 'Instance', 'Avatar URL', 'Notifications Enabled', 'Mentioned Notifications', 'Followed Notifications', 'Follow Requested Notifications', 'Boost Notifications', 'Favorited Notifications', 'Polls Notifications', 'Tab Preferences', 'Access Token', 'Client ID', 'Client Secret')
+    return data_headers, data_list, source_path
