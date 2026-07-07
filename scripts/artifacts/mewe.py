@@ -1,149 +1,127 @@
+# pylint: disable=W0613,W0702
+__artifacts_v2__ = {
+    "get_mewe_chat": {
+        "name": "MeWe - Chat",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-11-10",
+        "last_update_date": "2026-07-07",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "",
+        "paths": ('*/com.mewe/databases/app_v3.db',),
+        "output_types": "standard",
+        "artifact_icon": "message-square",
+    },
+    "get_mewe_session": {
+        "name": "MeWe - SGSession",
+        "description": "",
+        "author": "",
+        "creation_date": "2021-11-10",
+        "last_update_date": "2021-11-10",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "",
+        "paths": ('*/com.mewe/shared_prefs/SGSession.xml',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "key",
+    }
+}
+
+import datetime
+import re
 import xml.etree.ElementTree as ET
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
 
+# Module-level constants (kept for backwards-compatibility; snapchat.py imports APP_NAME)
 APP_NAME = 'MeWe'
-DB_NAMES = ('app_database', 'app_v3.db')  # Added support for app_v3.db
+DB_NAME = 'app_v3.db'
 SGSESSION_FILE = 'SGSession.xml'
 
 CHAT_MESSAGES_QUERY = '''
     SELECT
-        DATETIME(createdAt, 'unixepoch'),
+        createdAt,
         threadId,
         groupId,
         ownerId,
         ownerName,
         textPlain,
-        CASE currentUserMessage
-            WHEN 1 THEN "Sent"
-            ELSE "Received"
-        END currentUserMessage,
-        CASE attachmentType
-            WHEN "UNSUPPORTED" THEN ''
-            ELSE attachmentType
-        END attachmentType,
+        CASE currentUserMessage WHEN 1 THEN "Sent" ELSE "Received" END currentUserMessage,
+        CASE attachmentType WHEN "UNSUPPORTED" THEN '' ELSE attachmentType END attachmentType,
         attachmentName,
-        CASE deleted
-            WHEN 1 THEN "YES"
-            ELSE "NO"
-        END deleted
+        CASE deleted WHEN 1 THEN "YES" ELSE "NO" END deleted
     FROM CHAT_MESSAGE
     JOIN CHAT_THREAD ON threadId = CHAT_THREAD.id
 '''
 
 
-def _perform_query(cursor, query):
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
     try:
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        return len(rows), rows
-    except:
-        return 0, None
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
 
 
-def _make_reports(title, data_headers, data_list, report_folder, db_file_name, tl_bool):
-    report = ArtifactHtmlReport(title)
-    report.start_artifact_report(report_folder, title)
-    report.add_script()
-    report.write_artifact_data_table(data_headers, data_list, db_file_name)
-    report.end_artifact_report()
-
-    tsv(report_folder, data_headers, data_list, title, db_file_name)
-
-    if tl_bool == True:
-        timeline(report_folder, title, data_list, data_headers)
-
-
-def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
-    logfunc(f'{title} found')
-
-    tree = ET.parse(xml_file)
-    data_headers = ('Key', 'Value')
+@artifact_processor
+def get_mewe_chat(files_found, report_folder, seeker, wrap_text):
     data_list = []
-
-    root = tree.getroot()
-    for node in root:
-        # skip not relevant keys
-        if '.' in node.attrib['name']:
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not file_found.endswith(DB_NAME):
             continue
 
-        value = None
+        source_path = file_found
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
         try:
-            value = node.attrib['value']
+            cursor.execute(CHAT_MESSAGES_QUERY)
+            rows = cursor.fetchall()
         except:
-            value = node.text
+            rows = []
+        db.close()
 
-        data_list.append((node.attrib['name'], value))
+        for row in rows:
+            timestamp = datetime.datetime.fromtimestamp(int(row[0]), datetime.timezone.utc) if row[0] else ''
+            data_list.append((timestamp, row[1], row[2], row[3], row[4], row[5], row[6], row[7],
+                              row[8] if row[8] else '', row[9]))
 
-    tl_bool = False
-
-    _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name, tl_bool)
-
-
-def _parse_chat_messages(messages_count, rows, report_folder, db_file_name):
-    logfunc(f'{messages_count} messages found')
-
-    data_headers = (
-        'Timestamp', 'Thread Id', 'Thread Name', 'User Id', 'User Name',
-        'Message Text', 'Message Direction', 'Message Type',
-        'Attachment Name', 'Deleted'
-    )
-    data_list = [(
-        row[0], row[1], row[2], row[3], row[4], row[5],
-        row[6], row[7], row[8] if row[8] else '', row[9]
-    ) for row in rows]
-
-    tl_bool = True
-
-    _make_reports(f'{APP_NAME} - Chat', data_headers, data_list, report_folder, db_file_name, tl_bool)
+    data_headers = (('Timestamp', 'datetime'), 'Thread Id', 'Thread Name', 'User Id', 'User Name',
+                    'Message Text', 'Message Direction', 'Message Type', 'Attachment Name', 'Deleted')
+    return data_headers, data_list, source_path
 
 
-def _parse_app_database(db_file, db_file_name, report_folder):
-    db = open_sqlite_db_readonly(db_file)
-    cursor = db.cursor()
+@artifact_processor
+def get_mewe_session(files_found, report_folder, seeker, wrap_text):
+    data_list = []
+    source_path = ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not file_found.endswith(SGSESSION_FILE):
+            continue
 
-    messages_count, rows = _perform_query(cursor, CHAT_MESSAGES_QUERY)
-    if messages_count > 0 and rows:
-        _parse_chat_messages(messages_count, rows, report_folder, db_file_name)
-    else:
-        logfunc(f'No {APP_NAME} chat data found')
+        source_path = file_found
+        root = _parse_xml(file_found)
+        for node in root:
+            if '.' in node.attrib['name']:
+                continue  # skip not relevant keys
+            try:
+                value = node.attrib['value']
+            except:
+                value = node.text
+            data_list.append((node.attrib['name'], value))
 
-    cursor.close()
-    db.close()
-
-
-def get_mewe(files_found, report_folder, seeker, wrap_text):
-    db_file = None
-    db_file_name = None
-    xml_file = None
-    xml_file_name = None
-
-    app_database_processed = False
-    sgsession_processed = False
-
-    for ff in files_found:
-        if ff.endswith(DB_NAMES) and not app_database_processed:
-            db_file = ff
-            db_file_name = ff.replace(seeker.data_folder, '')
-            _parse_app_database(db_file, db_file_name, report_folder)
-            app_database_processed = True
-        if ff.endswith(SGSESSION_FILE) and not sgsession_processed:
-            xml_file = ff
-            xml_file_name = ff.replace(seeker.data_folder, '')
-            _parse_xml(xml_file, xml_file_name, report_folder, SGSESSION_FILE, 'SGSession')
-            sgsession_processed = True
-
-    artifacts = [
-        app_database_processed, sgsession_processed
-    ]
-    if not (True in artifacts):
-        logfunc(f'{APP_NAME} data not found')
-
-
-__artifacts__ = {
-    "mewe": (
-        "MeWe",
-        ('*/com.mewe/databases/app_database', '*/com.mewe/databases/app_v3.db', '*/com.mewe/shared_prefs/SGSession.xml'),
-        get_mewe)
-}
+    data_headers = ('Key', 'Value')
+    return data_headers, data_list, source_path
