@@ -8,10 +8,11 @@ import traceback
 import sys
 
 import scripts.plugin_loader as plugin_loader
+import leapp_functions.app.history as history
 
 from scripts.search_files import *
 from scripts.ilapfuncs import *
-from scripts.version_info import leapp_version
+from scripts.version_info import leapp_name, leapp_version
 from time import process_time, gmtime, strftime, perf_counter
 from scripts.lavafuncs import *
 from scripts.context import Context
@@ -294,6 +295,10 @@ def main():
     
     initialize_lava(input_path, out_params.output_folder_base, extracttype)
 
+    # Record history if enabled
+    history.record_input_path(input_path)
+    history.record_output_path(output_path)
+
     crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, profile_filename)
 
     lava_finalize_output(out_params.output_folder_base)
@@ -431,6 +436,11 @@ def crunch_artifacts(
     
     report.generate_report(out_params.output_folder_base, run_time_secs, run_time_HMS, extracttype, input_path, casedata, profile_filename, icons)
     logfunc('Report generation Completed.')
+
+    # Record the run in history
+    lava_project_path = os.path.join(out_params.output_folder_base, lava_json_name)
+    history.record_recent_run(leapp_name.lower(), leapp_version, lava_project_path)
+
     logfunc('')
     logfunc(f'Report location: {out_params.output_folder_base}')
 
