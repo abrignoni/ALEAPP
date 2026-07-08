@@ -1,18 +1,17 @@
 # Alternate artifacts
 
 Artifacts in this folder are **not** part of a normal ALEAPP run. They are
-developer/tooling oriented modules. Nothing in ALEAPP loads this folder;
-developer tooling (batch-leapp) stages the module into `scripts/artifacts/`
-for the duration of a coverage run, or you can copy it there manually:
+developer/tooling oriented modules, loaded only when the CLI is given this
+folder explicitly (option ported from iLEAPP in PR #939):
 
 ```
-cp scripts/alternate_artifacts/appInventory.py scripts/artifacts/
-python3 aleapp.py -t zip -i <extraction.zip> -o <output>
-rm scripts/artifacts/appInventory.py
+python3 aleapp.py -t zip -i <extraction.zip> -o <output> \
+    --custom_artifacts_path scripts/alternate_artifacts
 ```
 
-(iLEAPP exposes the same module through `--custom_artifacts_path`; ALEAPP does
-not have that CLI option yet, so staging is the interim mechanism.)
+On checkouts that predate `--custom_artifacts_path`, developer tooling
+(batch-leapp) falls back to staging the module into `scripts/artifacts/` for
+the duration of a coverage run and removing it afterwards.
 
 ## Modules
 
