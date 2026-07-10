@@ -12,6 +12,15 @@ __artifacts_v2__ = {
         "paths": ('*_im.db*', '*db_im_xx*'),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 11 rows",
+            "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 10 rows",
+            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 0 rows",
+            "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 2 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Conversation ID",
@@ -35,6 +44,15 @@ __artifacts_v2__ = {
         "paths": ('*_im.db*', '*db_im_xx*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 24 rows",
+            "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 94 rows",
+            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 2 rows",
+            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 2 rows",
+            "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 8 rows",
+        },
     }
 }
 

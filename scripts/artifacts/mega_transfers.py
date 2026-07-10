@@ -12,6 +12,10 @@ __artifacts_v2__ = {
         "paths": ('*/mega.privacy.android.app/databases/megapreferences',),
         "output_types": "standard",
         "artifact_icon": "download",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | mega.privacy.android.app vc 261630858 | 0 rows",
+            "pixel7a_a14": "Android 14 | mega.privacy.android.app vc 241780257 | 0 rows",
+        },
     }
 }
 

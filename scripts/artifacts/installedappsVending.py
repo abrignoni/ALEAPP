@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.vending/databases/localappstate.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.vending vc 84801930 | 93 rows",
+            "galaxys10_a10": "Android 10 | com.android.vending vc 82481710 | 56 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.vending vc 85180930 | 147 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.vending vc 84812830 | 97 rows",
+            "pixel7a_a14": "Android 14 | com.android.vending vc 84191730 | 155 rows",
+            "samsunga53_a14": "Android 14 | com.android.vending vc 84913330 | 204 rows",
+            "samsungs20_a13": "Android 13 | com.android.vending vc 84962330 | 150 rows",
+            "sharon_a14": "Android 14 | com.android.vending vc 84222730 | 122 rows",
+        },
     }
 }
 

@@ -11,7 +11,10 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/DriveBladeDB*',),
         'output_types': 'standard',
-        'artifact_icon': 'map-pin'
+        'artifact_icon': 'map-pin',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 9 rows',
+        }
     },
     'Life360_DriveEvents': {
         'name': 'Life360 Drive Events (DriveBladeDB)',
@@ -24,7 +27,10 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/DriveBladeDB*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
-        'artifact_icon': 'map-pin'
+        'artifact_icon': 'map-pin',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 14 rows',
+        }
     },
     'Life360_DriveWaypoints': {
         'name': 'Life360 Drive Waypoints',
@@ -37,7 +43,10 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/DriveBladeDB*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
-        'artifact_icon': 'map-pin'
+        'artifact_icon': 'map-pin',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 815 rows',
+        }
     }
 }
 

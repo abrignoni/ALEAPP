@@ -33,6 +33,16 @@ __artifacts_v2__ = {
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 0 rows",
+        },
     },
     "get_fcm_xbox_party": {
         "name": "FCM - Xbox Party Invites",
@@ -46,6 +56,16 @@ __artifacts_v2__ = {
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "user-plus",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 0 rows",
+        },
     },
     "get_fcm_xbox_presence": {
         "name": "FCM - Xbox Presence",
@@ -59,6 +79,16 @@ __artifacts_v2__ = {
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 0 rows",
+        },
     }
 }
 

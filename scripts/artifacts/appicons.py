@@ -1,3 +1,4 @@
+# pylint: disable=W0612,W0613,W0631
 __artifacts_v2__ = {
     "appIcons": {
         "name": "App Icon",
@@ -10,7 +11,11 @@ __artifacts_v2__ = {
         "notes": "Seems to be a google thing, on Nexus/Pixel devices only?",
         "paths": ('*/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
         "output_types": ["html", "lava"],
-        "artifact_icon": "package"
+        "artifact_icon": "package",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.nexuslauncher | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.nexuslauncher | 100 rows",
+        }
     }
 }
 

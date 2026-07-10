@@ -13,6 +13,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.skydrive/files/QTMetadata.db*'),
         "output_types": "standard",
         "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.microsoft.skydrive vc 2027390102 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.microsoft.skydrive vc 2026998332 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.microsoft.skydrive vc 2027440202 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.microsoft.skydrive | 0 rows",
+            "sharon_a14": "Android 14 | com.microsoft.skydrive vc 2027110002 | 0 rows",
+        },
     }
 }
 

@@ -12,6 +12,15 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gms/app_semanticlocation_rawsignal_db/*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 6651 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 1497 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 5033 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 0 rows",
+        },
     }
 }
 

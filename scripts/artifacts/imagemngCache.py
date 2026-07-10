@@ -11,6 +11,16 @@ __artifacts_v2__ = {
         "paths": ('*/cache/image_manager_disk_cache/*.*', '*/*.cnt'),
         "output_types": "standard",
         "artifact_icon": "photo",
+        "sample_data": {
+            "anne_a15": "Android 15 | 1895 rows",
+            "galaxys10_a10": "Android 10 | 1140 rows",
+            "hc_pixel8pro_a16": "Android 16 | 1219 rows",
+            "kevin_pocox7_a15": "Android 15 | 21306 rows",
+            "pixel7a_a14": "Android 14 | 6018 rows",
+            "samsunga53_a14": "Android 14 | 6610 rows",
+            "samsungs20_a13": "Android 13 | 3164 rows",
+            "sharon_a14": "Android 14 | 2597 rows",
+        },
     }
 }
 

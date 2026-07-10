@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/com.facebook*',),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 1 row",
+        },
     }
 }
 

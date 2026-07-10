@@ -12,6 +12,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows",
+        },
     },
     "get_wire_contacts": {
         "name": "Wire Contacts",
@@ -25,6 +29,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows",
+        },
     },
     "get_wire_messages": {
         "name": "Wire Messages",
@@ -38,6 +46,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows",
+        },
     }
 }
 

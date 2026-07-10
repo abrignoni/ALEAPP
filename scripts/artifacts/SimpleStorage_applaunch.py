@@ -13,6 +13,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.as/databases/SimpleStorage*'),
         "output_types": "standard",
         "artifact_icon": "loader",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.as vc 14926349 | 10 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.as vc 10790541 | 0 rows",
+        },
     }
 }
 

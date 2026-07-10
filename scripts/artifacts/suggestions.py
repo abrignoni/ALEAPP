@@ -12,6 +12,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml',),
         "output_types": "standard",
         "artifact_icon": "clock",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.settings.intelligence vc 1000282241 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.settings.intelligence vc 1000230247 | 3 rows",
+        },
     }
 }
 

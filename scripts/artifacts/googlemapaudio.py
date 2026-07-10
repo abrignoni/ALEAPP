@@ -12,6 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.maps/app_tts-cache/*_*',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 480 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.apps.maps vc 1064201040 | 25 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 359 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.maps vc 1067620099 | 301 rows",
+            "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 362 rows",
+        },
     }
 }
 

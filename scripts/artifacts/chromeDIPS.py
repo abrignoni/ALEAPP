@@ -12,6 +12,12 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/DIPS*', '*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*', '*/app_webview/Default/DIPS*'),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533 | 13 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 19 rows",
+            "pixel7a_a14": "Android 14 | com.android.chrome vc 616710133, com.microsoft.emmx vc 259210005 | 36 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 19 rows",
+        },
     }
 }
 

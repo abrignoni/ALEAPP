@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.imo.android.imous/databases/accountdb.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.imo.android.imous vc 2043 | 1 row",
+        },
     },
     "get_imo_messages": {
         "name": "IMO - Messages",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.imo.android.imous/databases/imofriends.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.imo.android.imous vc 2043 | 22 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Chat Partner",

@@ -12,6 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gsf/databases/googlesettings.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "settings",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.google.android.gsf | 13 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gsf | 18 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gsf | 57 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gsf | 33 rows",
+            "sharon_a14": "Android 14 | com.google.android.gsf | 18 rows",
+        },
     }
 }
 

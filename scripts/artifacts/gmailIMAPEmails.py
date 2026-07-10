@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "html_columns": ["Body(HTML)"],
         "artifact_icon": "inbox",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+        },
     },
     "gmailIMAPAccounts": {
         "name": "Gmail - IMAP Accounts",
@@ -24,7 +34,17 @@ __artifacts_v2__ = {
         "notes": "", 
         "paths": ('*/data/com.google.android.gm/databases/EmailProvider.*'), 
         "output_types": "standard",
-        "artifact_icon": "user", 
+        "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+        }, 
     }
 }
 

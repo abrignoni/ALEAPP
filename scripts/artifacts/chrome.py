@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 94 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 191 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 20 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 46 rows",
+            "pixel7a_a14": "Android 14 | 76 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 132 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 65 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 137 rows",
+        },
     },
     "get_chromeWebVisits": {
         "name": "Web Visits",
@@ -25,6 +35,16 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 127 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 291 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 39 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 71 rows",
+            "pixel7a_a14": "Android 14 | 89 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 174 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 86 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 198 rows",
+        },
     },
     "get_chromeSearchTerms": {
         "name": "Search Terms",
@@ -38,6 +58,16 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 44 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 20 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 3 rows",
+            "pixel7a_a14": "Android 14 | 7 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 39 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 18 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 18 rows",
+        },
     },
     "get_chromeDownloads": {
         "name": "Downloads",
@@ -51,6 +81,16 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "download",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 0 rows",
+            "pixel7a_a14": "Android 14 | 4 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 2 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 108 rows",
+        },
     },
     "get_chromeKeywordSearchTerms": {
         "name": "Keyword Search Terms",
@@ -64,6 +104,16 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 88 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 15 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 4 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 3 rows",
+            "pixel7a_a14": "Android 14 | 7 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 48 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 18 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 23 rows",
+        },
     }
 }
 

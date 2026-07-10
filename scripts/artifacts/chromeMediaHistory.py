@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
         "output_types": "standard",
         "artifact_icon": "photo",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 0 rows",
+        },
     },
     "get_chromeMediaHistoryPlaybacks": {
         "name": "Media History - Playbacks",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
         "output_types": "standard",
         "artifact_icon": "photo",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 0 rows",
+        },
     },
     "get_chromeMediaHistoryOrigins": {
         "name": "Media History - Origins",
@@ -38,6 +44,9 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Media History*', '*/app_sbrowser/Default/Media History*', '*/app_opera/Media History*', '*/app_webview/Default/Media History*'),
         "output_types": "standard",
         "artifact_icon": "photo",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 0 rows",
+        },
     }
 }
 

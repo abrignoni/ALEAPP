@@ -11,7 +11,10 @@ __artifacts_v2__ = {
         'notes': 'WAL file recovery',
         'paths': ('*/com.life360.android.safetymapd/databases/NoShowAlertRoomDatabase*',),
         'output_types': 'standard',
-        'artifact_icon': 'alert-triangle'
+        'artifact_icon': 'alert-triangle',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 9 rows',
+        }
     }
 }
 

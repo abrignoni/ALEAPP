@@ -12,6 +12,12 @@ __artifacts_v2__ = {
         "paths": ('*/efs/recovery/history', '*/data/log/recovery_history.log'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | 6 rows",
+            "galaxys10_a10": "Android 10 | 4 rows",
+            "samsunga53_a14": "Android 14 | 5 rows",
+            "sharon_a14": "Android 14 | 4 rows",
+        },
     }
 }
 

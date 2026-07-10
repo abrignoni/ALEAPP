@@ -13,6 +13,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
         "output_types": "all",
         "artifact_icon": "activity",
+        "sample_data": {
+            "samsunga53_a14": "Android 14 | com.nike.plusgps vc 1717605525 | 0 rows",
+        },
     }
 }
 

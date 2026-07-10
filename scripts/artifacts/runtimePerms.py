@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/system/users/*/runtime-permissions.xml', '*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "activity",
+        "sample_data": {
+            "anne_a15": "Android 15 | 12258 rows",
+            "galaxys10_a10": "Android 10 | 1005 rows",
+            "hc_pixel8pro_a16": "Android 16 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | 0 rows",
+            "pixel7a_a14": "Android 14 | 6661 rows",
+            "samsunga53_a14": "Android 14 | 21634 rows",
+            "samsungs20_a13": "Android 13 | 19872 rows",
+            "sharon_a14": "Android 14 | 11562 rows",
+        },
     }
 }
 

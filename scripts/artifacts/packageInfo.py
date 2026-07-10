@@ -12,6 +12,15 @@ __artifacts_v2__ = {
         "paths": ('*/system/packages.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
+        "sample_data": {
+            "anne_a15": "Android 15 | 513 rows",
+            "galaxys10_a10": "Android 10 | 448 rows",
+            "hc_pixel8pro_a16": "Android 16 | 385 rows",
+            "kevin_pocox7_a15": "Android 15 | 426 rows",
+            "pixel7a_a14": "Android 14 | 369 rows",
+            "samsunga53_a14": "Android 14 | 486 rows",
+            "sharon_a14": "Android 14 | 499 rows",
+        },
     }
 }
 

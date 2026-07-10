@@ -12,6 +12,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.app.myfiles/databases/OperationHistory.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "clock",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
+            "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 0 rows",
+        },
     }
 }
 

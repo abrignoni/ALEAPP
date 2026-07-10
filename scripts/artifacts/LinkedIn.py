@@ -36,7 +36,10 @@ __artifacts_v2__ = {
                 "conversationLabelColumn": "Conversation Label"
             }
         },
-        "artifact_icon": "message"
+        "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.linkedin.android vc 198600 | 0 rows",
+        }
     }
 }
 

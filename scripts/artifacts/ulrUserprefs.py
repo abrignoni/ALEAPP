@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gms/shared_prefs/ULR_USER_PREFS.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 15 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 13 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 15 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 15 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 14 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 81 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 28 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 15 rows",
+        },
     }
 }
 

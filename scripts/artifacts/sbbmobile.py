@@ -11,7 +11,10 @@ __artifacts_v2__ = {
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
         "html_columns": ['location of places (link)'],
-        "artifact_icon": "search"
+        "artifact_icon": "search",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | ch.sbb.mobile.android.b2c vc 111004052 | 0 rows",
+        }
     },
     "cff_search_history": {
         "name": "SBB Mobile - Search History",
@@ -25,7 +28,10 @@ __artifacts_v2__ = {
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
         "html_columns": ['location of search (link)'],
-        "artifact_icon": "search"
+        "artifact_icon": "search",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | ch.sbb.mobile.android.b2c vc 111004052 | 4 rows",
+        }
     },
     "cff_travel_cards": {
         "name": "SBB Mobile - Travel Cards",
@@ -38,7 +44,10 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
-        "artifact_icon": "user"
+        "artifact_icon": "user",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | ch.sbb.mobile.android.b2c vc 111004052 | 0 rows",
+        }
     },
         "cff_purchased_tickets": {
         "name": "SBB Mobile - Ticket Purchased recently",
@@ -51,7 +60,10 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
-        "artifact_icon": "star"
+        "artifact_icon": "star",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | ch.sbb.mobile.android.b2c vc 111004052 | 0 rows",
+        }
     }
 }
 

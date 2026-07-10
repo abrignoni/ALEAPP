@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 0 rows",
+        },
     },
     "get_line_messages": {
         "name": "Line - Messages",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 0 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread ID",
@@ -48,6 +54,9 @@ __artifacts_v2__ = {
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 0 rows",
+        },
     }
 }
 

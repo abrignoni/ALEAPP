@@ -12,6 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/system/PkgPredictions.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
+        "sample_data": {
+            "anne_a15": "Android 15 | 483 rows",
+            "galaxys10_a10": "Android 10 | 295 rows",
+            "samsunga53_a14": "Android 14 | 158 rows",
+            "samsungs20_a13": "Android 13 | 407 rows",
+            "sharon_a14": "Android 14 | 443 rows",
+        },
     }
 }
 

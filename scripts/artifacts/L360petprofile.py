@@ -10,7 +10,10 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/PetProfileRoomDatabase*',),
         'output_types': 'standard',
-        'artifact_icon': 'mood-smile'
+        'artifact_icon': 'mood-smile',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 2 rows',
+        }
     }
 }
 

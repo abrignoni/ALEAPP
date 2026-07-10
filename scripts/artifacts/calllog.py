@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.contacts/databases/calllog.db*', '*/com.samsung.android.providers.contacts/databases/calllog.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.providers.contacts | 11 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.providers.contacts | 24 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 705 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 12 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.contacts | 2655 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 69 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 12 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 397 rows",
+        },
         "html_columns": ['Type'],
     }
 }

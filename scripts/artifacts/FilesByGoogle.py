@@ -10,7 +10,12 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.nbu.files/databases/files_master_database*'),
         "output_types": "standard",
-        "artifact_icon": "file"
+        "artifact_icon": "file",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.nbu.files vc 1849879 | 71 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.nbu.files vc 1508395 | 434 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.nbu.files vc 695143 | 228 rows",
+        }
     },
     "fbg_searchhistory": {
         "name": "Files By Google - Search History",

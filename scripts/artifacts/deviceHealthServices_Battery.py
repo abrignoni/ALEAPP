@@ -11,7 +11,16 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.turbo/databases/turbo.db*',),
         "output_types": "all",
-        "artifact_icon": "battery-charging"
+        "artifact_icon": "battery-charging",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.apps.turbo | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.apps.turbo vc 10235989 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.turbo vc 10272287 | 397 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.turbo vc 10270262 | 1416 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.turbo | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.apps.turbo | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.apps.turbo vc 10261629 | 0 rows",
+        }
     },
     "Turbo_Bluetooth": {
         "name": "Turbo - Bluetooth Device Info",
@@ -24,7 +33,12 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.apps.turbo/databases/bluetooth.db*',),
         "output_types": "all",
-        "artifact_icon": "bluetooth"
+        "artifact_icon": "bluetooth",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.google.android.apps.turbo vc 10235989 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.apps.turbo | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.apps.turbo vc 10261629 | 0 rows",
+        }
     }
 }
 

@@ -12,6 +12,14 @@ __artifacts_v2__ = {
         "paths": ('*/system/appops/discrete/**',),
         "output_types": "standard",
         "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | 1886 rows",
+            "kevin_pocox7_a15": "Android 15 | 1720 rows",
+            "pixel7a_a14": "Android 14 | 1948 rows",
+            "samsunga53_a14": "Android 14 | 13 rows",
+            "samsungs20_a13": "Android 13 | 41 rows",
+            "sharon_a14": "Android 14 | 281 rows",
+        },
     }
 }
 

@@ -11,6 +11,12 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.android.honeyboard/databases/ClipItem*',),
         "output_types": "standard",
         "artifact_icon": "clipboard",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.honeyboard vc 590202300 | 8 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.honeyboard | 3 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.honeyboard | 11 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.honeyboard vc 560051300 | 19 rows",
+        },
     },
     "get_honeyboard_screenshot": {
         "name": "Samsung Honeyboard - Clipboard Screenshot",
@@ -24,6 +30,12 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip',),
         "output_types": "standard",
         "artifact_icon": "clipboard",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.honeyboard vc 590202300 | 3 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.honeyboard | 3 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.honeyboard | 1 row",
+            "sharon_a14": "Android 14 | com.samsung.android.honeyboard vc 560051300 | 17 rows",
+        },
     }
 }
 

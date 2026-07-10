@@ -11,6 +11,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/databases/*_conversations.db*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 2 rows",
+        },
     },
     "get_chatgpt_conversations": {
         "name": "ChatGPT - Messages (Legacy)",
@@ -37,6 +40,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_user.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_accountstatus": {
         "name": "ChatGPT - Account Status",
@@ -50,6 +56,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_accountstatus.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "user-check",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 2 rows",
+        },
     },
     "get_chatgpt_accountuserstate": {
         "name": "ChatGPT - Account User State",
@@ -63,6 +72,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_accountuser_state.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_custominstructions": {
         "name": "ChatGPT - Custom Instructions",
@@ -76,6 +88,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_custom_instructions.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "edit",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_usersettings": {
         "name": "ChatGPT - User Settings",
@@ -89,6 +104,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_user_settings.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "settings",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_analytics": {
         "name": "ChatGPT - User Analytics",
@@ -102,6 +120,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/shared_prefs/analytics-android-oai.xml',),
         "output_types": "standard",
         "artifact_icon": "chart-bar",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_media": {
         "name": "ChatGPT - Media Uploads",

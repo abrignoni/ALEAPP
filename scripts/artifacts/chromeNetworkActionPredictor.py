@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/app_Chrome/Default/Network Action Predictor*', '*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predicator*', '*/app_webview/Default/Network Action Predictor*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "wifi",
+        "sample_data": {
+            "sharon_a14": "Android 14 | com.sec.android.app.sbrowser vc 1260103502 | 0 rows",
+        },
     }
 }
 

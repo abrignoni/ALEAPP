@@ -13,6 +13,13 @@ __artifacts_v2__ = {
                   '*/data/com.sec.android.gallery3d/files/.Trash/**'),
         "output_types": "all",
         "artifact_icon": "photo",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.gallery3d vc 1550500003 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.gallery3d | 0 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.gallery3d | 0 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.gallery3d vc 1450000033 | 0 rows",
+            "sharon_a14": "Android 14 | com.sec.android.gallery3d vc 1500100001 | 0 rows",
+        },
     }
 }
 

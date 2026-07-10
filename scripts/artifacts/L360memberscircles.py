@@ -10,7 +10,11 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/MembersEngineRoomDatabase*',),
         'output_types': 'standard',
-        'artifact_icon': 'user'
+        'artifact_icon': 'user',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 4 rows',
+            'pixel7a_a14': 'Android 14 | com.life360.android.safetymapd vc 294540 | 0 rows',
+        }
     }
 }
 

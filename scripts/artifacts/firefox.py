@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 7 rows",
+        },
     },
     "get_firefox_visits": {
         "name": "Firefox - Web Visits",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 8 rows",
+        },
     },
     "get_firefox_bookmarks": {
         "name": "Firefox - Bookmarks",
@@ -38,6 +44,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 5 rows",
+        },
     },
     "get_firefox_searches": {
         "name": "Firefox - Search Terms",
@@ -51,6 +60,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 2 rows",
+        },
     }
 }
 

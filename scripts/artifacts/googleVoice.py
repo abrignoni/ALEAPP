@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/AccountData.pb', '*/data/com.google.android.apps.googlevoice/files/accounts/*/SqliteKeyValueCache:VoiceAccountCache.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.google.android.apps.googlevoice vc 3579017 | 1 row",
+        },
     },
     "googlevoice_calls": {
         "name": "Google Voice - Calls",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "phone",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.google.android.apps.googlevoice vc 3579017 | 4 rows",
+        },
     },
     "googlevoice_voicemails": {
         "name": "Google Voice - Voicemails",
@@ -38,6 +44,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "record-mail",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.google.android.apps.googlevoice vc 3579017 | 1 row",
+        },
     },
     "googlevoice_messages": {
         "name": "Google Voice - Messages",
@@ -51,6 +60,14 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/Photo MMS images/*', '*/data/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.providers.contacts | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.providers.contacts | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.googlevoice vc 3579017 | 14 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 0 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 0 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 0 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Conversation ID",

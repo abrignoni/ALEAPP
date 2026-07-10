@@ -12,6 +12,11 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 0 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.contacts | 0 rows",
+        },
     }
 }
 
