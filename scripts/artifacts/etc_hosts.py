@@ -12,6 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/system/etc/hosts',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | 0 rows",
+            "pixel7a_a14": "Android 14 | 0 rows",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "sharon_a14": "Android 14 | 0 rows",
+        },
     }
 }
 

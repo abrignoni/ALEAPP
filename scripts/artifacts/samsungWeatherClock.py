@@ -12,6 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.daemonapp | 5 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.daemonapp | 1 row",
+            "samsunga53_a14": "Android 14 | com.sec.android.daemonapp | 1 row",
+            "samsungs20_a13": "Android 13 | com.sec.android.daemonapp | 1 row",
+            "sharon_a14": "Android 14 | com.sec.android.daemonapp | 1 row",
+        },
     },
     "get_samsungWeatherClockDaily": {
         "name": "Samsung Weather Clock - Daily",
@@ -25,6 +32,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.daemonapp | 40 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.daemonapp | 8 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.daemonapp | 8 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.daemonapp | 8 rows",
+            "sharon_a14": "Android 14 | com.sec.android.daemonapp | 8 rows",
+        },
     },
     "get_samsungWeatherClockHourly": {
         "name": "Samsung Weather Clock - Hourly",
@@ -38,6 +52,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.daemonapp | 120 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.daemonapp | 24 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.daemonapp | 24 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.daemonapp | 24 rows",
+            "sharon_a14": "Android 14 | com.sec.android.daemonapp | 24 rows",
+        },
     }
 }
 

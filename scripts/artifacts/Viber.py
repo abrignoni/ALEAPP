@@ -12,6 +12,11 @@ __artifacts_v2__ = {
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 0 rows",
+            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 0 rows",
+        },
     },
     "get_Viber_contacts": {
         "name": "Viber - Contacts",
@@ -25,6 +30,11 @@ __artifacts_v2__ = {
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 0 rows",
+            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 0 rows",
+        },
     },
     "get_Viber_messages": {
         "name": "Viber - Messages",
@@ -38,6 +48,11 @@ __artifacts_v2__ = {
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 17 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 34 rows",
+            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 5051 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread ID",
@@ -61,6 +76,11 @@ __artifacts_v2__ = {
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "lock",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 0 rows",
+            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 0 rows",
+        },
     }
 }
 

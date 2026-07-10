@@ -11,6 +11,10 @@ __artifacts_v2__ = {
         "paths": ('*/*-wal', '*/*-journal'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | 721 rows",
+            "samsunga53_a14": "Android 14 | 1916 rows",
+        },
         "html_columns": ['Report'],
     }
 }

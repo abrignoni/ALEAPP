@@ -12,6 +12,15 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.messaging/databases/bugle_db*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.apps.messaging vc 289151900 | 94 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.messaging vc 311755063 | 81 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.messaging vc 289151063 | 243 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.messaging vc 238308063 | 1123 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.messaging vc 292971900 | 135 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.apps.messaging vc 293261063 | 40 rows",
+            "sharon_a14": "Android 14 | com.google.android.apps.messaging vc 161637900 | 0 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Conversation ID",

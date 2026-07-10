@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/system/packages.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "settings",
+        "sample_data": {
+            "anne_a15": "Android 15 | 1 row",
+            "galaxys10_a10": "Android 10 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | 1 row",
+            "pixel7a_a14": "Android 14 | 1 row",
+            "samsunga53_a14": "Android 14 | 1 row",
+            "samsungs20_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 1 row",
+        },
     },
     "get_permissions_list": {
         "name": "Permissions",
@@ -25,6 +35,16 @@ __artifacts_v2__ = {
         "paths": ('*/system/packages.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "settings",
+        "sample_data": {
+            "anne_a15": "Android 15 | 3060 rows",
+            "galaxys10_a10": "Android 10 | 1784 rows",
+            "hc_pixel8pro_a16": "Android 16 | 1970 rows",
+            "kevin_pocox7_a15": "Android 15 | 2107 rows",
+            "pixel7a_a14": "Android 14 | 1629 rows",
+            "samsunga53_a14": "Android 14 | 2651 rows",
+            "samsungs20_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 2793 rows",
+        },
     },
     "get_permissions_packages": {
         "name": "Package and Shared User",
@@ -38,6 +58,16 @@ __artifacts_v2__ = {
         "paths": ('*/system/packages.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "settings",
+        "sample_data": {
+            "anne_a15": "Android 15 | 0 rows",
+            "galaxys10_a10": "Android 10 | 6388 rows",
+            "hc_pixel8pro_a16": "Android 16 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | 0 rows",
+            "pixel7a_a14": "Android 14 | 0 rows",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "samsungs20_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 0 rows",
+        },
     }
 }
 

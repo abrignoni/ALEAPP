@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "download",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.providers.media.module | 0 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 12 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 30 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 74 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 1 row",
+            "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 5 rows",
+            "sharon_a14": "Android 14 | com.google.android.providers.media.module | 122 rows",
+        },
     },
     "get_emulatedSmeta_images": {
         "name": "Emulated Storage Metadata - Images",
@@ -25,6 +35,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "photo",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.providers.media.module | 212 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 18 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 330 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 193 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 2 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 15 rows",
+            "sharon_a14": "Android 14 | com.google.android.providers.media.module | 1410 rows",
+        },
     },
     "get_emulatedSmeta_files": {
         "name": "Emulated Storage Metadata - Files",
@@ -38,6 +58,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.providers.media.module | 369 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 207 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 660 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 364 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 26 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 133 rows",
+            "sharon_a14": "Android 14 | com.google.android.providers.media.module | 1938 rows",
+        },
     },
     "get_emulatedSmeta_videos": {
         "name": "Emulated Storage Metadata - Videos",
@@ -51,6 +81,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "video",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.providers.media.module | 11 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 3 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 90 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 9 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.providers.media.module | 29 rows",
+        },
     },
     "get_emulatedSmeta_audio": {
         "name": "Emulated Storage Metadata - Audio",
@@ -64,6 +104,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "music",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.providers.media.module | 2 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 14 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 1 row",
+            "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 1 row",
+            "sharon_a14": "Android 14 | com.google.android.providers.media.module | 2 rows",
+        },
     },
     "get_emulatedSmeta_files_legacy": {
         "name": "Emulated Storage Metadata - Files (Legacy)",
@@ -77,6 +127,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.providers.media.module | 0 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.media | 64 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.providers.media.module | 0 rows",
+        },
     }
 }
 

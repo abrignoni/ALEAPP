@@ -11,6 +11,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.projection.gearhead/databases/carservicedata.db*'),
         "output_types": "standard",
         "artifact_icon": "truck",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.projection.gearhead vc 151653424 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.projection.gearhead vc 152653624 | 3 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.projection.gearhead vc 123642624 | 1 row",
+            "samsunga53_a14": "Android 14 | com.google.android.projection.gearhead vc 156654484 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.projection.gearhead vc 124642854 | 0 rows",
+        },
     }
 }
 

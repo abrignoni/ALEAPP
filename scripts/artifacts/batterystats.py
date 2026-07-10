@@ -11,7 +11,17 @@ __artifacts_v2__ = {
         "notes": "",
         "output_types": ["standard"],
         "paths": (  '*/system/batterystats-daily.xml'),
-        "artifact_icon": "battery-charging"
+        "artifact_icon": "battery-charging",
+        "sample_data": {
+            "anne_a15": "Android 15 | 170 rows",
+            "galaxys10_a10": "Android 10 | 275 rows",
+            "hc_pixel8pro_a16": "Android 16 | 367 rows",
+            "kevin_pocox7_a15": "Android 15 | 586 rows",
+            "pixel7a_a14": "Android 14 | 727 rows",
+            "samsunga53_a14": "Android 14 | 335 rows",
+            "samsungs20_a13": "Android 13 | 148 rows",
+            "sharon_a14": "Android 14 | 230 rows",
+        }
     }
 }
 

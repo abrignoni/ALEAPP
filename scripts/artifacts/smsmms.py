@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.providers.telephony | 25 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.telephony | 32 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.telephony | 62 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.telephony | 87 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.telephony | 1031 rows",
+            "samsunga53_a14": "Android 14 | com.android.providers.telephony | 123 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.telephony | 35 rows",
+            "sharon_a14": "Android 14 | com.android.providers.telephony | 308 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread ID",
@@ -38,6 +48,16 @@ __artifacts_v2__ = {
                   '*/com.android.providers.telephony/parts/*'),
         "output_types": "standard",
         "artifact_icon": "photo",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.providers.telephony | 67 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.telephony | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.telephony | 17 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.telephony | 219 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.telephony | 91 rows",
+            "samsunga53_a14": "Android 14 | com.android.providers.telephony | 12 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.telephony | 6 rows",
+            "sharon_a14": "Android 14 | com.android.providers.telephony | 20 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread ID",

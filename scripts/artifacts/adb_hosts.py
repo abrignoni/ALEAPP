@@ -1,3 +1,4 @@
+# pylint: disable=W0613,W0702
 __artifacts_v2__ = {
     "adb_hosts": {
         "name": "ADB Hosts",
@@ -11,7 +12,14 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/misc/adb/adb_keys'),
         "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "terminal"
+        "artifact_icon": "terminal",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | 1 row",
+            "pixel7a_a14": "Android 14 | 0 rows",
+            "samsungs20_a13": "Android 13 | 1 row",
+            "sharon_a14": "Android 14 | 0 rows",
+        }
     }
 }
 

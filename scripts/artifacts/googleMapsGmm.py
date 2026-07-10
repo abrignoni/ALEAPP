@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.maps/databases/gmm_storage.db',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 13 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.apps.maps vc 1064201040 | 2 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.maps vc 1068624404 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.maps vc 1067620099 | 4 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.maps vc 1068326445 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.apps.maps vc 1068347331 | 1 row",
+            "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 0 rows",
+        },
     },
     "get_googleMapsGmm_places": {
         "name": "Google Maps Label Places",
@@ -25,6 +35,15 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db',),
         "output_types": "all",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 1 row",
+            "galaxys10_a10": "Android 10 | com.google.android.apps.maps vc 1064201040 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.maps vc 1068624404 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.maps vc 1067620099 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.apps.maps vc 1068347331 | 1 row",
+            "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 1 row",
+        },
     }
 }
 

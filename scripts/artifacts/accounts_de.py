@@ -11,7 +11,17 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system_de/*/accounts_de.db*'),
         "output_types": "standard",
-        "artifact_icon": "user"
+        "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | 11 rows",
+            "galaxys10_a10": "Android 10 | 5 rows",
+            "hc_pixel8pro_a16": "Android 16 | 10 rows",
+            "kevin_pocox7_a15": "Android 15 | 8 rows",
+            "pixel7a_a14": "Android 14 | 21 rows",
+            "samsunga53_a14": "Android 14 | 11 rows",
+            "samsungs20_a13": "Android 13 | 19 rows",
+            "sharon_a14": "Android 14 | 15 rows",
+        }
     }
 }
 

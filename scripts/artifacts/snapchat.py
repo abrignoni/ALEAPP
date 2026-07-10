@@ -7,6 +7,13 @@ __artifacts_v2__ = {
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
         "output_types": "standard", "artifact_icon": "rss",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 0 rows",
+        },
     },
     "get_snapchat_friends": {
         "name": "Snapchat - Friends",
@@ -15,6 +22,13 @@ __artifacts_v2__ = {
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
         "output_types": "standard", "artifact_icon": "users",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 4 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 4 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 6 rows",
+        },
     },
     "get_snapchat_messages": {
         "name": "Snapchat - Messages",
@@ -23,6 +37,13 @@ __artifacts_v2__ = {
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
         "output_types": "standard", "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 0 rows",
+        },
     },
     "get_snapchat_memories": {
         "name": "Snapchat - Memories",
@@ -31,6 +52,11 @@ __artifacts_v2__ = {
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
         "output_types": "standard", "artifact_icon": "photo",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 4 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 3 rows",
+        },
     },
     "get_snapchat_meo": {
         "name": "Snapchat - MEO My Eyes Only",
@@ -40,6 +66,11 @@ __artifacts_v2__ = {
         "notes": "Passcode recovery brute-forces the 4-digit MEO code (bcrypt); can be slow.",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
         "output_types": "standard", "artifact_icon": "eye-off",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 1 row",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 0 rows",
+        },
     },
     "get_snapchat_snap_media": {
         "name": "Snapchat - Snap Media",
@@ -48,6 +79,11 @@ __artifacts_v2__ = {
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
         "output_types": "all", "artifact_icon": "photo",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 5 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 3 rows",
+        },
     },
     "get_snapchat_identity": {
         "name": "Snapchat - Identity Persistent Store",
@@ -56,6 +92,13 @@ __artifacts_v2__ = {
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/shared_prefs/identity_persistent_store.xml',),
         "output_types": "standard", "artifact_icon": "user",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 12 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 10 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 12 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 13 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 12 rows",
+        },
     },
     "get_snapchat_login_signup": {
         "name": "Snapchat - Login Signup Store",
@@ -64,6 +107,13 @@ __artifacts_v2__ = {
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/shared_prefs/LoginSignupStore.xml',),
         "output_types": "standard", "artifact_icon": "login-2",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 2 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 3 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 2 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 1 row",
+        },
     }
 }
 

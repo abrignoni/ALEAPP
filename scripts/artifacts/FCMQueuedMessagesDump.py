@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "database",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 5647 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 512 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 31046 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 38204 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 35523 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 5010 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 3914 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 36746 rows",
+        },
     },
     "get_fcm_dump_verizon": {
         "name": "FCM Decoded - Verizon",
@@ -25,6 +35,16 @@ __artifacts_v2__ = {
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 0 rows",
+        },
     },
     "get_fcm_dump_tiktok": {
         "name": "FCM Decoded - TikTok",
@@ -38,6 +58,16 @@ __artifacts_v2__ = {
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 225 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 32 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 475 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 433 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 102 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 40 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 391 rows",
+        },
     },
     "get_fcm_dump_instagram": {
         "name": "FCM Decoded - Instagram",
@@ -51,6 +81,16 @@ __artifacts_v2__ = {
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 33 rows",
+        },
     },
     "get_fcm_dump_gqsb": {
         "name": "FCM Decoded - Geolocation",
@@ -64,6 +104,16 @@ __artifacts_v2__ = {
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 29 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 53 rows",
+        },
     }
 }
 

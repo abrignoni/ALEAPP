@@ -28,6 +28,13 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "lock",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.knox.securefolder vc 192100000 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.knox.securefolder | 0 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.knox.securefolder | 0 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.knox.securefolder | 0 rows",
+            "sharon_a14": "Android 14 | com.samsung.knox.securefolder vc 191200000 | 0 rows",
+        },
     }
 }
 

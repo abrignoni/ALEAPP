@@ -21,7 +21,11 @@ __artifacts_v2__ = {
                   "*/com.waze/waze/cached_data*"),
         "output_types": [ "standard" ],
         "html_columns": [ "Profile Picture URL" ],
-        "artifact_icon": "user"
+        "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 2 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 2 rows",
+        }
     },
     "waze_session_info": {
         "name": "Waze - Session Info",
@@ -34,7 +38,11 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/session"),
         "output_types": [ "all" ],
-        "artifact_icon": "navigation"
+        "artifact_icon": "navigation",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 24 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 24 rows",
+        }
     },
     "waze_track_gps_quality": {
         "name": "Waze - Track GPS Quality",
@@ -49,7 +57,11 @@ __artifacts_v2__ = {
                   "*/com.waze/waze_log.txt",
                   "*/com.waze/*spdlog.logdata.gz"),
         "output_types": [ "all" ],
-        "artifact_icon": "navigation"
+        "artifact_icon": "navigation",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 0 rows",
+        }
     },
     "waze_search_history": {
         "name": "Waze - Search History",
@@ -62,7 +74,11 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
         "output_types": [ "all" ],
-        "artifact_icon": "search"
+        "artifact_icon": "search",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 4 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 3 rows",
+        }
     },
     "waze_recent_locations": {
         "name": "Waze - Recent Locations",
@@ -75,7 +91,11 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
         "output_types": [ "all" ],
-        "artifact_icon": "map-pin"
+        "artifact_icon": "map-pin",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 4 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 3 rows",
+        }
     },
     "waze_favorite_locations": {
         "name": "Waze - Favorite Locations",
@@ -89,7 +109,11 @@ __artifacts_v2__ = {
         "paths": ("*/com.waze/user.db*",
                   "*/com.waze/waze/cached_data*"),                  
         "output_types": [ "all" ],
-        "artifact_icon": "star"
+        "artifact_icon": "star",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 0 rows",
+        }
     },
     "waze_shared_locations": {
         "name": "Waze - Shared Locations",
@@ -102,7 +126,11 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
         "output_types": [ "all" ],
-        "artifact_icon": "map-pin"
+        "artifact_icon": "map-pin",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 0 rows",
+        }
     },
     "waze_planned_events": {
         "name": "Waze - Planned Events",
@@ -116,7 +144,11 @@ __artifacts_v2__ = {
         "paths": ("*/com.waze/user.db*"),
         "output_types": [ "all" ],
         "html_columns": [ "Image URL" ],
-        "artifact_icon": "calendar"
+        "artifact_icon": "calendar",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 0 rows",
+        }
     },
     "waze_tts": {
         "name": "Waze - Text-To-Speech Navigation",
@@ -129,7 +161,11 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/waze/tts/tts.db*"),
         "output_types": [ "standard" ],
-        "artifact_icon": "volume-2"
+        "artifact_icon": "volume-2",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 400 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 574 rows",
+        }
     }
 }
 

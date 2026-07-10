@@ -11,6 +11,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gms/databases/fitness.db.*'),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 33 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+        },
     }
 }
 

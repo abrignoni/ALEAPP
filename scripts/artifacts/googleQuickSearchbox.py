@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb',),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "sharon_a14": "Android 14 | com.google.android.googlequicksearchbox vc 301381725 | 1 row",
+        },
     }
 }
 

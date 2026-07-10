@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*',),
         "output_types": "all",
         "artifact_icon": "activity",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 0 rows",
+        },
     },
     "get_garmin_devices": {
         "name": "Garmin - Devices",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*',),
         "output_types": "standard",
         "artifact_icon": "device-watch",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 1 row",
+        },
     },
     "get_garmin_weather": {
         "name": "Garmin - Weather",
@@ -38,6 +44,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/gcm_cache.db*',),
         "output_types": "all",
         "artifact_icon": "cloud",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 0 rows",
+        },
     },
     "get_garmin_notification_details": {
         "name": "Garmin - Notification Details",
@@ -53,6 +62,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/notification-database*',),
         "output_types": "standard",
         "artifact_icon": "bell",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 45 rows",
+        },
     },
     "get_garmin_cache_db_activities": {
         "name": "Garmin - Cache DB Activities",
@@ -66,6 +78,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": "all",
         "artifact_icon": "activity",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 0 rows",
+        },
     },
     "get_garmin_sleep_activities": {
         "name": "Garmin - Sleep Activities",
@@ -80,6 +95,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": "standard",
         "artifact_icon": "moon",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 0 rows",
+        },
     }
 }
 

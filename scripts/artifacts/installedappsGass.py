@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 408 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 81 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 696 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 1310 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 214 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 404 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 240 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 1585 rows",
+        },
     }
 }
 

@@ -13,6 +13,9 @@ __artifacts_v2__ = {
                   '*/new_recent_history_cache_navigated.cs'),
         "output_types": "standard",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 4 rows",
+        },
     }
 }
 

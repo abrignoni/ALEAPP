@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.life360.android.safetymapd/databases/messaging.db*',),
         "output_types": "all",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.life360.android.safetymapd vc 294540 | 20 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread ID",
@@ -35,6 +38,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.life360.android.safetymapd/databases/L360LocalStoreRoomDatabase*',),
         "output_types": ['html', 'tsv', 'lava', 'kml'],
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.life360.android.safetymapd vc 2897710 | 6 rows",
+            "pixel7a_a14": "Android 14 | com.life360.android.safetymapd vc 294540 | 0 rows",
+        },
     },
     "get_Life360_locations": {
         "name": "Life360 - Locations",
@@ -48,6 +55,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.life360.android.safetymapd/databases/L360EventStore.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.life360.android.safetymapd vc 294540 | 15668 rows",
+            "sharon_a14": "Android 14 | com.life360.android.safetymapd vc 296030 | 0 rows",
+        },
     },
     "get_Life360_device_battery": {
         "name": "Life360 - Device Battery",
@@ -61,6 +72,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.life360.android.safetymapd/databases/L360EventStore.db*',),
         "output_types": "standard",
         "artifact_icon": "battery",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.life360.android.safetymapd vc 294540 | 15668 rows",
+            "sharon_a14": "Android 14 | com.life360.android.safetymapd vc 296030 | 0 rows",
+        },
     }
 }
 

@@ -13,6 +13,14 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "html_columns": ["Message"],
         "artifact_icon": "inbox",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 200 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 201 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 206 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 206 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 112 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 207 rows",
+        },
     },
     "gmailLabels": {
         "name": "Gmail - Label Details",
@@ -26,6 +34,16 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*'),
         "output_types": ["html","tsv","lava"],
         "artifact_icon": "mail",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 32 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 30 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 33 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 32 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 32 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 66 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 33 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 32 rows",
+        },
     },
     "gmailDownloadRequests": {
         "name": "Gmail - Download Requests",
@@ -39,6 +57,12 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.gm/databases/downloader.db*'),
         "output_types": "standard",
         "artifact_icon": "download",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+        },
     }
 }
 

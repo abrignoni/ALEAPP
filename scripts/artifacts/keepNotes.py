@@ -12,6 +12,11 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.keep/databases/keep.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.keep vc 220663535 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.keep vc 220627544 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.keep vc 220548335 | 2 rows",
+        },
     }
 }
 

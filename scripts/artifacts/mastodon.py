@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.joinmastodon.android vc 93 | 0 rows",
+        },
     },
     "get_mastodon_account_searches": {
         "name": "Mastodon - Account Searches",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.joinmastodon.android vc 93 | 1 row",
+        },
     },
     "get_mastodon_notifications": {
         "name": "Mastodon - Notifications",
@@ -38,6 +44,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "bell",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.joinmastodon.android vc 93 | 6 rows",
+        },
     },
     "get_mastodon_timeline": {
         "name": "Mastodon - Timeline",
@@ -51,6 +60,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.joinmastodon.android vc 93 | 2 rows",
+        },
     },
     "get_mastodon_accounts": {
         "name": "Mastodon - Account Details",
@@ -64,6 +76,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.joinmastodon.android/files/accounts.json',),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.joinmastodon.android vc 93 | 1 row",
+        },
     },
     "get_mastodon_instance": {
         "name": "Mastodon - Instance Details",
@@ -77,6 +92,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.joinmastodon.android/files/instance*.json',),
         "output_types": "standard",
         "artifact_icon": "server",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.joinmastodon.android vc 93 | 1 row",
+        },
     }
 }
 

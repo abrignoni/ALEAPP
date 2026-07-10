@@ -1,3 +1,4 @@
+# pylint: disable=W0611,W0613,W0621,W0631
 __artifacts_v2__ = {
     "last_boot_time": {
         "name": "Last Boot Time",
@@ -11,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/misc/bootstat/last_boot_time_utc'),
         "output_types": "standard",
         "artifact_icon": "power",
+        "sample_data": {
+            "anne_a15": "Android 15 | 1 row",
+            "galaxys10_a10": "Android 10 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | 1 row",
+            "pixel7a_a14": "Android 14 | 1 row",
+            "samsunga53_a14": "Android 14 | 1 row",
+            "samsungs20_a13": "Android 13 | 1 row",
+            "sharon_a14": "Android 14 | 1 row",
+        },
     }
 }
 

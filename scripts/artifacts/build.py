@@ -12,6 +12,14 @@ __artifacts_v2__ = {
         "paths": ('*/vendor/build.prop',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "info-circle",
+        "sample_data": {
+            "anne_a15": "Android 15 | 0 rows",
+            "galaxys10_a10": "Android 10 | 6 rows",
+            "hc_pixel8pro_a16": "Android 16 | 6 rows",
+            "pixel7a_a14": "Android 14 | 6 rows",
+            "samsunga53_a14": "Android 14 | 6 rows",
+            "sharon_a14": "Android 14 | 6 rows",
+        },
     }
 }
 

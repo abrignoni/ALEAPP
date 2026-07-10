@@ -12,6 +12,12 @@ __artifacts_v2__ = {
         "paths": ('*/*threads_db2-uid',),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.facebook.orca vc 335215725 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.facebook.orca vc 343213368 | 1 row",
+            "pixel7a_a14": "Android 14 | com.facebook.orca vc 323609457 | 1 row",
+            "sharon_a14": "Android 14 | com.facebook.orca vc 324209509 | 1 row",
+        },
     },
     "get_fb_msys_chats": {
         "name": "Facebook Messenger - Chats (msys_database)",
@@ -25,6 +31,13 @@ __artifacts_v2__ = {
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.facebook.katana vc 465218038, com.facebook.orca vc 335215725 | 4 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277, com.facebook.orca vc 343213368 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.facebook.orca vc 323609457 | 30 rows",
+            "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094, com.facebook.orca vc 337415659 | 0 rows",
+            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791, com.facebook.orca vc 324209509 | 23 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread Key",
@@ -48,6 +61,13 @@ __artifacts_v2__ = {
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "phone",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.facebook.katana vc 465218038, com.facebook.orca vc 335215725 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277, com.facebook.orca vc 343213368 | 4 rows",
+            "pixel7a_a14": "Android 14 | com.facebook.orca vc 323609457 | 8 rows",
+            "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094, com.facebook.orca vc 337415659 | 0 rows",
+            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791, com.facebook.orca vc 324209509 | 0 rows",
+        },
     },
     "get_fb_msys_contacts": {
         "name": "Facebook Messenger - Contacts (msys_database)",
@@ -61,6 +81,13 @@ __artifacts_v2__ = {
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.facebook.katana vc 465218038, com.facebook.orca vc 335215725 | 38 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277, com.facebook.orca vc 343213368 | 6 rows",
+            "pixel7a_a14": "Android 14 | com.facebook.orca vc 323609457 | 2 rows",
+            "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094, com.facebook.orca vc 337415659 | 2 rows",
+            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791, com.facebook.orca vc 324209509 | 65 rows",
+        },
     },
     "get_fb_threads_chats": {
         "name": "Facebook Messenger - Chats (threads_db2)",
@@ -74,6 +101,12 @@ __artifacts_v2__ = {
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.facebook.katana vc 465218038 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094 | 0 rows",
+            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791 | 0 rows",
+        },
     },
     "get_fb_threads_calls": {
         "name": "Facebook Messenger - Calls (threads_db2)",
@@ -87,6 +120,12 @@ __artifacts_v2__ = {
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "phone",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.facebook.katana vc 465218038 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094 | 0 rows",
+            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791 | 0 rows",
+        },
     },
     "get_fb_threads_contacts": {
         "name": "Facebook Messenger - Contacts (threads_db2)",
@@ -100,6 +139,12 @@ __artifacts_v2__ = {
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.facebook.katana vc 465218038 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094 | 0 rows",
+            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791 | 0 rows",
+        },
     }
 }
 

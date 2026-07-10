@@ -1,3 +1,4 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "accounts_ce": {
         "name": "Accounts_ce",
@@ -10,7 +11,17 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system_ce/*/accounts_ce.db*'),
         "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "user"
+        "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | 9 rows",
+            "galaxys10_a10": "Android 10 | 4 rows",
+            "hc_pixel8pro_a16": "Android 16 | 9 rows",
+            "kevin_pocox7_a15": "Android 15 | 8 rows",
+            "pixel7a_a14": "Android 14 | 20 rows",
+            "samsunga53_a14": "Android 14 | 8 rows",
+            "samsungs20_a13": "Android 13 | 16 rows",
+            "sharon_a14": "Android 14 | 14 rows",
+        }
     },
     "accounts_ce_authtokens": {
         "name": "Authentication tokens",
@@ -23,7 +34,17 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system_ce/*/accounts_ce.db*'),
         "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "key"
+        "artifact_icon": "key",
+        "sample_data": {
+            "anne_a15": "Android 15 | 75 rows",
+            "galaxys10_a10": "Android 10 | 78 rows",
+            "hc_pixel8pro_a16": "Android 16 | 160 rows",
+            "kevin_pocox7_a15": "Android 15 | 122 rows",
+            "pixel7a_a14": "Android 14 | 162 rows",
+            "samsunga53_a14": "Android 14 | 130 rows",
+            "samsungs20_a13": "Android 13 | 107 rows",
+            "sharon_a14": "Android 14 | 107 rows",
+        }
     }
 }
 

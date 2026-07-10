@@ -12,6 +12,11 @@ __artifacts_v2__ = {
         "paths": ('*/log/power_off_reset_reason.txt', '*/log/power_off_reset_reason_backup.txt'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "battery",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | 10 rows",
+            "samsungs20_a13": "Android 13 | 6 rows",
+            "sharon_a14": "Android 14 | 10 rows",
+        },
     }
 }
 

@@ -12,6 +12,14 @@ __artifacts_v2__ = {
         "paths": ('*/system/appops.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
+        "sample_data": {
+            "anne_a15": "Android 15 | 0 rows",
+            "galaxys10_a10": "Android 10 | 14 rows",
+            "pixel7a_a14": "Android 14 | 0 rows",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "samsungs20_a13": "Android 13 | 11 rows",
+            "sharon_a14": "Android 14 | 0 rows",
+        },
     }
 }
 

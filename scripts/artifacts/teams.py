@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 32 rows",
+        },
     },
     "get_teams_users": {
         "name": "Teams - Users",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 3 rows",
+        },
     },
     "get_teams_calllog": {
         "name": "Teams - Call Log",
@@ -38,6 +44,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 2 rows",
+        },
     },
     "get_teams_activity": {
         "name": "Teams - Activity Feed",
@@ -51,6 +60,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 0 rows",
+        },
     },
     "get_teams_fileinfo": {
         "name": "Teams - File Info",
@@ -64,6 +76,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "file",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 0 rows",
+        },
     }
 }
 

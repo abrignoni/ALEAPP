@@ -10,7 +10,17 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "chart-bar"
+        "artifact_icon": "chart-bar",
+        "sample_data": {
+            "anne_a15": "Android 15 | 4 rows",
+            "galaxys10_a10": "Android 10 | 4 rows",
+            "hc_pixel8pro_a16": "Android 16 | 3 rows",
+            "kevin_pocox7_a15": "Android 15 | 3 rows",
+            "pixel7a_a14": "Android 14 | 3 rows",
+            "samsunga53_a14": "Android 14 | 4 rows",
+            "samsungs20_a13": "Android 13 | 4 rows",
+            "sharon_a14": "Android 14 | 4 rows",
+        }
     }
 }
 

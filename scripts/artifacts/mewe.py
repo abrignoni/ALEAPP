@@ -36,6 +36,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.mewe/shared_prefs/SGSession.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "key",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.mewe vc 90017000 | 27 rows",
+            "pixel7a_a14": "Android 14 | com.mewe vc 80116099 | 25 rows",
+        },
     }
 }
 

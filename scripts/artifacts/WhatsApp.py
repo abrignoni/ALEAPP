@@ -12,6 +12,14 @@ __artifacts_v2__ = {
         "paths": ('*/com.whatsapp/databases/wa.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 268 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 14 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 295 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 92 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 28 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 638 rows",
+        },
     },
     "get_whatsapp_call_logs": {
         "name": "WhatsApp - Call Logs",
@@ -25,6 +33,14 @@ __artifacts_v2__ = {
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 4 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 3 rows",
+        },
     },
     "get_whatsapp_messages": {
         "name": "WhatsApp - Messages",
@@ -38,6 +54,14 @@ __artifacts_v2__ = {
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 0 rows",
+        },
     },
     "get_whatsapp_one_to_one_messages": {
         "name": "WhatsApp - One To One Messages",
@@ -53,6 +77,14 @@ __artifacts_v2__ = {
                   '*/Android/media/com.whatsapp/WhatsApp/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 29 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 7 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 3877 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 73 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 195 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 781 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Other Participant WA User Name",
@@ -80,6 +112,14 @@ __artifacts_v2__ = {
                   '*/Android/media/com.whatsapp/WhatsApp/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 7 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 39 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 156 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 4730 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Conversation Name",
@@ -105,6 +145,14 @@ __artifacts_v2__ = {
                   '*/com.whatsapp/files/Avatars/*'),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 10 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 3 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 0 rows",
+        },
     },
     "get_whatsapp_user_profile": {
         "name": "WhatsApp - User Profile",
@@ -119,6 +167,14 @@ __artifacts_v2__ = {
                   '*/com.whatsapp/shared_prefs/startup_prefs.xml'),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 1 row",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 1 row",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 1 row",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 1 row",
+        },
     }
 }
 
