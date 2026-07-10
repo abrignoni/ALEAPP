@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_Xender": {
         "name": "Xender - Contacts",
-        "description": "",
+        "description": "Parses Xender contact profiles (device ID and nickname) from the Xender trans-history database.",
         "author": "",
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     },
     "get_Xender_messages": {
         "name": "Xender - Messages",
-        "description": "",
+        "description": "Parses Xender file transfer history (file path, name, size, timestamp, direction and sender and recipient details) from the Xender trans-history database.",
         "author": "",
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",

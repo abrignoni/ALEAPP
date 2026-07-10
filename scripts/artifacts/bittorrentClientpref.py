@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_bittorrentClientpref": {
         "name": "BitTorrent Prefs",
-        "description": "",
+        "description": "Parses BitTorrent client preferences (key, value and text) from the com.bittorrent.client preferences XML.",
         "author": "",
         "creation_date": "2023-03-26",
         "last_update_date": "2023-03-26",

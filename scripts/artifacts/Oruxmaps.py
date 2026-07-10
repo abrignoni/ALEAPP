@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_Oruxmaps": {
         "name": "Oruxmaps - POI",
-        "description": "",
+        "description": "Parses saved points of interest (latitude, longitude, altitude, time and name) from the OruxMaps oruxmapstracks.db database.",
         "author": "",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     },
     "get_Oruxmaps_tracks": {
         "name": "Oruxmaps - Tracks",
-        "description": "",
+        "description": "Parses recorded GPS tracks and their trackpoints (name, description, latitude, longitude, altitude and time) from the OruxMaps oruxmapstracks.db database.",
         "author": "",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",

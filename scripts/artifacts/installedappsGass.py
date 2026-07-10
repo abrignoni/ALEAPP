@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_installedappsGass": {
         "name": "installedappsGass",
-        "description": "",
+        "description": "Parses installed applications (bundle ID, version code and SHA-256 hash) from the Google Play services gass.db.",
         "author": "",
         "creation_date": "2020-03-01",
         "last_update_date": "2020-03-01",

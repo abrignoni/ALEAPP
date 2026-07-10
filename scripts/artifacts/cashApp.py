@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_cashApp": {
         "name": "Cash App",
-        "description": "",
+        "description": "Parses Cash App transactions (date, sender and recipient display names, unique IDs and cashtags, amount, status and note) from cash_money.db.",
         "author": "",
         "creation_date": "2021-10-06",
         "last_update_date": "2021-10-06",

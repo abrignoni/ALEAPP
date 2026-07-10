@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_firefoxFormHistory": {
         "name": "Firefox - Form History",
-        "description": "",
+        "description": "Parses Firefox saved form entries (field name, value, times used, first and last used timestamps) from formhistory.sqlite.",
         "author": "",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",

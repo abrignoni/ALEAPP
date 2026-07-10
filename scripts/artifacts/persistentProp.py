@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_persistentProp": {
         "name": "persistentProp",
-        "description": "",
+        "description": "Parses persistent system properties and their set times (timestamp and event) from the persistent_properties file.",
         "author": "",
         "creation_date": "2021-08-18",
         "last_update_date": "2021-08-18",

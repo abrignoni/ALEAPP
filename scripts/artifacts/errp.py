@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_errp": {
         "name": "Errp",
-        "description": "",
+        "description": "Parses provisioning and error events (timestamp, event, code and details) from the system users eRR.p file.",
         "author": "",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",

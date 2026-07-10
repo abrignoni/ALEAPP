@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_torrentResumeinfo": {
         "name": "torrentResumeinfo",
-        "description": "",
+        "description": "Parses torrent resume data (file, info hash and data) from .resume files.",
         "author": "",
         "creation_date": "2023-03-26",
         "last_update_date": "2023-03-26",

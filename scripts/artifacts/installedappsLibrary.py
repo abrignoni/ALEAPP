@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_installedappsLibrary": {
         "name": "InstalledappsLibrary",
-        "description": "",
+        "description": "Parses app purchase and ownership records (purchase time, account and doc ID) from the Play Store library.db.",
         "author": "",
         "creation_date": "2020-03-01",
         "last_update_date": "2020-03-01",

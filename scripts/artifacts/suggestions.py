@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_suggestions": {
         "name": "suggestions",
-        "description": "",
+        "description": "Parses settings suggestion events (timestamp and name) from the settings intelligence suggestions.xml.",
         "author": "",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",

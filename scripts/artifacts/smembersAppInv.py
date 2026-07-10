@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_smembersAppInv": {
         "name": "smembersAppInv",
-        "description": "",
+        "description": "Parses the Samsung Members app inventory (last used, display and package name, system-app flag, hashes and classification) from the com_pocketgeek_sdk_app_inventory database.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",

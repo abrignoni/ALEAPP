@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_imo_account": {
         "name": "IMO - Account ID",
-        "description": "",
+        "description": "Parses the local IMO account (account ID and name) from the IMO accountdb.db.",
         "author": "",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     },
     "get_imo_messages": {
         "name": "IMO - Messages",
-        "description": "",
+        "description": "Parses IMO messages (timestamp, sender and recipient IDs, message, direction, read status and attachments) from the IMO imofriends.db.",
         "author": "",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-07-03",

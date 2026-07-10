@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_battery_usage_v4": {
         "name": "battery_usage_v4",
-        "description": "",
+        "description": "Parses per-app battery usage (timestamp, application, power consumed, foreground and background usage, battery level and status) from the settings intelligence battery-usage-db-v4 database.",
         "author": "",
         "creation_date": "2021-12-21",
         "last_update_date": "2021-12-21",

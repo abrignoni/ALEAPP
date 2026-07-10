@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_googlemaplocation": {
         "name": "Googlemaplocation",
-        "description": "",
+        "description": "Parses Google Maps navigation destinations (timestamp, destination and source coordinates, title and address) from the da_destination_history database.",
         "author": "",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",

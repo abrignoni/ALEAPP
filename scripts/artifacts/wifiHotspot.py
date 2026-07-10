@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_wifiHotspot": {
         "name": "wifiHotspot",
-        "description": "",
+        "description": "Parses the Wi-Fi hotspot (SoftAP) configuration (SSID, passphrase and security type) from the softap configuration files.",
         "author": "",
         "creation_date": "2020-11-18",
         "last_update_date": "2020-11-18",

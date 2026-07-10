@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_build": {
         "name": "Build",
-        "description": "",
+        "description": "Parses device build properties (key and value) from the vendor build.prop file.",
         "author": "",
         "creation_date": "2020-03-30",
         "last_update_date": "2020-03-30",

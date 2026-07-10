@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_usageHistory": {
         "name": "Usagehistory",
-        "description": "",
+        "description": "Parses application usage history (timestamp, package and component) from the usage-history.xml file.",
         "author": "",
         "creation_date": "2022-07-06",
         "last_update_date": "2022-07-06",

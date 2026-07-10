@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_pikpakPlay": {
         "name": "PikPak Play",
-        "description": "",
+        "description": "Parses PikPak video playback history (last play timestamp, duration, played time and name) from the PikPak greendao.db.",
         "author": "",
         "creation_date": "2023-03-24",
         "last_update_date": "2023-03-24",

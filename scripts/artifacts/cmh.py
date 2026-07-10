@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_cmh": {
         "name": "cmh",
-        "description": "",
+        "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address and path) from cmh.db.",
         "author": "",
         "creation_date": "2020-03-05",
         "last_update_date": "2020-03-05",

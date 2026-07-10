@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_vlcMedia": {
         "name": "VLC",
-        "description": "",
+        "description": "Parses VLC media library entries (insertion and last played dates, filename, path and favorite flag) from vlc_media.db.",
         "author": "",
         "creation_date": "2021-03-01",
         "last_update_date": "2021-03-01",

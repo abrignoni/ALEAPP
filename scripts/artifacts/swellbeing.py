@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_swellbeing": {
         "name": "swellbeing",
-        "description": "",
+        "description": "Parses Samsung Digital Wellbeing app usage events (timestamp, event ID, package and event type) from dwbCommon.db.",
         "author": "",
         "creation_date": "2020-05-21",
         "last_update_date": "2020-05-21",
