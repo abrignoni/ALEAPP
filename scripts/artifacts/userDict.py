@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_userDict": {
         "name": "userDict",
-        "description": "",
+        "description": "Parses the personal user dictionary (word, frequency, locale, app ID and shortcut) from the user dictionary database.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",

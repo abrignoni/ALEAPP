@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_HideX": {
         "name": "HideX",
-        "description": "",
+        "description": "Parses the list of apps hidden or locked by the HideX privacy app (package name and active state) from hidex.db.",
         "author": "",
         "creation_date": "2021-10-12",
         "last_update_date": "2021-10-12",

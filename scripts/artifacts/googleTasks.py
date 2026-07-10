@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_googleTasks": {
         "name": "GoogleTasks",
-        "description": "",
+        "description": "Parses Google Tasks (created, modified, completed and due times, task name, details and status) from the Google Tasks data.db.",
         "author": "",
         "creation_date": "2021-08-21",
         "last_update_date": "2021-08-21",

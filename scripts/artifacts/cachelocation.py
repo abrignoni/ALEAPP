@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_cachelocation": {
         "name": "Cache Location",
-        "description": "",
+        "description": "Parses cached cell and Wi-Fi location fixes (accuracy, confidence, latitude, longitude and read time) from the Google location cache files.",
         "author": "",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",

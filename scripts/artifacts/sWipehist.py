@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_sWipehist": {
         "name": "sWipehist",
-        "description": "",
+        "description": "Parses Samsung wipe and recovery events (timestamp, wipe events, reason, provider and reboot reason) from the recovery history files.",
         "author": "",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",

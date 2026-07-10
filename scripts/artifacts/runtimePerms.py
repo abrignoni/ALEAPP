@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_runtimePerms": {
         "name": "runtimePerms",
-        "description": "",
+        "description": "Parses granted runtime permissions (user, type, name, permission, granted state and flags) from the runtime-permissions.xml file.",
         "author": "",
         "creation_date": "2021-01-25",
         "last_update_date": "2021-01-25",

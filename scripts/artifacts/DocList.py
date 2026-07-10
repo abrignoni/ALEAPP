@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_DocList": {
         "name": "DocList",
-        "description": "",
+        "description": "Parses Google Drive file metadata (name, owner, type, created/modified/opened dates, URIs, MD5 and size) from the DocList.db database.",
         "author": "",
         "creation_date": "2020-12-21",
         "last_update_date": "2020-12-21",

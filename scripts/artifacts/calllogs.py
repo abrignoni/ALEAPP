@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_calllogs": {
         "name": "Call Logs",
-        "description": "",
+        "description": "Parses call logs (number, start and end time, direction and name) from the contacts and logs provider databases.",
         "author": "",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",

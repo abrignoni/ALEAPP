@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_sRecoveryhist": {
         "name": "sRecoveryhist",
-        "description": "",
+        "description": "Parses Samsung recovery history (timestamp, wipe events, reason, reboot reason and locale) from the efs recovery history file.",
         "author": "",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",

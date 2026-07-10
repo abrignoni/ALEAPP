@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_etc_hosts": {
         "name": "Etc_hosts",
-        "description": "",
+        "description": "Parses host-to-IP mappings (IP address and hostname) from the system etc/hosts file.",
         "author": "",
         "creation_date": "2020-10-09",
         "last_update_date": "2020-10-09",

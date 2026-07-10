@@ -1,7 +1,8 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "airtagAlerts": {
         "name": "Android Airtag Alerts",
-        "description": "",
+        "description": "Parses unknown-tracker (AirTag) alerts (creation and update timestamps, MAC address, device type and alert status) from the Google Play services personalsafety database.",
         "author": "@AlexisBrignoni",
         "creation_date": "2023-08-18",
         "last_update_date": "2025-03-16",
@@ -14,7 +15,7 @@ __artifacts_v2__ = {
     },
     "airtagScans": {
         "name": "Android Airtag Scans",
-        "description": "",
+        "description": "Parses unknown-tracker (AirTag) scan records (timestamps, MAC address, state, RSSI and location) from the Google Play services personalsafety database.",
         "author": "@AlexisBrignoni",
         "creation_date": "2023-08-18",
         "last_update_date": "2025-03-16",
@@ -27,7 +28,7 @@ __artifacts_v2__ = {
     },
     "airtagLastScan": {
         "name": "Android Airtag Last Scan",
-        "description": "",
+        "description": "Parses the last unknown-tracker (AirTag) scan time from the personalsafety_info protobuf file.",
         "author": "@AlexisBrignoni",
         "creation_date": "2023-08-18",
         "last_update_date": "2025-03-16",
@@ -40,7 +41,7 @@ __artifacts_v2__ = {
     },
     "airtagPassiveScan": {
         "name": "Android Airtag Passive Scan",
-        "description": "",
+        "description": "Parses the unknown-tracker (AirTag) passive-scan opt-in setting from the personalsafety_optin protobuf file.",
         "author": "@AlexisBrignoni",
         "creation_date": "2023-08-18",
         "last_update_date": "2025-03-16",
@@ -133,10 +134,10 @@ def airtagScans(files_found, report_folder, seeker, wrap_text):
         creation_timestamp = convert_unix_ts_to_utc(record[0])
         last_updated_timestamp = convert_unix_ts_to_utc(record[1])
 
-        blescan_proto, types = blackboxprotobuf.decode_message(blescan)
+        blescan_proto, _ = blackboxprotobuf.decode_message(blescan)
         posrssi = (blescan_proto['2'])
         
-        location_scan_proto, types = blackboxprotobuf.decode_message(location_scan)
+        location_scan_proto, _ = blackboxprotobuf.decode_message(location_scan)
         latitude = (location_scan_proto['4']/1e7)
         longitude = (location_scan_proto['5']/1e7)
         

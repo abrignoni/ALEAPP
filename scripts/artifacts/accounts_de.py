@@ -1,7 +1,8 @@
+# pylint: disable=W0613
 __artifacts_v2__ = {
     "accounts_de": {
         "name": "Accounts_de",
-        "description": "",
+        "description": "Parses device accounts and their authentication activity (account type and name, last password entry, action type and time) from accounts_de.db.",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-03-02",
         "last_update_date": "2025-03-14",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_WordsWithFriends": {
         "name": "WordsWithFriends",
-        "description": "",
+        "description": "Parses in-game chat messages (creation time, message, sender name and email) from the Words With Friends wf_database.sqlite.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",

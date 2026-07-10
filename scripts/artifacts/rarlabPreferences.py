@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_rarlabPreferences": {
         "name": "rarlabPreferences",
-        "description": "",
+        "description": "Parses RAR (RARLAB) application preferences (key, text and value) from the com.rarlab.rar preferences XML.",
         "author": "",
         "creation_date": "2023-03-29",
         "last_update_date": "2023-03-29",

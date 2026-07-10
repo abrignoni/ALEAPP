@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_oldpowerOffReset": {
         "name": "oldpowerOffReset",
-        "description": "",
+        "description": "Parses power-off and reset reasons (timestamp and reason) from the power_off_reset_reason log files.",
         "author": "",
         "creation_date": "2023-03-14",
         "last_update_date": "2023-03-14",

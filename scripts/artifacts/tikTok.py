@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_tikTok": {
         "name": "TikTok - Messages",
-        "description": "",
+        "description": "Parses TikTok direct messages (timestamp, user, nickname, message, links, read state and conversation) from the TikTok IM databases.",
         "author": "",
         "creation_date": "2021-03-02",
         "last_update_date": "2026-07-03",
@@ -25,7 +25,7 @@ __artifacts_v2__ = {
     },
     "get_tikTok_contacts": {
         "name": "TikTok - Contacts",
-        "description": "",
+        "description": "Parses TikTok contacts (UID, nickname, unique ID, avatar and follow status) from the TikTok IM databases.",
         "author": "",
         "creation_date": "2021-03-02",
         "last_update_date": "2021-03-02",

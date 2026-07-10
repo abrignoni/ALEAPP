@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_firefoxDownloads": {
         "name": "Firefox - Downloads",
-        "description": "",
+        "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database.",
         "author": "",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",

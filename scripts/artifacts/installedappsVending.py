@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_installedappsVending": {
         "name": "InstalledappsVending",
-        "description": "",
+        "description": "Parses installed applications (package, title, first download and last updated times, install reason and account) from the Play Store localappstate.db.",
         "author": "",
         "creation_date": "2020-03-01",
         "last_update_date": "2020-03-01",

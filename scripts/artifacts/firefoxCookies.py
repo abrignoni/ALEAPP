@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_firefoxCookies": {
         "name": "Firefox - Cookies",
-        "description": "",
+        "description": "Parses Firefox cookies (host, name, value, path, created, last accessed and expiration timestamps) from cookies.sqlite.",
         "author": "",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",

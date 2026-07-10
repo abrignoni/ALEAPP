@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_roles": {
         "name": "roles",
-        "description": "",
+        "description": "Parses assigned system role holders (Android version, user, role and holder package) from the roles.xml file.",
         "author": "",
         "creation_date": "2021-01-25",
         "last_update_date": "2021-01-25",

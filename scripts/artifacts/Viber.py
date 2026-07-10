@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_Viber": {
         "name": "Viber - Call Logs",
-        "description": "",
+        "description": "Parses Viber call logs (timestamp, phone number, direction, duration and call type) from the Viber databases.",
         "author": "",
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     },
     "get_Viber_contacts": {
         "name": "Viber - Contacts",
-        "description": "",
+        "description": "Parses Viber contacts (display name and phone number) from the Viber databases.",
         "author": "",
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
     },
     "get_Viber_messages": {
         "name": "Viber - Messages",
-        "description": "",
+        "description": "Parses Viber messages (date, sender and recipients, thread, content, direction, read status and attachments) from the Viber databases.",
         "author": "",
         "creation_date": "2020-12-24",
         "last_update_date": "2026-07-03",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_smyfilesRecents": {
         "name": "My Files - Recent Files",
-        "description": "",
+        "description": "Parses Samsung My Files recent files (modified timestamp, name, size, path, extension and source) from the My Files database.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     },
     "get_smyfilesRecents_fileinfo": {
         "name": "My Files - Recent Files (FileInfo)",
-        "description": "",
+        "description": "Parses Samsung My Files recent files (recent and modified timestamps, file ID, package, path, size and download, hidden and trashed flags) from the My Files FileInfo database.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",

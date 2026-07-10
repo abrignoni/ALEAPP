@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_Zapya": {
         "name": "Zapya",
-        "description": "",
+        "description": "Parses Zapya file transfer records (device, name, direction, timestamp, path and title) from the transfer20.db database.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",

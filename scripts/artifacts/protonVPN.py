@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_protonvpn_device_info": {
         "name": "ProtonVPN - Device Info",
-        "description": "",
+        "description": "Parses ProtonVPN device and server-list-updater information (key and value) from the ServerListUpdater.xml preferences.",
         "author": "",
         "creation_date": "2022-09-04",
         "last_update_date": "2022-09-04",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     },
     "get_protonvpn_connection_history": {
         "name": "ProtonVPN - Connection History",
-        "description": "",
+        "description": "Parses ProtonVPN connection history (server address and timestamp) from the ProtonVPN Data.log.",
         "author": "",
         "creation_date": "2022-09-04",
         "last_update_date": "2022-09-04",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
     },
     "get_protonvpn_user_info": {
         "name": "ProtonVPN - User Info",
-        "description": "",
+        "description": "Parses the ProtonVPN user account (email, name, username, display name and account state) from the ProtonVPN database.",
         "author": "",
         "creation_date": "2022-09-04",
         "last_update_date": "2022-09-04",

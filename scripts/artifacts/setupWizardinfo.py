@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_setupWizardinfo": {
         "name": "setupWizardinfo",
-        "description": "",
+        "description": "Parses device setup wizard events (timestamp and name) from the setup_wizard_info.xml preferences.",
         "author": "",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",

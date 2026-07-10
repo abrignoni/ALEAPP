@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_atrackerdetect": {
         "name": "atrackerdetect",
-        "description": "",
+        "description": "Parses preferences from the Apple Tracker Detect Android app (key, value and milliseconds from last boot) from its shared_prefs XML.",
         "author": "",
         "creation_date": "2022-01-08",
         "last_update_date": "2022-01-08",
