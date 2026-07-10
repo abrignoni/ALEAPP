@@ -5,7 +5,7 @@ a = Analysis(
     ['../../aleappGUI.py'],
     pathex=['../scripts/artifacts'],
     binaries=[],
-    datas=[('../', 'scripts'), ('../../assets', 'assets')],
+    datas=[('../', 'scripts'), ('../../assets', 'assets'), ('../../leapp_functions', 'leapp_functions')],
     hiddenimports=[
         'bcrypt',
         'bencoding',
@@ -20,6 +20,7 @@ a = Analysis(
         'polyline',
         'xmltodict',
         'xlsxwriter',
+        'zoneinfo'
     ],
     hookspath=[],
     hooksconfig={},
@@ -60,5 +61,5 @@ app = BUNDLE(
     name='aleappGUI.app',
     icon='../../assets/icon.icns',
     bundle_identifier='4n6.brigs.ALEAPP',
-    version='3.7.0-dev.0',
+    version='2026.1.0',
 )
