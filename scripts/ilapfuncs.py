@@ -17,7 +17,23 @@ from pathlib import Path
 from urllib.parse import quote
 import scripts.artifact_report as artifact_report
 from scripts.context import Context
+from scripts.version_info import leapp_name
 
+# new location for modules imported for backward compatibility
+# existing functions that are moved should leave a commented out def line
+from leapp_functions.app.platform import (
+    ILLEGAL_FILENAME_CHARS,
+    format_illegal_filename_chars,
+    illegal_chars_in_filename,
+    sanitize_file_name,
+    sanitize_file_path,
+    validate_filename,
+)
+from leapp_functions.app.output import (
+    get_output_folder_base,
+    resolve_output_folder_name,
+    validate_output_folder_available,
+)
 
 _console_write = sys.stdout.write
 
@@ -46,13 +62,7 @@ class OutputParameters:
     screen_output_file_path = ''
 
     def __init__(self, output_folder, custom_folder_name=None):
-        now = datetime.now()
-        currenttime = str(now.strftime('%Y-%m-%d_%A_%H%M%S'))
-        if custom_folder_name:
-            folder_name = custom_folder_name
-        else:
-            folder_name = 'ALEAPP_Reports_' + currenttime
-        self.output_folder_base = os.path.join(output_folder, folder_name)
+        self.output_folder_base = get_output_folder_base(output_folder, custom_folder_name)
         self.data_folder = os.path.join(self.output_folder_base, 'data')
         self.media_folder = os.path.join(self.output_folder_base, 'media')
         self.html_media_folder = os.path.join(self.output_folder_base, '_HTML', 'media')
@@ -363,7 +373,7 @@ def get_data_list_with_media(media_header_info, data_list):
     ''' 
     For columns with media item, generate:
       - A data list with HTML code for HTML output
-      - A data list with extraction path of media items for TSV, KML and Timeline exports  
+      - A data list with extraction path of media items for TSV, KML and Timeline exports
     '''
     html_data_list = []
     txt_data_list = []
@@ -395,7 +405,7 @@ def get_data_list_with_media(media_header_info, data_list):
 
                 # Construct the full, absolute path to the canonical media file
                 canonical_path = os.path.join(output_params.output_folder_base, media_item['extraction_path'])
-                
+
                 # Construct the full, absolute path for the HTML link destination
                 html_path = os.path.join(output_params.html_media_folder, Path(canonical_path).name)
 
@@ -405,7 +415,7 @@ def get_data_list_with_media(media_header_info, data_list):
                         os.link(canonical_path, html_path)
                     except OSError:
                         shutil.copy2(canonical_path, html_path)
-                
+
                 # Generate the HTML tag and add the path for the text report
                 html_code += html_media_tag(media_item['extraction_path'], media_item['type'], style, media_item['name'])
                 path_list.append(media_item['extraction_path'])
@@ -419,7 +429,7 @@ def get_data_list_with_media(media_header_info, data_list):
 
         html_data_list.append(tuple(html_row))
         txt_data_list.append(tuple(txt_row))
-        
+
     return html_data_list, txt_data_list
 
 def artifact_processor(func):
@@ -527,17 +537,11 @@ def is_platform_windows():
     '''Returns True if running on Windows'''
     return sys.platform == 'win32'
 
-def sanitize_file_path(filename, replacement_char='_'):
-    r'''
-    Removes illegal characters (for windows) from the string passed. Does not replace \ or /
-    '''
-    return re.sub(r'[*?:"<>|\'\r\n]', replacement_char, filename)
+# def sanitize_file_path(filename, replacement_char='_'):
+# Moved to leapp_functions.app.platform
 
-def sanitize_file_name(filename, replacement_char='_'):
-    '''
-    Removes illegal characters (for windows) from the string passed.
-    '''
-    return re.sub(r'[\\/*?:"<>|\'\r\n]', replacement_char, filename)
+# def sanitize_file_name(filename, replacement_char='_'):
+# Moved to leapp_functions.app.platform
 
 def get_next_unused_name(path):
     '''Checks if path exists, if it does, finds an unused name by appending -xx

@@ -13,6 +13,7 @@ import leapp_functions.app.history as history
 
 from scripts.search_files import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from scripts.ilapfuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
+from leapp_functions.app.output import validate_output_folder_available
 from scripts.version_info import leapp_name, leapp_version
 from time import process_time, gmtime, strftime, perf_counter
 from scripts.lavafuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
@@ -31,10 +32,19 @@ def validate_args(args):
 
     # Check existence of paths
     if not os.path.exists(args.input_path):
-        raise argparse.ArgumentError(None, 'INPUT file/folder does not exist! Run the program again.')
+        raise argparse.ArgumentError(None, f'INPUT path \'{args.input_path}\' does not exist! Run the program again.')
 
     if not os.path.exists(args.output_path):
         raise argparse.ArgumentError(None, 'OUTPUT folder does not exist! Run the program again.')
+    if not os.path.isdir(os.path.abspath(args.output_path)):
+        raise argparse.ArgumentError(None, f'OUTPUT path \'{args.output_path}\' must be a directory! Run the program again.')
+
+    # Validate new folder name for output path
+    output_folder_valid, output_folder_error = validate_output_folder_available(
+        os.path.abspath(args.output_path), args.custom_output_folder)
+    if not output_folder_valid:
+        raise argparse.ArgumentError(None, output_folder_error)
+
 
     if args.load_case_data and not os.path.exists(args.load_case_data):
         raise argparse.ArgumentError(None, 'LEAPP Case Data file not found! Run the program again.')
