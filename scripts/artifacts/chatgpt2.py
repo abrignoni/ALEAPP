@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Android ChatGPT conversations",
         "author": "Alexis Brignoni",
         "creation_date": "2025-07-08",
-        "last_update_date": "2025-09-09",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "ChatGPT",
         "notes": "",
@@ -79,6 +79,9 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
 
             # Print one result as a check
             for message_id, message in list(reconstructed_messages.items()):
+                if not isinstance(message, dict) or not isinstance(message.get('content'), dict):
+                    logfunc(f'Skipping ChatGPT message {message_id}: unrecognized message structure')
+                    continue
                 cdt = ''
                 mdt = ''
                 creationdate = message['content'].get('created_date','')
@@ -99,11 +102,17 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
                         mdt = datetime.strptime(modificationdate, "%Y-%m-%dT%H:%M:%SZ")
                     mdt = mdt.replace(tzinfo=timezone.utc)
 
-                chunkdata = message['content']['content'].get('content')
-                if chunkdata == None:
-                    chunkdata = message['content']['content']
-
-                references = message['content']['content'].get('references')
+                # The nested content value is a dict in most messages but can
+                # also be a plain string (e.g. some tool/voice messages)
+                content = message['content'].get('content')
+                if isinstance(content, dict):
+                    chunkdata = content.get('content')
+                    if chunkdata == None:
+                        chunkdata = content
+                    references = content.get('references')
+                else:
+                    chunkdata = content
+                    references = ''
 
                 # Get conversation title
                 conversation_id = message['content'].get('conversation_id')

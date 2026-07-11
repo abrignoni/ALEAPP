@@ -20,7 +20,7 @@ __artifacts_v2__ = {
         "description": "User messages with ChatGPT, older DBMessage.messageNode schema (see ChatGPT - Conversations / chatgpt2 for the newer DBMessageChunk schema)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
-        "last_update_date": "2024-07-09",
+        "last_update_date": "2026-07-10",
         "requirements": "",
         "category": "ChatGPT",
         "notes": "",
@@ -149,7 +149,8 @@ from pathlib import Path
 import blackboxprotobuf
 from PIL import Image, UnidentifiedImageError
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_media
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_media, \
+    does_column_exist_in_db
 
 
 def _iso_to_utc(value):
@@ -234,6 +235,10 @@ def get_chatgpt_conversations(context):
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('_conversations.db'):
+            continue
+        if not does_column_exist_in_db(file_found, 'DBMessage', 'messageNode'):
+            logfunc(f'Skipping {file_found}: no DBMessage.messageNode column '
+                    '(newer ChatGPT schema, parsed by ChatGPT - Conversations)')
             continue
         source_path = file_found
         account = _account(os.path.basename(file_found), '_conversations.db')

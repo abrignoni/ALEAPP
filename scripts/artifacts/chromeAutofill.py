@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Parses Chrome autofill entries",
         "author": "",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
@@ -86,6 +86,12 @@ def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         columns = [i[1] for i in cursor.execute('PRAGMA table_info(autofill)')]
+
+        if not columns:
+            # Some Web Data databases (e.g. embedded WebViews) have no autofill table
+            logfunc(f'No {browser_name} autofill table available in {file_found}')
+            db.close()
+            continue
 
         if 'date_created' in columns:
             cursor.execute('select date_created, name, value, date_last_used, count from autofill')

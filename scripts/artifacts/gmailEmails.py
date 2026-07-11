@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Parses emails from Gmail",
         "author": "Alexis Brignoni, Patrick Dalla, @stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2025-07-30",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "Email",
         "notes": "",
@@ -71,7 +71,8 @@ import blackboxprotobuf
 import os
 from datetime import datetime
 
-from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor
+from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor, \
+    logfunc
 
 @artifact_processor
 def gmailEmails(files_found, report_folder, seeker, wrap_text):
@@ -161,15 +162,20 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                     else:
                         subjectline = ''
                 
+                messagehtml = ''
                 messagetest = (message.get('6', '')) #HTML message
                 if messagetest != '':
                     messagetest = message['6'].get('2','')
                     if messagetest != '':
-                        if isinstance(message['6']['2'], list):
-                            for x in message['6']['2']:
-                                messagehtml = messagehtml + (x['3']['2'].decode())
-                        else:
-                            messagehtml = (message['6']['2']['3']['2'].decode()) 
+                        try:
+                            if isinstance(message['6']['2'], list):
+                                for x in message['6']['2']:
+                                    messagehtml = messagehtml + (x['3']['2'].decode())
+                            else:
+                                messagehtml = (message['6']['2']['3']['2'].decode())
+                        except (AttributeError, KeyError, TypeError, IndexError):
+                            # The body node nesting varies between app versions
+                            logfunc(f'Unrecognized Gmail message body structure for server id {serverid}; body omitted')
                
                 mailedby = (message.get('11', {}).get('8', b'')) #mailed by
                 if isinstance(message.get('11', {}).get('8', ''), bytes): 

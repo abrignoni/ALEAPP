@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "description": "Existing account in LinkedIn App. The Public Identifier can be used to visit the public profile on the LinkedIn Website (https://www.linkedin.com/in/[Public Identifier]).",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2025-04-26",
-        'last_update_date': '2026-02-07',
+        'last_update_date': '2026-07-10',
         "requirements": "xml, json",
         "category": "LinkedIn",
         "notes": "",
@@ -91,16 +91,27 @@ def linkedin_account(files_found, _report_folder, _seeker, _wrap_text):
                 value = elem.attrib.get('value') if 'value' in elem.attrib else elem.text
                 xml_dict[name] = value
 
-    # Now get the data from the dict and put it into the data_list
-    last_login =  convert_unix_ts_to_utc(int(xml_dict['lastLoggedInTimestamp']))
-    account_mail = xml_dict['memberEmail']
-    temp_meModel = json.loads(xml_dict['meModel'])
-    member_id = temp_meModel['plainId']
-    last_name = temp_meModel['miniProfile']['lastName']
-    first_name = temp_meModel['miniProfile']['firstName']
-    headline = temp_meModel['miniProfile']['occupation']
-    public_identifier = temp_meModel['miniProfile']['publicIdentifier']
-    data_list = [(last_login, member_id, account_mail, last_name, first_name, headline, public_identifier)]
+    # Now get the data from the dict and put it into the data_list.
+    # Not every install carries the account keys (e.g. never signed in).
+    last_login = xml_dict.get('lastLoggedInTimestamp')
+    last_login = convert_unix_ts_to_utc(int(last_login)) if last_login else ''
+    account_mail = xml_dict.get('memberEmail', '')
+    member_id = last_name = first_name = headline = public_identifier = ''
+    me_model = xml_dict.get('meModel')
+    if me_model:
+        temp_meModel = json.loads(me_model)
+        mini_profile = temp_meModel.get('miniProfile', {})
+        member_id = temp_meModel.get('plainId', '')
+        last_name = mini_profile.get('lastName', '')
+        first_name = mini_profile.get('firstName', '')
+        headline = mini_profile.get('occupation', '')
+        public_identifier = mini_profile.get('publicIdentifier', '')
+
+    data_list = []
+    if any((last_login, member_id, account_mail, last_name, first_name, headline, public_identifier)):
+        data_list = [(last_login, member_id, account_mail, last_name, first_name, headline, public_identifier)]
+    else:
+        logfunc('No LinkedIn account details found in linkedInPrefsName.xml')
 
     data_headers = (    
                         ('Last Login', 'datetime'),

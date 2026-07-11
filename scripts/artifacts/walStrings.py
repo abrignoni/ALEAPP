@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "If  we only want ascii, use 'ascii_chars_re' below",
         "author": "",
         "creation_date": "2020-04-17",
-        "last_update_date": "2020-04-17",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "SQLite Journaling",
         "notes": "",
@@ -40,7 +40,10 @@ def get_walStrings(context):
     x = 1
     data_list = []
     for file_found in files_found:
-        if Path(file_found).stat().st_size == 0:
+        # The seeker can list files it could not extract (e.g. zero-byte
+        # archive members), so the path may not exist on disk.
+        path = Path(file_found)
+        if not path.is_file() or path.stat().st_size == 0:
             continue
 
         journalName = os.path.basename(file_found)
