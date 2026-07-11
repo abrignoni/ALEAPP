@@ -20,7 +20,8 @@ a = Analysis(['..\\..\\aleapp.py'],
                 'polyline',
                 'simplekml',
                 'xlsxwriter',
-                'xmltodict'
+                'xmltodict',
+                'zoneinfo'
              ],
              hookspath=['.\\'],
              runtime_hooks=[],
