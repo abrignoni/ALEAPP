@@ -27,6 +27,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/databases/*_conversations.db*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 0 rows",
+        },
     },
     "get_chatgpt_user": {
         "name": "ChatGPT - User",

@@ -12,7 +12,10 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.linkedin.android/shared_prefs/linkedInPrefsName.xml'),
         "output_types": "standard",
-        "artifact_icon": "user"
+        "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.linkedin.android vc 198600 | 1 row",
+        }
     },
     "linkedin_messages": {
         "name": "LinkedIn - Messages",

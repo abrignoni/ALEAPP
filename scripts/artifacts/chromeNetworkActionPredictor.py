@@ -14,6 +14,8 @@ __artifacts_v2__ = {
         "artifact_icon": "wifi",
         "sample_data": {
             "sharon_a14": "Android 14 | com.sec.android.app.sbrowser vc 1260103502 | 0 rows",
+            "anne_a15": "Android 15 | com.sec.android.app.sbrowser vc 1280509502 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.sec.android.app.sbrowser vc 1300067502 | 0 rows",
         },
     }
 }

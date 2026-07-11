@@ -20,6 +20,8 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 206 rows",
             "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 112 rows",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 207 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 28 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 109 rows",
         },
     },
     "gmailLabels": {

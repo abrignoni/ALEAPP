@@ -14,6 +14,12 @@ __artifacts_v2__ = {
         "sample_data": {
             "galaxys10_a10": "Android 10 | 721 rows",
             "samsunga53_a14": "Android 14 | 1916 rows",
+            "anne_a15": "Android 15 | 869 rows",
+            "hc_pixel8pro_a16": "Android 16 | 527 rows",
+            "kevin_pocox7_a15": "Android 15 | 519 rows",
+            "pixel7a_a14": "Android 14 | 510 rows",
+            "samsungs20_a13": "Android 13 | 791 rows",
+            "sharon_a14": "Android 14 | 900 rows",
         },
         "html_columns": ['Report'],
     }

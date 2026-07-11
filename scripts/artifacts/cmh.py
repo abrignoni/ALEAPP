@@ -15,8 +15,9 @@ __artifacts_v2__ = {
         "sample_data": {
             "galaxys10_a10": "Android 10 | com.samsung.cmh | 32 rows",
             "samsunga53_a14": "Android 14 | com.samsung.cmh | 2 rows",
-            "samsungs20_a13": "Android 13 | com.samsung.cmh | 15 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.cmh | 16 rows",
             "sharon_a14": "Android 14 | com.samsung.cmh | 1410 rows",
+            "anne_a15": "Android 15 | com.samsung.cmh | 212 rows",
         },
     }
 }
