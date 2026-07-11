@@ -5,10 +5,10 @@ __artifacts_v2__ = {
         "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address and path) from cmh.db.",
         "author": "",
         "creation_date": "2020-03-05",
-        "last_update_date": "2026-07-10",
+        "last_update_date": "2026-07-11",
         "requirements": "none",
         "category": "Samsung_CMH",
-        "notes": "",
+        "notes": "Queries the files table directly (media_type 1 = images), which matches the images view older CMH versions defined over it; newer CMH versions dropped that view.",
         "paths": ('*/cmh.db',),
         "output_types": "all",
         "artifact_icon": "file",
@@ -25,8 +25,7 @@ import datetime
 import hashlib
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, does_table_exist_in_db, \
-    does_view_exist_in_db
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, does_table_exist_in_db
 
 
 def _ms_to_utc(value):
@@ -44,7 +43,7 @@ def _sec_to_utc(value):
 @artifact_processor
 def get_cmh(files_found, report_folder, seeker, wrap_text):
     # Extractions can hold several cmh.db copies (e.g. one per user profile);
-    # parse every distinct copy that carries the images view. The same
+    # parse every distinct copy that carries the files table. The same
     # database can appear under aliased paths (data/data vs data/user/0,
     # tool mirror folders), so byte-identical copies are only parsed once.
     data_list = []
@@ -61,21 +60,24 @@ def get_cmh(files_found, report_folder, seeker, wrap_text):
             continue
         seen_hashes.add(file_hash)
 
-        # images is a view in most CMH versions; newer versions dropped it
-        if not (does_view_exist_in_db(file_found, 'images') or does_table_exist_in_db(file_found, 'images')):
-            logfunc(f'No images table/view in {file_found} (unsupported CMH schema version?)')
+        if not does_table_exist_in_db(file_found, 'files'):
+            logfunc(f'No files table in {file_found} (unsupported CMH schema version?)')
             continue
 
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         try:
+            # Older CMH versions defined an images view as exactly
+            # "SELECT ... FROM files WHERE media_type=1"; newer versions
+            # dropped the view, so query the files table directly.
             cursor.execute('''
                 SELECT
-                images.datetaken, images.date_added, images.date_modified, images.title,
-                images.bucket_display_name, images.latitude, images.longitude,
-                location_view.address_text, location_view.uri, images._data, images.isprivate
-                FROM images
-                left join location_view on location_view._id = images._id
+                files.datetaken, files.date_added, files.date_modified, files.title,
+                files.bucket_display_name, files.latitude, files.longitude,
+                location_view.address_text, location_view.uri, files._data, files.isprivate
+                FROM files
+                left join location_view on location_view._id = files._id
+                WHERE files.media_type = 1
             ''')
             all_rows = cursor.fetchall()
         except sqlite3.OperationalError as ex:

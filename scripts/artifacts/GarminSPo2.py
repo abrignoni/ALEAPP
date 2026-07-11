@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-10",
         "requirements": "Python 3.7 or higher",
         "category": "Garmin",
-        "notes": "",
+        "notes": "Newer Garmin Connect versions no longer populate cache-database; current app data lives in gcm_cache.db and garmin.api files (parsed by the GarminJson, GarminGcmJsonActivities, garmin and Garmin*API artifacts).",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "activity",
