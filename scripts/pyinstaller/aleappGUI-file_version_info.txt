@@ -19,7 +19,7 @@ VSVersionInfo(
         StringStruct('FileVersion', '2026.1.0'),
         StringStruct('InternalName', 'ALEAPP'),
         StringStruct('LegalCopyright', 'Result of a collaborative effort in the DFIR community.'),
-        StringStruct('OriginalFilename', 'AleappGUI.exe'),
+        StringStruct('OriginalFilename', 'aleappGUI.exe'),
         StringStruct('ProductName', 'ALEAPP'),
         StringStruct('ProductVersion', '2026.1.0')])
       ]), 

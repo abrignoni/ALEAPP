@@ -1,4 +1,4 @@
-1SVersionInfo(
+VSVersionInfo(
   ffi=FixedFileInfo(
     filevers=(2026, 1, 0, 0),
     prodvers=(2026, 1, 0, 0),
