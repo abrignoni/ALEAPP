@@ -17,6 +17,9 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 19 rows",
             "pixel7a_a14": "Android 14 | com.android.chrome vc 616710133, com.microsoft.emmx vc 259210005 | 36 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 19 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 3 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 15 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 13 rows",
         },
     }
 }

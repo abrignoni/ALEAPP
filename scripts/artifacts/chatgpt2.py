@@ -13,6 +13,9 @@ __artifacts_v2__ = {
         "html_columns": ['Content'],
         "output_types": "standard",
         "artifact_icon": "loader",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 12 rows",
+        },
     }
 }
 

@@ -19,6 +19,7 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.microsoft.skydrive vc 2027440202 | 0 rows",
             "samsungs20_a13": "Android 13 | com.microsoft.skydrive | 0 rows",
             "sharon_a14": "Android 14 | com.microsoft.skydrive vc 2027110002 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.microsoft.skydrive vc 2026280402 | 0 rows",
         },
     }
 }

@@ -16,6 +16,11 @@ __artifacts_v2__ = {
             "galaxys10_a10": "Android 10 | 6 rows",
             "pixel7a_a14": "Android 14 | 4 rows",
             "sharon_a14": "Android 14 | 4 rows",
+            "anne_a15": "Android 15 | 2 rows",
+            "hc_pixel8pro_a16": "Android 16 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | 1 row",
+            "samsunga53_a14": "Android 14 | 18 rows",
+            "samsungs20_a13": "Android 13 | 4 rows",
         },
     },
     "get_chromeAutofillProfiles": {
