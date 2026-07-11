@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Parses the Network Action Predictor from Chromium Based Browsers",
         "author": "",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
@@ -45,6 +45,14 @@ def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_te
 
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
+        columns = [i[1] for i in cursor.execute('PRAGMA table_info(network_action_predictor)')]
+
+        if not columns:
+            # Some browser variants keep only resource_prefetch_predictor tables here
+            logfunc(f'No network_action_predictor table available in {file_found}')
+            db.close()
+            continue
+
         cursor.execute('''
         select
         user_text,

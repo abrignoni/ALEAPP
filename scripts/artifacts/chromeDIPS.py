@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Module Description: Parses Chromium DIPS (Detect Incidental Party State)",
         "author": "@KevinPagano3",
         "creation_date": "2023-04-07",
-        "last_update_date": "2023-04-07",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
@@ -33,6 +33,12 @@ def _webkit_to_utc(value):
     if value in (None, 0, ''):
         return ''
     return datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(microseconds=int(value))
+
+
+def _first_column(columns, candidates):
+    """Returns the first candidate column present in the table, or NULL —
+    the bounces schema varies between Chromium versions."""
+    return next((column for column in candidates if column in columns), 'NULL')
 
 
 @artifact_processor
@@ -77,23 +83,25 @@ def get_chromeDIPS(files_found, report_folder, seeker, wrap_text):
         cursor = db.cursor()
         columns = [i[1] for i in cursor.execute('PRAGMA table_info(bounces)')]
 
-        stateless = 'first_stateless_bounce_time' in columns
-        first_user_col = 'first_user_interaction_time' if 'first_user_interaction_time' in columns else 'first_user_activation_time'
-        last_user_col = 'last_user_interaction_time' if 'last_user_interaction_time' in columns else 'last_user_activation_time'
-        if stateless:
-            first_bounce_col, last_bounce_col = 'first_stateless_bounce_time', 'last_stateless_bounce_time'
-        else:
-            first_bounce_col, last_bounce_col = 'first_bounce_time', 'last_bounce_time'
+        if not columns:
+            logfunc(f'No bounces table available in {file_found}')
+            db.close()
+            continue
+
+        first_user_col = _first_column(columns, ('first_user_interaction_time', 'first_user_activation_time'))
+        last_user_col = _first_column(columns, ('last_user_interaction_time', 'last_user_activation_time'))
+        first_bounce_col = _first_column(columns, ('first_stateless_bounce_time', 'first_bounce_time'))
+        last_bounce_col = _first_column(columns, ('last_stateless_bounce_time', 'last_bounce_time'))
 
         cursor.execute(f'''
             select
             site,
-            first_site_storage_time,
-            last_site_storage_time,
+            {_first_column(columns, ('first_site_storage_time',))},
+            {_first_column(columns, ('last_site_storage_time',))},
             {first_user_col},
             {last_user_col},
-            first_stateful_bounce_time,
-            last_stateful_bounce_time,
+            {_first_column(columns, ('first_stateful_bounce_time',))},
+            {_first_column(columns, ('last_stateful_bounce_time',))},
             {first_bounce_col},
             {last_bounce_col}
             from bounces

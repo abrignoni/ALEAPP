@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address and path) from cmh.db.",
         "author": "",
         "creation_date": "2020-03-05",
-        "last_update_date": "2020-03-05",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "Samsung_CMH",
         "notes": "",
@@ -22,8 +22,11 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import hashlib
+import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, does_table_exist_in_db, \
+    does_view_exist_in_db
 
 
 def _ms_to_utc(value):
@@ -40,23 +43,51 @@ def _sec_to_utc(value):
 
 @artifact_processor
 def get_cmh(files_found, report_folder, seeker, wrap_text):
-    source_path = str(files_found[0])
-    db = open_sqlite_db_readonly(source_path)
-    cursor = db.cursor()
-    cursor.execute('''
-        SELECT
-        images.datetaken, images.date_added, images.date_modified, images.title,
-        images.bucket_display_name, images.latitude, images.longitude,
-        location_view.address_text, location_view.uri, images._data, images.isprivate
-        FROM images
-        left join location_view on location_view._id = images._id
-    ''')
-    all_rows = cursor.fetchall()
-    db.close()
-
+    # Extractions can hold several cmh.db copies (e.g. one per user profile);
+    # parse every distinct copy that carries the images view. The same
+    # database can appear under aliased paths (data/data vs data/user/0,
+    # tool mirror folders), so byte-identical copies are only parsed once.
     data_list = []
-    for r in all_rows:
-        data_list.append((_ms_to_utc(r[0]), _sec_to_utc(r[1]), _sec_to_utc(r[2]), r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10]))
+    sources = []
+    seen_hashes = set()
+    for file_found in files_found:
+        file_found = str(file_found)
+        if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
+            continue  # Skip mirror, it should be duplicate data
 
+        with open(file_found, 'rb') as db_file:
+            file_hash = hashlib.sha256(db_file.read()).hexdigest()
+        if file_hash in seen_hashes:
+            continue
+        seen_hashes.add(file_hash)
+
+        # images is a view in most CMH versions; newer versions dropped it
+        if not (does_view_exist_in_db(file_found, 'images') or does_table_exist_in_db(file_found, 'images')):
+            logfunc(f'No images table/view in {file_found} (unsupported CMH schema version?)')
+            continue
+
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        try:
+            cursor.execute('''
+                SELECT
+                images.datetaken, images.date_added, images.date_modified, images.title,
+                images.bucket_display_name, images.latitude, images.longitude,
+                location_view.address_text, location_view.uri, images._data, images.isprivate
+                FROM images
+                left join location_view on location_view._id = images._id
+            ''')
+            all_rows = cursor.fetchall()
+        except sqlite3.OperationalError as ex:
+            logfunc(f'Unable to query {file_found} (unsupported CMH schema version?): {ex}')
+            all_rows = []
+        db.close()
+
+        if all_rows:
+            sources.append(file_found)
+        for r in all_rows:
+            data_list.append((_ms_to_utc(r[0]), _sec_to_utc(r[1]), _sec_to_utc(r[2]), r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10]))
+
+    source_path = ', '.join(sources) if sources else str(files_found[0])
     data_headers = (('Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), 'Title', 'Bucket Name', 'Latitude', 'Longitude', 'Address', 'URI', 'Data Location', 'Is Private')
     return data_headers, data_list, source_path

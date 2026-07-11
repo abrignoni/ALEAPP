@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Get Information relative to the weight data in the database cache-database from the table weight in the Garmin Connect app",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
-        "last_update_date": "2023-02-24",
+        "last_update_date": "2026-07-10",
         "requirements": "Python 3.7 or higher",
         "category": "Garmin",
         "notes": "",
@@ -16,6 +16,7 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
@@ -27,11 +28,16 @@ def get_garmin_weight(files_found, report_folder, seeker, wrap_text):
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
-    cursor.execute('''
-        Select samplePk, "date", weight
-        from weight
-    ''')
-    all_rows = cursor.fetchall()
+    try:
+        cursor.execute('''
+            Select samplePk, "date", weight
+            from weight
+        ''')
+        all_rows = cursor.fetchall()
+    except sqlite3.OperationalError as ex:
+        # Newer Garmin Connect versions restructured the cache-database
+        logfunc(f'Unable to query the Garmin cache-database (unsupported schema version?): {ex}')
+        all_rows = []
     db.close()
     logfunc(f"Found {len(all_rows)} weight entries")
 
