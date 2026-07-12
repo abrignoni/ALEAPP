@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 12 rows",
             "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 6 rows",
             "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 31 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.contacts | 4 rows",
+            "userb2_a13": "Android 13 | com.android.providers.contacts | 0 rows",
         },
     }
 }

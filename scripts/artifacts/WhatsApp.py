@@ -19,6 +19,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 92 rows",
             "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 28 rows",
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 638 rows",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 2 rows",
         },
     },
     "get_whatsapp_call_logs": {
@@ -40,6 +41,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 4 rows",
             "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
         },
     },
     "get_whatsapp_messages": {
@@ -61,6 +63,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 0 rows",
             "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
         },
     },
     "get_whatsapp_one_to_one_messages": {
@@ -84,6 +87,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 73 rows",
             "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 195 rows",
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 781 rows",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 71 rows",
         },
         "data_views": {
             "conversation": {
@@ -119,6 +123,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 156 rows",
             "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 4730 rows",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
         },
         "data_views": {
             "conversation": {
@@ -152,6 +157,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 0 rows",
             "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 3 rows",
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
         },
     },
     "get_whatsapp_user_profile": {
@@ -174,6 +180,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 1 row",
             "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 1 row",
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 1 row",
         },
     }
 }

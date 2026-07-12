@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.gms | 5010 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 3914 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 36746 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 11408 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 2016 rows",
         },
     },
     "get_fcm_dump_verizon": {
@@ -44,6 +46,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 0 rows",
         },
     },
     "get_fcm_dump_tiktok": {
@@ -67,6 +71,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.gms | 102 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 40 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 391 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 86 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 142 rows",
         },
     },
     "get_fcm_dump_instagram": {
@@ -90,6 +96,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 33 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 0 rows",
         },
     },
     "get_fcm_dump_gqsb": {
@@ -113,6 +121,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 53 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 54 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 0 rows",
         },
     }
 }

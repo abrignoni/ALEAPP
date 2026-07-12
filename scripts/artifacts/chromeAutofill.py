@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | 1 row",
             "samsunga53_a14": "Android 14 | 18 rows",
             "samsungs20_a13": "Android 13 | 4 rows",
+            "russell_pixel6a_a13": "Android 13 | 8 rows",
+            "userb2_a13": "Android 13 | 12 rows",
         },
     },
     "get_chromeAutofillProfiles": {
@@ -44,6 +46,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | 0 rows",
             "samsungs20_a13": "Android 13 | 0 rows",
             "sharon_a14": "Android 14 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | 0 rows",
+            "userb2_a13": "Android 13 | 0 rows",
         },
     }
 }

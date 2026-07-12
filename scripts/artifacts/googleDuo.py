@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.apps.tachyon vc 6691613 | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.tachyon vc 6745781 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.tachyon vc 5494470 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.tachyon vc 4350816 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.tachyon vc 5753132 | 0 rows",
         },
     },
     "get_googleDuo_contacts": {
@@ -44,6 +46,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.apps.tachyon vc 6691613 | 1 row",
             "samsungs20_a13": "Android 13 | com.google.android.apps.tachyon vc 6745781 | 4 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.tachyon vc 5494470 | 26 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.tachyon vc 4350816 | 2 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.tachyon vc 5753132 | 0 rows",
         },
     },
     "get_googleDuo_notes": {
@@ -68,6 +72,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.apps.tachyon vc 6691613 | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.tachyon vc 6745781 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.tachyon vc 5494470 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.tachyon vc 4350816 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.tachyon vc 5753132 | 0 rows",
         },
     }
 }

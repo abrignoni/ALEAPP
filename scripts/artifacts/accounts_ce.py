@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | 8 rows",
             "samsungs20_a13": "Android 13 | 16 rows",
             "sharon_a14": "Android 14 | 14 rows",
+            "russell_pixel6a_a13": "Android 13 | 8 rows",
+            "userb2_a13": "Android 13 | 2 rows",
         }
     },
     "accounts_ce_authtokens": {
@@ -44,6 +46,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | 130 rows",
             "samsungs20_a13": "Android 13 | 107 rows",
             "sharon_a14": "Android 14 | 107 rows",
+            "russell_pixel6a_a13": "Android 13 | 227 rows",
+            "userb2_a13": "Android 13 | 108 rows",
         }
     }
 }

@@ -20,6 +20,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
             "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 0 rows",
             "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 0 rows",
+            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 0 rows",
         },
         "data_views": {
             "conversation": {
@@ -52,6 +54,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
             "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 2 rows",
             "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 8 rows",
+            "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 5 rows",
+            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 1 row",
         },
     }
 }

@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*',),
         "output_types": "all",
         "artifact_icon": "shield",
+        "sample_data": {
+            "russell_pixel6a_a13": "Android 13 | de.seemoo.at_tracking_detection.release vc 37 | 1960 rows",
+        },
     },
     "get_airGuard_scans": {
         "name": "AirGuard AirTag Scans",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*',),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "russell_pixel6a_a13": "Android 13 | de.seemoo.at_tracking_detection.release vc 37 | 805 rows",
+        },
     }
 }
 

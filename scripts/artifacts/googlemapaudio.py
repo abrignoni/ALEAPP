@@ -18,6 +18,8 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 359 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.maps vc 1067620099 | 301 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 362 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 252 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 26 rows",
         },
     }
 }
