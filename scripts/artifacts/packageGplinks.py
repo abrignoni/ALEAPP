@@ -20,6 +20,8 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | 369 rows",
             "samsungs20_a13": "Android 13 | 506 rows",
             "sharon_a14": "Android 14 | 499 rows",
+            "russell_pixel6a_a13": "Android 13 | 303 rows",
+            "userb2_a13": "Android 13 | 303 rows",
         },
         "html_columns": ['Possible Google Play Store Link'],
     }

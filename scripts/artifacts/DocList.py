@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.apps.docs vc 214258185 | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.docs vc 214207580 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.docs vc 213692448 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.docs vc 213183212 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.docs vc 213806576 | 0 rows",
         },
     }
 }

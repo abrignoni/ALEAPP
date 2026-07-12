@@ -13,6 +13,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 0 rows",
             "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
             "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
         },
     },
     "get_snapchat_friends": {
@@ -28,6 +29,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 4 rows",
             "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
             "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 6 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 5 rows",
         },
     },
     "get_snapchat_messages": {
@@ -43,6 +45,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 0 rows",
             "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
             "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
         },
     },
     "get_snapchat_memories": {
@@ -56,6 +59,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 4 rows",
             "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
             "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
         },
     },
     "get_snapchat_meo": {
@@ -70,6 +74,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 1 row",
             "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
             "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
         },
     },
     "get_snapchat_snap_media": {
@@ -83,6 +88,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 5 rows",
             "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
             "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
         },
     },
     "get_snapchat_identity": {
@@ -98,6 +104,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 12 rows",
             "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 13 rows",
             "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 12 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 12 rows",
         },
     },
     "get_snapchat_login_signup": {
@@ -113,6 +120,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 3 rows",
             "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 2 rows",
             "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 3 rows",
         },
     }
 }

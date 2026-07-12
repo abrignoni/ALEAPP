@@ -20,6 +20,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 12 rows",
             "samsungs20_a13": "Android 13 | com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 7 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 37 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 9 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 8 rows",
         },
     }
 }

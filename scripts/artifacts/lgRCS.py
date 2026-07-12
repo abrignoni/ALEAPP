@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.android.providers.telephony | 0 rows",
             "samsungs20_a13": "Android 13 | com.android.providers.telephony | 0 rows",
             "sharon_a14": "Android 14 | com.android.providers.telephony | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.telephony | 0 rows",
+            "userb2_a13": "Android 13 | com.android.providers.telephony | 0 rows",
         },
     }
 }

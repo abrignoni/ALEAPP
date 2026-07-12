@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 1 row",
             "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 5 rows",
             "sharon_a14": "Android 14 | com.google.android.providers.media.module | 122 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.providers.media.module | 2 rows",
         },
     },
     "get_emulatedSmeta_images": {
@@ -44,6 +46,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 2 rows",
             "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 15 rows",
             "sharon_a14": "Android 14 | com.google.android.providers.media.module | 1410 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 55 rows",
+            "userb2_a13": "Android 13 | com.google.android.providers.media.module | 4 rows",
         },
     },
     "get_emulatedSmeta_files": {
@@ -67,6 +71,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 26 rows",
             "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 133 rows",
             "sharon_a14": "Android 14 | com.google.android.providers.media.module | 1938 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 149 rows",
+            "userb2_a13": "Android 13 | com.google.android.providers.media.module | 26 rows",
         },
     },
     "get_emulatedSmeta_videos": {
@@ -90,6 +96,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.providers.media.module | 29 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 5 rows",
+            "userb2_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
         },
     },
     "get_emulatedSmeta_audio": {
@@ -113,6 +121,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 1 row",
             "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 1 row",
             "sharon_a14": "Android 14 | com.google.android.providers.media.module | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
         },
     },
     "get_emulatedSmeta_files_legacy": {
@@ -136,6 +146,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.providers.media.module | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
         },
     }
 }

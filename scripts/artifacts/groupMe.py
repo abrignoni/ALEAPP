@@ -14,6 +14,7 @@ __artifacts_v2__ = {
         "artifact_icon": "users",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.groupme.android vc 240460204 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.groupme.android vc 231500204 | 1 row",
         },
     },
     "get_groupMe_chat": {
@@ -30,6 +31,7 @@ __artifacts_v2__ = {
         "artifact_icon": "message",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.groupme.android vc 240460204 | 86 rows",
+            "russell_pixel6a_a13": "Android 13 | com.groupme.android vc 231500204 | 1 row",
         },
     }
 }

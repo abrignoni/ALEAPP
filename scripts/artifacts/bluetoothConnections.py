@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | 1 row",
             "samsungs20_a13": "Android 13 | 0 rows",
             "sharon_a14": "Android 14 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | 4 rows",
+            "userb2_a13": "Android 13 | 1 row",
         },
     },
     "get_bluetoothAdapter": {
@@ -44,6 +46,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | 14 rows",
             "samsungs20_a13": "Android 13 | 14 rows",
             "sharon_a14": "Android 14 | 14 rows",
+            "russell_pixel6a_a13": "Android 13 | 10 rows",
+            "userb2_a13": "Android 13 | 10 rows",
         },
     }
 }

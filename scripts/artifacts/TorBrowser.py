@@ -27,6 +27,7 @@ __artifacts_v2__ = {
         "artifact_icon": "bookmark",
         "sample_data": {
             "hc_pixel8pro_a16": "Android 16 | org.torproject.torbrowser vc 2016164570 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | org.torproject.torbrowser vc 2015960779 | 0 rows",
         }
     },
     "torbrowser_usageinfo": {
@@ -43,6 +44,7 @@ __artifacts_v2__ = {
         "artifact_icon": "info-circle",
         "sample_data": {
             "hc_pixel8pro_a16": "Android 16 | org.torproject.torbrowser vc 2016164570 | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | org.torproject.torbrowser vc 2015960779 | 1 row",
         }
     },
 }

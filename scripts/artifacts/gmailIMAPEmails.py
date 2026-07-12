@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 0 rows",
         },
     },
     "gmailIMAPAccounts": {
@@ -44,6 +46,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 0 rows",
         }, 
     }
 }

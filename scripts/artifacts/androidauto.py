@@ -17,6 +17,8 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.google.android.projection.gearhead vc 123642624 | 1 row",
             "samsunga53_a14": "Android 14 | com.google.android.projection.gearhead vc 156654484 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.projection.gearhead vc 124642854 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.projection.gearhead vc 97632214 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.projection.gearhead vc 132644464 | 0 rows",
         },
     }
 }

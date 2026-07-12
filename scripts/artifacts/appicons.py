@@ -15,6 +15,8 @@ __artifacts_v2__ = {
         "sample_data": {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.nexuslauncher | 0 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.nexuslauncher | 100 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.nexuslauncher | 293 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.nexuslauncher | 88 rows",
         }
     }
 }

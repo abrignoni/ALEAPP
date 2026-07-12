@@ -16,6 +16,8 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.wellbeing vc 839927 | 1 row",
             "kevin_pocox7_a15": "Android 15 | com.google.android.apps.wellbeing vc 762847 | 1 row",
             "pixel7a_a14": "Android 14 | com.google.android.apps.wellbeing vc 550467 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.wellbeing vc 495937 | 1 row",
+            "userb2_a13": "Android 13 | com.google.android.apps.wellbeing vc 668567 | 1 row",
         },
         "html_columns": ['Protobuf Parsed Data'],
     }

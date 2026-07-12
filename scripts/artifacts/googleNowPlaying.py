@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.intelligence.sense/db/history_db*', '*/com.google.android.as/databases/history_db*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "music",
+        "sample_data": {
+            "userb2_a13": "Android 13 | com.google.android.as vc 8997612 | 470 rows",
+        },
         "html_columns": ['Timestamp'],
     }
 }

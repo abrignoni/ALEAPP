@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 132 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 65 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 137 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 118 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 62 rows",
         },
     },
     "get_chromeWebVisits": {
@@ -44,6 +46,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 174 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 86 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 198 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 207 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 76 rows",
         },
     },
     "get_chromeSearchTerms": {
@@ -67,6 +71,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 39 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 18 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 18 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 37 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 16 rows",
         },
     },
     "get_chromeDownloads": {
@@ -90,6 +96,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 0 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 2 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 108 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 1 row",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 2 rows",
         },
     },
     "get_chromeKeywordSearchTerms": {
@@ -113,6 +121,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 48 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 18 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 23 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 44 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 16 rows",
         },
     }
 }

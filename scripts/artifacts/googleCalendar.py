@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.android.providers.calendar | 0 rows",
             "samsungs20_a13": "Android 13 | com.android.providers.calendar | 1 row",
             "sharon_a14": "Android 14 | com.android.providers.calendar | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.calendar | 79 rows",
+            "userb2_a13": "Android 13 | com.android.providers.calendar | 0 rows",
         },
     },
     "get_calendar_calendars": {
@@ -44,6 +46,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.android.providers.calendar | 5 rows",
             "samsungs20_a13": "Android 13 | com.android.providers.calendar | 3 rows",
             "sharon_a14": "Android 14 | com.android.providers.calendar | 4 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.calendar | 3 rows",
+            "userb2_a13": "Android 13 | com.android.providers.calendar | 1 row",
         },
     }
 }

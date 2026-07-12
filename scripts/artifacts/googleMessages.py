@@ -20,6 +20,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.apps.messaging vc 292971900 | 135 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.messaging vc 293261063 | 40 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.messaging vc 161637900 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.messaging vc 186597063 | 36 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.messaging vc 259818063 | 42 rows",
         },
         "data_views": {
             "conversation": {

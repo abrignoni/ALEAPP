@@ -21,6 +21,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.google.android.apps.maps vc 1068326445 | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.maps vc 1068347331 | 1 row",
             "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 6 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 6 rows",
         },
     },
     "get_googleMapsGmm_places": {
@@ -43,6 +45,8 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.google.android.apps.maps vc 1067620099 | 0 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.maps vc 1068347331 | 1 row",
             "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 0 rows",
         },
     }
 }

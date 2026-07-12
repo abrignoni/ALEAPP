@@ -15,6 +15,8 @@ __artifacts_v2__ = {
         "sample_data": {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.settings.intelligence vc 1000282241 | 2 rows",
             "pixel7a_a14": "Android 14 | com.google.android.settings.intelligence vc 1000230247 | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.settings.intelligence vc 1000217934 | 5 rows",
+            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 6 rows",
         },
     }
 }
