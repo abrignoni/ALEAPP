@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Google Maps text-to-speech voice guidance audio (app_tts-temp)",
         "author": "",
         "creation_date": "2023-04-27",
-        "last_update_date": "2023-04-27",
+        "last_update_date": "2026-07-12",
         "requirements": "none",
         "category": "Google Maps Voice Guidance",
         "notes": "",
@@ -44,7 +44,9 @@ def get_googlemapaudioTemp(files_found, report_folder, seeker, wrap_text):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if os.path.isdir(file_found):
+        # Some archives hold a file and a directory under the same name, so a
+        # matched path may exist only in the archive listing, never on disk.
+        if not os.path.isfile(file_found):
             continue
         file_size = os.path.getsize(file_found)
         if file_size == 0:
