@@ -465,7 +465,7 @@ def artifact_processor(func):
         else:
             data_headers, data_list, source_path = func(files_found, report_folder, seeker, wrap_text)
 
-        if not source_path:
+        if data_list and not source_path:
             logfunc("No source_path provided")
         else:
             # Report extraction-relative paths, never the examiner's local filesystem
