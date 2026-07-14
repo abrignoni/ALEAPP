@@ -31,9 +31,8 @@ __artifacts_v2__ = {
         "category": "Clipboard",
         "notes": (
             "Schema detected automatically. user_id 0 = primary user; "
-            "150 = Samsung Secure Folder. UID->package resolution needs a "
-            "text-format packages.xml (pre-Android 12; newer devices store it "
-            "as binary ABX)."
+            "150 = Samsung Secure Folder. Old-schema UIDs are resolved from "
+            "packages.xml (text XML or, on Android 12+, binary ABX)."
         ),
         # Match ClipItem.db*, not just ClipItem.db, so the -wal/-shm are
         # co-extracted — the live schema/rows can reside entirely in an
@@ -126,7 +125,8 @@ try:
 except ImportError:
     _PIL_AVAILABLE = False
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_embedded_media
+from scripts.ilapfuncs import (artifact_processor, logfunc, open_sqlite_db_readonly,
+                               check_in_embedded_media, checkabx, abxread)
 
 # ClipData type codes
 _TYPE_CODES = {1: "Text", 2: "Intent", 3: "URI", 4: "HTML/Rich Text"}
@@ -182,8 +182,10 @@ def _build_uid_map(seeker):
     """Build a {uid: package_name} map from packages.xml in the extraction.
 
     packages.xml (/data/system/packages.xml) is present in full FFS extractions.
-    The seeker searches the whole extraction, not just the Honeyboard directory.
-    Returns an empty dict when packages.xml is absent or cannot be parsed.
+    On Android 12+ it is stored as binary ABX rather than text XML, so it is
+    decoded with ALEAPP's checkabx/abxread helpers when needed. The seeker
+    searches the whole extraction, not just the Honeyboard directory. Returns an
+    empty dict when packages.xml is absent or cannot be parsed.
     """
     uid_map = {}
     if seeker is None:
@@ -193,13 +195,15 @@ def _build_uid_map(seeker):
     except (AttributeError, OSError):
         return uid_map
 
-    parse_failed = False
     for f in pkg_files:
         f = str(f)
         try:
-            tree = ET.parse(f)
-        except (ET.ParseError, OSError):
-            parse_failed = True
+            tree = abxread(f, False) if checkabx(f) else ET.parse(f)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            # packages.xml is a best-effort secondary lookup; a malformed file
+            # (partial/encrypted extraction, or an ABX the vendored decoder
+            # rejects) must not abort clipboard parsing.
+            logfunc(f"honeyboard_clipboard: could not parse {f}: {exc}")
             continue
         for pkg in tree.getroot().iter("package"):
             name = pkg.get("name", "")
@@ -212,10 +216,6 @@ def _build_uid_map(seeker):
         if uid_map:
             logfunc(f"honeyboard_clipboard: resolved {len(uid_map)} UIDs from {f}")
             break
-
-    if not uid_map and parse_failed:
-        logfunc("honeyboard_clipboard: packages.xml present but not text XML "
-                "(binary ABX on Android 12+); old-schema UIDs left unresolved.")
 
     return uid_map
 
