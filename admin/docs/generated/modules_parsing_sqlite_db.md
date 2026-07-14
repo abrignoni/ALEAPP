@@ -97,7 +97,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | PumaActivities |
 | PumaUsers |
 | RunkeeperActivities |
-| SamsungHoneyboard |
 | Todoist |
 | Twitter |
 | VerizonRDDAnalytics |
@@ -198,6 +197,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | sChats |
 | samsungSmartThings |
 | samsungWeatherClock |
+| samsung_honeyboard_clipboard |
 | scontextLog |
 | shareit |
 | siminfo |
