@@ -432,14 +432,16 @@ def get_data_list_with_media(media_header_info, data_list):
 
     return html_data_list, txt_data_list
 
-def artifact_processor(func):
+
+def artifact_processor(func, *, injected_globals=None, injected_module_name=None, injected_custom_func_name=None):
     @wraps(func)
     def wrapper(files_found, report_folder, seeker, wrap_text):
-        module_name = func.__module__.split('.')[-1]
-        func_name = func.__name__
+        module_name = injected_module_name or func.__module__.split('.')[-1]
+        func_name = injected_custom_func_name or func.__name__
         module_file_path = inspect.getfile(func)
 
-        all_artifacts_info = func.__globals__.get('__artifacts_v2__', {})
+        all_artifacts_info = (injected_globals.get('__artifacts_v2__', {}) if injected_globals
+                              else func.__globals__.get('__artifacts_v2__', {}))
         artifact_info = all_artifacts_info.get(func_name, {})
 
         artifact_name = artifact_info.get('name', func_name)
