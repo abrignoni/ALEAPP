@@ -22,6 +22,7 @@ import datetime
 import textwrap
 
 from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.html_safe import esc
 
 
 def timestampcalc(timevalue):
@@ -60,16 +61,16 @@ def get_torrentinfo(files_found, report_folder, seeker, wrap_text):
                                     for y in itemvalue:
                                         if len(y[b'path']) == 1:
                                             file = (y[b'path'][0].decode())
-                                            aggregate = aggregate + f'Files: {file} <br>'
+                                            aggregate = aggregate + f'Files: {esc(file)} <br>'
                         else:
-                            aggregate = aggregate + f'{x.decode()}: {y.decode()} <br>'
+                            aggregate = aggregate + f'{esc(x.decode())}: {esc(y.decode())} <br>'
 
                 elif key.decode() == 'pieces':
                     pass
                 elif key.decode() == 'creation date':
                     aggregate = aggregate + f'{key.decode()}: {timestampcalc(value)} <br>'
                 else:
-                    aggregate = aggregate + f'{key.decode()}: {value.decode()} <br>' #add if value is binary decode
+                    aggregate = aggregate + f'{esc(key.decode())}: {esc(value.decode())} <br>' #add if value is binary decode
 
             data_list.append((textwrap.fill(file_found.strip(), width=25),infohash,aggregate))
         except Exception as e: logfunc(str(e))

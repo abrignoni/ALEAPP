@@ -18,6 +18,7 @@ __artifacts_v2__ = {
 
 import datetime
 
+from scripts.html_safe import safe_url
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
@@ -45,7 +46,7 @@ def get_pikpakCloudlist(files_found, report_folder, seeker, wrap_text):
 
         for row in all_rows:
             local_update = datetime.datetime.fromtimestamp(int(row[3]) / 1000, datetime.timezone.utc) if row[3] else ''
-            link = f'<a href="{row[8]}" target="_blank">{row[8]}</a>'
+            link = safe_url(row[8])
             data_list.append((row[0], row[1], row[2], local_update, row[4], row[5], row[6], row[7], link))
 
     data_headers = ('Create Time', 'Modify Time', 'Delete Time', ('Local Update Time', 'datetime'), 'User ID', 'Name', 'Kind', 'URL', 'Thumbnail Link')

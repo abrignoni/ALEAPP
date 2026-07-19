@@ -31,6 +31,7 @@ __artifacts_v2__ = {
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, \
     get_sqlite_db_records, logfunc, open_sqlite_db_readonly
+from scripts.html_safe import esc
 
 @artifact_processor
 def plz_interaction(files_found, _report_folder, _seeker, _wrap_text):
@@ -70,7 +71,7 @@ def plz_interaction(files_found, _report_folder, _seeker, _wrap_text):
                     cons_link = coordinate_to_osm(record[2], record[3])
                 data_list.append((record[0], local_data[0][4], meteo_link, cons_link))
             else:
-                data_list.append(record)
+                data_list.append((record[0], record[1], esc(record[2]), esc(record[3])))
 
         return data_headers, data_list, source_path
     else:
@@ -102,8 +103,8 @@ def swissmeteo_plz(files_found, _report_folder, _seeker, _wrap_text):
     else:
         logfunc('No plz_interaction')
 
-def coordinate_to_osm(lat, lon): 
-    return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=15"
+def coordinate_to_osm(lat, lon):
+    return f"https://www.openstreetmap.org/?mlat={esc(lat)}&mlon={esc(lon)}&zoom=15"
 
 def lv03_to_osm(E, N): 
     # based on https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/master/scripts/py/wgs84_ch1903.py

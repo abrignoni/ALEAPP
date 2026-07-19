@@ -27,6 +27,7 @@ __artifacts_v2__ = {
     }
 }
 
+from scripts.html_safe import esc
 from scripts.ilapfuncs import artifact_processor
 
 
@@ -46,7 +47,7 @@ def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
 
         for x in values:
             bundleid = x.split(' ', 1)
-            url = f'<a href="https://play.google.com/store/apps/details?id={bundleid[0]}" target="_blank"><font color="blue">https://play.google.com/store/apps/details?id={bundleid[0]}</font></a>'
+            url = f'<a href="https://play.google.com/store/apps/details?id={esc(bundleid[0])}" target="_blank"><font color="blue">https://play.google.com/store/apps/details?id={esc(bundleid[0])}</font></a>'
             data_list.append((bundleid[0], url))
 
     data_headers = ('Bundle ID', 'Possible Google Play Store Link')

@@ -7,6 +7,7 @@ from scripts.ilapfuncs import (
     artifact_processor,
     open_sqlite_db_readonly
 )
+from scripts.html_safe import safe_source
 
 __artifacts_v2__ = {
     "deepseek_chat_messages": {
@@ -165,7 +166,7 @@ def deepseek_chat_messages(files_found, _report_folder, _seeker, _wrap_text):
                             table_name,
                             inserted_at_utc,
                             role,
-                            content
+                            safe_source(content)
                         ))
 
                 except Exception as e:  # pylint: disable=broad-exception-caught

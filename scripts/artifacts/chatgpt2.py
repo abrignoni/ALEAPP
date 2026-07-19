@@ -25,6 +25,7 @@ import json
 from datetime import datetime, timezone
 from collections import defaultdict
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.html_safe import safe_source
 
 @artifact_processor
 def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
@@ -121,7 +122,7 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
                 conversation_id = message['content'].get('conversation_id')
                 conversation_title = conversations.get(conversation_id, 'Unknown Conversation')
 
-                data_list.append((mdt, cdt, conversation_title, chunkdata, references, message_id, conversation_id))
+                data_list.append((mdt, cdt, conversation_title, safe_source(chunkdata), references, message_id, conversation_id))
 
     data_headers = (('Modified Time', 'datetime'), ('Creation Time', 'datetime'), 'Conversation Title', 'Content', 'Content References','Message ID','Conversation ID')
 

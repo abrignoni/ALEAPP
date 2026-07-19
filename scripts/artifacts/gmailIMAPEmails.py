@@ -57,6 +57,7 @@ import urllib.parse
 
 from scripts.ilapfuncs import open_sqlite_db_readonly, artifact_processor, convert_unix_ts_to_utc, logfunc, check_in_media
 from scripts.context import Context
+from scripts.html_safe import safe_source
 
 @artifact_processor
 def gmailIMAPEmails(files_found, _report_folder, _seeker, _wrap_text):
@@ -179,7 +180,7 @@ def gmailIMAPEmails(files_found, _report_folder, _seeker, _wrap_text):
                 attachment_cell = AttachmentPaths
             else:
                 attachment_cell = ''
-            data_list.append((row[0], row[1], row[2], tBody, hBody, row[3], row[4], row[5], row[6], row[7], row[8], row[9], attachment_cell, row[11], Context.get_relative_path(emailProviderDB)))
+            data_list.append((row[0], row[1], row[2], tBody, safe_source(hBody), row[3], row[4], row[5], row[6], row[7], row[8], row[9], attachment_cell, row[11], Context.get_relative_path(emailProviderDB)))
 
     data_headers = (('Timestamp','datetime'),'_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Recipient','Reply To','Subject Line','Mailed By','Signed by', 'Read', 'AttachmentFlag', ('Attachments', 'media'), 'Mailbox Folder', 'Source File')
     return data_headers, data_list, 'See source file(s) below:'
