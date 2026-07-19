@@ -27,6 +27,7 @@ import json
 
 from scripts.ilapfuncs import artifact_processor
 from scripts.parse3 import ParseProto
+from scripts.html_safe import esc
 
 
 @artifact_processor
@@ -38,7 +39,7 @@ def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text):
     parsedContent = str(content_json_dump).encode(encoding='UTF-8',errors='ignore')
 
     data_list = []
-    data_list.append(('<pre id=\"json\">'+str(parsedContent).replace("\\n", "<br>")+'</pre>', str(content)))
+    data_list.append(('<pre id=\"json\">'+esc(str(parsedContent)).replace("\\n", "<br>")+'</pre>', str(content)))
 
     data_headers = ('Protobuf Parsed Data', 'Protobuf Data')
     return data_headers, data_list, source_path

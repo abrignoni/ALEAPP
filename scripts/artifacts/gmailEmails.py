@@ -79,6 +79,7 @@ from datetime import datetime
 
 from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor, \
     logfunc
+from scripts.html_safe import safe_source
 
 @artifact_processor
 def gmailEmails(files_found, report_folder, seeker, wrap_text):
@@ -207,7 +208,7 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                             if attachpath.endswith(attachname):
                                 attachment = check_in_media(attachpath, name=attachname) or ''
 
-                data_list.append((timestamp,serverid,messagehtml,attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,bigTopDataDB))
+                data_list.append((timestamp,serverid,safe_source(messagehtml),attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,bigTopDataDB))
 
     data_headers = (('Timestamp','datetime'),'Email ID','Message',('Attachment','media'),'Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
     return data_headers, data_list, 'See source file(s) below:'

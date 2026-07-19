@@ -20,6 +20,7 @@ import hashlib
 import bencoding
 
 from scripts.ilapfuncs import artifact_processor
+from scripts.html_safe import esc
 
 
 @artifact_processor
@@ -64,7 +65,7 @@ def get_TorrentData(files_found, report_folder, seeker, wrap_text):
                                             filen = iivalue[0].decode()
                                         except:
                                             filen = iivalue[0]
-                            aggf = aggf + f'<tr><td>{dirr}</td><td>{filen}</td></tr>'
+                            aggf = aggf + f'<tr><td>{esc(dirr)}</td><td>{esc(filen)}</td></tr>'
                         aggf = aggf + '</table>'
 
         data_list.append((torrentname, info_hash, aggf))

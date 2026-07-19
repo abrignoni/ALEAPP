@@ -69,6 +69,7 @@ __artifacts_v2__ = {
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, \
     get_sqlite_db_records, logfunc
+from scripts.html_safe import esc
 
 @artifact_processor
 def cff_purchased_tickets(files_found, _report_folder, _seeker, _wrap_text):
@@ -207,5 +208,5 @@ def cff_travel_cards(files_found, _report_folder, _seeker, _wrap_text):
     else:
         logfunc('No Data')
 
-def coordinate_to_osm(lat, lon): 
-    return f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=15"
+def coordinate_to_osm(lat, lon):
+    return f"https://www.openstreetmap.org/?mlat={esc(lat)}&mlon={esc(lon)}&zoom=15"

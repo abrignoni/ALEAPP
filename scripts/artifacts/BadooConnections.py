@@ -18,6 +18,7 @@ __artifacts_v2__ = {
 
 import datetime
 
+from scripts.html_safe import esc
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 
@@ -39,7 +40,7 @@ def get_badoo_conn(files_found, report_folder, seeker, wrap_text):
     data_list = []
     for row in all_rows:
         sort_timestamp = datetime.datetime.fromtimestamp(int(row[4]) / 1000, datetime.timezone.utc) if row[4] else ''
-        avatar_url = '<img src="' + row[5] + '" width="100" height="100">' if row[5] else ''
+        avatar_url = '<img src="' + esc(row[5]) + '" width="100" height="100">' if row[5] else ''
         data_list.append((row[0], row[1], row[2], row[3], sort_timestamp, avatar_url, row[6]))
 
     data_headers = ('ID', 'Name', 'Gender', 'Origin', ('Sort Timestamp', 'datetime'), 'Avatar URL', 'Display Message')

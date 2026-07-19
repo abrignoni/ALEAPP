@@ -18,6 +18,7 @@ __artifacts_v2__ = {
 
 import datetime
 
+from scripts.html_safe import esc
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 
@@ -42,7 +43,7 @@ def get_puma_users(files_found, report_folder, seeker, wrap_text):
     for row in all_rows:
         dob = datetime.datetime.fromtimestamp(int(row[4]) / 1000, datetime.timezone.utc) if row[4] else ''
         work_time = row[16] / 60 if row[16] else 'N/A'
-        image = '<img src="' + row[10] + '" alt="' + row[10] + '" width="50" height="50">' if row[10] else 'N/A'
+        image = '<img src="' + esc(row[10]) + '" alt="' + esc(row[10]) + '" width="50" height="50">' if row[10] else 'N/A'
         data_list.append((row[0], row[1], row[2], row[3], dob, row[5], row[6], row[7], row[8], row[9], image, row[11], row[12], row[13], row[14], row[15], work_time))
 
     data_headers = ('ID', 'Email', 'Name', 'Gender', ('Date of Birth', 'datetime'), 'Weight', 'Height', 'Country', 'Location', 'Interests', 'Profile Image URL', 'Total Score', 'Following Count', 'Followers Count', 'Goal', 'Workout Time of Day', 'Workout Duration')

@@ -24,6 +24,7 @@ import blackboxprotobuf
 
 from html import escape
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, is_platform_windows
+from scripts.html_safe import esc
 
 is_windows = is_platform_windows()
 slash = '\\' if is_windows else '/'
@@ -133,7 +134,7 @@ def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
                     if last_data_set[0] == timestamp:  # exact duplicate, do not add
                         pass
                     else:
-                        last_data_set[0] += ',<br />' + timestamp
+                        last_data_set[0] += ',<br />' + esc(timestamp)
                 else:
                     data_list.append(last_data_set)
                     last_data_set = []
