@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_firefox_history": {
         "name": "Firefox - Web History",
@@ -105,7 +104,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_firefox_history(files_found, report_folder, seeker, wrap_text):
+def get_firefox_history(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT moz_places.last_visit_date_local, moz_places.url, moz_places.title,
@@ -125,7 +125,8 @@ def get_firefox_history(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_firefox_visits(files_found, report_folder, seeker, wrap_text):
+def get_firefox_visits(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT moz_historyvisits.visit_date, moz_places.url, moz_places.title,
@@ -148,7 +149,8 @@ def get_firefox_visits(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_firefox_bookmarks(files_found, report_folder, seeker, wrap_text):
+def get_firefox_bookmarks(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT moz_bookmarks.dateAdded, moz_bookmarks.lastModified, moz_bookmarks.title, moz_places.url,
@@ -166,7 +168,8 @@ def get_firefox_bookmarks(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_firefox_searches(files_found, report_folder, seeker, wrap_text):
+def get_firefox_searches(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT id, term FROM moz_places_metadata_search_queries ORDER BY id ASC
