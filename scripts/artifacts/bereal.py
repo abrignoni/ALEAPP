@@ -171,7 +171,7 @@ def _decode_body(raw):
     for decoder in (gzip.decompress, zlib.decompress):
         try:
             candidates.append(decoder(raw))
-        except Exception:
+        except (OSError, zlib.error, EOFError):
             pass
     try:
         candidates.append(zlib.decompress(raw, -zlib.MAX_WBITS))
@@ -389,7 +389,7 @@ def _media_ref(path, label):
         return ""
     try:
         return check_in_media(path, name=label) or ""
-    except Exception as ex:
+    except OSError as ex:
         logfunc(f"BeReal: unable to check in media {path}: {ex}")
         return ""
 
@@ -649,7 +649,8 @@ def _realmoji_fields(obj):
 
 
 @artifact_processor
-def bereal_device_user(files_found, report_folder, seeker, wrap_text):
+def bereal_device_user(context):
+    files_found = context.get_files_found()
     preferences = _preference_identifiers(files_found)
     by_url, _ = _media_index(files_found)
     rows, used, candidates = [], [], []
@@ -679,7 +680,8 @@ def bereal_device_user(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def bereal_friends(files_found, report_folder, seeker, wrap_text):
+def bereal_friends(context):
+    files_found = context.get_files_found()
     by_url, _ = _media_index(files_found)
     rows, used = [], []
     for parsed, meta, sources in _json_sources(files_found):
@@ -702,7 +704,8 @@ def bereal_friends(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def bereal_posts(files_found, report_folder, seeker, wrap_text):
+def bereal_posts(context):
+    files_found = context.get_files_found()
     by_url, _ = _media_index(files_found)
     bts_index = _own_bts_video_index(files_found)
     rows, used = [], []
@@ -724,7 +727,7 @@ def bereal_posts(files_found, report_folder, seeker, wrap_text):
                      meta.get("url", "")))
         used.extend(sources)
         used.extend((front_local, back_local, video_local))
-    headers = ("Captured", "Posted/Updated", "Post ID", "Author", "Authorship Basis", "Caption",
+    headers = (("Captured", "datetime"), ("Posted/Updated", "datetime"), "Post ID", "Author", "Authorship Basis", "Caption",
                "Front Camera URL", ("Front Camera Media", "media"),
                "Rear Camera URL", ("Rear Camera Media", "media"),
                "Video (BTS) URL", ("Video", "media"), "Source Endpoint")
@@ -732,7 +735,8 @@ def bereal_posts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def bereal_profile_pictures(files_found, report_folder, seeker, wrap_text):
+def bereal_profile_pictures(context):
+    files_found = context.get_files_found()
     _, entries = _media_index(files_found)
     profiles = {}
     for parsed, meta, _ in _json_sources(files_found):
@@ -783,12 +787,13 @@ def _iter_comment_groups(files_found):
 
 
 @artifact_processor
-def bereal_comments(files_found, report_folder, seeker, wrap_text):
+def bereal_comments(context):
+    files_found = context.get_files_found()
     by_url, _ = _media_index(files_found)
     rows, used = [], []
     # Comments embedded directly on a recovered post (BeReal's normal shape: the post
     # object's own "comments" array).
-    for obj, author_hint, ownership, meta, sources in _iter_posts(files_found):
+    for obj, _, _, meta, sources in _iter_posts(files_found):
         post_id = _first(obj, "id", "postId", "post_id", "momentId", "moment_id") or ""
         comments = obj.get("comments")
         if not isinstance(comments, list):
@@ -816,17 +821,18 @@ def bereal_comments(files_found, report_folder, seeker, wrap_text):
         rows.append((created, comment_id, post_id, username or uid, text, picture, media, meta.get("url", "")))
         used.extend(sources)
         used.append(local)
-    headers = ("Created", "Comment ID", "Post ID", "Author", "Comment",
+    headers = (("Created", "datetime"), "Comment ID", "Post ID", "Author", "Comment",
                "Author Profile Picture URL", ("Author Profile Picture", "media"), "Source Endpoint")
     return headers, _dedupe(rows), _source_path(used)
 
 
 @artifact_processor
-def bereal_realmojis(files_found, report_folder, seeker, wrap_text):
+def bereal_realmojis(context):
+    files_found = context.get_files_found()
     by_url, _ = _media_index(files_found)
     rows, used = [], []
     # RealMojis are embedded directly on the post object's own "realMojis" array.
-    for obj, author_hint, ownership, meta, sources in _iter_posts(files_found):
+    for obj, _, _, meta, sources in _iter_posts(files_found):
         post_id = _first(obj, "id", "postId", "post_id", "momentId", "moment_id") or ""
         reactions = obj.get("realMojis")
         if not isinstance(reactions, list):
@@ -834,7 +840,7 @@ def bereal_realmojis(files_found, report_folder, seeker, wrap_text):
         for reaction_obj in reactions:
             if not isinstance(reaction_obj, dict):
                 continue
-            realmoji_id, reaction, media_url, created, is_instant = _realmoji_fields(reaction_obj)
+            _, reaction, media_url, created, is_instant = _realmoji_fields(reaction_obj)
             if not (reaction or media_url):
                 continue
             uid, username, _, author_picture = _user_fields(reaction_obj)
@@ -846,7 +852,7 @@ def bereal_realmojis(files_found, report_folder, seeker, wrap_text):
                          media_url, media, author_picture, author_media, meta.get("url", "")))
             used.extend(sources)
             used.extend((local, author_local))
-    headers = ("Created", "Post ID", "Author", "Reaction", "RealMoji Type",
+    headers = (("Created", "datetime"), "Post ID", "Author", "Reaction", "RealMoji Type",
                "Reaction Media URL", ("RealMoji Media", "media"),
                "Author Profile Picture URL", ("Author Profile Picture", "media"), "Source Endpoint")
     return headers, _dedupe(rows), _source_path(used)
