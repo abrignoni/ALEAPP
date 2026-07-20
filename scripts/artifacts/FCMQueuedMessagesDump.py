@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_fcm_dump": {
         "name": "FCM Dump",
@@ -173,7 +173,8 @@ def _load_packages(files_found):
 
 
 @artifact_processor
-def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for package, rows in package_tables.items():
@@ -184,7 +185,8 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_dump_verizon(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump_verizon(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.verizon.messaging.vzmsgs', []):
@@ -200,7 +202,8 @@ def get_fcm_dump_verizon(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_dump_tiktok(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump_tiktok(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.zhiliaoapp.musically', []):
@@ -217,7 +220,8 @@ def get_fcm_dump_tiktok(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_dump_instagram(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump_instagram(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.instagram.android', []):
@@ -241,7 +245,8 @@ def get_fcm_dump_instagram(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_dump_gqsb(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump_gqsb(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.google.android.googlequicksearchbox', []):

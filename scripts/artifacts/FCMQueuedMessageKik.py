@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "fcm_kik": {
         "name": "FCM-KIK Notifications",
@@ -81,7 +80,8 @@ from scripts.ilapfuncs import artifact_processor
 
 
 @artifact_processor
-def fcm_kik(files_found, report_folder, seeker, wrap_text):
+def fcm_kik(context):
+    files_found = context.get_files_found()
     # we only need the input data dirs not every matching file
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     rows = []
@@ -107,7 +107,8 @@ def fcm_kik(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def fcm_kik_blanks(files_found, report_folder, seeker, wrap_text):
+def fcm_kik_blanks(context):
+    files_found = context.get_files_found()
     # we only need the input data dirs not every matching file
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     rows = []

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 """
 Copyright 2022, CCL Forensics
 
@@ -80,7 +79,8 @@ def _annotation(kv):
 
 
 @artifact_processor
-def get_fcm_jungrammer(files_found, report_folder, seeker, wrap_text):
+def get_fcm_jungrammer(context):
+    files_found = context.get_files_found()
     in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)
     source = " ".join(str(x) for x in in_dirs)
     conversations = {}  # conv_key -> {package, from_token, parties: [], messages: [(ts, type, text)]}
