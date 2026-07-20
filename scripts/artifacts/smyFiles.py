@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_smyFiles": {
         "name": "My Files - Download History",
@@ -76,7 +76,8 @@ def _query(source_path, sql):
 
 
 @artifact_processor
-def get_smyFiles(files_found, report_folder, seeker, wrap_text):
+def get_smyFiles(context):
+    files_found = context.get_files_found()
     source_path = _myfiles_db(files_found)
     rows = _query(source_path, '''
         select mDate, mName, mFullPath, mIsHidden, mTrashed, _source, _description, _from_s_browser
@@ -88,7 +89,8 @@ def get_smyFiles(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_smyFiles_legacy(files_found, report_folder, seeker, wrap_text):
+def get_smyFiles_legacy(context):
+    files_found = context.get_files_found()
     source_path = _myfiles_db(files_found)
     rows = _query(source_path, '''
         select date, name, size, _data, _source, _description, _from_s_browser
@@ -100,7 +102,8 @@ def get_smyFiles_legacy(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_smyFiles_recent(files_found, report_folder, seeker, wrap_text):
+def get_smyFiles_recent(context):
+    files_found = context.get_files_found()
     source_path = _myfiles_db(files_found)
     rows = _query(source_path, '''
         select mDate, mName, mFullPath, mIsHidden, mTrashed, _source, _description, _from_s_browser

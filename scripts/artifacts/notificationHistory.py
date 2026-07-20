@@ -1,4 +1,4 @@
-# pylint: disable=E1101,W0613,W0718
+# pylint: disable=E1101,W0718
 __artifacts_v2__ = {
     "get_notificationHistory": {
         "name": "Android Notification History",
@@ -112,7 +112,8 @@ def _xml_root(file_found, multi_root):
 
 
 @artifact_processor
-def get_notificationHistory_status(files_found, report_folder, seeker, wrap_text):
+def get_notificationHistory_status(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -133,7 +134,8 @@ def get_notificationHistory_status(files_found, report_folder, seeker, wrap_text
 
 
 @artifact_processor
-def get_notificationHistory_snoozed(files_found, report_folder, seeker, wrap_text):
+def get_notificationHistory_snoozed(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -154,7 +156,8 @@ def get_notificationHistory_snoozed(files_found, report_folder, seeker, wrap_tex
 
 
 @artifact_processor
-def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
+def get_notificationHistory(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     fields = ['uid', 'user_id', 'package_index', 'channel_name', 'channel_id',

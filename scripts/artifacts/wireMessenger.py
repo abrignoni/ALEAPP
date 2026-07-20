@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_wire_profile": {
         "name": "Wire User Profile",
@@ -142,7 +141,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_wire_profile(files_found, report_folder, seeker, wrap_text):
+def get_wire_profile(context):
+    files_found = context.get_files_found()
     source_path = _user_db(files_found)
     rows = _run(source_path, '''
         SELECT Users._id, Users.name, Users.email, Users.phone,
@@ -172,7 +172,8 @@ def get_wire_profile(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_wire_contacts(files_found, report_folder, seeker, wrap_text):
+def get_wire_contacts(context):
+    files_found = context.get_files_found()
     source_path = _user_db(files_found)
     rows = _run(source_path, '''
         SELECT Users._id, Users.name, Users.handle, Users.connection,
@@ -186,7 +187,8 @@ def get_wire_contacts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_wire_messages(files_found, report_folder, seeker, wrap_text):
+def get_wire_messages(context):
+    files_found = context.get_files_found()
     source_path = _user_db(files_found)
     data_list = []
     for r in _run(source_path, MESSAGES_SQL):

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_roles": {
         "name": "roles",
@@ -52,7 +51,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_roles(files_found, report_folder, seeker, wrap_text):
+def get_roles(context):
+    files_found = context.get_files_found()
 
     slash = '\\' if is_platform_windows() else '/'
     data_list = []

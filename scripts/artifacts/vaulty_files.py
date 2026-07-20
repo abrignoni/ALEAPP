@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_vaulty_files": {
         "name": "vaulty_files",
@@ -21,7 +20,8 @@ from scripts.ilapfuncs import artifact_processor, convert_human_ts_to_utc
 
 
 @artifact_processor
-def get_vaulty_files(files_found, report_folder, seeker, wrap_text):
+def get_vaulty_files(context):
+    files_found = context.get_files_found()
 
     # Media database
     db_filepath = str(files_found[0])

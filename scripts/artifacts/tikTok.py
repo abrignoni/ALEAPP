@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_tikTok": {
         "name": "TikTok - Messages",
@@ -79,7 +78,8 @@ def _tiktok_dbs(files_found):
 
 
 @artifact_processor
-def get_tikTok(files_found, report_folder, seeker, wrap_text):
+def get_tikTok(context):
+    files_found = context.get_files_found()
     data_list = []
     maindb, attachdb = _tiktok_dbs(files_found)
     source_path = maindb
@@ -126,7 +126,8 @@ def get_tikTok(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_tikTok_contacts(files_found, report_folder, seeker, wrap_text):
+def get_tikTok_contacts(context):
+    files_found = context.get_files_found()
     data_list = []
     maindb, attachdb = _tiktok_dbs(files_found)
     source_path = maindb

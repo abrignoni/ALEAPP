@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_smyFiles2": {
         "name": "My Files - Download History (FileInfo)",
@@ -82,7 +81,8 @@ def _rows(db_path, sql):
 
 
 @artifact_processor
-def get_smyFiles2(files_found, report_folder, seeker, wrap_text):
+def get_smyFiles2(context):
+    files_found = context.get_files_found()
     db_path = _db_path(files_found)
     rows = _rows(db_path, '''
         SELECT date_modified, name, path, is_hidden, is_trashed, _source, _description
@@ -95,7 +95,8 @@ def get_smyFiles2(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_smyFiles2_gdrive(files_found, report_folder, seeker, wrap_text):
+def get_smyFiles2_gdrive(context):
+    files_found = context.get_files_found()
     cache = [str(f) for f in files_found if '/cache/' in str(f).replace('\\', '/')]
     cache_by_name = {os.path.basename(f): f for f in cache}
     cache_by_stem = {os.path.splitext(os.path.basename(f))[0]: f for f in cache}

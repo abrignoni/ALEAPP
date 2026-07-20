@@ -1,4 +1,4 @@
-# pylint: disable=E1121,W0613,W0718
+# pylint: disable=E1121,W0718
 __artifacts_v2__ = {
     "speedtest_tests": {
         "name": "Speedtest Test Results",
@@ -48,7 +48,8 @@ from scripts.ilapfuncs import open_sqlite_db_readonly, logfunc, artifact_process
 import json
 
 @artifact_processor
-def speedtest_tests(files_found, report_folder, seeker, wrap_text):
+def speedtest_tests(context):
+    files_found = context.get_files_found()
     file_path = files_found[0]
     headers = [('Timestamp', 'datetime'), 'Connection type', 'SSID', 'Latitude', 'Longitude', 'External IP', 'Internal IP', 'Download speed (Kbps)', 'Upload speed (Kbps)']
 
@@ -73,7 +74,8 @@ def speedtest_tests(files_found, report_folder, seeker, wrap_text):
     return headers, timestamped_result, file_path
 
 @artifact_processor
-def speedtest_reports_location(files_found, report_folder, seeker, wrap_text):
+def speedtest_reports_location(context):
+    files_found = context.get_files_found()
     file_path = files_found[0]
     headers = [('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Accuracy (meters)']
 
@@ -107,7 +109,8 @@ def speedtest_reports_location(files_found, report_folder, seeker, wrap_text):
     return headers, reports, file_path
 
 @artifact_processor
-def speedtest_reports_wifi(files_found, report_folder, seeker, wrap_text):
+def speedtest_reports_wifi(context):
+    files_found = context.get_files_found()
     file_path = files_found[0]
     headers = [('Timestamp', 'datetime'), 'BSSID', 'SSID', 'Signal Strength']
     results = []

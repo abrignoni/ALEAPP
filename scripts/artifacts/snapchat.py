@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_snapchat_feeds": {
         "name": "Snapchat - Feeds",
@@ -198,7 +198,8 @@ def _decrypt_meo_code(hashed):
 
 
 @artifact_processor
-def get_snapchat_feeds(files_found, report_folder, seeker, wrap_text):
+def get_snapchat_feeds(context):
+    files_found = context.get_files_found()
     source_path = _find(files_found, 'main.db', 'tcspahn.db')
     rows = _rows(source_path, '''
         SELECT lastInteractionTimestamp, key, displayInteractionType, lastReadTimestamp, lastReader,
@@ -213,7 +214,8 @@ def get_snapchat_feeds(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_snapchat_friends(files_found, report_folder, seeker, wrap_text):
+def get_snapchat_friends(context):
+    files_found = context.get_files_found()
     source_path = _find(files_found, 'main.db', 'tcspahn.db')
     rows = _rows(source_path, '''
         SELECT addedTimestamp, username, userId, displayName, phone, birthday
@@ -226,7 +228,8 @@ def get_snapchat_friends(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_snapchat_messages(files_found, report_folder, seeker, wrap_text):
+def get_snapchat_messages(context):
+    files_found = context.get_files_found()
     source_path = _find(files_found, 'main.db', 'tcspahn.db')
     rows = _rows(source_path, '''
         SELECT timestamp, seenTimestamp, senderId, username, displayName, type, content
@@ -240,7 +243,8 @@ def get_snapchat_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_snapchat_memories(files_found, report_folder, seeker, wrap_text):
+def get_snapchat_memories(context):
+    files_found = context.get_files_found()
     source_path = _find(files_found, 'memories.db')
     rows = _rows(source_path, '''
         SELECT create_time, _id, snap_ids, CASE is_private WHEN 1 THEN 'YES' ELSE 'NO' END,
@@ -253,7 +257,8 @@ def get_snapchat_memories(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_snapchat_meo(files_found, report_folder, seeker, wrap_text):
+def get_snapchat_meo(context):
+    files_found = context.get_files_found()
     source_path = _find(files_found, 'memories.db')
     rows = _rows(source_path,
                  'SELECT user_id, hashed_passcode, master_key, master_key_iv FROM memories_meo_confidential')
@@ -263,7 +268,8 @@ def get_snapchat_meo(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_snapchat_snap_media(files_found, report_folder, seeker, wrap_text):
+def get_snapchat_snap_media(context):
+    files_found = context.get_files_found()
     source_path = _find(files_found, 'memories.db')
     rows = _rows(source_path, '''
         SELECT create_time, memories_snap._id, media_id, memories_entry_id, time_zone_id, format,
@@ -305,12 +311,14 @@ def _parse_xml_rows(xml_file):
 
 
 @artifact_processor
-def get_snapchat_identity(files_found, report_folder, seeker, wrap_text):
+def get_snapchat_identity(context):
+    files_found = context.get_files_found()
     source_path = _find(files_found, 'identity_persistent_store.xml')
     return ('Key', 'Value'), _parse_xml_rows(source_path), source_path
 
 
 @artifact_processor
-def get_snapchat_login_signup(files_found, report_folder, seeker, wrap_text):
+def get_snapchat_login_signup(context):
+    files_found = context.get_files_found()
     source_path = _find(files_found, 'LoginSignupStore.xml')
     return ('Key', 'Value'), _parse_xml_rows(source_path), source_path

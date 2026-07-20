@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_smyfilesRecents": {
         "name": "My Files - Recent Files",
@@ -62,7 +62,8 @@ def _myfiles_db(files_found):
 
 
 @artifact_processor
-def get_smyfilesRecents(files_found, report_folder, seeker, wrap_text):
+def get_smyfilesRecents(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _myfiles_db(files_found)
     if source_path:
@@ -86,7 +87,8 @@ def get_smyfilesRecents(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_smyfilesRecents_fileinfo(files_found, report_folder, seeker, wrap_text):
+def get_smyfilesRecents_fileinfo(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _myfiles_db(files_found)
     if source_path:

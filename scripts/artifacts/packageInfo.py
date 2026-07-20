@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_package_info": {
         "name": "package_info",
@@ -66,7 +65,8 @@ def ReadUnixTimeMs(unix_time_ms):  # Unix timestamp is time epoch beginning 1970
 
 
 @artifact_processor
-def get_package_info(files_found, report_folder, seeker, wrap_text):
+def get_package_info(context):
+    files_found = context.get_files_found()
     packages = []
     source_path = ''
     for file_found in files_found:

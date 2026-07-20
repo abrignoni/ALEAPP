@@ -72,7 +72,8 @@ from scripts.ilapfuncs import artifact_processor, get_file_path, \
 from scripts.html_safe import esc
 
 @artifact_processor
-def cff_purchased_tickets(files_found, _report_folder, _seeker, _wrap_text):
+def cff_purchased_tickets(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "SbbMobile.db")
 
     if source_path:
@@ -102,7 +103,8 @@ def cff_purchased_tickets(files_found, _report_folder, _seeker, _wrap_text):
         logfunc('No Data')
 
 @artifact_processor
-def cff_searched_places(files_found, _report_folder, _seeker, _wrap_text):
+def cff_searched_places(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "SbbMobile.db")
     data_list = []
 
@@ -140,7 +142,8 @@ def cff_searched_places(files_found, _report_folder, _seeker, _wrap_text):
         logfunc('No Data')
 
 @artifact_processor
-def cff_search_history(files_found, _report_folder, _seeker, _wrap_text):
+def cff_search_history(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "SbbMobile.db")
     data_list = []
 
@@ -183,7 +186,8 @@ def cff_search_history(files_found, _report_folder, _seeker, _wrap_text):
         logfunc('No Data')
 
 @artifact_processor
-def cff_travel_cards(files_found, _report_folder, _seeker, _wrap_text):
+def cff_travel_cards(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "SbbMobile.db")
     data_list = []
 

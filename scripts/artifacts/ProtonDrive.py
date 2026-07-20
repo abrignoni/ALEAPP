@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "protondrive_useraccount": {
         "name": "Proton Drive - User Account",
@@ -33,7 +32,8 @@ from pathlib import Path
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
 @artifact_processor
-def protondrive_useraccount(files_found, report_folder, seeker, wrap_text):
+def protondrive_useraccount(context):
+    files_found = context.get_files_found()
     data_list = []
     
     def is_sqlite_db(path):
@@ -85,7 +85,8 @@ def protondrive_useraccount(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def protondrive_fileinfo(files_found, report_folder, seeker, wrap_text):
+def protondrive_fileinfo(context):
+    files_found = context.get_files_found()
 
     data_list = []
     

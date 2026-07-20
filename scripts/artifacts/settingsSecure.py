@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_settingsSecure": {
         "name": "settingsSecure",
@@ -66,7 +65,8 @@ def _parse_root(file_found):
 
 
 @artifact_processor
-def get_settingsSecure(files_found, report_folder, seeker, wrap_text):
+def get_settingsSecure(context):
+    files_found = context.get_files_found()
 
     slash = '\\' if is_platform_windows() else '/'
     data_list = []

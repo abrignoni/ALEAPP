@@ -34,7 +34,8 @@ from scripts.ilapfuncs import artifact_processor, get_file_path, \
 from scripts.html_safe import esc
 
 @artifact_processor
-def plz_interaction(files_found, _report_folder, _seeker, _wrap_text):
+def plz_interaction(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
     data_list = []
     cursor = None
@@ -78,7 +79,8 @@ def plz_interaction(files_found, _report_folder, _seeker, _wrap_text):
         logfunc('No Swissmeteo')
 
 @artifact_processor
-def swissmeteo_plz(files_found, _report_folder, _seeker, _wrap_text):
+def swissmeteo_plz(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
     data_list = []
 

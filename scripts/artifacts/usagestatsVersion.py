@@ -34,7 +34,8 @@ from scripts.ilapfuncs import artifact_processor, \
 
 
 @artifact_processor
-def usagestatsVersion(files_found, _report_folder, _seeker, _wrap_text):
+def usagestatsVersion(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "version")
     data_list = []
 

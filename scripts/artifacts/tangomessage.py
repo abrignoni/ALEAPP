@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0631,W0702,W0718
+# pylint: disable=W0631,W0702,W0718
 __artifacts_v2__ = {
     "get_tangomessage": {
         "name": "tangomessage",
@@ -33,7 +33,8 @@ def _decodeMessage(wrapper, message):
 
 
 @artifact_processor
-def get_tangomessage(files_found, report_folder, seeker, wrap_text):
+def get_tangomessage(context):
+    files_found = context.get_files_found()
 
     for file_found in files_found:
         file_found = str(file_found)

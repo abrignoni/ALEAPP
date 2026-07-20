@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W1309
+# pylint: disable=W1309
 __artifacts_v2__ = {
     "get_run_user": {
         "name": "RunkeeperUser",
@@ -47,7 +47,8 @@ def _s_to_utc(value):
 
 
 @artifact_processor
-def get_run_user(files_found, report_folder, seeker, wrap_text):
+def get_run_user(context):
+    files_found = context.get_files_found()
     # Dictionary to store the user information
     user_info = {}
     # Attributes to be extracted from the xml file

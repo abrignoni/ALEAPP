@@ -1,4 +1,4 @@
-# pylint: disable=E1101,W0613
+# pylint: disable=E1101
 __artifacts_v2__ = {
     "get_vaulty_info": {
         "name": "vaulty_info",
@@ -34,7 +34,8 @@ def _brute_force(target):
 
 
 @artifact_processor
-def get_vaulty_info(files_found, report_folder, seeker, wrap_text):
+def get_vaulty_info(context):
+    files_found = context.get_files_found()
 
     source_path = str(files_found[0])
     with open(source_path, "r", encoding='utf-8', errors='replace') as file:

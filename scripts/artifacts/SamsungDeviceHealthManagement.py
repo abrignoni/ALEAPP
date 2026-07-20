@@ -90,7 +90,8 @@ __artifacts_v2__ = {
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
 
 @artifact_processor
-def sdhms_config_reloads(files_found, _report_folder, _seeker, _wrap_text):
+def sdhms_config_reloads(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
 
     query = ('''
@@ -124,7 +125,8 @@ def sdhms_config_reloads(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def sdhms_netstat(files_found, _report_folder, _seeker, _wrap_text):
+def sdhms_netstat(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
 
     query = ('''
@@ -164,7 +166,8 @@ def sdhms_netstat(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def sdhms_temperature(files_found, _report_folder, _seeker, _wrap_text):
+def sdhms_temperature(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
 
     query = ('''
@@ -218,7 +221,8 @@ def sdhms_temperature(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def sdhms_cpustats(files_found, _report_folder, _seeker, _wrap_text):
+def sdhms_cpustats(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
 
     query = ('''

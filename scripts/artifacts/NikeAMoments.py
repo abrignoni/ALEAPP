@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_nike_activMoments": {
         "name": "Nike - Activity Moments",
@@ -70,7 +69,8 @@ def _moment_desc(mtype, mvalue):
 
 
 @artifact_processor
-def get_nike_activMoments(files_found, report_folder, seeker, wrap_text):
+def get_nike_activMoments(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     data_list = []
     if source_path:

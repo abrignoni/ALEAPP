@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_siminfo": {
         "name": "siminfo",
@@ -43,7 +42,8 @@ FALLBACK_SQL = '''
 
 
 @artifact_processor
-def get_siminfo(files_found, report_folder, seeker, wrap_text):
+def get_siminfo(context):
+    files_found = context.get_files_found()
     data_list = []
     source_paths = []
     for file_found in files_found:

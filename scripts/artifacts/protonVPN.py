@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_protonvpn_device_info": {
         "name": "ProtonVPN - Device Info",
@@ -68,7 +68,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_protonvpn_device_info(files_found, report_folder, seeker, wrap_text):
+def get_protonvpn_device_info(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -108,7 +109,8 @@ def get_protonvpn_device_info(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_protonvpn_connection_history(files_found, report_folder, seeker, wrap_text):
+def get_protonvpn_connection_history(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -139,7 +141,8 @@ def get_protonvpn_connection_history(files_found, report_folder, seeker, wrap_te
 
 
 @artifact_processor
-def get_protonvpn_user_info(files_found, report_folder, seeker, wrap_text):
+def get_protonvpn_user_info(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

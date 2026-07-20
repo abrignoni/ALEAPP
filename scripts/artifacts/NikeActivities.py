@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_nike_activities": {
         "name": "Nike - Activities",
@@ -58,7 +57,8 @@ def _q(cursor, sql, params):
 
 
 @artifact_processor
-def get_nike_activities(files_found, report_folder, seeker, wrap_text):
+def get_nike_activities(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     data_list = []
     if source_path:

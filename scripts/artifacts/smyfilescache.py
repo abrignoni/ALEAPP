@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_smyfilescache": {
         "name": "My Files Cache",
@@ -46,7 +45,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_smyfilescache(files_found, report_folder, seeker, wrap_text):
+def get_smyfilescache(context):
+    files_found = context.get_files_found()
     jpg_by_name = {os.path.basename(str(f)): str(f) for f in files_found if str(f).endswith('.jpg')}
 
     db_path = ''
