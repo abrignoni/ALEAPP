@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_garmin_polyline": {
         "name": "Garmin - Polyline Activities",
@@ -46,7 +46,8 @@ def _db(files_found):
 
 
 @artifact_processor
-def get_garmin_polyline(files_found, report_folder, seeker, wrap_text):
+def get_garmin_polyline(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     data_list = []
     if source_path:

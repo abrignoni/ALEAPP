@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_garmin_json": {
         "name": "GarminJson",
@@ -41,7 +40,8 @@ def _pretty_json(raw):
 
 
 @artifact_processor
-def get_garmin_json(files_found, report_folder, seeker, wrap_text):
+def get_garmin_json(context):
+    files_found = context.get_files_found()
     logfunc("Processing data for Garmin JSON")
     files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm') and not str(x).endswith('journal')]
     source_path = str(files_found[0])

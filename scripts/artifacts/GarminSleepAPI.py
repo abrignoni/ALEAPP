@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_sleep_api": {
         "name": "GarminSleepAPI",
@@ -36,7 +35,8 @@ def _ms_to_time(value):
 
 
 @artifact_processor
-def get_sleep_api(files_found, report_folder, seeker, wrap_text):
+def get_sleep_api(context):
+    files_found = context.get_files_found()
     logfunc("Processing data for Garmin Sleep API")
     source_path = str(files_found[0])
     logfunc("Processing file: " + source_path)

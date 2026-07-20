@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_garmin_notifications": {
         "name": "Garmin - Notifications",
@@ -28,7 +27,8 @@ from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readon
 
 
 @artifact_processor
-def get_garmin_notifications(files_found, report_folder, seeker, wrap_text):
+def get_garmin_notifications(context):
+    files_found = context.get_files_found()
     logfunc("Processing data for Garmin Notifications")
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
