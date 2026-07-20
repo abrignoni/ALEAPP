@@ -1,4 +1,4 @@
-# pylint: disable=E1121,W0613,W0718
+# pylint: disable=E1121,W0718
 __artifacts_v2__ = {
     "extract_zepplife_heartrate": {
         "name": "Zepp Life - Heart Rate",
@@ -19,7 +19,8 @@ from datetime import datetime, timezone
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 @artifact_processor
-def extract_zepplife_heartrate(files_found, report_folder, seeker, wrap_text):
+def extract_zepplife_heartrate(context):
+    files_found = context.get_files_found()
     data_list = []
 
     origin = None

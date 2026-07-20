@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_skype_call_logs": {
         "name": "Skype - Call Logs",
@@ -65,7 +65,8 @@ def _skype_db(files_found):
 
 
 @artifact_processor
-def get_skype_call_logs(files_found, report_folder, seeker, wrap_text):
+def get_skype_call_logs(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _skype_db(files_found) or ''
     if source_path:
@@ -114,7 +115,8 @@ def get_skype_call_logs(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_skype_messages(files_found, report_folder, seeker, wrap_text):
+def get_skype_messages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _skype_db(files_found) or ''
     if source_path:
@@ -168,7 +170,8 @@ def get_skype_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_skype_contacts(files_found, report_folder, seeker, wrap_text):
+def get_skype_contacts(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _skype_db(files_found) or ''
     if source_path:

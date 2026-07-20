@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Oruxmaps": {
         "name": "Oruxmaps - POI",
@@ -40,7 +39,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
+def get_Oruxmaps(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
@@ -57,7 +57,8 @@ def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Oruxmaps_tracks(files_found, report_folder, seeker, wrap_text):
+def get_Oruxmaps_tracks(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()

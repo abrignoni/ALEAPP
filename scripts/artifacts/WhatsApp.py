@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_whatsapp_contacts": {
         "name": "WhatsApp - Contacts",
@@ -264,7 +263,8 @@ def _run(cursor, sql):
 
 
 @artifact_processor
-def get_whatsapp_contacts(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_contacts(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'wa.db')
     data_list = []
     if source:
@@ -292,7 +292,8 @@ def get_whatsapp_contacts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_call_logs(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_call_logs(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -324,7 +325,8 @@ def get_whatsapp_call_logs(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_messages(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_messages(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -358,7 +360,8 @@ def get_whatsapp_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_one_to_one_messages(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_one_to_one_messages(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -403,7 +406,8 @@ def get_whatsapp_one_to_one_messages(files_found, report_folder, seeker, wrap_te
 
 
 @artifact_processor
-def get_whatsapp_group_messages(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_group_messages(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -449,7 +453,8 @@ def get_whatsapp_group_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_group_details(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_group_details(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -488,7 +493,8 @@ def get_whatsapp_group_details(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_user_profile(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_user_profile(context):
+    files_found = context.get_files_found()
     keys = ('push_name', 'my_current_status', 'version', 'ph', 'cc')
     data = {k: '' for k in keys}
     source = ''

@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_smyfiles_OpHistory": {
         "name": "My Files Operation History",
@@ -66,7 +66,8 @@ def get_user(file_found):
 
 
 @artifact_processor
-def get_smyfiles_OpHistory(files_found, report_folder, seeker, wrap_text):
+def get_smyfiles_OpHistory(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     Androidversion = aG.versionf

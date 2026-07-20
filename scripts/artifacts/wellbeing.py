@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_wellbeing": {
         "name": "Digital Wellbeing - Events",
@@ -62,7 +61,8 @@ def _app_usage_db(files_found):
 
 
 @artifact_processor
-def get_wellbeing(files_found, report_folder, seeker, wrap_text):
+def get_wellbeing(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _app_usage_db(files_found)
     if source_path:
@@ -96,7 +96,8 @@ def get_wellbeing(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_wellbeing_url(files_found, report_folder, seeker, wrap_text):
+def get_wellbeing_url(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _app_usage_db(files_found)
     if source_path:

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_teleguard": {
         "name": "Teleguard - Messages",
@@ -122,7 +121,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_teleguard(files_found, report_folder, seeker, wrap_text):
+def get_teleguard(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT datetime(createDate/1000,'unixepoch'), datetime(userTime/1000,'unixepoch'),
@@ -177,7 +177,8 @@ def get_teleguard(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teleguard_posts(files_found, report_folder, seeker, wrap_text):
+def get_teleguard_posts(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT datetime(createDate/1000,'unixepoch'), channelId, header, content, type, localStatus,
@@ -191,7 +192,8 @@ def get_teleguard_posts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teleguard_contacts(files_found, report_folder, seeker, wrap_text):
+def get_teleguard_contacts(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT datetime(lastActivityTime/1000,'unixepoch'), serverId, alias, type, color, avatar, options,
@@ -212,7 +214,8 @@ def get_teleguard_contacts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teleguard_channels(files_found, report_folder, seeker, wrap_text):
+def get_teleguard_channels(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, 'SELECT * FROM channels')
     data_headers = ('ID', 'Alias', 'Description', 'Category', 'Color', 'Avatar ID', 'Subscribers Count',

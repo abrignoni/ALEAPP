@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_Xender": {
         "name": "Xender - Contacts",
@@ -42,7 +42,8 @@ def _xender_db(files_found):
 
 
 @artifact_processor
-def get_Xender(files_found, report_folder, seeker, wrap_text):
+def get_Xender(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _xender_db(files_found)
     if source_path:
@@ -63,7 +64,8 @@ def get_Xender(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Xender_messages(files_found, report_folder, seeker, wrap_text):
+def get_Xender_messages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _xender_db(files_found)
     if source_path:

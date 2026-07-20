@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_permissions_trees": {
         "name": "Permission Trees",
@@ -116,7 +115,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_permissions_trees(files_found, report_folder, seeker, wrap_text):
+def get_permissions_trees(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for root, file_found in _iter_roots(files_found):
@@ -131,7 +131,8 @@ def get_permissions_trees(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_permissions_list(files_found, report_folder, seeker, wrap_text):
+def get_permissions_list(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for root, file_found in _iter_roots(files_found):
@@ -146,7 +147,8 @@ def get_permissions_list(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_permissions_packages(files_found, report_folder, seeker, wrap_text):
+def get_permissions_packages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for root, file_found in _iter_roots(files_found):

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "SimpleStorage_applaunch": {
         "name": "SimpleStorage - App Launch",
@@ -26,7 +25,8 @@ from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_r
 from scripts.context import Context
 
 @artifact_processor
-def SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text):
+def SimpleStorage_applaunch(context):
+    files_found = context.get_files_found()
     data_list = []
     
     source_path = get_file_path(files_found, "SimpleStorage")

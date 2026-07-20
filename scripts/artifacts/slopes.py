@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_slopes": {
         "name": "Slopes - Resort Details",
@@ -62,7 +61,8 @@ def _slopes_db(files_found):
 
 
 @artifact_processor
-def get_slopes(files_found, report_folder, seeker, wrap_text):
+def get_slopes(context):
+    files_found = context.get_files_found()
     source_path = _slopes_db(files_found)
     data_list = []
     if source_path:
@@ -83,7 +83,8 @@ def get_slopes(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_slopes_actions(files_found, report_folder, seeker, wrap_text):
+def get_slopes_actions(context):
+    files_found = context.get_files_found()
     source_path = _slopes_db(files_found)
     data_list = []
     if source_path:
@@ -106,7 +107,8 @@ def get_slopes_actions(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_slopes_lift(files_found, report_folder, seeker, wrap_text):
+def get_slopes_lift(context):
+    files_found = context.get_files_found()
     source_path = _slopes_db(files_found)
     data_list = []
     if source_path:

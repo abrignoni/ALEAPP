@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_recentactivity": {
         "name": "Recent Activity",
@@ -67,7 +66,8 @@ def _media(folder, *parts):
 
 
 @artifact_processor
-def get_recentactivity(files_found, report_folder, seeker, wrap_text):
+def get_recentactivity(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

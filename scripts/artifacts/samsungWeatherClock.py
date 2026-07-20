@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_samsungWeatherClockInfo": {
         "name": "Samsung Weather Clock - Info",
@@ -74,7 +73,8 @@ def _weatherclock_db(files_found):
 
 
 @artifact_processor
-def get_samsungWeatherClockInfo(files_found, report_folder, seeker, wrap_text):
+def get_samsungWeatherClockInfo(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _weatherclock_db(files_found) or ''
     if source_path:
@@ -117,7 +117,8 @@ def get_samsungWeatherClockInfo(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_samsungWeatherClockDaily(files_found, report_folder, seeker, wrap_text):
+def get_samsungWeatherClockDaily(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _weatherclock_db(files_found) or ''
     if source_path:
@@ -150,7 +151,8 @@ def get_samsungWeatherClockDaily(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_samsungWeatherClockHourly(files_found, report_folder, seeker, wrap_text):
+def get_samsungWeatherClockHourly(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _weatherclock_db(files_found) or ''
     if source_path:

@@ -109,7 +109,8 @@ import datetime
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
 
 @artifact_processor
-def healthmate_accounts(files_found, _report_folder, _seeker, _wrap_text):
+def healthmate_accounts(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     file_found = str(files_found[0])
 
@@ -184,7 +185,8 @@ def healthmate_accounts(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, file_found
 
 @artifact_processor
-def healthmate_trackings(files_found, _report_folder, _seeker, _wrap_text):
+def healthmate_trackings(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     room_db = next((str(f) for f in files_found if 'room-healthmate' in str(f).lower()), None)
@@ -260,7 +262,8 @@ def healthmate_trackings(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, room_db
 
 @artifact_processor
-def healthmate_locations(files_found, _report_folder, _seeker, _wrap_text):
+def healthmate_locations(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     file_found = str(files_found[0])
@@ -306,7 +309,8 @@ def healthmate_locations(files_found, _report_folder, _seeker, _wrap_text):
 
     return data_headers, data_list, file_found
 @artifact_processor
-def healthmate_messages(files_found, _report_folder, _seeker, _wrap_text):
+def healthmate_messages(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
 
     query = ('''
@@ -343,7 +347,8 @@ def healthmate_messages(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def healthmate_contacts(files_found, _report_folder, _seeker, _wrap_text):
+def healthmate_contacts(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     query = ('''
@@ -388,7 +393,8 @@ def healthmate_contacts(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def healthmate_measurements(files_found, _report_folder, _seeker, _wrap_text):
+def healthmate_measurements(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     query = ('''
@@ -465,7 +471,8 @@ def healthmate_measurements(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def healthmate_devices(files_found, _report_folder, _seeker, _wrap_text):
+def healthmate_devices(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
 
     query = ('''

@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_textnow_call_logs": {
         "name": "Text Now - Call Logs",
@@ -47,7 +47,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_textnow_call_logs(files_found, report_folder, seeker, wrap_text):
+def get_textnow_call_logs(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -93,7 +94,8 @@ def get_textnow_call_logs(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_textnow_messages(files_found, report_folder, seeker, wrap_text):
+def get_textnow_messages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -165,7 +167,8 @@ def get_textnow_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_textnow_contacts(files_found, report_folder, seeker, wrap_text):
+def get_textnow_contacts(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

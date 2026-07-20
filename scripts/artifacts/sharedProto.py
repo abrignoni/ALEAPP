@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_sharedProto": {
         "name": "Shared Proto Data",
@@ -45,7 +45,8 @@ def _txt(value):
 
 
 @artifact_processor
-def get_sharedProto(files_found, report_folder, seeker, wrap_text):
+def get_sharedProto(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)

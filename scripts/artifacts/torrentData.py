@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_TorrentData": {
         "name": "TorrentData",
@@ -24,7 +24,8 @@ from scripts.html_safe import esc
 
 
 @artifact_processor
-def get_TorrentData(files_found, report_folder, seeker, wrap_text):
+def get_TorrentData(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

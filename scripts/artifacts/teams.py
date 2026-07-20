@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_teams": {
         "name": "Teams - Messages",
@@ -117,7 +117,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_teams(files_found, report_folder, seeker, wrap_text):
+def get_teams(context):
+    files_found = context.get_files_found()
     source_path = _teams_db(files_found)
     rows = _run(source_path, '''
         SELECT arrivalTime, userDisplayName, content, displayName, deleteTime,
@@ -132,7 +133,8 @@ def get_teams(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teams_users(files_found, report_folder, seeker, wrap_text):
+def get_teams_users(context):
+    files_found = context.get_files_found()
     source_path = _teams_db(files_found)
     rows = _run(source_path, '''
         SELECT lastSyncTime, givenName, surname, displayName, email, secondaryEmail, alternativeEmail,
@@ -145,7 +147,8 @@ def get_teams_users(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teams_calllog(files_found, report_folder, seeker, wrap_text):
+def get_teams_calllog(context):
+    files_found = context.get_files_found()
     source_path = _teams_db(files_found)
     rows = _run(source_path, '''
         SELECT
@@ -166,7 +169,8 @@ def get_teams_calllog(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teams_activity(files_found, report_folder, seeker, wrap_text):
+def get_teams_activity(context):
+    files_found = context.get_files_found()
     source_path = _teams_db(files_found)
     rows = _run(source_path, '''
         SELECT activityTimestamp, sourceUserImDisplayName, messagePreview, activityType, activitySubtype, isRead
@@ -178,7 +182,8 @@ def get_teams_activity(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teams_fileinfo(files_found, report_folder, seeker, wrap_text):
+def get_teams_fileinfo(context):
+    files_found = context.get_files_found()
     source_path = _teams_db(files_found)
     rows = _run(source_path, '''
         SELECT lastModifiedTime, fileName, type, objectUrl, isFolder, lastModifiedBy

@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_Viber": {
         "name": "Viber - Call Logs",
@@ -110,7 +110,8 @@ def _viber_dbs(files_found):
 
 
 @artifact_processor
-def get_Viber(files_found, report_folder, seeker, wrap_text):
+def get_Viber(context):
+    files_found = context.get_files_found()
     data_db, _, _ = _viber_dbs(files_found)
     data_list = []
     if data_db:
@@ -139,7 +140,8 @@ def get_Viber(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Viber_contacts(files_found, report_folder, seeker, wrap_text):
+def get_Viber_contacts(context):
+    files_found = context.get_files_found()
     data_db, _, _ = _viber_dbs(files_found)
     data_list = []
     if data_db:
@@ -161,7 +163,8 @@ def get_Viber_contacts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Viber_messages(files_found, report_folder, seeker, wrap_text):
+def get_Viber_messages(context):
+    files_found = context.get_files_found()
     _, messages_db, _ = _viber_dbs(files_found)
     data_list = []
     if messages_db:
@@ -195,7 +198,8 @@ def get_Viber_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Viber_additional(files_found, report_folder, seeker, wrap_text):
+def get_Viber_additional(context):
+    files_found = context.get_files_found()
     _, _, prefs_db = _viber_dbs(files_found)
     data_list = []
     if prefs_db:

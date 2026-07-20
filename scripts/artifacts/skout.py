@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_skout_messages": {
         "name": "Skout Messages",
@@ -32,7 +31,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 
 
 @artifact_processor
-def get_skout_messages(files_found, report_folder, seeker, wrap_text):
+def get_skout_messages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -79,7 +79,8 @@ def get_skout_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_skout_users(files_found, report_folder, seeker, wrap_text):
+def get_skout_users(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

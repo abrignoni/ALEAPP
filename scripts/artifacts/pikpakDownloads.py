@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_pikpakDownloads": {
         "name": "PikPak Downloads",
@@ -27,7 +26,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_pikpakDownloads(files_found, report_folder, seeker, wrap_text):
+def get_pikpakDownloads(context):
+    files_found = context.get_files_found()
 
     source_path = ''
     for file_found in files_found:
