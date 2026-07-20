@@ -66,7 +66,7 @@ class LeappArtifactStorageBinaryStream(ArtifactStorageBinaryStream):
         return self._stream.write(data)
 
     def close(self) -> None:
-        self._reference = check_in_embedded_media(self.source_file, self._stream.raw)
+        self._reference = check_in_embedded_media(self.source_file, self._stream.getvalue())
         self._stream.close()
 
     def get_file_location_reference(self) -> str:
@@ -91,7 +91,7 @@ class LeappArtifactStorageTextStream(ArtifactStorageTextStream):
         return self._stream.write(data)
 
     def close(self) -> None:
-        self._reference = check_in_embedded_media(self.source_file, self._stream.buffer)
+        self._reference = check_in_embedded_media(self.source_file, self._stream.getvalue().encode("utf-8"))
         self._stream.close()
 
     def get_file_location_reference(self) -> str:
