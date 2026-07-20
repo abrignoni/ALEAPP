@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_mms_from_backup": {
         "name": "SMS and MMS Backup - MMS",
@@ -119,15 +118,14 @@ def _backup_files(files_found, suffix):
 
 
 @artifact_processor
-def get_mms_from_backup(files_found, report_folder, seeker, wrap_text):
+def get_mms_from_backup(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in _backup_files(files_found, 'mms_backup'):
         source_path = file_found
         for mms in read_messages_from_backup(file_found):
             body = mms.get('mms_body', '')
-            if wrap_text:
-                body = body.replace("\n", "")
             data_list.append((
                 ReadUnixTime(mms.get('date', 0)), ReadUnixTime(mms.get('date_sent', 0)),
                 mms.get('ct_l', ''), ', '.join(mms.get('recipients', [])), mms.get('sub', ''),
@@ -140,15 +138,14 @@ def get_mms_from_backup(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_sms_from_backup(files_found, report_folder, seeker, wrap_text):
+def get_sms_from_backup(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in _backup_files(files_found, 'sms_backup'):
         source_path = file_found
         for sms in read_messages_from_backup(file_found):
             body = sms.get('body', '')
-            if wrap_text:
-                body = body.replace("\n", "")
             data_list.append((
                 ReadUnixTimeMs(sms.get('date', 0)), ReadUnixTimeMs(sms.get('date_sent', 0)),
                 sms.get('read', ''), sms.get('type', ''), body,

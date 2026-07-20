@@ -1,4 +1,4 @@
-# pylint: disable=E0606,E1101,W0311,W0613,W0702,W1309
+# pylint: disable=E0606,E1101,W0311,W0702,W1309
 __artifacts_v2__ = {
     "get_usagestats": {
         "name": "usagestats",
@@ -253,7 +253,8 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
     db.commit()
 
 @artifact_processor
-def get_usagestats(files_found, report_folder, seeker, wrap_text):
+def get_usagestats(context):
+    files_found = context.get_files_found()
 
     logfunc('Android Usagestats XML & Protobuf Parser')
 
@@ -279,7 +280,7 @@ def get_usagestats(files_found, report_folder, seeker, wrap_text):
                 if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
                     continue
                 source = source or file_found
-                data_list.extend(process_usagestats(file_found, uid, report_folder, 1))
+                data_list.extend(process_usagestats(file_found, uid, 1))
             elif len(parts) > 3 and parts[-1] == 'usagestats' and parts[-3] == 'system_ce':
                 uid = parts[-2]
                 try:
@@ -293,7 +294,7 @@ def get_usagestats(files_found, report_folder, seeker, wrap_text):
                 if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
                     continue
                 source = source or file_found
-                data_list.extend(process_usagestats(file_found, uid, report_folder, 2))
+                data_list.extend(process_usagestats(file_found, uid, 2))
 
     data_headers = ('User (UID)', ('Last Time Active', 'datetime'), 'Usage Type',
                     'Time Active in Msecs', 'Time Active in Secs',
@@ -464,7 +465,7 @@ def add_v2_usagestats_to_db(folder, db):
             except:
                 logfunc(f'Parse error - Error parsing Protobuf file: {filepath}')
 
-def process_usagestats(folder, uid, report_folder, version):
+def process_usagestats(folder, uid, version):
 
     # In-memory working database; the parsed rows are returned to the framework
     # for rendering as one consolidated table across all users.

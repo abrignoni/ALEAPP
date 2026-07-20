@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_fb_user_id": {
         "name": "Facebook Messenger - User ID",
@@ -186,7 +185,9 @@ def _q(cursor, sql):
 
 
 @artifact_processor
-def get_fb_user_id(files_found, report_folder, seeker, wrap_text):
+def get_fb_user_id(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -209,7 +210,9 @@ def get_fb_user_id(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_msys_chats(files_found, report_folder, seeker, wrap_text):
+def get_fb_msys_chats(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -279,7 +282,9 @@ def get_fb_msys_chats(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_msys_calls(files_found, report_folder, seeker, wrap_text):
+def get_fb_msys_calls(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -315,7 +320,9 @@ def get_fb_msys_calls(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_msys_contacts(files_found, report_folder, seeker, wrap_text):
+def get_fb_msys_contacts(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -353,7 +360,9 @@ def get_fb_msys_contacts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_threads_chats(files_found, report_folder, seeker, wrap_text):
+def get_fb_threads_chats(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     primary = '''
@@ -429,7 +438,9 @@ def get_fb_threads_chats(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_threads_calls(files_found, report_folder, seeker, wrap_text):
+def get_fb_threads_calls(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -465,7 +476,9 @@ def get_fb_threads_calls(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_threads_contacts(files_found, report_folder, seeker, wrap_text):
+def get_fb_threads_contacts(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:

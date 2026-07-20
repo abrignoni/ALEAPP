@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0631,W0612,W0622
+# pylint: disable=W0631,W0612,W0622
 __artifacts_v2__ = {
     "gmailEmails": {
         "name": "Gmail - App Emails",
@@ -82,7 +82,9 @@ from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlit
 from scripts.html_safe import safe_source
 
 @artifact_processor
-def gmailEmails(files_found, report_folder, seeker, wrap_text):
+def gmailEmails(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     bigTopDataDB = ''
     source_bigTop = ''
     
@@ -214,7 +216,9 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, 'See source file(s) below:'
 
 @artifact_processor      
-def gmailLabels(files_found, report_folder, seeker, wrap_text):
+def gmailLabels(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     bigTopDataDB = ''
     source_bigTop = ''
     
@@ -258,7 +262,9 @@ def gmailLabels(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, 'See source file(s) below:'
       
 @artifact_processor        
-def gmailDownloadRequests(files_found, report_folder, seeker, wrap_text):
+def gmailDownloadRequests(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     downloaderDB = ''
     source_downloader = ''
     data_list = []

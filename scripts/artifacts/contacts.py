@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0612,W0613,W0718
+# pylint: disable=W0611,W0612,W0718
 __artifacts_v2__ = {
     "contacts": {
         "name": "Contacts",
@@ -33,7 +33,9 @@ import datetime
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, does_column_exist_in_db
 
 @artifact_processor
-def contacts(files_found, report_folder, seeker, wrap_text):
+def contacts(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
 
     source_file = ''
     data_list = []
