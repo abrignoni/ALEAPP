@@ -1,4 +1,4 @@
-# pylint: disable=W0611,W0613,W0621,W0631
+# pylint: disable=W0611,W0621,W0631
 __artifacts_v2__ = {
     "last_boot_time": {
         "name": "Last Boot Time",
@@ -32,7 +32,8 @@ import time
 from scripts.ilapfuncs import logfunc, logdevinfo, artifact_processor
 
 @artifact_processor
-def last_boot_time(files_found, report_folder, seeker, wrap_text):
+def last_boot_time(context):
+    files_found = context.get_files_found()
 
     data_list = []
 

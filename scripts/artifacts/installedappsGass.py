@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_installedappsGass": {
         "name": "installedappsGass",
@@ -31,7 +30,8 @@ from scripts.ilapfuncs import artifact_processor, is_platform_windows, open_sqli
 
 
 @artifact_processor
-def get_installedappsGass(files_found, report_folder, seeker, wrap_text):
+def get_installedappsGass(context):
+    files_found = context.get_files_found()
 
     slash = '\\' if is_platform_windows() else '/'
     data_list = []

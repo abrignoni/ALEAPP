@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "grok_generatedvideos": {
         "name": "Grok - Videos",
@@ -56,7 +56,8 @@ def _parse_xml(file_found):
             return ET.Element('empty')
 
 @artifact_processor
-def grok_generatedvideos(files_found, report_folder, seeker, wrap_text):
+def grok_generatedvideos(context):
+    files_found = context.get_files_found()
     data_list = []
 
     db_path = None
@@ -282,7 +283,8 @@ def grok_generatedvideos(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def grok_useraccount(files_found, report_folder, seeker, wrap_text):
+def grok_useraccount(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ""
 

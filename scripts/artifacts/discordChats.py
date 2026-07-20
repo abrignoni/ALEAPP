@@ -1,4 +1,4 @@
-# pylint: disable=W0612,W0613,W0631
+# pylint: disable=W0612,W0631
 __artifacts_v2__ = {
     "get_discordChats": {
         "name": "discordChats",
@@ -39,7 +39,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_discordChats(files_found, report_folder, seeker, wrap_text):
+def get_discordChats(context):
+    files_found = context.get_files_found()
 
     # build a table mapping all non-printable characters to None
     NOPRINT_TRANS_TABLE = {

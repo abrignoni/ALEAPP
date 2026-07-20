@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleCallScreen": {
         "name": "Google Call Screen",
@@ -51,7 +51,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
+def get_googleCallScreen(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:

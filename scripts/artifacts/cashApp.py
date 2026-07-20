@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0631
+# pylint: disable=W0631
 __artifacts_v2__ = {
     "get_cashApp": {
         "name": "Cash App",
@@ -19,7 +19,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 
 
 @artifact_processor
-def get_cashApp(files_found, report_folder, seeker, wrap_text):
+def get_cashApp(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

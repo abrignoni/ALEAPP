@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_libretorrentFR": {
         "name": "LibretorrentFR",
@@ -23,7 +22,8 @@ from scripts.html_safe import esc
 
 
 @artifact_processor
-def get_libretorrentFR(files_found, report_folder, seeker, wrap_text):
+def get_libretorrentFR(context):
+    files_found = context.get_files_found()
 
     source_path = ''
     for file_found in files_found:

@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0631
+# pylint: disable=W0631
 __artifacts_v2__ = {
     "get_meetmechats": {
         "name": "MeetMe Chats",
@@ -19,7 +19,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_meetmechats(files_found, report_folder, seeker, wrap_text):
+def get_meetmechats(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

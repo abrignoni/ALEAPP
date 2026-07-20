@@ -1,4 +1,4 @@
-# pylint: disable=W0612,W0613
+# pylint: disable=W0612
 __artifacts_v2__ = {
     "googlevoice_accounts": {
         "name": "Google Voice - User Accounts",
@@ -99,7 +99,8 @@ def _decode_text(value):
     return str(value)
 
 @artifact_processor
-def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
+def googlevoice_accounts(context):
+    files_found = context.get_files_found()
     data_headers = ('Account Number', 'Full Name', 'Email Address', 'Linked Phone Number', 'Current Google Voice Number')
     data_list = []
     source_path = ""
@@ -178,7 +179,8 @@ def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
+def googlevoice_calls(context):
+    files_found = context.get_files_found()
     data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Direction', 'Caller', 'Recipient', 'Call Status', 'Voicemail Left', 'Duration', ('Call Recording', 'media'))
     data_list = []
     source_path = ""
@@ -296,7 +298,8 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
+def googlevoice_voicemails(context):
+    files_found = context.get_files_found()
     data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Caller', 'Recipient', 'Duration', 'Read Status', 'Transcript', ('Audio File', 'media'))
     data_list = []
     source_path = ""
@@ -406,7 +409,8 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
+def googlevoice_messages(context):
+    files_found = context.get_files_found()
     data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Conversation ID', 'Direction', 'Sender', 'Recipient(s)', 'Read Status', 'Message', ('Image', 'media'))
     data_list = []
     source_path = ""

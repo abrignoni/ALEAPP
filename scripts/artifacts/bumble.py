@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_bumble": {
         "name": "Bumble - User Settings",
@@ -594,7 +594,8 @@ def _parse_settings(files_found):
 
 
 @artifact_processor
-def get_bumble(files_found, report_folder, seeker, wrap_text):
+def get_bumble(context):
+    files_found = context.get_files_found()
     info, source_path = _parse_settings(files_found)
     data_list = []
     if info:
@@ -607,7 +608,8 @@ def get_bumble(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_bumble_messages(files_found, report_folder, seeker, wrap_text):
+def get_bumble_messages(context):
+    files_found = context.get_files_found()
     info, _settings = _parse_settings(files_found)
     user_name = info.get('user_name', '') if info else ''
     local = f'{user_name} (local user)' if user_name else '(local user)'
@@ -636,7 +638,8 @@ def get_bumble_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_bumble_matches(files_found, report_folder, seeker, wrap_text):
+def get_bumble_matches(context):
+    files_found = context.get_files_found()
     source_path = _chat_db(files_found)
     rows = _run(source_path, """
         SELECT user_name, age, gender,

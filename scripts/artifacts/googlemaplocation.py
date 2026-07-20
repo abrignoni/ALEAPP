@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googlemaplocation": {
         "name": "Googlemaplocation",
@@ -28,7 +28,8 @@ def convertGeo(s):
 
 
 @artifact_processor
-def get_googlemaplocation(files_found, report_folder, seeker, wrap_text):
+def get_googlemaplocation(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_emulatedSmeta": {
         "name": "Emulated Storage Metadata - Downloads",
@@ -208,7 +208,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size,
@@ -228,7 +229,8 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_images(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_images(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size, latitude, longitude,
@@ -245,7 +247,8 @@ def get_emulatedSmeta_images(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_files(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_files(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size, latitude, longitude,
@@ -262,7 +265,8 @@ def get_emulatedSmeta_files(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_videos(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_videos(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size, latitude, longitude,
@@ -279,7 +283,8 @@ def get_emulatedSmeta_videos(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_audio(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_audio(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size,
@@ -296,7 +301,8 @@ def get_emulatedSmeta_audio(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_files_legacy(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_files_legacy(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, False)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size, latitude, longitude,

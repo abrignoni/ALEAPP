@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "airtagAlerts": {
         "name": "Android Airtag Alerts",
@@ -90,7 +89,8 @@ from scripts.ilapfuncs import artifact_processor, \
 
 
 @artifact_processor
-def airtagAlerts(files_found, report_folder, seeker, wrap_text):
+def airtagAlerts(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "personalsafety_db")
     data_list = []
     
@@ -130,7 +130,8 @@ def airtagAlerts(files_found, report_folder, seeker, wrap_text):
 
         
 @artifact_processor
-def airtagScans(files_found, report_folder, seeker, wrap_text):
+def airtagScans(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "personalsafety_db")
     data_list = []
     
@@ -177,7 +178,8 @@ def airtagScans(files_found, report_folder, seeker, wrap_text):
 
         
 @artifact_processor
-def airtagLastScan(files_found, report_folder, seeker, wrap_text):
+def airtagLastScan(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "personalsafety_info.pb")
     data_list = []
     
@@ -194,7 +196,8 @@ def airtagLastScan(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def airtagPassiveScan(files_found, report_folder, seeker, wrap_text):
+def airtagPassiveScan(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "personalsafety_optin.pb")
     data_list = []
     

@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleMapsGmm": {
         "name": "Google Search History Maps",
@@ -84,7 +84,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text):
+def get_googleMapsGmm(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -125,7 +126,8 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googleMapsGmm_places(files_found, report_folder, seeker, wrap_text):
+def get_googleMapsGmm_places(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:

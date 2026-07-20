@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 _PATHS_PHONE_ACT = ('*/com.fitbit.FitbitMobile/databases/activity_db*',)
 _PATHS_PHONE_DEV = ('*/com.fitbit.FitbitMobile/databases/device_database*',)
 _PATHS_PHONE_EX = ('*/com.fitbit.FitbitMobile/databases/exercise_db*',)
@@ -99,7 +99,8 @@ def _route_media(source, coords, title, subtitle, base):
 
 
 @artifact_processor
-def get_fitbit_activity(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_activity(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'activity_db')
     rows = _run(src, '''SELECT LOG_DATE, TIME_CREATED, NAME, LOG_TYPE, ACTIVE_DURATION, SPEED, PACE,
         ELEVATION_GAIN, AVERAGE_HEART_RATE, DISTANCE, DISTANCE_UNIT, DURATION, DURATION/60, STEPS,
@@ -118,7 +119,8 @@ def get_fitbit_activity(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_device(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_device(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'device_database')
     rows = _run(src, '''SELECT lastsynctime, deviceName, bleMacAddress, batteryPercent, deviceType
         FROM core_device''')
@@ -134,7 +136,8 @@ def _phone_gps_rows(src):
 
 
 @artifact_processor
-def get_fitbit_exercise(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_exercise(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'exercise_db')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], src)
                  for r in _phone_gps_rows(src)]
@@ -144,7 +147,8 @@ def get_fitbit_exercise(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_routes(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_routes(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'exercise_db')
     sessions = {}
     for r in _phone_gps_rows(src):
@@ -166,7 +170,8 @@ def get_fitbit_routes(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_heart(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_heart(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'heart_rate_db')
     rows = _run(src, 'SELECT DATE_TIME, AVERAGE_HEART_RATE, RESTING_HEART_RATE FROM HEART_RATE_DAILY_SUMMARY')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], src) for r in rows]
@@ -175,7 +180,8 @@ def get_fitbit_heart(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_sleep_detail(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_sleep_detail(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'sleep')
     rows = _run(src, 'SELECT DATE_TIME, SECONDS, LEVEL_STRING, LOG_ID FROM SLEEP_LEVEL_DATA')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], src) for r in rows]
@@ -184,7 +190,8 @@ def get_fitbit_sleep_detail(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_sleep_summary(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_sleep_summary(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'sleep')
     rows = _run(src, '''SELECT DATE_OF_SLEEP, START_TIME, SYNC_STATUS_STRING, DURATION, DURATION/60000,
         MINUTES_AFTER_WAKEUP, MINUTES_ASLEEP, MINUTES_AWAKE, MINUTES_TO_FALL_ASLEEP, LOG_ID FROM SLEEP_LOG''')
@@ -197,7 +204,8 @@ def get_fitbit_sleep_summary(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_friends(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_friends(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'social_db')
     rows = _run(src, 'SELECT OWNING_USER_ID, ENCODED_ID, DISPLAY_NAME, AVATAR_URL, FRIEND, CHILD FROM FRIEND')
     data_list = [(r[0], r[1], r[2], r[3], r[4], r[5], src) for r in rows]
@@ -207,7 +215,8 @@ def get_fitbit_friends(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_user(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_user(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'social_db')
     rows = _run(src, '''SELECT LAST_UPDATED, DISPLAY_NAME, FULL_NAME, ABOUT_ME, AVATAR_URL,
         COVER_PHOTO_URL, CITY, STATE, COUNTRY, JOINED_DATE, DATE_OF_BIRTH, HEIGHT, WEIGHT, GENDER, COACH
@@ -221,7 +230,8 @@ def get_fitbit_user(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_steps(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_steps(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'mobile_track_db')
     rows = _run(src, '''SELECT TIMESTAMP, STEPS_COUNT, METS_COUNT, TIME_CREATED, TIME_UPDATED
         FROM PEDOMETER_MINUTE_DATA''')
@@ -232,7 +242,8 @@ def get_fitbit_steps(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_profile(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_profile(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'user.db')
     rows = _run(src, '''SELECT fullName, displayName, email, gender, dateOfBirth, height, weight,
         memberSince, userId FROM FitbitProfileEntity''')
@@ -243,7 +254,8 @@ def get_fitbit_wearos_profile(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_activity(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_activity(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'user.db')
     rows = _run(src, '''SELECT startTime, name, duration/1000/60, distance, distanceUnit, steps,
         calories, averageHeartRate, elevationGain, activeZoneMinutes, logId FROM ActivityExerciseEntity
@@ -255,7 +267,8 @@ def get_fitbit_wearos_activity(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_daily(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_daily(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'user.db')
     rows = _run(src, '''SELECT date, totalMinutesMoving, totalMinutesSedentary, longestDuration,
         longestStart FROM SedentaryDataEntity ORDER BY date DESC''')
@@ -266,7 +279,8 @@ def get_fitbit_wearos_daily(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_hourly(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_hourly(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'user.db')
     data_list = []
     for r in _run(src, 'SELECT date, hourlyData FROM SedentaryDataEntity ORDER BY date DESC'):
@@ -284,7 +298,8 @@ def get_fitbit_wearos_hourly(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_sleep_logs(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_sleep_logs(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'user.db')
     rows = _run(src, '''SELECT startTime, endTime, dateOfSleep, minutesAsleep, minutesAwake,
         minutesToFallAsleep, minutesAfterWakeup, type, isMainSleep FROM FitbitSleepDateEntity
@@ -297,7 +312,8 @@ def get_fitbit_wearos_sleep_logs(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_workouts(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_workouts(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'passive_stats.db')
     rows = _run(src, '''SELECT time, sessionId, exerciseTypeId, totalDistanceMm/1000000.0, steps,
         caloriesBurned, avgHeartRate, elevationGainFt FROM ExerciseSummaryEntity ORDER BY time DESC''')
@@ -313,7 +329,8 @@ def _wearos_gps_rows(src):
 
 
 @artifact_processor
-def get_fitbit_wearos_gps(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_gps(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'passive_stats.db')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[6]) for r in _wearos_gps_rows(src)]
     data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Speed',
@@ -322,7 +339,8 @@ def get_fitbit_wearos_gps(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_gps_route(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_gps_route(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'passive_stats.db')
     rows = _wearos_gps_rows(src)
     coords = [(r[1], r[2]) for r in rows if r[1] and r[2]]
@@ -340,7 +358,8 @@ def get_fitbit_wearos_gps_route(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_hr(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_hr(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'passive_stats.db')
     rows = _run(src, 'SELECT startTime, endTime, value, accuracy FROM HeartRateStatEntity ORDER BY startTime DESC')
     data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3]) for r in rows]
@@ -349,7 +368,8 @@ def get_fitbit_wearos_hr(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_pace(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_pace(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'passive_stats.db')
     rows = _run(src, 'SELECT timeSeconds, sessionId, statType, value FROM LivePaceEntity ORDER BY timeSeconds DESC')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3]) for r in rows]
@@ -358,7 +378,8 @@ def get_fitbit_wearos_pace(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_sleep(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_sleep(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'passive_stats.db')
     rows = _run(src, '''SELECT sleepStartTime, sleepEndTime, (sleepEndTime-sleepStartTime)/1000/60
         FROM LocalSleepPeriodsEntity ORDER BY sleepStartTime DESC''')
@@ -368,7 +389,8 @@ def get_fitbit_wearos_sleep(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_azm(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_azm(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'passive_stats.db')
     rows = _run(src, 'SELECT startTime, endTime, activeZone, value, lastBpm FROM PassiveAzmEntity ORDER BY startTime DESC')
     data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4]) for r in rows]
@@ -377,7 +399,8 @@ def get_fitbit_wearos_azm(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_splits(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_splits(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'passive_stats.db')
     rows = _run(src, '''SELECT time, sessionId, avgPaceMilliSecPerKm/1000/60.0, avgHeartRate, steps,
         caloriesBurned FROM ExerciseSplitAnnotationEntity ORDER BY time ASC''')
@@ -388,7 +411,8 @@ def get_fitbit_wearos_splits(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fitbit_wearos_opaque_hr(files_found, report_folder, seeker, wrap_text):
+def get_fitbit_wearos_opaque_hr(context):
+    files_found = context.get_files_found()
     src = _find(files_found, 'passive_stats.db')
     rows = _run(src, 'SELECT timestamp, baseHeartRate, confidence FROM OpaqueHeartRateEntity ORDER BY timestamp DESC')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2]) for r in rows]

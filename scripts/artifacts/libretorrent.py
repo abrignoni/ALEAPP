@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_libretorrent": {
         "name": "Libretorrent",
@@ -21,7 +20,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_libretorrent(files_found, report_folder, seeker, wrap_text):
+def get_libretorrent(context):
+    files_found = context.get_files_found()
 
     source_path = ''
     for file_found in files_found:

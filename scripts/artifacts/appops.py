@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_appops": {
         "name": "App Ops Permissions",
@@ -124,7 +123,8 @@ def _appops_file(files_found):
 
 
 @artifact_processor
-def get_appops(files_found, report_folder, seeker, wrap_text):
+def get_appops(context):
+    files_found = context.get_files_found()
     source_path = _appops_file(files_found)
     data_list = []
     if source_path:
@@ -145,7 +145,8 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_appops_legacy(files_found, report_folder, seeker, wrap_text):
+def get_appops_legacy(context):
+    files_found = context.get_files_found()
     source_path = _appops_file(files_found)
     data_list = []
     if source_path:

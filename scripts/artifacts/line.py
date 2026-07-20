@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_line": {
         "name": "Line - Contacts",
@@ -83,7 +83,8 @@ def _line_dbs(files_found):
 
 
 @artifact_processor
-def get_line(files_found, report_folder, seeker, wrap_text):
+def get_line(context):
+    files_found = context.get_files_found()
     msg_db, _ = _line_dbs(files_found)
     data_list = []
     if msg_db:
@@ -101,7 +102,8 @@ def get_line(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_line_messages(files_found, report_folder, seeker, wrap_text):
+def get_line_messages(context):
+    files_found = context.get_files_found()
     msg_db, _ = _line_dbs(files_found)
     data_list = []
     if msg_db:
@@ -145,7 +147,8 @@ def get_line_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_line_calls(files_found, report_folder, seeker, wrap_text):
+def get_line_calls(context):
+    files_found = context.get_files_found()
     msg_db, call_db = _line_dbs(files_found)
     data_list = []
     if call_db and msg_db:

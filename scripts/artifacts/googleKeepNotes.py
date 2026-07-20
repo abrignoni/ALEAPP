@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_googleKeepNotes": {
         "name": "Google Keep - Notes",
@@ -81,7 +80,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
+def get_googleKeepNotes(context):
+    files_found = context.get_files_found()
     source_path = _keep_db(files_found)
     rows = _run(source_path, '''
         SELECT list_item.time_created, list_item.time_last_updated, list_parent_id, name, title, text,
@@ -99,7 +99,8 @@ def get_googleKeepNotes(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googleKeepNotes_sharing(files_found, report_folder, seeker, wrap_text):
+def get_googleKeepNotes_sharing(context):
+    files_found = context.get_files_found()
     source_path = _keep_db(files_found)
     rows = _run(source_path, '''
         SELECT tree_entity.shared_timestamp, list_item.list_parent_id, account.name, sharing.email,

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_googleDuo": {
         "name": "Google Duo - Call History",
@@ -126,7 +125,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_googleDuo(files_found, report_folder, seeker, wrap_text):
+def get_googleDuo(context):
+    files_found = context.get_files_found()
     source_path = _tachyon_db(files_found)
     rows = _run(source_path, '''
         SELECT timestamp_usec, substr(self_id, 0, instr(self_id, '|')),
@@ -144,7 +144,8 @@ def get_googleDuo(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googleDuo_contacts(files_found, report_folder, seeker, wrap_text):
+def get_googleDuo_contacts(context):
+    files_found = context.get_files_found()
     source_path = _tachyon_db(files_found)
     rows = _run(source_path, '''
         SELECT system_contact_last_update_millis, contact_display_name, user_id,
@@ -158,7 +159,8 @@ def get_googleDuo_contacts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googleDuo_notes(files_found, report_folder, seeker, wrap_text):
+def get_googleDuo_notes(context):
+    files_found = context.get_files_found()
     source_path = _tachyon_db(files_found)
     rows = _run(source_path, '''
         SELECT sent_timestamp_millis, received_timestamp_millis, seen_timestamp_millis,

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_lgRCS": {
         "name": "LG RCS Chats",
@@ -55,7 +54,8 @@ def _rcs_db(files_found):
 
 
 @artifact_processor
-def get_lgRCS(files_found, report_folder, seeker, wrap_text):
+def get_lgRCS(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _rcs_db(files_found)
     data_headers = (('Date', 'datetime'), 'Address', 'Body', 'Read?', 'Thread ID', 'Is File?',

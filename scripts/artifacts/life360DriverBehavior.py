@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_TripEvents": {
         "name": "Life360 Driver Behavior - Trip Events",
@@ -64,7 +63,8 @@ def _iter_trip_files(files_found):
 
 
 @artifact_processor
-def get_TripEvents(files_found, report_folder, seeker, wrap_text):
+def get_TripEvents(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found, data in _iter_trip_files(files_found):
@@ -96,7 +96,8 @@ def get_TripEvents(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_TripWaypoints(files_found, report_folder, seeker, wrap_text):
+def get_TripWaypoints(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found, data in _iter_trip_files(files_found):

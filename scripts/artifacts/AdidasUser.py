@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_adidas_user": {
         "name": "AdidasUser",
@@ -29,7 +28,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_adidas_user(files_found, report_folder, seeker, wrap_text):
+def get_adidas_user(context):
+    files_found = context.get_files_found()
     logfunc("Processing data for Adidas User")
     files_found = [x for x in files_found if not str(x).endswith('-journal')]
     source_path = str(files_found[0])

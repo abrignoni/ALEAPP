@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_calendar": {
         "name": "Calendar - Events",
@@ -90,7 +89,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_calendar(files_found, report_folder, seeker, wrap_text):
+def get_calendar(context):
+    files_found = context.get_files_found()
     source_path = _calendar_db(files_found)
     rows = _run(source_path, '''
         SELECT Events.dtstart, Events.dtend, Events.eventTimezone, Events.title, Events.description,
@@ -109,7 +109,8 @@ def get_calendar(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_calendar_calendars(files_found, report_folder, seeker, wrap_text):
+def get_calendar_calendars(context):
+    files_found = context.get_files_found()
     source_path = _calendar_db(files_found)
     rows = _run(source_path, '''
         SELECT cal_sync8, name, calendar_displayName, account_name, account_type,

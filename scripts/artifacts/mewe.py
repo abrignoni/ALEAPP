@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_mewe_chat": {
         "name": "MeWe - Chat",
@@ -90,7 +90,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_mewe_chat(files_found, report_folder, seeker, wrap_text):
+def get_mewe_chat(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -119,7 +120,8 @@ def get_mewe_chat(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_mewe_session(files_found, report_folder, seeker, wrap_text):
+def get_mewe_session(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

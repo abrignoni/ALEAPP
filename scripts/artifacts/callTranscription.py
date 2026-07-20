@@ -1,4 +1,4 @@
-# pylint: disable=E0606,W0401,W0612,W0613,W0614
+# pylint: disable=E0606,W0401,W0612,W0614
 __artifacts_v2__ = {
     "get_callTranscription": {
         "name": "Android Call Transcriptions",
@@ -21,7 +21,8 @@ from datetime import *
 from scripts.ilapfuncs import artifact_processor
 
 @artifact_processor
-def get_callTranscription(files_found, report_folder, seeker, wrap_text):
+def get_callTranscription(context):
+    files_found = context.get_files_found()
 
     data_list = []
     for file_found in files_found:

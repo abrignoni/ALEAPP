@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_AVG": {
         "name": "AVG - Encryption Details",
@@ -214,14 +213,16 @@ def _compute_avg(files_found):
 
 
 @artifact_processor
-def get_AVG(files_found, report_folder, seeker, wrap_text):
+def get_AVG(context):
+    files_found = context.get_files_found()
     enc_details, _, source_path = _compute_avg(files_found)
     data_headers = ('Encryption Detail', 'Value')
     return data_headers, enc_details, source_path
 
 
 @artifact_processor
-def get_AVG_media(files_found, report_folder, seeker, wrap_text):
+def get_AVG_media(context):
+    files_found = context.get_files_found()
     _, media_list, source_path = _compute_avg(files_found)
     data_headers = (('Media', 'media'), 'Decrypted Filename', 'Original File Path',
                     ('Encrypted Date', 'datetime'), 'File Size', 'Decrypted Full Path')

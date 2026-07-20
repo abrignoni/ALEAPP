@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_galleryTrash": {
         "name": "Gallery Trash",
@@ -40,7 +39,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_galleryTrash(files_found, report_folder, seeker, wrap_text):
+def get_galleryTrash(context):
+    files_found = context.get_files_found()
     # Map basename -> path for the trashed media files so each row can resolve its thumbnail
     trash_files = {os.path.basename(str(f)): str(f) for f in files_found if '.Trash' in str(f)}
 

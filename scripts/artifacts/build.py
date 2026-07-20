@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_build": {
         "name": "Build",
@@ -30,7 +29,8 @@ from scripts.ilapfuncs import artifact_processor, logfunc, logdevinfo
 
 
 @artifact_processor
-def get_build(files_found, report_folder, seeker, wrap_text):
+def get_build(context):
+    files_found = context.get_files_found()
     data_list = []
     Androidversion = scripts.artifacts.artGlobals.versionf
 
