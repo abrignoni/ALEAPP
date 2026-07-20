@@ -1,6 +1,5 @@
 import io
 import pathlib
-import enum
 import re
 import sqlite3
 
@@ -8,7 +7,7 @@ import mister_skinnylegs.util.profile_folder_protocols
 from mister_skinnylegs import MisterSkinnylegs, iter_plugins, BrowserType
 from mister_skinnylegs.util import ArtifactStorage, ArtifactStorageBinaryStream, ArtifactStorageTextStream
 
-from scripts.ilapfuncs import artifact_processor, logfunc, check_in_media, check_in_embedded_media
+from scripts.ilapfuncs import artifact_processor, logfunc, check_in_embedded_media
 from scripts.context import Context
 
 
