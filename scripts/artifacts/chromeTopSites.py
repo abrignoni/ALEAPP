@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_chromeTopSites": {
         "name": "Top Sites",
@@ -34,7 +34,8 @@ from scripts.artifacts.chrome import get_browser_name
 
 
 @artifact_processor
-def get_chromeTopSites(files_found, report_folder, seeker, wrap_text):
+def get_chromeTopSites(context):
+    files_found = context.get_files_found()
     all_data = []
 
     data_headers = ['URL', 'Rank', 'Title', 'Redirects']

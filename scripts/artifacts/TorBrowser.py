@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "torbrowser_thumbnails": {
         "name": "Tor Browser Tab Thumnails",
@@ -75,7 +75,8 @@ def _parse_xml(file_found):
             return ET.Element('empty')
 
 @artifact_processor
-def torbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
+def torbrowser_thumbnails(context):
+    files_found = context.get_files_found()
     data_list = []
 
     for file_found in files_found:
@@ -102,7 +103,8 @@ def torbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, 'See source path(s) below'
 
 @artifact_processor
-def torbrowser_bookmarks(files_found, report_folder, seeker, wrap_text):
+def torbrowser_bookmarks(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for source_path in files_found:
@@ -150,7 +152,8 @@ def torbrowser_bookmarks(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
     
 @artifact_processor
-def torbrowser_usageinfo(files_found, report_folder, seeker, wrap_text):
+def torbrowser_usageinfo(context):
+    files_found = context.get_files_found()
 
     usage_keys = {
         "pref_key_last_browse_activity_time",

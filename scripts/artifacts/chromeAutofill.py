@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_chromeAutofill": {
         "name": "Chrome Autofill - Entries",
@@ -73,7 +73,8 @@ def _browser_for(file_found):
 
 
 @artifact_processor
-def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
+def get_chromeAutofill(context):
+    files_found = context.get_files_found()
     all_data = []
     data_headers = ['Date Created', 'Field', 'Value', 'Date Last Used', 'Count']
     lava_data_headers = data_headers.copy()
@@ -125,7 +126,8 @@ def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_chromeAutofillProfiles(files_found, report_folder, seeker, wrap_text):
+def get_chromeAutofillProfiles(context):
+    files_found = context.get_files_found()
     all_data = []
     data_headers = ['Date Modified', 'GUID', 'First Name', 'Middle Name', 'Last Name', 'Email',
                     'Phone Number', 'Company Name', 'Address', 'City', 'State', 'Zip Code',

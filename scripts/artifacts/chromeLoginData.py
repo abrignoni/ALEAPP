@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_chromeLoginData": {
         "name": "Login Data",
@@ -69,7 +68,8 @@ def get_valid_date(d1, d2):
 
 
 @artifact_processor
-def get_chromeLoginData(files_found, report_folder, seeker, wrap_text):
+def get_chromeLoginData(context):
+    files_found = context.get_files_found()
     all_data = []
 
     data_headers = ['Created Time', 'Username', 'Password', 'Origin URL', 'Blacklisted by User']
