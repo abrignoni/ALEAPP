@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_battery_usage_v9": {
         "name": "Settings Services - Battery Usages v9 - Battery States",
@@ -109,7 +108,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text):
+def get_battery_usage_v9(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     data_list = []
     rows = _run(source_path, '''
@@ -153,7 +153,8 @@ def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_app_usage_events(files_found, report_folder, seeker, wrap_text):
+def get_app_usage_events(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT uid, userId, timestamp,

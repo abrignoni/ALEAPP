@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_imo_account": {
         "name": "IMO - Account ID",
@@ -52,7 +52,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_imo_account(files_found, report_folder, seeker, wrap_text):
+def get_imo_account(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -78,7 +79,8 @@ def get_imo_account(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_imo_messages(files_found, report_folder, seeker, wrap_text):
+def get_imo_messages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

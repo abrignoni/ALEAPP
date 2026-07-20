@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleChat": {
         "name": "Google Chat - Messages",
@@ -194,7 +194,8 @@ def _parse_annotation(blob):
 
 
 @artifact_processor
-def get_googleChat(files_found, report_folder, seeker, wrap_text):
+def get_googleChat(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):
@@ -230,7 +231,8 @@ def get_googleChat(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googleChat_groups(files_found, report_folder, seeker, wrap_text):
+def get_googleChat_groups(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):
@@ -249,7 +251,8 @@ def get_googleChat_groups(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googleChat_drafts(files_found, report_folder, seeker, wrap_text):
+def get_googleChat_drafts(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):
@@ -266,7 +269,8 @@ def get_googleChat_drafts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googleChat_users(files_found, report_folder, seeker, wrap_text):
+def get_googleChat_users(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):

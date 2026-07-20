@@ -59,7 +59,8 @@ from scripts.html_safe import safe_source
 
 
 @artifact_processor
-def get_fair_mail_accounts(files_found, _report_folder, _seeker, _wrap_text):
+def get_fair_mail_accounts(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
         
     query = ('''
@@ -95,7 +96,8 @@ def get_fair_mail_accounts(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def get_fair_mail_contacts(files_found, _report_folder, _seeker, _wrap_text):
+def get_fair_mail_contacts(context):
+    files_found = context.get_files_found()
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
     
     query = ('''
@@ -127,7 +129,8 @@ def get_fair_mail_contacts(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def get_fair_mail_messages(files_found, _report_folder, _seeker, _wrap_text):
+def get_fair_mail_messages(context):
+    files_found = context.get_files_found()
     
     # Get the different files found and store their pathes in corresponding lists to work with them
     main_db = ''

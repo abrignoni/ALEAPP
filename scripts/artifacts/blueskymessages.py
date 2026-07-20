@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_blueskymessages": {
         "name": "Bluesky - Messages",
@@ -120,7 +120,8 @@ def _build_actors(files_found):
 
 
 @artifact_processor
-def get_blueskymessages_actors(files_found, report_folder, seeker, wrap_text):
+def get_blueskymessages_actors(context):
+    files_found = context.get_files_found()
     actors = _build_actors(files_found)
     source_path = next((str(f) for f in files_found if not str(f).endswith('RKStorage')), '')
     data_headers = ('Created At', 'DID', 'Handle', 'Display Name', 'Avatar', 'Viewer', 'Labels',
@@ -129,7 +130,8 @@ def get_blueskymessages_actors(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_blueskymessages(files_found, report_folder, seeker, wrap_text):
+def get_blueskymessages(context):
+    files_found = context.get_files_found()
     actors = _build_actors(files_found)
     data_list = []
     seen = set()

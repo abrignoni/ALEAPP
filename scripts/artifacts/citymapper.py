@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_citymapperLocationHistory" : {
         "name": "Citymapper - Location History",
@@ -77,7 +77,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_citymapperLocationHistory(files_found, report_folder, _seeker, _wrap_text):
+def get_citymapperLocationHistory(context):
+    files_found = context.get_files_found()
 
     location_data_list = []
     source = ''
@@ -114,7 +115,8 @@ def get_citymapperLocationHistory(files_found, report_folder, _seeker, _wrap_tex
 
 
 @artifact_processor
-def get_citymapperSavedTrips(files_found, report_folder, _seeker, _wrap_text):
+def get_citymapperSavedTrips(context):
+    files_found = context.get_files_found()
 
     saved_trip_data_list = []
     source = ''
@@ -154,7 +156,8 @@ def get_citymapperSavedTrips(files_found, report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def get_citymapperAppPreferences(files_found, report_folder, _seeker, _wrap_text):
+def get_citymapperAppPreferences(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source = ''

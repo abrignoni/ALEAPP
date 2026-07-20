@@ -1,4 +1,4 @@
-# pylint: disable=E0606,W0613
+# pylint: disable=E0606
 __artifacts_v2__ = {
     "get_googleTasks": {
         "name": "GoogleTasks",
@@ -48,7 +48,8 @@ def protobuf_parse_completed(data):
 
 
 @artifact_processor
-def get_googleTasks(files_found, report_folder, seeker, wrap_text):
+def get_googleTasks(context):
+    files_found = context.get_files_found()
     all_new_rows = []
     source_path = ''
     for file_found in files_found:

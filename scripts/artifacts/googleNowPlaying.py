@@ -1,4 +1,4 @@
-# pylint: disable=E0606,W0612,W0613
+# pylint: disable=E0606,W0612
 __artifacts_v2__ = {
     "get_googleNowPlaying": {
         "name": "GoogleNowPlaying",
@@ -61,7 +61,8 @@ def AreContentsSame(last_data_set, timezones, songtitle, artist, duration, album
 
 
 @artifact_processor
-def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
+def get_googleNowPlaying(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

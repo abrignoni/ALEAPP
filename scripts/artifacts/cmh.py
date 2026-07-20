@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_cmh": {
         "name": "cmh",
@@ -42,7 +41,8 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_cmh(files_found, report_folder, seeker, wrap_text):
+def get_cmh(context):
+    files_found = context.get_files_found()
     # Extractions can hold several cmh.db copies (e.g. one per user profile);
     # parse every distinct copy that carries the files table. The same
     # database can appear under aliased paths (data/data vs data/user/0,

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "GooglePlaySearches": {
         "name": "Google Play Searches",
@@ -30,7 +29,8 @@ __artifacts_v2__ = {
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
 
 @artifact_processor
-def GooglePlaySearches(files_found, report_folder, seeker, wrap_text):
+def GooglePlaySearches(context):
+    files_found = context.get_files_found()
     data_list = []
     
     source_path = get_file_path(files_found, "suggestions.db")

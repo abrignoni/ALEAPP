@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_calllog": {
         "name": "Call logs ",
@@ -44,7 +43,8 @@ CALL_TYPE_ICONS = {
 
 
 @artifact_processor
-def get_calllog(files_found, report_folder, seeker, wrap_text):
+def get_calllog(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

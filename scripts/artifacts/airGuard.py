@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_airGuard": {
         "name": "AirGuard AirTag Tracker",
@@ -78,7 +77,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_airGuard(files_found, report_folder, seeker, wrap_text):
+def get_airGuard(context):
+    files_found = context.get_files_found()
     source_path = _attd_db(files_found)
     # Older databases keep latitude/longitude on the beacon table; newer ones use a location table
     if source_path and does_table_exist_in_db(source_path, 'location'):
@@ -103,7 +103,8 @@ def get_airGuard(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_airGuard_scans(files_found, report_folder, seeker, wrap_text):
+def get_airGuard_scans(context):
+    files_found = context.get_files_found()
     source_path = _attd_db(files_found)
     rows = _run(source_path, '''
         SELECT startDate, endDate, duration, noDevicesFound,

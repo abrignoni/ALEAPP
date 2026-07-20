@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0631
+# pylint: disable=W0631
 __artifacts_v2__ = {
     "factory_reset": {
         "name": "Factory Reset",
@@ -33,7 +33,8 @@ import time
 from scripts.ilapfuncs import artifact_processor, logdevinfo
 
 @artifact_processor
-def factory_reset(files_found, report_folder, seeker, wrap_text):
+def factory_reset(context):
+    files_found = context.get_files_found()
 
     for file_found in files_found:
         file_found = str(file_found)

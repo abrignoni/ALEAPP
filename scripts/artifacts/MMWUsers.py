@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_map_users": {
         "name": "MapUsers",
@@ -29,7 +28,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_map_users(files_found, report_folder, seeker, wrap_text):
+def get_map_users(context):
+    files_found = context.get_files_found()
 
     files_found = [x for x in files_found if not str(x).endswith('-journal')
                    and not str(x).endswith('_gear') and not str(x).endswith('_gear-journal')]

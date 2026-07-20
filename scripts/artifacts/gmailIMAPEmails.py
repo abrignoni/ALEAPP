@@ -60,7 +60,8 @@ from scripts.context import Context
 from scripts.html_safe import safe_source
 
 @artifact_processor
-def gmailIMAPEmails(files_found, _report_folder, _seeker, _wrap_text):
+def gmailIMAPEmails(context):
+    files_found = context.get_files_found()
     emailProviderDB = ''    
     emailProviderDB_found = []
 
@@ -186,7 +187,8 @@ def gmailIMAPEmails(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, 'See source file(s) below:'
     
 @artifact_processor
-def gmailIMAPAccounts(files_found, _report_folder, _seeker, _wrap_text):
+def gmailIMAPAccounts(context):
+    files_found = context.get_files_found()
     emailProviderDB = '' 
     emailProviderDB_found = []
 

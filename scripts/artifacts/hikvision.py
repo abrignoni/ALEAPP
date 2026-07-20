@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_hikvision": {
         "name": "Hikvision - CCTV Channels",
@@ -93,7 +92,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_hikvision(files_found, report_folder, seeker, wrap_text):
+def get_hikvision(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found, 'database.hik')
     rows = _run(source_path, '''
         SELECT nDeviceID, nChannelNo, chChannelName,
@@ -105,7 +105,8 @@ def get_hikvision(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_hikvision_info(files_found, report_folder, seeker, wrap_text):
+def get_hikvision_info(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found, 'database.hik')
     rows = _run(source_path, '''
         SELECT nDeviceID, chDeviceName, chDeviceSerialNo, nDevicePort, nChannelNum, nStartChan,
@@ -118,7 +119,8 @@ def get_hikvision_info(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_hikvision_activity(files_found, report_folder, seeker, wrap_text):
+def get_hikvision_activity(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found, 'ezvizlog.db')
     rows = _run(source_path, 'SELECT time, systemName, content FROM event')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2]) for r in rows]
@@ -127,7 +129,8 @@ def get_hikvision_activity(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_hikvision_media(files_found, report_folder, seeker, wrap_text):
+def get_hikvision_media(context):
+    files_found = context.get_files_found()
     files_by_name = {os.path.basename(str(f)): str(f) for f in files_found}
     source_path = _db(files_found, 'image.db')
     rows = _run(source_path, '''

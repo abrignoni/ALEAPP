@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_burner": {
         "name": "Burner - Numbers",
@@ -78,7 +77,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_burner(files_found, report_folder, seeker, wrap_text):
+def get_burner(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT date_created, name, phone_number_id, last_updated_date, expiration_date,
@@ -96,7 +96,8 @@ def get_burner(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_burner_communications(files_found, report_folder, seeker, wrap_text):
+def get_burner_communications(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT messages.date_created, messages.contact_phone_number, contacts.name,

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_errp": {
         "name": "Errp",
@@ -19,7 +18,8 @@ from scripts.ilapfuncs import artifact_processor, convert_local_to_utc
 
 
 @artifact_processor
-def get_errp(files_found, report_folder, seeker, wrap_text):
+def get_errp(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

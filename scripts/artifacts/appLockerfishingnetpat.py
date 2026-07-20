@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_appLockerfishingnetpat": {
         "name": "App Locker Pat",
@@ -23,7 +22,8 @@ from scripts.ilapfuncs import artifact_processor
 
 
 @artifact_processor
-def get_appLockerfishingnetpat(files_found, report_folder, seeker, wrap_text):
+def get_appLockerfishingnetpat(context):
+    files_found = context.get_files_found()
 
     standardKey = '526e7934384e693861506a59436e5549'
     standardIV = '526e7934384e693861506a59436e5549'

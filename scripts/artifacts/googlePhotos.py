@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_googlePhotos": {
         "name": "Google Photos - Local Media",
@@ -194,7 +193,8 @@ def _find_media(files_found, key):
 
 
 @artifact_processor
-def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -231,7 +231,8 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googlePhotos_remote(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_remote(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -266,7 +267,8 @@ def get_googlePhotos_remote(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googlePhotos_shared(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_shared(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -295,7 +297,8 @@ def get_googlePhotos_shared(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googlePhotos_folders(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_folders(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -324,7 +327,8 @@ def get_googlePhotos_folders(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googlePhotos_cache(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_cache(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -352,7 +356,8 @@ def get_googlePhotos_cache(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googlePhotos_trash(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_trash(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

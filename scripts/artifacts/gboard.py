@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_gboardCache": {
         "name": "Gboard - Clipboard",
@@ -204,7 +203,8 @@ def _events_trainingcachev2(file_found):
 
 
 @artifact_processor
-def get_gboardCache(files_found, report_folder, seeker, wrap_text):
+def get_gboardCache(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -241,7 +241,8 @@ def get_gboardCache(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_gboardCache_keystrokes(files_found, report_folder, seeker, wrap_text):
+def get_gboardCache_keystrokes(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -265,7 +266,8 @@ def get_gboardCache_keystrokes(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_gboardCache_sessions(files_found, report_folder, seeker, wrap_text):
+def get_gboardCache_sessions(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:

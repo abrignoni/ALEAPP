@@ -67,7 +67,8 @@ def extract_content_from_fragments(fragments):
 
 
 @artifact_processor
-def deepseek_chat_messages(files_found, _report_folder, _seeker, _wrap_text):
+def deepseek_chat_messages(context):
+    files_found = context.get_files_found()
 
     data_headers = (
         ('Timestamp', 'datetime'),

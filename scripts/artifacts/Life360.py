@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Life360_chat_messages": {
         "name": "Life360 - Chat Messages",
@@ -154,7 +153,8 @@ def _ble_events(file_found):
 
 
 @artifact_processor
-def get_Life360_chat_messages(files_found, report_folder, seeker, wrap_text):
+def get_Life360_chat_messages(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'messaging.db')
     data_list = []
     if source:
@@ -193,7 +193,8 @@ def get_Life360_chat_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Life360_places(files_found, report_folder, seeker, wrap_text):
+def get_Life360_places(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'L360LocalStoreRoomDatabase')
     data_list = []
     if source:
@@ -210,7 +211,8 @@ def get_Life360_places(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Life360_locations(files_found, report_folder, seeker, wrap_text):
+def get_Life360_locations(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'L360EventStore.db')
     data_list = []
     if source:
@@ -227,7 +229,8 @@ def get_Life360_locations(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Life360_device_battery(files_found, report_folder, seeker, wrap_text):
+def get_Life360_device_battery(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'L360EventStore.db')
     data_list = []
     if source:

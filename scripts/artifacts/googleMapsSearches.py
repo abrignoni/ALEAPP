@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleMapsSearches": {
         "name": "Google Maps Searches",
@@ -61,7 +61,8 @@ def _extract_search(item):
 
 
 @artifact_processor
-def get_googleMapsSearches(files_found, report_folder, seeker, wrap_text):
+def get_googleMapsSearches(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_appLockerfishingnetdb": {
         "name": "App Locker DB",
@@ -19,7 +18,8 @@ from scripts.ilapfuncs import artifact_processor
 
 
 @artifact_processor
-def get_appLockerfishingnetdb(files_found, report_folder, seeker, wrap_text):
+def get_appLockerfishingnetdb(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

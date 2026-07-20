@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "frosting": {
         "name": "App Updates (Frosting.db)",
@@ -32,7 +31,8 @@ __artifacts_v2__ = {
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
 
 @artifact_processor
-def frosting(files_found, report_folder, seeker, wrap_text):
+def frosting(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = get_file_path(files_found, "frosting.db")
     

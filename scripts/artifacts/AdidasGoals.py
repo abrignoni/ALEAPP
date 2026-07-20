@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_adidas_goals": {
         "name": "AdidasGoals",
@@ -34,7 +33,8 @@ def _yyyymmdd(value):
 
 
 @artifact_processor
-def get_adidas_goals(files_found, report_folder, seeker, wrap_text):
+def get_adidas_goals(context):
+    files_found = context.get_files_found()
     logfunc("Processing data for Adidas Goals")
     files_found = [x for x in files_found if not str(x).endswith('-journal')]
     source_path = str(files_found[0])

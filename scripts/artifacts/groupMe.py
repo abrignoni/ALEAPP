@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_groupMe": {
         "name": "GroupMe - Group Information",
@@ -48,7 +47,8 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_groupMe(files_found, report_folder, seeker, wrap_text):
+def get_groupMe(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
@@ -82,7 +82,8 @@ def get_groupMe(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_groupMe_chat(files_found, report_folder, seeker, wrap_text):
+def get_groupMe_chat(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()

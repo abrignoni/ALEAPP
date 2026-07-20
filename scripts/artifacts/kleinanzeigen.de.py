@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_kleinanzeigenaccount": {
         "name": "kleinanzeigen.de App - Account Details",
@@ -123,21 +123,24 @@ def _recent_searches(files_found, marker):
 
 
 @artifact_processor
-def get_kleinanzeigenrecentsearchescache(files_found, report_folder, seeker, wrap_text):
+def get_kleinanzeigenrecentsearchescache(context):
+    files_found = context.get_files_found()
     data_list, source_path = _recent_searches(files_found, 'RECENT_SEARCHES_CACHE')
     data_headers = ('Search Term', 'Category', ('Search Timestamp', 'datetime'))
     return data_headers, data_list, source_path
 
 
 @artifact_processor
-def get_kleinanzeigennonresettablerecentsearchescache(files_found, report_folder, seeker, wrap_text):
+def get_kleinanzeigennonresettablerecentsearchescache(context):
+    files_found = context.get_files_found()
     data_list, source_path = _recent_searches(files_found, 'NON_RESETTABLE_RECENT_SEARCHES_CACHE')
     data_headers = ('Search Term', 'Category', ('Search Timestamp', 'datetime'))
     return data_headers, data_list, source_path
 
 
 @artifact_processor
-def get_kleinanzeigenaccount(files_found, report_folder, seeker, wrap_text):
+def get_kleinanzeigenaccount(context):
+    files_found = context.get_files_found()
     keys = ['USERPROFILE_NAME_KEY', 'USERPROFILE_INITIALS', 'LAST_EMAIL_USED', 'AUTH_USER_EMAIL', 'AUTH_USER_ID',
             'USERPROFILE_PHONE_NUMBER_KEY', 'USERPROFILE_ACCOUNT_TYPE_KEY', 'USERPROFILE_USER_SINCE_DATE_KEY',
             'USERPROFILE_LOCATION_LONGITUDE_KEY', 'USERPROFILE_LOCATION_LATITUDE_KEY']
@@ -171,7 +174,8 @@ def _messagebox_db(files_found):
 
 
 @artifact_processor
-def get_kleinanzeigenmessagebox(files_found, report_folder, seeker, wrap_text):
+def get_kleinanzeigenmessagebox(context):
+    files_found = context.get_files_found()
     source_path = _messagebox_db(files_found)
     data_list = []
     if source_path:
@@ -200,7 +204,8 @@ def get_kleinanzeigenmessagebox(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_kleinanzeigenmessages(files_found, report_folder, seeker, wrap_text):
+def get_kleinanzeigenmessages(context):
+    files_found = context.get_files_found()
     source_path = _messagebox_db(files_found)
     data_list = []
     if source_path:
