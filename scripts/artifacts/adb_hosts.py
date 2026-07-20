@@ -31,7 +31,8 @@ from scripts.ilapfuncs import artifact_processor, \
 
 
 @artifact_processor
-def adb_hosts(files_found, report_folder, seeker, wrap_text):
+def adb_hosts(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "adb_keys")
     data_list = []
     

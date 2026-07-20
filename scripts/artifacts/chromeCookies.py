@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_chromeCookies": {
         "name": "Cookies",
@@ -28,14 +27,14 @@ __artifacts_v2__ = {
 }
 
 import os
-import textwrap
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
 
 
 @artifact_processor
-def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
+def get_chromeCookies(context):
+    files_found = context.get_files_found()
     all_data = []
 
     data_headers = ['Last Access Date', 'Host', 'Name', 'Value', 'Created Date', 'Expiration Date', 'Path']
@@ -102,10 +101,7 @@ def get_chromeCookies(files_found, report_folder, seeker, wrap_text):
 
             data_list = []
             for row in all_rows:
-                if wrap_text:
-                    data_list.append((convert_human_ts_to_utc(row[0]),row[1],(textwrap.fill(row[2], width=50)),row[3],convert_human_ts_to_utc(row[4]),convert_human_ts_to_utc(row[5]),row[6]))
-                else:
-                    data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],convert_human_ts_to_utc(row[4]),convert_human_ts_to_utc(row[5]),row[6]))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],convert_human_ts_to_utc(row[4]),convert_human_ts_to_utc(row[5]),row[6]))
 
             data_list = [row + (browser_name,) for row in data_list]
             all_data.extend(data_list)

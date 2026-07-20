@@ -1,4 +1,4 @@
-# pylint: disable=W0612,W0613,W0631
+# pylint: disable=W0612,W0631
 __artifacts_v2__ = {
     "appIcons": {
         "name": "App Icon",
@@ -36,7 +36,8 @@ class App:
         self.icons = {} # { Component: ('Label', icon, last_update), .. }
 
 @artifact_processor
-def appIcons(files_found, report_folder, seeker, wrap_text):
+def appIcons(context):
+    files_found = context.get_files_found()
     artifact_info = inspect.stack()[0]
     source_path = get_file_path(files_found, "app_icons.db", "mirror")
     data_list = []
