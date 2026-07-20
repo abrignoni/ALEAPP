@@ -5,18 +5,22 @@ __artifacts_v2__ = {
         "description": "Get Information related to Garmin activities from the cache-database",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
-        "last_update_date": "2023-02-24",
+        "last_update_date": "2026-07-10",
         "requirements": "Python 3.7 or higher",
         "category": "Garmin",
-        "notes": "",
+        "notes": "Newer Garmin Connect versions no longer populate cache-database; current app data lives in gcm_cache.db and garmin.api files (parsed by the GarminJson, GarminGcmJsonActivities, garmin and Garmin*API artifacts).",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 0 rows",
+        },
     }
 }
 
 import datetime
 import json
+import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
@@ -35,20 +39,25 @@ def get_garmin_activities(files_found, report_folder, seeker, wrap_text):
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     # Combine activity_details and activity_summaries (grouped by activityId to drop duplicates)
-    cursor.execute('''
-    Select *
-    from (
-        SELECT activity_details.activityId, abd.json, lastUpdated, lastUpdate, calendarDate, activityName, activity_details.startTimeGMT, activityTypeKey, distance, duration, movingDuration, elevationGain, elevationLoss, averageSpeed, maxSpeed, startLatitude, startLongitude, ownerId, ownerProfileImageUrlLarge, calories, averageHR, maxHR, averageRunningCadenceInStepsPerMinute, maxRunningCadenceInStepsPerMinute, steps
-        from activity_details
-        LEFT JOIN activity_summaries abd on activity_details.activityId = abd.activityId
-        UNION
-        SELECT activity_summaries.activityId, json, lastUpdated, lastUpdate, calendarDate, activityName, acd.startTimeGMT, activityTypeKey, distance, duration, movingDuration, elevationGain, elevationLoss, averageSpeed, maxSpeed, startLatitude, startLongitude, ownerId, ownerProfileImageUrlLarge, calories, averageHR, maxHR, averageRunningCadenceInStepsPerMinute, maxRunningCadenceInStepsPerMinute, steps
-        from activity_summaries
-        LEFT JOIN activity_details acd on activity_summaries.activityId = acd.activityId
-    ) as t
-    group by activityId;
-    ''')
-    all_rows = cursor.fetchall()
+    try:
+        cursor.execute('''
+        Select *
+        from (
+            SELECT activity_details.activityId, abd.json, lastUpdated, lastUpdate, calendarDate, activityName, activity_details.startTimeGMT, activityTypeKey, distance, duration, movingDuration, elevationGain, elevationLoss, averageSpeed, maxSpeed, startLatitude, startLongitude, ownerId, ownerProfileImageUrlLarge, calories, averageHR, maxHR, averageRunningCadenceInStepsPerMinute, maxRunningCadenceInStepsPerMinute, steps
+            from activity_details
+            LEFT JOIN activity_summaries abd on activity_details.activityId = abd.activityId
+            UNION
+            SELECT activity_summaries.activityId, json, lastUpdated, lastUpdate, calendarDate, activityName, acd.startTimeGMT, activityTypeKey, distance, duration, movingDuration, elevationGain, elevationLoss, averageSpeed, maxSpeed, startLatitude, startLongitude, ownerId, ownerProfileImageUrlLarge, calories, averageHR, maxHR, averageRunningCadenceInStepsPerMinute, maxRunningCadenceInStepsPerMinute, steps
+            from activity_summaries
+            LEFT JOIN activity_details acd on activity_summaries.activityId = acd.activityId
+        ) as t
+        group by activityId;
+        ''')
+        all_rows = cursor.fetchall()
+    except sqlite3.OperationalError as ex:
+        # Newer Garmin Connect versions restructured the cache-database
+        logfunc(f'Unable to query the Garmin cache-database (unsupported schema version?): {ex}')
+        all_rows = []
     db.close()
     logfunc(f"Found {len(all_rows)} Garmin Activities")
 

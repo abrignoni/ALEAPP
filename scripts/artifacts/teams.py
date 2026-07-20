@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_teams": {
         "name": "Teams - Messages",
-        "description": "",
+        "description": "Parses Microsoft Teams messages (timestamp, user, content, topic, delete time and conversation) from SkypeTeams.db.",
         "author": "",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
@@ -12,10 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 32 rows",
+        },
     },
     "get_teams_users": {
         "name": "Teams - Users",
-        "description": "",
+        "description": "Parses Microsoft Teams users (last sync, name, email, phone numbers and account flags) from SkypeTeams.db.",
         "author": "",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
@@ -25,10 +28,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 3 rows",
+        },
     },
     "get_teams_calllog": {
         "name": "Teams - Call Log",
-        "description": "",
+        "description": "Parses Microsoft Teams call logs (connect and end time, state, type, originator, direction and participant) from SkypeTeams.db.",
         "author": "",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
@@ -38,10 +44,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 2 rows",
+        },
     },
     "get_teams_activity": {
         "name": "Teams - Activity Feed",
-        "description": "",
+        "description": "Parses the Microsoft Teams activity feed (timestamp, display name, message preview, activity type and read state) from SkypeTeams.db.",
         "author": "",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
@@ -51,10 +60,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 0 rows",
+        },
     },
     "get_teams_fileinfo": {
         "name": "Teams - File Info",
-        "description": "",
+        "description": "Parses Microsoft Teams file references (modified time, file name, type, object URL, folder flag and last modified by) from SkypeTeams.db.",
         "author": "",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
@@ -64,6 +76,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "file",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.microsoft.teams vc 2024132725 | 0 rows",
+        },
     }
 }
 

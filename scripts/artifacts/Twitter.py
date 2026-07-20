@@ -12,6 +12,11 @@ __artifacts_v2__ = {
         "paths": ('*/com.twitter.android/databases/*-search.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.twitter.android vc 310480000 | 2 rows",
+            "samsungs20_a13": "Android 13 | com.twitter.android vc 311550000 | 2 rows",
+            "sharon_a14": "Android 14 | com.twitter.android vc 310542000 | 0 rows",
+        },
     }
 }
 

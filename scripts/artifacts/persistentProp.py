@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_persistentProp": {
         "name": "persistentProp",
-        "description": "",
+        "description": "Parses persistent system properties and their set times (timestamp and event) from the persistent_properties file.",
         "author": "",
         "creation_date": "2021-08-18",
         "last_update_date": "2021-08-18",
@@ -12,6 +12,18 @@ __artifacts_v2__ = {
         "paths": ('*/property/persistent_properties',),
         "output_types": "standard",
         "artifact_icon": "info-circle",
+        "sample_data": {
+            "anne_a15": "Android 15 | 0 rows",
+            "galaxys10_a10": "Android 10 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | 0 rows",
+            "pixel7a_a14": "Android 14 | 0 rows",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "samsungs20_a13": "Android 13 | 2 rows",
+            "sharon_a14": "Android 14 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | 1 row",
+            "userb2_a13": "Android 13 | 0 rows",
+        },
     }
 }
 

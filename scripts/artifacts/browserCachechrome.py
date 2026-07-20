@@ -11,6 +11,18 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.android.chrome/cache/Cache/*_0',),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533 | 21956 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 847 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433 | 1289 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 39865 rows",
+            "pixel7a_a14": "Android 14 | com.android.chrome vc 616710133 | 3035 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 1701 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233 | 44 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 13957 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033 | 11054 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 1257 rows",
+        },
     }
 }
 

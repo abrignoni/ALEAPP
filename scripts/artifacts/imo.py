@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_imo_account": {
         "name": "IMO - Account ID",
-        "description": "",
+        "description": "Parses the local IMO account (account ID and name) from the IMO accountdb.db.",
         "author": "",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
@@ -12,10 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.imo.android.imous/databases/accountdb.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.imo.android.imous vc 2043 | 1 row",
+        },
     },
     "get_imo_messages": {
         "name": "IMO - Messages",
-        "description": "",
+        "description": "Parses IMO messages (timestamp, sender and recipient IDs, message, direction, read status and attachments) from the IMO imofriends.db.",
         "author": "",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-07-03",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.imo.android.imous/databases/imofriends.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.imo.android.imous vc 2043 | 22 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Chat Partner",

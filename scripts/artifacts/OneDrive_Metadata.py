@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Parses the QTMetadata.db from OneDrive",
         "author": "Matt Beers and Anthony Reince",
         "creation_date": "2025-04-17",
-        "last_update_date": "2025-04-17",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "Cloud Storage",
         "notes": "Inline base64 image previews replaced with checked-in media; cached image streams are "
@@ -13,6 +13,14 @@ __artifacts_v2__ = {
         "paths": ('*/com.microsoft.skydrive/files/QTMetadata.db*'),
         "output_types": "standard",
         "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.microsoft.skydrive vc 2027390102 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.microsoft.skydrive vc 2026998332 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.microsoft.skydrive vc 2027440202 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.microsoft.skydrive | 0 rows",
+            "sharon_a14": "Android 14 | com.microsoft.skydrive vc 2027110002 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.microsoft.skydrive vc 2026280402 | 0 rows",
+        },
     }
 }
 
@@ -20,7 +28,8 @@ import datetime
 import os
 import mimetypes
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_embedded_media
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_embedded_media, \
+    does_column_exist_in_db
 
 
 def _ms_to_utc(value):
@@ -74,17 +83,22 @@ def get_onedrive(files_found, report_folder, seeker, wrap_text):
 
         if file_found.endswith('QTMetadata.db'):
             source = file_found
+            # Some OneDrive schema versions carry fileHash/fileHashType instead of sha1Hash
+            hash_column = 'items.sha1Hash'
+            if not does_column_exist_in_db(file_found, 'items', 'sha1Hash'):
+                hash_column = 'NULL'
+                logfunc(f'No items.sha1Hash column in {file_found}; hash values unavailable')
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
 
-            cursor.execute('''
+            cursor.execute(f'''
             SELECT
                 items.itemDate,
                 items._id,
                 items.extension,
                 items.name,
                 items.ownerName,
-                items.sha1Hash,
+                {hash_column},
                 stream_cache.parentID,
                 stream_cache.stream_location
             FROM

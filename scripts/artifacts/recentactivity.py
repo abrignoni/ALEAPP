@@ -16,6 +16,18 @@ __artifacts_v2__ = {
                   '*/system_ce/*/recent_images/*/*'),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "anne_a15": "Android 15 | 35 rows",
+            "galaxys10_a10": "Android 10 | 38 rows",
+            "hc_pixel8pro_a16": "Android 16 | 4 rows",
+            "kevin_pocox7_a15": "Android 15 | 21 rows",
+            "pixel7a_a14": "Android 14 | 5 rows",
+            "samsunga53_a14": "Android 14 | 37 rows",
+            "samsungs20_a13": "Android 13 | 36 rows",
+            "sharon_a14": "Android 14 | 13 rows",
+            "russell_pixel6a_a13": "Android 13 | 15 rows",
+            "userb2_a13": "Android 13 | 4 rows",
+        },
     }
 }
 

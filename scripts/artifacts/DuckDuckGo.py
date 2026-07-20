@@ -11,7 +11,11 @@ __artifacts_v2__ = {
         "notes": "Tested on version 5.237.0 (June, 3rd 2025)",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "bookmark"
+        "artifact_icon": "bookmark",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 0 rows",
+        }
     },
     "duckduckgo_favorites": {
         "name": "DuckDuckGo - Favorited Sites",
@@ -24,7 +28,11 @@ __artifacts_v2__ = {
         "notes": "Tested on version 5.237.0 (June, 3rd 2025)",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "star"
+        "artifact_icon": "star",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 0 rows",
+        }
     },
     "duckduckgo_history": {
         "name": "DuckDuckGo - Web Browser History",
@@ -37,7 +45,11 @@ __artifacts_v2__ = {
         "notes": "Tested on version 5.237.0 (June, 3rd 2025)",
         "paths": ('*/com.duckduckgo.mobile.android/databases/history.db*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "globe"
+        "artifact_icon": "globe",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 12 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 12 rows",
+        }
     },
     "duckduckgo_opentabs": {
         "name": "DuckDuckGo - Open Tabs",
@@ -50,7 +62,11 @@ __artifacts_v2__ = {
         "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*','*/com.duckduckgo.mobile.android/cache/tabPreviews/*/*.jpg'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "book"
+        "artifact_icon": "book",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 3 rows",
+        }
     },
         "duckduckgo_fireproof": {
         "name": "DuckDuckGo - FireProof Sites",
@@ -63,7 +79,11 @@ __artifacts_v2__ = {
         "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "globe"
+        "artifact_icon": "globe",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 0 rows",
+        }
     },
     
         "duckduckgo_downloads": {
@@ -77,7 +97,11 @@ __artifacts_v2__ = {
         "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
         "paths": ('*/com.duckduckgo.mobile.android/databases/downloads.db*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "download"
+        "artifact_icon": "download",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 0 rows",
+        }
     },
     "duckduckgo_thumbnails": {
         "name": "DuckDuckGo - Tab Thumbnails",
@@ -90,7 +114,11 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.duckduckgo.mobile.android/cache/tabPreviews/*/*.jpg','*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "timeline", "lava"],
-        "artifact_icon": "photo"
+        "artifact_icon": "photo",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 5 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 5 rows",
+        }
     },
         "duckduckgo_duckai": {
         "name": "DuckDuckGo - Duck AI",
@@ -103,7 +131,11 @@ __artifacts_v2__ = {
         "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
         "paths": ('*com.duckduckgo.mobile.android/app_webview/Default/Local Storage/leveldb/*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "message"
+        "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 0 rows",
+        }
     },
         "duckduckgo_cookies": {
         "name": "DuckDuckGo - Cookies",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_discreteNative": {
         "name": "DiscreteNative",
-        "description": "",
+        "description": "Parses discrete app-ops permission usage (timestamp, package, permission module and operation, and usage duration) from the system appops discrete records.",
         "author": "",
         "creation_date": "2022-01-19",
         "last_update_date": "2022-01-19",
@@ -12,6 +12,16 @@ __artifacts_v2__ = {
         "paths": ('*/system/appops/discrete/**',),
         "output_types": "standard",
         "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | 1886 rows",
+            "kevin_pocox7_a15": "Android 15 | 1720 rows",
+            "pixel7a_a14": "Android 14 | 1948 rows",
+            "samsunga53_a14": "Android 14 | 13 rows",
+            "samsungs20_a13": "Android 13 | 41 rows",
+            "sharon_a14": "Android 14 | 281 rows",
+            "russell_pixel6a_a13": "Android 13 | 41 rows",
+            "userb2_a13": "Android 13 | 13 rows",
+        },
     }
 }
 

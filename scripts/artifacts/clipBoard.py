@@ -12,6 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/*clipboard/*/*'),
         "output_types": "standard",
         "artifact_icon": "clipboard",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.honeyboard vc 590202300 | 1 row",
+            "galaxys10_a10": "Android 10 | 10 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.honeyboard | 3 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.honeyboard | 0 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.honeyboard vc 560051300 | 0 rows",
+        },
     }
 }
 

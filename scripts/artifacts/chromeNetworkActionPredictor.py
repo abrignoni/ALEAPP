@@ -5,13 +5,18 @@ __artifacts_v2__ = {
         "description": "Parses the Network Action Predictor from Chromium Based Browsers",
         "author": "",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
         "paths": ('*/app_Chrome/Default/Network Action Predictor*', '*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predicator*', '*/app_webview/Default/Network Action Predictor*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "wifi",
+        "sample_data": {
+            "sharon_a14": "Android 14 | com.sec.android.app.sbrowser vc 1260103502 | 0 rows",
+            "anne_a15": "Android 15 | com.sec.android.app.sbrowser vc 1280509502 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.sec.android.app.sbrowser vc 1300067502 | 0 rows",
+        },
     }
 }
 
@@ -42,6 +47,14 @@ def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_te
 
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
+        columns = [i[1] for i in cursor.execute('PRAGMA table_info(network_action_predictor)')]
+
+        if not columns:
+            # Some browser variants keep only resource_prefetch_predictor tables here
+            logfunc(f'No network_action_predictor table available in {file_found}')
+            db.close()
+            continue
+
         cursor.execute('''
         select
         user_text,

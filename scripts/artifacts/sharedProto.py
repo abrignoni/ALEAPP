@@ -12,6 +12,11 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*',),
         "output_types": "standard",
         "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.app.sbrowser vc 1280509502 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.sec.android.app.sbrowser vc 1300067502 | 0 rows",
+            "sharon_a14": "Android 14 | com.sec.android.app.sbrowser vc 1260103502 | 261 rows",
+        },
     }
 }
 

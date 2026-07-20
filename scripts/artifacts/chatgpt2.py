@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Android ChatGPT conversations",
         "author": "Alexis Brignoni",
         "creation_date": "2025-07-08",
-        "last_update_date": "2025-09-09",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "ChatGPT",
         "notes": "",
@@ -13,6 +13,9 @@ __artifacts_v2__ = {
         "html_columns": ['Content'],
         "output_types": "standard",
         "artifact_icon": "loader",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 12 rows",
+        },
     }
 }
 
@@ -22,6 +25,7 @@ import json
 from datetime import datetime, timezone
 from collections import defaultdict
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.html_safe import safe_source
 
 @artifact_processor
 def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
@@ -79,6 +83,9 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
 
             # Print one result as a check
             for message_id, message in list(reconstructed_messages.items()):
+                if not isinstance(message, dict) or not isinstance(message.get('content'), dict):
+                    logfunc(f'Skipping ChatGPT message {message_id}: unrecognized message structure')
+                    continue
                 cdt = ''
                 mdt = ''
                 creationdate = message['content'].get('created_date','')
@@ -99,17 +106,23 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
                         mdt = datetime.strptime(modificationdate, "%Y-%m-%dT%H:%M:%SZ")
                     mdt = mdt.replace(tzinfo=timezone.utc)
 
-                chunkdata = message['content']['content'].get('content')
-                if chunkdata == None:
-                    chunkdata = message['content']['content']
-
-                references = message['content']['content'].get('references')
+                # The nested content value is a dict in most messages but can
+                # also be a plain string (e.g. some tool/voice messages)
+                content = message['content'].get('content')
+                if isinstance(content, dict):
+                    chunkdata = content.get('content')
+                    if chunkdata == None:
+                        chunkdata = content
+                    references = content.get('references')
+                else:
+                    chunkdata = content
+                    references = ''
 
                 # Get conversation title
                 conversation_id = message['content'].get('conversation_id')
                 conversation_title = conversations.get(conversation_id, 'Unknown Conversation')
 
-                data_list.append((mdt, cdt, conversation_title, chunkdata, references, message_id, conversation_id))
+                data_list.append((mdt, cdt, conversation_title, safe_source(chunkdata), references, message_id, conversation_id))
 
     data_headers = (('Modified Time', 'datetime'), ('Creation Time', 'datetime'), 'Conversation Title', 'Content', 'Content References','Message ID','Conversation ID')
 

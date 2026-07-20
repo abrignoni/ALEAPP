@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "description": "Parses and extracts account information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-06-27",
+        "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
@@ -21,7 +21,11 @@ __artifacts_v2__ = {
                   "*/com.waze/waze/cached_data*"),
         "output_types": [ "standard" ],
         "html_columns": [ "Profile Picture URL" ],
-        "artifact_icon": "user"
+        "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 2 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 2 rows",
+        }
     },
     "waze_session_info": {
         "name": "Waze - Session Info",
@@ -34,7 +38,11 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/session"),
         "output_types": [ "all" ],
-        "artifact_icon": "navigation"
+        "artifact_icon": "navigation",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 24 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 24 rows",
+        }
     },
     "waze_track_gps_quality": {
         "name": "Waze - Track GPS Quality",
@@ -49,7 +57,11 @@ __artifacts_v2__ = {
                   "*/com.waze/waze_log.txt",
                   "*/com.waze/*spdlog.logdata.gz"),
         "output_types": [ "all" ],
-        "artifact_icon": "navigation"
+        "artifact_icon": "navigation",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 0 rows",
+        }
     },
     "waze_search_history": {
         "name": "Waze - Search History",
@@ -62,20 +74,28 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
         "output_types": [ "all" ],
-        "artifact_icon": "search"
+        "artifact_icon": "search",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 4 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 3 rows",
+        }
     },
     "waze_recent_locations": {
         "name": "Waze - Recent Locations",
         "description": "Parses and extracts recent locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-06-27",
+        "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
         "output_types": [ "all" ],
-        "artifact_icon": "map-pin"
+        "artifact_icon": "map-pin",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 4 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 3 rows",
+        }
     },
     "waze_favorite_locations": {
         "name": "Waze - Favorite Locations",
@@ -89,7 +109,11 @@ __artifacts_v2__ = {
         "paths": ("*/com.waze/user.db*",
                   "*/com.waze/waze/cached_data*"),                  
         "output_types": [ "all" ],
-        "artifact_icon": "star"
+        "artifact_icon": "star",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 0 rows",
+        }
     },
     "waze_shared_locations": {
         "name": "Waze - Shared Locations",
@@ -102,7 +126,11 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
         "output_types": [ "all" ],
-        "artifact_icon": "map-pin"
+        "artifact_icon": "map-pin",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 0 rows",
+        }
     },
     "waze_planned_events": {
         "name": "Waze - Planned Events",
@@ -116,20 +144,28 @@ __artifacts_v2__ = {
         "paths": ("*/com.waze/user.db*"),
         "output_types": [ "all" ],
         "html_columns": [ "Image URL" ],
-        "artifact_icon": "calendar"
+        "artifact_icon": "calendar",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 0 rows",
+        }
     },
     "waze_tts": {
         "name": "Waze - Text-To-Speech Navigation",
         "description": "Parses and extracts text-to-speech navigation information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-06-27",
+        "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/waze/tts/tts.db*"),
         "output_types": [ "standard" ],
-        "artifact_icon": "volume-2"
+        "artifact_icon": "volume-2",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 400 rows",
+            "sharon_a14": "Android 14 | com.waze vc 1030483 | 574 rows",
+        }
     }
 }
 
@@ -140,8 +176,8 @@ import sqlite3
 from pathlib import Path
 from urllib.parse import urlparse
 from math import log10
-import blackboxprotobuf
 import gzip
+import blackboxprotobuf
 from scripts.ilapfuncs import (
     open_sqlite_db_readonly, get_sqlite_db_records,
     does_column_exist_in_db, get_txt_file_content, convert_unix_ts_to_utc,
@@ -150,7 +186,6 @@ from scripts.ilapfuncs import (
 
 # Constants
 COMMA_SEP = ', '
-WAZE_PREFERENCES_PLIST = 'com.waze.iphone.plist'
 SOURCE_FILE_NAME = 'Source File Name'
 SOURCE_PATH_NOTE = f"Refer to the '{SOURCE_FILE_NAME}' column to identify the exact " \
                    "device location of the origin file."
@@ -274,7 +309,6 @@ F_LAST_DEST_NAME = 'last_dest_name'
 F_LAST_DEST_VENUE_NAME = 'last_dest_venue_name'
 F_LAST_SYNCED = 'last_synced'
 F_LAST_WAYPOINT_ACCESS = 'last_waypoint_access'
-F_CONTEXT = 'context'
 F_IMAGE_ID = 'image_id'
 F_EVENT_ID = 'event_id'
 F_EVENT_TYPE = 'event_type'
@@ -868,14 +902,23 @@ def _parse_account_user(source_path: str, context, data_list: list, data_list_ht
 #                fields[F_NICKNAME] = value
             elif key == 'Realtime.PersistentId':
                 fields[F_WAZE_ID] = value.split('|')[-1] if value else None
+
             elif key == 'Realtime.Invisible mode':
                 fields[F_INVISIBLE_MODE] = (
                     'N/A' if value == '' else ('On' if value == '1' else 'Off')
                 )
             elif key == 'General.First use':
-                fields[F_FIRST_USE] = convert_unix_ts_to_utc(float(value))
+                fields[F_FIRST_USE] = (
+                    convert_unix_ts_to_utc(int(value))
+                    if value and value != '0'
+                    else None
+                )
             elif key == 'App Launch.Dynamic Splash Screen Last Shown Utc Seconds':
-                fields[F_LAST_LAUNCH] = convert_unix_ts_to_utc(float(value))
+                fields[F_LAST_LAUNCH] = (
+                    convert_unix_ts_to_utc(int(value))
+                    if value and value != '0'
+                    else None
+                )
 
         except (KeyError, TypeError, IndexError, ValueError) as ex:
             logfunc(f"[{context.get_artifact_name()}] "
@@ -1567,7 +1610,6 @@ def waze_recent_locations(context):
         'Longitude',
         ('Created', 'datetime'),
         ('Last Waypoint Access', 'datetime'),
-        'Context',
         'Image ID',
         'Venue ID',
         'Location'
@@ -1604,7 +1646,6 @@ def waze_recent_locations(context):
         CAST((CAST(P.longitude AS REAL) / 1000000) AS TEXT) AS "longitude",
 	    R.created_time,
         R.waypoint_access_time,
-        R.string_context,
 	    R.image_id,
         P.venue_id
     FROM RECENTS AS "R"
@@ -1632,7 +1673,6 @@ def waze_recent_locations(context):
                 F_LON: None,
                 F_CREATED: None,
                 F_LAST_WAYPOINT_ACCESS: None,
-                F_CONTEXT: None,
                 F_IMAGE_ID: None,
                 F_VENUE_ID: None,
                 F_LOCATION: None
@@ -1665,11 +1705,10 @@ def waze_recent_locations(context):
             fields[F_LON] = record[11]
 
             # String Context
-            fields[F_CONTEXT] = record[14]
-            fields[F_IMAGE_ID] = record[15]
+            fields[F_IMAGE_ID] = record[14]
 
             # Venue ID
-            fields[F_VENUE_ID] = record[16]
+            fields[F_VENUE_ID] = record[15]
 
             # Precise location within the source database table for validation
             location = [ f"RECENTS (id: {recent_id})" ]
@@ -1691,7 +1730,6 @@ def waze_recent_locations(context):
                 fields[F_LON],
                 fields[F_CREATED],
                 fields[F_LAST_WAYPOINT_ACCESS],
-                fields[F_CONTEXT],
                 fields[F_IMAGE_ID],
                 fields[F_VENUE_ID],
                 fields[F_LOCATION]
@@ -2450,7 +2488,7 @@ def _parse_tts_table(cursor, table_name: str, source_path: str, context, data_li
         for record in cursor:
             try:
                 # Unpack record for clarity
-                (row_id, raw_ts, text, text_type) = record
+                (row_id, raw_ts, text_type, text) = record
 
                 # Convert timestamps to UTC
                 timestamp = convert_unix_ts_to_utc(raw_ts)

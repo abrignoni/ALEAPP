@@ -14,6 +14,15 @@ __artifacts_v2__ = {
                   '*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db'),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.google.android.googlequicksearchbox vc 301139116 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.googlequicksearchbox vc 301302075 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.googlequicksearchbox vc 301639434 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.googlequicksearchbox vc 301671258 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.googlequicksearchbox vc 301381725 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.googlequicksearchbox vc 301246250 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.googlequicksearchbox vc 301427619 | 0 rows",
+        },
     }
 }
 

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_userDict": {
         "name": "userDict",
-        "description": "",
+        "description": "Parses the personal user dictionary (word, frequency, locale, app ID and shortcut) from the user dictionary database.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
@@ -12,6 +12,17 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.userdictionary/databases/user_dict.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.providers.userdictionary | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.userdictionary | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.userdictionary | 0 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.userdictionary | 0 rows",
+            "samsunga53_a14": "Android 14 | com.android.providers.userdictionary | 0 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.userdictionary | 0 rows",
+            "sharon_a14": "Android 14 | com.android.providers.userdictionary | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.userdictionary | 0 rows",
+            "userb2_a13": "Android 13 | com.android.providers.userdictionary | 0 rows",
+        },
     }
 }
 

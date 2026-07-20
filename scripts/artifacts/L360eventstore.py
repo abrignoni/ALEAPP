@@ -10,7 +10,11 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
-        'artifact_icon': 'map-pin'
+        'artifact_icon': 'map-pin',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 2758 rows',
+            'pixel7a_a14': 'Android 14 | com.life360.android.safetymapd vc 294540 | 0 rows',
+        }
     },
     'Life360_Waypoints': {
         'name': 'Life360 Waypoints',
@@ -23,7 +27,11 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
-        'artifact_icon': 'map-pin'
+        'artifact_icon': 'map-pin',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 953 rows',
+            'pixel7a_a14': 'Android 14 | com.life360.android.safetymapd vc 294540 | 0 rows',
+        }
     },
     'Life360_BatteryLevel': {
         'name': 'Life360 Battery Level',
@@ -36,7 +44,11 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': 'standard',
-        'artifact_icon': 'battery-charging'
+        'artifact_icon': 'battery-charging',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 4956 rows',
+            'pixel7a_a14': 'Android 14 | com.life360.android.safetymapd vc 294540 | 7 rows',
+        }
     },
     'Life360_Drive_Events': {
         'name': 'Life360 Drive Events (EventStore)',
@@ -49,7 +61,11 @@ __artifacts_v2__ = {
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
-        'artifact_icon': 'truck'
+        'artifact_icon': 'truck',
+        'sample_data': {
+            'hc_pixel8pro_a16': 'Android 16 | com.life360.android.safetymapd vc 2897710 | 18 rows',
+            'pixel7a_a14': 'Android 14 | com.life360.android.safetymapd vc 294540 | 0 rows',
+        }
     }
 }
 

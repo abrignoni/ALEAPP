@@ -24,7 +24,11 @@ __artifacts_v2__ = {
         "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
         "paths": ('*/org.torproject.torbrowser/files/places.sqlite'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "bookmark"
+        "artifact_icon": "bookmark",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | org.torproject.torbrowser vc 2016164570 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | org.torproject.torbrowser vc 2015960779 | 0 rows",
+        }
     },
     "torbrowser_usageinfo": {
         "name": "Tor Browser - Usage Info",
@@ -37,7 +41,11 @@ __artifacts_v2__ = {
         "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
         "paths": ('*/org.torproject.torbrowser/shared_prefs/fenix_preferences.xml'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "info-circle"
+        "artifact_icon": "info-circle",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | org.torproject.torbrowser vc 2016164570 | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | org.torproject.torbrowser vc 2015960779 | 1 row",
+        }
     },
 }
 

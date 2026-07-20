@@ -11,7 +11,14 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/anomaly.db*'),
         "output_types": "all",
-        "artifact_icon": "settings"
+        "artifact_icon": "settings",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.sdhms | 29 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 11 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 9 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 28 rows",
+            "sharon_a14": "Android 14 | com.sec.android.sdhms | 100 rows",
+        }
     },
     "sdhms_netstat": {
         "name": "SDHMS Netstat",
@@ -24,7 +31,14 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
         "output_types": "all",
-        "artifact_icon": "chart-bar-popular"
+        "artifact_icon": "chart-bar-popular",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.sdhms | 1582 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 0 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 1154 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 324 rows",
+            "sharon_a14": "Android 14 | com.sec.android.sdhms | 1160 rows",
+        }
     },
     "sdhms_temperature": {
         "name": "SDHMS Temperature Logs",
@@ -37,7 +51,14 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
         "output_types": "all",
-        "artifact_icon": "thermometer"
+        "artifact_icon": "thermometer",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.sdhms | 567 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 0 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 0 rows",
+            "sharon_a14": "Android 14 | com.sec.android.sdhms | 0 rows",
+        }
     },
     "sdhms_cpustats": {
         "name": "SDHMS CPU Stats",
@@ -50,7 +71,14 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
         "output_types": "all",
-        "artifact_icon": "cpu"
+        "artifact_icon": "cpu",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.sdhms | 963 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 1045 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 491 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 595 rows",
+            "sharon_a14": "Android 14 | com.sec.android.sdhms | 483 rows",
+        }
     }
 
 }

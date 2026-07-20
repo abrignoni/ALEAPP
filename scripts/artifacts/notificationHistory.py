@@ -13,6 +13,11 @@ __artifacts_v2__ = {
         "paths": ('**/system_ce/*/notification_history/history/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
+        "sample_data": {
+            "anne_a15": "Android 15 | 286 rows",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "sharon_a14": "Android 14 | 44 rows",
+        },
     },
     "get_notificationHistory_status": {
         "name": "Android Notification History - Status",
@@ -26,6 +31,18 @@ __artifacts_v2__ = {
         "paths": ('**/system/users/*/settings_secure.xml',),
         "output_types": "standard",
         "artifact_icon": "toggle-right",
+        "sample_data": {
+            "anne_a15": "Android 15 | 1 row",
+            "galaxys10_a10": "Android 10 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | 1 row",
+            "pixel7a_a14": "Android 14 | 1 row",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "samsungs20_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | 1 row",
+            "userb2_a13": "Android 13 | 1 row",
+        },
     },
     "get_notificationHistory_snoozed": {
         "name": "Android Notification History - Snoozed",
@@ -39,6 +56,18 @@ __artifacts_v2__ = {
         "paths": ('**/system/notification_policy.xml',),
         "output_types": "standard",
         "artifact_icon": "clock",
+        "sample_data": {
+            "anne_a15": "Android 15 | 0 rows",
+            "galaxys10_a10": "Android 10 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | 0 rows",
+            "pixel7a_a14": "Android 14 | 0 rows",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "samsungs20_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | 0 rows",
+            "userb2_a13": "Android 13 | 0 rows",
+        },
     }
 }
 

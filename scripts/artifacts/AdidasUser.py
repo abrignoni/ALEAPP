@@ -18,6 +18,7 @@ __artifacts_v2__ = {
 
 import datetime
 
+from scripts.html_safe import esc
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 
@@ -75,7 +76,7 @@ def get_adidas_user(files_found, report_folder, seeker, wrap_text):
         elif key == 'lastV3SessionSyncAtLocalTime':
             last_sync = _ms_to_utc(val)
 
-    image_html = f'<img src="{image}" alt="{image}" width="50" height="50">' if image else ''
+    image_html = f'<img src="{esc(image)}" alt="{esc(image)}" width="50" height="50">' if image else ''
     data_list = [(user_id, name, height, weight, country, gender, email, created_at, image_html, my_fitness_pal, garmin_connect, polar, last_sync)]
 
     data_headers = ('ID', 'Name', 'Height', 'Weight', 'Country', 'Gender', 'Email', ('Created At', 'datetime'), 'Image', 'My Fitness Pal', 'Garmin Connect', 'Polar', ('LastSync', 'datetime'))

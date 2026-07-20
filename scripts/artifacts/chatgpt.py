@@ -11,19 +11,25 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/databases/*_conversations.db*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 2 rows",
+        },
     },
     "get_chatgpt_conversations": {
         "name": "ChatGPT - Messages (Legacy)",
         "description": "User messages with ChatGPT, older DBMessage.messageNode schema (see ChatGPT - Conversations / chatgpt2 for the newer DBMessageChunk schema)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
-        "last_update_date": "2024-07-09",
+        "last_update_date": "2026-07-10",
         "requirements": "",
         "category": "ChatGPT",
         "notes": "",
         "paths": ('**/com.openai.chatgpt/databases/*_conversations.db*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 0 rows",
+        },
     },
     "get_chatgpt_user": {
         "name": "ChatGPT - User",
@@ -37,6 +43,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_user.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_accountstatus": {
         "name": "ChatGPT - Account Status",
@@ -50,6 +59,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_accountstatus.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "user-check",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 2 rows",
+        },
     },
     "get_chatgpt_accountuserstate": {
         "name": "ChatGPT - Account User State",
@@ -63,6 +75,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_accountuser_state.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_custominstructions": {
         "name": "ChatGPT - Custom Instructions",
@@ -76,6 +91,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_custom_instructions.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "edit",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_usersettings": {
         "name": "ChatGPT - User Settings",
@@ -89,6 +107,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/files/datastore/*_user_settings.preferences_pb',),
         "output_types": "standard",
         "artifact_icon": "settings",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_analytics": {
         "name": "ChatGPT - User Analytics",
@@ -102,6 +123,9 @@ __artifacts_v2__ = {
         "paths": ('**/com.openai.chatgpt/shared_prefs/analytics-android-oai.xml',),
         "output_types": "standard",
         "artifact_icon": "chart-bar",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 1 row",
+        },
     },
     "get_chatgpt_media": {
         "name": "ChatGPT - Media Uploads",
@@ -128,7 +152,8 @@ from pathlib import Path
 import blackboxprotobuf
 from PIL import Image, UnidentifiedImageError
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_media
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_media, \
+    does_column_exist_in_db
 
 
 def _iso_to_utc(value):
@@ -213,6 +238,10 @@ def get_chatgpt_conversations(context):
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('_conversations.db'):
+            continue
+        if not does_column_exist_in_db(file_found, 'DBMessage', 'messageNode'):
+            logfunc(f'Skipping {file_found}: no DBMessage.messageNode column '
+                    '(newer ChatGPT schema, parsed by ChatGPT - Conversations)')
             continue
         source_path = file_found
         account = _account(os.path.basename(file_found), '_conversations.db')

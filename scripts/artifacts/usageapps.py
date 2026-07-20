@@ -13,6 +13,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.as/databases/reflection_gel_events.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.google.android.as vc 1353029 | 1063 rows",
+        },
     }
 }
 

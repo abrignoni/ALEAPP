@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_calllogs": {
         "name": "Call Logs",
-        "description": "",
+        "description": "Parses call logs (number, start and end time, direction and name) from the contacts and logs provider databases.",
         "author": "",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",
@@ -12,6 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 0 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.contacts | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.contacts | 0 rows",
+            "userb2_a13": "Android 13 | com.android.providers.contacts | 0 rows",
+        },
     }
 }
 

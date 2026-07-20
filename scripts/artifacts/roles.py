@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_roles": {
         "name": "roles",
-        "description": "",
+        "description": "Parses assigned system role holders (Android version, user, role and holder package) from the roles.xml file.",
         "author": "",
         "creation_date": "2021-01-25",
         "last_update_date": "2021-01-25",
@@ -12,6 +12,18 @@ __artifacts_v2__ = {
         "paths": ('*/system/users/*/roles.xml', '*/misc_de/*/apexdata/com.android.permission/roles.xml'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",
+        "sample_data": {
+            "anne_a15": "Android 15 | 40 rows",
+            "galaxys10_a10": "Android 10 | 8 rows",
+            "hc_pixel8pro_a16": "Android 16 | 44 rows",
+            "kevin_pocox7_a15": "Android 15 | 40 rows",
+            "pixel7a_a14": "Android 14 | 38 rows",
+            "samsunga53_a14": "Android 14 | 76 rows",
+            "samsungs20_a13": "Android 13 | 63 rows",
+            "sharon_a14": "Android 14 | 38 rows",
+            "russell_pixel6a_a13": "Android 13 | 66 rows",
+            "userb2_a13": "Android 13 | 33 rows",
+        },
     }
 }
 

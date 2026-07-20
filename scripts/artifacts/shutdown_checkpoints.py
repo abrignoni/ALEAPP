@@ -11,6 +11,13 @@ __artifacts_v2__ = {
         "paths": ('*/system/shutdown-checkpoints/checkpoints-*'),
         "output_types": "standard",
         "artifact_icon": "power",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | 61 rows",
+            "kevin_pocox7_a15": "Android 15 | 31 rows",
+            "pixel7a_a14": "Android 14 | 41 rows",
+            "russell_pixel6a_a13": "Android 13 | 21 rows",
+            "userb2_a13": "Android 13 | 17 rows",
+        },
     }
 }
 

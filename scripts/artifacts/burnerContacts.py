@@ -13,6 +13,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.adhoclabs.burner vc 2104 | 1 row",
+        },
     }
 }
 

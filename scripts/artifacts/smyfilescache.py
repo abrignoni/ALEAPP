@@ -13,6 +13,13 @@ __artifacts_v2__ = {
                   '*/com.sec.android.app.myfiles/cache/*.*'),
         "output_types": "standard",
         "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.app.myfiles vc 1520402000 | 2048 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.app.myfiles vc 1150303551 | 1024 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 2048 rows",
+            "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 2048 rows",
+        },
     }
 }
 

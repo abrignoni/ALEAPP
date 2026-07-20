@@ -18,6 +18,7 @@ __artifacts_v2__ = {
 
 import datetime
 
+from scripts.html_safe import esc
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 
@@ -49,7 +50,7 @@ def get_map_users(files_found, report_folder, seeker, wrap_text):
         height = round(row[6], 2) if row[6] is not None else row[6]
         weight = round(row[7], 2) if row[7] is not None else row[7]
         if row[12]:
-            image = '<img src="' + row[12] + '" alt="' + str(row[10]) + '" width="50" height="50">'
+            image = '<img src="' + esc(row[12]) + '" alt="' + esc(str(row[10])) + '" width="50" height="50">'
         else:
             image = 'N/A'
         data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], height, weight, row[8],

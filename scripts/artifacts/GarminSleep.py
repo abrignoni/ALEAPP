@@ -5,17 +5,21 @@ __artifacts_v2__ = {
         "description": "Get Information relative to the sleep data in the database cache-database from the table sleep_detail in the Garmin Connect app",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
-        "last_update_date": "2023-02-24",
+        "last_update_date": "2026-07-10",
         "requirements": "Python 3.7 or higher",
         "category": "Garmin",
-        "notes": "",
+        "notes": "Newer Garmin Connect versions no longer populate cache-database; current app data lives in gcm_cache.db and garmin.api files (parsed by the GarminJson, GarminGcmJsonActivities, garmin and Garmin*API artifacts).",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 0 rows",
+        },
     }
 }
 
 import datetime
+import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
@@ -33,20 +37,25 @@ def get_garmin_sleep(files_found, report_folder, seeker, wrap_text):
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
-    cursor.execute('''
-        SELECT
-        sleepStartTimeGMT,
-        sleepEndTimeGMT,
-        sleepTimeInSeconds,
-        deepSleepSeconds,
-        lightSleepSeconds,
-        remSleepSeconds,
-        awakeSleepSeconds,
-        averageSpO2Value,
-        averageSpO2HRSleep
-        from sleep_detail
-    ''')
-    all_rows = cursor.fetchall()
+    try:
+        cursor.execute('''
+            SELECT
+            sleepStartTimeGMT,
+            sleepEndTimeGMT,
+            sleepTimeInSeconds,
+            deepSleepSeconds,
+            lightSleepSeconds,
+            remSleepSeconds,
+            awakeSleepSeconds,
+            averageSpO2Value,
+            averageSpO2HRSleep
+            from sleep_detail
+        ''')
+        all_rows = cursor.fetchall()
+    except sqlite3.OperationalError as ex:
+        # Newer Garmin Connect versions restructured the cache-database
+        logfunc(f'Unable to query the Garmin cache-database (unsupported schema version?): {ex}')
+        all_rows = []
     db.close()
     logfunc(f"Found {len(all_rows)} sleep entries")
 

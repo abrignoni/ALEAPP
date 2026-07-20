@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_smyfilesStored": {
         "name": "smyfilesStored",
-        "description": "",
+        "description": "Parses cached file records (timestamp, storage, path, size and latest access) from the Samsung My Files FileCache.db.",
         "author": "",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
@@ -12,6 +12,12 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*',),
         "output_types": "standard",
         "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.app.myfiles vc 1520402000 | 2048 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.app.myfiles vc 1150303551 | 1024 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 2048 rows",
+            "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 2048 rows",
+        },
     }
 }
 

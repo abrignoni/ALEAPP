@@ -5,7 +5,7 @@ block_cipher = None
 a = Analysis(['..\\..\\aleappGUI.py'],
              pathex=['..\\scripts\\artifacts'],
              binaries=[],
-             datas=[('..\\', '.\\scripts'), ('..\\..\\assets', '.\\assets')],
+             datas=[('..\\', '.\\scripts'), ('..\\..\\assets', '.\\assets'), ('..\\..\\leapp_functions', '.\\leapp_functions')],
              hiddenimports=[
                 'bcrypt',
                 'bencoding',
@@ -20,7 +20,8 @@ a = Analysis(['..\\..\\aleappGUI.py'],
                 'polyline',
                 'simplekml',
                 'xlsxwriter',
-                'xmltodict'
+                'xmltodict',
+                'zoneinfo'
              ],
              hookspath=['.\\'],
              runtime_hooks=[],

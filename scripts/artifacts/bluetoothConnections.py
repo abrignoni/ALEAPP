@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_bluetoothConnections": {
         "name": "Bluetooth Connections",
-        "description": "",
+        "description": "Parses previously connected Bluetooth devices (first connected timestamp, device name, MAC address and link key) from bt_config.conf.",
         "author": "",
         "creation_date": "2021-06-23",
         "last_update_date": "2021-06-23",
@@ -12,10 +12,22 @@ __artifacts_v2__ = {
         "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
         "output_types": "standard",
         "artifact_icon": "bluetooth",
+        "sample_data": {
+            "anne_a15": "Android 15 | 2 rows",
+            "galaxys10_a10": "Android 10 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | 4 rows",
+            "pixel7a_a14": "Android 14 | 4 rows",
+            "samsunga53_a14": "Android 14 | 1 row",
+            "samsungs20_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | 4 rows",
+            "userb2_a13": "Android 13 | 1 row",
+        },
     },
     "get_bluetoothAdapter": {
         "name": "Bluetooth Adapter Information",
-        "description": "",
+        "description": "Parses the local Bluetooth adapter information (key and value) from bt_config.conf.",
         "author": "",
         "creation_date": "2021-06-23",
         "last_update_date": "2021-06-23",
@@ -25,6 +37,18 @@ __artifacts_v2__ = {
         "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "bluetooth",
+        "sample_data": {
+            "anne_a15": "Android 15 | 14 rows",
+            "galaxys10_a10": "Android 10 | 14 rows",
+            "hc_pixel8pro_a16": "Android 16 | 9 rows",
+            "kevin_pocox7_a15": "Android 15 | 11 rows",
+            "pixel7a_a14": "Android 14 | 10 rows",
+            "samsunga53_a14": "Android 14 | 14 rows",
+            "samsungs20_a13": "Android 13 | 14 rows",
+            "sharon_a14": "Android 14 | 14 rows",
+            "russell_pixel6a_a13": "Android 13 | 10 rows",
+            "userb2_a13": "Android 13 | 10 rows",
+        },
     }
 }
 

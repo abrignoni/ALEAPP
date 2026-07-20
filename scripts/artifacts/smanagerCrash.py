@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_smanagerCrash": {
         "name": "smanagerCrash",
-        "description": "",
+        "description": "Parses application crash records (timestamp and package name) from the Samsung device manager sm.db.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",

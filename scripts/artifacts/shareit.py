@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_shareit": {
         "name": "shareit",
-        "description": "",
+        "description": "Parses SHAREit file transfer history (direction, sender and recipient IDs, device name, description, timestamp and file path) from the SHAREit history.db.",
         "author": "",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",

@@ -13,6 +13,13 @@ __artifacts_v2__ = {
                   '*/com.google.android.dialer/files/callscreenrecordings/*.*'),
         "output_types": "standard",
         "artifact_icon": "phone",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.dialer vc 19806568 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.dialer vc 19106378 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.dialer vc 15435008 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.dialer vc 11945968 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.dialer vc 18101788 | 0 rows",
+        },
     }
 }
 

@@ -12,6 +12,18 @@ __artifacts_v2__ = {
         "paths": ('*/user_de/*/com.android.providers.telephony/databases/telephony.db',),
         "output_types": "standard",
         "artifact_icon": "info-circle",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.providers.telephony | 1 row",
+            "galaxys10_a10": "Android 10 | com.android.providers.telephony | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.telephony | 2 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.telephony | 3 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.telephony | 1 row",
+            "samsunga53_a14": "Android 14 | com.android.providers.telephony | 2 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.telephony | 2 rows",
+            "sharon_a14": "Android 14 | com.android.providers.telephony | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.telephony | 2 rows",
+            "userb2_a13": "Android 13 | com.android.providers.telephony | 1 row",
+        },
     }
 }
 

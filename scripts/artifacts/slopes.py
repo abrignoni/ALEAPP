@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_slopes": {
         "name": "Slopes - Resort Details",
-        "description": "",
+        "description": "Parses ski resort details (name, location, coordinates, contact numbers, altitudes and run counts) recorded by the Slopes app from slopes.db.",
         "author": "",
         "creation_date": "2022-04-27",
         "last_update_date": "2022-04-27",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     },
     "get_slopes_actions": {
         "name": "Slopes - Actions",
-        "description": "",
+        "description": "Parses recorded ski and snowboard actions (start and end time, duration, type, distance, coordinates, speed and altitude) from the Slopes slopes.db.",
         "author": "",
         "creation_date": "2022-04-27",
         "last_update_date": "2022-04-27",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
     },
     "get_slopes_lift": {
         "name": "Slopes - Lift Details",
-        "description": "",
+        "description": "Parses ski lift details (name, type, capacity, start and end coordinates and resort) from the Slopes slopes.db.",
         "author": "",
         "creation_date": "2022-04-27",
         "last_update_date": "2022-04-27",

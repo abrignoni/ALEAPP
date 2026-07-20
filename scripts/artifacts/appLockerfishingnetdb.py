@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_appLockerfishingnetdb": {
         "name": "App Locker DB",
-        "description": "",
+        "description": "Parses the stored unlock pattern for the App Locker privacy app (encrypted and decrypted pattern and key) from privacy_safe.db.",
         "author": "",
         "creation_date": "2021-12-14",
         "last_update_date": "2021-12-14",

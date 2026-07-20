@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_libretorrentFR": {
         "name": "LibretorrentFR",
-        "description": "",
+        "description": "Parses torrent fast-resume data (info hash, name, save path, bytes downloaded and uploaded) from the LibreTorrent libretorrent.db.",
         "author": "",
         "creation_date": "2023-09-15",
         "last_update_date": "2023-09-15",
@@ -19,6 +19,7 @@ __artifacts_v2__ = {
 import bencoding
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.html_safe import esc
 
 
 @artifact_processor
@@ -58,7 +59,7 @@ def get_libretorrentFR(files_found, report_folder, seeker, wrap_text):
                                         lenghtf = iivalue
                                     if iikey == b'path':
                                         pathf = iivalue[0].decode()
-                                aggf = aggf + f'Lenght: {lenghtf} Path: {pathf} <br>'
+                                aggf = aggf + f'Lenght: {esc(lenghtf)} Path: {esc(pathf)} <br>'
                 elif key == b'save_path':
                     spath = value.decode()
                 elif key == b'name':
@@ -78,7 +79,7 @@ def get_libretorrentFR(files_found, report_folder, seeker, wrap_text):
                         value = str(value)
                     else:
                         value = value.decode()
-                    agg = agg + f'{key.decode()}: {value} <br>'
+                    agg = agg + f'{esc(key.decode())}: {esc(value)} <br>'
 
             data_list.append((torrentihash, torrentname, spath, iname, tdown, tup, aggf, agg))
 

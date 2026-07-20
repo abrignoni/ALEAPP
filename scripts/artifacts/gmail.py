@@ -12,6 +12,18 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gm/shared_prefs/Gmail.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "mail",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 1 row",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 1 row",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 1 row",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 1 row",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 1 row",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 1 row",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 1 row",
+        },
     }
 }
 

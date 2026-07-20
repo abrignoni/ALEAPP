@@ -12,6 +12,18 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Cookies*', '*/app_sbrowser/Default/Cookies*', '*/app_opera/Cookies*', '*/app_webview/Default/Cookies*'),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "anne_a15": "Android 15 | 1777 rows",
+            "galaxys10_a10": "Android 10 | 800 rows",
+            "hc_pixel8pro_a16": "Android 16 | 474 rows",
+            "kevin_pocox7_a15": "Android 15 | 4170 rows",
+            "pixel7a_a14": "Android 14 | 1554 rows",
+            "samsunga53_a14": "Android 14 | 1491 rows",
+            "samsungs20_a13": "Android 13 | 670 rows",
+            "sharon_a14": "Android 14 | 1842 rows",
+            "russell_pixel6a_a13": "Android 13 | 1420 rows",
+            "userb2_a13": "Android 13 | 632 rows",
+        },
     }
 }
 

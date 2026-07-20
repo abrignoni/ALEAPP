@@ -11,7 +11,19 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.android.vending/databases/suggestions.db*'),
         "output_types": "standard",
-        'artifact_icon': 'search'
+        'artifact_icon': 'search',
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.vending vc 84801930 | 4 rows",
+            "galaxys10_a10": "Android 10 | com.android.vending vc 82481710 | 5 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.vending vc 85180930 | 34 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.vending vc 84812830 | 23 rows",
+            "pixel7a_a14": "Android 14 | com.android.vending vc 84191730 | 48 rows",
+            "samsunga53_a14": "Android 14 | com.android.vending vc 84913330 | 26 rows",
+            "samsungs20_a13": "Android 13 | com.android.vending vc 84962330 | 21 rows",
+            "sharon_a14": "Android 14 | com.android.vending vc 84222730 | 25 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.vending vc 83631220 | 12 rows",
+            "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 9 rows",
+        }
     }
 }
 

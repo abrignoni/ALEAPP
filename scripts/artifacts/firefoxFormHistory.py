@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_firefoxFormHistory": {
         "name": "Firefox - Form History",
-        "description": "",
+        "description": "Parses Firefox saved form entries (field name, value, times used, first and last used timestamps) from formhistory.sqlite.",
         "author": "",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",
@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/formhistory.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 0 rows",
+        },
     }
 }
 

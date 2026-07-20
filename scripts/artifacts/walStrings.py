@@ -4,13 +4,25 @@ __artifacts_v2__ = {
         "description": "If  we only want ascii, use 'ascii_chars_re' below",
         "author": "",
         "creation_date": "2020-04-17",
-        "last_update_date": "2020-04-17",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "SQLite Journaling",
         "notes": "",
         "paths": ('*/*-wal', '*/*-journal'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | 721 rows",
+            "samsunga53_a14": "Android 14 | 1916 rows",
+            "anne_a15": "Android 15 | 869 rows",
+            "hc_pixel8pro_a16": "Android 16 | 527 rows",
+            "kevin_pocox7_a15": "Android 15 | 519 rows",
+            "pixel7a_a14": "Android 14 | 510 rows",
+            "samsungs20_a13": "Android 13 | 791 rows",
+            "sharon_a14": "Android 14 | 900 rows",
+            "russell_pixel6a_a13": "Android 13 | 455 rows",
+            "userb2_a13": "Android 13 | 527 rows",
+        },
         "html_columns": ['Report'],
     }
 }
@@ -36,7 +48,10 @@ def get_walStrings(context):
     x = 1
     data_list = []
     for file_found in files_found:
-        if Path(file_found).stat().st_size == 0:
+        # The seeker can list files it could not extract (e.g. zero-byte
+        # archive members), so the path may not exist on disk.
+        path = Path(file_found)
+        if not path.is_file() or path.stat().st_size == 0:
             continue
 
         journalName = os.path.basename(file_found)

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_setupWizardinfo": {
         "name": "setupWizardinfo",
-        "description": "",
+        "description": "Parses device setup wizard events (timestamp and name) from the setup_wizard_info.xml preferences.",
         "author": "",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",
@@ -12,6 +12,12 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml',),
         "output_types": "standard",
         "artifact_icon": "info-circle",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.settings.intelligence vc 1000282241 | 1 row",
+            "pixel7a_a14": "Android 14 | com.google.android.settings.intelligence vc 1000230247 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.settings.intelligence vc 1000217934 | 2 rows",
+            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 2 rows",
+        },
     }
 }
 

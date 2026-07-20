@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9',),
         "output_types": "standard",
         "artifact_icon": "battery",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.android.settings | 26561 rows",
+        },
     },
     "get_app_usage_events": {
         "name": "Settings Services - App Battery Usages v9 - App Battery Usage Events",
@@ -25,6 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9',),
         "output_types": "standard",
         "artifact_icon": "battery",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.android.settings | 3196 rows",
+        },
     }
 }
 

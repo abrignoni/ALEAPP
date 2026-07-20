@@ -12,6 +12,18 @@ __artifacts_v2__ = {
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": "standard",
         "artifact_icon": "wifi",
+        "sample_data": {
+            "anne_a15": "Android 15 | 12 rows",
+            "galaxys10_a10": "Android 10 | 4 rows",
+            "hc_pixel8pro_a16": "Android 16 | 2 rows",
+            "kevin_pocox7_a15": "Android 15 | 20 rows",
+            "pixel7a_a14": "Android 14 | 11 rows",
+            "samsunga53_a14": "Android 14 | 2 rows",
+            "samsungs20_a13": "Android 13 | 2 rows",
+            "sharon_a14": "Android 14 | 18 rows",
+            "russell_pixel6a_a13": "Android 13 | 9 rows",
+            "userb2_a13": "Android 13 | 1 row",
+        },
     }
 }
 

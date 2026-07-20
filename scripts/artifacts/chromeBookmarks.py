@@ -12,6 +12,12 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Bookmarks*', '*/app_sbrowser/Default/Bookmarks*', '*/app_opera/Bookmarks*', '*/app_webview/Default/Bookmarks*'),
         "output_types": "standard",
         "artifact_icon": "bookmark",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.android.chrome vc 616710133, com.microsoft.emmx vc 259210005, com.opera.browser vc 1908324306 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.microsoft.emmx vc 365012523 | 1 row",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 6 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033 | 0 rows",
+        },
     }
 }
 

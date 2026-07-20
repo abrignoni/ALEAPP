@@ -14,6 +14,18 @@ __artifacts_v2__ = {
                   '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.dynamite vc 5349480, com.google.android.gm vc 64361093 | 37 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 54 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 0 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Group ID",
@@ -40,6 +52,18 @@ __artifacts_v2__ = {
                   '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.dynamite vc 5349480, com.google.android.gm vc 64361093 | 2 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 3 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 0 rows",
+        },
     },
     "get_googleChat_drafts": {
         "name": "Google Chat - Drafts",
@@ -55,6 +79,18 @@ __artifacts_v2__ = {
                   '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
         "output_types": "standard",
         "artifact_icon": "edit",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.dynamite vc 5349480, com.google.android.gm vc 64361093 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 0 rows",
+        },
     },
     "get_googleChat_users": {
         "name": "Google Chat - Users",
@@ -70,6 +106,18 @@ __artifacts_v2__ = {
                   '*/com.google.android.apps.dynamite/databases/user_accounts/*/dynamite.db*'),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.dynamite vc 5349480, com.google.android.gm vc 64361093 | 12 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 6 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 0 rows",
+        },
     }
 }
 

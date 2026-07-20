@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_sRecoveryhist": {
         "name": "sRecoveryhist",
-        "description": "",
+        "description": "Parses Samsung recovery history (timestamp, wipe events, reason, reboot reason and locale) from the efs recovery history file.",
         "author": "",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",
@@ -12,6 +12,12 @@ __artifacts_v2__ = {
         "paths": ('*/efs/recovery/history',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | 0 rows",
+            "galaxys10_a10": "Android 10 | 4 rows",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "sharon_a14": "Android 14 | 0 rows",
+        },
     }
 }
 

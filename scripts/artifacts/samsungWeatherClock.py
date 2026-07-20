@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_samsungWeatherClockInfo": {
         "name": "Samsung Weather Clock - Info",
-        "description": "",
+        "description": "Parses current conditions from the Samsung Weather Clock (timestamp, timezone, location, temperature, conditions, sunrise and sunset) from the WeatherClock database.",
         "author": "",
         "creation_date": "2021-10-13",
         "last_update_date": "2021-10-13",
@@ -12,10 +12,17 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.daemonapp | 5 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.daemonapp | 1 row",
+            "samsunga53_a14": "Android 14 | com.sec.android.daemonapp | 1 row",
+            "samsungs20_a13": "Android 13 | com.sec.android.daemonapp | 1 row",
+            "sharon_a14": "Android 14 | com.sec.android.daemonapp | 1 row",
+        },
     },
     "get_samsungWeatherClockDaily": {
         "name": "Samsung Weather Clock - Daily",
-        "description": "",
+        "description": "Parses the Samsung Weather Clock daily forecast (timestamp, location, temperature, conditions and daily high and low) from the WeatherClock database.",
         "author": "",
         "creation_date": "2021-10-13",
         "last_update_date": "2021-10-13",
@@ -25,10 +32,17 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.daemonapp | 40 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.daemonapp | 8 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.daemonapp | 8 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.daemonapp | 8 rows",
+            "sharon_a14": "Android 14 | com.sec.android.daemonapp | 8 rows",
+        },
     },
     "get_samsungWeatherClockHourly": {
         "name": "Samsung Weather Clock - Hourly",
-        "description": "",
+        "description": "Parses the Samsung Weather Clock hourly forecast (timestamp, location, temperature, conditions, rain probability and wind) from the WeatherClock database.",
         "author": "",
         "creation_date": "2021-10-13",
         "last_update_date": "2021-10-13",
@@ -38,6 +52,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.daemonapp | 120 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.daemonapp | 24 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.daemonapp | 24 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.daemonapp | 24 rows",
+            "sharon_a14": "Android 14 | com.sec.android.daemonapp | 24 rows",
+        },
     }
 }
 

@@ -13,6 +13,10 @@ __artifacts_v2__ = {
                   '*/data/ch.swisscows.messenger.teleguardapp/cache/**'),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 2 rows",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 42 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Chat ID",
@@ -37,6 +41,10 @@ __artifacts_v2__ = {
         "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 0 rows",
+        },
     },
     "get_teleguard_contacts": {
         "name": "Teleguard - Contacts",
@@ -50,6 +58,10 @@ __artifacts_v2__ = {
         "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 2 rows",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 5 rows",
+        },
     },
     "get_teleguard_channels": {
         "name": "Teleguard - Channels",
@@ -63,6 +75,10 @@ __artifacts_v2__ = {
         "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": "standard",
         "artifact_icon": "radio",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 0 rows",
+        },
     }
 }
 

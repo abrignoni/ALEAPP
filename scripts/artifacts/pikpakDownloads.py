@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_pikpakDownloads": {
         "name": "PikPak Downloads",
-        "description": "",
+        "description": "Parses PikPak downloads (create and modify times, title, local storage path and URL) from the PikPak downloads database.",
         "author": "",
         "creation_date": "2023-03-24",
         "last_update_date": "2023-03-24",

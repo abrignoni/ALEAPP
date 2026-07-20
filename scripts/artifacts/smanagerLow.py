@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_smanagerLow": {
         "name": "smanagerLow",
-        "description": "",
+        "description": "Parses app usage sessions logged by the Samsung low-power context service (start and end time, package and timestamps) from the lowpowercontext-system database.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",

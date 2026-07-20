@@ -13,6 +13,13 @@ __artifacts_v2__ = {
                   '*/com.google.android.inputmethod.latin/files/clipboard_image/*'),
         "output_types": "standard",
         "artifact_icon": "clipboard",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.inputmethod.latin vc 175827782 | 4 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 4 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 4 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 4 rows",
+            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 8 rows",
+        },
     },
     "get_gboardCache_keystrokes": {
         "name": "Gboard - Keystroke Cache",
@@ -26,6 +33,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db',),
         "output_types": "standard",
         "artifact_icon": "brand-chrome",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.inputmethod.latin vc 175827782 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 0 rows",
+        },
     },
     "get_gboardCache_sessions": {
         "name": "Gboard - Sessions",
@@ -39,6 +53,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcachev3.db',),
         "output_types": "standard",
         "artifact_icon": "brand-chrome",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.inputmethod.latin vc 175827782 | 12 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 359 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 230 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 357 rows",
+            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 140 rows",
+        },
     }
 }
 

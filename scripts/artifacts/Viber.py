@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_Viber": {
         "name": "Viber - Call Logs",
-        "description": "",
+        "description": "Parses Viber call logs (timestamp, phone number, direction, duration and call type) from the Viber databases.",
         "author": "",
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",
@@ -12,10 +12,15 @@ __artifacts_v2__ = {
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 0 rows",
+            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 0 rows",
+        },
     },
     "get_Viber_contacts": {
         "name": "Viber - Contacts",
-        "description": "",
+        "description": "Parses Viber contacts (display name and phone number) from the Viber databases.",
         "author": "",
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",
@@ -25,10 +30,15 @@ __artifacts_v2__ = {
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 0 rows",
+            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 0 rows",
+        },
     },
     "get_Viber_messages": {
         "name": "Viber - Messages",
-        "description": "",
+        "description": "Parses Viber messages (date, sender and recipients, thread, content, direction, read status and attachments) from the Viber databases.",
         "author": "",
         "creation_date": "2020-12-24",
         "last_update_date": "2026-07-03",
@@ -38,6 +48,11 @@ __artifacts_v2__ = {
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 17 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 34 rows",
+            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 5051 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Thread ID",
@@ -61,6 +76,11 @@ __artifacts_v2__ = {
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "lock",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 0 rows",
+            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 0 rows",
+        },
     }
 }
 

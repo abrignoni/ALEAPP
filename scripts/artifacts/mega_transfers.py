@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_mega_transfers": {
         "name": "mega_transfers",
-        "description": "",
+        "description": "Parses completed MEGA uploads and downloads (timestamp, folder, filename, size, direction and state) from the MEGA megapreferences database.",
         "author": "",
         "creation_date": "2022-06-04",
         "last_update_date": "2022-06-04",
@@ -12,6 +12,10 @@ __artifacts_v2__ = {
         "paths": ('*/mega.privacy.android.app/databases/megapreferences',),
         "output_types": "standard",
         "artifact_icon": "download",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | mega.privacy.android.app vc 261630858 | 0 rows",
+            "pixel7a_a14": "Android 14 | mega.privacy.android.app vc 241780257 | 0 rows",
+        },
     }
 }
 

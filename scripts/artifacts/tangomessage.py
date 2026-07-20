@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_tangomessage": {
         "name": "tangomessage",
-        "description": "",
+        "description": "Parses Tango messages (create time, direction and message) from the Tango tc.db.",
         "author": "",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",

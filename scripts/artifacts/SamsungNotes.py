@@ -12,7 +12,12 @@ __artifacts_v2__ = {
         "output_types": ["standard"],
         "paths": (  '*/com.samsung.android.app.notes/databases/sdoc.db*',
                     '*/user/*/com.samsung.android.app.notes/SDocData/*/media/*'),
-        "artifact_icon": "edit"
+        "artifact_icon": "edit",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.app.notes vc 443081000 | 2 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.app.notes vc 442923000 | 7 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.app.notes vc 441305000 | 1 row",
+        }
     }
 
 }

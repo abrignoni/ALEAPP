@@ -5,13 +5,25 @@ __artifacts_v2__ = {
         "description": "Represents an app",
         "author": "",
         "creation_date": "2020-11-03",
-        "last_update_date": "2020-11-03",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "",
         "paths": ('*/system/packages.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
+        "sample_data": {
+            "anne_a15": "Android 15 | 513 rows",
+            "galaxys10_a10": "Android 10 | 448 rows",
+            "hc_pixel8pro_a16": "Android 16 | 385 rows",
+            "kevin_pocox7_a15": "Android 15 | 426 rows",
+            "pixel7a_a14": "Android 14 | 369 rows",
+            "samsunga53_a14": "Android 14 | 486 rows",
+            "sharon_a14": "Android 14 | 499 rows",
+            "samsungs20_a13": "Android 13 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | 303 rows",
+            "userb2_a13": "Android 13 | 303 rows",
+        },
     }
 }
 
@@ -19,6 +31,7 @@ import datetime
 import os
 import xmltodict
 import xml.etree.ElementTree as etree
+from xml.parsers.expat import ExpatError
 
 from scripts.ilapfuncs import artifact_processor, logfunc, is_platform_windows, abxread, checkabx
 
@@ -65,14 +78,20 @@ def get_package_info(files_found, report_folder, seeker, wrap_text):
             continue
 
         source_path = file_found
-        if (checkabx(file_found)):
-            multi_root = False
-            tree = abxread(file_found, multi_root)
-            xlmstring = (etree.tostring(tree.getroot()).decode())
-            doc = xmltodict.parse(xlmstring)
-        else:
-            with open(file_found, encoding='utf-8', errors='replace') as fd:
-                doc = xmltodict.parse(fd.read())
+        try:
+            if (checkabx(file_found)):
+                multi_root = False
+                tree = abxread(file_found, multi_root)
+                xlmstring = (etree.tostring(tree.getroot()).decode())
+                doc = xmltodict.parse(xlmstring)
+            else:
+                with open(file_found, encoding='utf-8', errors='replace') as fd:
+                    doc = xmltodict.parse(fd.read())
+        except ExpatError as ex:
+            # Some extractions carry a packages.xml that is neither plain XML
+            # nor ABX (e.g. encrypted or partially recovered content)
+            logfunc(f'Unable to parse {file_found} (not valid XML/ABX): {ex}')
+            continue
 
         package_dict = doc.get('packages', {}).get('package', {})
         for package in package_dict:

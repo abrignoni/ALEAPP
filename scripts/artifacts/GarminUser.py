@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/gcm_user_preferences*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 23 rows",
+        },
     }
 }
 

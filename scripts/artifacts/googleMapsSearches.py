@@ -12,6 +12,15 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.maps/files/new_recent_history_cache_search.cs',),
         "output_types": "all",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 7 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.apps.maps vc 1064201040 | 10 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.maps vc 1067620099 | 6 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.apps.maps vc 1068347331 | 1 row",
+            "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 8 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 7 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 6 rows",
+        },
     }
 }
 

@@ -12,6 +12,12 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.discord/files/kv-storage/*/a*',),
         "output_types": "standard",
         "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.discord vc 333012 | 7 rows",
+            "pixel7a_a14": "Android 14 | com.discord vc 239015 | 47 rows",
+            "samsungs20_a13": "Android 13 | com.discord vc 310011 | 1 row",
+            "userb2_a13": "Android 13 | com.discord vc 255014 | 25 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Channel ID",

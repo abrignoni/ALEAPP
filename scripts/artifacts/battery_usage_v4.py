@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_battery_usage_v4": {
         "name": "battery_usage_v4",
-        "description": "",
+        "description": "Parses per-app battery usage (timestamp, application, power consumed, foreground and background usage, battery level and status) from the settings intelligence battery-usage-db-v4 database.",
         "author": "",
         "creation_date": "2021-12-21",
         "last_update_date": "2021-12-21",
@@ -12,6 +12,12 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*',),
         "output_types": "standard",
         "artifact_icon": "battery",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.settings.intelligence vc 1000282241 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.settings.intelligence vc 1000230247 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.settings.intelligence vc 1000217934 | 98857 rows",
+            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 216 rows",
+        },
     }
 }
 

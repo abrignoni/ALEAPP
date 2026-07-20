@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_firefoxRecentlyClosedTabs": {
         "name": "Firefox - Recently Closed Tabs",
-        "description": "",
+        "description": "Parses Firefox recently closed tabs (timestamp, title and URL) from the recently_closed_tabs database.",
         "author": "",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",
@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/databases/recently_closed_tabs*',),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 1 row",
+        },
     }
 }
 

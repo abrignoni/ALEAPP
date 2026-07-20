@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_swellbeing": {
         "name": "swellbeing",
-        "description": "",
+        "description": "Parses Samsung Digital Wellbeing app usage events (timestamp, event ID, package and event type) from dwbCommon.db.",
         "author": "",
         "creation_date": "2020-05-21",
         "last_update_date": "2020-05-21",
@@ -12,6 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
         "output_types": "standard",
         "artifact_icon": "battery",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.forest | 2410 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.forest | 11382 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.forest | 6921 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.forest | 554 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.forest vc 510200008 | 3187 rows",
+        },
     }
 }
 

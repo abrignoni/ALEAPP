@@ -15,6 +15,11 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "trash",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.providers.trash | 3 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.providers.trash | 0 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.providers.trash | 29 rows",
+        },
     }
 }
 

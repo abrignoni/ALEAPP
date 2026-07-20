@@ -12,6 +12,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*',),
         "output_types": "standard",
         "artifact_icon": "heart",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.wellbeing vc 839927 | 4556 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.wellbeing vc 762847 | 18070 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.wellbeing vc 550467 | 44715 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.wellbeing vc 495937 | 11663 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.wellbeing vc 668567 | 1723 rows",
+        },
     },
     "get_wellbeing_url": {
         "name": "Digital Wellbeing - URL Events",
@@ -25,6 +32,13 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*',),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.wellbeing vc 839927 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.wellbeing vc 762847 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.wellbeing vc 550467 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.wellbeing vc 495937 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.wellbeing vc 668567 | 0 rows",
+        },
     }
 }
 

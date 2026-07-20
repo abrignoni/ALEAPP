@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_smembersEvents": {
         "name": "smembersEvents",
-        "description": "",
+        "description": "Parses Samsung Members device events (created time, type, value and snapshot flag) from the com_pocketgeek_sdk database.",
         "author": "",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",

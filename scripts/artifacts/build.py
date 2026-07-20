@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_build": {
         "name": "Build",
-        "description": "",
+        "description": "Parses device build properties (key and value) from the vendor build.prop file.",
         "author": "",
         "creation_date": "2020-03-30",
         "last_update_date": "2020-03-30",
@@ -12,6 +12,15 @@ __artifacts_v2__ = {
         "paths": ('*/vendor/build.prop',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "info-circle",
+        "sample_data": {
+            "anne_a15": "Android 15 | 0 rows",
+            "galaxys10_a10": "Android 10 | 6 rows",
+            "hc_pixel8pro_a16": "Android 16 | 6 rows",
+            "pixel7a_a14": "Android 14 | 6 rows",
+            "samsunga53_a14": "Android 14 | 6 rows",
+            "sharon_a14": "Android 14 | 6 rows",
+            "russell_pixel6a_a13": "Android 13 | 6 rows",
+        },
     }
 }
 

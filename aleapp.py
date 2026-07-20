@@ -7,13 +7,16 @@ import scripts.report as report
 import traceback
 import sys
 
+import pathlib
 import scripts.plugin_loader as plugin_loader
+import leapp_functions.app.history as history
 
-from scripts.search_files import *
-from scripts.ilapfuncs import *
-from scripts.version_info import leapp_version
+from scripts.search_files import *  # pylint: disable=wildcard-import,unused-wildcard-import
+from scripts.ilapfuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
+from leapp_functions.app.output import validate_output_folder_available
+from scripts.version_info import leapp_name, leapp_version
 from time import process_time, gmtime, strftime, perf_counter
-from scripts.lavafuncs import *
+from scripts.lavafuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from scripts.context import Context
 
 def validate_args(args):
@@ -29,10 +32,19 @@ def validate_args(args):
 
     # Check existence of paths
     if not os.path.exists(args.input_path):
-        raise argparse.ArgumentError(None, 'INPUT file/folder does not exist! Run the program again.')
+        raise argparse.ArgumentError(None, f'INPUT path \'{args.input_path}\' does not exist! Run the program again.')
 
     if not os.path.exists(args.output_path):
         raise argparse.ArgumentError(None, 'OUTPUT folder does not exist! Run the program again.')
+    if not os.path.isdir(os.path.abspath(args.output_path)):
+        raise argparse.ArgumentError(None, f'OUTPUT path \'{args.output_path}\' must be a directory! Run the program again.')
+
+    # Validate new folder name for output path
+    output_folder_valid, output_folder_error = validate_output_folder_available(
+        os.path.abspath(args.output_path), args.custom_output_folder)
+    if not output_folder_valid:
+        raise argparse.ArgumentError(None, output_folder_error)
+
 
     if args.load_case_data and not os.path.exists(args.load_case_data):
         raise argparse.ArgumentError(None, 'LEAPP Case Data file not found! Run the program again.')
@@ -151,9 +163,8 @@ def main():
                         help=("Generate a text file list of artifact paths. "
                               "This argument is meant to be used alone, without any other arguments."))
     parser.add_argument('--custom_output_folder', required=False, action="store", help="Custom name for the output folder")
+    parser.add_argument('--custom_artifacts_path', required=False, action="store", help="Additional path to load artifacts from (e.g., scripts/alternate_artifacts)")
 
-    loader = plugin_loader.PluginLoader()
-    available_plugins = list(loader.plugins)
     profile_filename = None
     casedata = {}
 
@@ -163,6 +174,12 @@ def main():
         sys.exit()
 
     args = parser.parse_args()
+
+    loader_paths = [plugin_loader.PLUGINPATH]
+    if args.custom_artifacts_path:
+        loader_paths.append(pathlib.Path(args.custom_artifacts_path))
+    loader = plugin_loader.PluginLoader(plugin_paths=loader_paths)
+    available_plugins = list(loader.plugins)
 
     plugins = []
     plugins_parsed_first = []
@@ -183,13 +200,13 @@ def main():
     if args.artifact_paths:
         print('Artifact path list generation started.')
         print('')
-        with open('path_list.txt', 'a') as paths:
+        with open('path_list.txt', 'a', encoding='utf-8') as paths:
             for plugin in loader.plugins:
                 if isinstance(plugin.search, tuple):
                     for x in plugin.search:
                         paths.write(x + '\n')
                         print(x)
-                else:  # TODO check that this is actually a string?
+                else:  # search should be a string here
                     paths.write(plugin.search + '\n')
                     print(plugin.search)
         print('')
@@ -230,7 +247,7 @@ def main():
         with open(case_data_filename, "rt", encoding="utf-8") as case_data_file:
             try:
                 case_data = json.load(case_data_file)
-            except:
+            except:  # pylint: disable=bare-except
                 case_data_load_error = "File was not a valid case data file: invalid format"
                 print(case_data_load_error)
                 return
@@ -255,7 +272,7 @@ def main():
         with open(profile_filename, "rt", encoding="utf-8") as profile_file:
             try:
                 profile = json.load(profile_file)
-            except:
+            except:  # pylint: disable=bare-except
                 profile_load_error = "File was not a valid case data file: invalid format"
                 print(profile_load_error)
                 return
@@ -294,6 +311,10 @@ def main():
     
     initialize_lava(input_path, out_params.output_folder_base, extracttype)
 
+    # Record history if enabled
+    history.record_input_path(input_path)
+    history.record_output_path(output_path)
+
     crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, profile_filename)
 
     lava_finalize_output(out_params.output_folder_base)
@@ -327,7 +348,7 @@ def crunch_artifacts(
         else:
             logfunc('Error on argument -o (input type)')
             return False
-    except Exception as ex:
+    except Exception:  # pylint: disable=broad-exception-caught
         logfunc('Had an exception in Seeker - see details below. Terminating Program!')
         temp_file = io.StringIO()
         traceback.print_exc(file=temp_file)
@@ -382,7 +403,7 @@ def crunch_artifacts(
                             lava_insert_sqlite_file_path(file_path_id,seeker.file_infos.get(pathh).source_path)
                             file_path_ids.add(file_path_id)
                         lava_insert_sqlite_artifact_link_pattern_to_file(artifact_search_pattern_id, file_path_id)
-                log.write(f'</li></ul>')
+                log.write('</li></ul>')
                 files_found.extend(found)
         if files_found:
             category_folder = os.path.join(out_params.output_folder_base, '_HTML', plugin.category)
@@ -395,13 +416,13 @@ def crunch_artifacts(
                     continue  # cannot do work
             try:
                 plugin.method(files_found, category_folder, seeker, wrap_text)
-            except Exception as ex:
+            except Exception as ex:  # pylint: disable=broad-exception-caught
                 logfunc('Reading {} artifact had errors!'.format(plugin.name))
                 logfunc('Error was {}'.format(str(ex)))
                 logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
                 continue  # nope
         else:
-            logfunc(f"No file found")
+            logfunc("No file found")
         logfunc('{} [{}] artifact completed'.format(plugin.name, plugin.module_name))
         parsed_modules += 1
         GuiWindow.SetProgressBar(parsed_modules, len(plugins))
@@ -431,6 +452,11 @@ def crunch_artifacts(
     
     report.generate_report(out_params.output_folder_base, run_time_secs, run_time_HMS, extracttype, input_path, casedata, profile_filename, icons)
     logfunc('Report generation Completed.')
+
+    # Record the run in history
+    lava_project_path = os.path.join(out_params.output_folder_base, lava_json_name)
+    history.record_recent_run(leapp_name.lower(), leapp_version, lava_project_path)
+
     logfunc('')
     logfunc(f'Report location: {out_params.output_folder_base}')
 

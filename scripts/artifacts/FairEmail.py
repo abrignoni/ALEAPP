@@ -55,6 +55,7 @@ __artifacts_v2__ = {
 import os
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, check_in_media
+from scripts.html_safe import safe_source
 
 
 @artifact_processor
@@ -87,7 +88,7 @@ def get_fair_mail_accounts(files_found, _report_folder, _seeker, _wrap_text):
         creationdate = convert_unix_ts_to_utc(row[10]/1000)
         lastconnecteddate = convert_unix_ts_to_utc(row[11]/1000)
 
-        data_list.append(( creationdate, lastconnecteddate, account_id, name, email, display_name, signature, server, port, username, password, account_name))
+        data_list.append(( creationdate, lastconnecteddate, account_id, name, email, display_name, safe_source(signature), server, port, username, password, account_name))
 
     data_headers = ( 'Creation Date', 'Last Connected Date', 'Account ID', 'Name', 'E-Mail Address', 'Display Name', 'Signature', 'IMAP Server', 'IMAP Port', 'Username', 'Password', 'Account Name')
 

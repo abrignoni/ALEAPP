@@ -5,13 +5,25 @@ __artifacts_v2__ = {
         "description": "Parses Chrome autofill entries",
         "author": "",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | 6 rows",
+            "pixel7a_a14": "Android 14 | 4 rows",
+            "sharon_a14": "Android 14 | 4 rows",
+            "anne_a15": "Android 15 | 2 rows",
+            "hc_pixel8pro_a16": "Android 16 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | 1 row",
+            "samsunga53_a14": "Android 14 | 18 rows",
+            "samsungs20_a13": "Android 13 | 4 rows",
+            "russell_pixel6a_a13": "Android 13 | 8 rows",
+            "userb2_a13": "Android 13 | 12 rows",
+        },
     },
     "get_chromeAutofillProfiles": {
         "name": "Chrome Autofill - Profiles",
@@ -25,6 +37,18 @@ __artifacts_v2__ = {
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "anne_a15": "Android 15 | 0 rows",
+            "galaxys10_a10": "Android 10 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | 0 rows",
+            "pixel7a_a14": "Android 14 | 0 rows",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "samsungs20_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | 0 rows",
+            "userb2_a13": "Android 13 | 0 rows",
+        },
     }
 }
 
@@ -71,6 +95,12 @@ def get_chromeAutofill(files_found, report_folder, seeker, wrap_text):
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         columns = [i[1] for i in cursor.execute('PRAGMA table_info(autofill)')]
+
+        if not columns:
+            # Some Web Data databases (e.g. embedded WebViews) have no autofill table
+            logfunc(f'No {browser_name} autofill table available in {file_found}')
+            db.close()
+            continue
 
         if 'date_created' in columns:
             cursor.execute('select date_created, name, value, date_last_used, count from autofill')

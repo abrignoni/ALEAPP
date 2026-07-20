@@ -12,6 +12,18 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*', '*/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html","tsv","lava"],
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.providers.contacts | 9 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.providers.contacts | 3 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 2 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 19 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.contacts | 16 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 12 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 6 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 31 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.contacts | 4 rows",
+            "userb2_a13": "Android 13 | com.android.providers.contacts | 0 rows",
+        },
     }
 }
 

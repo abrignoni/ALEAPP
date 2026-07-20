@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_firefoxTopSites": {
         "name": "Firefox - Top Sites",
-        "description": "",
+        "description": "Parses Firefox top sites (created timestamp, title, URL and default flag) from the top_sites database.",
         "author": "",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",
@@ -12,6 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.mozilla.firefox/databases/top_sites*',),
         "output_types": "standard",
         "artifact_icon": "globe",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 3 rows",
+        },
     }
 }
 

@@ -12,6 +12,18 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.calendar/databases/calendar.db*',),
         "output_types": "standard",
         "artifact_icon": "calendar",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.providers.calendar | 0 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.calendar | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.calendar | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.calendar | 62 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.calendar | 0 rows",
+            "samsunga53_a14": "Android 14 | com.android.providers.calendar | 0 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.calendar | 1 row",
+            "sharon_a14": "Android 14 | com.android.providers.calendar | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.calendar | 79 rows",
+            "userb2_a13": "Android 13 | com.android.providers.calendar | 0 rows",
+        },
     },
     "get_calendar_calendars": {
         "name": "Calendar - Calendars",
@@ -25,6 +37,18 @@ __artifacts_v2__ = {
         "paths": ('*/com.android.providers.calendar/databases/calendar.db*',),
         "output_types": "standard",
         "artifact_icon": "calendar",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.providers.calendar | 4 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.calendar | 3 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.calendar | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.calendar | 4 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.calendar | 1 row",
+            "samsunga53_a14": "Android 14 | com.android.providers.calendar | 5 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.calendar | 3 rows",
+            "sharon_a14": "Android 14 | com.android.providers.calendar | 4 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.calendar | 3 rows",
+            "userb2_a13": "Android 13 | com.android.providers.calendar | 1 row",
+        },
     }
 }
 

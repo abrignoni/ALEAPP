@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_libretorrent": {
         "name": "Libretorrent",
-        "description": "",
+        "description": "Parses torrents added in LibreTorrent/BitLord (timestamp, name, download path, magnet, paused state and visibility) from libretorrent.db.",
         "author": "",
         "creation_date": "2023-09-12",
         "last_update_date": "2023-09-12",
