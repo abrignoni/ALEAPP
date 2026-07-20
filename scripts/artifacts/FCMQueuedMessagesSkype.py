@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 """
 Copyright 2022, CCL Forensics
 
@@ -273,7 +272,8 @@ def _load(files_found):
 
 
 @artifact_processor
-def get_fcm_skype(files_found, report_folder, seeker, wrap_text):
+def get_fcm_skype(context):
+    files_found = context.get_files_found()
     messages, _notifications, source = _load(files_found)
     data_headers = (('FCM Timestamp', 'datetime'), 'App', 'Original Timestamp', 'Conversation ID',
                     'Recipient', 'Sender', 'Content', 'Metadata')
@@ -281,7 +281,8 @@ def get_fcm_skype(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_skype_notifications(files_found, report_folder, seeker, wrap_text):
+def get_fcm_skype_notifications(context):
+    files_found = context.get_files_found()
     _messages, notifications, source = _load(files_found)
     data_headers = (('Timestamp', 'datetime'), 'App', 'Title', 'Message', 'Recipient', 'Link')
     return data_headers, notifications, source

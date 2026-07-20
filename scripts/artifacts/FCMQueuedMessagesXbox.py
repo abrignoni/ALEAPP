@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 """
 Copyright 2022, CCL Forensics
 
@@ -188,7 +187,8 @@ def _load(files_found):
 
 
 @artifact_processor
-def get_fcm_xbox(files_found, report_folder, seeker, wrap_text):
+def get_fcm_xbox(context):
+    files_found = context.get_files_found()
     messages, _parties, _presence, source = _load(files_found)
     data_headers = ('FCM Key', ('FCM Timestamp', 'datetime'), 'Conversation ID',
                     ('Message Timestamp', 'datetime'), 'Sender', 'Text', 'Content')
@@ -196,14 +196,16 @@ def get_fcm_xbox(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_xbox_party(files_found, report_folder, seeker, wrap_text):
+def get_fcm_xbox_party(context):
+    files_found = context.get_files_found()
     _messages, parties, _presence, source = _load(files_found)
     data_headers = ('FCM Key', ('FCM Timestamp', 'datetime'), 'Sender')
     return data_headers, parties, source
 
 
 @artifact_processor
-def get_fcm_xbox_presence(files_found, report_folder, seeker, wrap_text):
+def get_fcm_xbox_presence(context):
+    files_found = context.get_files_found()
     _messages, _parties, presence, source = _load(files_found)
     data_headers = ('FCM Key', ('FCM Timestamp', 'datetime'), 'User')
     return data_headers, presence, source
