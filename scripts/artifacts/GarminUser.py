@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_garminUP": {
         "name": "Garmin - User Preferences",
@@ -58,7 +57,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_garminUP(files_found, report_folder, seeker, wrap_text):
+def get_garminUP(context):
+    files_found = context.get_files_found()
     # Dictionary to store the user information
     user_info = {}
     # Attributes to be extracted from the xml file

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_steps_api": {
         "name": "GarminStepsAPI",
@@ -23,7 +22,8 @@ from scripts.ilapfuncs import artifact_processor, logfunc
 
 
 @artifact_processor
-def get_steps_api(files_found, report_folder, seeker, wrap_text):
+def get_steps_api(context):
+    files_found = context.get_files_found()
     logfunc("Processing data for Steps API")
     data_list = []
     source_path = ''
