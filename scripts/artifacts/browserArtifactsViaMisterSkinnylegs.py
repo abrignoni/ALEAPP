@@ -1,3 +1,223 @@
+__artifacts_v2__ = {'binance_user_details_msl_plugin': {'name': 'Browser Data - Binance User Details (Mister Skinnylegs)',
+                                                        'description': 'Recovers Binance User Details records from the Cache',
+                                                        'author': 'Mister Skinnylegs Contributors',
+                                                        'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                        'output_types': ['html', 'lava', 'tsv'],
+                                                        'artifact_icon': 'globe'},
+                    'binance_balances_msl_plugin': {'name': 'Browser Data - Binance Balances (Mister Skinnylegs)',
+                                                    'description': 'Recovers Binance Balance records from the Cache',
+                                                    'author': 'Mister Skinnylegs Contributors',
+                                                    'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                    'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                    'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                    'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'bing_searches_msl_plugin': {'name': 'Browser Data - Bing searches (Mister Skinnylegs)',
+                                                 'description': 'Recovers Bing searches from URLs in history, cache',
+                                                 'author': 'Mister Skinnylegs Contributors',
+                                                 'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                 'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                 'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                 'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'chatgpt_chat_information_msl_plugin': {
+                        'name': 'Browser Data - ChatGPT Chat Information (Mister Skinnylegs)',
+                        'description': 'Recovers ChatGPT chat information from History and Cache',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'chatgpt_user_information_msl_plugin': {
+                        'name': 'Browser Data - ChatGPT User Information (Mister Skinnylegs)',
+                        'description': 'Recovers ChatGPT user information from Cache',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'coinbase_payment_methods_msl_plugin': {
+                        'name': 'Browser Data - Coinbase Payment Methods (Mister Skinnylegs)',
+                        'description': 'Recovers Coinbase Payement Methods records from the Cache',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'coinbase_user_details_msl_plugin': {'name': 'Browser Data - Coinbase User Details (Mister Skinnylegs)',
+                                                         'description': 'Recovers Coinbase User Details records from the Cache',
+                                                         'author': 'Mister Skinnylegs Contributors',
+                                                         'creation_date': '2026-07-16',
+                                                         'last_update_date': '2026-07-16',
+                                                         'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                         'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                         'output_types': ['html', 'lava', 'tsv'],
+                                                         'artifact_icon': 'globe'},
+                    'coinbase_balances_msl_plugin': {'name': 'Browser Data - Coinbase Balances (Mister Skinnylegs)',
+                                                     'description': 'Recovers Coinbase Balances records from the Cache',
+                                                     'author': 'Mister Skinnylegs Contributors',
+                                                     'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                     'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                     'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                     'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'coinbase_transactions_msl_plugin': {'name': 'Browser Data - Coinbase Transactions (Mister Skinnylegs)',
+                                                         'description': 'Recovers Coinbase Transactions from the Cache',
+                                                         'author': 'Mister Skinnylegs Contributors',
+                                                         'creation_date': '2026-07-16',
+                                                         'last_update_date': '2026-07-16',
+                                                         'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                         'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                         'output_types': ['html', 'lava', 'tsv'],
+                                                         'artifact_icon': 'globe'},
+                    'deepseek_user_information_msl_plugin': {
+                        'name': 'Browser Data - DeepSeek User Information (Mister Skinnylegs)',
+                        'description': 'Recovers DeepSeek user information from Cache',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'deepseek_chat_session_information_msl_plugin': {
+                        'name': 'Browser Data - DeepSeek Chat Session Information (Mister Skinnylegs)',
+                        'description': 'Recovers DeepSeek Chat Session Information from Cache and History',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'deepseek_chat_messages_msl_plugin': {
+                        'name': 'Browser Data - DeepSeek Chat Messages (Mister Skinnylegs)',
+                        'description': 'Recovers DeepSeek Chat Messages from Cache',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'discord_chat_messages_msl_plugin': {'name': 'Browser Data - Discord Chat Messages (Mister Skinnylegs)',
+                                                         'description': 'Recovers Discord chat messages from the Cache',
+                                                         'author': 'Mister Skinnylegs Contributors',
+                                                         'creation_date': '2026-07-16',
+                                                         'last_update_date': '2026-07-16',
+                                                         'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                         'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                         'output_types': ['html', 'lava', 'tsv'],
+                                                         'artifact_icon': 'globe'},
+                    'dropbox_session_storage_user_activity_msl_plugin': {
+                        'name': 'Browser Data - Dropbox Session Storage User Activity (Mister Skinnylegs)',
+                        'description': "Recovers user activity from 'uxa' records in Session Storage",
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'dropbox_file_system_msl_plugin': {'name': 'Browser Data - Dropbox File System (Mister Skinnylegs)',
+                                                       'description': 'Recovers a partial file system from URLs in the history',
+                                                       'author': 'Mister Skinnylegs Contributors',
+                                                       'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                       'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                       'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                       'output_types': ['html', 'lava', 'tsv'],
+                                                       'artifact_icon': 'globe'},
+                    'dropbox_thumbnails_msl_plugin': {'name': 'Browser Data - Dropbox Thumbnails (Mister Skinnylegs)',
+                                                      'description': 'Recovers thumbnails for files stored in Dropbox',
+                                                      'author': 'Mister Skinnylegs Contributors',
+                                                      'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                      'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                      'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                      'output_types': ['html', 'lava', 'tsv'],
+                                                      'artifact_icon': 'globe'},
+                    'duckduckgo_searches_msl_plugin': {'name': 'Browser Data - Duckduckgo searches (Mister Skinnylegs)',
+                                                       'description': 'Recovers Duckduckgo searches from URLs in history, cache',
+                                                       'author': 'Mister Skinnylegs Contributors',
+                                                       'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                       'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                       'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                       'output_types': ['html', 'lava', 'tsv'],
+                                                       'artifact_icon': 'globe'},
+                    'google_drive_files_and_folders_msl_plugin': {
+                        'name': 'Browser Data - Google Drive Files and Folders (Mister Skinnylegs)',
+                        'description': 'Recovers Google Drive and Docs folder and file names (and urls) from history records',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'google_drive_thumbnails_msl_plugin': {
+                        'name': 'Browser Data - Google Drive Thumbnails (Mister Skinnylegs)',
+                        'description': 'Recovers Google Drive thumbnails from the cache',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'google_drive_usage_msl_plugin': {'name': 'Browser Data - Google Drive Usage (Mister Skinnylegs)',
+                                                      'description': 'Recovers indications of Google Drive usage',
+                                                      'author': 'Mister Skinnylegs Contributors',
+                                                      'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                      'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                      'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                      'output_types': ['html', 'lava', 'tsv'],
+                                                      'artifact_icon': 'globe'},
+                    'google_searches_msl_plugin': {'name': 'Browser Data - Google searches (Mister Skinnylegs)',
+                                                   'description': 'Recovers google searches from URLs in history, session storage, cache',
+                                                   'author': 'Mister Skinnylegs Contributors',
+                                                   'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                   'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                   'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                   'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'o365_sharepoint_recent_files_msl_plugin': {
+                        'name': 'Browser Data - O365-Sharepoint recent files (Mister Skinnylegs)',
+                        'description': 'Recovers recent files list and any thumbnails from API responses in the cache for Sharepoint and O365',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'o365_sharepoint_user_activity_msl_plugin': {
+                        'name': 'Browser Data - O365-Sharepoint user activity (Mister Skinnylegs)',
+                        'description': 'Recovers artifacts related to user activity (viewing, editing, downloading, etc.) for Sharepoint and O365',
+                        'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                        'last_update_date': '2026-07-16',
+                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                        'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'reddit_chat_messages_msl_plugin': {'name': 'Browser Data - Reddit Chat Messages (Mister Skinnylegs)',
+                                                        'description': 'Recovers Reddit chat messages from the Cache and IndexedDB',
+                                                        'author': 'Mister Skinnylegs Contributors',
+                                                        'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                        'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                        'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                        'output_types': ['html', 'lava', 'tsv'],
+                                                        'artifact_icon': 'globe'},
+                    'history_msl_plugin': {'name': 'Browser Data - History (Mister Skinnylegs)',
+                                           'description': 'Dumps History Records',
+                                           'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                                           'last_update_date': '2026-07-16',
+                                           'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                           'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                           'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'downloads_msl_plugin': {'name': 'Browser Data - Downloads (Mister Skinnylegs)',
+                                             'description': 'Dumps Download Records',
+                                             'author': 'Mister Skinnylegs Contributors', 'creation_date': '2026-07-16',
+                                             'last_update_date': '2026-07-16',
+                                             'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                             'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                             'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'localstorage_msl_plugin': {'name': 'Browser Data - Localstorage (Mister Skinnylegs)',
+                                                'description': 'Dumps Localstorage Records',
+                                                'author': 'Mister Skinnylegs Contributors',
+                                                'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'},
+                    'sessionstorage_msl_plugin': {'name': 'Browser Data - Sessionstorage (Mister Skinnylegs)',
+                                                  'description': 'Dumps Sessionstorage Records',
+                                                  'author': 'Mister Skinnylegs Contributors',
+                                                  'creation_date': '2026-07-16', 'last_update_date': '2026-07-16',
+                                                  'requirements': 'mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18',
+                                                  'category': 'Browser Artifacts', 'paths': '*/Default/Web Data',
+                                                  'output_types': ['html', 'lava', 'tsv'], 'artifact_icon': 'globe'}}
+
 import io
 import pathlib
 import re
@@ -18,42 +238,35 @@ class ProfileFolderType:
 
 PROFILE_PATH_ROW_HEADER = "Profile Path"
 
-# Dynamically generate artifacts from Skinnylegs' plugins at runtime
-__artifacts_v2__ = {
-    skinny_plugin.name: {
-        "name": f"Mister Skinnylegs - {skinny_plugin.name}",  # adding the prefix as some artifacts are shadowed currently
-        "description": skinny_plugin.description,
-        "author": "Mister Skinnylegs Contributors",   # TODO, this should also be available in skinnylegs plugins
-        "creation_date": "2026-07-16",  # TODO, this should also be available in skinnylegs plugins
-        "last_update_date": "2026-07-16",  # TODO, this should also be available in skinnylegs plugins
-        "requirements": "mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.15",
-        "category": "Browser Artifacts",
-        "notes": "Plugin automatically generated from Mister Skinnylegs plugins",
-        # the path feels a bit general... but should get all the non-browser browser stuff - can make more specific if
-        #  required
-        "paths": "*/Default/Web Data",  # this is a good marker for any Chromium profile folder, but there may be others
-        "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "globe"
-    } for skinny_plugin, plugin_path in iter_plugins()
-}
+func_to_msl = {'binance_user_details_msl_plugin': 'Binance User Details',
+               'binance_balances_msl_plugin': 'Binance Balances', 'bing_searches_msl_plugin': 'Bing searches',
+               'chatgpt_chat_information_msl_plugin': 'ChatGPT Chat Information',
+               'chatgpt_user_information_msl_plugin': 'ChatGPT User Information',
+               'coinbase_payment_methods_msl_plugin': 'Coinbase Payment Methods',
+               'coinbase_user_details_msl_plugin': 'Coinbase User Details',
+               'coinbase_balances_msl_plugin': 'Coinbase Balances',
+               'coinbase_transactions_msl_plugin': 'Coinbase Transactions',
+               'deepseek_user_information_msl_plugin': 'DeepSeek User Information',
+               'deepseek_chat_session_information_msl_plugin': 'DeepSeek Chat Session Information',
+               'deepseek_chat_messages_msl_plugin': 'DeepSeek Chat Messages',
+               'discord_chat_messages_msl_plugin': 'Discord Chat Messages',
+               'dropbox_session_storage_user_activity_msl_plugin': 'Dropbox Session Storage User Activity',
+               'dropbox_file_system_msl_plugin': 'Dropbox File System',
+               'dropbox_thumbnails_msl_plugin': 'Dropbox Thumbnails',
+               'duckduckgo_searches_msl_plugin': 'Duckduckgo searches',
+               'google_drive_files_and_folders_msl_plugin': 'Google Drive Files and Folders',
+               'google_drive_thumbnails_msl_plugin': 'Google Drive Thumbnails',
+               'google_drive_usage_msl_plugin': 'Google Drive Usage', 'google_searches_msl_plugin': 'Google searches',
+               'o365_sharepoint_recent_files_msl_plugin': 'O365-Sharepoint recent files',
+               'o365_sharepoint_user_activity_msl_plugin': 'O365-Sharepoint user activity',
+               'reddit_chat_messages_msl_plugin': 'Reddit Chat Messages', 'history_msl_plugin': 'History',
+               'downloads_msl_plugin': 'Downloads', 'localstorage_msl_plugin': 'Localstorage',
+               'sessionstorage_msl_plugin': 'Sessionstorage'}
+
 
 _SPEC_LOOKUP = {
     skinny_plugin.name: skinny_plugin for skinny_plugin, _ in iter_plugins()
 }
-
-
-def __dir__():
-    return ["__artifacts_v2__"] + list(__artifacts_v2__.keys())
-
-
-def __getattr__(name):
-    if name in __artifacts_v2__:
-        return artifact_processor(
-            lambda context: process(name, context),
-            injected_globals=globals(),
-            injected_module_name=process.__module__,
-            injected_custom_func_name=name
-        )
 
 
 class LeappArtifactStorageBinaryStream(ArtifactStorageBinaryStream):
@@ -114,6 +327,146 @@ class LeappArtifactStorage(ArtifactStorage):
         return LeappArtifactStorageTextStream(source_file)
 
 
+@artifact_processor
+def binance_user_details_msl_plugin(context):
+    return process(func_to_msl["binance_user_details_msl_plugin"], context)
+
+
+@artifact_processor
+def binance_balances_msl_plugin(context):
+    return process(func_to_msl["binance_balances_msl_plugin"], context)
+
+
+@artifact_processor
+def bing_searches_msl_plugin(context):
+    return process(func_to_msl["bing_searches_msl_plugin"], context)
+
+
+@artifact_processor
+def chatgpt_chat_information_msl_plugin(context):
+    return process(func_to_msl["chatgpt_chat_information_msl_plugin"], context)
+
+
+@artifact_processor
+def chatgpt_user_information_msl_plugin(context):
+    return process(func_to_msl["chatgpt_user_information_msl_plugin"], context)
+
+
+@artifact_processor
+def coinbase_payment_methods_msl_plugin(context):
+    return process(func_to_msl["coinbase_payment_methods_msl_plugin"], context)
+
+
+@artifact_processor
+def coinbase_user_details_msl_plugin(context):
+    return process(func_to_msl["coinbase_user_details_msl_plugin"], context)
+
+
+@artifact_processor
+def coinbase_balances_msl_plugin(context):
+    return process(func_to_msl["coinbase_balances_msl_plugin"], context)
+
+
+@artifact_processor
+def coinbase_transactions_msl_plugin(context):
+    return process(func_to_msl["coinbase_transactions_msl_plugin"], context)
+
+
+@artifact_processor
+def deepseek_user_information_msl_plugin(context):
+    return process(func_to_msl["deepseek_user_information_msl_plugin"], context)
+
+
+@artifact_processor
+def deepseek_chat_session_information_msl_plugin(context):
+    return process(func_to_msl["deepseek_chat_session_information_msl_plugin"], context)
+
+
+@artifact_processor
+def deepseek_chat_messages_msl_plugin(context):
+    return process(func_to_msl["deepseek_chat_messages_msl_plugin"], context)
+
+
+@artifact_processor
+def discord_chat_messages_msl_plugin(context):
+    return process(func_to_msl["discord_chat_messages_msl_plugin"], context)
+
+
+@artifact_processor
+def dropbox_session_storage_user_activity_msl_plugin(context):
+    return process(func_to_msl["dropbox_session_storage_user_activity_msl_plugin"], context)
+
+
+@artifact_processor
+def dropbox_file_system_msl_plugin(context):
+    return process(func_to_msl["dropbox_file_system_msl_plugin"], context)
+
+
+@artifact_processor
+def dropbox_thumbnails_msl_plugin(context):
+    return process(func_to_msl["dropbox_thumbnails_msl_plugin"], context)
+
+
+@artifact_processor
+def duckduckgo_searches_msl_plugin(context):
+    return process(func_to_msl["duckduckgo_searches_msl_plugin"], context)
+
+
+@artifact_processor
+def google_drive_files_and_folders_msl_plugin(context):
+    return process(func_to_msl["google_drive_files_and_folders_msl_plugin"], context)
+
+
+@artifact_processor
+def google_drive_thumbnails_msl_plugin(context):
+    return process(func_to_msl["google_drive_thumbnails_msl_plugin"], context)
+
+
+@artifact_processor
+def google_drive_usage_msl_plugin(context):
+    return process(func_to_msl["google_drive_usage_msl_plugin"], context)
+
+
+@artifact_processor
+def google_searches_msl_plugin(context):
+    return process(func_to_msl["google_searches_msl_plugin"], context)
+
+
+@artifact_processor
+def o365_sharepoint_recent_files_msl_plugin(context):
+    return process(func_to_msl["o365_sharepoint_recent_files_msl_plugin"], context)
+
+
+@artifact_processor
+def o365_sharepoint_user_activity_msl_plugin(context):
+    return process(func_to_msl["o365_sharepoint_user_activity_msl_plugin"], context)
+
+
+@artifact_processor
+def reddit_chat_messages_msl_plugin(context):
+    return process(func_to_msl["reddit_chat_messages_msl_plugin"], context)
+
+
+@artifact_processor
+def history_msl_plugin(context):
+    return process(func_to_msl["history_msl_plugin"], context)
+
+
+@artifact_processor
+def downloads_msl_plugin(context):
+    return process(func_to_msl["downloads_msl_plugin"], context)
+
+
+@artifact_processor
+def localstorage_msl_plugin(context):
+    return process(func_to_msl["localstorage_msl_plugin"], context)
+
+
+@artifact_processor
+def sessionstorage_msl_plugin(context):
+    return process(func_to_msl["sessionstorage_msl_plugin"], context)
+
+
 def process(plugin_name: str, context: Context):
     data_headers = [PROFILE_PATH_ROW_HEADER]
     data_rows = []
@@ -124,7 +477,12 @@ def process(plugin_name: str, context: Context):
 
         # force the seeker to get what we need for processing
         rel_profile_path = context.get_relative_path(str(profile_folder))
-        seeker.search(str(pathlib.Path("*", rel_profile_path, "**")))
+        #seeker.search(str(pathlib.Path("*", rel_profile_path, "**")))
+        seeker.search(str(pathlib.Path("*", rel_profile_path, "Session Storage", "**")))
+        seeker.search(str(pathlib.Path("*", rel_profile_path, "Local Storage", "**")))
+        seeker.search(str(pathlib.Path("*", rel_profile_path, "IndexedDB", "**")))
+        seeker.search(str(pathlib.Path("*", rel_profile_path, "History")))
+        seeker.search(str(pathlib.Path("*", rel_profile_path, "IndexedDB", "shared_proto_db")))
 
         # We have to attempt to locate the cache folder as we don't know what app we're looking at
         # On modern devices they should be at:
