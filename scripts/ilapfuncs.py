@@ -433,15 +433,14 @@ def get_data_list_with_media(media_header_info, data_list):
     return html_data_list, txt_data_list
 
 
-def artifact_processor(func, *, injected_globals=None, injected_module_name=None, injected_custom_func_name=None):
+def artifact_processor(func):
     @wraps(func)
     def wrapper(files_found, report_folder, seeker, wrap_text):
-        module_name = injected_module_name or func.__module__.split('.')[-1]
-        func_name = injected_custom_func_name or func.__name__
+        module_name = func.__module__.split('.')[-1]
+        func_name = func.__name__
         module_file_path = inspect.getfile(func)
 
-        all_artifacts_info = (injected_globals.get('__artifacts_v2__', {}) if injected_globals
-                              else func.__globals__.get('__artifacts_v2__', {}))
+        all_artifacts_info = func.__globals__.get('__artifacts_v2__', {})
         artifact_info = all_artifacts_info.get(func_name, {})
 
         artifact_name = artifact_info.get('name', func_name)
@@ -479,7 +478,7 @@ def artifact_processor(func, *, injected_globals=None, injected_module_name=None
                 data_list, html_data_list = data_list
             else:
                 html_data_list = data_list
-            logfunc(f"Found {len(data_list):,} {'records' if len(data_list)>1 else 'record'} for {artifact_name}")
+            logfunc(f"Found {len(data_list):,} {'records' if len(data_list) > 1 else 'record'} for {artifact_name}")
             icons.setdefault(category, {artifact_name: icon}).update({artifact_name: icon})
 
             # Strip tuples from headers for HTML, TSV, and timeline
@@ -495,14 +494,16 @@ def artifact_processor(func, *, injected_globals=None, injected_module_name=None
                 report = artifact_report.ArtifactHtmlReport(artifact_name)
                 report.start_artifact_report(report_folder, artifact_name, description)
                 report.add_script()
-                report.write_artifact_data_table(stripped_headers, html_data_list, source_path, html_no_escape=html_columns)
+                report.write_artifact_data_table(stripped_headers, html_data_list, source_path,
+                                                 html_no_escape=html_columns)
                 report.end_artifact_report()
 
             if check_output_types('tsv', output_types):
                 tsv(report_folder, stripped_headers, txt_data_list if media_header_info else data_list, artifact_name)
 
             if check_output_types('timeline', output_types):
-                timeline(report_folder, artifact_name, txt_data_list if media_header_info else data_list, stripped_headers)
+                timeline(report_folder, artifact_name, txt_data_list if media_header_info else data_list,
+                         stripped_headers)
 
             if check_output_types('lava', output_types):
                 table_name, object_columns, column_map = lava_process_artifact(category,
@@ -511,19 +512,22 @@ def artifact_processor(func, *, injected_globals=None, injected_module_name=None
                                                                                data_headers,
                                                                                len(data_list),
                                                                                func_name=func_name,
-                                                                               data_views=artifact_info.get("data_views"),
+                                                                               data_views=artifact_info.get(
+                                                                                   "data_views"),
                                                                                artifact_icon=icon,
                                                                                source_path=source_path)
                 lava_insert_sqlite_data(table_name, data_list, object_columns, data_headers, column_map)
 
             if check_output_types('kml', output_types):
-                kmlgen(report_folder, artifact_name, txt_data_list if media_header_info else data_list, stripped_headers)
+                kmlgen(report_folder, artifact_name, txt_data_list if media_header_info else data_list,
+                       stripped_headers)
 
         else:
             if output_types != 'none':
                 logfunc(f"No data found for {artifact_name}")
-        
+
         return data_headers, data_list, source_path
+
     return wrapper
 
 
