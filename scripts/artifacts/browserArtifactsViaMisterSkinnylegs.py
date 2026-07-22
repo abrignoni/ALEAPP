@@ -223,12 +223,21 @@ import pathlib
 import re
 import sqlite3
 
-import mister_skinnylegs.util.profile_folder_protocols
-from mister_skinnylegs import MisterSkinnylegs, iter_plugins, BrowserType
-from mister_skinnylegs.util import ArtifactStorage, ArtifactStorageBinaryStream, ArtifactStorageTextStream
-
 from scripts.ilapfuncs import artifact_processor, logfunc, check_in_embedded_media
 from scripts.context import Context
+
+try:
+    import mister_skinnylegs.util.profile_folder_protocols
+    from mister_skinnylegs import MisterSkinnylegs, iter_plugins, BrowserType
+    from mister_skinnylegs.util import ArtifactStorage, ArtifactStorageBinaryStream, ArtifactStorageTextStream
+    _MSL_AVAILABLE = True
+except ImportError as _msl_import_error:
+    # Without the guard a missing/broken mister_skinnylegs install would raise during
+    # plugin discovery and abort loading of ALL ALEAPP artifacts, not just these.
+    _MSL_AVAILABLE = False
+    logfunc(f"Mister Skinnylegs package not available, browser artifacts disabled: {_msl_import_error}")
+    __artifacts_v2__ = {}
+    ArtifactStorage = ArtifactStorageBinaryStream = ArtifactStorageTextStream = object
 
 
 class ProfileFolderType:
@@ -266,7 +275,7 @@ func_to_msl = {'binance_user_details_msl_plugin': 'Binance User Details',
 
 _SPEC_LOOKUP = {
     skinny_plugin.name: skinny_plugin for skinny_plugin, _ in iter_plugins()
-}
+} if _MSL_AVAILABLE else {}
 
 
 class LeappArtifactStorageBinaryStream(ArtifactStorageBinaryStream):
