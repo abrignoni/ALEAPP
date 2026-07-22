@@ -26,7 +26,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor
 
@@ -71,7 +71,7 @@ def get_googleMapsSearches(context):
         try:
             with open(file_found, 'rb') as f:
                 data = f.read()
-            values, _ = blackboxprotobuf.decode_message(data[8:], TYPEDEF)
+            values, _ = decode_protobuf(data[8:], TYPEDEF)
         except Exception:
             continue
         entry = values.get('1')

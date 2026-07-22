@@ -6,7 +6,7 @@ import inspect
 import json
 import math
 import os
-import re
+import re  # pylint: disable=unused-import
 import shutil
 import sqlite3
 import sys
@@ -17,11 +17,11 @@ from pathlib import Path
 from urllib.parse import quote
 import scripts.artifact_report as artifact_report
 from scripts.context import Context
-from scripts.version_info import leapp_name
+from scripts.version_info import leapp_name  # pylint: disable=unused-import
 
 # new location for modules imported for backward compatibility
 # existing functions that are moved should leave a commented out def line
-from leapp_functions.app.platform import (
+from leapp_functions.app.platform import (  # pylint: disable=unused-import
     ILLEGAL_FILENAME_CHARS,
     format_illegal_filename_chars,
     illegal_chars_in_filename,
@@ -29,7 +29,7 @@ from leapp_functions.app.platform import (
     sanitize_file_path,
     validate_filename,
 )
-from leapp_functions.app.output import (
+from leapp_functions.app.output import (  # pylint: disable=unused-import
     get_output_folder_base,
     resolve_output_folder_name,
     validate_output_folder_available,
@@ -40,6 +40,7 @@ _console_write = sys.stdout.write
 # common third party imports
 import pytz
 import simplekml
+from scripts import blackboxprotobuf
 from scripts.filetype import guess_mime, guess_extension
 from functools import wraps
 
@@ -625,6 +626,18 @@ def get_binary_file_content(file_path):
     except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
     return bytes()
+
+def decode_protobuf(data, typedef=None):
+    '''Decode schemaless protobuf data via the vendored blackboxprotobuf.
+
+    Single entry point for artifacts that parse protobuf without a schema.
+    Returns (values, typedef) from blackboxprotobuf.decode_message with the
+    1.0.1 output contract artifacts are written against: length-delimited
+    fields that are not messages decode as bytes, and fields with alternate
+    typedefs split into 'N-M' keys. See scripts/blackboxprotobuf/README.md
+    for why the library is vendored.
+    '''
+    return blackboxprotobuf.decode_message(data, typedef)
 
 def get_sqlite_db_path(path):
     if is_platform_windows():

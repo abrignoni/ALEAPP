@@ -22,7 +22,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor
 
@@ -47,7 +47,7 @@ def get_googleInitiatedNav(context):
         try:
             with open(file_found, 'rb') as f:
                 data = f.read()
-            values, _ = blackboxprotobuf.decode_message(data[8:])
+            values, _ = decode_protobuf(data[8:])
         except Exception:
             continue
         if not isinstance(values, dict):

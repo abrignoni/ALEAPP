@@ -126,7 +126,7 @@ import os
 import re
 import sqlite3
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 from scripts.context import Context
@@ -167,7 +167,7 @@ def _parse_annotation(blob):
     if not blob:
         return blank
     try:
-        values = blackboxprotobuf.decode_message(blob)
+        values = decode_protobuf(blob)
     except Exception:
         return blank
     try:  # image attachment

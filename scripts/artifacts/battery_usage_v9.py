@@ -37,7 +37,7 @@ import base64
 import datetime
 import sqlite3
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 from scripts.context import Context
@@ -119,7 +119,7 @@ def get_battery_usage_v9(context):
     ''')
     for row in rows:
         try:
-            proto, _ = blackboxprotobuf.decode_message(base64.b64decode(row[5]))
+            proto, _ = decode_protobuf(base64.b64decode(row[5]))
         except Exception:  # pylint: disable=W0718
             continue
         if not isinstance(proto, dict):

@@ -20,7 +20,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
@@ -78,7 +78,7 @@ def get_usageapps(context):
         for row in all_rows:
             deleted = row[1] if row[1] and 'deleted_app' in row[1] else ''
             bundleid, usage = '', ''
-            values, _ = blackboxprotobuf.decode_message(row[2], PROTO_TYPES)
+            values, _ = decode_protobuf(row[2], PROTO_TYPES)
             values = _to_str(values)
             for key, val in values.items():
                 if key == '1':

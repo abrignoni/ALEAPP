@@ -39,7 +39,7 @@ __artifacts_v2__ = {
 import datetime
 import sqlite3
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
@@ -571,7 +571,7 @@ def _parse_settings(files_found):
     if sf:
         try:
             with open(sf, 'rb') as handle:
-                values, _ = blackboxprotobuf.decode_message(handle.read(), _TYPES)
+                values, _ = decode_protobuf(handle.read(), _TYPES)
             base = _g(values, '2', '1', 2, '2-1', '2')
             if isinstance(base, dict):
                 info = {

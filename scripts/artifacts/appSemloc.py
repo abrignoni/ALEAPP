@@ -29,7 +29,7 @@ __artifacts_v2__ = {
 import datetime
 import pathlib
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor
@@ -58,7 +58,7 @@ def get_appSemloc(context):
             continue
         for record in leveldb_records.iterate_records_raw():
             try:
-                value, _ = blackboxprotobuf.decode_message(record.value)
+                value, _ = decode_protobuf(record.value)
             except Exception:
                 continue
             outer = value.get('1') if isinstance(value, dict) else None

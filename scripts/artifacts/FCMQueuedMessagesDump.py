@@ -133,7 +133,7 @@ import gzip
 import json
 import pathlib
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.ilapfuncs import artifact_processor, logfunc
@@ -255,7 +255,7 @@ def get_fcm_dump_gqsb(context):
             continue
         try:
             datos = base64.b64decode(datos)
-            values, _ = blackboxprotobuf.decode_message(datos)
+            values, _ = decode_protobuf(datos)
             values = values['3']
             try:
                 smartspacecheck = values['3'].decode()
@@ -264,7 +264,7 @@ def get_fcm_dump_gqsb(context):
             if 'Smartspace' in smartspacecheck:
                 values = values['14']['2']['13']['2']
                 values = gzip.decompress(values)
-                values, _ = blackboxprotobuf.decode_message(values)
+                values, _ = decode_protobuf(values)
                 url = values['2']['14'].decode()
                 lat = url.split('?')[1].split('lat=')[1].split('&')[0]
                 lon = url.split('?')[1].split('lat=')[1].split('&')[1].split('lon=')[1]
@@ -279,7 +279,7 @@ def get_fcm_dump_gqsb(context):
                         try:
                             values = values['14']['2']['20']
                             values = gzip.decompress(values)
-                            values, _ = blackboxprotobuf.decode_message(values, GQSB_TYPEDEF)
+                            values, _ = decode_protobuf(values, GQSB_TYPEDEF)
                             lat = values['1']['7']['1']['8']['7']['2']['1']
                             lon = values['1']['7']['1']['8']['7']['2']['2']
                             city = values['1']['7']['1']['8']['7']['2']['3'].decode()

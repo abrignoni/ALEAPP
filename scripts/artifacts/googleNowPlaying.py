@@ -20,7 +20,7 @@ __artifacts_v2__ = {
 }
 
 import time
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from html import escape
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, is_platform_windows
@@ -106,7 +106,7 @@ def get_googleNowPlaying(context):
                 timestamp = row[0]
                 pb = row[1]
 
-                data, actual_types = blackboxprotobuf.decode_message(pb, pb_types)
+                data, actual_types = decode_protobuf(pb, pb_types)
                 data = recursive_convert_bytes_to_str(data)
 
                 try:             timezones = FilterInvalidValue(data["7"])

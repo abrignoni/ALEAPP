@@ -9,7 +9,7 @@ a = Analysis(
     hiddenimports=[
         'bcrypt',
         'bencoding',
-        'blackboxprotobuf',
+        'scripts.blackboxprotobuf',
         'bs4',
         'Crypto.Cipher.AES',
         'Crypto.Util.Padding',

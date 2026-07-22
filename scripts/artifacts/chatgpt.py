@@ -149,7 +149,7 @@ import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 from PIL import Image, UnidentifiedImageError
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_media, \
@@ -182,7 +182,7 @@ def _pb_json(file_found):
     '''Decode a *.preferences_pb file and return the embedded JSON dict (or None).'''
     try:
         with open(file_found, 'rb') as f:
-            values, _ = blackboxprotobuf.decode_message(f.read())
+            values, _ = decode_protobuf(f.read())
         if isinstance(values, dict):
             pb = values.get('1', {}).get('2', {}).get('5', b'{}')
             return json.loads(pb.decode('utf-8'))

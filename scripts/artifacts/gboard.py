@@ -66,7 +66,7 @@ import datetime
 import os
 import sqlite3
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, \
     does_table_exist_in_db, check_in_media
@@ -110,7 +110,7 @@ def _events_trainingcache2(file_found):
                               {'2': {'type': 'message', 'message_typedef':
                                      {'1': {'name': '', 'type': 'bytes'}}}}}}
             for row in cursor.fetchall():
-                data, _ = blackboxprotobuf.decode_message(row['_payload'], pb_types)
+                data, _ = decode_protobuf(row['_payload'], pb_types)
                 texts = data.get('7', {}).get('2', [])
                 text_typed = ''
                 if texts:
@@ -165,7 +165,7 @@ def _events_trainingcachev2(file_found):
                 ke = keyboard_event(row['id'], '', '', '', '', row['ts2'], row['ts1'], row['ts1'])
                 desc_proto = row['desc_proto']
                 if desc_proto:
-                    desc, _ = blackboxprotobuf.decode_message(desc_proto, None)
+                    desc, _ = decode_protobuf(desc_proto, None)
                     try:
                         ke.textbox_name = desc.get('6', b'').decode('utf8', 'ignore')
                     except AttributeError:
@@ -177,7 +177,7 @@ def _events_trainingcachev2(file_found):
             ke.end_date = row['ts1']
             data_proto = row['data_proto']
             if data_proto:
-                data, _ = blackboxprotobuf.decode_message(data_proto, None)
+                data, _ = decode_protobuf(data_proto, None)
                 input_dict = data.get('6', None)
                 if input_dict:
                     chars_items = input_dict.get('4', {})

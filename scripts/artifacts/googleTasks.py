@@ -16,7 +16,7 @@ __artifacts_v2__ = {
 }
 
 from datetime import datetime, timezone as dtimezone
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
@@ -26,7 +26,7 @@ def b2s(a):
 
 
 def protobuf_parse_not_completed(data):
-    pb = blackboxprotobuf.decode_message(data, 'None')
+    pb = decode_protobuf(data, 'None')
     completed = pb[0].get('2',{}).get('5',{}).get('1','')
     created = datetime.fromtimestamp(pb[0].get('11',{}).get('1',''), dtimezone.utc)
     modified = datetime.fromtimestamp(pb[0].get('3',{}).get('1',''), dtimezone.utc)
@@ -37,7 +37,7 @@ def protobuf_parse_not_completed(data):
 
 
 def protobuf_parse_completed(data):
-    pb = blackboxprotobuf.decode_message(data, None)
+    pb = decode_protobuf(data, None)
     task = pb[0].get('2',{}).get('2','').decode()
     task_details = b2s(pb[0].get('2',{}).get('3',''))
     completed = datetime.fromtimestamp(pb[0].get('2',{}).get('5',{}).get('1',''), dtimezone.utc)

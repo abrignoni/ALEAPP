@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     }
 }
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 from pathlib import Path
 from datetime import *
 from scripts.ilapfuncs import artifact_processor
@@ -32,7 +32,7 @@ def get_callTranscription(context):
             parentpath = path_object.parent
             with open (file_found, 'rb') as f:
                 pb = f.read()
-                protostuff, types = blackboxprotobuf.decode_message(pb)
+                protostuff, types = decode_protobuf(pb)
                 transcription_data = protostuff['1']
                 
                 for data in transcription_data:
