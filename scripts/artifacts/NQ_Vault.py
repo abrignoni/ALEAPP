@@ -32,6 +32,7 @@ __artifacts_v2__ = {
 import datetime
 import functools
 import itertools
+import re
 import sqlite3
 import string
 from pathlib import Path
@@ -73,6 +74,19 @@ def brute_force_pin(encoded_pin):
 
 def raw_pin_to_xor_key(pin):
     return hex(java_string_hashcode(str(pin)) & 0xFF)
+
+
+def sanitize_output_filename(filename, default_name='recovered_file.bin'):
+    # The original filename comes from the vault DB (attacker-controlled), so
+    # strip directory components and characters that could break output paths.
+    raw_name = str(filename or '')
+    normalized = raw_name.replace('\\', '/')
+    safe_name = Path(normalized).name
+    safe_name = re.sub(r'[\x00-\x1f<>:"/\\|?*]+', '_', safe_name)
+    safe_name = safe_name.strip().strip('.')
+    if not safe_name:
+        return default_name
+    return safe_name
 
 
 def _extract_data_from_db(file_found):
@@ -151,7 +165,7 @@ def get_NQVault_media(context):
             decrypted = bytes((b ^ key) if i < 128 else b for i, b in enumerate(raw))
 
             kind = filetype.guess(decrypted)
-            name = info['old_filename'] or f'{stem}.bin'
+            name = sanitize_output_filename(info['old_filename'], default_name=f'{stem}.bin')
             if kind:
                 thumb = check_in_embedded_media(file_found, decrypted, name,
                                                 force_type=kind.mime, force_extension=kind.extension)

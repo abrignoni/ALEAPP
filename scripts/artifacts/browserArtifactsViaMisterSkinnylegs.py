@@ -350,9 +350,11 @@ try:
     from mister_skinnylegs import MisterSkinnylegs, iter_plugins, BrowserType
     from mister_skinnylegs.util import ArtifactStorage, ArtifactStorageBinaryStream, ArtifactStorageTextStream
     _MSL_AVAILABLE = True
-except ImportError as _msl_import_error:
+except (ImportError, TypeError) as _msl_import_error:
     # Without the guard a missing/broken mister_skinnylegs install would raise during
     # plugin discovery and abort loading of ALL ALEAPP artifacts, not just these.
+    # TypeError: on Python 3.10, ccl_mozilla_reader's StructuredDataType enum uses
+    # 'enum.auto(),' with a stray trailing comma (a tuple value 3.10 cannot resolve).
     _MSL_AVAILABLE = False
     logfunc(f"Mister Skinnylegs package not available, browser artifacts disabled: {_msl_import_error}")
     __artifacts_v2__ = {}
@@ -458,10 +460,11 @@ class LeappArtifactStorageTextStream(ArtifactStorageTextStream):
 
 
 class LeappArtifactStorage(ArtifactStorage):
-    def get_binary_stream(self, file_name: str, source_file: str) -> ArtifactStorageBinaryStream:
+    # file_name is required by the mister_skinnylegs ArtifactStorage interface
+    def get_binary_stream(self, file_name: str, source_file: str) -> ArtifactStorageBinaryStream:  # pylint: disable=unused-argument
         return LeappArtifactStorageBinaryStream(source_file)
 
-    def get_text_stream(self, file_name: str, source_file: str) -> ArtifactStorageTextStream:
+    def get_text_stream(self, file_name: str, source_file: str) -> ArtifactStorageTextStream:  # pylint: disable=unused-argument
         return LeappArtifactStorageTextStream(source_file)
 
 
