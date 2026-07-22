@@ -73,7 +73,7 @@ __artifacts_v2__ = {
 }
 
 import zlib
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 import os
 from datetime import datetime
 
@@ -135,7 +135,7 @@ def gmailEmails(context):
                     arreglo = bytearray(data)
                     arreglo = arreglo[1:]
                     decompressed_data = zlib.decompress(arreglo)
-                    message, typedef = blackboxprotobuf.decode_message(decompressed_data)
+                    message, typedef = decode_protobuf(decompressed_data)
                    
                     timestamp = (datetime.utcfromtimestamp(message['17'] / 1000))              
                 else:

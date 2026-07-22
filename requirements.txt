@@ -1,14 +1,13 @@
 bcrypt==3.2.0
 beautifulsoup4==4.8.2
 bencoding
-blackboxprotobuf
 fitdecode==0.10.0
 folium==0.14.0
 geopy==2.3.0
 packaging==20.1
 pillow==12.1.1
 polyline==2.0.0
-protobuf==3.10.0
+protobuf==5.29.6
 PyCryptodome
 pytz
 simplekml

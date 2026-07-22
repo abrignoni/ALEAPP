@@ -23,7 +23,7 @@ __artifacts_v2__ = {
 import datetime
 import pathlib
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor, logfunc
@@ -63,7 +63,7 @@ def get_sharedProto(context):
             pf = f'{pathlib.Path(origin).parent.name}/{pathlib.Path(origin).name}'
             try:
                 record_key = record.user_key.decode('utf-8', 'replace')
-                protostuff, _ = blackboxprotobuf.decode_message(record.value)
+                protostuff, _ = decode_protobuf(record.value)
             except Exception:
                 continue
             outer = protostuff.get('1')

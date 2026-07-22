@@ -177,7 +177,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from math import log10
 import gzip
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 from scripts.ilapfuncs import (
     open_sqlite_db_readonly, get_sqlite_db_records,
     does_column_exist_in_db, get_txt_file_content, convert_unix_ts_to_utc,
@@ -707,7 +707,7 @@ def _get_cached_data(source_path, context):
             if 0 < first_tag < 32:
                 data = data[first_tag:]
 
-        decoded_data, _ = blackboxprotobuf.decode_message(
+        decoded_data, _ = decode_protobuf(
             data,
             CACHED_DATA_MESSAGE_TYPE
         )

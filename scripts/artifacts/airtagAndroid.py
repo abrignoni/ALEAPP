@@ -82,7 +82,7 @@ __artifacts_v2__ = {
 }
 
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 from scripts.ilapfuncs import artifact_processor, \
     get_file_path, get_sqlite_db_records, get_binary_file_content, \
     convert_unix_ts_to_utc
@@ -163,10 +163,10 @@ def airtagScans(context):
         creation_timestamp = convert_unix_ts_to_utc(record[0])
         last_updated_timestamp = convert_unix_ts_to_utc(record[1])
 
-        blescan_proto, _ = blackboxprotobuf.decode_message(blescan)
+        blescan_proto, _ = decode_protobuf(blescan)
         posrssi = (blescan_proto['2'])
         
-        location_scan_proto, _ = blackboxprotobuf.decode_message(location_scan)
+        location_scan_proto, _ = decode_protobuf(location_scan)
         latitude = (location_scan_proto['4']/1e7)
         longitude = (location_scan_proto['5']/1e7)
         
@@ -185,7 +185,7 @@ def airtagLastScan(context):
     
     proto_data = get_binary_file_content(source_path)
 
-    lastscan, _ = blackboxprotobuf.decode_message(proto_data)
+    lastscan, _ = decode_protobuf(proto_data)
     lastscan = (lastscan['1'])
     lastscan = convert_unix_ts_to_utc(lastscan)
     data_list.append((lastscan, ))
@@ -203,7 +203,7 @@ def airtagPassiveScan(context):
     
     proto_data = get_binary_file_content(source_path)
 
-    pass_scan, _ = blackboxprotobuf.decode_message(proto_data)
+    pass_scan, _ = decode_protobuf(proto_data)
     pass_scan = (pass_scan['1'])
     
     if pass_scan == 1:

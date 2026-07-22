@@ -55,7 +55,7 @@ import datetime
 import sqlite3
 import struct
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
@@ -142,7 +142,7 @@ def get_googleMapsGmm_places(context):
         ''')
         for row in rows:
             try:
-                pb = blackboxprotobuf.decode_message(row[4], 'None')
+                pb = decode_protobuf(row[4], 'None')
                 if row[1] == '0:0':
                     label = 'Home'
                 elif row[1] == '1:0':

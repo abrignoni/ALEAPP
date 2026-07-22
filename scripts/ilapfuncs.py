@@ -40,6 +40,7 @@ _console_write = sys.stdout.write
 # common third party imports
 import pytz
 import simplekml
+from scripts import blackboxprotobuf
 from scripts.filetype import guess_mime, guess_extension
 from functools import wraps
 
@@ -619,6 +620,18 @@ def get_binary_file_content(file_path):
     except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
     return bytes()
+
+def decode_protobuf(data, typedef=None):
+    '''Decode schemaless protobuf data via the vendored blackboxprotobuf.
+
+    Single entry point for artifacts that parse protobuf without a schema.
+    Returns (values, typedef) from blackboxprotobuf.decode_message with the
+    1.0.1 output contract artifacts are written against: length-delimited
+    fields that are not messages decode as bytes, and fields with alternate
+    typedefs split into 'N-M' keys. See scripts/blackboxprotobuf/README.md
+    for why the library is vendored.
+    '''
+    return blackboxprotobuf.decode_message(data, typedef)
 
 def get_sqlite_db_path(path):
     if is_platform_windows():

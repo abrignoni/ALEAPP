@@ -8,7 +8,6 @@ from pathlib import Path
 
 import bcrypt
 import bencoding
-import blackboxprotobuf
 import fitdecode
 import folium
 import polyline
@@ -29,7 +28,6 @@ THIRD_PARTY_IMPORTS = (
     "bcrypt",
     "bs4",
     "bencoding",
-    "blackboxprotobuf",
     "fitdecode",
     "folium",
     "geopy",
@@ -51,6 +49,7 @@ CORE_MODULES = (
     "aleapp",
     "scripts.ilapfuncs",
     "scripts.plugin_loader",
+    "scripts.blackboxprotobuf",
     "scripts.artifacts.notification_history_pb.notificationhistory_pb2",
     "scripts.artifacts.usagestats_pb.usagestatsservice_pb2",
 )
@@ -78,7 +77,9 @@ class TestDependencyCompatibility(unittest.TestCase):
 
         self.assertEqual(bencoding.bdecode(bencoding.bencode({b"a": 1})), {b"a": 1})
 
-        message, types = blackboxprotobuf.decode_message(b"\x08\x96\x01")
+        from scripts.ilapfuncs import decode_protobuf
+
+        message, types = decode_protobuf(b"\x08\x96\x01")
         self.assertEqual(message["1"], 150)
         self.assertEqual(types["1"]["type"], "int")
 

@@ -26,7 +26,7 @@ __artifacts_v2__ = {
 import datetime
 import os
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
 
@@ -75,7 +75,7 @@ def get_googleCallScreen(context):
             # Decode the transcript protobuf into a plain-text conversation
             conversation = ''
             try:
-                data, _ = blackboxprotobuf.decode_message(row[2], PB_TYPES)
+                data, _ = decode_protobuf(row[2], PB_TYPES)
                 messages = data.get('1', [])
                 if isinstance(messages, dict):
                     messages = [messages]

@@ -82,7 +82,7 @@ __artifacts_v2__ = {
     }
 }
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 import os
 import time
 import struct
@@ -124,7 +124,7 @@ def googlevoice_accounts(context):
                 source_path = file
                 pb = get_binary_file_content(file)
 
-                message = blackboxprotobuf.decode_message(pb)
+                message = decode_protobuf(pb)
 
                 # check for data in the account
                 if '2' in message[0]:
@@ -160,7 +160,7 @@ def googlevoice_accounts(context):
                 if usageentries > 0:
                     for row in all_rows:
                         pb = row[0]
-                message = blackboxprotobuf.decode_message(pb)
+                message = decode_protobuf(pb)
 
                 # check account data exists
                 if '3' in message[0]:
@@ -224,7 +224,7 @@ def googlevoice_calls(context):
                 if usageentries > 0:
                     for row in all_rows:
                         pb = row[0]
-                        message = blackboxprotobuf.decode_message(pb)
+                        message = decode_protobuf(pb)
 
                         # check if the entry is a call (answered, missed, outgoing)
                         # 13 = 0 for a missed or declined call without a voicemail
@@ -343,7 +343,7 @@ def googlevoice_voicemails(context):
                 if usageentries > 0:
                     for row in all_rows:
                         pb = row[0]
-                        message = blackboxprotobuf.decode_message(pb)
+                        message = decode_protobuf(pb)
 
                         # check if the entry is a voicemail
                         # 13 = 3 for a voicemail is received
@@ -457,7 +457,7 @@ def googlevoice_messages(context):
                         # conversation_id starts with "t" for individual messages
                         if row[1].startswith("t"):
                             pb = row[0]
-                            message = blackboxprotobuf.decode_message(pb)
+                            message = decode_protobuf(pb)
 
                             # Conversation ID
                             conversation_id = row[1]
@@ -521,7 +521,7 @@ def googlevoice_messages(context):
                         # conversation_id starts with "g" for group chat messages
                         elif row[1].startswith("g"):
                             pb = row[0]
-                            message = blackboxprotobuf.decode_message(pb)
+                            message = decode_protobuf(pb)
 
                             # Conversation ID
                             conversation_id = row[1]

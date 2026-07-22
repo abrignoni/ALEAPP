@@ -23,7 +23,7 @@ import datetime
 import os
 import struct
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, check_in_embedded_media
 
@@ -108,7 +108,7 @@ def get_quicksearch(context):
         source_path = os.path.dirname(file_found)
         try:
             with open(file_found, 'rb') as f:
-                values, _ = blackboxprotobuf.decode_message(f.read())
+                values, _ = decode_protobuf(f.read())
         except Exception:
             continue
         session_type, queries, mp3_data = _parse_session(values)

@@ -31,7 +31,7 @@ import json
 import os
 import sqlite3
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
 
@@ -102,7 +102,7 @@ def get_quicksearch_recent(context):
         source_path = file_found
         try:
             with open(file_found, 'rb') as f:
-                values, _ = blackboxprotobuf.decode_message(f.read(), _TYPES)
+                values, _ = decode_protobuf(f.read(), _TYPES)
         except Exception:
             continue
         items = values.get('1')
