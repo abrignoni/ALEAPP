@@ -571,20 +571,26 @@ def process(plugin_name: str, context: Context):
                     "Can't deal with anything but dictionaries results currently - contact mister_skinnylegs devs")
 
             for k in o.keys():
-                if k not in data_headers:
+                if k not in data_headers and (k, "media") not in data_headers:
                     if k in (spec.media_field_names or []):
-                        data_headers.append(("Media", k))
+                        data_headers.append((k, "media"))
                     else:
                         data_headers.append(k)
 
             o[PROFILE_PATH_ROW_HEADER] = rel_profile_path  # add the profile path in for reporting
-            row = tuple(
-                o[k].friendly_string
-                if isinstance(o[k], mister_skinnylegs.util.profile_folder_protocols.ArtifactLocationProtocol)
-                else o[k]
-                for k in data_headers)
-            data_rows.append(row)
+            row = []
+            for header in data_headers:
+                key = header[0] if isinstance(header, tuple) else header
+                value = o.get(key)
+                if isinstance(value, mister_skinnylegs.util.profile_folder_protocols.ArtifactLocationProtocol):
+                    value = value.friendly_string
+                row.append(value)
+            data_rows.append(tuple(row))
             source_files.append(profile_folder)
+
+    # Headers can grow while rows are collected, so pad earlier (shorter) rows to keep
+    # every row aligned with the final header list
+    data_rows = [row + (None,) * (len(data_headers) - len(row)) for row in data_rows]
 
     return data_headers, data_rows, ", ".join(str(x) for x in source_files)
 
