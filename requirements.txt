@@ -11,6 +11,7 @@ polyline==2.0.0
 protobuf==3.10.0
 PyCryptodome
 pytz
+mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18
 simplekml
 wheel
 xlsxwriter==3.1.1
