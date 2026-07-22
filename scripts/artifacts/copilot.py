@@ -8,9 +8,9 @@
 
 __artifacts_v2__ = {
     "copilot_account": {
-        "name": "Microsoft Copilot - Account",
+        "name": "Account",
         "description": "Existing account in Microsoft Copilot App.",
-        "author": "[Nama Anda]",
+        "author": "Dolly Aswin Harahap <dolly.aswin@gmail.com>",
         "version": "0.1",
         "creation_date": "2026-05-09",
         "last_update_date": "2026-05-09",
@@ -22,9 +22,9 @@ __artifacts_v2__ = {
         "artifact_icon": "user"
     },
     "copilot_sessions": {
-        "name": "Microsoft Copilot - Sessions",
+        "name": "Sessions",
         "description": "List of conversation sessions in Microsoft Copilot App.",
-        "author": "[Nama Anda]",
+        "author": "Dolly Aswin Harahap <dolly.aswin@gmail.com>",
         "version": "0.1",
         "creation_date": "2026-05-09",
         "last_update_date": "2026-05-09",
@@ -33,12 +33,13 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.microsoft.copilot/files/offline_cache/offline_sessions.json'),
         "output_types": "standard",
+        "html_columns": ["Session ID"],
         "artifact_icon": "list"
     },
-    "copilot_messages": {
-        "name": "Microsoft Copilot - Messages",
+    "copilot_sessions_conversation": {
+        "name": "Sessions_-_Conversation",
         "description": "Conversation messages from Microsoft Copilot App.",
-        "author": "[Nama Anda]",
+        "author": "Dolly Aswin Harahap <dolly.aswin@gmail.com>",
         "version": "0.1",
         "creation_date": "2026-05-09",
         "last_update_date": "2026-05-09",
@@ -59,7 +60,7 @@ from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc
 
 # ─────────────────────────────────────────────
 #  ARTIFACT 1 — copilot_account
-#  Sumber: com.microsoft.oneauth.accounts.xml
+#  Source: com.microsoft.oneauth.accounts.xml
 # ─────────────────────────────────────────────
 
 @artifact_processor
@@ -150,7 +151,7 @@ def copilot_account(files_found, _report_folder, _seeker, _wrap_text):
 
 # ─────────────────────────────────────────────
 #  ARTIFACT 2 — copilot_sessions
-#  Sumber: offline_sessions.json
+#  Source: offline_sessions.json
 # ─────────────────────────────────────────────
 
 @artifact_processor
@@ -170,8 +171,13 @@ def copilot_sessions(files_found, _report_folder, _seeker, _wrap_text):
         session_type = session.get('type', '')
         is_pinned   = session.get('isPinned', False)
 
+        if session_id:
+            session_id_display = f'<a href="Sessions_-_Conversation.html?search={session_id}">{session_id}</a>'
+        else:
+            session_id_display = session_id
+
         data_list.append((
-            session_id,
+            session_id_display,
             title,
             updated_at,
             session_type,
@@ -190,12 +196,12 @@ def copilot_sessions(files_found, _report_folder, _seeker, _wrap_text):
 
 
 # ─────────────────────────────────────────────
-#  ARTIFACT 3 — copilot_messages
-#  Sumber: offline_conv_*.json (multi-file)
+#  ARTIFACT 3 — copilot_sessions_conversation
+#  Source: offline_conv_*.json (multi-file)
 # ─────────────────────────────────────────────
 
 @artifact_processor
-def copilot_messages(files_found, _report_folder, _seeker, _wrap_text):
+def copilot_sessions_conversation(files_found, _report_folder, _seeker, _wrap_text):
 
     data_list = []
 
