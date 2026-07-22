@@ -460,10 +460,11 @@ class LeappArtifactStorageTextStream(ArtifactStorageTextStream):
 
 
 class LeappArtifactStorage(ArtifactStorage):
-    def get_binary_stream(self, file_name: str, source_file: str) -> ArtifactStorageBinaryStream:
+    # file_name is required by the mister_skinnylegs ArtifactStorage interface
+    def get_binary_stream(self, file_name: str, source_file: str) -> ArtifactStorageBinaryStream:  # pylint: disable=unused-argument
         return LeappArtifactStorageBinaryStream(source_file)
 
-    def get_text_stream(self, file_name: str, source_file: str) -> ArtifactStorageTextStream:
+    def get_text_stream(self, file_name: str, source_file: str) -> ArtifactStorageTextStream:  # pylint: disable=unused-argument
         return LeappArtifactStorageTextStream(source_file)
 
 
