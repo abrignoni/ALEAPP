@@ -170,6 +170,10 @@ def copilot_sessions(files_found, _report_folder, _seeker, _wrap_text):
         updated_at  = session.get('updatedAt', '')   # sudah ISO 8601, tidak perlu konversi
         session_type = session.get('type', '')
         is_pinned   = session.get('isPinned', False)
+        continued_at = session.get('continuedAt') or ''
+        url         = session.get('url') or ''
+        group       = session.get('group') or ''
+        has_unread  = session.get('hasUnreadMessages', False)
 
         if session_id:
             session_id_display = f'<a href="Sessions_-_Conversation.html?search={session_id}">{session_id}</a>'
@@ -181,7 +185,11 @@ def copilot_sessions(files_found, _report_folder, _seeker, _wrap_text):
             title,
             updated_at,
             session_type,
-            is_pinned
+            is_pinned,
+            continued_at,
+            url,
+            group,
+            has_unread
         ))
 
     data_headers = (
@@ -189,7 +197,11 @@ def copilot_sessions(files_found, _report_folder, _seeker, _wrap_text):
         'Title',
         'Updated At',
         'Type',
-        'Is Pinned'
+        'Is Pinned',
+        'Continued At',
+        'URL',
+        'Group',
+        'Has Unread Messages'
     )
 
     return data_headers, data_list, files_found[0]
