@@ -6,7 +6,7 @@ import inspect
 import json
 import math
 import os
-import re
+import re  # pylint: disable=unused-import
 import shutil
 import sqlite3
 import sys
@@ -17,11 +17,11 @@ from pathlib import Path
 from urllib.parse import quote
 import scripts.artifact_report as artifact_report
 from scripts.context import Context
-from scripts.version_info import leapp_name
+from scripts.version_info import leapp_name  # pylint: disable=unused-import
 
 # new location for modules imported for backward compatibility
 # existing functions that are moved should leave a commented out def line
-from leapp_functions.app.platform import (
+from leapp_functions.app.platform import (  # pylint: disable=unused-import
     ILLEGAL_FILENAME_CHARS,
     format_illegal_filename_chars,
     illegal_chars_in_filename,
@@ -29,7 +29,7 @@ from leapp_functions.app.platform import (
     sanitize_file_path,
     validate_filename,
 )
-from leapp_functions.app.output import (
+from leapp_functions.app.output import (  # pylint: disable=unused-import
     get_output_folder_base,
     resolve_output_folder_name,
     validate_output_folder_available,
