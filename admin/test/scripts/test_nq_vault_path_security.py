@@ -91,7 +91,7 @@ class TestNQVaultPathSecurity(unittest.TestCase):
             # context; capture the name the artifact checks media in under.
             checked_in = []
 
-            def fake_check_in_embedded_media(source_file, data, name='', **kwargs):
+            def fake_check_in_embedded_media(source_file, data, name='', **_kwargs):
                 checked_in.append({'source': source_file, 'data': data, 'name': name})
                 return 'media-ref'
 

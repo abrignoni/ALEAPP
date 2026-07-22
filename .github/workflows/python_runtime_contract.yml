@@ -6,8 +6,8 @@ on:
       - '.github/workflows/python_runtime_contract.yml'
       - 'README.md'
       - 'requirements.txt'
-      - 'admin/test/scripts/test_dependency_compatibility.py'
-      - 'admin/test/scripts/test_runtime_requirements.py'
+      # The job runs the whole admin/test/scripts suite, so trigger on all of it
+      - 'admin/test/scripts/**'
 
 jobs:
   runtime-contract:
