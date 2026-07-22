@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": '*/com.google.android.gms/databases/personalsafety_db*',
         "output_types": "standard",
-        "artifact_icon": "alert-circle",
+        "artifact_icon": "bell-ringing",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": '*/com.google.android.gms/databases/personalsafety_db*',
         "output_types": "all",
-        "artifact_icon": "alert-circle",
+        "artifact_icon": "radar",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": '*/files/personalsafety/shared/personalsafety_info.pb',
         "output_types": "standard",
-        "artifact_icon": "alert-circle",
+        "artifact_icon": "clock-search",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gms | 1 row",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 1 row",
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": '*/files/personalsafety/shared/personalsafety_optin.pb',
         "output_types": "standard",
-        "artifact_icon": "alert-circle"
+        "artifact_icon": "radar-2"
     }
 }
 
