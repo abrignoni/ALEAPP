@@ -234,14 +234,29 @@ def copilot_sessions_conversation(files_found, _report_folder, _seeker, _wrap_te
             channel     = message.get('channel', '')
             created_at  = message.get('createdAt', '')   # sudah ISO 8601
 
-            # Teks pesan tersimpan di dalam array content[0]['text']
-            message_text = ''
-            try:
-                content = message.get('content', [])
-                if content:
-                    message_text = content[0].get('text', '')
-            except (IndexError, TypeError, AttributeError):
-                pass
+            message_text_parts = []
+            citations_parts = []
+            
+            content = message.get('content', [])
+            if isinstance(content, list):
+                for part in content:
+                    part_type = part.get('type', '')
+                    if part_type == 'text':
+                        txt = part.get('text', '')
+                        if txt:
+                            message_text_parts.append(txt)
+                    elif part_type == 'citation':
+                        title = part.get('title', '')
+                        url = part.get('url', '')
+                        if title and url:
+                            citations_parts.append(f"{title} ({url})")
+                        elif url:
+                            citations_parts.append(url)
+                        elif title:
+                            citations_parts.append(title)
+            
+            message_text = '\n'.join(message_text_parts)
+            citations = ';\n'.join(citations_parts)
 
             data_list.append((
                 conversation_id,
@@ -249,7 +264,8 @@ def copilot_sessions_conversation(files_found, _report_folder, _seeker, _wrap_te
                 created_at,
                 author,
                 channel,
-                message_text
+                message_text,
+                citations
             ))
 
     data_headers = (
@@ -258,7 +274,8 @@ def copilot_sessions_conversation(files_found, _report_folder, _seeker, _wrap_te
         'Created At',
         'Author',
         'Channel',
-        'Message'
+        'Message',
+        'Citations'
     )
 
     return data_headers, data_list, files_found[0]
