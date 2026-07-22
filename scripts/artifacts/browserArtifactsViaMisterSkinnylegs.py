@@ -594,11 +594,13 @@ def process(plugin_name: str, context: Context):
                     value = value.friendly_string
                 row.append(value)
             data_rows.append(tuple(row))
-            source_files.append(profile_folder)
+            if profile_folder not in source_files:
+                source_files.append(profile_folder)
 
     # Headers can grow while rows are collected, so pad earlier (shorter) rows to keep
     # every row aligned with the final header list
     data_rows = [row + (None,) * (len(data_headers) - len(row)) for row in data_rows]
 
-    return data_headers, data_rows, ", ".join(str(x) for x in source_files)
+    # Newline-joined so artifact_processor can relativize each path individually
+    return data_headers, data_rows, "\n".join(str(x) for x in source_files)
 
