@@ -247,6 +247,10 @@ class ProfileFolderType:
 
 PROFILE_PATH_ROW_HEADER = "Profile Path"
 
+# Profile folders whose type couldn't be determined; module-level so the warning
+# logs once per run instead of once per artifact (28+ times)
+_unknown_profile_folders_warned = set()
+
 func_to_msl = {'binance_user_details_msl_plugin': 'Binance User Details',
                'binance_balances_msl_plugin': 'Binance Balances', 'bing_searches_msl_plugin': 'Bing searches',
                'chatgpt_chat_information_msl_plugin': 'ChatGPT Chat Information',
@@ -508,7 +512,9 @@ def process(plugin_name: str, context: Context):
             if part == "app_chrome":
                 profile_folder_type = ProfileFolderType.app_chrome
                 break
-            elif re.match(r"^app_\w*webview", part):
+            elif re.match(r"^app_\w*webview", part) or re.match(r"^app_xwalk", part):
+                # app_xwalk_*: Crosswalk-based webviews (e.g. WeChat) use a Chromium
+                # profile layout; treat as webview so cache discovery is attempted
                 profile_folder_type = ProfileFolderType.webview
                 break
 
@@ -516,7 +522,9 @@ def process(plugin_name: str, context: Context):
         cache_path = None
         cache_rel_path = None
         if profile_folder_type is None:
-            logfunc(f"Couldn't determine a browser profile folder type for {rel_profile_path}")
+            if rel_profile_path not in _unknown_profile_folders_warned:
+                _unknown_profile_folders_warned.add(rel_profile_path)
+                logfunc(f"Couldn't determine a browser profile folder type for {rel_profile_path}")
         else:
             # Try Modern location first
             if profile_folder_type == ProfileFolderType.app_chrome:
