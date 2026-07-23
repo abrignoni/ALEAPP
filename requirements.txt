@@ -7,6 +7,9 @@ geopy==2.3.0
 packaging==20.1
 pillow==12.3.0
 polyline==2.0.0
+# Do NOT pip install the PyPI 'blackboxprotobuf' into this environment: it
+# force-downgrades protobuf to 3.10.0 (reintroducing patched CVEs). ALEAPP
+# uses the vendored copy in scripts/blackboxprotobuf instead.
 protobuf==5.29.6
 PyCryptodome
 pytz

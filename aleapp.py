@@ -14,7 +14,7 @@ import leapp_functions.app.history as history
 from scripts.search_files import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from scripts.ilapfuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from leapp_functions.app.output import validate_output_folder_available
-from scripts.version_info import leapp_name, leapp_version
+from scripts.version_info import leapp_name, leapp_version, check_runtime_dependencies
 from time import process_time, gmtime, strftime, perf_counter
 from scripts.lavafuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from scripts.context import Context
@@ -143,6 +143,7 @@ def create_casedata(path):
     return
 
 def main():
+    check_runtime_dependencies()
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
     parser.add_argument('-t', choices=['fs', 'tar', 'zip', 'gz'], required=False, action="store",
                         help=("Specify the input type. "

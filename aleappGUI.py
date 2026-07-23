@@ -12,7 +12,7 @@ import leapp_functions.app.history as history
 
 from PIL import Image, ImageTk
 from tkinter import ttk, filedialog as tk_filedialog, messagebox as tk_msgbox
-from scripts.version_info import leapp_version
+from scripts.version_info import leapp_version, check_runtime_dependencies
 from scripts.search_files import *
 from scripts.modules_to_exclude import modules_to_exclude
 from scripts.lavafuncs import *
@@ -26,6 +26,8 @@ from leapp_functions.app.platform import sanitize_file_name
 from leapp_functions.app.output import default_output_folder_name, validate_output_folder_available
 from scripts.context import Context
 from scripts.lavafuncs import lava_json_name
+
+check_runtime_dependencies()
 
 
 def allow_output_folder_name_chars(proposed):
