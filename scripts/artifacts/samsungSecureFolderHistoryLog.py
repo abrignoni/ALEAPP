@@ -488,8 +488,6 @@ def samsungSecureFolderHistoryLog(context):
             continue
 
         db_records = get_sqlite_db_records(file_found, query)
-        if not db_records:
-            continue
 
         source_path = context.get_relative_path(file_found)
         records = [

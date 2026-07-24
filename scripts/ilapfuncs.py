@@ -684,8 +684,9 @@ def get_sqlite_db_records(path, query, attach_query=None):
             if attach_query:
                 cursor.execute(attach_query)
             cursor.execute(query)
-            records = cursor.fetchall()
-            return records
+            # NOTE: we return the cursor directly, to be iterated by the caller
+            #   to keep it as a generator
+            return cursor
         except sqlite3.OperationalError as e:
             logfunc(f"Error with {path}:")
             logfunc(f" - {str(e)}")

@@ -49,7 +49,7 @@ __artifacts_v2__ = {
             "galaxys10_a10": "Android 10 | ch.sbb.mobile.android.b2c vc 111004052 | 0 rows",
         }
     },
-        "cff_purchased_tickets": {
+    "cff_purchased_tickets": {
         "name": "SBB Mobile - Ticket Purchased recently",
         "description": "List of purchased ticket up to 7 days",
         "author": "jerome.arn@vd.ch",
@@ -71,6 +71,7 @@ from scripts.ilapfuncs import artifact_processor, get_file_path, \
     get_sqlite_db_records, logfunc
 from scripts.html_safe import esc
 
+
 @artifact_processor
 def cff_purchased_tickets(context):
     files_found = context.get_files_found()
@@ -81,8 +82,8 @@ def cff_purchased_tickets(context):
             SELECT
                 validFrom,
                 validUntil,
-				traveler,
-                CASE 
+                traveler,
+                CASE
                     WHEN refundState == "NORMAL" THEN "Not Refunded"
                     WHEN refundState == "COMPLETE" THEN "Refunded"
                     ELSE refundState
@@ -95,12 +96,14 @@ def cff_purchased_tickets(context):
                 PurchasedTickets
         '''
 
-        data_headers = ("Valid from", "Valid until", "Traveler", "is Refunded", "Payment method", "Ticket description", "Ticket departure", "Ticket destination")
-        db_records = get_sqlite_db_records(source_path, query)
+        data_headers = ("Valid from", "Valid until", "Traveler", "is Refunded",
+                        "Payment method", "Ticket description", "Ticket departure", "Ticket destination")
+        db_records = list(get_sqlite_db_records(source_path, query))
 
         return data_headers, db_records, source_path
     else:
         logfunc('No Data')
+
 
 @artifact_processor
 def cff_searched_places(context):
@@ -113,11 +116,11 @@ def cff_searched_places(context):
             SELECT
                 datetime(timestamp/1000, 'unixepoch', 'localtime'),
                 title,
-                CASE 
+                CASE
                     WHEN favorite THEN "True"
                     ELSE "False"
                 END AS favorite,
-                CASE 
+                CASE
                     WHEN type == "a" THEN "Address"
                     WHEN type == "p" THEN "POI"
                     WHEN type == "c" THEN "Coordinate"
@@ -126,7 +129,7 @@ def cff_searched_places(context):
                 END AS type,
                 latitude,
                 longitude
-            FROM 
+            FROM
                 SearchedPlaces
         '''
 
@@ -135,11 +138,12 @@ def cff_searched_places(context):
 
         data_list = [
             record[:4] + (coordinate_to_osm(record[4], record[5]),)
-            for record in db_records
-]
+            for record in db_records]
+
         return data_headers, data_list, source_path
     else:
         logfunc('No Data')
+
 
 @artifact_processor
 def cff_search_history(context):
@@ -152,15 +156,15 @@ def cff_search_history(context):
                 SELECT
                 datetime(timestamp/1000, 'unixepoch', 'localtime'),
                 departure,
-                CASE 
+                CASE
                     WHEN departureType == "a" THEN "Address"
                     WHEN departureType == "p" THEN "POI"
                     WHEN departureType == "c" THEN "Coordinate"
                     WHEN departureType == "s" THEN "Station"
                     ELSE departureType
                 END AS departureType,
-				target,
-				CASE 
+                target,
+                CASE
                     WHEN targetType == "a" THEN "Address"
                     WHEN targetType == "p" THEN "POI"
                     WHEN targetType == "c" THEN "Coordinate"
@@ -169,11 +173,12 @@ def cff_search_history(context):
                 END AS targetType,
                 latitude,
                 longitude
-            FROM 
+            FROM
                 SearchHistory
         '''
 
-        data_headers = (("Search timestamp", "datetime"), "Departure", "Departure (type)", "Destination", "Destination (type)", "location of search (link)")
+        data_headers = (("Search timestamp", "datetime"), "Departure", "Departure (type)", "Destination",
+                        "Destination (type)", "location of search (link)")
         db_records = get_sqlite_db_records(source_path, query)
 
         data_list = [
@@ -184,6 +189,7 @@ def cff_search_history(context):
         return data_headers, data_list, source_path
     else:
         logfunc('No Data')
+
 
 @artifact_processor
 def cff_travel_cards(context):
@@ -211,6 +217,7 @@ def cff_travel_cards(context):
         return data_headers, data_list, source_path
     else:
         logfunc('No Data')
+
 
 def coordinate_to_osm(lat, lon):
     return f"https://www.openstreetmap.org/?mlat={esc(lat)}&mlon={esc(lon)}&zoom=15"
