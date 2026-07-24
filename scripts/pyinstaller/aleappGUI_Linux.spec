@@ -27,6 +27,7 @@ a = Analysis(
         'fitdecode',
         'html.parser',
         'mister_skinnylegs',
+        'PIL._tkinter_finder',
         'PIL.Image',
         'polyline',
         'uuid',
