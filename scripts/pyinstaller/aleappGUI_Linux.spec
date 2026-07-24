@@ -9,10 +9,15 @@ from PyInstaller.utils.hooks import collect_data_files
 msl_plugin_datas = collect_data_files('mister_skinnylegs.plugins', include_py_files=True)
 
 a = Analysis(
-    ['../../aleapp.py'],
+    ['../../aleappGUI.py'],
     pathex=['../scripts/artifacts'],
     binaries=[],
-    datas=[('../', 'scripts'), *msl_plugin_datas],
+    datas=[
+        ('../', 'scripts'),
+        ('../../assets', 'assets'),
+        ('../../leapp_functions', 'leapp_functions'),
+        *msl_plugin_datas
+        ],
     hiddenimports=[
         'bcrypt',
         'bencoding',
@@ -22,6 +27,7 @@ a = Analysis(
         'fitdecode',
         'html.parser',
         'mister_skinnylegs',
+        'PIL._tkinter_finder',
         'PIL.Image',
         'polyline',
         'uuid',
@@ -42,7 +48,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='aleapp',
+    name='aleappGUI',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -53,6 +59,4 @@ exe = EXE(
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
 )
