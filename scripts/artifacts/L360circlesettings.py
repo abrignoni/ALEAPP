@@ -25,6 +25,7 @@ from scripts.ilapfuncs import (
     logfunc
 )
 
+
 @artifact_processor
 def Life360_CircleSettings(context):
 
@@ -57,15 +58,18 @@ def Life360_CircleSettings(context):
     try:
         db_records = get_sqlite_db_records(source_path, query)
 
-        logfunc(f'Life360_CircleSettings: Records found = {len(db_records)}')
-
         for record in db_records:
 
-            data_list.append((record[0], record[1], record[2], record[3], record[4], record[5], record[6], record[7], record[8], record[9], record[10], record[11], record[12], record[13], record[14]))
+            data_list.append((record[0], record[1], record[2], record[3], record[4], record[5],
+                              record[6], record[7], record[8], record[9], record[10], record[11],
+                              record[12], record[13], record[14]))
 
     except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f'Error processing Life360 CircleSettings: {e}')
 
-    data_headers = ('Circle ID', 'App Features', 'App Features ID', 'Collision Alerts Push', 'Collision Alerts SMS', 'Customer Support', 'Data Breach Detection', 'Driver Reports', 'Location History', 'Place Alerts', 'Plan', 'SOS Alerts Push', 'SOS Alerts SMS', 'TileGPS Activation', 'Uber One')
+    data_headers = ('Circle ID', 'App Features', 'App Features ID', 'Collision Alerts Push',
+                    'Collision Alerts SMS', 'Customer Support', 'Data Breach Detection',
+                    'Driver Reports', 'Location History', 'Place Alerts', 'Plan',
+                    'SOS Alerts Push', 'SOS Alerts SMS', 'TileGPS Activation', 'Uber One')
 
     return data_headers, data_list, source_path

@@ -185,7 +185,10 @@ def knuddels_chats(context):
         thread.sender,
         users.id,
         thread.id,
-        CASE WHEN thread.snapExpired = 1 THEN 'Yes' WHEN thread.snapExpired = 0 THEN 'No' END, -- 1 = expired, 0 = not expired
+        CASE
+            WHEN thread.snapExpired = 1 THEN 'Yes'
+            WHEN thread.snapExpired = 0 THEN 'No'
+        END, -- 1 = expired, 0 = not expired
         conversations.participants
         FROM thread
         JOIN users ON users.id = thread.sender
@@ -238,7 +241,7 @@ def knuddels_chats(context):
         'Thread Table UID',
         'Users Table UID',
     )
-    
+
     db_count = len(db_files)
     source_note = f"{db_count} Knuddels database{'s' if db_count != 1 else ''} - see Source File column"
     return data_headers, data_list, source_note
@@ -267,7 +270,10 @@ def knuddels_contacts(context):
         friedlisttype,
         onlinestatus,
         lastactivetime,
-        CASE WHEN profileimagehidden = 1 THEN 'Yes' WHEN profileimagehidden = 0 THEN 'No' END, -- 1 = hidden, 0 = visible
+        CASE
+            WHEN profileimagehidden = 1 THEN 'Yes'
+            WHEN profileimagehidden = 0 THEN 'No'
+        END, -- 1 = hidden, 0 = visible
         distance
         FROM users
         '''
@@ -375,7 +381,7 @@ def knuddels_account(context):
 
         last_msg = ""
         try:
-            rows = get_sqlite_db_records(db, "SELECT max(timestamp) FROM thread")
+            rows = list(get_sqlite_db_records(db, "SELECT max(timestamp) FROM thread"))
             if rows and rows[0] and rows[0][0]:
                 last_msg = ms_to_utc(rows[0][0])
         except sqlite3.Error:

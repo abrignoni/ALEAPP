@@ -26,6 +26,7 @@ from scripts.ilapfuncs import (
     logfunc
 )
 
+
 @artifact_processor
 def Life360_User(context):
 
@@ -35,7 +36,7 @@ def Life360_User(context):
     source_path = get_file_path(files_found, 'com.amplitude.api')
 
     query = '''
-    SELECT 
+    SELECT
         key AS "Key",
         value AS "Value"
     FROM store
@@ -43,8 +44,6 @@ def Life360_User(context):
 
     try:
         db_records = get_sqlite_db_records(source_path, query)
-
-        logfunc(f'Life360_User: Records found = {len(db_records)}')
 
         for record in db_records:
 

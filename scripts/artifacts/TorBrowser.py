@@ -74,6 +74,7 @@ def _parse_xml(file_found):
             logfunc(f'Skipping unparseable XML {file_found}: {ex}')
             return ET.Element('empty')
 
+
 @artifact_processor
 def torbrowser_thumbnails(context):
     files_found = context.get_files_found()
@@ -98,9 +99,10 @@ def torbrowser_thumbnails(context):
         if media_item:
             data_list.append((modifiedtime, media_item, filename, location))
 
-    data_headers = (('ModifiedTime', 'datetime'),('Thumbnail', 'media'),'File Name','Location')
+    data_headers = (('ModifiedTime', 'datetime'), ('Thumbnail', 'media'), 'File Name', 'Location')
 
     return data_headers, data_list, 'See source path(s) below'
+
 
 @artifact_processor
 def torbrowser_bookmarks(context):
@@ -111,46 +113,35 @@ def torbrowser_bookmarks(context):
         source_path = str(source_path)
         if source_path.endswith('.sqlite'):
             break
-                       
+
     query = '''
-        SELECT 
+        SELECT
             child.id,
             CASE
                 WHEN child.parent = 1 THEN 'PlacesRoot'
                 ELSE parent.title
             END AS "Parent Container",
-            CASE 
+            CASE
                 WHEN child.id = 1 THEN 'PlacesRoot'
                 ELSE child.title
             END AS Title,
-            moz_places.url AS URL, 
-            moz_places.description AS Description, 
+            moz_places.url AS URL,
+            moz_places.description AS Description,
             DATETIME((child.dateAdded / 1000), 'unixepoch') AS 'Date Added (UTC)',
             DATETIME((child.lastModified / 1000), 'unixepoch') AS 'Date Last Modified (UTC)'
         FROM moz_bookmarks AS child
-        LEFT JOIN moz_places ON child.fk = moz_places.id  
+        LEFT JOIN moz_places ON child.fk = moz_places.id
         LEFT JOIN moz_bookmarks AS parent ON child.parent = parent.id
         WHERE child.type = 1;
         '''
 
-    db_records = get_sqlite_db_records(source_path, query)
+    data_headers = ('Bookmark ID', 'Parent Folder', 'Title', 'URL', 'Description',
+                    ('Date Added', 'datetime'), ('Last Modified', 'datetime'))
+    data_list = list(get_sqlite_db_records(source_path, query))
 
-    for row in db_records:
-        bookmark_id     = row[0]
-        parent_folder   = row[1]
-        title           = row[2]
-        url             = row[3]
-        description     = row[4]
-        added_date      = row[5]
-        last_modified   = row[6]
-
-        data_list.append((bookmark_id,parent_folder,title,url,description,added_date,last_modified))
-
-    data_headers = ('Bookmark ID', 'Parent Folder', 'Title', 'URL', 'Description', ('Date Added','datetime'),('Last Modified','datetime')) 
-    data_list = get_sqlite_db_records(source_path, query)        
-    
     return data_headers, data_list, source_path
-    
+
+
 @artifact_processor
 def torbrowser_usageinfo(context):
     files_found = context.get_files_found()
@@ -190,14 +181,10 @@ def torbrowser_usageinfo(context):
                     dt = datetime.datetime.utcfromtimestamp(ts / 1000.0)
                     value_out = dt.strftime("%Y-%m-%d %H:%M:%S")
                 except Exception:
-                    pass 
+                    pass
 
             data_list.append((key_name, value_out, filename, path))
 
     data_headers = ("Key", "Value", "File Name", "Path")
 
     return data_headers, data_list, source_path
-
-
-
-

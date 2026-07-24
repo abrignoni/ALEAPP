@@ -19,8 +19,8 @@ __artifacts_v2__ = {
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user",
                   "*/com.waze/waze/cached_data*"),
-        "output_types": [ "standard" ],
-        "html_columns": [ "Profile Picture URL" ],
+        "output_types": ["standard"],
+        "html_columns": ["Profile Picture URL"],
         "artifact_icon": "user",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 2 rows",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/session"),
-        "output_types": [ "all" ],
+        "output_types": ["all"],
         "artifact_icon": "navigation",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 24 rows",
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "paths": ("*/com.waze/spdlog.*logdata",
                   "*/com.waze/waze_log.txt",
                   "*/com.waze/*spdlog.logdata.gz"),
-        "output_types": [ "all" ],
+        "output_types": ["all"],
         "artifact_icon": "navigation",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
@@ -73,7 +73,7 @@ __artifacts_v2__ = {
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
-        "output_types": [ "all" ],
+        "output_types": ["all"],
         "artifact_icon": "search",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 4 rows",
@@ -90,7 +90,7 @@ __artifacts_v2__ = {
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
-        "output_types": [ "all" ],
+        "output_types": ["all"],
         "artifact_icon": "map-pin",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 4 rows",
@@ -107,8 +107,8 @@ __artifacts_v2__ = {
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*",
-                  "*/com.waze/waze/cached_data*"),                  
-        "output_types": [ "all" ],
+                  "*/com.waze/waze/cached_data*"),
+        "output_types": ["all"],
         "artifact_icon": "star",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
@@ -125,7 +125,7 @@ __artifacts_v2__ = {
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
-        "output_types": [ "all" ],
+        "output_types": ["all"],
         "artifact_icon": "map-pin",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
@@ -142,8 +142,8 @@ __artifacts_v2__ = {
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/user.db*"),
-        "output_types": [ "all" ],
-        "html_columns": [ "Image URL" ],
+        "output_types": ["all"],
+        "html_columns": ["Image URL"],
         "artifact_icon": "calendar",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 0 rows",
@@ -160,7 +160,7 @@ __artifacts_v2__ = {
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com",
         "paths": ("*/com.waze/waze/tts/tts.db*"),
-        "output_types": [ "standard" ],
+        "output_types": ["standard"],
         "artifact_icon": "volume-2",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.waze vc 1030478 | 400 rows",
@@ -237,9 +237,9 @@ LEGACY_GPS_RE = re.compile(
 
 # GPS_QUALITY for new SWIFT payload format blocks
 # Step 1: matches the WCEWazeAppEvent block opener line
-WAZE_EVENT_RE   = re.compile(r"WCEWazeAppEvent")
+WAZE_EVENT_RE = re.compile(r"WCEWazeAppEvent")
 # Step 2: matches the 'gps_quality {' line nested inside the block
-GPS_BLOCK_RE    = re.compile(r"^\s*gps_quality\s*\{")
+GPS_BLOCK_RE = re.compile(r"^\s*gps_quality\s*\{")
 SWIFT_LAT_RE = re.compile(r"latitude:\s*([+-]?[0-9.]+)")
 SWIFT_LON_RE = re.compile(r"longitude:\s*([+-]?[0-9.]+)")
 SWIFT_SAM_CNT_RE = re.compile(r"sample_count:\s*([0-9]+)")
@@ -262,7 +262,7 @@ F_FIRST_USE = 'first_use'
 F_FIRST_NAME = 'first_name'
 F_LAST_NAME = 'last_name'
 F_USER_NAME = 'user_name'
-#F_NICKNAME = 'nickname'
+# F_NICKNAME = 'nickname'
 F_PIC_URL = 'profile_picture_url'
 F_EMAIL = 'email'
 F_WAZE_ID = 'waze_id'
@@ -510,7 +510,7 @@ def split_coordinates(value: str | None, divisor: int | float = 1.0,
         raw_lon, raw_lat = value.strip().split(',')
         raw_lat, raw_lon = (raw_lon, raw_lat) if swap else (raw_lat, raw_lon)
 
-        latitude  = f"{float(raw_lat.strip()) / divisor:.{decimal_places}f}"
+        latitude = f"{float(raw_lat.strip()) / divisor:.{decimal_places}f}"
         longitude = f"{float(raw_lon.strip()) / divisor:.{decimal_places}f}"
 
         return latitude, longitude
@@ -541,9 +541,8 @@ CACHED_DATA_MESSAGE_TYPE = {
                     2: {'type': 'string', 'name': 'last_name',
                         'message_typedef': {
                             1: {'type': 'string', 'name': 'value'},
-                            9: {'type': 'int', 'name': 'ref_id'}
-                        }
-                    },
+                            9: {'type': 'int', 'name': 'ref_id'}}
+                        },
                     4: {'type': 'string', 'name': 'email'},
                     5: {'type': 'int', 'name': 'is_verified'},
                     9: {'type': 'int', 'name': 'ref_id'},   # last_name->ref_id
@@ -556,8 +555,7 @@ CACHED_DATA_MESSAGE_TYPE = {
                         'name': 'last_known_position',
                         'message_typedef': {
                             1: {'type': 'sint', 'name': 'lon_e6'},
-                            2: {'type': 'sint', 'name': 'lat_e6'
-                            }
+                            2: {'type': 'sint', 'name': 'lat_e6'}
                         }
                     }
                 }
@@ -619,8 +617,8 @@ CACHED_DATA_MESSAGE_TYPE = {
                             7: {'type': 'string', 'name': 'country'},
                             8: {'type': 'string', 'name': 'house_number'},
                             9: {'type': 'string', 'name': 'place_id'},
-                            #10: {}, Possible timestamp field
-                            #11: {}, Field observed in samples but semantic meaning unknown
+                            # 10: {}, Possible timestamp field
+                            # 11: {}, Field observed in samples but semantic meaning unknown
                         }
                     },
                     2: {'type': 'string', 'name': 'place_label'},
@@ -661,7 +659,7 @@ def _safe_str(obj: any, default: str = '') -> str:
 def _pbget(d, key, default=None):
     """
     Retrieve a value from a dictionary using either an integer or string key.
-    
+
     Args:
         d (dict): The dictionary to search.
         key (int/str): The protobuf tag or field name.
@@ -863,7 +861,7 @@ def _parse_account_user(source_path: str, context, data_list: list, data_list_ht
         F_FIRST_NAME: None,
         F_LAST_NAME: None,
         F_USER_NAME: None,
-        #F_NICKNAME: None,
+        # F_NICKNAME: None,
         F_PIC_URL: None,
         F_EMAIL: None,
         F_WAZE_ID: None,
@@ -984,7 +982,6 @@ def waze_account(context):
     source_path = context.get_source_file_path('user')
     if source_path:
         _parse_account_user(source_path, context, data_list, data_list_html)
-
 
     # Search for the 'cached_data[.pb]' file
     source_path = (
@@ -1214,11 +1211,11 @@ def waze_track_gps_quality(context):
         #   inside_event  — we are inside a WCEWazeAppEvent { ... } block
         #   inside_gps    — we are inside the nested gps_quality { ... } sub-block
         #   event_depth   — { } nesting depth; when it reaches 0 the event closes
-        inside_event   = False
-        event_depth    = 0
-        inside_gps     = False
+        inside_event = False
+        event_depth = 0
+        inside_gps = False
         event_start_line = 0
-        current_payload  = {}
+        current_payload = {}
 
         for line_count, line in enumerate(lines, start=1):
             try:
@@ -1276,16 +1273,16 @@ def waze_track_gps_quality(context):
                         event_depth = clean_line.count('{') - clean_line.count('}')
                         event_start_line = line_count
                         current_payload = {
-                            'lat' : None, 'lon' : None,
+                            'lat': None, 'lon': None,
                             'sam_cnt': None, 'bad_cnt': None, 'dup_cnt': None,
                             'acc_min': None, 'acc_avg': None, 'acc_max': None,
-                            'prov' : None,
-                            'sec' : None, 'ns' : 0,
+                            'prov': None,
+                            'sec': None, 'ns': 0,
                         }
                     continue
 
                 # Swift block: State 1 (inside event)
-                opens  = clean_line.count('{')
+                opens = clean_line.count('{')
                 closes = clean_line.count('}')
 
                 # State 1 -> 2: enter gps_quality sub-block
@@ -1351,7 +1348,7 @@ def waze_track_gps_quality(context):
                 # State 1 -> 0: event block fully closed
                 if event_depth <= 0:
                     inside_event = False
-                    inside_gps   = False
+                    inside_gps = False
 
                     # Emit record only if we have timestamp and coordinates
                     if (current_payload['sec'] is not None
@@ -1485,7 +1482,7 @@ def waze_search_history(context):
             has_is_residential = "NULL"
 
         query = f'''
-        SELECT 
+        SELECT
             P.id,
             {has_updated_time} AS "updated",
             P.name,
@@ -1553,7 +1550,7 @@ def waze_search_history(context):
                 fields[F_LOCATION] = f"PLACES (id: {place_id})"
 
                 # Base row for both lists
-                #base_data = tuple(fields.values())
+                # base_data = tuple(fields.values())
                 base_data = (
                     fields[F_UPDATED],
                     fields[F_NAME],
@@ -1593,7 +1590,7 @@ def waze_search_history(context):
 @artifact_processor
 def waze_recent_locations(context):
     """
-    Extracts the history of recently visited or selected locations, 
+    Extracts the history of recently visited or selected locations,
     joining RECENTS with the PLACES table for full coordinates.
     """
 
@@ -1623,7 +1620,7 @@ def waze_recent_locations(context):
         return data_headers, data_list, source_path
 
     query = '''
-    SELECT 
+    SELECT
         R.id,
         P.id,
         R.access_time,
@@ -1644,9 +1641,9 @@ def waze_recent_locations(context):
         P.country,
         CAST((CAST(P.latitude AS REAL) / 1000000) AS TEXT) AS "latitude",
         CAST((CAST(P.longitude AS REAL) / 1000000) AS TEXT) AS "longitude",
-	    R.created_time,
+        R.created_time,
         R.waypoint_access_time,
-	    R.image_id,
+        R.image_id,
         P.venue_id
     FROM RECENTS AS "R"
     LEFT JOIN PLACES AS "P" ON (R.place_id = P.id)
@@ -1654,8 +1651,6 @@ def waze_recent_locations(context):
     '''
 
     db = get_sqlite_db_records(source_path, query)
-    if not db:
-        return data_headers, data_list, source_path
 
     for record in db:
         try:
@@ -1711,7 +1706,7 @@ def waze_recent_locations(context):
             fields[F_VENUE_ID] = record[15]
 
             # Precise location within the source database table for validation
-            location = [ f"RECENTS (id: {recent_id})" ]
+            location = [f"RECENTS (id: {recent_id})"]
             if place_id is not None:
                 location.append(f"PLACES (id: {place_id})")
             fields[F_LOCATION] = COMMA_SEP.join(location)
@@ -1828,7 +1823,7 @@ def _parse_favorite_cached(source_path: str, context, data_list: list) -> None:
             fields[F_HOUSE_NUM] = _safe_str(_pbget(place_details, 8))
 
             # Location Type and Label
-            #loc_type_str = _safe_str(_pbget(saved_place, 2))
+            # loc_type_str = _safe_str(_pbget(saved_place, 2))
             loc_type = _safe_str(_pbget(saved_place, 3))
             if loc_type == '-1':
                 loc_type_str = 'N/A'
@@ -1848,7 +1843,7 @@ def _parse_favorite_cached(source_path: str, context, data_list: list) -> None:
             fields[F_LOCATION_TYPE] = loc_type_str
 
             # Convert timestamps to UTC
-            #created = convert_unix_ts_to_utc(_pbget(place_details, ))
+            # created = convert_unix_ts_to_utc(_pbget(place_details, ))
             fields[F_MODIFIED] = convert_unix_ts_to_utc(_pbget(place_details, 10))
 
             # Server Identifier
@@ -1864,7 +1859,7 @@ def _parse_favorite_cached(source_path: str, context, data_list: list) -> None:
             fields[F_DEVICE_PATH] = device_path
 
             # Base row for both lists
-            #base_data = tuple(fields.values())
+            # base_data = tuple(fields.values())
             base_data = (
                 fields[F_LAST_ACCESS],
                 fields[F_LOCATION_TYPE],
@@ -1906,9 +1901,9 @@ def _parse_favorite_user_db(source_path: str, context, data_list: list) -> None:
     """
 
     query = '''
-    SELECT 
-	    F.id,
-	    P.id,
+    SELECT
+        F.id,
+        P.id,
         F.access_time,
         CASE f.type
             WHEN -1 THEN 'N/A'
@@ -1917,19 +1912,19 @@ def _parse_favorite_user_db(source_path: str, context, data_list: list) -> None:
             WHEN 2 THEN 'Work'
             WHEN 3 THEN 'Events'
             WHEN 4 THEN 'Saved POI'
-            ELSE 'Unknown (' || IFNULL(f.type, 'N/A') || ')'	
-        END AS "entry_type",        
-	    F.name,
+            ELSE 'Unknown (' || IFNULL(f.type, 'N/A') || ')'
+        END AS "entry_type",
+        F.name,
         P.name AS "place_name",
-	    P.house,
+        P.house,
         P.street,
         P.city,
         P.state,
         P.country,
         CAST((CAST(P.latitude AS REAL) / 1000000) AS TEXT) AS "latitude",
         CAST((CAST(P.longitude AS REAL) / 1000000) AS TEXT) AS "longitude",
-	    F.created_time,
-	    F.modified_time,
+        F.created_time,
+        F.modified_time,
         F.waypoint_access_time,
         F.rank,
         F.server_id,
@@ -1939,8 +1934,7 @@ def _parse_favorite_user_db(source_path: str, context, data_list: list) -> None:
     '''
 
     db = get_sqlite_db_records(source_path, query)
-    if not db:
-        return
+
     device_path = get_device_file_path(source_path, context)
 
     for record in db:
@@ -2007,13 +2001,13 @@ def _parse_favorite_user_db(source_path: str, context, data_list: list) -> None:
             fields[F_DEVICE_PATH] = device_path
 
             # Precise location within the source database table for validation
-            location = [ f"FAVORITES (id: {favorite_id})" ]
+            location = [f"FAVORITES (id: {favorite_id})"]
             if place_id is not None:
                 location.append(f"PLACES (id: {place_id})")
             fields[F_LOCATION] = COMMA_SEP.join(location)
 
             # Base row for both lists
-            #base_data = tuple(fields.values())
+            # base_data = tuple(fields.values())
             base_data = (
                 fields[F_LAST_ACCESS],
                 fields[F_LOCATION_TYPE],
@@ -2081,7 +2075,6 @@ def waze_favorite_locations(context):
     if source_path:
         _parse_favorite_user_db(source_path, context, data_list)
 
-
     # Search for the 'cached_data[.pb]' file
     source_path = (
         context.get_source_file_path('cached_data') or
@@ -2126,11 +2119,11 @@ def waze_shared_locations(context):
         return data_headers, data_list, source_path
 
     query = '''
-    SELECT 
-	    SP.id,
-	    P.id,
+    SELECT
+        SP.id,
+        P.id,
         SP.share_time,
-	    coalesce(SP.name, P.name) AS "name",
+        coalesce(SP.name, P.name) AS "name",
         P.house,
         P.street,
         P.city,
@@ -2138,18 +2131,16 @@ def waze_shared_locations(context):
         P.country,
         CAST((CAST(P.latitude AS REAL) / 1000000) AS TEXT) AS "latitude",
         CAST((CAST(P.longitude AS REAL) / 1000000) AS TEXT) AS "longitude",
-	    SP.created_time,
-	    SP.modified_time,
+        SP.created_time,
+        SP.modified_time,
         SP.access_time,
-	    SP.owner_id,
+        SP.owner_id,
         P.venue_id
     FROM SHARED_PLACES AS "SP"
-    LEFT JOIN PLACES AS "P" ON (SP.place_id = P.id)                   
+    LEFT JOIN PLACES AS "P" ON (SP.place_id = P.id)
     '''
 
     db = get_sqlite_db_records(source_path, query)
-    if not db:
-        return data_headers, data_list, source_path
 
     for record in db:
         try:
@@ -2203,13 +2194,13 @@ def waze_shared_locations(context):
             fields[F_VENUE_ID] = record[15]
 
             # Precise location within the source database table for validation
-            location_list = [ f"SHARED_PLACES (id: {shared_id})" ]
+            location_list = [f"SHARED_PLACES (id: {shared_id})"]
             if place_id is not None:
                 location_list.append(f"PLACES (id: {place_id})")
             fields[F_LOCATION] = COMMA_SEP.join(location_list)
 
             # Base row for both lists
-            #base_data = tuple(fields.values())
+            # base_data = tuple(fields.values())
             base_data = (
                 fields[F_SHARED],
                 fields[F_NAME],
@@ -2301,7 +2292,7 @@ def waze_planned_events(context):
             P.id,
             {has_op_id},
             E.created_time,
-            CASE 
+            CASE
                 WHEN E.type = 1 THEN 'Calendar'
                 WHEN E.type = 2 THEN 'Partner'
                 WHEN E.type = 6 THEN 'Reservation'
@@ -2399,7 +2390,7 @@ def waze_planned_events(context):
                 fields[F_EVENT_ID] = record[20]
 
                 # Precise location within the source database table for validation
-                location_list = [ f"EVENTS_PLACES (id: {event_id})" ]
+                location_list = [f"EVENTS_PLACES (id: {event_id})"]
                 if place_id is not None or orig_place_id is not None:
                     place_ids = []
                     if place_id is not None:
@@ -2411,7 +2402,7 @@ def waze_planned_events(context):
                 fields[F_LOCATION] = COMMA_SEP.join(location_list)
 
                 # Base row
-                #base_data = tuple(fields.values())
+                # base_data = tuple(fields.values())
                 base_data = (
                     fields[F_CREATED],
                     fields[F_EVENT_TYPE],
@@ -2469,7 +2460,7 @@ def _parse_tts_table(cursor, table_name: str, source_path: str, context, data_li
     # Dynamic query for each validated table
     query = f'''
     SELECT
-	    T.ROWID,
+        T.ROWID,
         T.update_time,
         CASE
             WHEN T.text_type = 0 THEN 'Prompt'
@@ -2524,7 +2515,7 @@ def _parse_tts_table(cursor, table_name: str, source_path: str, context, data_li
 @artifact_processor
 def waze_tts(context):
     """
-    Dynamically scans all tables in tts.db to extract a history of 
+    Dynamically scans all tables in tts.db to extract a history of
     text-to-speech instructions provided during navigation.
     """
 
@@ -2545,8 +2536,6 @@ def waze_tts(context):
     # Get all table names from the database
     query = "SELECT name FROM sqlite_master WHERE type='table'"
     all_tables = get_sqlite_db_records(source_path, query)
-    if not all_tables:
-        return data_headers, data_list, source_path
 
     # Open the database ONCE for all subsequent table scans
     db_table = open_sqlite_db_readonly(source_path)
