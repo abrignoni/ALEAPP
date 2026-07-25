@@ -1,14 +1,15 @@
 __artifacts_v2__ = {
     "get_firefoxDownloads": {
         "name": "Firefox - Downloads",
-        "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database.",
+        "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database. Also matches Tor Browser, which is Firefox-based and uses the same database.",
         "author": "",
         "creation_date": "2022-01-12",
-        "last_update_date": "2022-01-12",
+        "last_update_date": "2026-07-25",
+        "notes": "Newer Firefox versions renamed the destination_directory column to directory_path; both schemas are supported.",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "",
-        "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',),
+        "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',
+                  '*/org.torproject.torbrowser/databases/mozac_downloads_database*'),
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
@@ -35,7 +36,12 @@ def get_firefoxDownloads(context):
         source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+
+        # Newer Firefox versions renamed destination_directory to directory_path
+        table_columns = [row[1] for row in cursor.execute('PRAGMA table_info(downloads)')]
+        directory_column = 'directory_path' if 'directory_path' in table_columns else 'destination_directory'
+
+        cursor.execute(f'''
         SELECT
         datetime(created_at/1000,'unixepoch') AS CreatedDate,
         file_name AS FileName,
@@ -48,7 +54,7 @@ def get_firefoxDownloads(context):
             WHEN 5 THEN 'Failed'
             WHEN 6 THEN 'Finished'
         END AS Status,
-        destination_directory AS DestDir
+        {directory_column} AS DestDir
         FROM downloads
         ''')
 
