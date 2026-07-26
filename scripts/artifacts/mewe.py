@@ -8,8 +8,20 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("MeWe moved its chat store from 'app_database' to 'app_v3.db'; both are read. "
-                  "Newer builds leave an empty 'mewe_old' database behind, which is skipped."),
+        "notes": ("Source: MeWe moved its chat store from 'app_database' to 'app_v3.db'; both are read. "
+                  "Newer builds leave an empty 'mewe_old' beside it, which is skipped.\n"
+                  "Direction: 'Sent' means the account signed in on this device sent the message. "
+                  "Its user ID is the suffix of the 'user_info<id>' key in SGSession.xml (see MeWe - "
+                  "SGSession), which can be matched against User Id to confirm who the owner is.\n"
+                  "Thread Name is the other party on a one-to-one chat, not a group name; a Group Id "
+                  "of 'contacts' likewise indicates a direct chat rather than a group.\n"
+                  "Deleted: 'YES' is the app's own deletion flag. The row and its text are still "
+                  "present here, so a deleted message can remain readable.\n"
+                  "Shared locations arrive as an openstreetmap.org URL in Message Text, with the "
+                  "coordinates in the mlat/mlon parameters.\n"
+                  "Attachment Name is often empty even when Message Type is set (for example PHOTO); "
+                  "the absence of a name does not mean the absence of an attachment.\n"
+                  "Timestamps are UTC, converted from whole Unix seconds."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db'),
         "output_types": "standard",
@@ -38,9 +50,19 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("A post is stored once per feed it was loaded into, so the same post can appear "
-                  "more than once with a different Feed Context. The context is reported rather "
-                  "than de-duplicated, because which feed surfaced a post is itself informative."),
+        "notes": ("This is cached feed content, not an authorship record. Rows are posts the app "
+                  "downloaded to render a feed the user scrolled, so their presence shows what was "
+                  "delivered to the device, NOT that the device owner wrote, opened or read any of "
+                  "it. In both test images every cached post belongs to someone else "
+                  "(currentUserPost = 0 for all 74). Use 'Posted By Device Owner' = Yes to isolate "
+                  "the owner's own posts.\n"
+                  "A post is stored once per feed it was loaded into, so the same post can appear "
+                  "more than once with a different Feed Context. That is reported rather than "
+                  "de-duplicated, because which feed surfaced a post is itself informative. Treat "
+                  "the Post Id, not the row, as the unit when counting distinct posts.\n"
+                  "Poll Votes is the total across all voters, not the owner's vote.\n"
+                  "Timestamps are UTC, converted from whole Unix seconds. An Edited value of 0 "
+                  "renders blank and means never edited."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db'),
         "output_types": "standard",
@@ -58,7 +80,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": "",
+        "notes": ("Like MeWe - Posts, this is cached feed content: comments written by other people "
+                  "on posts the app downloaded. Presence does not imply the device owner wrote or "
+                  "read them. 'By Device Owner' = Yes marks the owner's own comments; in both test "
+                  "images none of the 16 cached comments were the owner's.\n"
+                  "'On Post By' and 'On Post Text' come from a LEFT JOIN to the cached post. If the "
+                  "parent post is no longer cached these are blank, and the comment is still "
+                  "reported rather than dropped; use Post Id to correlate.\n"
+                  "Timestamps are UTC, from whole Unix seconds."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db'),
         "output_types": "standard",
@@ -76,7 +105,17 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": "",
+        "notes": ("Image URL and Video URL Template are server-side paths on MeWe's CDN "
+                  "(for example /api/v2/photo/...), NOT files on the device. Do not expect to find "
+                  "a file at that path. Any locally cached copy lives under the app's Glide cache "
+                  "(cache/image_manager_disk_cache) under a hashed filename that cannot be "
+                  "correlated back to these URLs by name.\n"
+                  "Rows describe media attached to cached feed posts, so the same caveat as "
+                  "MeWe - Posts applies: this is what was delivered to the device, not what the "
+                  "owner posted or viewed.\n"
+                  "Post context is a LEFT JOIN; where the parent post is no longer cached the "
+                  "Post Created, Post Author and Group Name columns are blank and the media row is "
+                  "still reported (3 of 69 rows in the Android 14 test image)."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db'),
         "output_types": "standard",
@@ -93,7 +132,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": "",
+        "notes": ("One row per poll option, so a poll spans several rows sharing a Post Id and "
+                  "Question.\n"
+                  "Option Votes and Total Votes are server-reported tallies across all voters. "
+                  "Nothing here records how the device owner voted, or whether they voted at all; "
+                  "the POST table's pollVoted flag carries that and was 0 for every cached poll in "
+                  "the test image.\n"
+                  "Counts are a snapshot from when the post was cached, not live values."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db'),
         "output_types": "standard",
@@ -110,7 +155,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": "MeWe keeps a reaction tally per emoji rather than naming each reactor; only the device owner's own reaction is attributable.",
+        "notes": ("Reactions are stored as a per-emoji tally, not a list of reactors. A Reaction "
+                  "Count of 106 means 106 reactions were reported by the server; it does NOT "
+                  "identify, or make identifiable, who reacted. The single exception is "
+                  "'Device Owner Reacted' = Yes, which is the only attributable reaction in this "
+                  "artifact.\n"
+                  "'Reacted To' says which object was reacted to (Post, Comment or Chat Message), "
+                  "since the three come from separate tables merged here. Target Author, Target "
+                  "Text and Target Created are LEFT JOINed from that object and are blank if it is "
+                  "no longer cached.\n"
+                  "Counts are a snapshot from when the object was cached, not live values."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db'),
         "output_types": "standard",
@@ -128,7 +182,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": "",
+        "notes": ("Three tables are merged and the Type column says which one a row came from: "
+                  "Group (GROUP_), Page (PAGE) or Community (COMMUNITY). The same entity can appear "
+                  "twice, once as a Group or Page and again as a Community, because MeWe caches "
+                  "both views; match on Id.\n"
+                  "Membership is not the same as interest. A row can be present because the entity "
+                  "was merely rendered in a feed. Role and Confirmed indicate an actual "
+                  "relationship: Confirmed = Yes means the account joined the group, and Role names "
+                  "the page relationship (Owner, Admin, Follower).\n"
+                  "Last Opened is converted from milliseconds and reflects the last time the app "
+                  "surfaced the entity, which is not necessarily a deliberate visit by the user."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db'),
         "output_types": "standard",
@@ -146,7 +209,15 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": "",
+        "notes": ("The device owner is listed as a participant alongside the other members, so a "
+                  "one-to-one thread yields the owner and the correspondent. Cross-reference "
+                  "Participant Id against the 'user_info<id>' key in SGSession.xml to tell them "
+                  "apart.\n"
+                  "Status is the presence value last cached by the app (typically OFFLINE) and "
+                  "carries no timestamp, so it should not be read as a state at any particular "
+                  "moment.\n"
+                  "Only participants of threads still cached in the database appear; a thread the "
+                  "app has aged out leaves no participants behind."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db'),
         "output_types": "standard",
@@ -164,7 +235,13 @@ __artifacts_v2__ = {
         "last_update_date": "2021-11-10",
         "requirements": "none",
         "category": "MeWe",
-        "notes": "",
+        "notes": ("Identifies the account signed in on the device: the key 'user_info<id>' carries "
+                  "the owner's MeWe user ID as its suffix, which is the value to match against "
+                  "User Id / Sender fields in the other MeWe artifacts to establish who the device "
+                  "owner is.\n"
+                  "Contains authentication material (user_token, refresh_token) and a token "
+                  "expiration time. Handle accordingly.\n"
+                  "Keys containing a dot are skipped as framework noise."),
         "paths": ('*/com.mewe/shared_prefs/SGSession.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "key",
