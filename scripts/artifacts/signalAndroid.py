@@ -46,21 +46,29 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-25",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Attachment files on disk are separately encrypted with the modernKey from secrets.json; this artifact reports metadata only.",
-        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
+        "notes": "Attachment files are decrypted with the modernKey from secrets.json and each attachment's data_random. The stored file format is detected from its content, which can differ from the content type recorded in the database.",
+        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
+                  '*/org.thoughtcrime.securesms/app_parts/*'),
         "output_types": "standard",
         "artifact_icon": "paperclip",
     },
 }
 
+import base64
 import hashlib
+import hmac
 import json
+import mimetypes
 import os
 import sqlite3
 import tempfile
 
+from Crypto.Cipher import AES
+from Crypto.Util import Counter
+
 from scripts.sqlcipher_decrypt import decrypt_sqlcipher_db
-from scripts.ilapfuncs import artifact_processor, logfunc, convert_unix_ts_to_utc
+from scripts.ilapfuncs import (artifact_processor, logfunc, convert_unix_ts_to_utc,
+                               check_in_embedded_media)
 
 SECRETS_GLOB = '*/Secrets/secrets.json'
 SIGNAL_PACKAGE = 'org.thoughtcrime.securesms'
@@ -94,6 +102,7 @@ CALL_EVENTS = {
 
 # One decryption per database per run, shared by the artifacts in this module
 _decrypted_cache = {}
+_secrets_cache = {}
 
 
 def _read_signal_keys(secrets_path):
@@ -123,6 +132,27 @@ def _read_signal_keys(secrets_path):
     return database_key, attachment_key
 
 
+def _signal_secrets(context):
+    """Find and cache Signal's keys from the extraction's secrets.json."""
+    if 'keys' in _secrets_cache:
+        return _secrets_cache['keys']
+
+    _secrets_cache['keys'] = (None, None)
+    seeker = context.get_seeker()
+    secrets_files = [str(path) for path in seeker.search(SECRETS_GLOB)
+                     if os.path.basename(str(path)) == 'secrets.json']
+    if not secrets_files:
+        logfunc('Signal: no Secrets/secrets.json found, the data stays encrypted')
+        return _secrets_cache['keys']
+
+    for secrets_path in secrets_files:
+        database_key, attachment_key = _read_signal_keys(secrets_path)
+        if database_key or attachment_key:
+            _secrets_cache['keys'] = (database_key, attachment_key)
+            break
+    return _secrets_cache['keys']
+
+
 def _decrypted_database(context, database_path):
     """Decrypt the Signal database once per run; return a path or None."""
     if database_path in _decrypted_cache:
@@ -130,18 +160,7 @@ def _decrypted_database(context, database_path):
 
     _decrypted_cache[database_path] = None  # avoid retrying on later artifacts
 
-    seeker = context.get_seeker()
-    secrets_files = [str(path) for path in seeker.search(SECRETS_GLOB)
-                     if os.path.basename(str(path)) == 'secrets.json']
-    if not secrets_files:
-        logfunc('Signal: no Secrets/secrets.json found, the database stays encrypted')
-        return None
-
-    database_key = None
-    for secrets_path in secrets_files:
-        database_key, _ = _read_signal_keys(secrets_path)
-        if database_key:
-            break
+    database_key, _ = _signal_secrets(context)
     if not database_key:
         logfunc('Signal: secrets.json has no "sqlite db key" entry for Signal')
         return None
@@ -183,6 +202,65 @@ def _open_signal_database(context):
 
 def _display_name(profile_name, system_name, phone_number, username):
     return profile_name or system_name or phone_number or username or ''
+
+
+def _decrypt_attachment(modern_key, data_random, blob):
+    """Decrypt a Signal attachment blob.
+
+    Signal derives a per-file key with HMAC-SHA256(modernKey, data_random) and
+    encrypts with AES-CTR from a zero counter, so the stored file is exactly the
+    size of the plaintext.
+    """
+    key = hmac.new(modern_key, data_random, hashlib.sha256).digest()
+    counter = Counter.new(128, initial_value=0)
+    return AES.new(key, AES.MODE_CTR, counter=counter).decrypt(blob)
+
+
+def _detect_format(data, recorded_type=None):
+    """Return (extension, mime) for decrypted attachment bytes.
+
+    The format is sniffed from the content because Signal's recorded
+    content_type does not always match what is stored. Where the bytes are not
+    conclusive, such as the ZIP container shared by Office documents, the
+    recorded type fills in the detail.
+    """
+    for magic, extension, mime in (
+            (b'\xff\xd8\xff', 'jpg', 'image/jpeg'),
+            (b'\x89PNG\r\n\x1a\n', 'png', 'image/png'),
+            (b'GIF8', 'gif', 'image/gif'),
+            (b'OggS', 'ogg', 'audio/ogg'),
+            (b'%PDF', 'pdf', 'application/pdf'),
+            (b'\x1aE\xdf\xa3', 'webm', 'video/webm'),
+            (b'ID3', 'mp3', 'audio/mpeg'),
+    ):
+        if data.startswith(magic):
+            return extension, mime
+    if data[:4] == b'RIFF' and data[8:12] == b'WEBP':
+        return 'webp', 'image/webp'
+    if data[4:8] == b'ftyp':
+        return 'mp4', 'video/mp4'
+
+    # ZIP container: Office documents and similar, so trust the recorded type
+    if data[:4] in (b'PK\x03\x04', b'PK\x05\x06', b'PK\x07\x08'):
+        extension = mimetypes.guess_extension(recorded_type or '') if recorded_type else None
+        return (extension or '.zip').lstrip('.'), recorded_type or 'application/zip'
+
+    if recorded_type:
+        extension = mimetypes.guess_extension(recorded_type)
+        if extension:
+            return extension.lstrip('.'), recorded_type
+    return 'bin', None
+
+
+def _attachment_files(context):
+    """Map app_parts file names to their extracted paths."""
+    seeker = context.get_seeker()
+    found = {}
+    for path in seeker.search(f'*/{SIGNAL_PACKAGE}/app_parts/*'):
+        path = str(path)
+        if os.path.isfile(path):
+            found[os.path.basename(path)] = path
+    return found
 
 
 def _table_columns(connection, table):
@@ -365,6 +443,19 @@ def get_signalContacts(context):
 def get_signalAttachments(context):
     data_list = []
     source_path = ''
+    _, attachment_key = _signal_secrets(context)
+    modern_key = None
+    if attachment_key:
+        try:
+            modern_key = base64.b64decode(attachment_key + '==')
+        except (ValueError, TypeError):
+            logfunc('Signal: the attachment modernKey is not valid base64')
+    if not modern_key:
+        logfunc('Signal: no attachment modernKey available, reporting metadata only')
+
+    stored_files = _attachment_files(context) if modern_key else {}
+    decrypted_count = 0
+
     for connection, source_path in _open_signal_database(context):
         cursor = connection.cursor()
         attachment_columns = _table_columns(connection, 'attachment')
@@ -374,18 +465,40 @@ def get_signalAttachments(context):
             {_select_list(attachment_columns, 'attachment',
                           ['file_name', 'content_type', 'data_size', 'data_file',
                            'transfer_state', 'voice_note', 'video_gif', 'width', 'height',
-                           'caption', 'upload_timestamp', 'message_id'])}
+                           'caption', 'upload_timestamp', 'message_id', 'data_random'])}
         FROM attachment
         LEFT JOIN message ON attachment.message_id = message._id
         ORDER BY message.date_sent
         ''')
         for row in cursor:
+            media_reference = ''
+            detected_type = ''
+            stored_path = row[4] or ''
+            data_random = row[13]
+            file_on_disk = stored_files.get(os.path.basename(stored_path)) if stored_path else None
+
+            if modern_key and data_random and file_on_disk:
+                try:
+                    with open(file_on_disk, 'rb') as blob_file:
+                        plaintext = _decrypt_attachment(modern_key, data_random, blob_file.read())
+                    extension, mime = _detect_format(plaintext, row[2])
+                    detected_type = mime or 'unknown'
+                    name = row[1] or f'signal_attachment_{row[12]}.{extension}'
+                    media_reference = check_in_embedded_media(
+                        file_on_disk, plaintext, name=name,
+                        force_type=mime, force_extension=extension)
+                    decrypted_count += 1
+                except Exception as error:  # pylint: disable=broad-except
+                    logfunc(f'Signal: could not decrypt {os.path.basename(stored_path)}: {error}')
+
             data_list.append((
                 convert_unix_ts_to_utc(row[0]) if row[0] else '',
+                media_reference,
                 row[1] or '',
                 row[2] or '',
+                detected_type,
                 row[3] or '',
-                row[4] or '',
+                stored_path,
                 row[5],
                 'Yes' if row[6] else 'No',
                 'Yes' if row[7] else 'No',
@@ -396,10 +509,16 @@ def get_signalAttachments(context):
             ))
         connection.close()
 
+    if decrypted_count:
+        logfunc(f'Signal: decrypted {decrypted_count} attachment'
+                f'{"s" if decrypted_count > 1 else ""}')
+
     data_headers = (
         ('Message Date Sent', 'datetime'),
+        ('Attachment', 'media'),
         'File Name',
-        'Content Type',
+        'Recorded Content Type',
+        'Detected Content Type',
         'Size (Bytes)',
         'Stored File',
         'Transfer State',
