@@ -31,10 +31,11 @@ def _reserve_size(hmac_length):
 
 
 def _decrypt_page(page, page_number, encryption_key, hmac_key, digest, hmac_length, reserve,
-                  page_size):
+                  page_size, plaintext_header_size=0):
     """Decrypt one SQLCipher page. Returns (plaintext_body, hmac_verified)."""
-    # Page 1 keeps the salt in the clear, so its encrypted body starts after it
-    body_start = 16 if page_number == 1 else 0
+    # Page 1 starts after whatever is stored in the clear: either the salt, or a
+    # plaintext header when the database keeps one
+    body_start = (plaintext_header_size or 16) if page_number == 1 else 0
     body_end = page_size - reserve
     iv = page[body_end:body_end + IV_LENGTH]
     stored_hmac = page[body_end + IV_LENGTH:body_end + IV_LENGTH + hmac_length]
@@ -44,7 +45,9 @@ def _decrypt_page(page, page_number, encryption_key, hmac_key, digest, hmac_leng
                           digest).digest()
     body = AES.new(encryption_key, AES.MODE_CBC, iv).decrypt(page[body_start:body_end])
     if page_number == 1:
-        body = b'SQLite format 3\x00' + body
+        # Restore the bytes that were never encrypted
+        body = (page[:plaintext_header_size] if plaintext_header_size
+                else b'SQLite format 3\x00') + body
     return body + b'\x00' * reserve, hmac.compare_digest(calculated, stored_hmac)
 
 
@@ -87,7 +90,8 @@ def _wal_pages(wal_path, page_size):
 
 def decrypt_sqlcipher_db(encrypted_path, passphrase, output_path, page_size=DEFAULT_PAGE_SIZE,
                          kdf_iterations=1, hmac_algorithm='sha1', kdf_algorithm='sha1',
-                         raw_key=False, apply_wal=True):
+                         raw_key=False, apply_wal=True, plaintext_header_size=0,
+                         external_salt=None):
     """Decrypt a SQLCipher database to a plaintext SQLite file.
 
     Args:
@@ -103,6 +107,12 @@ def decrypt_sqlcipher_db(encrypted_path, passphrase, output_path, page_size=DEFA
             key = "x'..'") instead of deriving it.
         apply_wal: replay a sibling '-wal' file over the database image. Without
             this, recent records that have not been checkpointed are missed.
+        plaintext_header_size: bytes at the start of the file left unencrypted.
+            Apps that need the file to stay recognisable as SQLite set this,
+            usually to 32.
+        external_salt: the 16 byte salt, when it is not stored in the file. A
+            non-zero plaintext header displaces the salt, so it is kept with the
+            key instead (Signal for iOS stores both together in the keychain).
 
     Returns:
         (pages_decrypted, pages_whose_hmac_verified), counting replayed WAL frames
@@ -117,9 +127,10 @@ def decrypt_sqlcipher_db(encrypted_path, passphrase, output_path, page_size=DEFA
     if len(raw) < page_size:
         return 0, 0
 
-    salt = raw[:16]
+    salt = external_salt if external_salt else raw[:16]
     if raw_key:
-        encryption_key = bytes.fromhex(passphrase)
+        encryption_key = passphrase if isinstance(passphrase, (bytes, bytearray)) \
+            else bytes.fromhex(passphrase)
     else:
         encryption_key = hashlib.pbkdf2_hmac(kdf_algorithm, passphrase.encode(), salt,
                                              kdf_iterations, 32)
@@ -133,7 +144,7 @@ def decrypt_sqlcipher_db(encrypted_path, passphrase, output_path, page_size=DEFA
     for page_index in range(len(raw) // page_size):
         body, page_ok = _decrypt_page(raw[page_index * page_size:(page_index + 1) * page_size],
                                       page_index + 1, encryption_key, hmac_key, digest,
-                                      hmac_length, reserve, page_size)
+                                      hmac_length, reserve, page_size, plaintext_header_size)
         pages.append(body)
         decrypted_pages += 1
         verified += page_ok
@@ -146,7 +157,8 @@ def decrypt_sqlcipher_db(encrypted_path, passphrase, output_path, page_size=DEFA
             wal_pages, database_pages = _wal_pages(wal_path, page_size)
             for page_number, encrypted_page in sorted(wal_pages.items()):
                 body, page_ok = _decrypt_page(encrypted_page, page_number, encryption_key,
-                                              hmac_key, digest, hmac_length, reserve, page_size)
+                                              hmac_key, digest, hmac_length, reserve, page_size,
+                                              plaintext_header_size)
                 while len(pages) < page_number:
                     pages.append(b'\x00' * page_size)
                 pages[page_number - 1] = body
