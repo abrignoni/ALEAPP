@@ -30,6 +30,132 @@ __artifacts_v2__ = {
             }
         },
     },
+    "get_mewe_posts": {
+        "name": "MeWe - Posts",
+        "description": "Feed posts cached by MeWe, including group, author, text, link, media and poll details.",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2026-07-26",
+        "last_update_date": "2026-07-26",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": ("A post is stored once per feed it was loaded into, so the same post can appear "
+                  "more than once with a different Feed Context. The context is reported rather "
+                  "than de-duplicated, because which feed surfaced a post is itself informative."),
+        "paths": ('*/com.mewe/databases/app_database',
+                  '*/com.mewe/databases/app_v3.db'),
+        "output_types": "standard",
+        "artifact_icon": "news",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | app_v3.db | 74 rows",
+            "hc_pixel8pro_a16": "Android 16 | app_v3.db | 0 rows (POST empty)",
+        },
+    },
+    "get_mewe_comments": {
+        "name": "MeWe - Comments",
+        "description": "Comments on MeWe posts, with the text of the post each one replies to.",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2026-07-26",
+        "last_update_date": "2026-07-26",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "",
+        "paths": ('*/com.mewe/databases/app_database',
+                  '*/com.mewe/databases/app_v3.db'),
+        "output_types": "standard",
+        "artifact_icon": "message-circle",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | app_v3.db | 16 rows",
+            "hc_pixel8pro_a16": "Android 16 | app_v3.db | 0 rows (COMMENT empty)",
+        },
+    },
+    "get_mewe_post_media": {
+        "name": "MeWe - Post Media",
+        "description": "Photos and videos attached to MeWe posts.",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2026-07-26",
+        "last_update_date": "2026-07-26",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "",
+        "paths": ('*/com.mewe/databases/app_database',
+                  '*/com.mewe/databases/app_v3.db'),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | app_v3.db | 69 rows",
+        },
+    },
+    "get_mewe_polls": {
+        "name": "MeWe - Polls",
+        "description": "Poll questions and their options with vote counts, from MeWe posts.",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2026-07-26",
+        "last_update_date": "2026-07-26",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "",
+        "paths": ('*/com.mewe/databases/app_database',
+                  '*/com.mewe/databases/app_v3.db'),
+        "output_types": "standard",
+        "artifact_icon": "chart-bar",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | app_v3.db | 30 rows across 3 polls",
+        },
+    },
+    "get_mewe_reactions": {
+        "name": "MeWe - Reactions",
+        "description": "Emoji reactions on posts, comments and chat messages, including whether the device owner reacted.",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2026-07-26",
+        "last_update_date": "2026-07-26",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "MeWe keeps a reaction tally per emoji rather than naming each reactor; only the device owner's own reaction is attributable.",
+        "paths": ('*/com.mewe/databases/app_database',
+                  '*/com.mewe/databases/app_v3.db'),
+        "output_types": "standard",
+        "artifact_icon": "mood-smile",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | app_v3.db | 240 rows (227 post, 12 comment, 1 chat)",
+            "hc_pixel8pro_a16": "Android 16 | app_v3.db | 2 rows (chat)",
+        },
+    },
+    "get_mewe_groups": {
+        "name": "MeWe - Groups and Pages",
+        "description": "Groups, pages and communities the MeWe account follows or belongs to.",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2026-07-26",
+        "last_update_date": "2026-07-26",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "",
+        "paths": ('*/com.mewe/databases/app_database',
+                  '*/com.mewe/databases/app_v3.db'),
+        "output_types": "standard",
+        "artifact_icon": "users-group",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | app_v3.db | 4 rows (1 group, 1 page, 2 community)",
+            "pixel7a_a14": "Android 14 | app_v3.db | 2 rows",
+        },
+    },
+    "get_mewe_chat_participants": {
+        "name": "MeWe - Chat Participants",
+        "description": "Members of each MeWe chat thread.",
+        "author": "@AlexisBrignoni",
+        "creation_date": "2026-07-26",
+        "last_update_date": "2026-07-26",
+        "requirements": "none",
+        "category": "MeWe",
+        "notes": "",
+        "paths": ('*/com.mewe/databases/app_database',
+                  '*/com.mewe/databases/app_v3.db'),
+        "output_types": "standard",
+        "artifact_icon": "users",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | app_v3.db | 1 row",
+            "pixel7a_a14": "Android 14 | app_v3.db | 1 row",
+        },
+    },
     "get_mewe_session": {
         "name": "MeWe - SGSession",
         "description": "Parses MeWe session preferences (key and value) from the SGSession.xml file.",
@@ -207,3 +333,267 @@ def get_mewe_session(context):
 
     data_headers = ('Key', 'Value')
     return data_headers, data_list, source_path
+
+
+# Tables that only exist in the newer app_v3.db generation. Each processor
+# checks for its own table so an older database simply yields no rows.
+def _chat_databases(files_found):
+    """Yield MeWe chat databases, skipping the empty 'mewe_old' left by upgrades."""
+    for file_found in files_found:
+        file_found = str(file_found)
+        if file_found.endswith(DB_NAMES):
+            yield file_found
+
+
+def _rows(db_path, query):
+    """Run a read-only query, logging and swallowing schema mismatches."""
+    db = open_sqlite_db_readonly(db_path)
+    try:
+        return db.cursor().execute(query).fetchall()
+    except sqlite3.Error as ex:
+        logfunc(f'MeWe: query failed on {db_path}: {ex}')
+        return []
+    finally:
+        db.close()
+
+
+def _epoch(value):
+    """MeWe stores whole seconds; 0 means unset."""
+    if not value:
+        return ''
+    return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+
+
+def _millis(value):
+    """A few columns (lastVisit, lastOpenTime) are milliseconds instead."""
+    if not value:
+        return ''
+    return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+
+
+def _feed_context(is_all, is_discovery, is_favorite, in_profile, is_refpost):
+    """Name the feed a post row was cached for; the same post can be in several."""
+    parts = []
+    if is_all:
+        parts.append('All Feed')
+    if is_discovery:
+        parts.append('Discovery')
+    if is_favorite:
+        parts.append('Favorites')
+    if in_profile:
+        parts.append('Profile')
+    if is_refpost:
+        parts.append('Reshared')
+    return ', '.join(parts)
+
+
+def _collect(context, table, query, build, headers):
+    """Shared shape: run query against every MeWe database holding `table`."""
+    data_list = []
+    sources = []
+    for db_path in _chat_databases(context.get_files_found()):
+        if not does_table_exist_in_db(db_path, table):
+            continue
+        rows = _rows(db_path, query)
+        if rows:
+            sources.append(db_path)
+        for row in rows:
+            data_list.append(build(row))
+    return headers, data_list, ', '.join(sources)
+
+
+POSTS_QUERY = '''
+    SELECT createdAt, editedAt, ownerName, ownerHandle, groupName, groupId, textPlain,
+           currentUserPost, commentsCount, mediasCount, sharesCount, hasLink, linkUrl,
+           linkTitle, albumName, pollQuestion, pollVotes, eventName, eventLocation,
+           isAllfeed, isDiscoveryFeed, isFavoriteFeed, inProfile, isRefpost, id
+    FROM POST ORDER BY createdAt DESC
+'''
+
+
+@artifact_processor
+def get_mewe_posts(context):
+    headers = (('Created', 'datetime'), ('Edited', 'datetime'), 'Author', 'Author Handle',
+               'Group Name', 'Group Id', 'Text', 'Posted By Device Owner', 'Comments',
+               'Media Count', 'Shares', 'Link URL', 'Link Title', 'Album Name',
+               'Poll Question', 'Poll Votes', 'Event Name', 'Event Location',
+               'Feed Context', 'Post Id')
+
+    def build(r):
+        return (_epoch(r[0]), _epoch(r[1]), r[2], r[3], r[4], r[5], r[6],
+                'Yes' if r[7] else '', r[8], r[9], r[10],
+                r[12] if r[11] else '', r[13] if r[11] else '', r[14],
+                r[15], r[16] if r[15] else '', r[17], r[18],
+                _feed_context(r[19], r[20], r[21], r[22], r[23]), r[24])
+
+    return _collect(context, 'POST', POSTS_QUERY, build, headers)
+
+
+COMMENTS_QUERY = '''
+    SELECT c.createdAt, c.editedAt, c.ownerName, c.ownerHandle, c.textPlain,
+           c.currentUserPost, c.repliesCount, c.hasPhoto, c.photoName, c.hasAudio,
+           c.audioDuration, c.hasLink, c.linkUrl, c.documentName, c.postId,
+           p.textPlain, p.ownerName, c.id
+    FROM COMMENT c
+    LEFT JOIN POST p ON p.id = c.postId
+    ORDER BY c.createdAt DESC
+'''
+
+
+@artifact_processor
+def get_mewe_comments(context):
+    headers = (('Created', 'datetime'), ('Edited', 'datetime'), 'Author', 'Author Handle',
+               'Comment Text', 'By Device Owner', 'Replies', 'Has Photo', 'Photo Name',
+               'Has Audio', 'Audio Duration', 'Link URL', 'Document Name',
+               'On Post By', 'On Post Text', 'Post Id', 'Comment Id')
+
+    def build(r):
+        return (_epoch(r[0]), _epoch(r[1]), r[2], r[3], r[4],
+                'Yes' if r[5] else '', r[6], 'Yes' if r[7] else '', r[8],
+                'Yes' if r[9] else '', r[10], r[12] if r[11] else '', r[13],
+                r[16], r[15], r[14], r[17])
+
+    return _collect(context, 'COMMENT', COMMENTS_QUERY, build, headers)
+
+
+POST_MEDIA_QUERY = '''
+    SELECT m.postId, m.type, m.mime, m.name, m.imageUrl, m.imageWidth, m.imageHeight,
+           m.videoUrlTemplate, m.availableVideoResolutions, p.createdAt, p.ownerName,
+           p.groupName, m.itemId
+    FROM POST_MEDIA m
+    LEFT JOIN POST p ON p.id = m.postId
+'''
+
+
+@artifact_processor
+def get_mewe_post_media(context):
+    headers = (('Post Created', 'datetime'), 'Post Author', 'Group Name', 'Media Type',
+               'MIME Type', 'File Name', 'Image URL', 'Width', 'Height',
+               'Video URL Template', 'Video Resolutions', 'Post Id', 'Item Id')
+
+    def build(r):
+        return (_epoch(r[9]), r[10], r[11], r[1], r[2], r[3], r[4], r[5], r[6],
+                r[7], r[8], r[0], r[12])
+
+    return _collect(context, 'POST_MEDIA', POST_MEDIA_QUERY, build, headers)
+
+
+POLLS_QUERY = '''
+    SELECT p.createdAt, p.ownerName, p.groupName, p.pollQuestion, p.pollClosed,
+           p.pollEndDate, p.pollVotes, o.text, o.votes, o.position, o.imageUrl, p.id
+    FROM POLL_OPTION o
+    LEFT JOIN POST p ON p.id = o.postId
+    ORDER BY p.createdAt DESC, o.position
+'''
+
+
+@artifact_processor
+def get_mewe_polls(context):
+    headers = (('Post Created', 'datetime'), 'Author', 'Group Name', 'Question',
+               'Option', 'Option Votes', 'Option Position', 'Total Votes', 'Closed',
+               ('Ends', 'datetime'), 'Option Image URL', 'Post Id')
+
+    def build(r):
+        return (_epoch(r[0]), r[1], r[2], r[3], r[7], r[8], r[9], r[6],
+                'Yes' if r[4] else '', _epoch(r[5]), r[10], r[11])
+
+    return _collect(context, 'POLL_OPTION', POLLS_QUERY, build, headers)
+
+
+# Reactions live in three parallel tables, one per reactable object.
+REACTION_SOURCES = (
+    ('EMOJI_POST', 'Post', '''
+        SELECT e.key, e.count, e.userReacted, e.postId, p.ownerName, p.textPlain, p.createdAt
+        FROM EMOJI_POST e LEFT JOIN POST p ON p.id = e.postId'''),
+    ('EMOJI_COMMENT', 'Comment', '''
+        SELECT e.key, e.count, e.userReacted, e.commentId, c.ownerName, c.textPlain, c.createdAt
+        FROM EMOJI_COMMENT e LEFT JOIN COMMENT c ON c.id = e.commentId'''),
+    ('EMOJI_CHAT_MESSAGE', 'Chat Message', '''
+        SELECT e.key, e.count, e.userReacted, e.chatMessageId, m.ownerName, m.textPlain, m.createdAt
+        FROM EMOJI_CHAT_MESSAGE e LEFT JOIN CHAT_MESSAGE m ON m.id = e.chatMessageId'''),
+)
+
+
+@artifact_processor
+def get_mewe_reactions(context):
+    headers = (('Target Created', 'datetime'), 'Reacted To', 'Emoji', 'Reaction Count',
+               'Device Owner Reacted', 'Target Author', 'Target Text', 'Target Id')
+    data_list = []
+    sources = []
+
+    for db_path in _chat_databases(context.get_files_found()):
+        found_any = False
+        for table, label, query in REACTION_SOURCES:
+            if not does_table_exist_in_db(db_path, table):
+                continue
+            for row in _rows(db_path, query):
+                found_any = True
+                data_list.append((_epoch(row[6]), label, row[0], row[1],
+                                  'Yes' if row[2] else '', row[4], row[5], row[3]))
+        if found_any:
+            sources.append(db_path)
+
+    return headers, data_list, ', '.join(sources)
+
+
+@artifact_processor
+def get_mewe_groups(context):
+    headers = (('Last Opened', 'datetime'), 'Type', 'Name', 'Description', 'Access',
+               'Role', 'Public', 'Confirmed', 'Verified', 'Followers', 'Public URL Id',
+               'Owner Id', 'Id')
+    data_list = []
+    sources = []
+
+    for db_path in _chat_databases(context.get_files_found()):
+        found_any = False
+
+        if does_table_exist_in_db(db_path, 'GROUP_'):
+            for r in _rows(db_path, '''SELECT lastOpenTime, name, descriptionPlain,
+                    groupAccessType, roleEnum, isPublic, isConfirmed, publicUrlId,
+                    ownerId, _id FROM GROUP_'''):
+                found_any = True
+                data_list.append((_millis(r[0]), 'Group', r[1], r[2], r[3], r[4],
+                                  'Yes' if r[5] else '', 'Yes' if r[6] else '', '',
+                                  '', r[7], r[8], r[9]))
+
+        if does_table_exist_in_db(db_path, 'PAGE'):
+            for r in _rows(db_path, '''SELECT name, description, categoryName, followers,
+                    isVerified, isFollower, isOwner, isAdmin, urlId, id FROM PAGE'''):
+                found_any = True
+                role = ', '.join(n for n, f in
+                                 (('Owner', r[6]), ('Admin', r[7]), ('Follower', r[5])) if f)
+                data_list.append(('', 'Page', r[0], r[1], r[2], role, '', '',
+                                  'Yes' if r[4] else '', r[3], r[8], '', r[9]))
+
+        if does_table_exist_in_db(db_path, 'COMMUNITY'):
+            for r in _rows(db_path, '''SELECT lastVisit, name, type, isConfirmed,
+                    isVerified, id FROM COMMUNITY'''):
+                found_any = True
+                data_list.append((_millis(r[0]), f'Community ({r[2]})', r[1], '', '', '',
+                                  '', 'Yes' if r[3] else '', 'Yes' if r[4] else '',
+                                  '', '', '', r[5]))
+
+        if found_any:
+            sources.append(db_path)
+
+    return headers, data_list, ', '.join(sources)
+
+
+PARTICIPANTS_QUERY = '''
+    SELECT p.name, p.handle, p.status, p.isOwner, p.isAdmin, p.fingerprint,
+           t.name, t.chatType, p.chatThreadId, p.id
+    FROM CHAT_THREAD_PARTICIPANT p
+    LEFT JOIN CHAT_THREAD t ON t.id = p.chatThreadId
+'''
+
+
+@artifact_processor
+def get_mewe_chat_participants(context):
+    headers = ('Thread Name', 'Chat Type', 'Participant', 'Handle', 'Status',
+               'Is Owner', 'Is Admin', 'Fingerprint', 'Thread Id', 'Participant Id')
+
+    def build(r):
+        return (r[6], r[7], r[0], r[1], r[2], 'Yes' if r[3] else '',
+                'Yes' if r[4] else '', r[5], r[8], r[9])
+
+    return _collect(context, 'CHAT_THREAD_PARTICIPANT', PARTICIPANTS_QUERY, build, headers)
