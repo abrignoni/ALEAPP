@@ -295,46 +295,60 @@ def _checked_in_attachments(connection, modern_key, stored_files):
     the same attachment for both the message and the attachment artifact
     registers it once and returns the same reference.
 
-    Returns (references_by_message_id, detected_type_by_attachment_id).
+    Returns (references_by_message_id, detected_type_by_attachment_id,
+    thumbnail_reference_by_attachment_id).
     """
     references = {}
     detected_types = {}
+    thumbnails = {}
     if not modern_key:
-        return references, detected_types
+        return references, detected_types, thumbnails
 
     attachment_columns = _table_columns(connection, 'attachment')
     if not {'data_file', 'data_random'} <= attachment_columns:
-        return references, detected_types
+        return references, detected_types, thumbnails
 
     cursor = connection.cursor()
     cursor.execute(f'''
     SELECT {_select_list(attachment_columns, 'attachment',
                          ['_id', 'message_id', 'data_file', 'data_random',
-                          'content_type', 'file_name'])}
+                          'content_type', 'file_name', 'thumbnail_file', 'thumbnail_random'])}
     FROM attachment
     ''')
-    for attachment_id, message_id, data_file, data_random, content_type, file_name in cursor:
-        if not data_file or not data_random:
-            continue
-        path = stored_files.get(os.path.basename(data_file))
-        if not path:
-            continue
-        try:
-            with open(path, 'rb') as blob_file:
-                plaintext = _decrypt_attachment(modern_key, data_random, blob_file.read())
-            extension, mime = _detect_format(plaintext, content_type)
-            reference = check_in_embedded_media(
-                path, plaintext,
-                name=file_name or f'signal_attachment_{attachment_id}.{extension}',
-                force_type=mime, force_extension=extension)
-        except Exception as error:  # pylint: disable=broad-except
-            logfunc(f'Signal: could not decrypt {os.path.basename(data_file)}: {error}')
-            continue
+    for row in cursor:
+        (attachment_id, message_id, data_file, data_random,
+         content_type, file_name, thumbnail_file, thumbnail_random) = row
 
-        detected_types[attachment_id] = mime or 'unknown'
-        if reference and message_id is not None:
-            references.setdefault(message_id, []).append(reference)
-    return references, detected_types
+        # Signal stores a separate, smaller copy for some attachments. It uses the
+        # same per-file scheme with its own random, and can outlive the full file.
+        for blob_name, blob_random, is_thumbnail in (
+                (data_file, data_random, False),
+                (thumbnail_file, thumbnail_random, True)):
+            if not blob_name or not blob_random:
+                continue
+            path = stored_files.get(os.path.basename(blob_name))
+            if not path:
+                continue
+            try:
+                with open(path, 'rb') as blob_file:
+                    plaintext = _decrypt_attachment(modern_key, blob_random, blob_file.read())
+                extension, mime = _detect_format(plaintext, content_type)
+                label = 'thumbnail' if is_thumbnail else 'attachment'
+                default_name = f'signal_{label}_{attachment_id}.{extension}'
+                name = default_name if is_thumbnail else (file_name or default_name)
+                reference = check_in_embedded_media(
+                    path, plaintext, name=name, force_type=mime, force_extension=extension)
+            except Exception as error:  # pylint: disable=broad-except
+                logfunc(f'Signal: could not decrypt {os.path.basename(blob_name)}: {error}')
+                continue
+
+            if is_thumbnail:
+                thumbnails[attachment_id] = reference
+            else:
+                detected_types[attachment_id] = mime or 'unknown'
+                if reference and message_id is not None:
+                    references.setdefault(message_id, []).append(reference)
+    return references, detected_types, thumbnails
 
 
 def _table_columns(connection, table):
@@ -364,7 +378,7 @@ def get_signalMessages(context):
     stored_files = _attachment_files(context) if modern_key else {}
 
     for connection, source_path in _open_signal_database(context):
-        attachments_by_message, _ = _checked_in_attachments(
+        attachments_by_message, _, _ = _checked_in_attachments(
             connection, modern_key, stored_files)
 
         # Signal stores the quoted message's send time in quote_id, so the
@@ -622,7 +636,7 @@ def get_signalAttachments(context):
     decrypted_count = 0
 
     for connection, source_path in _open_signal_database(context):
-        references, detected_types = _checked_in_attachments(
+        references, detected_types, thumbnails = _checked_in_attachments(
             connection, modern_key, stored_files)
         decrypted_count += len(detected_types)
 
@@ -653,6 +667,7 @@ def get_signalAttachments(context):
             data_list.append((
                 convert_unix_ts_to_utc(row[0]) if row[0] else '',
                 own_media,
+                thumbnails.get(attachment_id, ''),
                 row[2] or '',
                 row[3] or '',
                 detected_types.get(attachment_id, ''),
@@ -678,6 +693,7 @@ def get_signalAttachments(context):
     data_headers = (
         ('Message Date Sent', 'datetime'),
         ('Attachment', 'media'),
+        ('Thumbnail', 'media'),
         'File Name',
         'Recorded Content Type',
         'Detected Content Type',
