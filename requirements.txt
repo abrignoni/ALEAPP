@@ -4,6 +4,7 @@ bencoding
 fitdecode==0.10.0
 folium==0.14.0
 geopy==2.3.0
+mutf8
 packaging==20.1
 pillow==12.3.0
 polyline==2.0.0
