@@ -38,6 +38,19 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "users",
     },
+    "get_signalGroups": {
+        "name": "Signal - Groups",
+        "description": "Parses Signal groups and their membership, including group title, member names and creation time.",
+        "author": "Alexis Brignoni",
+        "creation_date": "2026-07-25",
+        "last_update_date": "2026-07-25",
+        "requirements": "none",
+        "category": "Signal",
+        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json.",
+        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
+        "output_types": "standard",
+        "artifact_icon": "users",
+    },
     "get_signalAttachments": {
         "name": "Signal - Attachments",
         "description": "Parses metadata for attachments referenced by Signal messages.",
@@ -354,6 +367,13 @@ def get_signalMessages(context):
         attachments_by_message, _ = _checked_in_attachments(
             connection, modern_key, stored_files)
 
+        # Signal stores the quoted message's send time in quote_id, so the
+        # original can be resolved back to its own row
+        original_by_sent_time = {}
+        for sent, message_id in connection.execute(
+                'SELECT date_sent, _id FROM message WHERE date_sent IS NOT NULL'):
+            original_by_sent_time.setdefault(sent, message_id)
+
         cursor = connection.cursor()
         message_columns = _table_columns(connection, 'message')
         cursor.execute(f'''
@@ -363,10 +383,15 @@ def get_signalMessages(context):
             sender.e164, sender.profile_joined_name, sender.system_joined_name, sender.username,
             receiver.e164, receiver.profile_joined_name, receiver.system_joined_name, receiver.username,
             {_select_list(message_columns, 'message',
-                          ['read', 'remote_deleted', 'view_once', 'quote_body', 'expires_in'])}
+                          ['read', 'remote_deleted', 'view_once', 'quote_body', 'expires_in',
+                           'quote_id', 'quote_missing'])},
+            COALESCE(NULLIF(quoted.profile_joined_name, ''),
+                     NULLIF(quoted.system_joined_name, ''),
+                     NULLIF(quoted.e164, ''), NULLIF(quoted.username, ''), '')
         FROM message
         LEFT JOIN recipient AS sender ON message.from_recipient_id = sender._id
         LEFT JOIN recipient AS receiver ON message.to_recipient_id = receiver._id
+        LEFT JOIN recipient AS quoted ON message.quote_author = quoted._id
         ORDER BY message.date_sent
         ''')
         for row in cursor:
@@ -390,6 +415,10 @@ def get_signalMessages(context):
                 'Yes' if row[15] else 'No',
                 'Yes' if row[16] else 'No',
                 row[17] or '',
+                row[21] or '',
+                convert_unix_ts_to_utc(row[19]) if row[19] else '',
+                original_by_sent_time.get(row[19], '') if row[19] else '',
+                'Yes' if row[20] else 'No',
                 row[18] or '',
                 row[5],
             ))
@@ -412,6 +441,10 @@ def get_signalMessages(context):
         'Remote Deleted',
         'View Once',
         'Quoted Message',
+        'Quoted Author',
+        ('Quoted Message Sent', 'datetime'),
+        'Quoted Message ID',
+        'Quoted Original Missing',
         'Disappearing Timer (Seconds)',
         'Message ID',
     )
@@ -459,6 +492,70 @@ def get_signalCalls(context):
         'Read',
         ('Deleted Timestamp', 'datetime'),
         'Call ID',
+    )
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_signalGroups(context):
+    data_list = []
+    source_path = ''
+    for connection, source_path in _open_signal_database(context):
+        group_columns = _table_columns(connection, 'groups')
+        if not group_columns:
+            connection.close()
+            continue
+
+        # Membership lives in its own table, keyed by the textual group id
+        members_by_group = {}
+        if _table_columns(connection, 'group_membership'):
+            for group_id, name in connection.execute('''
+                SELECT group_membership.group_id,
+                       COALESCE(NULLIF(recipient.profile_joined_name, ''),
+                                NULLIF(recipient.system_joined_name, ''),
+                                NULLIF(recipient.e164, ''),
+                                NULLIF(recipient.username, ''))
+                FROM group_membership
+                LEFT JOIN recipient ON group_membership.recipient_id = recipient._id
+            '''):
+                members_by_group.setdefault(group_id, []).append(name or 'Unknown')
+
+        cursor = connection.cursor()
+        cursor.execute(f'''
+        SELECT {_select_list(group_columns, 'groups',
+                             ['_id', 'group_id', 'title', 'timestamp', 'active', 'mms',
+                              'revision', 'last_force_update_timestamp'])},
+               COALESCE(NULLIF(recipient.profile_joined_name, ''),
+                        NULLIF(recipient.system_joined_name, ''), '')
+        FROM groups
+        LEFT JOIN recipient ON groups.recipient_id = recipient._id
+        ORDER BY groups.timestamp
+        ''')
+        for row in cursor:
+            members = members_by_group.get(row[1], [])
+            data_list.append((
+                convert_unix_ts_to_utc(row[3]) if row[3] else '',
+                row[2] or row[8] or '',
+                len(members),
+                ', '.join(members),
+                'Yes' if row[4] else 'No',
+                'Yes' if row[5] else 'No',
+                row[6],
+                convert_unix_ts_to_utc(row[7]) if row[7] else '',
+                row[1] or '',
+            ))
+        connection.close()
+
+    data_headers = (
+        ('Created Timestamp', 'datetime'),
+        'Group Title',
+        'Member Count',
+        'Members',
+        'Active',
+        'MMS Group',
+        'Revision',
+        ('Last Forced Update', 'datetime'),
+        'Group ID',
     )
     return data_headers, data_list, source_path
 
