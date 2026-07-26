@@ -13,6 +13,10 @@ on:
       # not see changes under scripts/, and a 3.12-only f-string shipped broken
       # on 3.10/3.11 until it blocked unrelated pull requests (see #986).
       - 'scripts/**'
+      # The entry points are covered by the same suite and are equally able to
+      # break on an older Python
+      - 'aleapp.py'
+      - 'aleappGUI.py'
 
 jobs:
   runtime-contract:
