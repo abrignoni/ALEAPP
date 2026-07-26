@@ -8,6 +8,11 @@ on:
       - 'requirements.txt'
       # The job runs the whole admin/test/scripts suite, so trigger on all of it
       - 'admin/test/scripts/**'
+      # The suite imports every artifact module, which is the only check that a
+      # change parses on the oldest supported Python. Without this the job could
+      # not see changes under scripts/, and a 3.12-only f-string shipped broken
+      # on 3.10/3.11 until it blocked unrelated pull requests (see #986).
+      - 'scripts/**'
 
 jobs:
   runtime-contract:
