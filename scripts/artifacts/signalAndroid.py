@@ -263,6 +263,67 @@ def _attachment_files(context):
     return found
 
 
+def _modern_key(context):
+    """Return the raw attachment key, or None when it is unavailable."""
+    _, attachment_key = _signal_secrets(context)
+    if not attachment_key:
+        return None
+    try:
+        return base64.b64decode(attachment_key + '==')
+    except (ValueError, TypeError):
+        logfunc('Signal: the attachment modernKey is not valid base64')
+        return None
+
+
+def _checked_in_attachments(connection, modern_key, stored_files):
+    """Decrypt every attachment and group the media references by message.
+
+    check_in_embedded_media keys media on a hash of the content, so decrypting
+    the same attachment for both the message and the attachment artifact
+    registers it once and returns the same reference.
+
+    Returns (references_by_message_id, detected_type_by_attachment_id).
+    """
+    references = {}
+    detected_types = {}
+    if not modern_key:
+        return references, detected_types
+
+    attachment_columns = _table_columns(connection, 'attachment')
+    if not {'data_file', 'data_random'} <= attachment_columns:
+        return references, detected_types
+
+    cursor = connection.cursor()
+    cursor.execute(f'''
+    SELECT {_select_list(attachment_columns, 'attachment',
+                         ['_id', 'message_id', 'data_file', 'data_random',
+                          'content_type', 'file_name'])}
+    FROM attachment
+    ''')
+    for attachment_id, message_id, data_file, data_random, content_type, file_name in cursor:
+        if not data_file or not data_random:
+            continue
+        path = stored_files.get(os.path.basename(data_file))
+        if not path:
+            continue
+        try:
+            with open(path, 'rb') as blob_file:
+                plaintext = _decrypt_attachment(modern_key, data_random, blob_file.read())
+            extension, mime = _detect_format(plaintext, content_type)
+            reference = check_in_embedded_media(
+                path, plaintext,
+                name=file_name or f'signal_attachment_{attachment_id}.{extension}',
+                force_type=mime, force_extension=extension)
+        except Exception as error:  # pylint: disable=broad-except
+            logfunc(f'Signal: could not decrypt {os.path.basename(data_file)}: {error}')
+            continue
+
+        detected_types[attachment_id] = mime or 'unknown'
+        if reference and message_id is not None:
+            references.setdefault(message_id, []).append(reference)
+    return references, detected_types
+
+
 def _table_columns(connection, table):
     return {row[1] for row in connection.execute(f'PRAGMA table_info({table})')}
 
@@ -286,13 +347,19 @@ def _select_list(available, table_alias, columns):
 def get_signalMessages(context):
     data_list = []
     source_path = ''
+    modern_key = _modern_key(context)
+    stored_files = _attachment_files(context) if modern_key else {}
+
     for connection, source_path in _open_signal_database(context):
+        attachments_by_message, _ = _checked_in_attachments(
+            connection, modern_key, stored_files)
+
         cursor = connection.cursor()
         message_columns = _table_columns(connection, 'message')
         cursor.execute(f'''
         SELECT
             {_select_list(message_columns, 'message',
-                          ['date_sent', 'date_received', 'thread_id', 'type', 'body'])},
+                          ['date_sent', 'date_received', 'thread_id', 'type', 'body', '_id'])},
             sender.e164, sender.profile_joined_name, sender.system_joined_name, sender.username,
             receiver.e164, receiver.profile_joined_name, receiver.system_joined_name, receiver.username,
             {_select_list(message_columns, 'message',
@@ -304,22 +371,27 @@ def get_signalMessages(context):
         ''')
         for row in cursor:
             base_type = row[3] & MESSAGE_BASE_TYPE_MASK if row[3] is not None else None
+            # A message can carry several attachments, so the media cell takes a list
+            attachments = attachments_by_message.get(row[5], [])
             data_list.append((
                 convert_unix_ts_to_utc(row[0]),
                 convert_unix_ts_to_utc(row[1]),
                 row[2],
                 MESSAGE_DIRECTIONS.get(base_type, 'Unknown'),
                 MESSAGE_STATUS.get(base_type, ''),
-                _display_name(row[6], row[7], row[5], row[8]),
-                row[5] or '',
-                _display_name(row[10], row[11], row[9], row[12]),
-                row[9] or '',
+                _display_name(row[7], row[8], row[6], row[9]),
+                row[6] or '',
+                _display_name(row[11], row[12], row[10], row[13]),
+                row[10] or '',
                 row[4] or '',
-                'Yes' if row[13] else 'No',
+                attachments,
+                len(attachments),
                 'Yes' if row[14] else 'No',
                 'Yes' if row[15] else 'No',
-                row[16] or '',
+                'Yes' if row[16] else 'No',
                 row[17] or '',
+                row[18] or '',
+                row[5],
             ))
         connection.close()
 
@@ -334,11 +406,14 @@ def get_signalMessages(context):
         'Recipient',
         'Recipient Phone Number',
         'Message',
+        ('Attachments', 'media'),
+        'Attachment Count',
         'Read',
         'Remote Deleted',
         'View Once',
         'Quoted Message',
         'Disappearing Timer (Seconds)',
+        'Message ID',
     )
     return data_headers, data_list, source_path
 
@@ -443,69 +518,59 @@ def get_signalContacts(context):
 def get_signalAttachments(context):
     data_list = []
     source_path = ''
-    _, attachment_key = _signal_secrets(context)
-    modern_key = None
-    if attachment_key:
-        try:
-            modern_key = base64.b64decode(attachment_key + '==')
-        except (ValueError, TypeError):
-            logfunc('Signal: the attachment modernKey is not valid base64')
+    modern_key = _modern_key(context)
     if not modern_key:
         logfunc('Signal: no attachment modernKey available, reporting metadata only')
-
     stored_files = _attachment_files(context) if modern_key else {}
     decrypted_count = 0
 
     for connection, source_path in _open_signal_database(context):
+        references, detected_types = _checked_in_attachments(
+            connection, modern_key, stored_files)
+        decrypted_count += len(detected_types)
+
         cursor = connection.cursor()
         attachment_columns = _table_columns(connection, 'attachment')
         cursor.execute(f'''
         SELECT
             message.date_sent,
             {_select_list(attachment_columns, 'attachment',
-                          ['file_name', 'content_type', 'data_size', 'data_file',
+                          ['_id', 'file_name', 'content_type', 'data_size', 'data_file',
                            'transfer_state', 'voice_note', 'video_gif', 'width', 'height',
-                           'caption', 'upload_timestamp', 'message_id', 'data_random'])}
+                           'caption', 'upload_timestamp', 'message_id'])},
+            message.thread_id, message.type,
+            sender.e164, sender.profile_joined_name, sender.system_joined_name, sender.username
         FROM attachment
         LEFT JOIN message ON attachment.message_id = message._id
+        LEFT JOIN recipient AS sender ON message.from_recipient_id = sender._id
         ORDER BY message.date_sent
         ''')
         for row in cursor:
-            media_reference = ''
-            detected_type = ''
-            stored_path = row[4] or ''
-            data_random = row[13]
-            file_on_disk = stored_files.get(os.path.basename(stored_path)) if stored_path else None
-
-            if modern_key and data_random and file_on_disk:
-                try:
-                    with open(file_on_disk, 'rb') as blob_file:
-                        plaintext = _decrypt_attachment(modern_key, data_random, blob_file.read())
-                    extension, mime = _detect_format(plaintext, row[2])
-                    detected_type = mime or 'unknown'
-                    name = row[1] or f'signal_attachment_{row[12]}.{extension}'
-                    media_reference = check_in_embedded_media(
-                        file_on_disk, plaintext, name=name,
-                        force_type=mime, force_extension=extension)
-                    decrypted_count += 1
-                except Exception as error:  # pylint: disable=broad-except
-                    logfunc(f'Signal: could not decrypt {os.path.basename(stored_path)}: {error}')
+            attachment_id = row[1]
+            message_id = row[13]
+            base_type = row[15] & MESSAGE_BASE_TYPE_MASK if row[15] is not None else None
+            # Same media reference the message row uses, so both views point at one copy
+            media = [ref for ref in references.get(message_id, [])] if message_id is not None else []
+            own_media = media[0] if len(media) == 1 else media
 
             data_list.append((
                 convert_unix_ts_to_utc(row[0]) if row[0] else '',
-                media_reference,
-                row[1] or '',
+                own_media,
                 row[2] or '',
-                detected_type,
                 row[3] or '',
-                stored_path,
-                row[5],
-                'Yes' if row[6] else 'No',
+                detected_types.get(attachment_id, ''),
+                row[4] or '',
+                row[5] or '',
+                row[6],
                 'Yes' if row[7] else 'No',
-                f'{row[8]}x{row[9]}' if row[8] and row[9] else '',
-                row[10] or '',
-                convert_unix_ts_to_utc(row[11]) if row[11] else '',
-                row[12],
+                'Yes' if row[8] else 'No',
+                f'{row[9]}x{row[10]}' if row[9] and row[10] else '',
+                row[11] or '',
+                convert_unix_ts_to_utc(row[12]) if row[12] else '',
+                _display_name(row[17], row[18], row[16], row[19]),
+                MESSAGE_DIRECTIONS.get(base_type, ''),
+                row[14],
+                message_id,
             ))
         connection.close()
 
@@ -527,6 +592,9 @@ def get_signalAttachments(context):
         'Dimensions',
         'Caption',
         ('Upload Timestamp', 'datetime'),
+        'Sender',
+        'Direction',
+        'Thread ID',
         'Message ID',
     )
     return data_headers, data_list, source_path
