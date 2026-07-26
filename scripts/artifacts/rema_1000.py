@@ -89,8 +89,9 @@ def rema1000_receipt_prettified(context):
         for index, item in enumerate(list_receipt):
             if item is None:
                 list_receipt[index] = "None"
-        prettified_list[0] = f"{datetime.fromtimestamp(list_receipt[0]/1000,
-                                                       tz=ZoneInfo('Europe/Copenhagen')).strftime('%Y-%m-%d %H:%M:%S')}"
+        payment_date = datetime.fromtimestamp(list_receipt[0] / 1000,
+                                              tz=ZoneInfo('Europe/Copenhagen'))
+        prettified_list[0] = payment_date.strftime('%Y-%m-%d %H:%M:%S')
         prettified_list[1] = f"{list_receipt[3].split(';')[1].capitalize()}, {list_receipt[4]}, "\
             f"{list_receipt[3].split(';')[2].capitalize()}"
         split_items = [item.translate(translation_table) for item in list_receipt[3].split(";")[3:]]
