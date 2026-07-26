@@ -407,7 +407,8 @@ def crunch_artifacts(
                 log.write('</li></ul>')
                 files_found.extend(found)
         if files_found:
-            category_folder = os.path.join(out_params.output_folder_base, '_HTML', plugin.category)
+            category_folder = os.path.join(out_params.output_folder_base, '_HTML',
+                                           sanitize_report_name(plugin.category, 'category'))
             if not os.path.exists(category_folder):
                 try:
                     os.makedirs(category_folder)
