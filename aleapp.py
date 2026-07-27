@@ -428,7 +428,7 @@ def crunch_artifacts(
                 'files_found': files_found,
                 'category_folder': category_folder,
                 'wrap_text': wrap_text,
-                'output_folder_base': out_params.report_folder_base,
+                'output_folder_base': out_params.output_folder_base,
                 'input_path': input_path,
                 'extracttype': extracttype,
                 'file_infos_subset': file_infos_subset,
