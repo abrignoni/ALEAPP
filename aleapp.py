@@ -19,6 +19,13 @@ from time import process_time, gmtime, strftime, perf_counter
 from scripts.lavafuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from scripts.context import Context
 
+import multiprocessing
+import queue as _queue
+import signal
+
+import scripts.mp_plugin_runner as mp_plugin_runner
+import scripts.lavafuncs as _lavafuncs
+
 def validate_args(args):
     if args.artifact_paths or args.create_profile_casedata:
         return  # Skip further validation if --artifact_paths is used
@@ -165,6 +172,13 @@ def main():
                               "This argument is meant to be used alone, without any other arguments."))
     parser.add_argument('--custom_output_folder', required=False, action="store", help="Custom name for the output folder")
     parser.add_argument('--custom_artifacts_path', required=False, action="store", help="Additional path to load artifacts from (e.g., scripts/alternate_artifacts)")
+    parser.add_argument(
+        '--mp_per_plugin', '--mp',
+        action='store_true',
+        default=False,
+        dest='mp_per_plugin',
+        help='Run each plugin in a separate subprocess (enables skip with Ctrl+C).',
+    )
 
     profile_filename = None
     casedata = {}
@@ -316,13 +330,13 @@ def main():
     history.record_input_path(input_path)
     history.record_output_path(output_path)
 
-    crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, profile_filename)
+    crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, profile_filename, mp_per_plugin=args.mp_per_plugin)
 
     lava_finalize_output(out_params.output_folder_base)
 
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
-        loader: plugin_loader.PluginLoader, casedata, profile_filename):
+        loader: plugin_loader.PluginLoader, casedata, profile_filename, mp_per_plugin: bool = False):
     start = process_time()
     start_wall = perf_counter()
  
@@ -357,6 +371,109 @@ def crunch_artifacts(
         temp_file.close()
         return False
 
+    # --- subprocess mode setup ---
+    ctx_mp = None
+    _current_proc = [None]   # list for mutability in closure
+    _last_sigint_ts = [0.0]  # timestamp of last handled SIGINT
+    _abort_requested = [False]
+    old_sigint = None
+
+    if mp_per_plugin:
+        import time as _time_module
+        ctx_mp = multiprocessing.get_context('spawn')
+
+        def _terminate_current(reason: str):
+            proc = _current_proc[0]
+            if proc is not None and proc.is_alive():
+                logfunc(f'Skip requested ({reason}). Terminating plugin subprocess...')
+                try:
+                    proc.terminate()
+                except Exception:
+                    pass
+
+        def _handle_sigint(signum, frame):
+            now = _time_module.time()
+            elapsed = now - _last_sigint_ts[0]
+            # Ignore signals arriving within 500ms of the last one.
+            # sudo sends SIGINT to the entire process group, so the parent can
+            # receive it twice within microseconds from a single Ctrl+C press.
+            if elapsed < 0.5:
+                return
+            if _last_sigint_ts[0] > 0.0 and elapsed < 5.0:
+                # Second real Ctrl+C within 5 seconds → abort
+                _abort_requested[0] = True
+                print('\nAborting run.', flush=True)
+            else:
+                print('\nSkipping current plugin (Ctrl+C again within 5s to abort).', flush=True)
+            _last_sigint_ts[0] = now
+            _terminate_current('SIGINT')
+
+        def _handle_sigusr(signum, frame):
+            _terminate_current('SIGUSR')
+
+        old_sigint = signal.signal(signal.SIGINT, _handle_sigint)
+        if hasattr(signal, 'SIGUSR1'):
+            signal.signal(signal.SIGUSR1, _handle_sigusr)
+        if hasattr(signal, 'SIGUSR2'):
+            signal.signal(signal.SIGUSR2, _handle_sigusr)
+
+        def _run_plugin_subprocess(plugin, files_found, category_folder):
+            """Spawn one subprocess for plugin; returns result dict or None if skipped."""
+            file_infos_subset = {
+                path: (info.source_path, info.creation_date, info.modification_date)
+                for path, info in seeker.file_infos.items()
+            }
+            payload = {
+                'plugin_key': plugin.name,
+                'files_found': files_found,
+                'category_folder': category_folder,
+                'wrap_text': wrap_text,
+                'output_folder_base': out_params.report_folder_base,
+                'input_path': input_path,
+                'extracttype': extracttype,
+                'file_infos_subset': file_infos_subset,
+                'seeker_all_files': list(seeker.file_infos.keys()),
+            }
+
+            result_q = ctx_mp.Queue()
+            proc = ctx_mp.Process(
+                target=mp_plugin_runner.run_one_plugin,
+                args=(payload, result_q),
+            )
+            _current_proc[0] = proc
+            proc.start()
+
+            # Poll until the process finishes. The signal handler calls proc.terminate()
+            # directly, so we just need to detect when it exits.
+            while proc.is_alive():
+                try:
+                    result = result_q.get(timeout=0.25)
+                    proc.join()
+                    _current_proc[0] = None
+                    return result
+                except _queue.Empty:
+                    pass
+
+            _current_proc[0] = None
+
+            # Negative exit code means the process was killed by a signal (skip).
+            if proc.exitcode is not None and proc.exitcode < 0:
+                logfunc(f'  {plugin.name} subprocess terminated (exitcode={proc.exitcode}).')
+                return None
+
+            # Process exited cleanly — drain the queue one last time.
+            try:
+                result = result_q.get_nowait()
+                return result
+            except _queue.Empty:
+                return {
+                    'ok': False,
+                    'plugin_key': plugin.name,
+                    'error': 'Subprocess exited without putting a result on the queue.',
+                    'traceback': '',
+                }
+    # --- end subprocess mode setup ---
+
     # Now ready to run
     logfunc(f'Info: {len(loader) - 1} modules loaded.') # excluding usagestatsVersion
     if profile_filename:
@@ -376,6 +493,8 @@ def crunch_artifacts(
     # Search for the files per the arguments
     for plugin_number, plugin in enumerate(plugins, start=1):
         logfunc()
+        if mp_per_plugin and _abort_requested[0]:
+            break
         logfunc('[{}/{}] {} [{}] artifact started'.format(plugin_number, len(plugins),
                                                               plugin.name, plugin.module_name))
         if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
@@ -417,13 +536,27 @@ def crunch_artifacts(
                     logfunc('Error creating {} report directory at path {}'.format(plugin.name, category_folder))
                     logfunc('Error was {}'.format(str(ex)))
                     continue  # cannot do work
-            try:
-                plugin.method(files_found, category_folder, seeker, wrap_text)
-            except Exception as ex:  # pylint: disable=broad-exception-caught
-                logfunc('Reading {} artifact had errors!'.format(plugin.name))
-                logfunc('Error was {}'.format(str(ex)))
-                logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
-                continue  # nope
+            if mp_per_plugin:
+                result = _run_plugin_subprocess(plugin, files_found, category_folder)
+                if result is None:
+                    logfunc(f'{plugin.name} [{plugin.module_name}] skipped by user.')
+                elif result.get('ok'):
+                    for cat, arts in result.get('icons_delta', {}).items():
+                        icons.setdefault(cat, {}).update(arts)
+                    for cat, arts in result.get('lava_artifacts_delta', {}).items():
+                        _lavafuncs.lava_data['artifacts'].setdefault(cat, []).extend(arts)
+                else:
+                    logfunc('Error in {} [{}]: {}'.format(plugin.name, plugin.module_name, result.get('error')))
+                    if result.get('traceback'):
+                        logfunc(result['traceback'])
+            else:
+                try:
+                    plugin.method(files_found, category_folder, seeker, wrap_text)
+                except Exception as ex:  # pylint: disable=broad-exception-caught
+                    logfunc('Reading {} artifact had errors!'.format(plugin.name))
+                    logfunc('Error was {}'.format(str(ex)))
+                    logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
+                    continue  # nope
         else:
             logfunc("No file found")
         logfunc('{} [{}] artifact completed'.format(plugin.name, plugin.module_name))
@@ -431,6 +564,16 @@ def crunch_artifacts(
         GuiWindow.SetProgressBar(parsed_modules, len(plugins))
         log.flush()
     log.close()
+
+    if mp_per_plugin:
+        if _abort_requested[0]:
+            logfunc('Processing aborted by user after interrupt.')
+        if old_sigint is not None:
+            signal.signal(signal.SIGINT, old_sigint)
+        if hasattr(signal, 'SIGUSR1'):
+            signal.signal(signal.SIGUSR1, signal.SIG_DFL)
+        if hasattr(signal, 'SIGUSR2'):
+            signal.signal(signal.SIGUSR2, signal.SIG_DFL)
 
     write_device_info()
     logfunc('')
@@ -466,5 +609,6 @@ def crunch_artifacts(
     return True
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()
     main()
     
