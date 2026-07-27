@@ -10,9 +10,11 @@ from __future__ import annotations
 import os
 import traceback
 import warnings
+from types import SimpleNamespace
 
 import scripts.lavafuncs as lavafuncs
 import scripts.plugin_loader as plugin_loader
+from scripts.context import Context
 from scripts.ilapfuncs import (
     check_output_types,
     icons,
@@ -93,6 +95,19 @@ def run_one_plugin(payload: dict, result_queue) -> None:
         # Let logfunc() write to the correct file
         output_params_from_existing_output_folder_base(output_folder_base)
 
+        # Context.set_output_params() only ran in the parent process at startup —
+        # a spawned subprocess is a fresh interpreter, so Context._output_params
+        # is None here unless we set it too. Plugins that call
+        # Context.get_output_params() (e.g. mister_skinnylegs plugins, media
+        # linking helpers) would otherwise raise "Context not set".
+        output_params = SimpleNamespace(
+            output_folder_base=output_folder_base,
+            data_folder=os.path.join(output_folder_base, "data"),
+            media_folder=os.path.join(output_folder_base, "media"),
+            html_media_folder=os.path.join(output_folder_base, "_HTML", "media"),
+        )
+        Context.set_output_params(output_params)
+
         # Reload PluginLoader — avoids pickling LazyLoader callables
         loader = plugin_loader.PluginLoader()
         plugin_spec = loader[plugin_key]
@@ -130,17 +145,23 @@ def run_one_plugin(payload: dict, result_queue) -> None:
         #   All other fields (name, tablename, module, record_count) are str/int.
         # No tuple keys, no non-primitive values — safe to pass through a Queue.
         lava_artifacts_delta: dict = {}
+        meta_modules_delta: list = []
         if wants_lava and lavafuncs.lava_data:
             lava_artifacts_delta = {
                 cat: list(arts)
                 for cat, arts in lavafuncs.lava_data.get("artifacts", {}).items()
             }
+            # Per-module artifact metadata, written into the final _lava_data.lava.
+            # Each subprocess starts with an empty lava_data['meta']['modules'],
+            # so this list holds only the module entry(ies) this plugin added.
+            meta_modules_delta = list(lavafuncs.lava_data.get("meta", {}).get("modules", []))
 
         result_queue.put({
             "ok": True,
             "plugin_key": plugin_key,
             "icons_delta": icons_delta,
             "lava_artifacts_delta": lava_artifacts_delta,
+            "meta_modules_delta": meta_modules_delta,
         })
 
     except Exception as ex:

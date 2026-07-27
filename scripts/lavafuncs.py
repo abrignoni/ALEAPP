@@ -676,6 +676,9 @@ def lava_open_existing(output_path: str) -> None:
     lava_data = {
         "artifacts": OrderedDict(),
         "modules": [],
+        "meta": {
+            "modules": []
+        }
     }
     db_path = os.path.join(output_path, lava_db_name)
     lava_db = sqlite3.connect(db_path)

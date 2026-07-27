@@ -545,6 +545,13 @@ def crunch_artifacts(
                         icons.setdefault(cat, {}).update(arts)
                     for cat, arts in result.get('lava_artifacts_delta', {}).items():
                         _lavafuncs.lava_data['artifacts'].setdefault(cat, []).extend(arts)
+                    for module_info in result.get('meta_modules_delta', []):
+                        existing = next((m for m in _lavafuncs.lava_data['meta']['modules']
+                                          if m['module_name'] == module_info['module_name']), None)
+                        if existing:
+                            existing['artifacts'].extend(module_info['artifacts'])
+                        else:
+                            _lavafuncs.lava_data['meta']['modules'].append(module_info)
                 else:
                     logfunc('Error in {} [{}]: {}'.format(plugin.name, plugin.module_name, result.get('error')))
                     if result.get('traceback'):
