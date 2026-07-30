@@ -37,10 +37,10 @@ INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
 
 
-def _parse_root(file_found):
+def parse_settings_root(file_found, artifact_label='settingsSecure'):
     '''Return the XML root, tolerating ABX, Android-11 rootless files, and invalid XML tokens.
 
-    settings_secure.xml occasionally contains raw control characters or unescaped
+    The settings_*.xml files occasionally contain raw control characters or unescaped
     ampersands inside setting values, which make a plain ET.parse() raise
     "not well-formed (invalid token)". We recover by sanitizing the text; if it is
     still unparseable the file is skipped (None) rather than erroring the artifact.
@@ -60,7 +60,7 @@ def _parse_root(file_found):
         try:
             return ET.fromstring(xml)
         except ET.ParseError as ex:
-            logfunc(f'settingsSecure: skipping unparseable {file_found}: {ex}')
+            logfunc(f'{artifact_label}: skipping unparseable {file_found}: {ex}')
             return None
 
 
@@ -83,7 +83,7 @@ def get_settingsSecure(context):
         if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
             continue  # Skip mirror, it should be duplicate data
 
-        root = _parse_root(file_found)
+        root = parse_settings_root(file_found)
         if root is None:
             continue
 
