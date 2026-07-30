@@ -31,11 +31,13 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | appicons |
 | frosting |
 | gmailEmails |
+| googleDialer |
 | googleFitGMS |
 | googlePlaySearches |
 | honorMediaLibrary |
 | knuddels |
 | rema_1000 |
+| samsungBatteryStats |
 | samsungSecureFolderHistoryLog |
 | sbbmobile |
 | shistorylog |
