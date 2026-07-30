@@ -31,8 +31,12 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | appicons |
 | frosting |
 | gmailEmails |
+| googleAccountHistory |
+| googleConstellation |
 | googleDialer |
 | googleFitGMS |
+| googleIcingContacts |
+| googleOdlh |
 | googlePlaySearches |
 | honorMediaLibrary |
 | knuddels |
