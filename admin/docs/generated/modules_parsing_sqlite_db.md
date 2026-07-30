@@ -41,8 +41,12 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | honorMediaLibrary |
 | knuddels |
 | rema_1000 |
+| samsungBadgeProvider |
 | samsungBatteryStats |
+| samsungPrivacyDashboard |
 | samsungSecureFolderHistoryLog |
+| samsungSleepDetection |
+| samsungWifiDatabases |
 | sbbmobile |
 | shistorylog |
 | swissmeteo |
