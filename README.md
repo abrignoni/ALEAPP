@@ -63,7 +63,7 @@ To create aleapp, run:
 pyinstaller scripts/pyinstaller/aleapp_Linux.spec
 ```
 
-To create aleappGUI.app, run:
+To create aleappGUI, run:
 
 ```
 pyinstaller scripts/pyinstaller/aleappGUI_Linux.spec
