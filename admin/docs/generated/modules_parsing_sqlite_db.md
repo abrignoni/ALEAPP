@@ -45,10 +45,12 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungBadgeProvider |
 | samsungBatteryStats |
 | samsungLauncher |
+| samsungMediaProvider |
 | samsungPrivacyDashboard |
 | samsungScpm |
 | samsungSecureFolderHistoryLog |
 | samsungSleepDetection |
+| samsungStoryService |
 | samsungWifiDatabases |
 | sbbmobile |
 | shistorylog |
