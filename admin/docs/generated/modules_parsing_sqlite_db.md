@@ -32,6 +32,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | frosting |
 | gmailEmails |
 | googleAccountHistory |
+| googleCalendar |
 | googleConstellation |
 | googleDialer |
 | googleFitGMS |
@@ -43,7 +44,9 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | rema_1000 |
 | samsungBadgeProvider |
 | samsungBatteryStats |
+| samsungLauncher |
 | samsungPrivacyDashboard |
+| samsungScpm |
 | samsungSecureFolderHistoryLog |
 | samsungSleepDetection |
 | samsungWifiDatabases |
