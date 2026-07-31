@@ -3,15 +3,15 @@ __artifacts_v2__ = {
         "name": "Samsung WiFi Config Store DB",
         "description": "Saved Wi-Fi networks recorded in the Samsung WifiConfigStore.db "
                        "(configs table): SSID with security type and, where present, the "
-                       "creation time - a timestamp WifiConfigStore.xml does not carry.",
+                       "creation time.",
         "author": "",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "WiFi Profiles",
-        "notes": "The CREATION_TIME column does not exist on older One UI versions and is "
-                 "reported empty there; where it exists, entries created before the column "
-                 "was introduced hold 0 and are also reported empty.",
+        "notes": "The CREATION_TIME column does not exist in every schema observed and is "
+                 "reported empty there; where it exists, entries holding 0 are also "
+                 "reported empty.",
         "paths": ('*/system/WifiConfigStore.db*',),
         "output_types": "standard",
         "artifact_icon": "wifi",
@@ -34,8 +34,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "Unset coordinates are stored as -1.0 or the schema default 1000.0 and are "
-                 "reported empty.",
+        "notes": "Coordinates of 1000.0 (the declared column default) or -1.0 (observed for "
+                 "unset entries in test data) are reported empty.",
         "paths": ('*/system/wifigeofence.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",

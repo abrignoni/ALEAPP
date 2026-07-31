@@ -52,7 +52,7 @@ __artifacts_v2__ = {
     "googleCalendarAppEvents": {
         "name": "Google Calendar App Events",
         "description": "Events from the Google Calendar app's own store (cal_v2a, Events "
-                       "table), which can hold events that are not in the calendar provider "
+                       "table), kept separately from the calendar provider "
                        "database: start and end, title, description, the calendar and "
                        "account they belong to and the event web link, decoded from each "
                        "event's protobuf record.",
