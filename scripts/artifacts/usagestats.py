@@ -174,16 +174,22 @@ def _standby_parts(value):
 
 def get_string_by_token(packages, token1, token2=0):
     strings = packages.get(token1, None)
-    if strings:
-        if token2 == 0:
-            return strings[0]
-        if len(strings) >= token2:
-            return strings[token2 - 1]
-        else:
-            logfunc(f'index {token2 - 1} out of range')
-    else:
-        pass
-        # logfunc('No strings!') # This happens with deleted processes
+    if not strings:
+        # This happens with deleted processes.
+        return ''
+    # Optional event token fields are represented by an empty string in the
+    # shared field helper. They are not package-name token 0.
+    if token2 in (None, ''):
+        return ''
+    try:
+        token2 = int(token2)
+    except (TypeError, ValueError):
+        return ''
+    if token2 == 0:
+        return strings[0]
+    if len(strings) >= token2:
+        return strings[token2 - 1]
+    logfunc(f'index {token2 - 1} out of range')
     return ''
 
 def ReadUsageStatsV2PbFile(input_path):
