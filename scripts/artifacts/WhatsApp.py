@@ -190,7 +190,7 @@ import sqlite3
 
 import xmltodict
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, open_sqlite_db_readonly, check_in_media
 
 # Re-used location columns shared by the one-to-one and group message queries.
 _LOCATION_HEADERS = ('Shared Latitude/Starting Latitude (Live Location)',
@@ -248,7 +248,7 @@ def _open_msgstore(files_found):
     cursor = db.cursor()
     if wa:
         try:
-            cursor.execute('attach database "%s" as wadb' % wa)
+            cursor.execute(attach_sqlite_db_readonly(wa, 'wadb'))
         except sqlite3.Error:
             pass
     return db, cursor, msg, wa
