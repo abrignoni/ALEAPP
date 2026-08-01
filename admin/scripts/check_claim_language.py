@@ -33,10 +33,36 @@ Handling a match
   The allowlist is a deliberate act and every entry is reviewed; it is not a place to
   silence a finding you have not thought about.
 
+Two ways the check can quietly stop doing its job
+-------------------------------------------------
+Both are reported rather than hidden, because a check that has silently narrowed its
+own scope is worse than no check: it still prints a pass.
+
+* **A stale ALLOWLIST entry** -- one that no longer matches anything. It means the
+  description was reworded or the artifact key was renamed, so the entry now shields
+  nothing at all, except the next claim that happens to land under that same key. That
+  is how an allowlist quietly becomes a dumping ground: entries accumulate, nobody
+  rereads them, and each one is a pre-approval for text nobody has seen. Stale entries
+  fail the run and must be deleted.
+
+* **A module whose `__artifacts_v2__` is not a static literal** -- its fields cannot be
+  read without importing the module, so they are never checked. These are printed as
+  NOT CHECKED on every run, not just under `--verbose`, and counted in the summary, so
+  the coverage hole stays in front of whoever reads the output.
+
+  As of this writing that is exactly two modules, both structural rather than
+  accidental:
+    - `scripts/artifacts/artGlobals.py` -- shared globals, declares no
+      `__artifacts_v2__` dict at all.
+    - `scripts/artifacts/fitbit.py` -- builds its dict through an `_art()` helper, so
+      there is no literal for `ast.literal_eval` to read.
+  If that list ever drifts from reality, the runtime output is the authority, not this
+  docstring.
+
 Usage:
     python admin/scripts/check_claim_language.py           # fail on unallowlisted claims
     python admin/scripts/check_claim_language.py --list    # show every match, allowlisted too
-    python admin/scripts/check_claim_language.py --verbose # also report skipped modules
+    python admin/scripts/check_claim_language.py --verbose # add coverage and allowlist counts
 """
 
 import argparse
@@ -55,8 +81,10 @@ import sys
 #
 # Matching is case-insensitive and word-boundary aware -- `\ball\b` must not fire on
 # "call log", which is why the boundaries are explicit rather than relying on a trailing
-# space. Prefixes without a closing boundary (`\bcomplete`, `\breliable`, `\bhabit`) are
-# intentional so inflections such as "completed", "reliably" and "habits" are caught.
+# space. Prefixes without a closing boundary (`\bcomplete`, `\breliable`) are intentional
+# so inflections such as "completed" and "reliably" are caught. `\bhabits?\b` is closed on
+# purpose: the open stem `\bhabit` used by the sibling iLEAPP implementation also matches
+# "habitat", and the closed spelling already covers both inflections that occur in prose.
 CLAIM_PATTERN = re.compile(
     r"\ball\b|\bevery\b|\bcomplete|\bfull list\b|\bentire\b|"
     r"\bthe user (searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
@@ -160,23 +188,50 @@ def main():
     parser.add_argument('--list', action='store_true', dest='list_all',
                         help='print every match including allowlisted ones, then exit 0')
     parser.add_argument('--verbose', action='store_true',
-                        help='also report modules that were skipped')
+                        help='also report coverage and allowlist counts')
     args = parser.parse_args()
 
     repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     all_matches = []
     skipped = []
+    # Every (filename, artifact_key, field) the pattern actually fired on this run,
+    # allowlisted or not. An ALLOWLIST entry missing from this set matches nothing.
+    fired = set()
+    checked = 0
     for path in artifact_paths(repo_root):
         matches, skip_reason = scan_file(path)
         if skip_reason is not None:
             skipped.append((os.path.basename(path), skip_reason))
             continue
+        checked += 1
+        for match in matches:
+            fired.add((match['filename'], match['artifact_key'], match['field']))
         all_matches.extend(matches)
 
-    if args.verbose and skipped:
-        print(f'Skipped {len(skipped)} module(s):')
+    stale = sorted(ALLOWLIST - fired)
+
+    # A module whose __artifacts_v2__ cannot be evaluated statically is a real coverage
+    # hole -- its examiner-facing fields are never read. Print it on every run.
+    if skipped:
+        print(f'NOT CHECKED -- {len(skipped)} module(s) have no statically readable '
+              f'__artifacts_v2__:')
         for name, reason in skipped:
-            print(f'  {name}: {reason}')
+            print(f'  scripts/artifacts/{name}: {reason}')
+        print()
+
+    if args.verbose:
+        print(f'Scanned {checked + len(skipped)} module(s); {checked} checked, '
+              f'{len(skipped)} not checked.')
+        allowed_count = sum(1 for match in all_matches if match['allowlisted'])
+        print(f'Allowlist holds {len(ALLOWLIST)} entr(ies); {allowed_count} fired this run.')
+        print()
+
+    # A stale entry shields nothing except the next claim that lands under that key.
+    if stale:
+        print(f'Stale ALLOWLIST entr(ies) ({len(stale)}) -- these no longer match anything '
+              f'and should be deleted:')
+        for entry in stale:
+            print(f'  {entry[0]}:{entry[1]}:{entry[2]}')
         print()
 
     if args.list_all:
@@ -192,6 +247,16 @@ def main():
 
     violations = [match for match in all_matches if not match['allowlisted']]
     if not violations:
+        if stale:
+            print('Remove the stale entr(ies) above from ALLOWLIST in '
+                  f'{os.path.relpath(__file__, repo_root)}.')
+            return 1
+        allowed_count = sum(1 for match in all_matches if match['allowlisted'])
+        summary = (f'Checked {checked} artifact module(s): no unsupported claim language '
+                   f'({allowed_count} reviewed exception(s) allowlisted).')
+        if skipped:
+            summary += f' {len(skipped)} module(s) NOT checked, listed above.'
+        print(summary)
         return 0
 
     print('Unsupported-claim language in examiner-facing artifact fields:\n')
