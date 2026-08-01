@@ -69,13 +69,17 @@ __artifacts_v2__ = {
     },
     "ornetbrowser_frequents": {
         "name": "Ornet Browser - Frequents",
-        "description": "Parses Ornet Browser Frequently Visited Sites",
+        "description": "Parses the Ornet Browser frequents table",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Rows are read from the frequents "
+            "table of appDatabase. Count is the stored count value; what increments it is "
+            "not established, so it is reported as stored."
+        ),
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"
@@ -419,7 +423,7 @@ def ornetbrowser_frequents(context):
         FROM frequents
     '''
 
-    data_headers = ('URL', 'Title', 'Visit Count')
+    data_headers = ('URL', 'Title', 'Count')
     data_list = list(get_sqlite_db_records(source_path, query))
 
     return data_headers, data_list, context.get_relative_path(source_path)

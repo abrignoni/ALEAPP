@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "rema1000_receipt_raw": {
         "name": "Rema1000 Receipts, raw",
-        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan Selv'. All raw data.",
+        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan Selv'. Raw ReceiptEntity columns.",
         "author": "Nicolai Martini",
         "version": "1.2",
         "creation_date": "2026-04-17",

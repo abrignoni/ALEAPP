@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "get_mega_transfers": {
         "name": "mega_transfers",
-        "description": "Parses completed MEGA uploads and downloads (timestamp, folder, filename, size, direction and state) from the MEGA megapreferences database.",
+        "description": "Parses MEGA transfer records (timestamp, folder, filename, size, direction and state) from the completedtransfers table of the MEGA megapreferences database.",
         "author": "",
         "creation_date": "2022-06-04",
-        "last_update_date": "2022-06-04",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Mega",
         "notes": "",
