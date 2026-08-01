@@ -62,7 +62,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, logfunc, open_sqlite_db_readonly
 
 
 def _sec_to_utc(value):
@@ -154,7 +154,7 @@ def get_line_calls(context):
     if call_db and msg_db:
         db = open_sqlite_db_readonly(call_db)
         cursor = db.cursor()
-        cursor.execute('attach database "' + msg_db + '" as naver_line ')
+        cursor.execute(attach_sqlite_db_readonly(msg_db, 'naver_line'))
         try:
             cursor.execute('''
                 SELECT case Substr(calls.call_type, -1) when "O" then "Outgoing" else "Incoming" end AS direction,

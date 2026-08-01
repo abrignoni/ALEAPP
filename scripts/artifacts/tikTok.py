@@ -63,7 +63,7 @@ import datetime
 import os
 import re
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, open_sqlite_db_readonly
 
 
 def _tiktok_dbs(files_found):
@@ -86,7 +86,7 @@ def get_tikTok(context):
     if maindb and attachdb:
         db = open_sqlite_db_readonly(maindb)
         cursor = db.cursor()
-        cursor.execute(f"ATTACH DATABASE '{attachdb}' as db_im_xx;")
+        cursor.execute(attach_sqlite_db_readonly(attachdb, 'db_im_xx'))
         cursor.execute('''
             select
             created_time,
@@ -134,7 +134,7 @@ def get_tikTok_contacts(context):
     if maindb and attachdb:
         db = open_sqlite_db_readonly(maindb)
         cursor = db.cursor()
-        cursor.execute(f"ATTACH DATABASE '{attachdb}' as db_im_xx;")
+        cursor.execute(attach_sqlite_db_readonly(attachdb, 'db_im_xx'))
         cursor.execute('''
             select UID, NICK_NAME, UNIQUE_ID, INITIAL_LETTER,
             json_extract(AVATAR_THUMB, '$.url_list[0]') as avatarURL,
