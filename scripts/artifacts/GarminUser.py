@@ -28,29 +28,33 @@ import xml.etree.ElementTree as ET
 from scripts.ilapfuncs import artifact_processor, logfunc
 
 
-# remove whitespace from xml first line
-def remove_whitespace_from_xml_first_line(xml_file):
-    with open(xml_file, 'r', encoding='utf-8') as f:
+# read the xml with a clean first line, without touching the file on disk
+def read_xml_with_clean_first_line(xml_file):
+    """Return the file text with the first line replaced by a well formed XML declaration.
+
+    The stored declaration can carry leading whitespace that ElementTree rejects. The
+    replacement is made on an in-memory copy: the source is evidence, so it is only
+    ever opened for reading.
+    """
+    with open(xml_file, 'r', encoding='utf-8', errors='replace') as f:
         lines = f.readlines()
-    # replace first line with <?xml version='1.0' encoding='utf-8' standalone='yes' ?>
-    lines[0] = '<?xml version=\'1.0\' encoding=\'utf-8\' standalone=\'yes\' ?>\n'
-    with open(xml_file, 'w', encoding='utf-8') as f:
-        f.writelines(lines)
+    if lines:
+        lines[0] = '<?xml version=\'1.0\' encoding=\'utf-8\' standalone=\'yes\' ?>\n'
+    return ''.join(lines)
 
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
 
 
-def _parse_xml(file_found):
-    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+def _parse_xml(xml, file_found):
+    """Parse XML text, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
     try:
-        return ET.parse(file_found).getroot()
+        return ET.fromstring(xml)
     except ET.ParseError:
-        with open(file_found, encoding='utf-8', errors='replace') as f:
-            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        repaired = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', xml))
         try:
-            return ET.fromstring(xml)
+            return ET.fromstring(repaired)
         except ET.ParseError as ex:
             logfunc(f'Skipping unparseable XML {file_found}: {ex}')
             return ET.Element('empty')
@@ -72,9 +76,8 @@ def get_garminUP(context):
     logfunc("Processing data for Garmin User Profile XML")
     source_path = str(files_found[0])
     logfunc("Processing file: " + source_path)
-    # File is not well formatted, remove first element from first line
-    remove_whitespace_from_xml_first_line(source_path)
-    root = _parse_xml(source_path)
+    # File is not well formatted, replace the first line on an in-memory copy
+    root = _parse_xml(read_xml_with_clean_first_line(source_path), source_path)
     for child in root:
         for i in attribute:
             if child.attrib["name"] == i:

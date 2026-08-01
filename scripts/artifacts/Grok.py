@@ -32,11 +32,10 @@ import os
 import datetime
 import re
 from pathlib import Path
-import sqlite3
 import xml.etree.ElementTree as ET
 import json
 
-from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc
+from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
@@ -71,7 +70,9 @@ def grok_generatedvideos(context):
             continue
 
         try:
-            conn = sqlite3.connect(source_path)
+            conn = open_sqlite_db_readonly(source_path)
+            if not conn:
+                continue
             cur = conn.cursor()
 
             # Metadata tables: ExoPlayerCacheFileMetadata*
@@ -104,9 +105,10 @@ def grok_generatedvideos(context):
     exo_meta = {}
     id_to_url = {}
 
-    if db_path:
+    conn = open_sqlite_db_readonly(db_path) if db_path else None
+
+    if conn:
         try:
-            conn = sqlite3.connect(db_path)
             cur = conn.cursor()
 
             for tbl in meta_tables:
