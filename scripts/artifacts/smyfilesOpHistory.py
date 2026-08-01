@@ -96,12 +96,12 @@ def get_smyfiles_OpHistory(context):
 
         for entry in all_rows:
             cipher = entry[1]
-            if cipher != '':
-                clear_path = process_string(cipher)
+            if not cipher:
+                clear_path = '*blank entry*'
             elif cipher[:3] == '#G$':  # not supported, have seen in Android 13/14.
                 clear_path = '*unsupported entry*'
             else:
-                clear_path = '*blank entry*'
+                clear_path = process_string(cipher)
             data_list.append((user, clear_path, entry[2], entry[3], entry[4], entry[5], entry[6]))
 
     data_headers = ('Account', 'Item Path', 'Operation Date (timezone unverified)', 'Operation Type', 'Item Count', 'Folder Count', 'Page Type')
