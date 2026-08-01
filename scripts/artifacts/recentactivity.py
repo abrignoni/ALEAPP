@@ -77,17 +77,33 @@ def _media(folder, *parts):
     return ''
 
 
+def _snapshot_file(folder, filename):
+    """Find old flat or newer per-snapshot-directory task snapshot files."""
+    snapshot_folder = os.path.join(folder, 'snapshots')
+    direct_path = os.path.join(snapshot_folder, filename)
+    if os.path.isfile(direct_path):
+        return direct_path
+    matches = glob.glob(os.path.join(snapshot_folder, '**', filename), recursive=True)
+    return next((path for path in matches if os.path.isfile(path)), '')
+
+
+def _snapshot_media(folder, filename):
+    path = _snapshot_file(folder, filename)
+    if not path:
+        return ''
+    return check_in_media(path, os.path.basename(path)) or ''
+
+
 def _snapshot_metadata(folder, task_id):
     """Return TaskSnapshot protobuf details and linked high/low resolution images."""
     empty = ('',) * 15
     if not task_id:
         return empty
 
-    snapshot_folder = os.path.join(folder, 'snapshots')
-    high_image = _media(snapshot_folder, f'{task_id}.jpg')
-    low_image = _media(snapshot_folder, f'{task_id}_reduced.jpg')
-    proto_path = os.path.join(snapshot_folder, f'{task_id}.proto')
-    if not os.path.isfile(proto_path):
+    high_image = _snapshot_media(folder, f'{task_id}.jpg')
+    low_image = _snapshot_media(folder, f'{task_id}_reduced.jpg')
+    proto_path = _snapshot_file(folder, f'{task_id}.proto')
+    if not proto_path:
         return (high_image, low_image) + ('',) * 13
 
     snapshot = task_snapshot_pb2.TaskSnapshotProto()

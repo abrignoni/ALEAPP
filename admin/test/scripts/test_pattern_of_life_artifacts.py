@@ -105,11 +105,42 @@ class UsageStatsModernizationTests(unittest.TestCase):
         self.assertEqual(event_row[18:23], ('channel', 42, 'com.root', 'RootActivity', 'locus'))
         self.assertEqual(event_row[23:25], ('button', 'tap'))
 
+    def test_v2_event_without_optional_string_tokens_is_not_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            daily = os.path.join(folder, 'daily')
+            os.mkdir(daily)
+            interval_begin = 1_700_000_000_000
+            mappings = usagestatsservice_v2_pb2.ObfuscatedPackagesProto()
+            app = mappings.packages_map.add()
+            app.package_token = 1
+            app.strings.extend(['com.example', 'MainActivity'])
+            with open(os.path.join(folder, 'mappings'), 'wb') as output:
+                output.write(mappings.SerializeToString())
+
+            stats = usagestatsservice_v2_pb2.IntervalStatsObfuscatedProto()
+            event = stats.event_log.add()
+            event.package_token = 1
+            event.class_token = 2
+            event.time_ms = 4000
+            event.type = 1
+            with open(os.path.join(daily, str(interval_begin)), 'wb') as output:
+                output.write(stats.SerializeToString())
+
+            rows = usagestats.process_usagestats(folder, '0', 2)
+
+        event_row = next(row for row in rows if row[2] == 'event-log')
+        self.assertEqual(event_row[11:14], ('com.example', 'ACTIVITY_RESUMED', 'MainActivity'))
+        self.assertEqual(event_row[15:25], ('', '', '', '', '', '', '', '', '', ''))
+
 
 class RecentActivityModernizationTests(unittest.TestCase):
     def test_snapshot_proto_metadata_is_exposed(self):
         with tempfile.TemporaryDirectory() as folder:
             snapshots = os.path.join(folder, 'snapshots')
+            os.mkdir(snapshots)
+            # Newer Android images may place snapshots below an additional
+            # per-snapshot-set directory instead of directly in snapshots/.
+            snapshots = os.path.join(snapshots, 'snapshot-set-id')
             os.mkdir(snapshots)
             snapshot = task_snapshot_pb2.TaskSnapshotProto(
                 id=1_700_000_000_000,
