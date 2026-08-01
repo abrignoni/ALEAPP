@@ -91,6 +91,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | GarminSleep |
 | GarminSync |
 | GarminWeight |
+| Grok |
 | HideX |
 | K9Mail |
 | L360driveblade |
