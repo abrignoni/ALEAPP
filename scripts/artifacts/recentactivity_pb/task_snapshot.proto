@@ -1,0 +1,29 @@
+// Field definitions from AOSP's TaskSnapshotProto.
+// https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/proto/src/windowmanager.proto
+syntax = "proto3";
+
+package com.android.server.wm;
+
+message TaskSnapshotProto {
+  int32 orientation = 1;
+  int32 inset_left = 2;
+  int32 inset_top = 3;
+  int32 inset_right = 4;
+  int32 inset_bottom = 5;
+  bool is_real_snapshot = 6;
+  int32 windowing_mode = 7;
+  int32 system_ui_visibility = 8 [deprecated = true];
+  bool is_translucent = 9;
+  string top_activity_component = 10;
+  float legacy_scale = 11 [deprecated = true];
+  int64 id = 12;
+  int32 rotation = 13;
+  int32 task_width = 14;
+  int32 task_height = 15;
+  int32 appearance = 16;
+  int32 letterbox_inset_left = 17;
+  int32 letterbox_inset_top = 18;
+  int32 letterbox_inset_right = 19;
+  int32 letterbox_inset_bottom = 20;
+  int32 ui_mode = 21;
+}

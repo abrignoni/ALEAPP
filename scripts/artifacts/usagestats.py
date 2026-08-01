@@ -1,14 +1,21 @@
 # pylint: disable=E0606,E1101,W0311,W0702,W1309
 __artifacts_v2__ = {
     "get_usagestats": {
-        "name": "usagestats",
-        "description": "Event types referenced from core/java/android/app/usage/UsageEvents.java",
-        "author": "",
+        "name": "Usage Stats",
+        "description": "Android application, device-state, service, notification and user-interaction events from XML and protobuf UsageStats stores.",
+        "author": "Alexis Brignoni",
         "creation_date": "2020-02-25",
-        "last_update_date": "2020-02-25",
+        "last_update_date": "2026-07-31",
         "requirements": "none",
         "category": "Usage Stats",
-        "notes": "",
+        "notes": (
+            "Daily, weekly, monthly and yearly files overlap; repeated rows across those "
+            "intervals are not separate user actions. ACTIVITY_RESUMED records an Android "
+            "activity lifecycle transition, not proof that a person intentionally opened or "
+            "viewed the app. SCREEN_INTERACTIVE does not mean unlocked. Android source: "
+            "https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/"
+            "core/java/android/app/usage/UsageEvents.java"
+        ),
         "paths": ('*/system/usagestats/*', '*/system_ce/*/usagestats*'),
         "output_types": "standard",
         "artifact_icon": "battery",
@@ -84,6 +91,7 @@ class EventType(IntEnum):
     USER_UNLOCKED = 28
     USER_STOPPED = 29
     LOCUS_ID_SET = 30
+    APP_COMPONENT_USED = 31
 
     def __str__(self):
         return self.name # This returns 'KNOWN' instead of 'EventType.KNOWN'
@@ -93,6 +101,76 @@ class EventFlag(IntEnum):
 
     def __str__(self):
         return self.name
+
+
+DATA_COLUMNS = (
+    'usage_type', 'lastime', 'timeactive', 'last_time_service_used',
+    'total_time_service_used', 'last_time_visible', 'total_time_visible',
+    'last_time_component_used', 'app_launch_count', 'package', 'types', 'classs',
+    'event_flags', 'shortcut_id', 'standby_bucket', 'standby_reason',
+    'notification_channel', 'instance_id', 'task_root_package', 'task_root_class',
+    'locus_id', 'interaction_category', 'interaction_action', 'source', 'fullatt'
+)
+
+
+def _insert_data(cursor, **values):
+    placeholders = ','.join('?' for _ in DATA_COLUMNS)
+    cursor.execute(
+        f"INSERT INTO data ({','.join(DATA_COLUMNS)}) VALUES ({placeholders})",
+        tuple(values.get(column, '') for column in DATA_COLUMNS)
+    )
+
+
+def _event_type_name(value):
+    try:
+        return EventType(int(value)).name
+    except (ValueError, TypeError):
+        return str(value) if value not in (None, '') else ''
+
+
+def _event_flag_name(value):
+    if value in (None, ''):
+        return ''
+    try:
+        numeric = int(value)
+    except (ValueError, TypeError):
+        return str(value)
+    if numeric == EventFlag.FLAG_IS_PACKAGE_INSTANT_APP:
+        return EventFlag.FLAG_IS_PACKAGE_INSTANT_APP.name
+    return str(numeric)
+
+
+def _interval_time(value, interval_begin):
+    """Convert a stored interval offset (or legacy negative absolute value) to epoch ms."""
+    if value in (None, ''):
+        return ''
+    numeric = int(value)
+    return abs(numeric) if numeric < 0 else interval_begin + numeric
+
+
+def _duration(value):
+    if value in (None, ''):
+        return ''
+    return abs(int(value))
+
+
+def _field(message, name):
+    return getattr(message, name) if message.HasField(name) else ''
+
+
+def _pool_string(strings, index):
+    """Resolve Android's one-based string-pool index without raising on bad evidence."""
+    if not index:
+        return ''
+    offset = int(index) - 1
+    return strings[offset] if 0 <= offset < len(strings) else ''
+
+
+def _standby_parts(value):
+    if value in (None, ''):
+        return '', ''
+    numeric = int(value)
+    return (numeric & 0xFFFF0000) >> 16, numeric & 0x0000FFFF
 
 def get_string_by_token(packages, token1, token2=0):
     strings = packages.get(token1, None)
@@ -120,24 +198,25 @@ def AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages):
     cursor = db.cursor()
     # packages
     for usagestat_ob in stats_ob.packages:
-        finalt = ''
-        if usagestat_ob.HasField('last_time_active_ms'):
-            finalt = usagestat_ob.last_time_active_ms
-            if finalt < 0:
-                finalt = abs(finalt)
-            else:
-                finalt += file_name_int
-        tac = ''
-        if usagestat_ob.HasField('total_time_active_ms'):
-            tac = abs(usagestat_ob.total_time_active_ms)
         pkg = get_string_by_token(packages, usagestat_ob.package_token)
-        alc = ''
-        if usagestat_ob.HasField('app_launch_count'):
-            alc = abs(usagestat_ob.app_launch_count)
-
-        datainsert = ('packages', finalt, tac, '', '', '', alc, pkg, '' , '' , sourced, '')
-        cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+        _insert_data(
+            cursor,
+            usage_type='packages',
+            lastime=_interval_time(_field(usagestat_ob, 'last_time_active_ms'), file_name_int),
+            timeactive=_duration(_field(usagestat_ob, 'total_time_active_ms')),
+            last_time_service_used=_interval_time(
+                _field(usagestat_ob, 'last_time_service_used_ms'), file_name_int),
+            total_time_service_used=_duration(
+                _field(usagestat_ob, 'total_time_service_used_ms')),
+            last_time_visible=_interval_time(
+                _field(usagestat_ob, 'last_time_visible_ms'), file_name_int),
+            total_time_visible=_duration(_field(usagestat_ob, 'total_time_visible_ms')),
+            last_time_component_used=_interval_time(
+                _field(usagestat_ob, 'last_time_component_used_ms'), file_name_int),
+            app_launch_count=_duration(_field(usagestat_ob, 'app_launch_count')),
+            package=pkg,
+            source=sourced,
+        )
     #configurations
     for conf in stats_ob.configurations:
         usagetype = 'configurations'
@@ -152,9 +231,8 @@ def AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages):
         if conf.HasField('total_time_active_ms'):
             tac = abs(conf.total_time_active_ms)
         fullatti_str = str(conf.config)
-        datainsert = (usagetype, finalt, tac, '', '', '', '', '', '', '', sourced, fullatti_str)
-        cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+        _insert_data(cursor, usage_type=usagetype, lastime=finalt, timeactive=tac,
+                     source=sourced, fullatt=fullatti_str)
     #event-log
     usagetype = 'event-log'
     for event in stats_ob.event_log:
@@ -173,10 +251,43 @@ def AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages):
         if event.HasField('class_token'):
             classy = get_string_by_token(packages, event.package_token, event.class_token)
         if event.HasField('type'):
-            tipes = str(EventType(event.type)) if event.type <= 30 else str(event.type)
-        datainsert = (usagetype, finalt, '' , '' , '' , '' ,'' , pkg , tipes , classy , sourced, '')
-        cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                    'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+            tipes = _event_type_name(event.type)
+        event_package_token = _field(event, 'package_token')
+        task_root_package_token = _field(event, 'task_root_package_token')
+        standby_bucket, standby_reason = _standby_parts(_field(event, 'standby_bucket'))
+        interaction_category = ''
+        interaction_action = ''
+        if event.HasField('interaction_extras'):
+            interaction_category = get_string_by_token(
+                packages, event_package_token,
+                _field(event.interaction_extras, 'category_token'))
+            interaction_action = get_string_by_token(
+                packages, event_package_token,
+                _field(event.interaction_extras, 'action_token'))
+        _insert_data(
+            cursor,
+            usage_type=usagetype,
+            lastime=finalt,
+            package=pkg,
+            types=tipes,
+            classs=classy,
+            event_flags=_event_flag_name(_field(event, 'flags')),
+            shortcut_id=get_string_by_token(
+                packages, event_package_token, _field(event, 'shortcut_id_token')),
+            standby_bucket=standby_bucket,
+            standby_reason=standby_reason,
+            notification_channel=get_string_by_token(
+                packages, event_package_token, _field(event, 'notification_channel_id_token')),
+            instance_id=_field(event, 'instance_id'),
+            task_root_package=get_string_by_token(packages, task_root_package_token),
+            task_root_class=get_string_by_token(
+                packages, task_root_package_token, _field(event, 'task_root_class_token')),
+            locus_id=get_string_by_token(
+                packages, event_package_token, _field(event, 'locus_id_token')),
+            interaction_category=interaction_category,
+            interaction_action=interaction_action,
+            source=sourced,
+        )
 
     db.commit()
 
@@ -192,24 +303,26 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
     cursor = db.cursor()
     # packages
     for usagestat in stats.packages:
-        finalt = ''
-        if usagestat.HasField('last_time_active_ms'):
-            finalt = usagestat.last_time_active_ms
-            if finalt < 0:
-                finalt = abs(finalt)
-            else:
-                finalt += file_name_int
-        tac = ''
-        if usagestat.HasField('total_time_active_ms'):
-            tac = abs(usagestat.total_time_active_ms)
-        pkg = stats.stringpool.strings[usagestat.package_index - 1]
-        alc = ''
-        if usagestat.HasField('app_launch_count'):
-            alc = abs(usagestat.app_launch_count)
-
-        datainsert = ('packages', finalt, tac, '', '', '', alc, pkg, '' , '' , sourced, '')
-        cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+        pkg = (_pool_string(stats.stringpool.strings, usagestat.package_index)
+               if usagestat.HasField('package_index') else _field(usagestat, 'package'))
+        _insert_data(
+            cursor,
+            usage_type='packages',
+            lastime=_interval_time(_field(usagestat, 'last_time_active_ms'), file_name_int),
+            timeactive=_duration(_field(usagestat, 'total_time_active_ms')),
+            last_time_service_used=_interval_time(
+                _field(usagestat, 'last_time_service_used_ms'), file_name_int),
+            total_time_service_used=_duration(
+                _field(usagestat, 'total_time_service_used_ms')),
+            last_time_visible=_interval_time(
+                _field(usagestat, 'last_time_visible_ms'), file_name_int),
+            total_time_visible=_duration(_field(usagestat, 'total_time_visible_ms')),
+            last_time_component_used=_interval_time(
+                _field(usagestat, 'last_time_component_used_ms'), file_name_int),
+            app_launch_count=_duration(_field(usagestat, 'app_launch_count')),
+            package=pkg,
+            source=sourced,
+        )
     #configurations
     for conf in stats.configurations:
         usagetype = 'configurations'
@@ -224,9 +337,8 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
         if conf.HasField('total_time_active_ms'):
             tac = abs(conf.total_time_active_ms)
         fullatti_str = str(conf.config)
-        datainsert = (usagetype, finalt, tac, '', '', '', '', '', '', '', sourced, fullatti_str)
-        cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                        'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+        _insert_data(cursor, usage_type=usagetype, lastime=finalt, timeactive=tac,
+                     source=sourced, fullatt=fullatti_str)
     #event-log
     usagetype = 'event-log'
     for event in stats.event_log:
@@ -241,14 +353,40 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
             else:
                 finalt += file_name_int
         if event.HasField('package_index'):
-            pkg = stats.stringpool.strings[event.package_index - 1]
+            pkg = _pool_string(stats.stringpool.strings, event.package_index)
+        elif event.HasField('package'):
+            pkg = event.package
         if event.HasField('class_index'):
-            classy = stats.stringpool.strings[event.class_index - 1]
+            classy = _pool_string(stats.stringpool.strings, event.class_index)
+        elif event.HasField('class'):
+            classy = getattr(event, 'class')
         if event.HasField('type'):
-            tipes = str(EventType(event.type)) if event.type <= 30 else str(event.type)
-        datainsert = (usagetype, finalt, '' , '' , '' , '' ,'' , pkg , tipes , classy , sourced, '')
-        cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                    'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+            tipes = _event_type_name(event.type)
+        standby_bucket, standby_reason = _standby_parts(_field(event, 'standby_bucket'))
+        notification_channel = _field(event, 'notification_channel')
+        if not notification_channel and event.HasField('notification_channel_index'):
+            notification_channel = _pool_string(
+                stats.stringpool.strings, event.notification_channel_index)
+        _insert_data(
+            cursor,
+            usage_type=usagetype,
+            lastime=finalt,
+            package=pkg,
+            types=tipes,
+            classs=classy,
+            event_flags=_event_flag_name(_field(event, 'flags')),
+            shortcut_id=_field(event, 'shortcut_id'),
+            standby_bucket=standby_bucket,
+            standby_reason=standby_reason,
+            notification_channel=notification_channel,
+            instance_id=_field(event, 'instance_id'),
+            task_root_package=_pool_string(
+                stats.stringpool.strings, _field(event, 'task_root_package_index')),
+            task_root_class=_pool_string(
+                stats.stringpool.strings, _field(event, 'task_root_class_index')),
+            locus_id=_pool_string(stats.stringpool.strings, _field(event, 'locus_id_index')),
+            source=sourced,
+        )
 
     db.commit()
 
@@ -296,10 +434,17 @@ def get_usagestats(context):
                 source = source or file_found
                 data_list.extend(process_usagestats(file_found, uid, 2))
 
-    data_headers = ('User (UID)', ('Last Time Active', 'datetime'), 'Usage Type',
-                    'Time Active in Msecs', 'Time Active in Secs',
-                    ('Last Time Service Used', 'datetime'), ('Last Time Visible', 'datetime'),
-                    'Total Time Visible', 'App Launch Count', 'Package', 'Types', 'Class', 'Source')
+    data_headers = (
+        'User (UID)', ('Timestamp / Last Time Active', 'datetime'), 'Usage Type',
+        'Time Active (ms)', 'Time Active (sec)',
+        ('Last Time Service Used', 'datetime'), 'Total Time Service Used (ms)',
+        ('Last Time Visible', 'datetime'), 'Total Time Visible (ms)',
+        ('Last Time Component Used', 'datetime'), 'App Launch Count', 'Package',
+        'Event Type', 'Class', 'Event Flags', 'Shortcut ID', 'Standby Bucket',
+        'Standby Reason', 'Notification Channel', 'Instance ID', 'Task Root Package',
+        'Task Root Class', 'Locus ID', 'Interaction Category', 'Interaction Action',
+        'Interval'
+    )
     return data_headers, data_list, source
 
 def add_xml_or_v1_usagestats_to_db(folder, db):
@@ -371,13 +516,28 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
                                 else:
                                     finalt = file_name_int + time1
                                 pkg = (subelem.attrib['package'])
-                                tac = (subelem.attrib['timeActive'])
-                                alc = (subelem.attrib.get('appLaunchCount', ''))
-                                #insert in database
+                                tac = subelem.attrib['timeActive']
                                 cursor = db.cursor()
-                                datainsert = (usagetype, finalt, tac, '', '', '', alc, pkg, '', '', sourced, fullatti_str,)
-                                cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                                               'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+                                _insert_data(
+                                    cursor,
+                                    usage_type=usagetype,
+                                    lastime=finalt,
+                                    timeactive=tac,
+                                    last_time_service_used=_interval_time(
+                                        subelem.attrib.get('lastTimeServiceUsed', ''), file_name_int),
+                                    total_time_service_used=_duration(
+                                        subelem.attrib.get('totalTimeServiceUsed', '')),
+                                    last_time_visible=_interval_time(
+                                        subelem.attrib.get('lastTimeVisible', ''), file_name_int),
+                                    total_time_visible=_duration(
+                                        subelem.attrib.get('totalTimeVisible', '')),
+                                    last_time_component_used=_interval_time(
+                                        subelem.attrib.get('lastTimeComponentUsed', ''), file_name_int),
+                                    app_launch_count=subelem.attrib.get('appLaunchCount', ''),
+                                    package=pkg,
+                                    source=sourced,
+                                    fullatt=fullatti_str,
+                                )
                                 db.commit()
 
                         elif usagetype == 'configurations':
@@ -392,9 +552,8 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
                                 tac = (subelem.attrib['timeActive'])
                                 #insert in database
                                 cursor = db.cursor()
-                                datainsert = (usagetype, finalt, tac, '', '', '', '', '', '', '', sourced, fullatti_str,)
-                                cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                                               'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
+                                _insert_data(cursor, usage_type=usagetype, lastime=finalt,
+                                             timeactive=tac, source=sourced, fullatt=fullatti_str)
                                 db.commit()
 
                         elif usagetype == 'event-log':
@@ -406,22 +565,36 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
                                 else:
                                     finalt = file_name_int + time1
                                 pkg = (subelem.attrib['package'])
-                                tipes = (subelem.attrib['type'])
+                                tipes = _event_type_name(subelem.attrib['type'])
                                 fullatti_str = json.dumps(subelem.attrib)
-                                if 'class' in subelem.attrib:
-                                    classy = subelem.attrib['class']
-                                    cursor = db.cursor()
-                                    datainsert = (usagetype, finalt, '' , '' , '' , '' ,'' , pkg , tipes , classy , sourced, fullatti_str,)
-                                    cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                                               'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
-                                    db.commit()
-                                else:
-                                #insert in database
-                                    datainsert = (usagetype, finalt, '' , '' , '', '', '', pkg , tipes , '' , sourced, fullatti_str,)
-                                    cursor = db.cursor()
-                                    cursor.execute('INSERT INTO data (usage_type, lastime, timeactive, last_time_service_used, last_time_visible, total_time_visible, '
-                                               'app_launch_count, package, types, classs, source, fullatt)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', datainsert)
-                                    db.commit()
+                                standby_bucket, standby_reason = _standby_parts(
+                                    subelem.attrib.get('standbyBucket', ''))
+                                cursor = db.cursor()
+                                _insert_data(
+                                    cursor,
+                                    usage_type=usagetype,
+                                    lastime=finalt,
+                                    package=pkg,
+                                    types=tipes,
+                                    classs=subelem.attrib.get('class', ''),
+                                    event_flags=_event_flag_name(subelem.attrib.get('flags', '')),
+                                    shortcut_id=subelem.attrib.get('shortcutId', ''),
+                                    standby_bucket=standby_bucket,
+                                    standby_reason=standby_reason,
+                                    notification_channel=subelem.attrib.get(
+                                        'notificationChannel', ''),
+                                    instance_id=subelem.attrib.get('instanceId', ''),
+                                    task_root_package=subelem.attrib.get('taskRootPackage', ''),
+                                    task_root_class=subelem.attrib.get('taskRootClass', ''),
+                                    locus_id=subelem.attrib.get('locusId', ''),
+                                    interaction_category=subelem.attrib.get(
+                                        'interactionCategory', subelem.attrib.get('category', '')),
+                                    interaction_action=subelem.attrib.get(
+                                        'interactionAction', subelem.attrib.get('action', '')),
+                                    source=sourced,
+                                    fullatt=fullatti_str,
+                                )
+                                db.commit()
 
 def add_v2_usagestats_to_db(folder, db):
     '''Process usagestats version 2 protobuf files'''
@@ -474,9 +647,14 @@ def process_usagestats(folder, uid, version):
 
     cursor.execute('''
         CREATE TABLE data(usage_type TEXT, lastime INTEGER, timeactive INTEGER,
-                          last_time_service_used INTEGER, last_time_visible INTEGER, total_time_visible INTEGER,
-                          app_launch_count INTEGER,
-                          package TEXT, types TEXT, classs TEXT,
+                          last_time_service_used INTEGER, total_time_service_used INTEGER,
+                          last_time_visible INTEGER, total_time_visible INTEGER,
+                          last_time_component_used INTEGER, app_launch_count INTEGER,
+                          package TEXT, types TEXT, classs TEXT, event_flags TEXT,
+                          shortcut_id TEXT, standby_bucket INTEGER, standby_reason INTEGER,
+                          notification_channel TEXT, instance_id INTEGER,
+                          task_root_package TEXT, task_root_class TEXT, locus_id TEXT,
+                          interaction_category TEXT, interaction_action TEXT,
                           source TEXT, fullatt TEXT)
     ''')
 
@@ -500,32 +678,29 @@ def process_usagestats(folder, uid, version):
     case last_time_service_used  WHEN '' THEN ''
      ELSE datetime(last_time_service_used/1000, 'UNIXEPOCH')
     end last_time_service_used,
+    total_time_service_used,
     case last_time_visible  WHEN '' THEN ''
      ELSE datetime(last_time_visible/1000, 'UNIXEPOCH')
     end last_time_visible,
     total_time_visible,
+    case last_time_component_used WHEN '' THEN ''
+     ELSE datetime(last_time_component_used/1000, 'UNIXEPOCH')
+    end last_time_component_used,
     app_launch_count,
     package,
-    CASE types
-         WHEN '0' THEN 'NONE'
-         WHEN '1' THEN 'ACTIVITY_RESUMED'
-         WHEN '2' THEN 'ACTIVITY_PAUSED'
-         WHEN '5' THEN 'CONFIGURATION_CHANGE'
-         WHEN '7' THEN 'USER_INTERACTION'
-         WHEN '8' THEN 'SHORTCUT_INVOCATION'
-         WHEN '11' THEN 'STANDBY_BUCKET_CHANGED'
-         WHEN '15' THEN 'SCREEN_INTERACTIVE'
-         WHEN '16' THEN 'SCREEN_NON_INTERACTIVE'
-         WHEN '17' THEN 'KEYGUARD_SHOWN'
-         WHEN '18' THEN 'KEYGUARD_HIDDEN'
-         WHEN '19' THEN 'FOREGROUND_SERVICE_START'
-         WHEN '20' THEN 'FOREGROUND_SERVICE_STOP'
-         WHEN '23' THEN 'ACTIVITY_STOPPED'
-         WHEN '26' THEN 'DEVICE_SHUTDOWN'
-         WHEN '27' THEN 'DEVICE_STARTUP'
-         ELSE types
-    END types,
+    types,
     classs,
+    event_flags,
+    shortcut_id,
+    standby_bucket,
+    standby_reason,
+    notification_channel,
+    instance_id,
+    task_root_package,
+    task_root_class,
+    locus_id,
+    interaction_category,
+    interaction_action,
     source,
     fullatt
     from data
@@ -535,8 +710,12 @@ def process_usagestats(folder, uid, version):
 
     data_list = []
     for row in all_rows:
-        data_list.append((uid, _str_to_utc(row[0]), row[1], row[2], row[3], _str_to_utc(row[4]),
-                          _str_to_utc(row[5]), row[6], row[7], row[8], row[9], row[10], row[11]))
+        data_list.append((
+            uid, _str_to_utc(row[0]), row[1], row[2], row[3], _str_to_utc(row[4]),
+            row[5], _str_to_utc(row[6]), row[7], _str_to_utc(row[8]), row[9], row[10],
+            row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18],
+            row[19], row[20], row[21], row[22], row[23], row[24]
+        ))
 
     logfunc(f'Records processed for user {uid}: {len(data_list)}')
     db.close()
