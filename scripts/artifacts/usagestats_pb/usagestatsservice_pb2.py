@@ -13,11 +13,10 @@ from google.protobuf.internal import builder as _builder
 _sym_db = _symbol_database.Default()
 
 
-from . import configuration_pb2 as configuration__pb2
-from . import privacy_pb2 as privacy__pb2
+from scripts.artifacts.usagestats_pb import configuration_pb2 as configuration__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17usagestatsservice.proto\x12\x18\x63om.android.server.usage\x1a\x13\x63onfiguration.proto\x1a\rprivacy.proto\"\x9f\x0f\n\x12IntervalStatsProto\x12\x13\n\x0b\x65nd_time_ms\x18\x01 \x01(\x03\x12K\n\nstringpool\x18\x02 \x01(\x0b\x32\x37.com.android.server.usage.IntervalStatsProto.StringPool\x12\x15\n\rmajor_version\x18\x03 \x01(\x05\x12\x15\n\rminor_version\x18\x04 \x01(\x05\x12N\n\x0binteractive\x18\n \x01(\x0b\x32\x39.com.android.server.usage.IntervalStatsProto.CountAndTime\x12R\n\x0fnon_interactive\x18\x0b \x01(\x0b\x32\x39.com.android.server.usage.IntervalStatsProto.CountAndTime\x12Q\n\x0ekeyguard_shown\x18\x0c \x01(\x0b\x32\x39.com.android.server.usage.IntervalStatsProto.CountAndTime\x12R\n\x0fkeyguard_hidden\x18\r \x01(\x0b\x32\x39.com.android.server.usage.IntervalStatsProto.CountAndTime\x12I\n\x08packages\x18\x14 \x03(\x0b\x32\x37.com.android.server.usage.IntervalStatsProto.UsageStats\x12R\n\x0e\x63onfigurations\x18\x15 \x03(\x0b\x32:.com.android.server.usage.IntervalStatsProto.Configuration\x12\x45\n\tevent_log\x18\x16 \x03(\x0b\x32\x32.com.android.server.usage.IntervalStatsProto.Event\x1a+\n\nStringPool\x12\x0c\n\x04size\x18\x01 \x01(\x05\x12\x0f\n\x07strings\x18\x02 \x03(\t\x1a.\n\x0c\x43ountAndTime\x12\r\n\x05\x63ount\x18\x01 \x01(\x05\x12\x0f\n\x07time_ms\x18\x02 \x01(\x03\x1a\xb4\x04\n\nUsageStats\x12\x0f\n\x07package\x18\x01 \x01(\t\x12\x15\n\rpackage_index\x18\x02 \x01(\x05\x12\x1b\n\x13last_time_active_ms\x18\x03 \x01(\x03\x12\x1c\n\x14total_time_active_ms\x18\x04 \x01(\x03\x12\x12\n\nlast_event\x18\x05 \x01(\x05\x12\x18\n\x10\x61pp_launch_count\x18\x06 \x01(\x05\x12^\n\x0f\x63hooser_actions\x18\x07 \x03(\x0b\x32\x45.com.android.server.usage.IntervalStatsProto.UsageStats.ChooserAction\x12!\n\x19last_time_service_used_ms\x18\x08 \x01(\x03\x12\"\n\x1atotal_time_service_used_ms\x18\t \x01(\x03\x12\x1c\n\x14last_time_visible_ms\x18\n \x01(\x03\x12\x1d\n\x15total_time_visible_ms\x18\x0b \x01(\x03\x1a\xb0\x01\n\rChooserAction\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x63\n\x06\x63ounts\x18\x03 \x03(\x0b\x32S.com.android.server.usage.IntervalStatsProto.UsageStats.ChooserAction.CategoryCount\x1a,\n\rCategoryCount\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x03 \x01(\x05\x1a\x9e\x01\n\rConfiguration\x12\x33\n\x06\x63onfig\x18\x01 \x01(\x0b\x32#.android.content.ConfigurationProto\x12\x1b\n\x13last_time_active_ms\x18\x02 \x01(\x03\x12\x1c\n\x14total_time_active_ms\x18\x03 \x01(\x03\x12\r\n\x05\x63ount\x18\x04 \x01(\x05\x12\x0e\n\x06\x61\x63tive\x18\x05 \x01(\x08\x1a\x92\x03\n\x05\x45vent\x12\x0f\n\x07package\x18\x01 \x01(\t\x12\x15\n\rpackage_index\x18\x02 \x01(\x05\x12\r\n\x05\x63lass\x18\x03 \x01(\t\x12\x13\n\x0b\x63lass_index\x18\x04 \x01(\x05\x12\x0f\n\x07time_ms\x18\x05 \x01(\x03\x12\r\n\x05\x66lags\x18\x06 \x01(\x05\x12\x0c\n\x04type\x18\x07 \x01(\x05\x12\x33\n\x06\x63onfig\x18\x08 \x01(\x0b\x32#.android.content.ConfigurationProto\x12\x13\n\x0bshortcut_id\x18\t \x01(\t\x12\x16\n\x0estandby_bucket\x18\x0b \x01(\x05\x12\x1c\n\x14notification_channel\x18\x0c \x01(\t\x12\"\n\x1anotification_channel_index\x18\r \x01(\x05\x12\x13\n\x0binstance_id\x18\x0e \x01(\x05\x12\x1f\n\x17task_root_package_index\x18\x0f \x01(\x05\x12\x1d\n\x15task_root_class_index\x18\x10 \x01(\x05\x12\x16\n\x0elocus_id_index\x18\x11 \x01(\x05\x42\x02P\x01')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17usagestatsservice.proto\x12\x18\x63om.android.server.usage\x1a\x13\x63onfiguration.proto\"\xc4\x0f\n\x12IntervalStatsProto\x12\x13\n\x0b\x65nd_time_ms\x18\x01 \x01(\x03\x12K\n\nstringpool\x18\x02 \x01(\x0b\x32\x37.com.android.server.usage.IntervalStatsProto.StringPool\x12\x15\n\rmajor_version\x18\x03 \x01(\x05\x12\x15\n\rminor_version\x18\x04 \x01(\x05\x12N\n\x0binteractive\x18\n \x01(\x0b\x32\x39.com.android.server.usage.IntervalStatsProto.CountAndTime\x12R\n\x0fnon_interactive\x18\x0b \x01(\x0b\x32\x39.com.android.server.usage.IntervalStatsProto.CountAndTime\x12Q\n\x0ekeyguard_shown\x18\x0c \x01(\x0b\x32\x39.com.android.server.usage.IntervalStatsProto.CountAndTime\x12R\n\x0fkeyguard_hidden\x18\r \x01(\x0b\x32\x39.com.android.server.usage.IntervalStatsProto.CountAndTime\x12I\n\x08packages\x18\x14 \x03(\x0b\x32\x37.com.android.server.usage.IntervalStatsProto.UsageStats\x12R\n\x0e\x63onfigurations\x18\x15 \x03(\x0b\x32:.com.android.server.usage.IntervalStatsProto.Configuration\x12\x45\n\tevent_log\x18\x16 \x03(\x0b\x32\x32.com.android.server.usage.IntervalStatsProto.Event\x1a+\n\nStringPool\x12\x0c\n\x04size\x18\x01 \x01(\x05\x12\x0f\n\x07strings\x18\x02 \x03(\t\x1a.\n\x0c\x43ountAndTime\x12\r\n\x05\x63ount\x18\x01 \x01(\x05\x12\x0f\n\x07time_ms\x18\x02 \x01(\x03\x1a\xd9\x04\n\nUsageStats\x12\x0f\n\x07package\x18\x01 \x01(\t\x12\x15\n\rpackage_index\x18\x02 \x01(\x05\x12\x1b\n\x13last_time_active_ms\x18\x03 \x01(\x03\x12\x1c\n\x14total_time_active_ms\x18\x04 \x01(\x03\x12\x12\n\nlast_event\x18\x05 \x01(\x05\x12\x18\n\x10\x61pp_launch_count\x18\x06 \x01(\x05\x12^\n\x0f\x63hooser_actions\x18\x07 \x03(\x0b\x32\x45.com.android.server.usage.IntervalStatsProto.UsageStats.ChooserAction\x12!\n\x19last_time_service_used_ms\x18\x08 \x01(\x03\x12\"\n\x1atotal_time_service_used_ms\x18\t \x01(\x03\x12\x1c\n\x14last_time_visible_ms\x18\n \x01(\x03\x12\x1d\n\x15total_time_visible_ms\x18\x0b \x01(\x03\x12#\n\x1blast_time_component_used_ms\x18\x0c \x01(\x03\x1a\xb0\x01\n\rChooserAction\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x63\n\x06\x63ounts\x18\x03 \x03(\x0b\x32S.com.android.server.usage.IntervalStatsProto.UsageStats.ChooserAction.CategoryCount\x1a,\n\rCategoryCount\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x03 \x01(\x05\x1a\x9e\x01\n\rConfiguration\x12\x33\n\x06\x63onfig\x18\x01 \x01(\x0b\x32#.android.content.ConfigurationProto\x12\x1b\n\x13last_time_active_ms\x18\x02 \x01(\x03\x12\x1c\n\x14total_time_active_ms\x18\x03 \x01(\x03\x12\r\n\x05\x63ount\x18\x04 \x01(\x05\x12\x0e\n\x06\x61\x63tive\x18\x05 \x01(\x08\x1a\x92\x03\n\x05\x45vent\x12\x0f\n\x07package\x18\x01 \x01(\t\x12\x15\n\rpackage_index\x18\x02 \x01(\x05\x12\r\n\x05\x63lass\x18\x03 \x01(\t\x12\x13\n\x0b\x63lass_index\x18\x04 \x01(\x05\x12\x0f\n\x07time_ms\x18\x05 \x01(\x03\x12\r\n\x05\x66lags\x18\x06 \x01(\x05\x12\x0c\n\x04type\x18\x07 \x01(\x05\x12\x33\n\x06\x63onfig\x18\x08 \x01(\x0b\x32#.android.content.ConfigurationProto\x12\x13\n\x0bshortcut_id\x18\t \x01(\t\x12\x16\n\x0estandby_bucket\x18\x0b \x01(\x05\x12\x1c\n\x14notification_channel\x18\x0c \x01(\t\x12\"\n\x1anotification_channel_index\x18\r \x01(\x05\x12\x13\n\x0binstance_id\x18\x0e \x01(\x05\x12\x1f\n\x17task_root_package_index\x18\x0f \x01(\x05\x12\x1d\n\x15task_root_class_index\x18\x10 \x01(\x05\x12\x16\n\x0elocus_id_index\x18\x11 \x01(\x05\x42\x02P\x01')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -25,20 +24,20 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'usagestatsservice_pb2', _gl
 if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['DESCRIPTOR']._options = None
   _globals['DESCRIPTOR']._serialized_options = b'P\001'
-  _globals['_INTERVALSTATSPROTO']._serialized_start=90
-  _globals['_INTERVALSTATSPROTO']._serialized_end=2041
-  _globals['_INTERVALSTATSPROTO_STRINGPOOL']._serialized_start=817
-  _globals['_INTERVALSTATSPROTO_STRINGPOOL']._serialized_end=860
-  _globals['_INTERVALSTATSPROTO_COUNTANDTIME']._serialized_start=862
-  _globals['_INTERVALSTATSPROTO_COUNTANDTIME']._serialized_end=908
-  _globals['_INTERVALSTATSPROTO_USAGESTATS']._serialized_start=911
-  _globals['_INTERVALSTATSPROTO_USAGESTATS']._serialized_end=1475
-  _globals['_INTERVALSTATSPROTO_USAGESTATS_CHOOSERACTION']._serialized_start=1299
-  _globals['_INTERVALSTATSPROTO_USAGESTATS_CHOOSERACTION']._serialized_end=1475
-  _globals['_INTERVALSTATSPROTO_USAGESTATS_CHOOSERACTION_CATEGORYCOUNT']._serialized_start=1431
-  _globals['_INTERVALSTATSPROTO_USAGESTATS_CHOOSERACTION_CATEGORYCOUNT']._serialized_end=1475
-  _globals['_INTERVALSTATSPROTO_CONFIGURATION']._serialized_start=1478
-  _globals['_INTERVALSTATSPROTO_CONFIGURATION']._serialized_end=1636
-  _globals['_INTERVALSTATSPROTO_EVENT']._serialized_start=1639
-  _globals['_INTERVALSTATSPROTO_EVENT']._serialized_end=2041
+  _globals['_INTERVALSTATSPROTO']._serialized_start=75
+  _globals['_INTERVALSTATSPROTO']._serialized_end=2063
+  _globals['_INTERVALSTATSPROTO_STRINGPOOL']._serialized_start=802
+  _globals['_INTERVALSTATSPROTO_STRINGPOOL']._serialized_end=845
+  _globals['_INTERVALSTATSPROTO_COUNTANDTIME']._serialized_start=847
+  _globals['_INTERVALSTATSPROTO_COUNTANDTIME']._serialized_end=893
+  _globals['_INTERVALSTATSPROTO_USAGESTATS']._serialized_start=896
+  _globals['_INTERVALSTATSPROTO_USAGESTATS']._serialized_end=1497
+  _globals['_INTERVALSTATSPROTO_USAGESTATS_CHOOSERACTION']._serialized_start=1321
+  _globals['_INTERVALSTATSPROTO_USAGESTATS_CHOOSERACTION']._serialized_end=1497
+  _globals['_INTERVALSTATSPROTO_USAGESTATS_CHOOSERACTION_CATEGORYCOUNT']._serialized_start=1453
+  _globals['_INTERVALSTATSPROTO_USAGESTATS_CHOOSERACTION_CATEGORYCOUNT']._serialized_end=1497
+  _globals['_INTERVALSTATSPROTO_CONFIGURATION']._serialized_start=1500
+  _globals['_INTERVALSTATSPROTO_CONFIGURATION']._serialized_end=1658
+  _globals['_INTERVALSTATSPROTO_EVENT']._serialized_start=1661
+  _globals['_INTERVALSTATSPROTO_EVENT']._serialized_end=2063
 # @@protoc_insertion_point(module_scope)
