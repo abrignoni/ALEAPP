@@ -2,10 +2,10 @@
 __artifacts_v2__ = {
     "get_fcm_dump": {
         "name": "FCM Dump",
-        "description": "All records from the fcm_queued_messages.ldb leveldb (com.google.android.gms)",
+        "description": "Records recovered from the fcm_queued_messages.ldb leveldb (com.google.android.gms)",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-07-28",
-        "last_update_date": "2022-07-28",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",
         "notes": "",

@@ -22,7 +22,7 @@ __artifacts_v2__ = {
     },
     "cff_search_history": {
         "name": "SBB Mobile - Search History",
-        "description": "List of all search made on application",
+        "description": "Search history records stored by the application",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2026-03-26",
         "last_update_date": "2026-08-01",

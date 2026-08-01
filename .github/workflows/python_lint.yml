@@ -35,6 +35,14 @@ jobs:
         if: steps.changed-files-py.outputs.any_changed == 'true'
         run: python -m pip install -r requirements.txt
 
+      # Artifact name and description fields reach the HTML report and the LAVA manifest
+      # and get quoted in casework, so they must not claim more than the data shows.
+      # Runs over the whole artifact tree, not just changed files, so an allowlist entry
+      # removed elsewhere still gets caught. See the script's docstring.
+      - name: Check artifact claim language
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_claim_language.py
+
       # Fails only on warnings this pull request introduces. Long-lived modules carry
       # deliberate pre-existing warnings, and failing on those pushed contributors toward
       # unrelated refactors or blanket file-level disables. See the script's docstring.
