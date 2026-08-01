@@ -4,10 +4,14 @@ __artifacts_v2__ = {
         "description": "List of places searched in the past with last time used",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2026-03-26",
-        "last_update_date": "2026-03-26",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Travel",
-        "notes": "",
+        "notes": (
+            "Timestamps are rendered in UTC. The Type names for the stored 'a', 'p', 'c' "
+            "and 's' values were established through testing; any other value is shown as "
+            "stored."
+        ),
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
         "html_columns": ['location of places (link)'],
@@ -21,13 +25,19 @@ __artifacts_v2__ = {
         "description": "List of all search made on application",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2026-03-26",
-        "last_update_date": "2026-03-26",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Travel",
-        "notes": "",
+        "notes": (
+            "Timestamps are rendered in UTC. The Departure (type) and Destination (type) "
+            "names for the stored 'a', 'p', 'c' and 's' values were established through "
+            "testing; any other value is shown as stored. Result Coordinates are the "
+            "latitude and longitude stored on the search row, which describe a place in the "
+            "itinerary and not the location of the device when the search was made."
+        ),
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
-        "html_columns": ['location of search (link)'],
+        "html_columns": ['Result Coordinates (link)'],
         "artifact_icon": "search",
         "sample_data": {
             "galaxys10_a10": "Android 10 | ch.sbb.mobile.android.b2c vc 111004052 | 4 rows",
@@ -51,13 +61,17 @@ __artifacts_v2__ = {
     },
     "cff_purchased_tickets": {
         "name": "SBB Mobile - Ticket Purchased recently",
-        "description": "List of purchased ticket up to 7 days",
+        "description": "List of purchased tickets recorded in the PurchasedTickets table",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2026-03-26",
-        "last_update_date": "2026-03-26",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Travel",
-        "notes": "",
+        "notes": (
+            "Refund State shows the stored refundState value; a value of 'COMPLETE' is "
+            "reported as 'Refunded' and every other value is shown as stored, because the "
+            "meaning of the other states is not established."
+        ),
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
         "artifact_icon": "star",
@@ -84,7 +98,6 @@ def cff_purchased_tickets(context):
                 validUntil,
                 traveler,
                 CASE
-                    WHEN refundState == "NORMAL" THEN "Not Refunded"
                     WHEN refundState == "COMPLETE" THEN "Refunded"
                     ELSE refundState
                 END AS refundState,
@@ -96,7 +109,7 @@ def cff_purchased_tickets(context):
                 PurchasedTickets
         '''
 
-        data_headers = ("Valid from", "Valid until", "Traveler", "is Refunded",
+        data_headers = ("Valid from", "Valid until", "Traveler", "Refund State",
                         "Payment method", "Ticket description", "Ticket departure", "Ticket destination")
         db_records = list(get_sqlite_db_records(source_path, query))
 
@@ -114,7 +127,7 @@ def cff_searched_places(context):
     if source_path:
         query = '''
             SELECT
-                datetime(timestamp/1000, 'unixepoch', 'localtime'),
+                datetime(timestamp/1000, 'unixepoch'),
                 title,
                 CASE
                     WHEN favorite THEN "True"
@@ -133,7 +146,8 @@ def cff_searched_places(context):
                 SearchedPlaces
         '''
 
-        data_headers = (("Searched timestamp", "datetime"), "Title", "Is favorite", "Type", "location of places (link)")
+        data_headers = (("Searched timestamp (UTC)", "datetime"), "Title", "Is favorite", "Type",
+                        "location of places (link)")
         db_records = get_sqlite_db_records(source_path, query)
 
         data_list = [
@@ -154,7 +168,7 @@ def cff_search_history(context):
     if source_path:
         query = '''
                 SELECT
-                datetime(timestamp/1000, 'unixepoch', 'localtime'),
+                datetime(timestamp/1000, 'unixepoch'),
                 departure,
                 CASE
                     WHEN departureType == "a" THEN "Address"
@@ -177,8 +191,8 @@ def cff_search_history(context):
                 SearchHistory
         '''
 
-        data_headers = (("Search timestamp", "datetime"), "Departure", "Departure (type)", "Destination",
-                        "Destination (type)", "location of search (link)")
+        data_headers = (("Search timestamp (UTC)", "datetime"), "Departure", "Departure (type)", "Destination",
+                        "Destination (type)", "Result Coordinates (link)")
         db_records = get_sqlite_db_records(source_path, query)
 
         data_list = [

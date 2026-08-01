@@ -1,13 +1,13 @@
 __artifacts_v2__ = {
     "get_imagemngCache": {
         "name": "Image Manager Cache",
-        "description": "Cached images from app image_manager_disk_cache (Glide) and .cnt cache files",
+        "description": "Cached images from app image_manager_disk_cache (Glide) directories, plus files with a .cnt extension observed holding cached image data in the samples examined",
         "author": "",
         "creation_date": "2022-03-05",
-        "last_update_date": "2022-03-05",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Image Manager Cache",
-        "notes": "",
+        "notes": "Reference: Glide, 'DiskCache.Factory.DEFAULT_DISK_CACHE_DIR', https://github.com/bumptech/glide/blob/master/library/src/main/java/com/bumptech/glide/load/engine/cache/DiskCache.java",
         "paths": ('*/cache/image_manager_disk_cache/*.*', '*/*.cnt'),
         "output_types": "standard",
         "artifact_icon": "photo",

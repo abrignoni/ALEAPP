@@ -4,10 +4,11 @@ __artifacts_v2__ = {
         "description": "Parses details about the user profile for Wire Messenger",
         "author": "@cf-eglendye",
         "creation_date": "2024-04-24",
-        "last_update_date": "2024-04-24",
+        "last_update_date": "2026-08-01",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35",
+        "notes": "Tested on: Android 13 Wire v.3.81.35. Only the first registered client (clients[0]) "
+                 "is reported; any further clients registered to the account are not listed.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -38,10 +39,13 @@ __artifacts_v2__ = {
         "description": "Parses messages and call history for Wire Messenger",
         "author": "@cf-eglendye",
         "creation_date": "2024-04-24",
-        "last_update_date": "2024-04-24",
+        "last_update_date": "2026-08-01",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35",
+        "notes": "Tested on: Android 13 Wire v.3.81.35. Rows taken from the MsgDeletion table carry "
+                 "their timestamp in the Date / Time Deleted column and have no sent time. The call "
+                 "duration column is rendered by dividing the stored duration by 1000, which assumes "
+                 "the value is milliseconds; that unit has not been independently verified.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -166,8 +170,8 @@ def get_wire_profile(context):
                           row[8], thumb))
 
     data_headers = ('User ID', 'Display Name', 'Email Address', 'Phone Number', 'Verification Status',
-                    'Verification Device', 'Device Model', ('Date Registered', 'datetime'),
-                    'Profile Picture Name', ('Profile Picture', 'media'))
+                    'First Client Label', 'Device Model', ('Date Registered', 'datetime'),
+                    'Profile Picture ID', ('Profile Picture', 'media'))
     return data_headers, data_list, source_path
 
 
@@ -192,13 +196,15 @@ def get_wire_messages(context):
     source_path = _user_db(files_found)
     data_list = []
     for r in _run(source_path, MESSAGES_SQL):
-        data_list.append((_str_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], _str_to_utc(r[6]), r[7], r[8], r[9]))
+        data_list.append((_str_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], _str_to_utc(r[6]), r[7], r[8], r[9],
+                          ''))
 
-    # Surface deleted messages from MsgDeletion read-only (the original modified the source DB to do this)
+    # Surface deleted messages from MsgDeletion read-only (the original modified the source DB to do this).
+    # MsgDeletion.timestamp is a deletion time, not a sent time, so it gets its own column.
     for d in _run(source_path, 'SELECT message_id, timestamp FROM MsgDeletion'):
-        data_list.append((_ms_to_utc(d[1]), d[0], '', 'Deleted', '', '', '', '', '', ''))
+        data_list.append(('', d[0], '', 'Deleted', '', '', '', '', '', '', _ms_to_utc(d[1])))
 
     data_headers = (('Date / Time Sent', 'datetime'), 'Message ID', 'User Name', 'Message Type',
                     'Message Content', 'Reaction', ('Date / Time Reacted', 'datetime'), 'Reacted By',
-                    'Call Duration', 'Asset ID')
+                    'Call Duration (assumes ms)', 'Asset Name', ('Date / Time Deleted', 'datetime'))
     return data_headers, data_list, source_path

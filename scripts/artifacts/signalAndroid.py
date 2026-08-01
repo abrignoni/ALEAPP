@@ -4,10 +4,10 @@ __artifacts_v2__ = {
         "description": "Parses messages from the encrypted Signal database, including sender, recipient, direction and body.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-07-25",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json, produced by the extraction tool. Without it the database cannot be read.",
+        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json, produced by the extraction tool. Without it the database cannot be read. Signal stores expires_in in milliseconds, so the disappearing-message timer is divided by 1000 and reported in seconds. Direction and status are decoded from the MessageTypes base type, the low five bits of the message type column. Reference: Signal-Android, 'MessageTable.kt (expires_in stored in milliseconds)', https://github.com/signalapp/Signal-Android/blob/main/app/src/main/java/org/thoughtcrime/securesms/database/MessageTable.kt. Reference: Signal-Android, 'MessageTypes.java and CallTable.kt', https://github.com/signalapp/Signal-Android/blob/main/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -17,10 +17,10 @@ __artifacts_v2__ = {
         "description": "Parses the Signal call log, including call type, direction and outcome.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-07-25",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json.",
+        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json. Call type, direction and outcome are the Type, Direction and Event values defined by CallTable, which lists call types 0 Audio, 1 Video, 3 Group and 4 Ad hoc with no type 2; codes outside those sets are reported with their raw value. Reference: Signal-Android, 'MessageTypes.java and CallTable.kt', https://github.com/signalapp/Signal-Android/blob/main/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -56,10 +56,10 @@ __artifacts_v2__ = {
         "description": "Parses metadata for attachments referenced by Signal messages.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-07-25",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Attachment files are decrypted with the modernKey from secrets.json and each attachment's data_random. The stored file format is detected from its content, which can differ from the content type recorded in the database.",
+        "notes": "Attachment files are decrypted with the modernKey from secrets.json and each attachment's data_random. The stored file format is detected from its content, which can differ from the content type recorded in the database. The Direction column is decoded from the MessageTypes base type of the message the attachment belongs to. Reference: Signal-Android, 'MessageTypes.java and CallTable.kt', https://github.com/signalapp/Signal-Android/blob/main/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
                   '*/org.thoughtcrime.securesms/app_parts/*'),
         "output_types": "standard",
@@ -355,6 +355,17 @@ def _table_columns(connection, table):
     return {row[1] for row in connection.execute(f'PRAGMA table_info({table})')}
 
 
+def _expires_in_seconds(value):
+    """Signal writes expires_in in milliseconds, so report the timer in seconds."""
+    if not value:
+        return ''
+    try:
+        milliseconds = int(value)
+    except (TypeError, ValueError):
+        return value
+    return milliseconds // 1000 if milliseconds % 1000 == 0 else milliseconds / 1000
+
+
 def _select_list(available, table_alias, columns):
     """Build SELECT expressions, substituting NULL for columns this Signal version lacks.
 
@@ -433,7 +444,7 @@ def get_signalMessages(context):
                 convert_unix_ts_to_utc(row[19]) if row[19] else '',
                 original_by_sent_time.get(row[19], '') if row[19] else '',
                 'Yes' if row[20] else 'No',
-                row[18] or '',
+                _expires_in_seconds(row[18]),
                 row[5],
             ))
         connection.close()

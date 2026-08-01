@@ -5,10 +5,10 @@ __artifacts_v2__ = {
         "author": "Nicolai Martini",
         "version": "1.2",
         "creation_date": "2026-04-17",
-        "last_update_date": "2026-06-09",
+        "last_update_date": "2026-08-01",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "Rema1000 | Scan Selv",
-        "notes": "forensics data of supermarket habit and location insights.",
+        "notes": "Raw contents of the ReceiptEntity table, one column per header.",
         "paths": ("*/dk.rema1000.app/databases/receipts.db*",),
         "output_types": "standard",
         "artifact_icon": "shopping-cart"
@@ -19,10 +19,15 @@ __artifacts_v2__ = {
         "author": "Nicolai Martini",
         "version": "1.2",
         "creation_date": "2026-04-17",
-        "last_update_date": "2026-06-09",
+        "last_update_date": "2026-08-01",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "Rema1000 | Scan Selv",
-        "notes": "forensics data of supermarket habit and location insights.",
+        "notes": "Date and time is paymentDate read as a Unix epoch in milliseconds and converted to "
+                 "Europe/Copenhagen; both the epoch unit and that timezone are assumptions, neither is "
+                 "recorded in the database. Total price is totalPrice divided by 100, which assumes the "
+                 "value is stored in minor units; no currency is recorded in the database. Items lists "
+                 "only those searchText tokens that also appear as a shelfText1 value in "
+                 "ReceiptItemEntity, so tokens with no match are not shown.",
         "paths": ("*/dk.rema1000.app/databases/receipts.db*"),
         "output_types": "standard",
         "artifact_icon": "shopping-cart"
@@ -42,7 +47,11 @@ def rema1000_receipt_raw(context):
                     "storeNumber", "totalPrice", "totalPriceString",
                     "totalDiscount", "totalVat", "Chargeback",
                     "searchText", "zipString", "pp_id", "pp_cardType", "pp_maskedPan")
-    query = """SELECT * FROM ReceiptEntity;"""
+    query = """SELECT id, displayId, paymentDate, paymentSource,
+                      storeNumber, totalPrice, totalPriceString,
+                      totalDiscount, totalVat, Chargeback,
+                      searchText, zipString, pp_id, pp_cardType, pp_maskedPan
+               FROM ReceiptEntity;"""
     raw_records = get_sqlite_db_records(source_path, query)
 
     entries_list = []
@@ -66,8 +75,9 @@ def rema1000_receipt_prettified(context):
         "Å": "AA", "å": "aa",
         ".": ""
     })
-    data_headers = ("Date and time, DK", "Location", "Items", "Total price, DKK",
-                    "Payment method", "Payment Card Type", "Payment Card PAN")
+    data_headers = ("Date and time (Europe/Copenhagen)", "Location", "Items",
+                    "Total price (totalPrice/100)", "Payment method", "Payment Card Type",
+                    "Masked PAN")
     query = """SELECT shelfText1 FROM ReceiptItemEntity;"""
     product_records = get_sqlite_db_records(source_path, query)
     for product in product_records:

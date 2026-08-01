@@ -4,10 +4,14 @@ __artifacts_v2__ = {
         "description": "Parses file metadata from HONOR's gallery.db",
         "author": "@bitpwny",
         "creation_date": "2026-06-20",
-        "last_update_date": "2026-06-20",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "HONOR",
-        "notes": "",
+        "notes": "The Hash (as stored) column is the gallery_media.hash column reported unchanged; the "
+                 "hashing algorithm is not recorded in the database and has not been established. "
+                 "Recycled? is reported as 'Yes (flag = n)' for every non-zero recycleFlag value based "
+                 "on observations only; the meaning of the individual non-zero values has not been "
+                 "established.",
         "paths": ('*/com.hihonor.medialibrary/databases/gallery.db*',),
         "output_types": "standard",
         "artifact_icon": "file"
@@ -42,9 +46,9 @@ def honorMediaLibrary(context):
         bucket_display_name                     AS bucket_display_name,
         NULLIF(duration, 0)                     AS duration,
         resolution                              AS resolution,
-        hash                                    AS md5,
+        hash                                    AS file_hash,
         CASE
-            -- recycleFlag: All values other than 0 treated as recycled (based on observations)
+            -- recycleFlag: all values other than 0 treated as recycled; see the artifact notes
             WHEN recycleFlag = 0 THEN NULL
             ELSE 'Yes (flag = ' || recycleFlag || ')'
         END                                     AS recycled,
@@ -70,7 +74,7 @@ def honorMediaLibrary(context):
             record[10],                         #bucket_display_name
             record[11],                         #duration
             record[12],                         #resolution
-            record[13],                         #md5
+            record[13],                         #file_hash
             record[14],                         #recycled
             convert_unix_ts_to_utc(record[15]), #recycled_timestamp
             record[16],                         #source_file_path
@@ -91,7 +95,7 @@ def honorMediaLibrary(context):
         'Bucket Display Name',
         'Duration',
         'Resolution',
-        'MD5',
+        'Hash (as stored)',
         'Recycled?',
         ('Recycled Timestamp', 'datetime'),
         'Source File Path',

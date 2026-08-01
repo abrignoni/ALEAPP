@@ -22,10 +22,10 @@ __artifacts_v2__ = {
     },
     "get_gboardCache_keystrokes": {
         "name": "Gboard - Keystroke Cache",
-        "description": "Keystrokes typed by the user in app input fields, temporarily cached by Gboard",
+        "description": "Text entries recorded in the Gboard training cache",
         "author": "",
         "creation_date": "2021-01-09",
-        "last_update_date": "2021-01-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Gboard Keyboard",
         "notes": "",
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "description": "Gboard keyboard input sessions (trainingcachev3.db)",
         "author": "",
         "creation_date": "2021-01-09",
-        "last_update_date": "2021-01-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Gboard Keyboard",
         "notes": "",
@@ -291,5 +291,6 @@ def get_gboardCache_sessions(context):
         for row in rows:
             data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3]))
 
-    data_headers = (('Start', 'datetime'), ('Finish', 'datetime'), 'Session ID', 'Application')
+    data_headers = (('_session_id (as timestamp)', 'datetime'), ('_timestamp_', 'datetime'),
+                    'Session ID', 'Application')
     return data_headers, data_list, source_path

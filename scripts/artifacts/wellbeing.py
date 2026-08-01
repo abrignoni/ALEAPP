@@ -4,10 +4,17 @@ __artifacts_v2__ = {
         "description": "Parses Digital Wellbeing events",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-02-02",
-        "last_update_date": "2020-02-02",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Digital Wellbeing",
-        "notes": "",
+        "notes": (
+            "Event Type shows the UsageEvents.Event constant whose value matches the stored "
+            "numeric 'type' field; a value with no matching constant is shown as stored. "
+            "Constant names are reported as defined by AOSP; a keyguard or screen-state "
+            "constant does not by itself establish a user action. "
+            "Reference: Google, 'UsageEvents.Event constants', "
+            "https://developer.android.com/reference/android/app/usage/UsageEvents.Event"
+        ),
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*',),
         "output_types": "standard",
         "artifact_icon": "heart",
@@ -20,14 +27,22 @@ __artifacts_v2__ = {
         },
     },
     "get_wellbeing_url": {
-        "name": "Digital Wellbeing - URL Events",
-        "description": "Parses Digital Wellbeing URL events",
+        "name": "Digital Wellbeing - Component Events",
+        "description": "Parses Digital Wellbeing events recorded against a package component",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-02-02",
-        "last_update_date": "2020-02-02",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Digital Wellbeing",
-        "notes": "",
+        "notes": (
+            "Component Name is the components.component_name value stored for the event. "
+            "Event Type shows the UsageEvents.Event constant whose value matches the stored "
+            "numeric 'type' field; a value with no matching constant is shown as stored. "
+            "Constant names are reported as defined by AOSP; a keyguard or screen-state "
+            "constant does not by itself establish a user action. "
+            "Reference: Google, 'UsageEvents.Event constants', "
+            "https://developer.android.com/reference/android/app/usage/UsageEvents.Event"
+        ),
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -75,8 +90,8 @@ def get_wellbeing(context):
             case
                 when events.type = 1 THEN 'ACTIVITY_RESUMED'
                 when events.type = 2 THEN 'ACTIVITY_PAUSED'
-                when events.type = 12 THEN 'NOTIFICATION'
-                when events.type = 18 THEN 'KEYGUARD_HIDDEN & || Device Unlock'
+                when events.type = 12 THEN 'NOTIFICATION_INTERRUPTION'
+                when events.type = 18 THEN 'KEYGUARD_HIDDEN'
                 when events.type = 19 THEN 'FOREGROUND_SERVICE_START'
                 when events.type = 20 THEN 'FOREGROUND_SERVICE_STOP'
                 when events.type = 23 THEN 'ACTIVITY_STOPPED'
@@ -109,7 +124,7 @@ def get_wellbeing_url(context):
             component_events._id,
             components.package_id,
             packages.package_name,
-            components.component_name as website,
+            components.component_name,
             CASE
                 when component_events.type=1 THEN 'ACTIVITY_RESUMED'
                 when component_events.type=2 THEN 'ACTIVITY_PAUSED'
@@ -125,5 +140,6 @@ def get_wellbeing_url(context):
         for row in all_rows:
             data_list.append((_ms_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5]))
 
-    data_headers = (('Timestamp', 'datetime'), 'Event ID', 'Package ID', 'Package Name', 'Website', 'Event')
+    data_headers = (
+        ('Timestamp', 'datetime'), 'Event ID', 'Package ID', 'Package Name', 'Component Name', 'Event')
     return data_headers, data_list, source_path

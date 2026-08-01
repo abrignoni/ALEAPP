@@ -4,10 +4,15 @@ __artifacts_v2__ = {
         "description": "Get Information related to user defined goals from the Adidas Running app stored in goals",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-04-21",
-        "last_update_date": "2023-04-21",
+        "last_update_date": "2026-08-01",
         "requirements": "Python 3.7 or higher",
         "category": "Adidas-Running",
-        "notes": "",
+        "notes": "Columns of goalV2 are read by position over 'Select * from goalV2'; the mapping was "
+                 "established against the app version this parser was written for and may not hold on "
+                 "other versions. The eighth column of the table is not reported. The Start Date and "
+                 "End Date values are stored as plain integers and are split into YYYY-MM-DD by this "
+                 "parser; that interpretation comes from the observed values and is not confirmed by "
+                 "app documentation.",
         "paths": ('*/com.runtastic.android/databases/goals*',),
         "output_types": "standard",
         "artifact_icon": "activity",

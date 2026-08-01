@@ -4,10 +4,10 @@ __artifacts_v2__ = {
         "description": "Parses native downloads database",
         "author": "@KevinPagano3",
         "creation_date": "2023-01-09",
-        "last_update_date": "2025-09-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Downloads",
-        "notes": "",
+        "notes": "Reference: AOSP, 'Downloads.Impl.COLUMN_LAST_MODIFICATION (milliseconds; records the last status change)', https://developer.android.com/reference/android/app/DownloadManager#COLUMN_LAST_MODIFIED_TIMESTAMP",
         "paths": ('*/data/com.android.providers.downloads/databases/downloads.db*'),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -42,7 +42,7 @@ def downloads(context):
             cursor = db.cursor()
             cursor.execute('''
             select
-            datetime(lastmod/1000,'unixepoch') as "Modified/Downloaded Timestamp",
+            datetime(lastmod/1000,'unixepoch') as "Last Modified Timestamp",
             title,
             description,
             uri,
@@ -81,5 +81,5 @@ def downloads(context):
         else:
             continue
         
-    data_headers = (('Modified/Downloaded Timestamp','datetime'),'Title','Description','Provider URI','Save Location','Mime Type','App Provider Package','Current Bytes','Total Bytes','Status','Error Message','ETAG','Visible in Downloads UI','Deleted','Source File')    
+    data_headers = (('Last Modified Timestamp','datetime'),'Title','Description','Provider URI','Save Location','Mime Type','App Provider Package','Current Bytes','Total Bytes','Status','Error Message','ETAG','Visible in Downloads UI','Deleted','Source File')    
     return data_headers, data_list, 'See source file(s) below'

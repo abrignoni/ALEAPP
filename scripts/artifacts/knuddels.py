@@ -5,10 +5,25 @@ __artifacts_v2__ = {
         "description": "Extracts Knuddels chats (text, images/snaps and GIFs) from database files",
         "author": "@annkirpv",
         "creation_date": "2025-05-04",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Chats",
-        "notes": "",
+        "notes": ("From Me is derived from the database file name: the owner's nickname is taken to "
+                  "be the part of the name that follows 'knuddels', URL-decoded, and a message is "
+                  "marked 1 when its User Name matches that nickname and 0 when it does not. Where "
+                  "the file name does not follow that convention the owner cannot be established "
+                  "and the column is left blank for every row of that database rather than "
+                  "reporting the messages as received.\n"
+                  "In the conversation view only rows with From Me set to 1 are shown as sent by "
+                  "the device owner; a blank value is not attributed to the owner.\n"
+                  "Message Type is derived from markers found in the message text. A message that "
+                  "carries the app's marker prefix but no marker this parser recognises is reported "
+                  "as 'Unclassified' rather than as Text.\n"
+                  "GIF URL(s) (reconstructed by parser) is constructed by this parser: the truncated "
+                  "token found in the message text is joined to a base URL "
+                  "(https://chat.knuddels.de/pics/) that is hardcoded here. No such URL is stored in "
+                  "the message, the database or anywhere else in the data, and the result has not "
+                  "been verified to resolve."),
         "paths": (
             "*/com.knuddels.android/databases/knuddels*",
             "*/media/*/Pictures/Knuddels/*",
@@ -33,10 +48,12 @@ __artifacts_v2__ = {
         "description": "Extracts known Knuddels users (chat partners) from the users table",
         "author": "@annkirpv",
         "creation_date": "2026-06-30",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Contacts",
-        "notes": "",
+        "notes": ("Sex is decoded from the users.sex column as 1 = Male and 2 = Female. That mapping "
+                  "is not documented in the data and was established through testing; any other "
+                  "value is reported as stored."),
         "paths": ("*/com.knuddels.android/databases/knuddels*",),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -46,10 +63,20 @@ __artifacts_v2__ = {
         "description": "Extracts the local Knuddels account and app-usage info from shared_prefs XML",
         "author": "@annkirpv",
         "creation_date": "2026-06-30",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Accounts",
-        "notes": "",
+        "notes": ("passwordU (as stored) is the raw value of the shared_prefs key 'passwordU'. "
+                  "passwordU (ROT13-decoded, unverified) is that same value passed through ROT13 by "
+                  "this parser. Nothing in the data records what encoding, if any, was applied to "
+                  "the stored value or that it is the account password, and the decoded column has "
+                  "not been verified against a known password.\n"
+                  "session_timestamp, sites_visited_weekly_time and origins_visited_date are "
+                  "reported under their shared_prefs key names because what event each one records "
+                  "is not established.\n"
+                  "Active Account is Yes only where a User.xml carrying the same nickname was "
+                  "collected alongside the database. Where no such file was collected the cell is "
+                  "left blank, which does not establish that the account is inactive."),
         "paths": (
             "*/com.knuddels.android/shared_prefs/User.xml",
             "*/com.knuddels.android/shared_prefs/AwOrigin*VisitLoggerPrefs.*",
@@ -128,6 +155,10 @@ def classify_message(message):
         return "Image (Snap)"
     if GIF_START in message and GIF_END in message:
         return "GIF"
+    if GIF_START in message:
+        # Carries the app's in-message marker prefix but no marker recognised here.
+        # Reporting it as plain text would assert a classification not established.
+        return "Unclassified"
     return "Text"
 
 
@@ -171,10 +202,13 @@ def knuddels_chats(context):
         media_index.setdefault(bare_id, []).append(img_path)
 
     for file_found in db_files:
-        owner_nick = os.path.basename(file_found.replace("\\", "/"))
-        if owner_nick.lower().startswith("knuddels"):
-            owner_nick = owner_nick[len("knuddels"):]
-        owner_nick = unquote_plus(owner_nick)
+        # The owner's nickname is only recoverable from the file name. When the name does
+        # not follow the 'knuddels<nickname>' convention, or carries no nickname at all,
+        # the owner is unknown and From Me is left blank instead of reading as received.
+        db_basename = os.path.basename(file_found.replace("\\", "/"))
+        owner_nick = None
+        if db_basename.lower().startswith("knuddels"):
+            owner_nick = unquote_plus(db_basename[len("knuddels"):]) or None
 
         query = '''
         SELECT
@@ -217,7 +251,7 @@ def knuddels_chats(context):
 
             db_name = file_found.split("databases")[1].split("knuddels")[1]
             conversation_key = "chat_" + str(cid) + "_" + db_name
-            from_me = 1 if nickname == owner_nick else 0
+            from_me = '' if owner_nick is None else (1 if nickname == owner_nick else 0)
 
             data_list.append((
                 timestamp, nickname, message, msg_type, media_cell, gif_cell,
@@ -231,11 +265,11 @@ def knuddels_chats(context):
         'Message',
         'Message Type',
         ('Media', 'media'),
-        'GIF URL(s)',
+        'GIF URL(s) (reconstructed by parser)',
         'Snap Expired',
         'Participants',
         'Conversation Key',
-        'From Me',  # 1 = sent by owner, 0 = received
+        'From Me',  # 1 = sent by owner, 0 = received, blank = owner not established
         'Source File',
         'Message ID',
         'Thread Table UID',
@@ -265,7 +299,8 @@ def knuddels_contacts(context):
         uid,
         id,
         age,
-        CASE WHEN sex = 1 THEN 'Male' WHEN sex = 2 THEN 'Female' END, -- 1 = male, 2 = female
+        -- 1 = male, 2 = female, established through testing; any other value reported as stored
+        CASE WHEN sex = 1 THEN 'Male' WHEN sex = 2 THEN 'Female' ELSE sex END,
         img_version,
         friedlisttype,
         onlinestatus,
@@ -392,8 +427,10 @@ def knuddels_account(context):
             data_list.append(active_row(nickname, info, last_msg, [db]))
             matched_instances.add(instance)
         else:
+            # No User.xml carrying this nickname was collected, so whether the account is
+            # active cannot be established; the cell is left blank rather than reading 'No'.
             data_list.append((
-                nickname, "No", "", "", "", "", "", "", "", "",
+                nickname, "", "", "", "", "", "", "", "", "",
                 "", "", "", "", last_msg, Context.get_relative_path(db),
             ))
 
@@ -410,12 +447,12 @@ def knuddels_account(context):
         'UUID',
         'Auto Login',
         'Is Logged In',
-        'Password (C13/ROT13 stored)',
-        'Password (decoded)',
+        'passwordU (as stored)',
+        'passwordU (ROT13-decoded, unverified)',
         ('First Installed', 'datetime'),
-        ('Last App Usage', 'datetime'),
-        ('First Login This Week', 'datetime'),
-        'Last Login Date',
+        ('session_timestamp', 'datetime'),
+        ('sites_visited_weekly_time', 'datetime'),
+        'origins_visited_date',
         ('Last Message', 'datetime'),
         'Source File',
     )

@@ -1,11 +1,11 @@
 # pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleMapsGmm": {
-        "name": "Google Search History Maps",
+        "name": "Google Maps Directions",
         "description": "Parse Google Maps GMM directions (gmm_storage.db)",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-12-30",
-        "last_update_date": "2022-12-30",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "GEO Location",
         "notes": "Updated 2023-12-12 by @segumarc",
@@ -30,10 +30,18 @@ __artifacts_v2__ = {
         "description": "Parse Google Maps GMM labeled places (gmm_myplaces.db)",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-12-30",
-        "last_update_date": "2022-12-30",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "Updated 2023-12-12 by @segumarc",
+        "notes": ("Updated 2023-12-12 by @segumarc\n"
+                  "Label is read from the sync_item key_string. The keys '0:0' and '1:0' are "
+                  "rendered as 'Home' and 'Work'; that key-to-label mapping is not documented in "
+                  "the data and was established through testing. A stored label does not establish "
+                  "that the address is the person's residence or workplace, only that the entry "
+                  "carries that label. Any other key is reported with the label held in the "
+                  "protobuf.\n"
+                  "Latitude and Longitude are the stored values multiplied by 0.000001 and rounded "
+                  "to six decimal places, that is read as E6-scaled integers."),
         "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db',),
         "output_types": "all",
         "artifact_icon": "map-pin",

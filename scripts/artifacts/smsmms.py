@@ -4,10 +4,10 @@ __artifacts_v2__ = {
         "description": "SMS messages from mmssms.db (incl. LG extended types and Samsung spam_sms)",
         "author": "",
         "creation_date": "2020-03-10",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "SMS & MMS",
-        "notes": "",
+        "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds, per the AOSP telephony provider. LG extended type mappings were established through testing and are not vendor-documented.",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -40,10 +40,10 @@ __artifacts_v2__ = {
         "description": "MMS messages and attachments from mmssms.db",
         "author": "",
         "creation_date": "2020-03-10",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "SMS & MMS",
-        "notes": "",
+        "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds, per the AOSP telephony provider. Reference: AOSP, 'Telephony.BaseMmsColumns MESSAGE_BOX constants (ALL=0, INBOX=1, SENT=2, DRAFTS=3, OUTBOX=4, FAILED=5)', https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',
                   '*/com.android.providers.telephony/app_parts/*',
                   '*/com.android.providers.telephony/parts/*'),
@@ -111,7 +111,7 @@ _MMS_QUERY = '''
 
 
 # Telephony.Mms msg_box values; wording mirrors the SMS type CASE
-_MMS_BOX_DIRECTION = {1: 'Received', 2: 'Sent', 3: 'Draft', 4: 'Outbox'}
+_MMS_BOX_DIRECTION = {0: 'All messages', 1: 'Received', 2: 'Sent', 3: 'Draft', 4: 'Outbox', 5: 'Failed'}
 
 
 def _ms_to_utc(value):

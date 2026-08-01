@@ -30,10 +30,10 @@ __artifacts_v2__ = {
         "description": "Parses Life360 saved places (L360LocalStoreRoomDatabase)",
         "author": "@KevinPagano3",
         "creation_date": "2024-01-17",
-        "last_update_date": "2024-01-17",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Life360",
-        "notes": "",
+        "notes": "Radius is reported as stored; the database does not record its unit.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360LocalStoreRoomDatabase*',),
         "output_types": ['html', 'tsv', 'lava', 'kml'],
         "artifact_icon": "map-pin",
@@ -47,10 +47,11 @@ __artifacts_v2__ = {
         "description": "Parses Life360 device geolocation events (L360EventStore.db)",
         "author": "@KevinPagano3",
         "creation_date": "2024-01-17",
-        "last_update_date": "2024-01-17",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Life360",
-        "notes": "",
+        "notes": "Speed and the two accuracy values are reported as stored; the JSON records no units "
+                 "for them.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360EventStore.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -205,7 +206,7 @@ def get_Life360_places(context):
             data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], Context.get_relative_path(source)))
         db.close()
 
-    data_headers = ('Place Name', 'Latitude', 'Longitude', 'Radius (m)', 'Places Source', 'Source ID',
+    data_headers = ('Place Name', 'Latitude', 'Longitude', 'Radius (as stored)', 'Places Source', 'Source ID',
                     'Owner ID', 'Source File')
     return data_headers, data_list, source
 
@@ -221,8 +222,8 @@ def get_Life360_locations(context):
                               e['bearing'], e['vert'], e['hor'], e['lmode'], e['bssid'], e['ssid'],
                               e['id'], Context.get_relative_path(source)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Speed (mps)',
-                    'Course', 'Bearing', 'Vertical Accuracy (+/- m)', 'Horizontal Accuracy (+/- m)',
+    data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Speed (as stored)',
+                    'Course', 'Bearing', 'Vertical Accuracy (as stored)', 'Horizontal Accuracy (as stored)',
                     'Location Mode', 'Connected Access Point BSSID', 'Connected Access Point SSID',
                     'ID', 'Source File')
     return data_headers, data_list, source

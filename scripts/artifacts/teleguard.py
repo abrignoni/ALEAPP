@@ -67,10 +67,12 @@ __artifacts_v2__ = {
         "description": "Teleguard channels",
         "author": "",
         "creation_date": "2024-01-09",
-        "last_update_date": "2024-01-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Teleguard",
-        "notes": "",
+        "notes": "The channels table is read with 'SELECT *' and the first twelve columns are labelled "
+                 "by position; the mapping was established against the app version this parser was "
+                 "written for and may not hold on other versions. Any further columns are not reported.",
         "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": "standard",
         "artifact_icon": "radio",

@@ -5,10 +5,11 @@ __artifacts_v2__ = {
         "description": "Parses Xender contact profiles (device ID and nickname) from the Xender trans-history database.",
         "author": "",
         "creation_date": "2020-12-24",
-        "last_update_date": "2020-12-24",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "File Transfer",
-        "notes": "",
+        "notes": ("The query returns only profile rows where connect_times = 0, so profiles with a "
+                  "recorded connection count are not listed here."),
         "paths": ('*/cn.xender/databases/trans-history-db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
@@ -18,10 +19,15 @@ __artifacts_v2__ = {
         "description": "Parses Xender file transfer history (file path, name, size, timestamp, direction and sender and recipient details) from the Xender trans-history database.",
         "author": "",
         "creation_date": "2020-12-24",
-        "last_update_date": "2020-12-24",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "File Transfer",
-        "notes": "",
+        "notes": ("Direction is decoded from the new_history 'c_direction' column. Direction/status "
+                  "value mappings were established through testing; unrecognized values are "
+                  "reported as stored.\n"
+                  "to_id and from_id carry the recipient and sender device IDs recorded on the same "
+                  "row (r_device_id and s_device_id) and are left blank when the database does not "
+                  "hold them. The sender and recipient name columns are names, not identifiers."),
         "paths": ('*/cn.xender/databases/trans-history-db*',),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -84,14 +90,12 @@ def get_Xender_messages(context):
         db.close()
 
         for row in all_rows:
-            from_id = ''
-            to_id = ''
-            if row[4] == 1:
-                direction = 'Outgoing'
-                to_id = row[6]
-            else:
-                direction = 'Incoming'
-                from_id = row[6]
+            # Only c_direction = 1 is identified; any other value is reported as stored.
+            direction = {1: 'Outgoing'}.get(row[4], '' if row[4] is None else row[4])
+            # The parties come from the row's own device ID columns rather than being
+            # inferred from the direction value; s_name/r_name are names, not IDs.
+            from_id = row[7] if row[7] else ''
+            to_id = row[9] if row[9] else ''
             createtime = datetime.datetime.fromtimestamp(int(row[3]) / 1000, datetime.timezone.utc) if row[3] else ''
             data_list.append((row[0], row[1], row[2], createtime, direction, to_id, from_id, row[5], row[6], row[7], row[8], row[9]))
 

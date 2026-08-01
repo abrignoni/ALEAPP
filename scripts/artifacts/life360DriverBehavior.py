@@ -4,10 +4,12 @@ __artifacts_v2__ = {
         "description": "Parses Events from Life360 DriverBehavior/trips JSON files",
         "author": "Heather Charpentier",
         "creation_date": "2024-09-17",
-        "last_update_date": "2024-09-17",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Life360DriverBehavior",
-        "notes": "Processes event data from trip JSON files",
+        "notes": "Processes event data from trip JSON files. Speed and distance are reported as stored; "
+                 "the JSON records no units for them. The MPH columns multiply the stored speed by "
+                 "2.23694, which assumes the stored value is in metres per second.",
         "paths": ('*/trips/*.json',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
@@ -17,10 +19,11 @@ __artifacts_v2__ = {
         "description": "Parses Waypoints from Life360 DriverBehavior/trips JSON files",
         "author": "Heather Charpentier",
         "creation_date": "2024-09-17",
-        "last_update_date": "2024-09-17",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Life360DriverBehavior",
-        "notes": "Processes waypoint data from trip JSON files",
+        "notes": "Processes waypoint data from trip JSON files. Accuracy is reported as stored; the "
+                 "JSON records no unit for it.",
         "paths": ('*/trips/*.json',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "map-pin",
@@ -89,9 +92,11 @@ def get_TripEvents(context):
                 event.get('tripId', ''),
             ))
 
-    data_headers = (('Timestamp', 'datetime'), 'Event Type', 'Latitude', 'Longitude', 'Speed (m/s)', 'Speed (mph)',
-                    'Top Speed (m/s)', 'Top Speed (mph)', 'Average Speed (m/s)', 'Average Speed (mph)',
-                    'Distance (m)', 'Trip ID')
+    data_headers = (('Timestamp', 'datetime'), 'Event Type', 'Latitude', 'Longitude',
+                    'Speed (as stored)', 'Speed MPH (assumes m/s)',
+                    'Top Speed (as stored)', 'Top Speed MPH (assumes m/s)',
+                    'Average Speed (as stored)', 'Average Speed MPH (assumes m/s)',
+                    'Distance (as stored)', 'Trip ID')
     return data_headers, data_list, source_path
 
 
@@ -107,5 +112,5 @@ def get_TripWaypoints(context):
             for waypoint in event.get('waypoints', []):
                 data_list.append((waypoint.get('lat', ''), waypoint.get('lon', ''), waypoint.get('accuracy', ''), trip_id))
 
-    data_headers = ('Latitude', 'Longitude', 'Accuracy (m)', 'Trip ID')
+    data_headers = ('Latitude', 'Longitude', 'Accuracy (as stored)', 'Trip ID')
     return data_headers, data_list, source_path

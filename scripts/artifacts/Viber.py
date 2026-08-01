@@ -5,10 +5,16 @@ __artifacts_v2__ = {
         "description": "Parses Viber call logs (timestamp, phone number, direction, duration and call type) from the Viber databases.",
         "author": "",
         "creation_date": "2020-12-24",
-        "last_update_date": "2020-12-24",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Viber",
-        "notes": "",
+        "notes": ("Call Direction is decoded from the calls table 'type' column. Direction/status "
+                  "value mappings were established through testing; unrecognized values are "
+                  "reported as stored, so a value the mapping does not cover (a missed, rejected or "
+                  "unanswered call, for example) appears as the stored number rather than as a "
+                  "direction.\n"
+                  "Call End Time is not stored by the app: it is start time plus the duration "
+                  "column, which is treated as whole seconds."),
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -38,13 +44,20 @@ __artifacts_v2__ = {
     },
     "get_Viber_messages": {
         "name": "Viber - Messages",
-        "description": "Parses Viber messages (date, sender and recipients, thread, content, direction, read status and attachments) from the Viber databases.",
+        "description": "Parses Viber messages (date, sender and recipients, thread, content, direction, unread flag and attachments) from the Viber databases.",
         "author": "",
         "creation_date": "2020-12-24",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Viber",
-        "notes": "",
+        "notes": ("Direction is decoded from the messages table 'send_type' column. Direction/status "
+                  "value mappings were established through testing; unrecognized values are reported "
+                  "as stored.\n"
+                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "device owner; a row whose direction value is blank or unrecognized is not "
+                  "attributed to the owner.\n"
+                  "Unread carries the messages table 'unread' column as stored; it is not a "
+                  "read flag."),
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -120,7 +133,7 @@ def get_Viber(context):
         try:
             cursor.execute('''
                 SELECT date, canonized_number,
-                case type when 2 then "Outgoing" else "Incoming" end AS direction,
+                case type when 1 then "Incoming" when 2 then "Outgoing" else type end AS direction,
                 duration,
                 case viber_call_type when 1 then "Audio Call" when 4 then "Video Call" else "Unknown" end AS viber_call_type
                 FROM calls
@@ -135,7 +148,7 @@ def get_Viber(context):
             end = _ms_to_utc(int(r[0]) + int(r[3]) * 1000) if r[0] else ''
             data_list.append((start, r[1], r[2], end, r[4]))
 
-    data_headers = (('Call Start Time', 'datetime'), ('Phone Number', 'phonenumber'), 'Call Direction', ('Call End Time', 'datetime'), 'Call Type')
+    data_headers = (('Call Start Time', 'datetime'), ('Phone Number', 'phonenumber'), 'Call Direction', ('Call End Time (computed: start + duration)', 'datetime'), 'Call Type')
     return data_headers, data_list, data_db
 
 
@@ -174,7 +187,7 @@ def get_Viber_messages(context):
             cursor.execute('''
                 SELECT M.msg_date, convo_participants.from_number AS from_number,
                 convo_participants.recipients AS recipients, M.conversation_id AS thread_id, M.body AS msg_content,
-                case M.send_type when 1 then "Outgoing" else "Incoming" end AS direction,
+                case M.send_type when 0 then "Incoming" when 1 then "Outgoing" else M.send_type end AS direction,
                 M.unread read_status, M.extra_uri AS file_attachment
                 FROM   (SELECT *, group_concat(TO_RESULT.number) AS recipients
                         FROM   (SELECT P._id AS FROM_ID, P.conversation_id, PI.number AS FROM_NUMBER
@@ -193,7 +206,7 @@ def get_Viber_messages(context):
         for r in all_rows:
             data_list.append((_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7]))
 
-    data_headers = (('Message Date', 'datetime'), ('From Phone Number', 'phonenumber'), 'Recipients', 'Thread ID', 'Message', 'Direction', 'Read Status', 'File Attachment')
+    data_headers = (('Message Date', 'datetime'), ('From Phone Number', 'phonenumber'), 'Recipients', 'Thread ID', 'Message', 'Direction', 'Unread', 'File Attachment')
     return data_headers, data_list, messages_db
 
 

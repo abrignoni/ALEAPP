@@ -1,13 +1,15 @@
 __artifacts_v2__ = {
     "get_installedappsVending": {
         "name": "InstalledappsVending",
-        "description": "Parses installed applications (package, title, first download and last updated times, install reason and account) from the Play Store localappstate.db.",
+        "description": "Parses application records (package, title, first download and last updated times, install reason and account) from the appstate table of the Play Store localappstate.db.",
         "author": "",
         "creation_date": "2020-03-01",
-        "last_update_date": "2020-03-01",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Installed Apps",
-        "notes": "",
+        "notes": "A row records an application known to the appstate table. Whether the application "
+                 "was still installed at the time of extraction is not established by its presence "
+                 "here.",
         "paths": ('*/com.android.vending/databases/localappstate.db*',),
         "output_types": "standard",
         "artifact_icon": "package",

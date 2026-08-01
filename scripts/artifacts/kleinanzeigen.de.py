@@ -5,10 +5,12 @@ __artifacts_v2__ = {
         "description": "Extracts Account Details",
         "author": "@BrunoFischerGermany",
         "creation_date": "2024-04-02",
-        "last_update_date": "2024-04-02",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "kleinanzeigen.de App",
-        "notes": "",
+        "notes": ("Account Registered since is converted from the stored ISO 8601 string. A value "
+                  "that cannot be parsed as a date is left blank rather than shown in the date "
+                  "column as stored."),
         "paths": ('*/com.ebay.kleinanzeigen/shared_prefs/com.ebay.kleinanzeigen_preferences.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "shopping-bag",
@@ -57,10 +59,18 @@ __artifacts_v2__ = {
         "description": "Extracts individual messages from the message database",
         "author": "@BrunoFischerGermany",
         "creation_date": "2024-04-13",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "kleinanzeigen.de App",
-        "notes": "",
+        "notes": ("Direction is decoded from each message's 'sender' value: 'ME' identifies a "
+                  "message sent from this device. Direction/status value mappings were established "
+                  "through testing; any other sender value is reported as stored, and a message "
+                  "with no sender value is left blank.\n"
+                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "device owner; a row whose direction value is blank or unrecognized is not "
+                  "attributed to the owner.\n"
+                  "Timestamp is converted from the stored ISO 8601 string; a value that cannot be "
+                  "parsed as a date is left blank."),
         "paths": ('*com.ebay.kleinanzeigen/databases/messageBoxDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -102,7 +112,9 @@ def _iso_to_utc(value):
             dt = dt.replace(tzinfo=datetime.timezone.utc)
         return dt.astimezone(datetime.timezone.utc)
     except (ValueError, TypeError):
-        return value
+        # The column is typed as a date; a value that will not parse is reported as
+        # blank rather than passed through into a date column.
+        return ''
 
 
 def _recent_searches(files_found, marker):
@@ -230,7 +242,10 @@ def get_kleinanzeigenmessages(context):
             except (ValueError, TypeError):
                 messages = []
             for message in messages:
-                direction = 'Outgoing' if message.get('sender') == 'ME' else 'Incoming'
+                # Only the 'ME' sender is identified; any other value is reported as
+                # stored and a missing sender key leaves the column blank.
+                sender = message.get('sender')
+                direction = 'Outgoing' if sender == 'ME' else (sender if sender else '')
                 data_list.append((_iso_to_utc(message.get('sortByDate')), r[0], r[1], r[2],
                                   message.get('text', ''), direction, str(message.get('state', '')).lower()))
 

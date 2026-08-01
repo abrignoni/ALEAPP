@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Bluesky direct messages",
         "author": "Alexis Brignoni",
         "creation_date": "2024-11-19",
-        "last_update_date": "2024-11-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
@@ -149,19 +149,19 @@ def get_blueskymessages(context):
                 sender_id = message['sender']['did']
             except (KeyError, TypeError):
                 continue
-            username = ''
-            actor_url = ''
+            display_name = ''
+            handle = ''
             for actor in actors:
                 if sender_id == actor[1]:
-                    username = actor[3]
-                    actor_url = actor[2]
+                    display_name = actor[3]
+                    handle = actor[2]
                     break
-            row = (_iso_to_utc(message.get('sentAt')), actor_url, username, _fix(message.get('text')),
+            row = (_iso_to_utc(message.get('sentAt')), handle, display_name, _fix(message.get('text')),
                    sender_id, message.get('id'))
             if row not in seen:
                 seen.add(row)
                 data_list.append(row)
 
-    data_headers = (('Timestamp Sent', 'datetime'), 'Actor URL', 'Username', 'Message', 'Sender ID',
+    data_headers = (('Timestamp Sent', 'datetime'), 'Handle', 'Display Name', 'Message', 'Sender ID',
                     'Message ID')
     return data_headers, data_list, source_path

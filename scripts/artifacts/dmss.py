@@ -56,20 +56,26 @@ __artifacts_v2__ = {
         "description": "Cached IoT smart-home notifications from the Dahua DMSS app (per account)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
-        "last_update_date": "2023-04-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "",
+        "notes": "Alarm Notification renders the stored alarmTypeStr token as a readable label "
+                 "(for example gwMsg_AlarmLocal_PassiveInfrared as 'Motion detected'). Those "
+                 "token-to-label meanings are not documented in the data; they were established "
+                 "through testing. Any token without a mapping is reported as stored. "
+                 "Reference: E. Dragonas, C. Lambrinoudakis, M. Kotsis, 'IoT Forensics: "
+                 "Investigating the Mobile App of Dahua Technology', IEEE CSR 2023, "
+                 "https://ieeexplore.ieee.org/document/10224982",
         "paths": ('*/com.mm.android.DMSS/databases/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
     },
     "get_dmss_media": {
-        "name": "Dahua CCTV - User Created Media",
-        "description": "Media files the user created while viewing CCTV footage in the Dahua DMSS app",
+        "name": "Dahua CCTV - Media",
+        "description": "Media files recorded under the DMSS snapshot directory",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
-        "last_update_date": "2023-04-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
         "notes": "",
