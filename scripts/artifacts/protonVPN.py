@@ -33,10 +33,15 @@ __artifacts_v2__ = {
         "description": "Parses the ProtonVPN user account (email, name, username, display name and account state) from the ProtonVPN database.",
         "author": "",
         "creation_date": "2022-09-04",
-        "last_update_date": "2022-09-04",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "ProtonVPN",
-        "notes": "",
+        "notes": "Each UserEntity row is matched to its AccountEntity row on the user id column the two "
+                 "tables share. If a database is met whose schema exposes no shared user id, the rows "
+                 "are paired by result order instead, and an unequal number of rows on either side "
+                 "would then attribute an account to the wrong user. Values inside each row are read "
+                 "by position; that mapping was established against the app version this parser was "
+                 "written for and may not hold on other versions.",
         "paths": ('*/ch.protonvpn.android/databases/db',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",
@@ -149,15 +154,32 @@ def get_protonvpn_user_info(context):
             # Cursor for User Data
             cursor = db.cursor()
             cursor.execute('SELECT * FROM main.UserEntity')
+            user_columns = [column[0] for column in cursor.description]
             user_data_rows = cursor.fetchall()
 
             # Cursor for Account Data
             cursor = db.cursor()
             cursor.execute('SELECT * FROM main.AccountEntity')
+            account_columns = [column[0] for column in cursor.description]
             account_data_rows = cursor.fetchall()
 
-            for user_row, account_row in zip(user_data_rows, account_data_rows):
-                data_list.append((user_row[1], user_row[2], account_row[1], user_row[3], account_row[5]))
+            # Match each user to its own account on the id column both tables carry. Pairing the two
+            # result sets by row order attributes an account to another user as soon as the row
+            # counts or the row order differ.
+            key = next((column for column in user_columns
+                        if column.lower() in ('userid', 'user_id') and column in account_columns), None)
+            if key:
+                accounts_by_user = {row[account_columns.index(key)]: row for row in account_data_rows}
+                paired_rows = [(user_row, accounts_by_user.get(user_row[user_columns.index(key)]))
+                               for user_row in user_data_rows]
+            else:
+                logfunc(f'No shared user id column in {file_found}; '
+                        'UserEntity and AccountEntity rows are paired by result order')
+                paired_rows = list(zip(user_data_rows, account_data_rows))
+
+            for user_row, account_row in paired_rows:
+                data_list.append((user_row[1], user_row[2], account_row[1] if account_row else '',
+                                  user_row[3], account_row[5] if account_row else ''))
 
             db.close()
 

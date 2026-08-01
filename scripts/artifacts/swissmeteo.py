@@ -1,16 +1,23 @@
 __artifacts_v2__ = {
     "plz_interaction": {
-        "name": "Swissmeteo - Interaction with places",
-        "description": "Parse the interaction with meteo prevision of particular places",
+        "name": "Swissmeteo - Place interaction records",
+        "description": "Parse the plz_interaction table: postal code entries with timestamps and stored coordinates",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2025-09-25",
-        "last_update_date": "2025-10-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Meteo",
-        "notes": "",
+        "notes": "The 'Meteo of the city (link)' coordinates are converted from the x and y columns "
+                 "of the plz table in localdata.sqlite. Which of those columns holds the LV03 "
+                 "easting and which holds the northing is unverified, so the resulting position "
+                 "should be corroborated before use. The citation given here covers the LV03 to WGS84 "
+                 "conversion formula only; it does not establish the meaning of any column "
+                 "reported by this artifact. "
+                 "Reference: Swisstopo-WGS84-LV03, 'wgs84_ch1903.py', "
+                 "https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/master/scripts/py/wgs84_ch1903.py",
         "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
         "output_types": "standard",
-        "html_columns": ['Meteo of the city (link)', 'Consultation Location'],
+        "html_columns": ['Meteo of the city (link)', 'Recorded Coordinates'],
         "artifact_icon": "flag"
     },
     "swissmeteo_plz": {
@@ -18,7 +25,7 @@ __artifacts_v2__ = {
         "description": "Parse the app opening time and location",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2025-09-25",
-        "last_update_date": "2025-11-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Meteo",
         "notes": "",
@@ -46,14 +53,14 @@ def plz_interaction(context):
     if files_found[0].endswith('favorites_prediction_db.sqlite'):
         query = '''
         SELECT 
-            datetime(timestamp/1000, 'unixepoch', 'localtime') AS created_date,
+            datetime(timestamp/1000, 'unixepoch') AS created_date,
             plz,
             lat,
             lon
         FROM plz_interaction
         '''
 
-        data_headers = ('Consulted timestamp', "Meteo of the city", "Meteo of the city (link)", "Consultation Location")
+        data_headers = (('Interaction Timestamp', 'datetime'), "Meteo of the city", "Meteo of the city (link)", "Recorded Coordinates")
         db_records = get_sqlite_db_records(files_found[0], query)
 
         local_data = []
@@ -63,16 +70,16 @@ def plz_interaction(context):
 
         for record in db_records:
             local_data = get_location_infos(cursor, record[1])
+            if not (record[2] and record[3]):
+                cons_link = ''
+            else:
+                cons_link = coordinate_to_osm(record[2], record[3])
             # test for 1111 postal code case
             if len(local_data) > 0:
                 meteo_link = lv03_to_osm(local_data[0][1], local_data[0][2])
-                if not (record[2] and record[3]):
-                    cons_link = ''
-                else:
-                    cons_link = coordinate_to_osm(record[2], record[3])
                 data_list.append((record[0], local_data[0][4], meteo_link, cons_link))
             else:
-                data_list.append((record[0], record[1], esc(record[2]), esc(record[3])))
+                data_list.append((record[0], record[1], '', cons_link))
 
         return data_headers, data_list, source_path
     else:
@@ -90,13 +97,13 @@ def swissmeteo_plz(context):
     if files_found[0].endswith('favorites_prediction_db.sqlite'):
         query = '''
         SELECT 
-            datetime(timestamp/1000, 'unixepoch', 'localtime') AS created_date,
+            datetime(timestamp/1000, 'unixepoch') AS created_date,
             lat,
             lon
         FROM app_open
         '''
 
-        data_headers = ('Opened timestamp', 'Latitude', 'Longitude', "Map link")
+        data_headers = (('Opened Timestamp', 'datetime'), 'Latitude', 'Longitude', "Map link")
         db_records = get_sqlite_db_records(files_found[0], query)
         for record in db_records:
             data_list.append((record[0], record[1], record[2], coordinate_to_osm(record[1], record[2])))

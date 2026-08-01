@@ -1,11 +1,11 @@
 __artifacts_v2__ = {
     "get_firefoxDownloads": {
         "name": "Firefox - Downloads",
-        "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database. Also matches Tor Browser, which is Firefox-based and uses the same database.",
+        "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database. The Tor Browser path is also matched; in the samples examined it carried the same database.",
         "author": "",
         "creation_date": "2022-01-12",
-        "last_update_date": "2026-07-25",
-        "notes": "Newer Firefox versions renamed the destination_directory column to directory_path; both schemas are supported.",
+        "last_update_date": "2026-08-01",
+        "notes": "Two schema variants are handled: destination_directory and directory_path. Reference: Mozilla android-components, 'DownloadState.Status (PAUSED=3, CANCELLED=4, FAILED=5, COMPLETED=6)', https://github.com/mozilla-firefox/firefox/blob/main/mobile/android/android-components/components/browser/state/src/main/java/mozilla/components/browser/state/state/content/DownloadState.kt",
         "requirements": "none",
         "category": "Firefox",
         "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',
@@ -37,7 +37,7 @@ def get_firefoxDownloads(context):
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
 
-        # Newer Firefox versions renamed destination_directory to directory_path
+        # Two schema variants are handled: destination_directory and directory_path
         table_columns = [row[1] for row in cursor.execute('PRAGMA table_info(downloads)')]
         directory_column = 'directory_path' if 'directory_path' in table_columns else 'destination_directory'
 

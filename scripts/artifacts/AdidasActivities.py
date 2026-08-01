@@ -5,11 +5,17 @@ __artifacts_v2__ = {
         "description": "Adidas Running (Runtastic) activities with GPS routes",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
-        "last_update_date": "2023-02-24",
+        "last_update_date": "2026-08-01",
         "requirements": "polyline",
         "category": "Adidas",
         "notes": "Interactive folium map and online reverse-geocoding removed; route shown as an "
-                 "offline image (media) + a downloadable route KML.",
+                 "offline image (media) + a downloadable route KML. The values reported as 'N/A' are "
+                 "sentinels (temperature -300, max elevation -32768, min elevation 32767, humidity -1) "
+                 "that were established through testing, not from app documentation. The Latitude and "
+                 "Longitude columns are the first point of the decoded encodedTrace polyline and End "
+                 "Latitude/End Longitude the last point; they are reported as start and end on the "
+                 "assumption that the polyline is stored in chronological order, which the data does "
+                 "not itself establish.",
         "paths": ('*/com.runtastic.android/databases/db*',),
         "output_types": "all",
         "artifact_icon": "activity",

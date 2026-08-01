@@ -5,10 +5,16 @@ __artifacts_v2__ = {
         "description": "Extracts Operation History from My Files database",
         "author": "@PensiveHike",
         "creation_date": "2024-06-05",
-        "last_update_date": "2024-06-05",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "My Files",
-        "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown characters will be replaced with '?'.",
+        "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown "
+                 "characters will be replaced with '?'. The substitution table used to turn the stored "
+                 "item paths into cleartext was established through testing, not from app or vendor "
+                 "documentation. Columns of operation_history are read by position over "
+                 "'Select * from operation_history'; that mapping was likewise established against the "
+                 "Android 10-12 versions above and may not hold on other versions. The operation date "
+                 "is reported exactly as stored; the timezone it is recorded in has not been verified.",
         "paths": ('*/com.sec.android.app.myfiles/databases/OperationHistory.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "clock",
@@ -74,7 +80,7 @@ def get_smyfiles_OpHistory(context):
 
     if not 9 < int(Androidversion) < 13:
         logfunc(f'Android artifact My Files Operation History is not compatible with Android version {Androidversion}')
-        data_headers = ('Account', 'Item Path', 'Operation Date (Handset Timezone)', 'Operation Type', 'Item Count', 'Folder Count', 'Page Type')
+        data_headers = ('Account', 'Item Path', 'Operation Date (timezone unverified)', 'Operation Type', 'Item Count', 'Folder Count', 'Page Type')
         return data_headers, data_list, source_path
 
     for file_found in files_found:
@@ -98,5 +104,5 @@ def get_smyfiles_OpHistory(context):
                 clear_path = '*blank entry*'
             data_list.append((user, clear_path, entry[2], entry[3], entry[4], entry[5], entry[6]))
 
-    data_headers = ('Account', 'Item Path', 'Operation Date (Handset Timezone)', 'Operation Type', 'Item Count', 'Folder Count', 'Page Type')
+    data_headers = ('Account', 'Item Path', 'Operation Date (timezone unverified)', 'Operation Type', 'Item Count', 'Folder Count', 'Page Type')
     return data_headers, data_list, source_path

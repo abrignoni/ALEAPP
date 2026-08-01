@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Metadata related to the user's ChatGPT conversations. Validated up to app 1.2024.177.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
-        "last_update_date": "2024-07-09",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "ChatGPT",
         "notes": "",
@@ -17,10 +17,10 @@ __artifacts_v2__ = {
     },
     "get_chatgpt_conversations": {
         "name": "ChatGPT - Messages (Legacy)",
-        "description": "User messages with ChatGPT, older DBMessage.messageNode schema (see ChatGPT - Conversations / chatgpt2 for the newer DBMessageChunk schema)",
+        "description": "Messages in ChatGPT conversations (the role column indicates the author), older DBMessage.messageNode schema (see ChatGPT - Conversations / chatgpt2 for the newer DBMessageChunk schema)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
-        "last_update_date": "2026-07-10",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "ChatGPT",
         "notes": "",
@@ -128,11 +128,11 @@ __artifacts_v2__ = {
         },
     },
     "get_chatgpt_media": {
-        "name": "ChatGPT - Media Uploads",
-        "description": "Images uploaded to / cached by ChatGPT",
+        "name": "ChatGPT - Cached Media",
+        "description": "Image files present in the ChatGPT cache directory",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
-        "last_update_date": "2024-07-09",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "ChatGPT",
         "notes": "",
@@ -226,7 +226,7 @@ def get_chatgpt(context):
         db.close()
 
     data_headers = ('Account', ('Creation Date', 'datetime'), ('Modification Date', 'datetime'), 'Title',
-                    'Custom Instructions', 'Model', 'ID', 'Conversation ID', 'Remote ID')
+                    'Moderation Results', 'Gizmo ID', 'ID', 'Conversation ID', 'Remote ID')
     return data_headers, data_list, context.get_relative_path(source_path)
 
 

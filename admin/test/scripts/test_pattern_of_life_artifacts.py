@@ -58,7 +58,8 @@ class UsageStatsModernizationTests(unittest.TestCase):
         self.assertEqual(package_row[8], 3500)
         self.assertTrue(package_row[9])
         self.assertEqual(event_row[12], 'APP_COMPONENT_USED')
-        self.assertEqual(event_row[14], 'FLAG_IS_PACKAGE_INSTANT_APP')
+        # The 'flags' bitmask is carried through as stored, not decoded to a flag name.
+        self.assertEqual(event_row[14], '1')
         self.assertEqual(event_row[16:18], (40, 7))
         self.assertEqual(event_row[18:23], ('channel', 99, 'com.root', 'RootActivity', 'locus'))
 

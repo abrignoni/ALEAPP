@@ -5,10 +5,10 @@ __artifacts_v2__ = {
         "description": "Parses emails from Gmail",
         "author": "Alexis Brignoni, Patrick Dalla, @stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2026-07-10",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Email",
-        "notes": "",
+        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from numbered fields of the zipped message protobuf. Protobuf field positions were established through testing; Mailed By and Signed by reflect stored header values and are not verified against Authentication-Results.",
         "paths": ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*'),
         "output_types": "standard",
         "html_columns": ["Message"],
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "description": "Parses download requests from Gmail",
         "author": "@stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2025-07-30",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Email",
         "notes": "",
@@ -300,5 +300,5 @@ def gmailDownloadRequests(context):
         for record in db_records:
             data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7]))
     
-    data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Message ID','URL','Target File Path','Target File Size','Priority')
+    data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Caller ID','URL','Target File Path','Target File Size','Priority')
     return data_headers, data_list, downloaderDB

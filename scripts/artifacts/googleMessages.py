@@ -4,10 +4,18 @@ __artifacts_v2__ = {
         "description": "Google Messages",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-01-30",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "None",
         "category": "Google Messages",
-        "notes": "",
+        "notes": ("Direction comes from the sending participant's sub_id. AOSP treats -2 as the "
+                  "marker for a participant other than the device's own, so a sender whose sub_id "
+                  "is anything else is the self participant and the message is outgoing. A row "
+                  "whose sub_id is NULL is left blank rather than assigned a direction, because a "
+                  "NULL comparison is neither true nor false and would otherwise fall through to "
+                  "Incoming.\n"
+                  "Reference: AOSP Messaging, 'ParticipantData (OTHER_THAN_SELF_SUB_ID = -2, "
+                  "isSelf())', https://android.googlesource.com/platform/packages/apps/Messaging/"
+                  "+/refs/heads/main/src/com/android/messaging/datamodel/data/ParticipantData.java"),
         "paths": ('*/com.google.android.apps.messaging/databases/bugle_db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -68,7 +76,11 @@ def get_googleMessages(context):
         END AS "Attachment Byte Size",
         parts.local_cache_path AS "Attachment Location",
         parts.conversation_id AS "Conversation ID",
-        CASE WHEN participants.sub_id != -2 THEN 'Outgoing' ELSE 'Incoming' END AS "Direction"
+        CASE
+        WHEN participants.sub_id IS NULL THEN ''
+        WHEN participants.sub_id != -2 THEN 'Outgoing'
+        ELSE 'Incoming'
+        END AS "Direction"
         FROM
         parts
         JOIN messages ON messages._id=parts.message_id

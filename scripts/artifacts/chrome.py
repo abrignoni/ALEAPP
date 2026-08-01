@@ -30,10 +30,15 @@ __artifacts_v2__ = {
         "description": "Parses Web Visits from Chromium based browsers",
         "author": "",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "",
+        "notes": "Transition Type decodes the core type held in the low byte of the visits.transition "
+                 "value and Qualifier(s) decodes the qualifier bits set in its high byte. The "
+                 "0xC0000000 IS_REDIRECT_MASK is a mask covering the CLIENT_REDIRECT and "
+                 "SERVER_REDIRECT bits rather than a qualifier of its own, so it is not reported as a "
+                 "separate qualifier. Reference: Chromium, 'page_transition_types.h', "
+                 "https://chromium.googlesource.com/chromium/src",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -80,10 +85,14 @@ __artifacts_v2__ = {
         "description": "Parses Downloads from Chromium based browsers",
         "author": "",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "",
+        "notes": "Tab URL is the downloads.tab_url column, the page the download was started from. The "
+                 "source URL of the downloaded file is held in the downloads_url_chains table, which "
+                 "this artifact does not parse. Danger Type and Interrupt Reason decode the stored "
+                 "Chromium enum values. Reference: Chromium, 'download_danger_type.h, "
+                 "download_interrupt_reason_values.h', https://chromium.googlesource.com/chromium/src",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -252,8 +261,7 @@ def get_chromeWebVisits(context):
         CASE WHEN visits.transition & 0x10000000 THEN 'CHAIN_START, ' ELSE '' END ||
         CASE WHEN visits.transition & 0x20000000 THEN 'CHAIN_END, ' ELSE '' END ||
         CASE WHEN visits.transition & 0x40000000 THEN 'CLIENT_REDIRECT, ' ELSE '' END ||
-        CASE WHEN visits.transition & 0x80000000 THEN 'SERVER_REDIRECT, ' ELSE '' END ||
-        CASE WHEN visits.transition & 0xC0000000 THEN 'IS_REDIRECT_MASK, ' ELSE '' END),', ')
+        CASE WHEN visits.transition & 0x80000000 THEN 'SERVER_REDIRECT, ' ELSE '' END),', ')
         AS Qualifiers,
         Query2.url AS FromURL
         FROM visits
@@ -312,7 +320,7 @@ def get_chromeSearchTerms(context):
 def get_chromeDownloads(context):
     files_found = context.get_files_found()
     all_data = []
-    data_headers = ['Start Time', 'End Time', 'Last Access Time', 'URL', 'Target Path', 'State',
+    data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State',
                     'Danger Type', 'Interrupt Reason', 'Opened?', 'Received Bytes', 'Total Bytes']
     lava_data_headers = data_headers.copy()
     for i in (0, 1, 2):

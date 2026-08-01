@@ -27,10 +27,10 @@ __artifacts_v2__ = {
     },
     "get_hikvision_activity": {
         "name": "Hikvision - CCTV Activity",
-        "description": "User interaction with the Hik-Connect app (may indicate remote live view / playback)",
+        "description": "Events logged by the Hik-Connect app (ezvizlog.db event table)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-03-23",
-        "last_update_date": "2023-03-23",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Hikvision",
         "notes": "",
@@ -39,14 +39,16 @@ __artifacts_v2__ = {
         "artifact_icon": "video",
     },
     "get_hikvision_media": {
-        "name": "Hikvision - User Created Media",
-        "description": "Media files the user created while viewing CCTV footage in the Hik-Connect app",
+        "name": "Hikvision - CCTV Media",
+        "description": "Media files recorded in the Hik-Connect image.db",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-03-23",
-        "last_update_date": "2023-03-23",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Hikvision",
-        "notes": "",
+        "notes": ("Video Start Time and Video End Time are reported exactly as stored. Unlike "
+                  "createdTime in the same row, they are not converted, because the format they "
+                  "are written in is not established."),
         "paths": ('*/com.connect.enduser/databases/image.db*', '*/0/Pictures/Hik-Connect Album/*'),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -147,5 +149,6 @@ def get_hikvision_media(context):
 
     data_headers = (
         ('Creation Timestamp', 'datetime'), 'Camera ID', 'Device ID', 'Type', ('File', 'media'),
-        ('Thumbnail', 'media'), 'User', 'Folder Name', 'Video Start Time', 'Video End Time')
+        ('Thumbnail', 'media'), 'User', 'Folder Name', 'Video Start Time (as stored)',
+        'Video End Time (as stored)')
     return data_headers, data_list, source_path

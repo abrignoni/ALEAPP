@@ -2,14 +2,16 @@
 __artifacts_v2__ = {
     "get_notificationHistory": {
         "name": "Android Notification History",
-        "description": "A history of the notifications that landed on the device during the last 24h "
-                       "(system_ce notification_history protobufs). Based on a research project.",
+        "description": "Notifications recorded in the system_ce notification_history protobufs.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2024-07-02",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "Android Notification History",
-        "notes": "",
+        "notes": "Coverage is limited to the protobuf files still present under "
+                 "notification_history/history at the time of extraction, which is a rolling "
+                 "window rather than the device's full notification history. How long that "
+                 "window is was not established from the data.",
         "paths": ('**/system_ce/*/notification_history/history/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -46,10 +48,10 @@ __artifacts_v2__ = {
     },
     "get_notificationHistory_snoozed": {
         "name": "Android Notification History - Snoozed",
-        "description": "Notifications the user chose to snooze for a specific time interval (notification_policy.xml).",
+        "description": "Notifications recorded as snoozed in notification_policy.xml.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2024-07-02",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "",
@@ -221,5 +223,5 @@ def get_notificationHistory(context):
         'Channel Name', 'Channel Name Index', 'Channel ID', 'Channel ID Index', 'Conversation ID',
         'Conversation ID Index', 'Major Version', 'Image Type', 'Image Bitmap Filename', 'Image Resource ID',
         'Image Resource ID Package', 'Image Data Length', 'Image Data Offset', 'Image URI',
-        'Protobuf File Name', ('Protobuf File Creation Date', 'datetime'))
+        'Protobuf File Name', ('Timestamp From Protobuf File Name', 'datetime'))
     return data_headers, data_list, source_path

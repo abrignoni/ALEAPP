@@ -5,10 +5,12 @@ __artifacts_v2__ = {
         "description": "Parses Google Tasks (created, modified, completed and due times, task name, details and status) from the Google Tasks data.db.",
         "author": "",
         "creation_date": "2021-08-21",
-        "last_update_date": "2021-08-21",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Tasks",
-        "notes": "",
+        "notes": "Protobuf field positions for created/modified/completed times were established "
+                 "through testing. Task Due Date is reported as stored in the DueDate column, without "
+                 "conversion, unlike the three converted UTC time columns.",
         "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db',),
         "output_types": "standard",
         "artifact_icon": "file-text",
@@ -81,7 +83,7 @@ def get_googleTasks(context):
         ('Created Time', 'datetime'),
         ('Last Modified Time', 'datetime'),
         ('Completed Time', 'datetime'),
-        'Task Due Date',
+        'Task Due Date (as stored)',
         'Time Zone',
         'Task ID',
         'Task List ID',

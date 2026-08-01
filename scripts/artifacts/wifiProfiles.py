@@ -1,13 +1,14 @@
 __artifacts_v2__ = {
     "get_wifiProfiles": {
         "name": "wifiProfiles",
-        "description": "Saved Wi-Fi network profiles (SSID, keys, MAC, timestamps) from WifiConfigStore.xml",
+        "description": "Saved Wi-Fi network profiles (SSID, keys, gateway MAC address, timestamps) from WifiConfigStore.xml",
         "author": "",
         "creation_date": "2020-03-23",
-        "last_update_date": "2020-03-23",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "WiFi Profiles",
-        "notes": "",
+        "notes": "DefaultGwMacAddress is the MAC address recorded for the network's default "
+                 "gateway, not the address of the device or of any client on the network.",
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": "standard",
         "artifact_icon": "wifi",

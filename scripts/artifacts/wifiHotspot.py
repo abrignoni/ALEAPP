@@ -1,13 +1,19 @@
 __artifacts_v2__ = {
     "get_wifiHotspot": {
         "name": "wifiHotspot",
-        "description": "Parses the Wi-Fi hotspot (SoftAP) configuration (SSID, passphrase and security type) from the softap configuration files.",
+        "description": "Parses the Wi-Fi hotspot (SoftAP) configuration (SSID and passphrase, plus security type where the configuration is in XML form) from the softap configuration files.",
         "author": "",
         "creation_date": "2020-11-18",
-        "last_update_date": "2020-11-18",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "WiFi Profiles",
-        "notes": "",
+        "notes": "SecurityType is read from a named element and is therefore only populated for the "
+                 "WifiConfigStoreSoftAp.xml form; it is blank for the binary softap.conf form.\n"
+                 "In the binary softap.conf form SSID and Passphrase are taken by byte position: "
+                 "the SSID length is read from byte 5 and the passphrase from the bytes following "
+                 "the last null byte in the file. That layout is not documented, no bounds checking "
+                 "is performed, and a file laid out differently can yield a truncated or wrong "
+                 "value rather than an error.",
         "paths": ('*/misc/wifi/softap.conf', '*/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "wifi",

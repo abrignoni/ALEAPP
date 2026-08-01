@@ -4,10 +4,11 @@ __artifacts_v2__ = {
         'description': 'Parses Life360 Location Events',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
-        'last_update_date': '2026-06-30',
+        'last_update_date': '2026-08-01',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': '',
+        'notes': 'Speed is reported as stored. The MPH column multiplies it by 2.23694, which assumes '
+                 'the stored value is in metres per second; the JSON records no unit for it.',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
         'artifact_icon': 'map-pin',
@@ -21,10 +22,11 @@ __artifacts_v2__ = {
         'description': 'Parses Life360 Waypoints',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
-        'last_update_date': '2026-06-30',
+        'last_update_date': '2026-08-01',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': '',
+        'notes': 'Speed is reported as stored. The MPH column multiplies it by 2.23694, which assumes '
+                 'the stored value is in metres per second; the JSON records no unit for it.',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
         'artifact_icon': 'map-pin',
@@ -131,7 +133,7 @@ def Life360_Locations(context):
 
     data_headers = (
         ('Timestamp', 'datetime'), 'Latitude', 'Longitude',
-        'Horizontal Accuracy', 'Speed MPS', 'Speed MPH', 'Speed Accuracy'
+        'Horizontal Accuracy', 'Speed (as stored)', 'Speed MPH (assumes m/s)', 'Speed Accuracy'
     )
     return data_headers, data_list, source
 
@@ -170,7 +172,7 @@ def Life360_Waypoints(context):
     data_headers = (
         'Trip ID', ('Timestamp', 'datetime'),
         'Latitude', 'Longitude', 'Accuracy',
-        'Speed MPS', 'Speed MPH'
+        'Speed (as stored)', 'Speed MPH (assumes m/s)'
     )
     return data_headers, data_list, source
 

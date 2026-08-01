@@ -39,10 +39,14 @@ __artifacts_v2__ = {
         "description": "Parses DuckDuckGo Web Browsing History",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-05-21",
-        "last_update_date": "2025-06-08",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.237.0 (June, 3rd 2025)",
+        "notes": (
+            "Tested on version 5.237.0 (June, 3rd 2025). Visit Date is the stored "
+            "visits_list.timestamp string reproduced as recorded, with the ISO 'T' "
+            "separator replaced by a space; the file carries no time zone for it."
+        ),
         "paths": ('*/com.duckduckgo.mobile.android/databases/history.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe",
@@ -56,10 +60,18 @@ __artifacts_v2__ = {
         "description": "Parses DuckDuckGo Open Tab Information",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-05-21",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
+        "notes": (
+            "Tested on version 5.255.0 (Oct, 31st 2025). Cached Tab Preview Time is decoded "
+            "from the tab preview file name, which is a number read as a Unix time in "
+            "milliseconds; that reading was established through testing and the file name is "
+            "its only basis. It is rendered in UTC. Tab Last Accessed is the stored "
+            "tabs.lastAccessTime string reproduced as recorded, with the ISO 'T' separator "
+            "replaced by a space; the file carries no time zone for it, and it is reported as "
+            "'Unavailable' on versions whose tabs table has no lastAccessTime column."
+        ),
         "paths": (
             '*/com.duckduckgo.mobile.android/databases/app.db*',
             '*/com.duckduckgo.mobile.android/cache/tabPreviews/*/*.jpg'),
@@ -92,10 +104,10 @@ __artifacts_v2__ = {
         "description": "Parses DuckDuckGo Downloads",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
+        "notes": "Tested on version 5.255.0 (Oct, 31st 2025). Reference: DuckDuckGo Android, 'DownloadStatus (STARTED=0, FINISHED=1)', https://github.com/duckduckgo/Android/blob/develop/downloads/downloads-store/src/main/java/com/duckduckgo/downloads/store/DownloadStatus.kt",
         "paths": ('*/com.duckduckgo.mobile.android/databases/downloads.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "download",
@@ -109,10 +121,16 @@ __artifacts_v2__ = {
         "description": "Parses DuckDuckGo Tab thumbnail Information",
         "author": "@abrignoni & @stark4n6",
         "creation_date": "2022-05-28",
-        "last_update_date": "2025-06-10",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "",
+        "notes": (
+            "Timestamp is decoded from the thumbnail file name, which is a number read as a "
+            "Unix time in milliseconds; that reading was established through testing and the "
+            "file name is its only basis. It is rendered in UTC. Referenced In Tabs Table "
+            "records whether the file name appears in the tabs table of app.db; it describes "
+            "that reference only and does not establish whether a tab is open or closed."
+        ),
         "paths": (
             '*/com.duckduckgo.mobile.android/cache/tabPreviews/*/*.jpg',
             '*/com.duckduckgo.mobile.android/databases/app.db*'),
@@ -291,7 +309,7 @@ def duckduckgo_history(context):
             visits_list.rowid,
             history_entries.url,
             history_entries.title,
-            REPLACE(visits_list.timestamp, 'T', ' ') AS 'Visit Date (Local)',
+            REPLACE(visits_list.timestamp, 'T', ' ') AS 'Visit Date',
             CASE history_entries.isSerp
                 WHEN 1 THEN 'DuckDuckGo Search'
                 WHEN 0 THEN 'Web Page Visit'
@@ -301,7 +319,7 @@ def duckduckgo_history(context):
         LEFT JOIN history_entries ON visits_list.historyEntryId = history_entries.id;
         '''
 
-    data_headers = ('Visit ID', 'URL', 'Title', ('Visit Date (Local)', 'datetime'), 'History Type', 'Search Query')
+    data_headers = ('Visit ID', 'URL', 'Title', ('Visit Date', 'datetime'), 'History Type', 'Search Query')
     data_list = list(get_sqlite_db_records(source_path, query))
 
     return data_headers, data_list, context.get_relative_path(source_path)
@@ -329,9 +347,9 @@ def duckduckgo_opentabs(context):
                 tabs.title,
                 tabs.url,
                 tabs.tabPreviewFile,
-                DATETIME(RTRIM(tabs.tabPreviewFile, '.jpg') / 1000, 'unixepoch','localtime')
-                 AS 'Cached Tab Preview Time (Local)',
-                REPLACE(tabs.lastAccessTime, 'T', ' ') AS 'Tab Last Accessed (Local)'
+                DATETIME(RTRIM(tabs.tabPreviewFile, '.jpg') / 1000, 'unixepoch')
+                 AS 'Cached Tab Preview Time (UTC)',
+                REPLACE(tabs.lastAccessTime, 'T', ' ') AS 'Tab Last Accessed'
             FROM tabs
             LEFT JOIN tab_selection ON tabs.tabid = tab_selection.tabid;
         '''
@@ -346,9 +364,9 @@ def duckduckgo_opentabs(context):
                 tabs.title,
                 tabs.url,
                 tabs.tabPreviewFile,
-                DATETIME(RTRIM(tabs.tabPreviewFile, '.jpg') / 1000, 'unixepoch','localtime')
-                 AS 'Cached Tab Preview Time (Local)',
-                'Unavailable' AS 'Tab Last Accessed (Local)'
+                DATETIME(RTRIM(tabs.tabPreviewFile, '.jpg') / 1000, 'unixepoch')
+                 AS 'Cached Tab Preview Time (UTC)',
+                'Unavailable' AS 'Tab Last Accessed'
             FROM tabs
             LEFT JOIN tab_selection ON tabs.tabid = tab_selection.tabid;
         '''
@@ -361,8 +379,8 @@ def duckduckgo_opentabs(context):
         title = row[2]  # Title
         url = row[3]  # URL
         cached_filename = row[4]  # Cached Tab Filename
-        cached_time = row[5]  # Cached Tab Preview Time (Local)
-        last_accessed = row[6]  # Tab Last Accessed (Local)
+        cached_time = row[5]  # Cached Tab Preview Time (UTC)
+        last_accessed = row[6]  # Tab Last Accessed
 
         tab_thumbnail_media = None
 
@@ -382,9 +400,9 @@ def duckduckgo_opentabs(context):
         'Current Tab',
         'Title',
         'URL',
-        ('Tab Last Accessed (Local)', 'datetime'),
+        ('Tab Last Accessed', 'datetime'),
         'Cached Tab Filename',
-        ('Cached Tab Preview Time (Local)', 'datetime'),
+        ('Cached Tab Preview Time (UTC)', 'datetime'),
         ('Cached Tab Preview', 'media')
     )
 
@@ -448,7 +466,7 @@ def duckduckgo_downloads(context):
             downloads.fileName AS "File Name",
             downloads.contentLength,
             downloads.filePath AS "Download Path",
-            DATETIME(downloads.createdat) AS "Download Date (Local)"
+            DATETIME(downloads.createdat) AS "Download Date"
         FROM downloads;
         '''
 
@@ -464,7 +482,7 @@ def duckduckgo_downloads(context):
         data_list.append((download_id, download_status, file_name, size_bytes, download_path, download_date))
 
     data_headers = ('Download ID', 'Download Status', 'File Name', 'Size (Bytes)', 'Download Path',
-                    ('Download Date (Local)', 'datetime'))
+                    ('Download Date', 'datetime'))
 
     return data_headers, data_list, context.get_relative_path(source_path)
 
@@ -501,11 +519,15 @@ def duckduckgo_thumbnails(context):
         media_item = check_in_media(file_found, filename)
 
         if media_item:
-            tab_status = 'Open' if filename in open_preview_files else 'Closed'
+            referenced_in_tabs = 'Yes' if filename in open_preview_files else 'No'
 
-            data_list.append((tab_status, timestamp, media_item, filename, context.get_relative_path(str(file_found))))
+            data_list.append(
+                (referenced_in_tabs, timestamp, media_item, filename,
+                 context.get_relative_path(str(file_found))))
 
-    data_headers = ('Tab Status', ('Timestamp', 'datetime'), ('Thumbnail', 'media'), 'File Name', 'Location')
+    data_headers = (
+        'Referenced In Tabs Table', ('Timestamp (UTC)', 'datetime'), ('Thumbnail', 'media'),
+        'File Name', 'Location')
 
     return data_headers, data_list, 'See source path(s) below'
 

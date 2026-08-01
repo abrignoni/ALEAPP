@@ -5,10 +5,14 @@ __artifacts_v2__ = {
         "description": "Parses SHAREit file transfer history (direction, sender and recipient IDs, device name, description, timestamp and file path) from the SHAREit history.db.",
         "author": "",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "File Transfer",
-        "notes": "",
+        "notes": ("direction is decoded from the history table 'history_type' column. "
+                  "Direction/status value mappings were established through testing; unrecognized "
+                  "values are reported as stored.\n"
+                  "from_id and to_id hold the device_id of the row and are filled only when the "
+                  "direction value is recognized."),
         "paths": ('*/com.lenovo.anyshare.gps/databases/history.db*',),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -37,9 +41,9 @@ def get_shareit(context):
         cursor = db.cursor()
         try:
             cursor.execute('''
-                SELECT case history_type when 1 then "Incoming" else "Outgoing" end direction,
+                SELECT case history_type when 1 then "Incoming" when 2 then "Outgoing" else history_type end direction,
                        case history_type when 1 then device_id else null end from_id,
-                       case history_type when 1 then null else device_id end to_id,
+                       case history_type when 2 then device_id else null end to_id,
                        device_name, description, timestamp/1000 as timestamp, file_path
                                         FROM history
                                         JOIN item where history.content_id = item.item_id

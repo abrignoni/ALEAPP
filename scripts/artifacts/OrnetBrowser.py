@@ -13,15 +13,19 @@ __artifacts_v2__ = {
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "bookmark"
     },
-    "ornetbrowser_favorites": {
-        "name": "Ornet Browser - Favorited Sites",
-        "description": "Parses Ornet Browser favorite Sites",
+    "ornetbrowser_suggestions": {
+        "name": "Ornet Browser - Suggestions",
+        "description": "Parses the Ornet Browser suggestions table",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Rows are read from the suggestions "
+            "table of appDatabase. What the app stores in that table is not established, so "
+            "the entries are reported as stored."
+        ),
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "star"
@@ -31,10 +35,14 @@ __artifacts_v2__ = {
         "description": "Parses Ornetbrowser Web Browsing History",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Visit Date joins the stored "
+            "history.date and history.time strings and reproduces them as recorded; the "
+            "file carries no time zone for them."
+        ),
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"
@@ -44,10 +52,15 @@ __artifacts_v2__ = {
         "description": "Parses Ornet Browser Open Tab Information",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Tab Preview File Name Time is "
+            "decoded from the tab preview file name, which is a number read as a Unix time "
+            "in milliseconds; that reading was established through testing and the file name "
+            "is its only basis. It is rendered in UTC."
+        ),
         "paths": (
             '*/com.ornet.torbrowser/databases/appDatabase',
             '*/com.ornet.torbrowser/cache/tabPreviews/*/*.jpg'),
@@ -72,10 +85,14 @@ __artifacts_v2__ = {
         "description": "Parses Ornet Browser Downloads",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Last Modified is the stored "
+            "downloads.last_modified_at value rendered in UTC; the column name is the "
+            "field's own name and what the app updates it for is not established."
+        ),
         "paths": ('*/com.ornet.torbrowser/databases/kdownloader.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "download"
@@ -85,13 +102,18 @@ __artifacts_v2__ = {
         "description": "Parses Ornet Browser Tab thumbnail Information",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Timestamp is decoded from the "
+            "thumbnail file name, which is a number read as a Unix time in milliseconds; "
+            "that reading was established through testing and the file name is its only "
+            "basis. It is rendered in UTC."
+        ),
         "paths": (
             '*/com.ornet.torbrowser/cache/tabPreviews/*/*.jpg',
-            '*//comcom.ornet.torbrowser/databases/AppDatabase'),
+            '*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "timeline", "lava"],
         "artifact_icon": "photo"
     },
@@ -113,11 +135,11 @@ __artifacts_v2__ = {
         "description": "Parses Ornet Browser Cookies",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
-        "paths": ('*/com.ornet.torbrowser/files/mozilla/m6jacqwu.default/cookies.sqlite'),
+        "paths": ('*/com.ornet.torbrowser/files/mozilla/*/cookies.sqlite'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"
     },
@@ -203,7 +225,7 @@ def ornetbrowser_bookmarks(context):
 
 
 @artifact_processor
-def ornetbrowser_favorites(context):
+def ornetbrowser_suggestions(context):
     files_found = context.get_files_found()
     data_list = []
 
@@ -271,11 +293,11 @@ def ornetbrowser_history(context):
             history.id,
             history.url,
             history.title,
-            CONCAT(history.date, ' ', history.time) AS 'Visit Time (Local)'
+            CONCAT(history.date, ' ', history.time) AS 'Visit Date'
         FROM history;
         '''
 
-    data_headers = ('ID', 'URL', 'Title', ('Visit Date (Local)', 'datetime'))
+    data_headers = ('ID', 'URL', 'Title', ('Visit Date', 'datetime'))
     data_list = list(get_sqlite_db_records(source_path, query))
 
     return data_headers, data_list, context.get_relative_path(source_path)
@@ -319,7 +341,8 @@ def ornetbrowser_opentabs(context):
             tabs.url,
             tabs.title,
             tabs.tabPreviewFile,
-            DATETIME(RTRIM(tabs.tabPreviewFile, '.jpg') / 1000, 'unixepoch','localtime') AS "Cached Tab Preview Date"
+            DATETIME(RTRIM(tabs.tabPreviewFile, '.jpg') / 1000, 'unixepoch')
+                AS "Tab Preview File Name Time (UTC)"
         FROM tabs;
     '''
 
@@ -330,7 +353,7 @@ def ornetbrowser_opentabs(context):
         url = row[1]  # URL
         title = row[2]  # Title
         cached_filename = row[3]  # Cached Tab Filename
-        cached_time = row[4]  # Cached Tab Preview Time (Local)
+        cached_time = row[4]  # Tab Preview File Name Time (UTC)
 
         tab_thumbnail_media = None
 
@@ -356,7 +379,7 @@ def ornetbrowser_opentabs(context):
         'URL',
         'Title',
         'Cached Tab Filename',
-        ('Cached Tab Preview Time (Local)', 'datetime'),
+        ('Tab Preview File Name Time (UTC)', 'datetime'),
         ('Cached Tab Preview', 'media')
     )
 
@@ -421,7 +444,7 @@ def ornetbrowser_downloads(context):
             downloads.downloaded_bytes,
             downloads.total_bytes,
             downloads.dir_path AS "Download Path",
-            DATETIME(downloads.last_modified_at/1000, 'unixepoch') AS "Download Date (Local)"
+            DATETIME(downloads.last_modified_at/1000, 'unixepoch') AS "Last Modified (UTC)"
         FROM downloads
         '''
 
@@ -433,15 +456,15 @@ def ornetbrowser_downloads(context):
         download_url = row[3]
         downloaded_bytes = row[4]
         total_bytes = row[5]
-        download_date = row[6]
-        download_path = row[7]
+        download_path = row[6]
+        last_modified = row[7]
 
         data_list.append(
             (download_id, download_status, file_name, download_url, downloaded_bytes,
-             total_bytes, download_date, download_path))
+             total_bytes, last_modified, download_path))
 
     data_headers = ('Download ID', 'Download Status', 'File Name', 'Download URL', 'Downloaded Bytes',
-                    'Total Bytes', ('Download Date', 'datetime'), 'Download Path',)
+                    'Total Bytes', ('Last Modified (UTC)', 'datetime'), 'Download Path',)
 
     return data_headers, data_list, context.get_relative_path(source_path)
 

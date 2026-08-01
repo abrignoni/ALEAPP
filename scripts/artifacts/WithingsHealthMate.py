@@ -17,10 +17,15 @@ __artifacts_v2__ = {
         "description": "Health Mate Trackings",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-04-20",
-        "last_update_date": "2026-05-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Withings Health Mate",
-        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-2.html",
+        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-2.html "
+                 "Columns of the Track table are read by position; the mapping was established against "
+                 "the app versions listed at the top of this module and may not hold on other versions. "
+                 "Two activity category names are supplied by this parser and are not read from the "
+                 "activityCategory table: 37 ('Sleeping') and 272 ('Activity Tracking started manually'). "
+                 "Both were established through manual analysis, not from app documentation.",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*',
                   '*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
@@ -31,10 +36,13 @@ __artifacts_v2__ = {
         "description": "Health Mate Locations",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-04-20",
-        "last_update_date": "2026-05-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Withings Health Mate",
-        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html",
+        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
+                 "Columns of the WorkoutLocation table, including Latitude and Longitude, are read by "
+                 "position; the mapping was established against the app versions listed at the top of "
+                 "this module and may not hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*'),
         "output_types": "standard",
         "artifact_icon": "map-pin"
@@ -44,23 +52,28 @@ __artifacts_v2__ = {
         "description": "Health Mate Messages",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-04-20",
-        "last_update_date": "2026-05-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Withings Health Mate",
-        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html",
+        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
+                 "Columns of the chat table are read by position; the mapping was established against "
+                 "the app versions listed at the top of this module and may not hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
         "artifact_icon": "message"
     },
     "healthmate_contacts": {
-        "name": "Health Mate - Contacts",
-        "description": "Health Mate Contacts",
+        "name": "Health Mate - Leaderboard",
+        "description": "Health Mate leaderboard entries (leaderboard table)",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-04-21",
-        "last_update_date": "2026-05-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Withings Health Mate",
-        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html",
+        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
+                 "Columns of the leaderboard table are read by position; the mapping was established "
+                 "against the app versions listed at the top of this module and may not hold on other "
+                 "versions.",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*'),
         "output_types": "standard",
         "artifact_icon": "users"
@@ -70,10 +83,13 @@ __artifacts_v2__ = {
         "description": "Health Mate Measurements",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-04-21",
-        "last_update_date": "2026-05-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Withings Health Mate",
-        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html",
+        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
+                 "Columns of the vasistas table, including the values reported as SPO2 and Core "
+                 "Temperature, are read by position; the mapping was established against the app "
+                 "versions listed at the top of this module and may not hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
         "artifact_icon": "activity"
@@ -83,10 +99,14 @@ __artifacts_v2__ = {
         "description": "Health Mate Devices",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-04-21",
-        "last_update_date": "2026-05-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Withings Health Mate",
-        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html",
+        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
+                 "Columns of the devices table, including the value reported as the Last Used "
+                 "Timestamp and the Latitude/Longitude pair, are read by position; the mapping was "
+                 "established against the app versions listed at the top of this module and may not "
+                 "hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
         "artifact_icon": "activity"
@@ -101,9 +121,7 @@ __artifacts_v2__ = {
 # 2020-10-09: Android 6, App: 5.1.4
 # 2024-04-20: Android 13, App: 6.3.1
 
-# Requirements:  datetime
-import datetime
-
+# Requirements:  none
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
 
 
@@ -379,8 +397,8 @@ def healthmate_contacts(context):
 
         data_list.append(
             (modified,
-             date,
              row_id,
+             date,
              userid,
              score,
              firstname,
@@ -427,7 +445,7 @@ def healthmate_measurements(context):
                 category = 'Steps'
             case _:
                 category = 'Unknown Category ID'
-        timestamp = datetime.datetime.fromtimestamp(row[4]/1000).strftime('%Y-%m-%d %H:%M:%S')
+        timestamp = convert_unix_ts_to_utc(row[4]/1000)
         userid = row[1]
         duration = row[5]
         steps = row[11]

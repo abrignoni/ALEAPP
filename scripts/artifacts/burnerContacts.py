@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
         "version": "0.0.1",
         "creation_date": "2024-02-15",
-        "last_update_date": "2024-02-15",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Burner",
         "notes": "",
@@ -45,5 +45,5 @@ def get_burnerContacts(context):
         for row in all_rows:
             data_list.append((row[0], row[1]))
 
-    data_headers = ('User ID', ('Phone Number', 'phonenumber'))
+    data_headers = ('Contact ID', ('Phone Number', 'phonenumber'))
     return data_headers, data_list, source_path

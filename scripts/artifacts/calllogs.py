@@ -2,13 +2,13 @@
 __artifacts_v2__ = {
     "get_calllogs": {
         "name": "Call Logs",
-        "description": "Parses call logs (number, start and end time, direction and name) from the contacts and logs provider databases.",
+        "description": "Parses call logs (number, start and end time, call type, direction and name) from the contacts and logs provider databases.",
         "author": "",
         "creation_date": "2021-03-17",
-        "last_update_date": "2021-03-17",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Call Logs",
-        "notes": "",
+        "notes": "The same 'type' column is read from two different schemas, the AOSP 'calls' table in the contacts provider and the Samsung LogsProvider 'logs' table, and the AOSP CallLog.Calls code set is applied to both. Call type decodes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally; any other code is reported as its raw value. Direction is only filled in for the incoming (1) and outgoing (2) codes and is left blank for the rest, so the from_id and to_id columns stay empty for those rows and the number column carries the other party. Reference: AOSP, 'CallLog.Calls constants', https://developer.android.com/reference/android/provider/CallLog.Calls",
         "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -26,6 +26,21 @@ import datetime
 import os
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, does_table_exist_in_db
+
+# AOSP CallLog.Calls type codes, applied to both the AOSP calls table and the
+# Samsung LogsProvider logs table, which reuses the same column name
+CALL_TYPES = {
+    1: 'Incoming',
+    2: 'Outgoing',
+    3: 'Missed',
+    4: 'Voicemail',
+    5: 'Rejected',
+    6: 'Blocked',
+    7: 'Answered Externally',
+}
+# Only these two codes state who called whom; the others say what happened to
+# an entry without the record itself naming a direction
+CALL_DIRECTIONS = {1: 'Incoming', 2: 'Outgoing'}
 
 
 @artifact_processor
@@ -47,12 +62,7 @@ def get_calllogs(context):
         try:
             cursor.execute(f'''
                 SELECT number, date/1000, (date/1000 + duration) as end_date,
-                       case type when 1 then "Incoming"
-                                 when 3 then "Incoming"
-                                 when 2 then "Outgoing"
-                                 when 5 then "Outgoing"
-                                 else "Unknown" end as direction,
-                        name FROM {table} ORDER BY date DESC;''')
+                       type, name FROM {table} ORDER BY date DESC;''')
             all_rows = cursor.fetchall()
         except Exception as e:
             logfunc(str(e))
@@ -60,15 +70,14 @@ def get_calllogs(context):
         db.close()
 
         for row in all_rows:
-            callerId = None
-            calleeId = None
-            if row[3] == "Incoming":
-                callerId = row[0]
-            else:
-                calleeId = row[0]
+            type_code = row[3]
+            call_type = CALL_TYPES.get(type_code, type_code)  # unknown codes stay raw
+            direction = CALL_DIRECTIONS.get(type_code, '')
+            callerId = row[0] if direction == 'Incoming' else None
+            calleeId = row[0] if direction == 'Outgoing' else None
             starttime = datetime.datetime.fromtimestamp(int(row[1]), datetime.timezone.utc)
             endtime = datetime.datetime.fromtimestamp(int(row[2]), datetime.timezone.utc)
-            data_list.append((callerId, calleeId, starttime, endtime, row[3], row[4]))
+            data_list.append((callerId, calleeId, starttime, endtime, direction, call_type, row[0], row[4]))
 
-    data_headers = ('from_id', 'to_id', ('start_date', 'datetime'), ('end_date', 'datetime'), 'direction', 'name')
+    data_headers = ('from_id', 'to_id', ('start_date', 'datetime'), ('end_date', 'datetime'), 'direction', 'call_type', ('number', 'phonenumber'), 'name')
     return data_headers, data_list, source_path

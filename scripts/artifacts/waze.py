@@ -13,10 +13,11 @@ __artifacts_v2__ = {
         "description": "Parses and extracts account information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-07-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Waze",
-        "notes": "https://djangofaiola.blogspot.com",
+        "notes": "https://djangofaiola.blogspot.com. "
+                 "Field mappings were established through testing.",
         "paths": ("*/com.waze/user",
                   "*/com.waze/waze/cached_data*"),
         "output_types": ["standard"],
@@ -32,10 +33,11 @@ __artifacts_v2__ = {
         "description": "Parses and extracts session information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-06-27",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Waze",
-        "notes": "https://djangofaiola.blogspot.com",
+        "notes": "https://djangofaiola.blogspot.com. "
+                 "Key-to-field mappings were established through testing.",
         "paths": ("*/com.waze/session"),
         "output_types": ["all"],
         "artifact_icon": "navigation",
@@ -49,10 +51,14 @@ __artifacts_v2__ = {
         "description": "Parses and extracts track GPS quality information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-06-27",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Waze",
-        "notes": "https://djangofaiola.blogspot.com",
+        "notes": "https://djangofaiola.blogspot.com. "
+                 "Log field mappings were established through testing. The accuracy columns "
+                 "combine the legacy C++ ACC_MIN/ACC_AVG/ACC_MAX fields, which carry no unit in "
+                 "the log, with the Swift accuracy_min_meters/accuracy_avg_meters/"
+                 "accuracy_max_meters fields, which are expressed in meters.",
         "paths": ("*/com.waze/spdlog.*logdata",
                   "*/com.waze/waze_log.txt",
                   "*/com.waze/*spdlog.logdata.gz"),
@@ -65,13 +71,15 @@ __artifacts_v2__ = {
     },
     "waze_search_history": {
         "name": "Waze - Search History",
-        "description": "Parses and extracts searched locations information",
+        "description": "Parses and extracts location entries from the PLACES table",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-06-27",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Waze",
-        "notes": "https://djangofaiola.blogspot.com",
+        "notes": "https://djangofaiola.blogspot.com. "
+                 "Field mappings were established through testing; unrecognized values are "
+                 "reported as stored.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "artifact_icon": "search",
@@ -85,10 +93,12 @@ __artifacts_v2__ = {
         "description": "Parses and extracts recent locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-07-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Waze",
-        "notes": "https://djangofaiola.blogspot.com",
+        "notes": "https://djangofaiola.blogspot.com. "
+                 "Recent-entry type mappings were established through testing; unrecognized "
+                 "values are reported as stored.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "artifact_icon": "map-pin",
@@ -102,10 +112,12 @@ __artifacts_v2__ = {
         "description": "Parses and extracts favorite locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-06-27",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Waze",
-        "notes": "https://djangofaiola.blogspot.com",
+        "notes": "https://djangofaiola.blogspot.com. "
+                 "Favorite-entry type mappings were established through testing; unrecognized "
+                 "values are reported with the raw stored value.",
         "paths": ("*/com.waze/user.db*",
                   "*/com.waze/waze/cached_data*"),
         "output_types": ["all"],
@@ -120,10 +132,11 @@ __artifacts_v2__ = {
         "description": "Parses and extracts shared locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-06-27",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Waze",
-        "notes": "https://djangofaiola.blogspot.com",
+        "notes": "https://djangofaiola.blogspot.com. "
+                 "Field mappings were established through testing.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "artifact_icon": "map-pin",
@@ -134,13 +147,15 @@ __artifacts_v2__ = {
     },
     "waze_planned_events": {
         "name": "Waze - Planned Events",
-        "description": "Parses and extracts synchronized calendar events and planned trips.",
+        "description": "Parses and extracts the EVENTS_PLACES table and its linked place records.",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-06-27",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Waze",
-        "notes": "https://djangofaiola.blogspot.com",
+        "notes": "https://djangofaiola.blogspot.com. "
+                 "Event type and all-day mappings were established through testing; unrecognized "
+                 "values are reported as stored.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "html_columns": ["Image URL"],
@@ -155,10 +170,12 @@ __artifacts_v2__ = {
         "description": "Parses and extracts text-to-speech navigation information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-07-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Waze",
-        "notes": "https://djangofaiola.blogspot.com",
+        "notes": "https://djangofaiola.blogspot.com. "
+                 "Text type mappings were established through testing; unrecognized values are "
+                 "reported as stored.",
         "paths": ("*/com.waze/waze/tts/tts.db*"),
         "output_types": ["standard"],
         "artifact_icon": "volume-2",
@@ -967,7 +984,7 @@ def waze_account(context):
         'Email',
         'Waze User ID',
         'Invisible Mode',
-        ('Last App Launch', 'datetime'),
+        ('Dynamic Splash Screen Last Shown', 'datetime'),
         'Provider First Name',
         'Provider Last Name',
         'Provider Name',
@@ -1136,10 +1153,10 @@ def _read_spdlog_lines(file_path: str, context) -> list[str]:
 @artifact_processor
 def waze_track_gps_quality(context):
     """
-    Unified forensic parser for Waze spdlog files. Extracts high-precision
-    positioning data and matches absolute Unix Epoch timestamps (in milliseconds)
-    across legacy C++ log lines and modern Swift telemetry payloads for
-    heuristic deduplication.
+    Unified forensic parser for Waze spdlog files. Extracts positioning data
+    and matches absolute Unix Epoch timestamps (in milliseconds) across legacy
+    C++ log lines and modern Swift telemetry payloads for heuristic
+    deduplication.
 
     Two log architectures are handled:
 
@@ -1164,8 +1181,18 @@ def waze_track_gps_quality(context):
         }
 
     Deduplication: when a Legacy line is immediately followed by a Swift block
-    whose timestamp differs by <= 250 ms, they represent the same GPS sample.
-    The richer Swift record is kept and the Legacy one discarded.
+    whose timestamp differs by <= 250 ms (GPS_DEDUP_WINDOW_MS), the two records
+    are treated as the same GPS sample. This is a proximity heuristic, not a
+    property of the log format: the pairing is inferred from timestamp
+    closeness alone and is not guaranteed to be correct. The richer Swift
+    record is reported and the paired Legacy line is dropped, so de-duplicated
+    Legacy lines do not appear in the output. Legacy lines with no Swift block
+    within the window are reported as-is.
+
+    Accuracy columns: the Legacy C++ path supplies ACC_MIN/ACC_AVG/ACC_MAX,
+    which carry no unit in the log; the Swift path supplies
+    accuracy_min_meters/accuracy_avg_meters/accuracy_max_meters, which are in
+    meters. Both feed the same columns.
     """
 
     data_headers = (
@@ -1176,9 +1203,9 @@ def waze_track_gps_quality(context):
         'Sample Count',
         'Bad Sample Count',
         'Duplicate Sample Count',
-        'Accuracy Min (m)',
-        'Accuracy Avg (m)',
-        'Accuracy Max (m)',
+        'Accuracy Min',
+        'Accuracy Avg',
+        'Accuracy Max',
         'Position Provider',
         SOURCE_FILE_NAME,
         'Location'
@@ -1432,7 +1459,7 @@ def waze_track_gps_quality(context):
 @artifact_processor
 def waze_search_history(context):
     """
-    Extracts all locations manually searched by the user from the PLACES table.
+    Extracts location entries from the PLACES table (includes searched and referenced places).
     """
 
     data_headers = (
@@ -1590,7 +1617,7 @@ def waze_search_history(context):
 @artifact_processor
 def waze_recent_locations(context):
     """
-    Extracts the history of recently visited or selected locations,
+    Extracts the history of recently accessed location entries,
     joining RECENTS with the PLACES table for full coordinates.
     """
 
@@ -2234,10 +2261,9 @@ def waze_shared_locations(context):
 @artifact_processor
 def waze_planned_events(context):
     """
-    Extracts locations and scheduled destinations synchronized from calendar
-    events.  Waze reads the device calendar, resolves each event address
-    against the PLACES table and stores the result in EVENTS_PLACES inside
-    user.db.
+    Extracts the event entries stored in the EVENTS_PLACES table of user.db,
+    joined to the PLACES table referenced by their place_id and
+    origin_place_id columns for address and coordinate details.
     """
 
     data_headers = (
@@ -2515,8 +2541,8 @@ def _parse_tts_table(cursor, table_name: str, source_path: str, context, data_li
 @artifact_processor
 def waze_tts(context):
     """
-    Dynamically scans all tables in tts.db to extract a history of
-    text-to-speech instructions provided during navigation.
+    Dynamically scans all tables in tts.db to extract the text-to-speech
+    instruction strings recorded by the app.
     """
 
     data_headers = (

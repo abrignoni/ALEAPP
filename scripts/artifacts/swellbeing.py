@@ -4,10 +4,17 @@ __artifacts_v2__ = {
         "description": "Parses Samsung Digital Wellbeing app usage events (timestamp, event ID, package and event type) from dwbCommon.db.",
         "author": "",
         "creation_date": "2020-05-21",
-        "last_update_date": "2020-05-21",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Digital Wellbeing",
-        "notes": "",
+        "notes": (
+            "Event-type labels were established through testing against Samsung Digital "
+            "Wellbeing data; Samsung's implementation is not documented and its codes are "
+            "not verified to match the AOSP UsageEvents.Event constants used by the "
+            "usagestats artifact. An event type with no matching label is shown as stored. "
+            "A label names a recorded transition and does not by itself establish a user "
+            "action."
+        ),
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
         "output_types": "standard",
         "artifact_icon": "battery",
@@ -54,10 +61,10 @@ def get_swellbeing(context):
         when usageEvents.eventType=10 THEN 'NOTIFICATION PANEL'
         when usageEvents.eventType=11 THEN 'STANDBY_BUCKET_CHANGED'
         when usageEvents.eventType=12 THEN 'NOTIFICATION'
-        when usageEvents.eventType=15 THEN 'SCREEN_INTERACTIVE (Screen on for full user interaction)'
-        when usageEvents.eventType=16 THEN 'SCREEN_NON_INTERACTIVE (Screen on in Non-interactive state or completely turned off)'
-        when usageEvents.eventType=17 THEN 'KEYGUARD_SHOWN || POSSIBLE DEVICE LOCK'
-        when usageEvents.eventType=18 THEN 'KEYGUARD_HIDDEN || DEVICE UNLOCK'
+        when usageEvents.eventType=15 THEN 'SCREEN_INTERACTIVE'
+        when usageEvents.eventType=16 THEN 'SCREEN_NON_INTERACTIVE'
+        when usageEvents.eventType=17 THEN 'KEYGUARD_SHOWN'
+        when usageEvents.eventType=18 THEN 'KEYGUARD_HIDDEN'
         when usageEvents.eventType=19 THEN 'FOREGROUND_SERVICE START'
         when usageEvents.eventType=20 THEN 'FOREGROUND_SERVICE_STOP'
         when usageEvents.eventType=23 THEN 'ACTIVITY_STOPPED'

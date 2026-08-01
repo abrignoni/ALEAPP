@@ -21,10 +21,18 @@ __artifacts_v2__ = {
         "description": "Parses IMO messages (timestamp, sender and recipient IDs, message, direction, read status and attachments) from the IMO imofriends.db.",
         "author": "",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "IMO",
-        "notes": "",
+        "notes": ("Direction is decoded from the messages table 'message_type' column. "
+                  "Direction/status value mappings were established through testing; unrecognized "
+                  "values are reported as stored, so rows the mapping does not cover are not "
+                  "labelled as sent or received.\n"
+                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "device owner; a row whose direction value is blank or unrecognized is not "
+                  "attributed to the owner.\n"
+                  "From ID and To ID are filled only when the direction is recognized; the other "
+                  "party is always present in Chat Partner."),
         "paths": ('*/com.imo.android.imous/databases/imofriends.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -92,7 +100,7 @@ def get_imo_messages(context):
             try:
                 cursor.execute('''
                              SELECT messages.buid AS buid, imdata, last_message, timestamp/1000000000,
-                                    case message_type when 1 then "Incoming" else "Outgoing" end message_type, message_read
+                                    case message_type when 1 then "Incoming" when 2 then "Outgoing" else message_type end message_type, message_read
                                FROM messages
                               INNER JOIN friends ON friends.buid = messages.buid
                 ''')
@@ -106,7 +114,7 @@ def get_imo_messages(context):
                 attachmentPath = ''
                 if row[4] == "Incoming":
                     from_id = row[0]
-                else:
+                elif row[4] == "Outgoing":
                     to_id = row[0]
                 if row[1] is not None:
                     imdata_dict = json.loads(row[1])

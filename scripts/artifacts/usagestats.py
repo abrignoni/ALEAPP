@@ -2,19 +2,41 @@
 __artifacts_v2__ = {
     "get_usagestats": {
         "name": "Usage Stats",
-        "description": "Android application, device-state, service, notification and user-interaction events from XML and protobuf UsageStats stores.",
+        "description": (
+            "Package usage records, device configuration records and event-log entries read "
+            "from the Android UsageStats XML and protobuf stores."
+        ),
         "author": "Alexis Brignoni",
         "creation_date": "2020-02-25",
-        "last_update_date": "2026-07-31",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Usage Stats",
         "notes": (
-            "Daily, weekly, monthly and yearly files overlap; repeated rows across those "
-            "intervals are not separate user actions. ACTIVITY_RESUMED records an Android "
-            "activity lifecycle transition, not proof that a person intentionally opened or "
-            "viewed the app. SCREEN_INTERACTIVE does not mean unlocked. Android source: "
-            "https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/"
-            "core/java/android/app/usage/UsageEvents.java"
+            "Usage Type names the record kind a row was read from: 'packages' and "
+            "'configurations' are per-interval aggregates written by the platform, "
+            "'event-log' rows are individually recorded events. Interval names the daily, "
+            "weekly, monthly or yearly folder the record came from; in the tested images the "
+            "same record appears in more than one interval folder, so rows repeated across "
+            "intervals are not necessarily separate occurrences. "
+            "Event Type shows the UsageEvents.Event constant whose value matches the stored "
+            "numeric 'type' field; a value with no matching constant is shown as stored. The "
+            "constant name is the platform's label for a recorded transition and does not by "
+            "itself establish what a person did: ACTIVITY_RESUMED records an activity moving "
+            "to the foreground, and SCREEN_INTERACTIVE records the screen entering an "
+            "interactive state, which is a separate constant from KEYGUARD_SHOWN and "
+            "KEYGUARD_HIDDEN and therefore does not record keyguard (lock) state. "
+            "Timestamps are rendered in UTC. Each stored time is added to the interval "
+            "file's numeric name, except that a negative stored value is used as its own "
+            "magnitude; all four timestamp columns are converted the same way. The "
+            "millisecond units in the column names come from the protobuf field names "
+            "(last_time_active_ms, total_time_visible_ms and siblings); the matching XML "
+            "attributes carry no unit in their names. "
+            "Standby Bucket and Standby Reason are the high and low 16 bits of the single "
+            "stored standbyBucket value; that split is applied by this parser and is not "
+            "labelled in the file. Event Flags is the stored numeric 'flags' bitmask, "
+            "undecoded. "
+            "Reference: Google, 'UsageEvents.Event', "
+            "https://developer.android.com/reference/android/app/usage/UsageEvents.Event"
         ),
         "paths": ('*/system/usagestats/*', '*/system_ce/*/usagestats*'),
         "output_types": "standard",
@@ -57,7 +79,12 @@ def _str_to_utc(value):
         return ''
 
 
-# Event types referenced from core\java\android\app\usage\UsageEvents.java
+# Names for the numeric event 'type' field. The values 1, 2, 10, 12, 15, 16, 17, 18 and 23
+# match the public UsageEvents.Event constants; the remaining names are the platform's own
+# labels for the same field (core/java/android/app/usage/UsageEvents.java) and are not part
+# of the public API. A name identifies the recorded transition, nothing beyond it.
+# Reference: Google, 'UsageEvents.Event',
+# https://developer.android.com/reference/android/app/usage/UsageEvents.Event
 
 class EventType(IntEnum):
     NONE = 0
@@ -96,12 +123,6 @@ class EventType(IntEnum):
     def __str__(self):
         return self.name # This returns 'KNOWN' instead of 'EventType.KNOWN'
 
-class EventFlag(IntEnum):
-    FLAG_IS_PACKAGE_INSTANT_APP = 1
-
-    def __str__(self):
-        return self.name
-
 
 DATA_COLUMNS = (
     'usage_type', 'lastime', 'timeactive', 'last_time_service_used',
@@ -128,20 +149,24 @@ def _event_type_name(value):
         return str(value) if value not in (None, '') else ''
 
 
-def _event_flag_name(value):
+def _event_flags_value(value):
+    """Return the stored event 'flags' value unchanged.
+
+    The field is a bitmask and the platform's flag names are not part of the public API,
+    so the raw value is carried through rather than decoded to a name.
+    """
     if value in (None, ''):
         return ''
-    try:
-        numeric = int(value)
-    except (ValueError, TypeError):
-        return str(value)
-    if numeric == EventFlag.FLAG_IS_PACKAGE_INSTANT_APP:
-        return EventFlag.FLAG_IS_PACKAGE_INSTANT_APP.name
-    return str(numeric)
+    return str(value)
 
 
 def _interval_time(value, interval_begin):
-    """Convert a stored interval offset (or legacy negative absolute value) to epoch ms."""
+    """Return epoch milliseconds for a stored time.
+
+    A non-negative value is added to interval_begin, the interval file's numeric name. A
+    negative value is used as its own magnitude, which in the observed files is already an
+    absolute epoch-millisecond time.
+    """
     if value in (None, ''):
         return ''
     numeric = int(value)
@@ -149,6 +174,7 @@ def _interval_time(value, interval_begin):
 
 
 def _duration(value):
+    """Return the magnitude of a stored duration or count."""
     if value in (None, ''):
         return ''
     return abs(int(value))
@@ -159,7 +185,12 @@ def _field(message, name):
 
 
 def _pool_string(strings, index):
-    """Resolve Android's one-based string-pool index without raising on bad evidence."""
+    """Return the pooled string for a stored index.
+
+    The stored index is read as one-based, and an absent or zero index as 'no value'. An
+    index that falls outside the pool returns '' instead of raising, so a damaged or
+    truncated file does not abort the run.
+    """
     if not index:
         return ''
     offset = int(index) - 1
@@ -173,9 +204,10 @@ def _standby_parts(value):
     return (numeric & 0xFFFF0000) >> 16, numeric & 0x0000FFFF
 
 def get_string_by_token(packages, token1, token2=0):
+    """Resolve a token pair against the per-package string lists in the mappings file."""
     strings = packages.get(token1, None)
     if not strings:
-        # This happens with deleted processes.
+        # The mappings file carries no strings for this token, so it cannot be resolved.
         return ''
     # Optional event token fields are represented by an empty string in the
     # shared field helper. They are not package-name token 0.
@@ -186,6 +218,8 @@ def get_string_by_token(packages, token1, token2=0):
     except (TypeError, ValueError):
         return ''
     if token2 == 0:
+        # A package token carrying no sub-token resolves to the first string of the entry,
+        # which in the observed mappings files holds the package name.
         return strings[0]
     if len(strings) >= token2:
         return strings[token2 - 1]
@@ -277,7 +311,7 @@ def AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages):
             package=pkg,
             types=tipes,
             classs=classy,
-            event_flags=_event_flag_name(_field(event, 'flags')),
+            event_flags=_event_flags_value(_field(event, 'flags')),
             shortcut_id=get_string_by_token(
                 packages, event_package_token, _field(event, 'shortcut_id_token')),
             standby_bucket=standby_bucket,
@@ -380,7 +414,7 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
             package=pkg,
             types=tipes,
             classs=classy,
-            event_flags=_event_flag_name(_field(event, 'flags')),
+            event_flags=_event_flags_value(_field(event, 'flags')),
             shortcut_id=_field(event, 'shortcut_id'),
             standby_bucket=standby_bucket,
             standby_reason=standby_reason,
@@ -412,15 +446,16 @@ def get_usagestats(context):
         file_found = str(file_found)
         parts = file_found.split(slash)
         if os.path.isdir(file_found): # filter for directory only.
-            # Target = .../system/usagestats/0  <-- Android <= 10
-            # Target = .../system_ce/0/usagestats  <-- Android = 11
+            # Two store layouts are handled, selected by the shape of the path rather than
+            # by OS version: .../system/usagestats/<uid> and .../system_ce/<uid>/usagestats
             if len(parts) > 2 and parts[-2] == 'usagestats' and parts[-3] == 'system':
                 uid = parts[-1]
                 try:
                     int(uid)
                 except ValueError:
                     continue # uid was not a number
-                # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
+                # A Magisk mirror path presents the same store under a second path, so skip
+                # it rather than parse the same files twice.
                 if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
                     continue
                 source = source or file_found
@@ -434,7 +469,8 @@ def get_usagestats(context):
                 if uid_int in uids_processed:
                     continue
                 uids_processed.add(uid_int)
-                # Skip /sbin/.magisk/mirror/data/system/usagestats/0/ , it should be duplicate data??
+                # A Magisk mirror path presents the same store under a second path, so skip
+                # it rather than parse the same files twice.
                 if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
                     continue
                 source = source or file_found
@@ -446,8 +482,9 @@ def get_usagestats(context):
         ('Last Time Service Used', 'datetime'), 'Total Time Service Used (ms)',
         ('Last Time Visible', 'datetime'), 'Total Time Visible (ms)',
         ('Last Time Component Used', 'datetime'), 'App Launch Count', 'Package',
-        'Event Type', 'Class', 'Event Flags', 'Shortcut ID', 'Standby Bucket',
-        'Standby Reason', 'Notification Channel', 'Instance ID', 'Task Root Package',
+        'Event Type', 'Class', 'Event Flags (as stored)', 'Shortcut ID',
+        'Standby Bucket (high 16 bits)', 'Standby Reason (low 16 bits)',
+        'Notification Channel', 'Instance ID', 'Task Root Package',
         'Task Root Class', 'Locus ID', 'Interaction Category', 'Interaction Action',
         'Interval'
     )
@@ -466,6 +503,9 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
             if file_name == 'version':
                 continue
             else:
+                # Reset per file: without this a file outside the interval folders would
+                # keep the previous file's interval label.
+                sourced = ''
                 if 'daily' in filename:
                     sourced = 'daily'
                 elif 'weekly' in filename:
@@ -487,7 +527,7 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
                 try:
                     ET.parse(filename)
                 except ET.ParseError:
-                    # Perhaps an Android Q protobuf file
+                    # Not well-formed XML, so try the version 1 protobuf layout.
                     try:
                         stats = ReadUsageStatsPbFile(filename)
                         err = 0
@@ -583,7 +623,7 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
                                     package=pkg,
                                     types=tipes,
                                     classs=subelem.attrib.get('class', ''),
-                                    event_flags=_event_flag_name(subelem.attrib.get('flags', '')),
+                                    event_flags=_event_flags_value(subelem.attrib.get('flags', '')),
                                     shortcut_id=subelem.attrib.get('shortcutId', ''),
                                     standby_bucket=standby_bucket,
                                     standby_reason=standby_reason,
@@ -593,6 +633,8 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
                                     task_root_package=subelem.attrib.get('taskRootPackage', ''),
                                     task_root_class=subelem.attrib.get('taskRootClass', ''),
                                     locus_id=subelem.attrib.get('locusId', ''),
+                                    # Some of the tested XML stores carry the shorter
+                                    # 'category' / 'action' attribute names instead.
                                     interaction_category=subelem.attrib.get(
                                         'interactionCategory', subelem.attrib.get('category', '')),
                                     interaction_action=subelem.attrib.get(
@@ -622,6 +664,9 @@ def add_v2_usagestats_to_db(folder, db):
             if file_name in ('version', 'migrated', 'mappings'):
                 continue
 
+            # Reset per file: without this a file outside the interval folders would keep
+            # the previous file's interval label.
+            sourced = ''
             if 'daily' in filepath:
                 sourced = 'daily'
             elif 'weekly' in filepath:
@@ -637,7 +682,7 @@ def add_v2_usagestats_to_db(folder, db):
                 logfunc('Invalid filename at {filename}')
                 continue
 
-            # An Android R protobuf file
+            # Version 2 (token-obfuscated) protobuf layout.
             try:
                 stats_ob = ReadUsageStatsV2PbFile(filepath)
                 AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages)
@@ -671,8 +716,8 @@ def process_usagestats(folder, uid, version):
     else:
         add_v2_usagestats_to_db(folder, db)
 
-    #query for reporting
-    # Types mentioned here: UsageEvents.Event in platform_frameworks_base\api\current.txt
+    # Query for reporting. Stored times are epoch milliseconds; 'UNIXEPOCH' renders them in
+    # UTC and keeps SQLite from applying the examiner machine's local time zone.
     cursor.execute('''
     select
     case lastime WHEN '' THEN ''
@@ -680,7 +725,9 @@ def process_usagestats(folder, uid, version):
     end as lasttimeactive,
     usage_type,
     timeactive as time_Active_in_msecs,
-    timeactive/1000 as timeactive_in_secs,
+    case timeactive WHEN '' THEN ''
+     ELSE timeactive/1000
+    end as timeactive_in_secs,
     case last_time_service_used  WHEN '' THEN ''
      ELSE datetime(last_time_service_used/1000, 'UNIXEPOCH')
     end last_time_service_used,

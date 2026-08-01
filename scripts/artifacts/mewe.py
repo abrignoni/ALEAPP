@@ -5,18 +5,24 @@ __artifacts_v2__ = {
         "description": "Parses MeWe chat messages (timestamp, thread, user, message text, direction, type and attachments) from the MeWe chat database (app_database on older builds, app_v3.db on newer ones).",
         "author": "",
         "creation_date": "2021-11-10",
-        "last_update_date": "2026-07-26",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "MeWe",
         "notes": ("Source: MeWe moved its chat store from 'app_database' to 'app_v3.db'; both are read. "
                   "Newer builds leave an empty 'mewe_old' beside it, which is skipped.\n"
                   "Direction: 'Sent' means the account signed in on this device sent the message. "
                   "Its user ID is the suffix of the 'user_info<id>' key in SGSession.xml (see MeWe - "
-                  "SGSession), which can be matched against User Id to confirm who the owner is.\n"
+                  "SGSession), which can be matched against User Id to confirm who the owner is. "
+                  "Message Direction is read from the CHAT_MESSAGE 'currentUserMessage' flag; on a "
+                  "schema generation that does not carry that column the direction cannot be "
+                  "established and Message Direction is blank for every row of that database. In "
+                  "the conversation view a blank direction is not attributed to the owner.\n"
                   "Thread Name is the other party on a one-to-one chat, not a group name; a Group Id "
                   "of 'contacts' likewise indicates a direct chat rather than a group.\n"
                   "Deleted: 'YES' is the app's own deletion flag. The row and its text are still "
-                  "present here, so a deleted message can remain readable.\n"
+                  "present here, so a deleted message can remain readable. The flag is read from the "
+                  "CHAT_MESSAGE 'deleted' column; where that column is absent the cell is blank "
+                  "rather than reported as 'NO'.\n"
                   "Shared locations arrive as an openstreetmap.org URL in Message Text, with the "
                   "coordinates in the mlat/mlon parameters.\n"
                   "Attachment Name is often empty even when Message Type is set (for example PHOTO); "
@@ -47,12 +53,12 @@ __artifacts_v2__ = {
         "description": "Feed posts cached by MeWe, including group, author, text, link, media and poll details.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
-        "last_update_date": "2026-07-26",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("This is cached feed content, not an authorship record. Rows are posts the app "
-                  "downloaded to render a feed the user scrolled, so their presence shows what was "
-                  "delivered to the device, NOT that the device owner wrote, opened or read any of "
+        "notes": ("This is cached feed content, not an authorship record. Rows are posts held in "
+                  "the app's POST table, so their presence shows what was cached on the device, "
+                  "NOT that the device owner wrote, opened or read any of "
                   "it. In both test images every cached post belongs to someone else "
                   "(currentUserPost = 0 for all 74). Use 'Posted By Device Owner' = Yes to isolate "
                   "the owner's own posts.\n"
@@ -176,20 +182,21 @@ __artifacts_v2__ = {
     },
     "get_mewe_groups": {
         "name": "MeWe - Groups and Pages",
-        "description": "Groups, pages and communities the MeWe account follows or belongs to.",
+        "description": "Cached group, page and community records from the MeWe database.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
-        "last_update_date": "2026-07-26",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "MeWe",
         "notes": ("Three tables are merged and the Type column says which one a row came from: "
                   "Group (GROUP_), Page (PAGE) or Community (COMMUNITY). The same entity can appear "
                   "twice, once as a Group or Page and again as a Community, because MeWe caches "
                   "both views; match on Id.\n"
-                  "Membership is not the same as interest. A row can be present because the entity "
-                  "was merely rendered in a feed. Role and Confirmed indicate an actual "
-                  "relationship: Confirmed = Yes means the account joined the group, and Role names "
-                  "the page relationship (Owner, Admin, Follower).\n"
+                  "A cached row is not a membership record. A row can be present because the entity "
+                  "was merely rendered in a feed. Confirmed is the isConfirmed flag of the GROUP_ / "
+                  "COMMUNITY row rendered as Yes, and Role is built from the PAGE isOwner, isAdmin "
+                  "and isFollower flags; what the app sets either of them for was not established, "
+                  "so neither establishes that the account joined or follows the entity.\n"
                   "Last Opened is converted from milliseconds and reflects the last time the app "
                   "surfaced the entity, which is not necessarily a deliberate visit by the user."),
         "paths": ('*/com.mewe/databases/app_database',
@@ -206,18 +213,20 @@ __artifacts_v2__ = {
         "description": "Members of each MeWe chat thread.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
-        "last_update_date": "2026-07-26",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("The device owner is listed as a participant alongside the other members, so a "
-                  "one-to-one thread yields the owner and the correspondent. Cross-reference "
-                  "Participant Id against the 'user_info<id>' key in SGSession.xml to tell them "
-                  "apart.\n"
+        "notes": ("Rows are the participants recorded for a thread in CHAT_THREAD_PARTICIPANT. "
+                  "Whether the device owner is listed among them was not established; each test "
+                  "image yielded a single participant row in total. Cross-reference Participant Id "
+                  "against the 'user_info<id>' key in SGSession.xml to identify the owner where "
+                  "one is listed.\n"
                   "Status is the presence value last cached by the app (typically OFFLINE) and "
                   "carries no timestamp, so it should not be read as a state at any particular "
                   "moment.\n"
-                  "Only participants of threads still cached in the database appear; a thread the "
-                  "app has aged out leaves no participants behind."),
+                  "Only participants present in CHAT_THREAD_PARTICIPANT appear. A thread with no "
+                  "rows in that table yields no participants here; why rows are absent for a given "
+                  "thread was not established."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db'),
         "output_types": "standard",
@@ -296,6 +305,15 @@ def _column_or_null(db_path, key):
     return 'NULL'
 
 
+def _flag_case(column, when_one, when_zero):
+    """CASE over an optional 0/1 flag. A missing column, a NULL and any value the flag
+    does not define all yield a blank cell: the schema generation that lacks the column
+    cannot establish the flag, so no meaning is asserted for it."""
+    if column == 'NULL':
+        return "''"
+    return f"CASE {column} WHEN 1 THEN '{when_one}' WHEN 0 THEN '{when_zero}' ELSE '' END"
+
+
 def _build_chat_query(db_path):
     """Assemble the chat query for whichever schema generation this database is."""
     threadName = _column_or_null(db_path, 'threadName')
@@ -319,10 +337,10 @@ def _build_chat_query(db_path):
         {ownerId},
         {ownerName},
         {textPlain},
-        CASE {currentUserMessage} WHEN 1 THEN 'Sent' ELSE 'Received' END,
+        {_flag_case(currentUserMessage, 'Sent', 'Received')},
         CASE {attachmentType} WHEN 'UNSUPPORTED' THEN '' ELSE {attachmentType} END,
         {attachmentName},
-        CASE {deleted} WHEN 1 THEN 'YES' ELSE 'NO' END
+        {_flag_case(deleted, 'YES', 'NO')}
     FROM CHAT_MESSAGE
     JOIN CHAT_THREAD ON CHAT_MESSAGE.threadId = CHAT_THREAD.id
     ORDER BY CHAT_MESSAGE.createdAt
