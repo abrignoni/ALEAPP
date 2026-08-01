@@ -243,6 +243,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | tusky |
 | usageapps |
 | userDict |
+| vaulty_files |
 | vlcMedia |
 | vlcThumbs |
 | waze |
