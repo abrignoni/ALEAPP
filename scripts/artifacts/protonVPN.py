@@ -1,4 +1,3 @@
-# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_protonvpn_device_info": {
         "name": "ProtonVPN - Device Info",
@@ -18,10 +17,13 @@ __artifacts_v2__ = {
         "description": "Parses ProtonVPN connection history (server address and timestamp) from the ProtonVPN Data.log.",
         "author": "",
         "creation_date": "2022-09-04",
-        "last_update_date": "2022-09-04",
+        "last_update_date": "2026-07-31",
         "requirements": "none",
         "category": "ProtonVPN",
-        "notes": "",
+        "notes": "The server address is reported exactly as recorded in Data.log. Earlier versions "
+                 "resolved the hostname to an IP address at parse time; that lookup was removed "
+                 "because it generated network traffic from the examiner's workstation and the "
+                 "resolved address reflected DNS at the time of analysis, not the logged connection.",
         "paths": ('*/ch.protonvpn.android/log/Data.log',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -42,7 +44,6 @@ __artifacts_v2__ = {
 }
 
 import re
-import socket
 import datetime
 import xml.etree.ElementTree as ET
 
@@ -126,15 +127,9 @@ def get_protonvpn_connection_history(context):
                 initial_connect = entry.find('to:')
                 if initial_connect != -1:
                     timestamp = convert_human_ts_to_utc(entry[:entry.find('|')-1].split('.')[0].replace('T', ' '))
-                    try:
-                        server_hostname = regex.search(entry)[0]
-                        server_ip = socket.gethostbyname(server_hostname)
-                        data_list.append((server_hostname + f"  -  [ {server_ip} ]", timestamp))
-                    except socket.error:
-                        server_hostname = regex.search(entry)[0]
-                        data_list.append((server_hostname, timestamp))
-                    except:
-                        pass
+                    server_hostname = regex.search(entry)
+                    if server_hostname:
+                        data_list.append((server_hostname[0], timestamp))
 
     data_headers = ('Server Address', ('Timestamp', 'datetime'))
     return data_headers, data_list, source_path
