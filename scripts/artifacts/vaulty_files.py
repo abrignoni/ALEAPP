@@ -27,16 +27,6 @@ from scripts.ilapfuncs import artifact_processor, convert_human_ts_to_utc, open_
 def get_vaulty_files(context):
     files_found = context.get_files_found()
 
-    # Media database
-    db_filepath = str(files_found[0])
-    conn = open_sqlite_db_readonly(db_filepath)
-    c = conn.cursor()
-    # date_added is stored in seconds, date_modified in milliseconds; see notes above.
-    sql = """SELECT Media._id, datetime(Media.date_added, 'unixepoch'), datetime(Media.date_modified / 1000, 'unixepoch'), Media.path, Media._data FROM Media"""
-    c.execute(sql)
-    results = c.fetchall()
-    conn.close()
-
     # Data results
     # Headers name what each value holds, not the column it comes from: date_added
     # holds the file's creation time and date_modified the added-to-vault time.
@@ -47,6 +37,21 @@ def get_vaulty_files(context):
         'Original Path',
         'Vault Path',
     )
+    data_list = []
+
+    # Media database
+    db_filepath = str(files_found[0])
+    conn = open_sqlite_db_readonly(db_filepath)
+    if not conn:
+        return data_headers, data_list, db_filepath
+
+    c = conn.cursor()
+    # date_added is stored in seconds, date_modified in milliseconds; see notes above.
+    sql = """SELECT Media._id, datetime(Media.date_added, 'unixepoch'), datetime(Media.date_modified / 1000, 'unixepoch'), Media.path, Media._data FROM Media"""
+    c.execute(sql)
+    results = c.fetchall()
+    conn.close()
+
     data_list = [(r[0], convert_human_ts_to_utc(r[1]), convert_human_ts_to_utc(r[2]), r[3], r[4]) for r in results]
 
     return data_headers, data_list, db_filepath
