@@ -394,6 +394,16 @@ _ACTION_NAMES = {
     0xffa00ccc: 'Payment sent me',
 }
 
+# TlGen_Vector writes this constructor, then a count, then the elements.
+_VECTOR = 0x1CB5C415
+
+# InputGroupCall variants carried by TL_messageActionInviteToGroupCall.
+_INPUT_GROUP_CALLS = {
+    0xD8AA840F: ('int64', 'int64'),   # TL_inputGroupCall: id, access_hash
+    0xFE06823F: ('string',),          # TL_inputGroupCallSlug: slug
+    0x8C10603F: ('int32',),           # TL_inputGroupCallInviteMessage: msg_id
+}
+
 # Bare constructors carried by TL_messageActionPhoneCall.
 _DISCARD_REASONS = {
     0x85E42301: 'missed',
@@ -406,7 +416,16 @@ _DISCARD_REASONS = {
 # is (flags?, steps); a step of (flag, kind, label) with flag 0 is unconditional.
 _ACTION_PAYLOADS = {
     0xB5A1CE5A: (False, ((0, 'string', 'title'),)),                  # ChatEditTitle
-    0xBD47CBAD: (False, ((0, 'string', 'title'),)),                  # ChatCreate
+    0xBD47CBAD: (False, ((0, 'string', 'title'),
+                         (0, 'vector-int64', 'members'))),           # ChatCreate
+    0xA6638B9A: (False, ((0, 'string', 'title'),
+                         (0, 'vector-int32', 'members'))),           # ChatCreate_layer132
+    0x15CEFD00: (False, ((0, 'vector-int64', 'users'),)),            # ChatAddUser
+    0x488A7337: (False, ((0, 'vector-int32', 'users'),)),            # ChatAddUser_layer132
+    0x502F92F7: (False, ((0, 'groupcall', 'call'),
+                         (0, 'vector-int64', 'users'))),             # InviteToGroupCall
+    0x76B9F11A: (False, ((0, 'groupcall', 'call'),
+                         (0, 'vector-int32', 'users'))),             # InviteToGroupCall_layer132
     0xA43F30CC: (False, ((0, 'int64', 'user'),)),                    # ChatDeleteUser
     0x031224C3: (False, ((0, 'int64', 'inviter'),)),                 # ChatJoinedByLink
     0xFAE69F56: (False, ((0, 'string', 'message'),)),                # CustomAction
@@ -441,6 +460,30 @@ def _read_action_payload(reader, constructor):
             value = reader.read_peer()
         elif kind == 'reason':
             value = _DISCARD_REASONS.get(reader.read_uint32(), 'unknown')
+        elif kind in ('vector-int64', 'vector-int32'):
+            if reader.read_uint32() != _VECTOR:
+                return ', '.join(parts)
+            count = reader.read_int32()
+            if count < 0 or count > 10000:
+                return ', '.join(parts)
+            read = reader.read_int64 if kind == 'vector-int64' else reader.read_int32
+            members = [str(read()) for _ in range(count)]
+            if not members:
+                continue
+            value = ', '.join(members)
+        elif kind == 'groupcall':
+            fields = _INPUT_GROUP_CALLS.get(reader.read_uint32())
+            if fields is None:
+                return ', '.join(parts)
+            values = []
+            for field in fields:
+                if field == 'int64':
+                    values.append(str(reader.read_int64()))
+                elif field == 'int32':
+                    values.append(str(reader.read_int32()))
+                else:
+                    values.append(reader.read_string())
+            value = values[0] if values else ''
         else:
             return ''
         if kind == 'string' and not value:
