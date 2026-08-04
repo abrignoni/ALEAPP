@@ -55,6 +55,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | sbbmobile |
 | shistorylog |
 | swissmeteo |
+| telegramAndroid |
 | thunderbird |
 | waze |
 <!-- GET_RECORDS_END -->
