@@ -112,6 +112,34 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "messages",
     },
+    "get_telegramAccounts": {
+        "name": "Telegram - Accounts",
+        "description": (
+            "Parses the Telegram account slots from the userconfing.xml and userconfig1-3.xml "
+            "shared preferences files. Reports the signed-in user of each slot, decoded from "
+            "the stored user record, together with the app passcode configuration, the "
+            "auto-lock delay, the last contacts synchronisation time and the last dialled "
+            "number the app recorded."
+        ),
+        "author": "Alexis Brignoni",
+        "creation_date": "2026-08-04",
+        "last_update_date": "2026-08-04",
+        "requirements": "none",
+        "category": "Telegram",
+        "notes": "Telegram supports several accounts on one device; slot 0 is stored in "
+                 "userconfing.xml, spelled that way by the client, and slots 1 to 3 in "
+                 "userconfig1.xml through userconfig3.xml. The user key holds a "
+                 "base64-encoded TL user record, decoded here for the account id, names, "
+                 "username and phone number. A passcode is in use when passcodeHash1 holds a "
+                 "value; passcodeType 0 is a PIN and 1 is a password. The stored hash and "
+                 "salt are not reported, only whether they are present. Reference: "
+                 "Telegram-Android, 'SharedConfig.java (passcodeHash1, passcodeType, "
+                 "autoLockIn)', https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/"
+                 "src/main/java/org/telegram/messenger/SharedConfig.java",
+        "paths": ('*/org.telegram.messenger*/shared_prefs/userconf*.xml',),
+        "output_types": "standard",
+        "artifact_icon": "user-circle",
+    },
     "get_telegramAutoDownload": {
         "name": "Telegram - Auto-Download Settings",
         "description": (
@@ -140,7 +168,9 @@ __artifacts_v2__ = {
     },
 }
 
+import base64
 import io
+import os
 import struct
 import xml.etree.ElementTree as ET
 
@@ -825,6 +855,111 @@ def get_telegramChats(context):
             'Archived' if folder_id == 1 else 'Main',
         ))
     return data_headers, data_list, db_file
+
+
+# TL_user constructors whose prefix is flags, flags2, id, then the optional
+# access hash, names, username and phone. TL_user_layer184 and _layer227.
+_USER_RECORDS = {0x215C4438, 0x31774388}
+
+_PASSCODE_TYPES = {0: 'PIN', 1: 'Password'}
+
+
+def _decode_account_user(raw):
+    """Decode the base64 TL user record stored under the 'user' key."""
+    try:
+        blob = base64.b64decode(raw)
+    except (ValueError, TypeError):
+        return {}
+    if len(blob) < 16:
+        return {}
+    reader = _TLReader(blob)
+    if reader.read_uint32() not in _USER_RECORDS:
+        return {}
+    try:
+        flags = reader.read_uint32()
+        reader.read_uint32()                       # flags2
+        user = {'id': reader.read_int64()}
+        if flags & 1:
+            reader.read_int64()                    # access_hash
+        for bit, name in ((2, 'first_name'), (4, 'last_name'),
+                          (8, 'username'), (16, 'phone')):
+            if flags & bit:
+                user[name] = reader.read_string()
+        return user
+    except (struct.error, IndexError, UnicodeDecodeError):
+        return {}
+
+
+@artifact_processor
+def get_telegramAccounts(context):
+    data_headers = (
+        ('Last Contacts Sync', 'datetime'),
+        'Account Slot',
+        'User ID',
+        'First Name',
+        'Last Name',
+        'Username',
+        'Phone',
+        'Passcode',
+        'Auto-Lock',
+        'Unlock With Fingerprint',
+        'Last Dialled Number',
+    )
+    data_list = []
+    sources = []
+
+    for file_found in context.get_files_found():
+        path = str(file_found)
+        name = os.path.basename(path.replace('\\', '/'))
+        if not name.startswith('userconf') or not name.endswith('.xml'):
+            continue
+        try:
+            root = ET.parse(path).getroot()
+        except ET.ParseError as err:
+            logfunc(f'Telegram accounts: could not parse {path}: {err}')
+            continue
+        values = {element.get('name'): (element.get('value') or element.text or '')
+                  for element in root}
+        user = _decode_account_user(values.get('user', ''))
+        digits = ''.join(ch for ch in name if ch.isdigit())
+        slot = digits if digits else '0'
+
+        if not user and not values.get('passcodeHash1') \
+                and not values.get('last_call_phone_number'):
+            continue                                # an unused account slot
+
+        passcode_hash = values.get('passcodeHash1', '')
+        if passcode_hash:
+            kind = _PASSCODE_TYPES.get(_as_int(values.get('passcodeType')), 'Unknown')
+            passcode = f'Set ({kind})'
+        else:
+            passcode = 'Not set'
+        auto_lock = _as_int(values.get('autoLockIn'))
+        sync = _as_int(values.get('lastContactsSyncTime'))
+
+        data_list.append((
+            convert_unix_ts_to_utc(sync) if sync else '',
+            slot,
+            user.get('id', ''),
+            user.get('first_name', ''),
+            user.get('last_name', ''),
+            user.get('username', ''),
+            user.get('phone', ''),
+            passcode,
+            f'{auto_lock} seconds' if auto_lock else '',
+            'Yes' if values.get('useFingerprint') == 'true' else '',
+            values.get('last_call_phone_number', ''),
+        ))
+        sources.append(path)
+
+    return data_headers, data_list, '\n'.join(sources) if sources else ''
+
+
+def _as_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
 
 
 # DownloadController.java: mask index is the chat category, mask bits the media type.
