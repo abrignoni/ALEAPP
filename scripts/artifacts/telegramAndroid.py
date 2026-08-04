@@ -5,30 +5,39 @@ __artifacts_v2__ = {
             "Parses Telegram messages from the cache4.db messages_v2 table. Message text is "
             "decoded from the TL-serialised message blob stored in the data column; the "
             "timestamp, direction and read state are read from the table's own columns. "
-            "Messages whose blob uses a message constructor this parser does not cover are "
-            "still reported, with the text column left empty."
+            "Messages whose blob uses a constructor this parser does not cover are still "
+            "reported, with that constructor named in the message column."
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-08-03",
+        "last_update_date": "2026-08-04",
         "requirements": "none",
         "category": "Telegram",
         "notes": "The data column holds a TL-serialised TLRPC message object. The message "
                  "constructors and their field order are taken from the open-source Telegram "
                  "Android client; constructors from layer 179 onward read a second flags "
-                 "integer before the message id, which this parser accounts for. Messages "
-                 "carrying a forward or reply header nest further optional objects that this "
-                 "parser does not implement, so for those the text is located by searching "
+                 "integer before the message id, which this parser accounts for. Forward and "
+                 "reply headers are stepped over field by field using the same source, so "
+                 "forwarded messages and replies are decoded structurally. A reply that "
+                 "carries inline reply media, quoted entities or a poll option holds a "
+                 "further object tree this parser does not implement; for those, and for any "
+                 "header constructor not covered, the text is instead located by searching "
                  "the blob for the row's own date value, which sits immediately before the "
-                 "text, and reading the string that follows it; the candidate is accepted "
-                 "only when it is a well-formed TL string that decodes as strict UTF-8, and "
-                 "is otherwise reported as not recovered rather than guessed at. Service "
-                 "(system event) messages use a different constructor and are reported as "
-                 "'[Service message]' without an action label, because the action "
-                 "constructors were not verified against the client source. Reference: "
-                 "Telegram-Android, 'TL_legacy_message.java (TL_message layer constructors)', "
+                 "text, and is accepted only when it is a well-formed TL string that decodes "
+                 "as strict UTF-8. The same fallback is used when a structural walk ends on a "
+                 "date that disagrees with the date column. Text that neither route recovers "
+                 "is reported as not recovered rather than guessed at. All eight "
+                 "TL_messageService constructors are recognised and reported as '[Service "
+                 "message]' without an action label, because the action constructors were not "
+                 "verified against the client source. Reference: Telegram-Android, "
+                 "'TL_legacy_message.java (TL_message layer constructors)', "
                  "https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/tl/legacy/TL_legacy_message.java",
+                 "org/telegram/tgnet/tl/legacy/TL_legacy_message.java. Reference: "
+                 "Telegram-Android, 'generated TlGen_MessageReplyHeader.kt, "
+                 "TlGen_MessageFwdHeader.kt and TlGen_Message.kt (header field order, flag "
+                 "bits and service constructors)', https://github.com/DrKLO/Telegram/tree/"
+                 "master/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/"
+                 "model/generated",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -151,9 +160,65 @@ _MSG_NO_FLAGS2 = {
 }
 _MSG_ALL = _MSG_WITH_FLAGS2 | _MSG_NO_FLAGS2
 
-# Service (system event) message constructors seen in the wild. Their action
+# Every TL_messageService constructor defined by the client. Their action
 # payload is not decoded, so they are reported without an action label.
-_MSG_SERVICE = {0x2B085862, 0x7A800E0A, 0x286FA604}
+_MSG_SERVICE = {
+    0x7A800E0A,   # TL_messageService
+    0xD3D28540,   # TL_messageService_layer204
+    0x2B085862,   # TL_messageService_layer195
+    0x286FA604,   # TL_messageService_layer123
+    0x9E19A1F6,   # TL_messageService_layer118
+    0xC06B9607,   # TL_messageService_layer48
+    0x1D86F70E,   # TL_messageService_layer37
+    0x9F8D60BB,   # TL_messageService_layer16
+}
+
+# Forward headers, as (constructor: (flag, kind) steps). A flag of 0 marks an
+# unconditional field. Every field is a scalar, string or peer, so a forward
+# header can always be stepped over.
+_FWD_HEADERS = {
+    0x4E4DF4BB: (   # TL_messageFwdHeader
+        (1, 'peer'), (32, 'string'), (0, 'int32'), (4, 'int32'), (8, 'string'),
+        (16, 'peer'), (16, 'int32'), (256, 'peer'), (512, 'string'),
+        (1024, 'int32'), (64, 'string'),
+    ),
+    0x5F777DCE: (   # TL_messageFwdHeader_layer169
+        (1, 'peer'), (32, 'string'), (0, 'int32'), (4, 'int32'), (8, 'string'),
+        (16, 'peer'), (16, 'int32'), (64, 'string'),
+    ),
+}
+
+# Reply headers. 'media', 'entities' and 'bytes' mark fields whose payload is a
+# further object tree this parser does not implement; hitting one stops the
+# structural walk and the text is recovered by anchoring on the date instead.
+_REPLY_HEADERS = {
+    0x1B97DD66: (   # TL_messageReplyHeader
+        (16, 'int32'), (1, 'peer'), (32, 'fwd'), (256, 'media'), (2, 'int32'),
+        (64, 'string'), (128, 'entities'), (1024, 'int32'), (2048, 'int32'),
+        (4096, 'bytes'),
+    ),
+    0x6917560B: (   # TL_messageReplyHeader_layer223
+        (16, 'int32'), (1, 'peer'), (32, 'fwd'), (256, 'media'), (2, 'int32'),
+        (64, 'string'), (128, 'entities'), (1024, 'int32'), (2048, 'int32'),
+    ),
+    0xAFBC09DB: (   # TL_messageReplyHeader_layer207
+        (16, 'int32'), (1, 'peer'), (32, 'fwd'), (256, 'media'), (2, 'int32'),
+        (64, 'string'), (128, 'entities'), (1024, 'int32'),
+    ),
+    0x6EEBCABD: (   # TL_messageReplyHeader_layer166
+        (16, 'int32'), (1, 'peer'), (32, 'fwd'), (256, 'media'), (2, 'int32'),
+        (64, 'string'), (128, 'entities'),
+    ),
+    0xA6D57763: (   # TL_messageReplyHeader_layer165; the id is unconditional
+        (0, 'int32'), (1, 'peer'), (2, 'int32'),
+    ),
+}
+
+# Story reply headers carry no flags field.
+_REPLY_STORY_HEADERS = {
+    0x0E5AF939: (('peer',), ('int32',)),    # TL_messageReplyStoryHeader
+    0x9C98BFC1: (('int64',), ('int32',)),   # TL_messageReplyStoryHeader_layer173
+}
 
 
 class _TLReader:
@@ -188,6 +253,55 @@ class _TLReader:
         if constructor in (_PEER_USER, _PEER_CHAT, _PEER_CHANNEL):
             return self.read_int64()
         raise ValueError(f'unexpected peer constructor {constructor:#x}')
+
+
+def _skip_fields(reader, flags, steps):
+    """Step over a flag-driven field list. False when a field is not implemented."""
+    for flag, kind in steps:
+        if flag and not flags & flag:
+            continue
+        if kind == 'int32':
+            reader.read_int32()
+        elif kind == 'int64':
+            reader.read_int64()
+        elif kind == 'string':
+            reader.read_string()
+        elif kind == 'peer':
+            reader.read_peer()
+        elif kind == 'fwd':
+            if not _skip_fwd_header(reader):
+                return False
+        else:                       # media, entities, bytes
+            return False
+    return True
+
+
+def _skip_fwd_header(reader):
+    """Step over a MessageFwdHeader. False when the constructor is unknown."""
+    constructor = reader.read_uint32()
+    steps = _FWD_HEADERS.get(constructor)
+    if steps is None:
+        return False
+    return _skip_fields(reader, reader.read_uint32(), steps)
+
+
+def _skip_reply_header(reader):
+    """Step over a MessageReplyHeader. False when it cannot be fully stepped."""
+    constructor = reader.read_uint32()
+    story = _REPLY_STORY_HEADERS.get(constructor)
+    if story is not None:
+        for (kind,) in story:
+            if kind == 'peer':
+                reader.read_peer()
+            elif kind == 'int64':
+                reader.read_int64()
+            else:
+                reader.read_int32()
+        return True
+    steps = _REPLY_HEADERS.get(constructor)
+    if steps is None:
+        return False
+    return _skip_fields(reader, reader.read_uint32(), steps)
 
 
 def _text_after_date(blob, start, date):
@@ -234,7 +348,7 @@ def _decode_message_blob(blob, date=None):
     if constructor in _MSG_SERVICE:
         return {'service': True}
     if constructor not in _MSG_ALL:
-        return {}
+        return {'unknown': constructor}
 
     flags = reader.read_uint32()
     flags2 = reader.read_uint32() if constructor in _MSG_WITH_FLAGS2 else 0
@@ -247,18 +361,29 @@ def _decode_message_blob(blob, date=None):
     reader.read_peer()                                   # peer_id
     if flags & (1 << 28):
         reader.read_peer()                               # saved_peer_id
-    if flags & (1 << 2):                                 # forward header
-        return {'sender': sender, 'forwarded': True,
-                'text': _text_after_date(blob, reader.stream.tell(), date)}
+    forwarded = bool(flags & (1 << 2))
+    if forwarded:
+        position = reader.stream.tell()
+        if not _skip_fwd_header(reader):
+            return {'sender': sender, 'forwarded': True,
+                    'text': _text_after_date(blob, position, date)}
     if flags & (1 << 11):
         reader.read_int64()                              # via_bot_id
     if constructor in _MSG_WITH_FLAGS2 and flags2 & 1:
         reader.read_int64()                              # via_business_bot_id
-    if flags & (1 << 3):                                 # reply header
-        return {'sender': sender, 'reply': True,
-                'text': _text_after_date(blob, reader.stream.tell(), date)}
-    date = reader.read_int32()
-    return {'sender': sender, 'date': date, 'text': reader.read_string()}
+    reply = bool(flags & (1 << 3))
+    if reply:
+        position = reader.stream.tell()
+        if not _skip_reply_header(reader):
+            return {'sender': sender, 'reply': True,
+                    'text': _text_after_date(blob, position, date)}
+    stored_date = reader.read_int32()
+    if date and stored_date != date:
+        # The walk drifted; the date column is authoritative, so fall back.
+        return {'sender': sender, 'forwarded': forwarded, 'reply': reply,
+                'text': _text_after_date(blob, 0, date)}
+    return {'sender': sender, 'date': stored_date, 'text': reader.read_string(),
+            'forwarded': forwarded, 'reply': reply, 'structural': True}
 
 
 # --- shared helpers ----------------------------------------------------------
@@ -316,6 +441,8 @@ def get_telegramMessages(context):
         text = decoded.get('text') or ''
         if decoded.get('service'):
             text = '[Service message]'
+        elif decoded.get('unknown') is not None:
+            text = f"[Unrecognised message constructor {decoded['unknown']:#010x}]"
         elif decoded.get('forwarded') and not text:
             text = '[Forwarded message, text not recovered]'
         elif decoded.get('reply') and not text:
