@@ -5,8 +5,10 @@ __artifacts_v2__ = {
             "Parses Telegram messages from the cache4.db messages_v2 table. Message text is "
             "decoded from the TL-serialised message blob stored in the data column; the "
             "timestamp, direction and read state are read from the table's own columns. "
-            "Messages whose blob uses a constructor this parser does not cover are still "
-            "reported, with that constructor named in the message column."
+            "System events such as calls, screenshot notifications and auto-delete timer "
+            "changes are named, with the detail they carry. Messages whose blob uses a "
+            "constructor this parser does not cover are still reported, with that "
+            "constructor named in the message column."
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-03",
@@ -27,15 +29,22 @@ __artifacts_v2__ = {
                  "as strict UTF-8. The same fallback is used when a structural walk ends on a "
                  "date that disagrees with the date column. Text that neither route recovers "
                  "is reported as not recovered rather than guessed at. All eight "
-                 "TL_messageService constructors are recognised and reported as '[Service "
-                 "message]' without an action label, because the action constructors were not "
-                 "verified against the client source. Reference: Telegram-Android, "
+                 "TL_messageService constructors are recognised; their header is walked the "
+                 "same way and the action that follows is named from the client's own action "
+                 "constructors, so system events such as a phone call, a screenshot "
+                 "notification, a cleared history or an auto-delete timer change are "
+                 "identified rather than reported as an unlabelled service message. Detail "
+                 "fields are read for the actions that carry them, including the outcome and "
+                 "duration of a call and the new value of an auto-delete timer; an action "
+                 "with no reader implemented is reported by name alone. Reference: "
+                 "Telegram-Android, "
                  "'TL_legacy_message.java (TL_message layer constructors)', "
                  "https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/src/main/java/"
                  "org/telegram/tgnet/tl/legacy/TL_legacy_message.java. Reference: "
                  "Telegram-Android, 'generated TlGen_MessageReplyHeader.kt, "
-                 "TlGen_MessageFwdHeader.kt and TlGen_Message.kt (header field order, flag "
-                 "bits and service constructors)', https://github.com/DrKLO/Telegram/tree/"
+                 "TlGen_MessageFwdHeader.kt, TlGen_Message.kt and TlGen_MessageAction.kt "
+                 "(header field order, flag bits, service constructors and action "
+                 "constructors)', https://github.com/DrKLO/Telegram/tree/"
                  "master/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/"
                  "model/generated",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
@@ -255,6 +264,219 @@ class _TLReader:
         raise ValueError(f'unexpected peer constructor {constructor:#x}')
 
 
+# Service message headers, as (reads_flags, steps) up to but excluding the
+# action. Layouts from the client's generated TL model.
+_SERVICE_HEADERS = {
+    0x7A800E0A: (True, ((0, 'int32'), (256, 'peer'), (0, 'peer'),
+                        (268435456, 'peer'), (8, 'reply'), (0, 'int32'))),
+    0xD3D28540: (True, ((0, 'int32'), (256, 'peer'), (0, 'peer'),
+                        (8, 'reply'), (0, 'int32'))),
+    0x2B085862: (True, ((0, 'int32'), (256, 'peer'), (0, 'peer'),
+                        (8, 'reply'), (0, 'int32'))),
+    0x286FA604: (True, ((0, 'int32'), (256, 'peer'), (0, 'peer'),
+                        (8, 'reply'), (0, 'int32'))),
+    0x9E19A1F6: (True, ((0, 'int32'), (256, 'int32'), (0, 'peer'),
+                        (8, 'int32'), (0, 'int32'))),
+    0xC06B9607: (True, ((0, 'int32'), (256, 'int32'), (0, 'peer'), (0, 'int32'))),
+    0x1D86F70E: (True, ((0, 'int32'), (0, 'int32'), (0, 'peer'), (0, 'int32'))),
+    0x9F8D60BB: (False, ((0, 'int32'), (0, 'int32'), (0, 'peer'), (0, 'int32'),
+                         (0, 'int32'), (0, 'int32'))),
+}
+
+# Human labels for every TL_messageAction constructor the client defines.
+_ACTION_NAMES = {
+    0x031224c3: 'Joined chat by invite link',
+    0x08557637: 'Star gift',
+    0x0d999256: 'Topic created',
+    0x15cefd00: 'User added to chat',
+    0x16605e3e: 'Managed bot created',
+    0x26077b99: 'Star gift unique',
+    0x2a9fadc5: 'Giveaway results',
+    0x2c8f2a25: 'Suggest birthday',
+    0x2e3ae60e: 'Star gift unique',
+    0x2ffe2f7a: 'Conference call',
+    0x31518e9b: 'Requested peer',
+    0x31c48347: 'Gift code',
+    0x332ba9ed: 'Giveaway launch',
+    0x34f762f3: 'Star gift unique',
+    0x399674dc: 'Poll delete answer',
+    0x3c134d7b: 'Auto-delete timer changed',
+    0x3e2793ba: 'No forwards request',
+    0x40699cd0: 'Payment sent',
+    0x41b3e202: 'Payment refunded',
+    0x45d5b021: 'Gift stars',
+    0x4717e8a5: 'Star gift',
+    0x4792929b: 'Screenshot taken',
+    0x47dd8079: 'Web view data sent me',
+    0x488a7337: 'User added to chat',
+    0x48e91302: 'Gift premium',
+    0x502f92f7: 'Invited to group call',
+    0x5060a3f4: 'Chat wallpaper changed',
+    0x51bdb021: 'Group upgraded to supergroup',
+    0x56d03994: 'Gift code',
+    0x57de635e: 'Profile photo suggested',
+    0x5d20bae8: 'Change community',
+    0x5e3cfc4b: 'User added to chat',
+    0x678c2e09: 'Gift code',
+    0x69f916f8: 'Suggested post refund',
+    0x6c6274fa: 'Gift premium',
+    0x70ef8294: 'Contact joined Telegram',
+    0x73ada76b: 'Star gift purchase offer declined',
+    0x76b9f11a: 'Invited to group call',
+    0x774278d4: 'Star gift purchase offer',
+    0x7a0d7f42: 'Group call',
+    0x7fcb13a8: 'Chat photo changed',
+    0x80e11a7f: 'Phone call',
+    0x84b88578: 'Paid messages price',
+    0x87e2f155: 'Giveaway results',
+    0x8f31b327: 'Payment sent me',
+    0x92a72876: 'Game score',
+    0x94bd38ed: 'Message pinned',
+    0x95728543: 'Star gift unique',
+    0x95d2ac92: 'Channel created',
+    0x95ddcf69: 'Suggested post success',
+    0x95e3f807: 'Chat photo removed',
+    0x95e3fbef: 'Chat photo removed',
+    0x96163f56: 'Payment sent',
+    0x98e0d697: 'Proximity alert triggered',
+    0x9bb3ef44: 'Star gift',
+    0x9da1cd6c: 'Poll append answer',
+    0x9fbab604: 'History cleared',
+    0xa43f30cc: 'User removed from chat',
+    0xa6638b9a: 'Group created',
+    0xa80f51e4: 'Giveaway launch',
+    0xa8a3c699: 'Gift ton',
+    0xaa1afbfd: 'Auto-delete timer changed',
+    0xaa786345: 'Chat theme changed',
+    0xaba0f5c6: 'Gift premium',
+    0xabe9affe: 'Bot allowed',
+    0xac1f1fcd: 'Paid messages refunded',
+    0xacdfcb81: 'Star gift unique',
+    0xb00c47a2: 'Prize stars',
+    0xb055eaee: 'Migrated from group',
+    0xb07ed085: 'New creator pending',
+    0xb18a431c: 'Topic edited',
+    0xb2ae9b0c: 'User removed from chat',
+    0xb3a07661: 'Group call scheduled',
+    0xb4c38cb5: 'Web view data sent',
+    0xb5a1ce5a: 'Chat title changed',
+    0xb6aef7b0: 'Empty action',
+    0xb91bbd3a: 'Chat theme changed',
+    0xbc44a927: 'Chat wallpaper changed',
+    0xbcd71419: 'Paid messages price',
+    0xbd47cbad: 'Group created',
+    0xbf7d6572: 'Content protection toggled',
+    0xc0787d6d: 'Set same chat wall paper',
+    0xc0944820: 'Topic edited',
+    0xc516d679: 'Bot allowed',
+    0xc624b16e: 'Payment sent',
+    0xc7edbc83: 'Todo append tasks',
+    0xc83d6aec: 'Gift premium',
+    0xcc02aa6d: 'Boost apply',
+    0xcc7c5c89: 'Todo completions',
+    0xd2cfdb0e: 'Gift code',
+    0xd8f4f0a7: 'Star gift',
+    0xd95c6154: 'Telegram Passport data sent',
+    0xdb596550: 'Star gift',
+    0xe1037f92: 'Group upgraded to supergroup',
+    0xe188503b: 'Chat owner changed',
+    0xe6c31522: 'Star gift unique',
+    0xe7e75f97: 'Attach menu bot allowed',
+    0xea2c31d3: 'Star gift',
+    0xea3948e9: 'Migrated from group',
+    0xebbca3cb: 'Joined chat by request',
+    0xee7a1596: 'Suggested post approval',
+    0xf24de7fa: 'Star gift',
+    0xf3f25f76: 'Contact joined Telegram',
+    0xf89cf5e8: 'Joined chat by invite link',
+    0xfae69f56: 'Custom action',
+    0xfe77345d: 'Requested peer',
+    0xffa00ccc: 'Payment sent me',
+}
+
+# Bare constructors carried by TL_messageActionPhoneCall.
+_DISCARD_REASONS = {
+    0x85E42301: 'missed',
+    0xE095C1A0: 'disconnected',
+    0x57ADC690: 'hung up',
+    0xFAF7E8C9: 'busy',
+}
+
+# Payload readers for the actions that carry detail worth reporting. Each entry
+# is (flags?, steps); a step of (flag, kind, label) with flag 0 is unconditional.
+_ACTION_PAYLOADS = {
+    0xB5A1CE5A: (False, ((0, 'string', 'title'),)),                  # ChatEditTitle
+    0xBD47CBAD: (False, ((0, 'string', 'title'),)),                  # ChatCreate
+    0xA43F30CC: (False, ((0, 'int64', 'user'),)),                    # ChatDeleteUser
+    0x031224C3: (False, ((0, 'int64', 'inviter'),)),                 # ChatJoinedByLink
+    0xFAE69F56: (False, ((0, 'string', 'message'),)),                # CustomAction
+    0x92A72876: (False, ((0, 'int64', 'game'), (0, 'int32', 'score'))),  # GameScore
+    0x3C134D7B: (True, ((0, 'int32', 'timer seconds'),)),                  # SetMessagesTTL
+    0x80E11A7F: (True, ((0, 'int64', 'call id'), (1, 'reason', 'outcome'),
+                        (2, 'int32', 'duration seconds'))),          # PhoneCall
+    0x98E0D697: (False, ((0, 'peer', 'from'), (0, 'peer', 'to'),
+                         (0, 'int32', 'metres'))),                   # GeoProximityReached
+    0xC624B16E: (True, ((0, 'string', 'currency'), (0, 'int64', 'amount'))),  # PaymentSent
+}
+
+
+def _read_action_payload(reader, constructor):
+    """Read the detail fields of an action, when one is implemented for it."""
+    entry = _ACTION_PAYLOADS.get(constructor)
+    if entry is None:
+        return ''
+    reads_flags, steps = entry
+    flags = reader.read_uint32() if reads_flags else 0
+    parts = []
+    for flag, kind, label in steps:
+        if flag and not flags & flag:
+            continue
+        if kind == 'int32':
+            value = reader.read_int32()
+        elif kind == 'int64':
+            value = reader.read_int64()
+        elif kind == 'string':
+            value = reader.read_string()
+        elif kind == 'peer':
+            value = reader.read_peer()
+        elif kind == 'reason':
+            value = _DISCARD_REASONS.get(reader.read_uint32(), 'unknown')
+        else:
+            return ''
+        if kind == 'string' and not value:
+            continue
+        parts.append(f'{label} {value}')
+    return ', '.join(parts)
+
+
+def _decode_service(reader, constructor):
+    """Walk a service message header and name its action."""
+    entry = _SERVICE_HEADERS.get(constructor)
+    if entry is None:
+        return None
+    reads_flags, steps = entry
+    flags = reader.read_uint32() if reads_flags else 0
+    for flag, kind in steps:
+        if flag and not flags & flag:
+            continue
+        if kind == 'int32':
+            reader.read_int32()
+        elif kind == 'peer':
+            reader.read_peer()
+        elif kind == 'reply':
+            if not _skip_reply_header(reader):
+                return None
+    action = reader.read_uint32()
+    name = _ACTION_NAMES.get(action)
+    if name is None:
+        return f'Unrecognised action {action:#010x}'
+    try:
+        detail = _read_action_payload(reader, action)
+    except (struct.error, IndexError, UnicodeDecodeError, ValueError):
+        detail = ''
+    return f'{name} ({detail})' if detail else name
+
+
 def _skip_fields(reader, flags, steps):
     """Step over a flag-driven field list. False when a field is not implemented."""
     for flag, kind in steps:
@@ -346,7 +568,10 @@ def _decode_message_blob(blob, date=None):
     reader = _TLReader(blob)
     constructor = reader.read_uint32()
     if constructor in _MSG_SERVICE:
-        return {'service': True}
+        try:
+            return {'service': True, 'action': _decode_service(reader, constructor)}
+        except (struct.error, IndexError, UnicodeDecodeError, ValueError):
+            return {'service': True}
     if constructor not in _MSG_ALL:
         return {'unknown': constructor}
 
@@ -440,7 +665,8 @@ def get_telegramMessages(context):
         decoded = _decode_message_blob(blob, date)
         text = decoded.get('text') or ''
         if decoded.get('service'):
-            text = '[Service message]'
+            action = decoded.get('action')
+            text = f'[{action}]' if action else '[Service message]'
         elif decoded.get('unknown') is not None:
             text = f"[Unrecognised message constructor {decoded['unknown']:#010x}]"
         elif decoded.get('forwarded') and not text:
