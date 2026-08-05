@@ -161,5 +161,90 @@ class TelegramServiceActionTest(unittest.TestCase):
         self.assertIn('User added to chat', result)
 
 
+class TelegramChatFullTest(unittest.TestCase):
+    """Group and channel detail records.
+
+    Only one such record exists across the extractions available here, a
+    channel carrying a participant count and an empty description, so the
+    description text, the remaining counts and the basic group record shape
+    are encoded here rather than read from an image.
+    """
+
+    def decode(self, blob):
+        from scripts.artifacts.telegramAndroid import _decode_chat_full
+        return _decode_chat_full(blob)
+
+    def test_channel_with_counts(self):
+        # TL_channelFull_layer225: flags, flags2, id, about, then the counts.
+        # Flags set: participants (1), admins (2), kicked/banned (4), online (8192).
+        blob = (u32(0xE4E0B29D) + u32(1 | 2 | 4 | 8192) + u32(0) + i64(1667989259)
+                + tl_string('Trading signals') + i32(124) + i32(3) + i32(2)
+                + i32(1) + i32(17))
+        record = self.decode(blob)
+        self.assertEqual(record['about'], 'Trading signals')
+        self.assertEqual(record['participants'], 124)
+        self.assertEqual(record['admins'], 3)
+        self.assertEqual(record['kicked'], 2)
+        self.assertEqual(record['banned'], 1)
+        self.assertEqual(record['online'], 17)
+
+    def test_channel_with_only_participants(self):
+        """The shape actually present in the test corpus."""
+        blob = (u32(0xE4E0B29D) + u32(1) + u32(0) + i64(1667989259)
+                + tl_string('') + i32(124))
+        record = self.decode(blob)
+        self.assertEqual(record['about'], '')
+        self.assertEqual(record['participants'], 124)
+        self.assertNotIn('admins', record)
+
+    def test_older_channel_without_second_flags_word(self):
+        # TL_channelFull_layer121: flags, id, about, then the counts.
+        blob = (u32(0xF0E6672A) + u32(1) + i64(42) + tl_string('older layer')
+                + i32(9))
+        record = self.decode(blob)
+        self.assertEqual(record['about'], 'older layer')
+        self.assertEqual(record['participants'], 9)
+
+    def test_basic_group_record_has_description_only(self):
+        # TL_chatFull carries a description but no counts in the readable prefix.
+        blob = u32(0x2633421B) + u32(0) + i64(77) + tl_string('Family group')
+        record = self.decode(blob)
+        self.assertEqual(record['about'], 'Family group')
+        self.assertNotIn('participants', record)
+
+    def test_unknown_record_is_reported(self):
+        record = self.decode(u32(0xDEADBEEF) + b'\x00' * 16)
+        self.assertEqual(record.get('unknown'), 0xDEADBEEF)
+
+
+class TelegramUserFullTest(unittest.TestCase):
+    """Profile detail records: bio and blocked state."""
+
+    def decode(self, blob):
+        from scripts.artifacts.telegramAndroid import _decode_user_full
+        return _decode_user_full(blob)
+
+    def test_bio_and_blocked(self):
+        # TL_userFull_layer223: flags, flags2, id, about. blocked is bit 0,
+        # about is bit 1.
+        blob = (u32(0xA02BC13E) + u32(1 | 2) + u32(0) + i64(8299732043)
+                + tl_string("I'm a chemistry teacher."))
+        record = self.decode(blob)
+        self.assertEqual(record['about'], "I'm a chemistry teacher.")
+        self.assertTrue(record['blocked'])
+
+    def test_not_blocked_and_no_bio(self):
+        blob = u32(0xA02BC13E) + u32(0) + u32(0) + i64(1)
+        record = self.decode(blob)
+        self.assertEqual(record['about'], '')
+        self.assertFalse(record['blocked'])
+
+    def test_older_record_without_second_flags_word(self):
+        # TL_userFull_layer175 reads no flags2.
+        blob = u32(0xB9B12C6C) + u32(2) + i64(5) + tl_string('older bio')
+        record = self.decode(blob)
+        self.assertEqual(record['about'], 'older bio')
+
+
 if __name__ == '__main__':
     unittest.main()
