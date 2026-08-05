@@ -140,6 +140,58 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "user-circle",
     },
+    "get_telegramPeerDetails": {
+        "name": "Telegram - Peer Details",
+        "description": (
+            "Parses the cached profile detail Telegram stores for users in the user_settings "
+            "table of cache4.db, reporting the profile bio and whether the user is blocked. "
+            "Telegram caches this record when a profile is opened, so it can exist for a user "
+            "with no exchanged messages."
+        ),
+        "author": "Alexis Brignoni",
+        "creation_date": "2026-08-04",
+        "last_update_date": "2026-08-04",
+        "requirements": "none",
+        "category": "Telegram",
+        "notes": "The info column holds a TL user full record. Across the record versions "
+                 "this parser covers, the about field follows the id and precedes the nested "
+                 "objects, so it is read directly; blocked is flag bit 1 and needs no field "
+                 "read. Fields that sit after the nested settings and notification objects, "
+                 "such as the common chat count, are not read because those objects are not "
+                 "implemented. Names are resolved from the users table. Reference: "
+                 "Telegram-Android, 'generated TlGen_UserFull.kt (record layout and flag "
+                 "bits)', https://github.com/DrKLO/Telegram/tree/master/TMessagesProj_AppTests"
+                 "/src/androidTest/kotlin/org/telegram/tgnet/model/generated",
+        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "output_types": "standard",
+        "artifact_icon": "address-book",
+    },
+    "get_telegramSaveToGallery": {
+        "name": "Telegram - Save to Gallery Settings",
+        "description": (
+            "Parses the Telegram save-to-gallery configuration from the mainconfig.xml shared "
+            "preferences file, reporting for each category of chat whether incoming photos "
+            "and videos are saved to the device gallery and the video size limit. Telegram "
+            "writes these keys only after the setting is changed, so a category reported as "
+            "not set was still at the app default of off."
+        ),
+        "author": "Alexis Brignoni",
+        "creation_date": "2026-08-04",
+        "last_update_date": "2026-08-04",
+        "requirements": "none",
+        "category": "Telegram",
+        "notes": "Keys are <prefix>_save_gallery_photo, <prefix>_save_gallery_video and "
+                 "<prefix>_save_gallery_limitVideo, where the prefix is user, groups or "
+                 "channels. The client reads each with a default of false, so an absent key "
+                 "means the category was left at the app default. The older single "
+                 "save_gallery key is reported when present. Reference: Telegram-Android, "
+                 "'SaveToGallerySettingsHelper.java (preference key names and defaults)', "
+                 "https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/src/main/java/"
+                 "org/telegram/messenger/SaveToGallerySettingsHelper.java",
+        "paths": ('*/org.telegram.messenger*/shared_prefs/mainconfig.xml',),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+    },
     "get_telegramAutoDownload": {
         "name": "Telegram - Auto-Download Settings",
         "description": (
@@ -960,6 +1012,120 @@ def _as_int(value):
         return int(value)
     except (TypeError, ValueError):
         return 0
+
+
+# TL user full records whose prefix is flags, then optionally flags2, then the
+# id and the about string. Layouts from the generated TlGen_UserFull.kt.
+_USER_FULL_FLAGS2 = {
+    0x06CBE645, 0x22FF3E85, 0xCC997720, 0x1F58E369, 0x979D2376, 0x4D975BBC,
+    0xD2234EA0, 0x99E78045, 0x29DE80BE, 0x7E63CE1F, 0x3FD81E28, 0xC577B5AD,
+    0xA02BC13E,
+}
+_USER_FULL_NO_FLAGS2 = {
+    0xCF366521, 0x8C72EA81, 0xC4B1FC3F, 0xF8D32AED, 0x93EADB53, 0x4FE1CC86,
+    0xB9B12C6C,
+}
+_USER_FULL = _USER_FULL_FLAGS2 | _USER_FULL_NO_FLAGS2
+
+
+def _decode_user_full(blob):
+    """Read the about text and blocked flag from a TL user full record."""
+    if not isinstance(blob, bytes) or len(blob) < 12:
+        return {}
+    reader = _TLReader(blob)
+    constructor = reader.read_uint32()
+    if constructor not in _USER_FULL:
+        return {'unknown': constructor}
+    try:
+        flags = reader.read_uint32()
+        if constructor in _USER_FULL_FLAGS2:
+            reader.read_uint32()
+        reader.read_int64()                              # id
+        about = reader.read_string() if flags & 2 else ''
+        return {'about': about, 'blocked': bool(flags & 1)}
+    except (struct.error, IndexError, UnicodeDecodeError):
+        return {}
+
+
+@artifact_processor
+def get_telegramPeerDetails(context):
+    data_headers = (
+        'User ID',
+        'Name',
+        'Username',
+        'Bio',
+        'Blocked',
+        'Pinned',
+    )
+    data_list = []
+    db_file = get_file_path(context.get_files_found(), 'cache4.db')
+    if not db_file:
+        return data_headers, data_list, ''
+
+    names = {}
+    for uid, name in get_sqlite_db_records(db_file, 'SELECT uid, name FROM users') or []:
+        names[uid] = _split_user_name(name)
+
+    query = 'SELECT uid, info, pinned FROM user_settings'
+    for uid, blob, pinned in get_sqlite_db_records(db_file, query) or []:
+        decoded = _decode_user_full(blob)
+        if decoded.get('unknown') is not None:
+            bio = f"[Unrecognised record {decoded['unknown']:#010x}]"
+            blocked = ''
+        else:
+            bio = decoded.get('about', '')
+            blocked = 'Yes' if decoded.get('blocked') else 'No' if decoded else ''
+        display, username = names.get(uid, ('', ''))
+        data_list.append((uid, display, username, bio, blocked, 'Yes' if pinned else ''))
+    return data_headers, data_list, db_file
+
+
+# SaveToGallerySettingsHelper.java: one settings group per category of chat.
+_GALLERY_PREFIXES = (('user', 'Private chats'), ('groups', 'Groups'),
+                     ('channels', 'Channels'))
+_GALLERY_DEFAULT = 'Not set (app default, off)'
+
+
+@artifact_processor
+def get_telegramSaveToGallery(context):
+    data_headers = (
+        'Chat Category',
+        'Save Photos',
+        'Save Videos',
+        'Video Size Limit',
+    )
+    data_list = []
+    xml_file = get_file_path(context.get_files_found(), 'mainconfig.xml')
+    if not xml_file:
+        return data_headers, data_list, ''
+    try:
+        root = ET.parse(xml_file).getroot()
+    except ET.ParseError as err:
+        logfunc(f'Telegram save to gallery: could not parse {xml_file}: {err}')
+        return data_headers, data_list, xml_file
+    values = {element.get('name'): (element.get('value') or element.text or '')
+              for element in root}
+
+    def flag(key):
+        if key not in values:
+            return _GALLERY_DEFAULT
+        return 'Yes' if values[key] == 'true' else 'No'
+
+    for prefix, label in _GALLERY_PREFIXES:
+        limit_key = f'{prefix}_save_gallery_limitVideo'
+        limit = values.get(limit_key, '')
+        data_list.append((
+            label,
+            flag(f'{prefix}_save_gallery_photo'),
+            flag(f'{prefix}_save_gallery_video'),
+            limit if limit else _GALLERY_DEFAULT,
+        ))
+    if 'save_gallery' in values:
+        data_list.append((
+            'All chats (legacy setting)',
+            'Yes' if values['save_gallery'] == 'true' else 'No', '', '',
+        ))
+    return data_headers, data_list, xml_file
 
 
 # DownloadController.java: mask index is the chat category, mask bits the media type.
