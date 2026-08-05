@@ -224,6 +224,50 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "photo",
     },
+    "get_telegramChannelMembers": {
+        "name": "Telegram - Channel & Group Members",
+        "description": (
+            "Parses the channel and group membership Telegram cached, from the "
+            "channel_users_v2 table of cache4.db, reporting the chat, the member and the "
+            "date recorded against that membership, with names resolved from the users and "
+            "chats tables."
+        ),
+        "author": "Alexis Brignoni",
+        "creation_date": "2026-08-05",
+        "last_update_date": "2026-08-05",
+        "requirements": "none",
+        "category": "Telegram",
+        "notes": "The dialog id, user id and date columns are stored as plain integers and "
+                 "are reported as such. The data column holds a TL channel participant "
+                 "record; the creator constructor is named where it appears and any other "
+                 "constructor is reported by its id rather than guessed at. The membership "
+                 "cached here is what the client had retrieved, which is not necessarily "
+                 "the full member list of the chat.",
+        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "output_types": "standard",
+        "artifact_icon": "users-group",
+    },
+    "get_telegramChatHints": {
+        "name": "Telegram - Frequent Chats",
+        "description": (
+            "Parses the chat_hints table of cache4.db, which Telegram maintains to rank the "
+            "chats it suggests first. Each row carries a chat and a rating value, so the "
+            "table reflects which chats the client scored as most used."
+        ),
+        "author": "Alexis Brignoni",
+        "creation_date": "2026-08-05",
+        "last_update_date": "2026-08-05",
+        "requirements": "none",
+        "category": "Telegram",
+        "notes": "The did, rating and date columns are stored as plain values. The type "
+                 "column is reported as stored because its values are not documented in the "
+                 "client source that was checked. The rating is the client's own ranking "
+                 "figure; the scale and how it decays over time were not established, so it "
+                 "is reported as stored and is useful for ordering rather than as a count.",
+        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "output_types": "standard",
+        "artifact_icon": "star",
+    },
     "get_telegramVoipLogs": {
         "name": "Telegram - VoIP Call Logs",
         "description": (
@@ -1388,6 +1432,71 @@ def get_telegramSaveToGallery(context):
             'Yes' if values['save_gallery'] == 'true' else 'No', '', '',
         ))
     return data_headers, data_list, xml_file
+
+
+# Channel participant constructors seen in the corpus. Only the creator form is
+# present in the client's generated model; anything else is reported by id.
+_CHANNEL_PARTICIPANTS = {0x2FE601D3: 'Creator'}
+
+
+@artifact_processor
+def get_telegramChannelMembers(context):
+    data_headers = (
+        ('Date', 'datetime'),
+        'Chat ID',
+        'Chat',
+        'User ID',
+        'User',
+        'Role',
+    )
+    data_list = []
+    db_file = get_file_path(context.get_files_found(), 'cache4.db')
+    if not db_file:
+        return data_headers, data_list, ''
+
+    names = _name_lookup(db_file)
+    query = 'SELECT did, uid, date, data FROM channel_users_v2 ORDER BY did, date'
+    for did, uid, date, blob in get_sqlite_db_records(db_file, query) or []:
+        role = ''
+        if isinstance(blob, bytes) and len(blob) >= 4:
+            constructor = struct.unpack('<I', blob[:4])[0]
+            role = _CHANNEL_PARTICIPANTS.get(constructor, f'{constructor:#010x}')
+        data_list.append((
+            convert_unix_ts_to_utc(date) if date else '',
+            did,
+            names.get(did, '') or names.get(abs(did), ''),
+            uid,
+            names.get(uid, ''),
+            role,
+        ))
+    return data_headers, data_list, db_file
+
+
+@artifact_processor
+def get_telegramChatHints(context):
+    data_headers = (
+        ('Date', 'datetime'),
+        'Chat ID',
+        'Chat',
+        'Rating (as stored)',
+        'Type (as stored)',
+    )
+    data_list = []
+    db_file = get_file_path(context.get_files_found(), 'cache4.db')
+    if not db_file:
+        return data_headers, data_list, ''
+
+    names = _name_lookup(db_file)
+    query = 'SELECT did, type, rating, date FROM chat_hints ORDER BY rating DESC'
+    for did, kind, rating, date in get_sqlite_db_records(db_file, query) or []:
+        data_list.append((
+            convert_unix_ts_to_utc(date) if date else '',
+            did,
+            names.get(did, '') or names.get(abs(did), ''),
+            rating,
+            kind,
+        ))
+    return data_headers, data_list, db_file
 
 
 # Telegram writes one WebRTC log per call under cache/voip_logs, named for the
