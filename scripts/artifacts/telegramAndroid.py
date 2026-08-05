@@ -36,7 +36,11 @@ __artifacts_v2__ = {
                  "identified rather than reported as an unlabelled service message. Detail "
                  "fields are read for the actions that carry them, including the outcome and "
                  "duration of a call and the new value of an auto-delete timer; an action "
-                 "with no reader implemented is reported by name alone. Reference: "
+                 "with no reader implemented is reported by name alone. When the client "
+                 "stored the message's media at a known location it appends that path to the "
+                 "record as a trailing string, which is reported as the recorded media path; "
+                 "it is the path the app wrote, and the file is linked only when it is still "
+                 "present in the extraction, since Telegram evicts cached media. Reference: "
                  "Telegram-Android, "
                  "'TL_legacy_message.java (TL_message layer constructors)', "
                  "https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/src/main/java/"
@@ -47,7 +51,9 @@ __artifacts_v2__ = {
                  "constructors)', https://github.com/DrKLO/Telegram/tree/"
                  "master/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/"
                  "model/generated",
-        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "paths": ('*/org.telegram.messenger*/files/cache4.db*',
+                  '*/org.telegram.messenger*/cache/**',
+                  '*/org.telegram.messenger*/files/Telegram/**'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
     },
@@ -253,7 +259,7 @@ import struct
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc, convert_unix_ts_to_utc, \
-    get_sqlite_db_records, get_file_path
+    get_sqlite_db_records, get_file_path, check_in_media
 
 
 # --- TL deserialisation ------------------------------------------------------
@@ -628,6 +634,41 @@ def _decode_service(reader, constructor):
     return f'{name} ({detail})' if detail else name
 
 
+def _attach_path(blob):
+    """The local media path the client appends when it stores a message.
+
+    Telegram writes the message record and then the attachment path as a
+    trailing TL string, so the path is read from the end of the blob. Walking
+    forward to it would require decoding the media objects, which this parser
+    does not implement. A candidate is accepted only when its length byte, its
+    contents and the TL padding account for the blob exactly to its final byte,
+    which is what distinguishes the real trailing field from a coincidental
+    run of bytes.
+    """
+    if not isinstance(blob, bytes) or len(blob) < 6:
+        return ''
+    end = len(blob)
+    while end > 0 and blob[end - 1] == 0:        # TL pads to a 4-byte boundary
+        end -= 1
+    for length in range(1, 255):
+        start = end - length
+        marker = start - 1
+        if marker < 0:
+            break
+        if blob[marker] != length:
+            continue
+        consumed = length + 1
+        if marker + consumed + ((4 - consumed % 4) % 4) != len(blob):
+            continue
+        try:
+            text = blob[start:end].decode('utf-8')
+        except UnicodeDecodeError:
+            continue
+        if text.startswith('/'):
+            return text
+    return ''
+
+
 def _skip_fields(reader, flags, steps):
     """Step over a flag-driven field list. False when a field is not implemented."""
     for flag, kind in steps:
@@ -801,6 +842,8 @@ def get_telegramMessages(context):
         'Sender ID',
         'Sender',
         'Message',
+        'Recorded Media Path',
+        ('Media File', 'media'),
         'Read State',
         'Message ID',
     )
@@ -810,6 +853,19 @@ def get_telegramMessages(context):
         return data_headers, data_list, ''
 
     names = _name_lookup(db_file)
+
+    # Basename index of whatever media directories the extraction carried.
+    media_index = {}
+    for found in context.get_files_found():
+        path = str(found)
+        normalized = path.replace('\\', '/')
+        if '/org.telegram.messenger' not in normalized:
+            continue
+        if '/cache/' not in normalized and '/files/Telegram/' not in normalized:
+            continue
+        if os.path.isfile(path):
+            media_index.setdefault(normalized.rsplit('/', 1)[-1], path)
+
     query = '''SELECT mid, uid, date, out, read_state, data
                FROM messages_v2 ORDER BY date'''
     for mid, uid, date, out, read_state, blob in get_sqlite_db_records(db_file, query) or []:
@@ -827,6 +883,13 @@ def get_telegramMessages(context):
         sender_id = decoded.get('sender')
         if sender_id is None and not out:
             sender_id = uid            # in a one-to-one chat the peer is the sender
+        attach = _attach_path(blob)
+        media_ref = ''
+        if attach:
+            local = media_index.get(attach.replace('\\', '/').rsplit('/', 1)[-1])
+            if local:
+                media_ref = check_in_media(file_path=local)
+
         data_list.append((
             convert_unix_ts_to_utc(date),
             uid,
@@ -835,6 +898,8 @@ def get_telegramMessages(context):
             sender_id if sender_id is not None else '',
             names.get(sender_id, '') if sender_id is not None else '',
             text,
+            attach,
+            media_ref,
             read_state,
             mid,
         ))

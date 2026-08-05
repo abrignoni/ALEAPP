@@ -217,6 +217,48 @@ class TelegramChatFullTest(unittest.TestCase):
         self.assertEqual(record.get('unknown'), 0xDEADBEEF)
 
 
+class TelegramAttachPathTest(unittest.TestCase):
+    """The local media path the client appends when storing a message.
+
+    Only one message across the available extractions carries one, and the file
+    it names is no longer on the device, so the accept and reject behaviour is
+    encoded here rather than read from an image.
+    """
+
+    def decode(self, blob):
+        from scripts.artifacts.telegramAndroid import _attach_path
+        return _attach_path(blob)
+
+    def trailing(self, path):
+        raw = path.encode()
+        out = bytes([len(raw)]) + raw
+        return out + b'\x00' * ((4 - len(out) % 4) % 4)
+
+    def test_reads_trailing_path(self):
+        p = '/storage/emulated/0/Android/data/org.telegram.messenger/cache/-1_-2.jpg'
+        blob = b'\x11' * 40 + self.trailing(p)
+        self.assertEqual(self.decode(blob), p)
+
+    def test_rejects_when_field_does_not_reach_the_end(self):
+        """A run of bytes that looks like a string but is not the last field."""
+        p = '/storage/emulated/0/whatever.jpg'
+        blob = b'\x11' * 20 + self.trailing(p) + b'\x42' * 16
+        self.assertEqual(self.decode(blob), '')
+
+    def test_ignores_non_path_trailing_string(self):
+        blob = b'\x11' * 20 + self.trailing('not a path')
+        self.assertEqual(self.decode(blob), '')
+
+    def test_no_path_present(self):
+        self.assertEqual(self.decode(b'\x00' * 32), '')
+
+    def test_handles_all_padding_residues(self):
+        for extra in ('a', 'ab', 'abc', 'abcd'):
+            p = f'/data/{extra}'
+            blob = b'\x11' * 12 + self.trailing(p)
+            self.assertEqual(self.decode(blob), p)
+
+
 class TelegramUserFullTest(unittest.TestCase):
     """Profile detail records: bio and blocked state."""
 
