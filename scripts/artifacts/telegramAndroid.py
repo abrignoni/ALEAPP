@@ -224,6 +224,32 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "photo",
     },
+    "get_telegramVoipLogs": {
+        "name": "Telegram - VoIP Call Logs",
+        "description": (
+            "Parses the per-call WebRTC logs Telegram writes under cache/voip_logs. Each log "
+            "is named for the call it belongs to, so the file itself records that a call took "
+            "place and how long the call stack was running, independently of the message "
+            "history."
+        ),
+        "author": "Alexis Brignoni",
+        "creation_date": "2026-08-05",
+        "last_update_date": "2026-08-05",
+        "requirements": "none",
+        "category": "Telegram",
+        "notes": "The log file name is the call id, which is the same id the phone call "
+                 "service message in the chat carries, so the two can be tied together. The "
+                 "timestamps inside the log are local-time strings with no timezone, so they "
+                 "are reported as recorded and only their difference is used for the logged "
+                 "span; the file modification time is used as the UTC reference point. A log "
+                 "spans the call stack running, which starts before and ends after the "
+                 "connected call, so the logged span is not the billed call duration. "
+                 "Approach adapted from a Telegram parser contributed by WriteBlocked in "
+                 "ALEAPP pull request 716.",
+        "paths": ('*/org.telegram.messenger*/cache/voip_logs/*',),
+        "output_types": "standard",
+        "artifact_icon": "phone",
+    },
     "get_telegramAutoDownload": {
         "name": "Telegram - Auto-Download Settings",
         "description": (
@@ -253,8 +279,10 @@ __artifacts_v2__ = {
 }
 
 import base64
+import datetime
 import io
 import os
+import re
 import struct
 import xml.etree.ElementTree as ET
 
@@ -269,6 +297,12 @@ from scripts.ilapfuncs import artifact_processor, logfunc, convert_unix_ts_to_ut
 _PEER_USER = 0x59511722
 _PEER_CHAT = 0x36C6019A
 _PEER_CHANNEL = 0xA2A5371E
+# Layer 132 and older wrote the peer id as an Int32 under its own constructor.
+# A device on an older Telegram build stores messages with these, and reading
+# them as the 64-bit form misaligns every field that follows.
+_PEER_USER_LEGACY = 0x9DB1BC6D
+_PEER_CHAT_LEGACY = 0xBAD0E5BB
+_PEER_CHANNEL_LEGACY = 0xBDDDE532
 
 # TL_message constructors that read a second flags integer before the id.
 # TL_legacy_message.java, classes TL_message_layer179 and newer.
@@ -375,6 +409,9 @@ class _TLReader:
         constructor = self.read_uint32()
         if constructor in (_PEER_USER, _PEER_CHAT, _PEER_CHANNEL):
             return self.read_int64()
+        if constructor in (_PEER_USER_LEGACY, _PEER_CHAT_LEGACY,
+                           _PEER_CHANNEL_LEGACY):
+            return self.read_int32()
         raise ValueError(f'unexpected peer constructor {constructor:#x}')
 
 
@@ -1351,6 +1388,78 @@ def get_telegramSaveToGallery(context):
             'Yes' if values['save_gallery'] == 'true' else 'No', '', '',
         ))
     return data_headers, data_list, xml_file
+
+
+# Telegram writes one WebRTC log per call under cache/voip_logs, named for the
+# call id. Entries look like: 2024-1-31 12:36:34:849 <file>: (line N): <text>
+_VOIP_ENTRY = re.compile(r'^(\d{4})-(\d+)-(\d+) (\d+):(\d+):(\d+):(\d+)')
+
+
+def _voip_log_span(path):
+    """First and last entry times in a voip log, as recorded (device local)."""
+    first = last = None
+    try:
+        with open(path, 'r', encoding='utf-8', errors='ignore') as handle:
+            for line in handle:
+                match = _VOIP_ENTRY.match(line)
+                if not match:
+                    continue
+                stamp = datetime.datetime(*[int(match.group(i)) for i in range(1, 7)])
+                if first is None:
+                    first = stamp
+                last = stamp
+    except OSError:
+        return None, None
+    return first, last
+
+
+@artifact_processor
+def get_telegramVoipLogs(context):
+    data_headers = (
+        ('Log Last Modified (UTC)', 'datetime'),
+        'Call ID',
+        'Logged Span (seconds)',
+        'First Entry (device local time)',
+        'Last Entry (device local time)',
+        'Log Size (bytes)',
+        'Stats Log Present',
+        'Log File',
+    )
+    data_list = []
+    sources = []
+
+    logs, stats = {}, set()
+    for found in context.get_files_found():
+        path = str(found)
+        name = os.path.basename(path.replace('\\', '/'))
+        if '/voip_logs/' not in path.replace('\\', '/') or not os.path.isfile(path):
+            continue
+        if name.endswith('_stats.log'):
+            stats.add(name[:-len('_stats.log')])
+        elif name.endswith('.log'):
+            logs[name[:-len('.log')]] = path
+
+    for call_id, path in sorted(logs.items()):
+        first, last = _voip_log_span(path)
+        span = int((last - first).total_seconds()) if first and last else ''
+        try:
+            modified = convert_unix_ts_to_utc(int(os.path.getmtime(path)))
+            size = os.path.getsize(path)
+        except OSError:
+            modified, size = '', ''
+        data_list.append((
+            modified,
+            call_id,
+            span,
+            first.strftime('%Y-%m-%d %H:%M:%S') if first else '',
+            last.strftime('%Y-%m-%d %H:%M:%S') if last else '',
+            size,
+            'Yes' if call_id in stats else '',
+            path,
+        ))
+        sources.append(path)
+
+    return data_headers, data_list, '\n'.join(sources) if sources else ''
 
 
 # DownloadController.java: mask index is the chat category, mask bits the media type.

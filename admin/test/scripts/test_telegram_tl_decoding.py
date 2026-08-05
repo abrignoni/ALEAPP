@@ -55,6 +55,11 @@ def peer_user(user_id):
     return u32(PEER_USER) + i64(user_id)
 
 
+def peer_user_legacy(user_id):
+    """Layer 132 and older wrote the peer id as an Int32."""
+    return u32(0x9DB1BC6D) + i32(user_id)
+
+
 def service_message(action, date=1700000000, peer=555, mid=42):
     """A TL_messageService_layer195 with no from_id and no reply header."""
     return (u32(0x2B085862) + u32(0) + i32(mid) + peer_user(peer)
@@ -92,6 +97,27 @@ class TelegramTextMessageTest(unittest.TestCase):
     def test_unknown_constructor_is_reported(self):
         decoded = _decode_message_blob(u32(0xDEADBEEF) + b'\x00' * 16, 1700000000)
         self.assertEqual(decoded.get('unknown'), 0xDEADBEEF)
+
+
+class TelegramLegacyPeerTest(unittest.TestCase):
+    """Peers stored by Telegram builds on layer 132 and older.
+
+    Those constructors carry an Int32 id. Reading one as the current 64-bit
+    form misaligns every field after it, so a message from an older build
+    would decode to nothing useful. No extraction available here is old
+    enough to contain one.
+    """
+
+    def test_legacy_peer_message_decodes(self):
+        blob = (u32(0x76BEC211) + u32(0) + i32(7) + peer_user_legacy(12345)
+                + i32(1700000000) + tl_string('sent from an older build'))
+        decoded = _decode_message_blob(blob, 1700000000)
+        self.assertEqual(decoded.get('text'), 'sent from an older build')
+        self.assertTrue(decoded.get('structural'))
+
+    def test_current_peer_still_decodes(self):
+        decoded = _decode_message_blob(text_message('current build'), 1700000000)
+        self.assertEqual(decoded.get('text'), 'current build')
 
 
 class TelegramServiceActionTest(unittest.TestCase):
