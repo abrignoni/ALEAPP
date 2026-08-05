@@ -166,6 +166,32 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "address-book",
     },
+    "get_telegramChatDetails": {
+        "name": "Telegram - Chat Details",
+        "description": (
+            "Parses the cached group and channel detail Telegram stores in the "
+            "chat_settings_v2 table of cache4.db, reporting the description and, where the "
+            "record carries them, the participant, administrator, removed, banned and online "
+            "member counts."
+        ),
+        "author": "Alexis Brignoni",
+        "creation_date": "2026-08-04",
+        "last_update_date": "2026-08-04",
+        "requirements": "none",
+        "category": "Telegram",
+        "notes": "The info column holds a TL chat full or channel full record. The "
+                 "description is written unconditionally after the id, and the member counts "
+                 "follow it behind flags, so both are read directly; fields that sit after "
+                 "the record's nested photo and notification objects are not read because "
+                 "those objects are not implemented. Basic group records carry a description "
+                 "but no counts. Names are resolved from the chats table. Reference: "
+                 "Telegram-Android, 'generated TlGen_ChatFull.kt (record layouts and flag "
+                 "bits)', https://github.com/DrKLO/Telegram/tree/master/TMessagesProj_AppTests"
+                 "/src/androidTest/kotlin/org/telegram/tgnet/model/generated",
+        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "output_types": "standard",
+        "artifact_icon": "users-group",
+    },
     "get_telegramSaveToGallery": {
         "name": "Telegram - Save to Gallery Settings",
         "description": (
@@ -1077,6 +1103,140 @@ def get_telegramPeerDetails(context):
             blocked = 'Yes' if decoded.get('blocked') else 'No' if decoded else ''
         display, username = names.get(uid, ('', ''))
         data_list.append((uid, display, username, bio, blocked, 'Yes' if pinned else ''))
+    return data_headers, data_list, db_file
+
+
+# TL chat/channel full records, grouped by the shape of the readable prefix.
+# A: flags, flags2, id, about, then the counts.
+# B: flags, id, about, then the counts.
+# C: flags, id, about only, which is the basic group record.
+_CHAT_FULL_A = {
+    0x0F2BCB6F,
+    0x44C054A7,
+    0x52D6806B,
+    0x723027BD,
+    0x9FF3B858,
+    0xA04E8D3A,
+    0xBBAB348D,
+    0xE07429DE,
+    0xE4E0B29D,
+    0xEA68A619,
+    0xF2355507,
+}
+_CHAT_FULL_B = {
+    0x03648977,
+    0x10916653,
+    0x17F45FCF,
+    0x1C87A71A,
+    0x2548C037,
+    0x2D895C74,
+    0x2F532F3C,
+    0x548C3F93,
+    0x56662E2E,
+    0x59CFF963,
+    0x76AF5481,
+    0x7A7DE4F7,
+    0x95CB5F57,
+    0x97BEE562,
+    0x9882E516,
+    0x9E341DDF,
+    0xC3D5512F,
+    0xE13C3D20,
+    0xE9B27A17,
+    0xEF3A6ACD,
+    0xF0E6672A,
+    0xFAB31AA3,
+}
+_CHAT_FULL_C = {
+    0x0DC8C181,
+    0x1B7C9DB3,
+    0x22A235DA,
+    0x2633421B,
+    0x46A6FFB4,
+    0x49A0A5D9,
+    0x4DBDC099,
+    0x8A1E2983,
+    0xC9D31138,
+    0xCBB7A507,
+    0xD18EE226,
+    0xF06C4018,
+    0xF3474AF6,
+}
+_CHAT_FULL = _CHAT_FULL_A | _CHAT_FULL_B | _CHAT_FULL_C
+
+
+def _decode_chat_full(blob):
+    """Read the description and member counts from a chat or channel record."""
+    if not isinstance(blob, bytes) or len(blob) < 12:
+        return {}
+    reader = _TLReader(blob)
+    constructor = reader.read_uint32()
+    if constructor not in _CHAT_FULL:
+        return {'unknown': constructor}
+    try:
+        flags = reader.read_uint32()
+        if constructor in _CHAT_FULL_A:
+            reader.read_uint32()                         # flags2
+        reader.read_int64()                              # id
+        record = {'about': reader.read_string()}
+        if constructor in _CHAT_FULL_C:
+            return record                                # basic group: no counts
+        if flags & 1:
+            record['participants'] = reader.read_int32()
+        if flags & 2:
+            record['admins'] = reader.read_int32()
+        if flags & 4:
+            record['kicked'] = reader.read_int32()
+            record['banned'] = reader.read_int32()
+        if flags & 8192:
+            record['online'] = reader.read_int32()
+        return record
+    except (struct.error, IndexError, UnicodeDecodeError):
+        return {}
+
+
+@artifact_processor
+def get_telegramChatDetails(context):
+    data_headers = (
+        'Chat ID',
+        'Chat',
+        'Description',
+        'Participants',
+        'Administrators',
+        'Removed',
+        'Banned',
+        'Online',
+    )
+    data_list = []
+    db_file = get_file_path(context.get_files_found(), 'cache4.db')
+    if not db_file:
+        return data_headers, data_list, ''
+
+    names = {}
+    try:
+        for uid, name in get_sqlite_db_records(
+                db_file, 'SELECT uid, name FROM chats') or []:
+            names[uid] = name or ''
+    except Exception:      # pylint: disable=broad-except
+        pass
+
+    query = 'SELECT uid, info FROM chat_settings_v2'
+    for uid, blob in get_sqlite_db_records(db_file, query) or []:
+        record = _decode_chat_full(blob)
+        if record.get('unknown') is not None:
+            description = f"[Unrecognised record {record['unknown']:#010x}]"
+        else:
+            description = record.get('about', '')
+        data_list.append((
+            uid,
+            names.get(uid, ''),
+            description,
+            record.get('participants', ''),
+            record.get('admins', ''),
+            record.get('kicked', ''),
+            record.get('banned', ''),
+            record.get('online', ''),
+        ))
     return data_headers, data_list, db_file
 
 
