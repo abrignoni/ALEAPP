@@ -82,7 +82,8 @@ def get_run_user(context):
                     # Does the attribute have text?
                     if child.text:
                         if i == "profilePictureUrl":
-                            user_info[i] = '<img src="' + child.text + '" alt="' + child.text + '" width="50" height="50">'
+                            # Remote avatar URL: reported as text, never fetched.
+                            user_info[i] = child.text
                         else:
                             user_info[i] = child.text
 

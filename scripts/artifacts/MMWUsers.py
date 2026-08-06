@@ -50,7 +50,10 @@ def get_map_users(context):
         height = round(row[6], 2) if row[6] is not None else row[6]
         weight = round(row[7], 2) if row[7] is not None else row[7]
         if row[12]:
-            image = '<img src="' + esc(row[12]) + '" alt="' + esc(str(row[10])) + '" width="50" height="50">'
+            # The avatar URL is remote, so an <img> here would make opening the report
+            # fetch it and disclose the examination to the service. Report the URL as
+            # escaped text instead; the evidence is preserved, nothing is fetched.
+            image = esc(row[12])
         else:
             image = 'N/A'
         data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], height, weight, row[8],

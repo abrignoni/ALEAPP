@@ -47,7 +47,9 @@ def get_packageGplinks(context):
 
         for x in values:
             bundleid = x.split(' ', 1)
-            url = f'<a href="https://play.google.com/store/apps/details?id={esc(bundleid[0])}" target="_blank"><font color="blue">https://play.google.com/store/apps/details?id={esc(bundleid[0])}</font></a>'
+            # The Play Store URL is reported as text, not an anchor: a report
+            # reaches nothing outside its own folder.
+            url = esc(f'https://play.google.com/store/apps/details?id={bundleid[0]}')
             data_list.append((bundleid[0], url))
 
     data_headers = ('Bundle ID', 'Possible Google Play Store Link')
