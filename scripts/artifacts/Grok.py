@@ -35,7 +35,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 import json
 
-from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly_or_none
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
@@ -70,7 +70,7 @@ def grok_generatedvideos(context):
             continue
 
         try:
-            conn = open_sqlite_db_readonly(source_path)
+            conn = open_sqlite_db_readonly_or_none(source_path)
             if not conn:
                 continue
             cur = conn.cursor()
@@ -105,7 +105,7 @@ def grok_generatedvideos(context):
     exo_meta = {}
     id_to_url = {}
 
-    conn = open_sqlite_db_readonly(db_path) if db_path else None
+    conn = open_sqlite_db_readonly_or_none(db_path) if db_path else None
 
     if conn:
         try:

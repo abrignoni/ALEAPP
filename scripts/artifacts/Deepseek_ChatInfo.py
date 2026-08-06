@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from scripts.ilapfuncs import (
     artifact_processor,
-    open_sqlite_db_readonly
+    open_sqlite_db_readonly_or_none
 )
 
 __artifacts_v2__ = {
@@ -47,7 +47,7 @@ def deepseek_chat_info(context):
 
     for source_path in files_found:
 
-        db = open_sqlite_db_readonly(source_path)
+        db = open_sqlite_db_readonly_or_none(source_path)
 
         if db is None:
             continue

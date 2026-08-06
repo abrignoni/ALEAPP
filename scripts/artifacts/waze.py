@@ -196,7 +196,7 @@ from math import log10
 import gzip
 from scripts.ilapfuncs import decode_protobuf
 from scripts.ilapfuncs import (
-    open_sqlite_db_readonly, get_sqlite_db_records,
+    open_sqlite_db_readonly_or_none, get_sqlite_db_records,
     does_column_exist_in_db, get_txt_file_content, convert_unix_ts_to_utc,
     artifact_processor, logfunc
 )
@@ -1485,7 +1485,7 @@ def waze_search_history(context):
     if not source_path:
         return data_headers, data_list, source_path
 
-    db = open_sqlite_db_readonly(source_path)
+    db = open_sqlite_db_readonly_or_none(source_path)
     if not db:
         return data_headers, data_list, source_path
 
@@ -2296,7 +2296,7 @@ def waze_planned_events(context):
     if not source_path:
         return data_headers, (data_list, data_list_html), source_path
 
-    db = open_sqlite_db_readonly(source_path)
+    db = open_sqlite_db_readonly_or_none(source_path)
     if not db:
         return data_headers, (data_list, data_list_html), source_path
 
@@ -2564,7 +2564,7 @@ def waze_tts(context):
     all_tables = get_sqlite_db_records(source_path, query)
 
     # Open the database ONCE for all subsequent table scans
-    db_table = open_sqlite_db_readonly(source_path)
+    db_table = open_sqlite_db_readonly_or_none(source_path)
     if not db_table:
         return data_headers, data_list, source_path
 

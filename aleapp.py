@@ -419,6 +419,13 @@ def crunch_artifacts(
                     continue  # cannot do work
             try:
                 plugin.method(files_found, category_folder, seeker, wrap_text)
+            except SQLiteDatabaseError as ex:
+                # The database named itself and open_sqlite_db_readonly_or_none()
+                # already logged why it would not open, so a traceback here would
+                # only bury that. Skip the artifact the same way as any other error.
+                logfunc('Reading {} artifact had errors!'.format(plugin.name))
+                logfunc('Error was {}'.format(str(ex)))
+                continue  # nope
             except Exception as ex:  # pylint: disable=broad-exception-caught
                 logfunc('Reading {} artifact had errors!'.format(plugin.name))
                 logfunc('Error was {}'.format(str(ex)))

@@ -690,17 +690,51 @@ def get_sqlite_db_path(path):
     else:
         return quote(str(path), safe='/')
 
-def open_sqlite_db_readonly(path):
-    '''Opens a sqlite db in read-only mode, so original db (and -wal/journal are intact)'''
+class SQLiteDatabaseError(Exception):
+    '''Raised when an evidence database cannot be opened read-only.
+
+    The artifact runner catches this, logs the file that could not be opened
+    and skips that artifact. Before this existed, open_sqlite_db_readonly()
+    returned None to every caller and the overwhelming majority used the handle
+    without checking it, so an unreadable file surfaced further down as
+    "AttributeError: 'NoneType' object has no attribute ..." with a traceback
+    that named neither the file nor the reason.
+    '''
+
+
+def open_sqlite_db_readonly_or_none(path):
+    '''Opens a sqlite db in read-only mode, returning None if it cannot be opened.
+
+    For callers that probe a database which may legitimately be absent or
+    unreadable and have a defined answer for that case - see
+    does_table_exist_in_db() below, which reports "no" rather than failing the
+    artifact. Callers that need the handle to do any work should use
+    open_sqlite_db_readonly() instead, so the failure names the file.
+    '''
     try:
         if path:
-            path = get_sqlite_db_path(path)
-            with sqlite3.connect(f"file:{path}?mode=ro", uri=True) as db:
+            uri_path = get_sqlite_db_path(path)
+            with sqlite3.connect(f"file:{uri_path}?mode=ro", uri=True) as db:
                 return db
     except sqlite3.OperationalError as e:
         logfunc(f"Error with {path}:")
         logfunc(f" - {str(e)}")
     return None
+
+
+def open_sqlite_db_readonly(path):
+    '''Opens a sqlite db in read-only mode, so original db (and -wal/journal are intact)
+
+    Raises SQLiteDatabaseError if the database cannot be opened, so the caller
+    does not have to check the handle. Use open_sqlite_db_readonly_or_none()
+    where an unreadable database is an expected, handled outcome.
+    '''
+    if not path:
+        raise SQLiteDatabaseError('No database path was given to open')
+    db = open_sqlite_db_readonly_or_none(path)
+    if db is None:
+        raise SQLiteDatabaseError(f'Could not open database read-only: {path}')
+    return db
 
 def attach_sqlite_db_readonly(path, db_name):
     '''Return the query to attach a sqlite db in read-only mode.
@@ -710,7 +744,7 @@ def attach_sqlite_db_readonly(path, db_name):
     return  f'''ATTACH DATABASE "file:{path}?mode=ro" AS {db_name}'''
 
 def get_sqlite_db_records(path, query, attach_query=None):
-    db = open_sqlite_db_readonly(path)
+    db = open_sqlite_db_readonly_or_none(path)
     if db:
         try:
             cursor = db.cursor()
@@ -751,25 +785,26 @@ def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
 
 def does_column_exist_in_db(path, table_name, col_name):
     '''Checks if a specific col exists'''
-    db = open_sqlite_db_readonly(path)
+    db = open_sqlite_db_readonly_or_none(path)
     col_name = col_name.lower()
-    try:
-        db.row_factory = sqlite3.Row # For fetching columns by name
+    if db:
         query = f"pragma table_info('{table_name}');"
-        cursor = db.cursor()
-        cursor.execute(query)
-        all_rows = cursor.fetchall()
-        for row in all_rows:
-            if row['name'].lower() == col_name:
-                return True
-    except sqlite3.Error as ex:
-        logfunc(f"Query error, query={query} Error={str(ex)}")
+        try:
+            db.row_factory = sqlite3.Row # For fetching columns by name
+            cursor = db.cursor()
+            cursor.execute(query)
+            all_rows = cursor.fetchall()
+            for row in all_rows:
+                if row['name'].lower() == col_name:
+                    return True
+        except sqlite3.Error as ex:
+            logfunc(f"Query error, query={query} Error={str(ex)}")
     return False
 
 def does_table_exist_in_db(path, table_name):
     '''Checks if a table with specified name exists in an sqlite db'''
-    db = open_sqlite_db_readonly(path)
-    if db:    
+    db = open_sqlite_db_readonly_or_none(path)
+    if db:
         try:
             query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"
             cursor = db.execute(query)
@@ -781,7 +816,7 @@ def does_table_exist_in_db(path, table_name):
 
 def does_view_exist_in_db(path, table_name):
     '''Checks if a table with specified name exists in an sqlite db'''
-    db = open_sqlite_db_readonly(path)
+    db = open_sqlite_db_readonly_or_none(path)
     if db:
         try:
             query = f"SELECT name FROM sqlite_master WHERE type='view' AND name='{table_name}'"
