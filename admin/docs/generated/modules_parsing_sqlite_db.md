@@ -30,6 +30,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | androidauto |
 | appicons |
 | frosting |
+| galleryVault |
 | gmailEmails |
 | googleAccountHistory |
 | googleCalendar |
@@ -40,6 +41,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleOdlh |
 | googlePlaySearches |
 | honorMediaLibrary |
+| kikMessenger |
 | knuddels |
 | rema_1000 |
 | samsungBadgeProvider |
