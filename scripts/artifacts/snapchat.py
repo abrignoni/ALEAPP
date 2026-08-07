@@ -131,6 +131,78 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 4 rows",
         },
     },
+    "get_snapchat_arroyo_superseded_messages": {
+        "name": "Snapchat - Messages Not In Committed State (arroyo.db)",
+        "description": "Rows from the conversation_message table in arroyo.db that are present "
+                       "when the database file is read as of its last checkpoint and absent when "
+                       "the write-ahead log is applied. Columns match Snapchat - Messages "
+                       "(arroyo.db), with a Record State column added.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-07", "last_update_date": "2026-08-07",
+        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "notes": "These rows are NOT in the live conversation view and must not be read as "
+                 "current messages. Snapchat - Messages (arroyo.db) is the committed state.\n"
+                 "Method: arroyo.db is opened twice through SQLite, once with immutable=1, which "
+                 "ignores the write-ahead log and yields the file as of its last checkpoint, and "
+                 "once with mode=ro, which applies the log and yields the committed state. Rows "
+                 "whose (client_conversation_id, client_message_id) primary key appears in the "
+                 "first result and not the second are reported here. Both sides are consistent "
+                 "SQLite reads of the same bytes, so column names, type affinity and overflow "
+                 "pages are handled by SQLite rather than by a hand-written page parser.\n"
+                 "Why a row did not survive into the committed state is NOT established by this "
+                 "artifact. Removal by the application, a server re-sync rewriting those pages, "
+                 "and deletion are all consistent with the same result. On the tested image most "
+                 "of these rows carried Team Snapchat broadcast content, which is consistent with "
+                 "a re-sync, and that is an observation about one image rather than a general "
+                 "property.\n"
+                 "This is NOT deleted-record carving. It does not read freelist pages, "
+                 "unallocated space or freeblocks, and it does not parse WAL frames, so records "
+                 "that only ever existed inside the log are not recovered. It returns nothing "
+                 "when no -wal file accompanies the database, which was verified by removing the "
+                 "sidecar and confirming both reads agreed at 11 rows.\n"
+                 "Timestamps here are the values stored on the rows and will overlap the "
+                 "committed artifact's range, so take care not to count a conversation twice "
+                 "across the two artifacts or in the timeline. No conversation data view is "
+                 "declared, deliberately, so these rows do not render as chat messages in LAVA.",
+        "paths": ('*/com.snapchat.android/databases/arroyo.db*',
+                  '*/com.snapchat.android/databases/main.db*',
+                  '*/com.snapchat.android/shared_prefs/identity_persistent_store.xml'),
+        "output_types": "standard", "artifact_icon": "alert-triangle",
+        "sample_data": {
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 8 rows",
+        },
+    },
+    "get_snapchat_arroyo_superseded_conversations": {
+        "name": "Snapchat - Conversations Not In Committed State (arroyo.db)",
+        "description": "Rows from the conversation and feed_entry tables in arroyo.db that are "
+                       "present when the database file is read as of its last checkpoint and "
+                       "absent when the write-ahead log is applied.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-07", "last_update_date": "2026-08-07",
+        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "notes": "These rows are NOT in the live conversation list. Snapchat - Conversations "
+                 "(arroyo.db) is the committed state. Method and limits are the same as Snapchat "
+                 "- Messages Not In Committed State (arroyo.db); see that artifact's notes.\n"
+                 "A conversation is reported when its client_conversation_id is present in "
+                 "conversation or feed_entry as of the last checkpoint and in neither table once "
+                 "the log is applied. Comparing row counts alone would not find these: on the "
+                 "tested image conversation, conversation_identifier and feed_entry each held 4 "
+                 "rows in both reads, and it was only comparing primary keys that showed one "
+                 "identifier had been replaced by a different one.\n"
+                 "Participants, message counts and titles for these rows are read from the same "
+                 "pre-checkpoint view, so they describe the conversation as it stood at that "
+                 "point. A participant absent from the Friend table in main.db is reported as a "
+                 "bare UUID; that is an unresolved identifier, not a finding about the account.\n"
+                 "Message Count counts conversation_message rows carrying that "
+                 "client_conversation_id in the pre-checkpoint view, which is not necessarily the "
+                 "number of messages exchanged in the conversation.",
+        "paths": ('*/com.snapchat.android/databases/arroyo.db*',
+                  '*/com.snapchat.android/databases/main.db*'),
+        "output_types": "standard", "artifact_icon": "alert-triangle",
+        "sample_data": {
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 1 row",
+        },
+    },
     "get_snapchat_memories": {
         "name": "Snapchat - Memories",
         "description": "Snapchat memories entries",
@@ -214,7 +286,8 @@ import xml.etree.ElementTree as ET
 
 import bcrypt
 
-from scripts.ilapfuncs import artifact_processor, decode_protobuf, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, decode_protobuf, get_sqlite_db_path, \
+    open_sqlite_db_readonly
 
 _MEO_CODES = {}
 _XML_UNIX_KEYS = {'INSTALL_ON_DEVICE_TIMESTAMP', 'LONG_CLIENT_ID_DEVICE_TIMESTAMP',
@@ -397,10 +470,52 @@ def _friend_name(friends, user_id, index=0):
     return friends.get(user_id, ('', ''))[index]
 
 
-def _participants(arroyo_path, friends):
+def _rows_pre_wal(source_path, sql):
+    '''Run sql against the database file as of its last checkpoint, ignoring the WAL.
+
+    immutable=1 is strictly read-only. Unlike mode=ro it does not even create a -shm
+    sidecar, so no evidence file is altered. Path handling goes through the same
+    get_sqlite_db_path() that open_sqlite_db_readonly() uses, so Windows long paths and
+    URI-special characters behave identically.
+    '''
+    if not source_path:
+        return []
+    try:
+        db = sqlite3.connect(f'file:{get_sqlite_db_path(source_path)}?immutable=1', uri=True)
+    except sqlite3.Error:
+        return []
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
+    db.close()
+    return rows
+
+
+def _superseded(source_path, sql, key_indexes):
+    '''Rows present at the last checkpoint and absent once the write-ahead log is applied.
+
+    Both sides are consistent SQLite views of the same file, one ignoring the WAL and one
+    applying it, compared on the columns at key_indexes. Comparing row counts is not enough:
+    on the tested image counting flagged 2 of 30 tables in arroyo.db while comparing primary
+    keys flagged 6, because four tables held the same number of rows with different keys.
+
+    Empty when the file has no WAL alongside it. Why a row did not survive into the
+    committed state is not established here.
+    '''
+    def key(row):
+        return tuple(row[index] for index in key_indexes)
+
+    committed = {key(row) for row in _rows(source_path, sql)}
+    return [row for row in _rows_pre_wal(source_path, sql) if key(row) not in committed]
+
+
+def _participants(arroyo_path, friends, reader=_rows):
     '''Map client_conversation_id to (participant ids, participant usernames).'''
     participants = {}
-    for conversation_id, blob in _rows(
+    for conversation_id, blob in reader(
             arroyo_path, 'SELECT client_conversation_id, conversation_metadata FROM conversation'):
         entries = _pb_get(_decode(blob), '3')
         if isinstance(entries, dict):
@@ -440,22 +555,56 @@ def _yes_no(value):
     return 'YES' if value else 'NO'
 
 
-@artifact_processor
-def get_snapchat_arroyo_messages(context):
-    files_found = context.get_files_found()
-    source_path = _find(files_found, 'arroyo.db')
-    friends = _friends(_find(files_found, 'main.db'))
-    participants = _participants(source_path, friends)
-    local_user_id = _local_user_id(files_found, source_path, friends)
+_MESSAGE_SQL = '''
+    SELECT creation_timestamp, read_timestamp, sender_id, content_type, message_content,
+           message_state_type, is_saved, is_viewed_by_user, created_on_device,
+           remote_media_count, replies_count, quoted_server_message_id,
+           client_conversation_id, client_message_id, server_message_id
+    FROM conversation_message ORDER BY creation_timestamp
+'''
+# conversation_message primary key (client_conversation_id, client_message_id), as offsets
+# into the columns selected above.
+_MESSAGE_KEY = (12, 13)
 
+_MESSAGE_HEADERS = (('Creation Timestamp', 'datetime'), ('Read Timestamp', 'datetime'),
+                    'Sender Username', 'Sender Display Name', 'Sender ID', 'Message Direction',
+                    'Conversation Participants', 'Message Text', 'Content Type (as stored)',
+                    'Message State Type', 'Is Saved', 'Is Viewed By User', 'Created On Device',
+                    'Remote Media Count', 'Replies Count', 'Quoted Server Message ID',
+                    'Conversation ID', 'Client Message ID', 'Server Message ID')
+
+_CONVERSATION_HEADERS = (('Creation Timestamp', 'datetime'), ('Last Updated Timestamp', 'datetime'),
+                         ('Display Timestamp', 'datetime'), ('Tombstoned At Timestamp', 'datetime'),
+                         ('Streak Expiration Timestamp', 'datetime'), 'Conversation Title',
+                         'Participants', 'Participant IDs', 'Message Count', 'Streak Count',
+                         'Conversation Type (as stored)', 'Send State Type', 'Feed Item Creator',
+                         'Feed Item Creator ID', 'Last Chat Sender', 'Last Chat Sender ID',
+                         'Tombstoned', 'Conversation ID')
+
+_RECORD_STATE = 'Record State'
+_STATE_SUPERSEDED = 'Present at last checkpoint, absent after WAL'
+
+
+def _add_state(headers, rows, state):
+    '''Add a record state column, inserted after the leading timestamp columns.
+
+    Keeping every datetime column leftmost is the house ordering, so the insert point is
+    derived from the headers rather than hardcoded.
+    '''
+    index = 0
+    while (index < len(headers) and isinstance(headers[index], tuple)
+           and headers[index][1] == 'datetime'):
+        index += 1
+
+    def insert(values, value):
+        return tuple(values[:index]) + (value,) + tuple(values[index:])
+
+    return insert(headers, _RECORD_STATE), [insert(row, state) for row in rows]
+
+
+def _message_rows(rows, friends, participants, local_user_id):
     data_list = []
-    for row in _rows(source_path, '''
-            SELECT creation_timestamp, read_timestamp, sender_id, content_type, message_content,
-                   message_state_type, is_saved, is_viewed_by_user, created_on_device,
-                   remote_media_count, replies_count, quoted_server_message_id,
-                   client_conversation_id, client_message_id, server_message_id
-            FROM conversation_message ORDER BY creation_timestamp
-    '''):
+    for row in rows:
         (created, read, sender_id, content_type, blob, state, saved, viewed, on_device,
          media_count, replies, quoted_id, conversation_id, client_message_id, server_message_id) = row
         text = _pb_text(_decode(blob), '4', '4', '2', '1') if content_type == 1 else ''
@@ -469,40 +618,32 @@ def get_snapchat_arroyo_messages(context):
             direction, participants.get(conversation_id, ('', ''))[1], text, content_type, state,
             _yes_no(saved), _yes_no(viewed), _yes_no(on_device), media_count, replies, quoted_id,
             conversation_id, client_message_id, server_message_id))
-
-    data_headers = (('Creation Timestamp', 'datetime'), ('Read Timestamp', 'datetime'),
-                    'Sender Username', 'Sender Display Name', 'Sender ID', 'Message Direction',
-                    'Conversation Participants', 'Message Text', 'Content Type (as stored)',
-                    'Message State Type', 'Is Saved', 'Is Viewed By User', 'Created On Device',
-                    'Remote Media Count', 'Replies Count', 'Quoted Server Message ID',
-                    'Conversation ID', 'Client Message ID', 'Server Message ID')
-    return data_headers, data_list, source_path
+    return data_list
 
 
-@artifact_processor
-def get_snapchat_arroyo_conversations(context):
-    files_found = context.get_files_found()
-    source_path = _find(files_found, 'arroyo.db')
-    friends = _friends(_find(files_found, 'main.db'))
-    participants = _participants(source_path, friends)
-
-    conversations = {row[0]: row[1:] for row in _rows(source_path, '''
+def _conversation_rows(source_path, friends, reader, only_ids=None):
+    participants = _participants(source_path, friends, reader)
+    conversations = {row[0]: row[1:] for row in reader(source_path, '''
         SELECT client_conversation_id, creation_timestamp, tombstoned_at_timestamp, send_state_type
         FROM conversation
     ''')}
-    feeds = {row[0]: row[1:] for row in _rows(source_path, '''
+    feeds = {row[0]: row[1:] for row in reader(source_path, '''
         SELECT client_conversation_id, last_updated_timestamp, display_timestamp,
                streak_expiration_timestamp_ms, conversation_title, conversation_type, streak_count,
                feedItemCreator, last_chat_sender, tombstoned
         FROM feed_entry
     ''')}
-    counts = dict(_rows(source_path, '''
+    counts = dict(reader(source_path, '''
         SELECT client_conversation_id, COUNT(*) FROM conversation_message
         GROUP BY client_conversation_id
     '''))
 
+    wanted = set(conversations) | set(feeds)
+    if only_ids is not None:
+        wanted &= set(only_ids)
+
     data_list = []
-    for conversation_id in sorted(set(conversations) | set(feeds)):
+    for conversation_id in sorted(wanted):
         created, tombstoned_at, send_state = conversations.get(conversation_id, (None, None, ''))
         (updated, displayed, streak_expiry, title, conversation_type, streak, creator,
          last_sender, tombstoned) = feeds.get(conversation_id, (None,) * 9)
@@ -514,14 +655,58 @@ def get_snapchat_arroyo_conversations(context):
             counts.get(conversation_id, 0), streak, conversation_type, send_state,
             _friend_name(friends, creator), creator, _friend_name(friends, last_sender), last_sender,
             _yes_no(tombstoned), conversation_id))
+    return data_list
 
-    data_headers = (('Creation Timestamp', 'datetime'), ('Last Updated Timestamp', 'datetime'),
-                    ('Display Timestamp', 'datetime'), ('Tombstoned At Timestamp', 'datetime'),
-                    ('Streak Expiration Timestamp', 'datetime'), 'Conversation Title',
-                    'Participants', 'Participant IDs', 'Message Count', 'Streak Count',
-                    'Conversation Type (as stored)', 'Send State Type', 'Feed Item Creator',
-                    'Feed Item Creator ID', 'Last Chat Sender', 'Last Chat Sender ID',
-                    'Tombstoned', 'Conversation ID')
+
+def _superseded_conversation_ids(source_path):
+    '''client_conversation_id values that the WAL removes from conversation or feed_entry.'''
+    pre, committed = set(), set()
+    for sql in ('SELECT client_conversation_id FROM conversation',
+                'SELECT client_conversation_id FROM feed_entry'):
+        pre |= {row[0] for row in _rows_pre_wal(source_path, sql)}
+        committed |= {row[0] for row in _rows(source_path, sql)}
+    return pre - committed
+
+
+@artifact_processor
+def get_snapchat_arroyo_messages(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'arroyo.db')
+    friends = _friends(_find(files_found, 'main.db'))
+    data_list = _message_rows(_rows(source_path, _MESSAGE_SQL), friends,
+                              _participants(source_path, friends),
+                              _local_user_id(files_found, source_path, friends))
+    return _MESSAGE_HEADERS, data_list, source_path
+
+
+@artifact_processor
+def get_snapchat_arroyo_superseded_messages(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'arroyo.db')
+    friends = _friends(_find(files_found, 'main.db'))
+    rows = _message_rows(_superseded(source_path, _MESSAGE_SQL, _MESSAGE_KEY), friends,
+                         _participants(source_path, friends, _rows_pre_wal),
+                         _local_user_id(files_found, source_path, friends))
+    data_headers, data_list = _add_state(_MESSAGE_HEADERS, rows, _STATE_SUPERSEDED)
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_snapchat_arroyo_conversations(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'arroyo.db')
+    friends = _friends(_find(files_found, 'main.db'))
+    return _CONVERSATION_HEADERS, _conversation_rows(source_path, friends, _rows), source_path
+
+
+@artifact_processor
+def get_snapchat_arroyo_superseded_conversations(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'arroyo.db')
+    friends = _friends(_find(files_found, 'main.db'))
+    rows = _conversation_rows(source_path, friends, _rows_pre_wal,
+                              _superseded_conversation_ids(source_path))
+    data_headers, data_list = _add_state(_CONVERSATION_HEADERS, rows, _STATE_SUPERSEDED)
     return data_headers, data_list, source_path
 
 
