@@ -44,9 +44,7 @@ from scripts import blackboxprotobuf
 from scripts.filetype import guess_mime, guess_extension
 from functools import wraps
 
-# LEAPP version unique imports
-from geopy.geocoders import Nominatim
-
+from scripts.html_safe import esc, safe_local_path
 from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_get_media_item, \
     lava_insert_sqlite_media_item, lava_insert_sqlite_media_references, lava_get_media_references, \
     lava_get_full_media_info
@@ -354,20 +352,25 @@ def html_media_tag(media_path, mimetype, style, title=''):
         filename = Path(source).name
         return f"media/{filename}"
 
-    filename = Path(media_path).name
-    media_path = quote(relative_paths(media_path))
+    # The media name comes from the evidence, so every place it is emitted is
+    # escaped: percent-encoded in src/href by safe_local_path(), which also refuses a
+    # target that would leave the report folder, and HTML-escaped in title= and in the
+    # fallback link text. Before this, a crafted attachment filename broke out of the
+    # title attribute and ran in the examiner's report (CWE-79).
+    filename = esc(Path(media_path).name)
+    media_path = safe_local_path(relative_paths(media_path))
 
-    if mimetype == None:
+    if mimetype is None:
         mimetype = ''
     if 'video' in mimetype:
         thumb = f'<video width="320" height="240" controls="controls"><source src="{media_path}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
     elif 'image' in mimetype:
-        image_style = style if style else "max-height:300px; max-width:400px;"
-        thumb = f'<a href="{media_path}" target="_blank"><img title="{title}"  src="{media_path}" style="{image_style}"></img></a>'
+        image_style = esc(style) if style else "max-height:300px; max-width:400px;"
+        thumb = f'<a href="{media_path}" target="_blank"><img title="{esc(title)}"  src="{media_path}" style="{image_style}"></img></a>'
     elif 'audio' in mimetype:
         thumb = f'<audio controls><source src="{media_path}" type="audio/ogg"><source src="{media_path}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
     else:
-        thumb = f'<a href="{media_path}" target="_blank"> Link to {filename} file</>'
+        thumb = f'<a href="{media_path}" target="_blank"> Link to {filename} file</a>'
     return thumb
 
 def get_data_list_with_media(media_header_info, data_list):
@@ -502,11 +505,11 @@ def artifact_processor(func):
             source_path = '\n'.join(
                 Context.get_relative_path(p) for p in str(source_path).split('\n'))
 
+        if isinstance(data_list, tuple):
+            data_list, html_data_list = data_list
+        else:
+            html_data_list = data_list
         if len(data_list):
-            if isinstance(data_list, tuple):
-                data_list, html_data_list = data_list
-            else:
-                html_data_list = data_list
             logfunc(f"Found {len(data_list):,} {'records' if len(data_list) > 1 else 'record'} for {artifact_name}")
             # Path separators would break (or misplace) the report files, so the HTML, TSV
             # and KML outputs are written under a path safe name. The sidebar keys off the
@@ -954,17 +957,27 @@ def media_to_html(media_path, files_found, report_folder):
             source = relative_paths(str(source), splitter)
 
         mimetype = guess_mime(match)
-        if mimetype == None:
+        if mimetype is None:
             mimetype = ''
 
+        # allow_parent: relative_paths() above deliberately emits ../data/... to reach
+        # the extraction folder beside the report. The evidence filename in the
+        # fallback link text is escaped -- it used to be interpolated raw.
+        # Bind the escaped values to their own names rather than writing back over
+        # `source`, which is assigned several times above. Reading a name that only
+        # ever holds a checked value makes the safety local and obvious, to a reader
+        # and to admin/scripts/check_html_safety.py alike.
+        safe_source = safe_local_path(source, allow_parent=True)
+        safe_filename = esc(filename)
+
         if 'video' in mimetype:
-            thumb = f'<video width="320" height="240" controls="controls"><source src="{source}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
+            thumb = f'<video width="320" height="240" controls="controls"><source src="{safe_source}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
         elif 'image' in mimetype:
-            thumb = f'<a href="{source}" target="_blank"><img src="{source}"width="300"></img></a>'
+            thumb = f'<a href="{safe_source}" target="_blank"><img src="{safe_source}" width="300"></img></a>'
         elif 'audio' in mimetype:
-            thumb = f'<audio controls><source src="{source}" type="audio/ogg"><source src="{source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
+            thumb = f'<audio controls><source src="{safe_source}" type="audio/ogg"><source src="{safe_source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
         else:
-            thumb = f'<a href="{source}" target="_blank"> Link to {filename} file</>'
+            thumb = f'<a href="{safe_source}" target="_blank"> Link to {safe_filename} file</a>'
     return thumb
 
 
@@ -1466,70 +1479,3 @@ def checkabx(in_path):
         return (False)
     else:
         return (True)
-
-
-def get_raw_fields(latitude, longitude, c, conn):
-    geolocator = Nominatim(user_agent="address-retrieval")
-    location = geolocator.reverse(f"{latitude}, {longitude}")
-    if location:
-        raw_data = location.raw
-        # check if raw_data["address"]["road"] exists
-        not_present = False
-        if "road" in raw_data["address"]:
-            road = raw_data["address"]["road"]
-        elif "hamlet" in raw_data["address"]:
-            road = raw_data["address"]["hamlet"]
-        else:
-            road = 'Not Present'
-            not_present = True
-
-        if "city" in raw_data["address"]:
-            city = raw_data["address"]["city"]
-        elif "town" in raw_data["address"]:
-            city = raw_data["address"]["town"]
-        else:
-            city = 'Not present'
-            not_present = True
-        if not not_present:
-            store_raw_fields(latitude, longitude, road, city,
-                             raw_data["address"]["postcode"], raw_data["address"]["country"], c, conn)
-        # create a dict
-        obtained_data = {"road": road, "city": city, "postcode": raw_data["address"]["postcode"],
-                         "country": raw_data["address"]["country"]}
-        return obtained_data
-    else:
-        print("Location not found.")
-
-
-def store_raw_fields(latitude_value, longitude_value, road_value, city_value, postcode_value, country_value, c, conn):
-    # Check if the entry is already present
-    c.execute('''SELECT * FROM raw_fields WHERE latitude=? AND longitude=?''', (latitude_value, longitude_value))
-    if c.fetchone() is None:
-        # Insert a row of data
-        c.execute('''INSERT INTO raw_fields (latitude, longitude, road, city, postcode, country) 
-                      VALUES (?, ?, ?, ?, ?, ?)''',
-                  (latitude_value, longitude_value, road_value, city_value, postcode_value, country_value))
-
-        # Save (commit) the changes
-        conn.commit()
-
-# Function to check if the raw fields are already present in the database and return them if present or return None
-def check_raw_fields(latitude, longitude, c):
-    # Check if the entry is already present
-    c.execute('''SELECT * FROM raw_fields WHERE latitude=? AND longitude=?''', (latitude, longitude))
-    data = c.fetchone()
-    # convert to dict
-    return data
-
-#Function to check if the user as internet connection to do the geocoding features
-def check_internet_connection():
-    try:
-        geolocator = Nominatim(user_agent="check_internet_connection")
-        geolocator.reverse("39.7495, 8.8077")  # Leiria coordinates
-        logfunc("Internet connection is available.")
-        return True
-    except:  # pylint: disable=bare-except
-        logfunc("Internet connection is not available.")
-        return False
-    
-    
