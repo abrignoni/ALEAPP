@@ -29,6 +29,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | airtagAndroid |
 | androidauto |
 | appicons |
+| dropbox |
 | frosting |
 | galleryVault |
 | gmailEmails |
