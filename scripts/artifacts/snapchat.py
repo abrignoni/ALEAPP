@@ -48,6 +48,89 @@ __artifacts_v2__ = {
             "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
         },
     },
+    "get_snapchat_arroyo_messages": {
+        "name": "Snapchat - Messages (arroyo.db)",
+        "description": "Chat message records from the conversation_message table in arroyo.db. "
+                       "Sender and participant UUIDs are resolved against the Friend table in "
+                       "main.db, and message text is decoded from the message_content protobuf on "
+                       "rows where content_type is 1.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-07", "last_update_date": "2026-08-07",
+        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "notes": "Newer Snapchat builds store conversations in arroyo.db. The Snapchat - Messages "
+                 "artifact reads main.db and tcspahn.db and returns no rows against those builds.\n"
+                 "The glob keeps the -wal and -shm sidecars, because the write-ahead log carries "
+                 "much of the live state. On the tested image the database file read on its own "
+                 "(immutable=1) yielded 11 conversation_message rows, while the same file read with "
+                 "its WAL applied yielded 8.\n"
+                 "Message text is taken from the message_content protobuf at nested field path "
+                 "4 > 4 > 2 > 1. That path is derived from the structure observed in the tested "
+                 "image, not from a published schema. The decode is cross-checked against the SQL "
+                 "columns of the same row: protobuf 2 > 1 matches sender_id, 3 > 1 > 1 > 1 matches "
+                 "client_conversation_id, 4 > 2 matches content_type, and 6 > 1 and 6 > 2 match "
+                 "creation_timestamp and read_timestamp.\n"
+                 "In the tested image the 3 rows with content_type 1 carried a UTF-8 string at that "
+                 "path. The 5 rows with content_type 0, 2 and 3 carried media and sticker file "
+                 "names, CDN URLs, media dimensions and encryption key and IV fields, but no "
+                 "plaintext body; this artifact does not decrypt media payloads. Values of "
+                 "content_type other than 1 are reported as the stored integer with no label, "
+                 "because no source documenting the enum has been verified.\n"
+                 "Message Direction compares sender_id against the local account id, which is taken "
+                 "from LAST_LOGGED_IN_USERNAME in identity_persistent_store.xml resolved through "
+                 "Friend.userId in main.db, and failing that from the single distinct sender_id "
+                 "among rows where created_on_device is set (the schema comments in arroyo.db "
+                 "define that column as set when the message was created on this device). Both "
+                 "paths agreed on the tested image. The column is left blank when neither resolves.\n"
+                 "Not covered: media files on disk are not linked to message rows, and reactions, "
+                 "message_state history and Kraken epoch encrypted content are not parsed.",
+        "paths": ('*/com.snapchat.android/databases/arroyo.db*',
+                  '*/com.snapchat.android/databases/main.db*',
+                  '*/com.snapchat.android/shared_prefs/identity_persistent_store.xml'),
+        "output_types": "standard", "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 8 rows",
+        },
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Conversation ID",
+                "textColumn": "Message Text",
+                "directionColumn": "Message Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Creation Timestamp",
+                "senderColumn": "Sender Username",
+            }
+        },
+    },
+    "get_snapchat_arroyo_conversations": {
+        "name": "Snapchat - Conversations (arroyo.db)",
+        "description": "Conversation records from the conversation and feed_entry tables in "
+                       "arroyo.db. Participant UUIDs are decoded from the conversation_metadata "
+                       "protobuf and resolved against the Friend table in main.db.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-07", "last_update_date": "2026-08-07",
+        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "notes": "Rows are the union of client_conversation_id in the conversation and feed_entry "
+                 "tables, so a conversation present in only one of the two is still reported.\n"
+                 "Participant IDs are read from the conversation_metadata protobuf, at repeated "
+                 "field 3, sub-path 1 > 1, as 16 raw bytes formatted as a UUID. On the tested image "
+                 "this agreed for each of the 4 conversations with the feed_entry.participants "
+                 "column, which stores the same UUIDs as a plain concatenation of 16-byte values, "
+                 "and each of the 4 distinct sender_id values in conversation_message appeared in "
+                 "a resolved participant list.\n"
+                 "Conversation Type is reported as the stored integer with no label, because no "
+                 "source documenting the enum has been verified. Tombstoned At Timestamp is the "
+                 "conversation.tombstoned_at_timestamp column, which the schema comments in "
+                 "arroyo.db describe as when the conversation was locally left by the user.\n"
+                 "Message Count is a count of conversation_message rows carrying that "
+                 "client_conversation_id in this database, which is not necessarily the number of "
+                 "messages exchanged in the conversation.",
+        "paths": ('*/com.snapchat.android/databases/arroyo.db*',
+                  '*/com.snapchat.android/databases/main.db*'),
+        "output_types": "standard", "artifact_icon": "messages",
+        "sample_data": {
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 4 rows",
+        },
+    },
     "get_snapchat_memories": {
         "name": "Snapchat - Memories",
         "description": "Snapchat memories entries",
@@ -131,11 +214,13 @@ import xml.etree.ElementTree as ET
 
 import bcrypt
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, decode_protobuf, open_sqlite_db_readonly
 
 _MEO_CODES = {}
 _XML_UNIX_KEYS = {'INSTALL_ON_DEVICE_TIMESTAMP', 'LONG_CLIENT_ID_DEVICE_TIMESTAMP',
                   'FIRST_LOGGED_IN_ON_DEVICE_TIMESTAMP'}
+# blackboxprotobuf raises these when a blob does not decode as protobuf.
+_PB_ERRORS = (ValueError, TypeError, IndexError, KeyError, AttributeError)
 
 
 def _ms_to_utc(value):
@@ -239,6 +324,204 @@ def get_snapchat_messages(context):
                   _text_from_blob(r[6], 0x2c, 0x28, r[5])) for r in rows]
     data_headers = (('Creation Timestamp', 'datetime'), ('Seen Timestamp', 'datetime'), 'Sender ID',
                     'Sender Username', 'Sender Display Name', 'Message Type', 'Text')
+    return data_headers, data_list, source_path
+
+
+def _pb_get(node, key):
+    '''Read one field out of a blackboxprotobuf dict.
+
+    blackboxprotobuf splits a field whose repeats decode to different typedefs into
+    'N-1', 'N-2' keys, so fall back to the first such variant when the plain key is absent.
+    '''
+    if not isinstance(node, dict):
+        return None
+    if key in node:
+        return node[key]
+    for name in sorted(node):
+        if name.startswith(f'{key}-'):
+            return node[name]
+    return None
+
+
+def _pb_walk(node, *path):
+    '''Walk a blackboxprotobuf dict, taking the first element of any repeated field.'''
+    current = node
+    for key in path:
+        if isinstance(current, list):
+            current = current[0] if current else None
+        current = _pb_get(current, key)
+    if isinstance(current, list):
+        current = current[0] if current else None
+    return current
+
+
+def _pb_text(node, *path):
+    value = _pb_walk(node, *path)
+    if isinstance(value, (bytes, bytearray)):
+        return bytes(value).decode('utf-8', 'replace')
+    if isinstance(value, str):
+        return value
+    return ''
+
+
+def _uuid_from_bytes(value):
+    '''Format a 16-byte protobuf value as a canonical UUID string.'''
+    if not isinstance(value, (bytes, bytearray)) or len(value) != 16:
+        return ''
+    digits = bytes(value).hex()
+    return (f'{digits[0:8]}-{digits[8:12]}-{digits[12:16]}-'
+            f'{digits[16:20]}-{digits[20:32]}')
+
+
+def _decode(blob):
+    if not blob:
+        return None
+    try:
+        values, _typedef = decode_protobuf(bytes(blob))
+    except _PB_ERRORS:
+        return None
+    return values if isinstance(values, dict) else None
+
+
+def _friends(main_db_path):
+    '''Map Friend.userId to (username, displayName) from main.db.'''
+    friends = {}
+    for user_id, username, display_name in _rows(
+            main_db_path, 'SELECT userId, username, displayName FROM Friend'):
+        if user_id:
+            friends[user_id] = (username or '', display_name or '')
+    return friends
+
+
+def _friend_name(friends, user_id, index=0):
+    return friends.get(user_id, ('', ''))[index]
+
+
+def _participants(arroyo_path, friends):
+    '''Map client_conversation_id to (participant ids, participant usernames).'''
+    participants = {}
+    for conversation_id, blob in _rows(
+            arroyo_path, 'SELECT client_conversation_id, conversation_metadata FROM conversation'):
+        entries = _pb_get(_decode(blob), '3')
+        if isinstance(entries, dict):
+            entries = [entries]
+        ids = []
+        for entry in entries if isinstance(entries, list) else []:
+            user_id = _uuid_from_bytes(_pb_walk(entry, '1', '1'))
+            if user_id and user_id not in ids:
+                ids.append(user_id)
+        names = [_friend_name(friends, user_id) or user_id for user_id in ids]
+        participants[conversation_id] = (', '.join(ids), ', '.join(names))
+    return participants
+
+
+def _local_user_id(files_found, arroyo_path, friends):
+    '''The signed-in account's user id, or '' when it cannot be established.
+
+    Preferred source is LAST_LOGGED_IN_USERNAME in identity_persistent_store.xml resolved
+    through Friend.userId. Failing that, the single distinct sender of the messages the
+    arroyo.db schema comments describe as created on this device.
+    '''
+    username = ''
+    for key, value in _parse_xml_rows(_find(files_found, 'identity_persistent_store.xml')):
+        if key == 'LAST_LOGGED_IN_USERNAME' and value:
+            username = value
+    if username:
+        for user_id, (friend_username, _display) in friends.items():
+            if friend_username == username:
+                return user_id
+    senders = {row[0] for row in _rows(
+        arroyo_path,
+        'SELECT DISTINCT sender_id FROM conversation_message WHERE created_on_device = 1') if row[0]}
+    return senders.pop() if len(senders) == 1 else ''
+
+
+def _yes_no(value):
+    return 'YES' if value else 'NO'
+
+
+@artifact_processor
+def get_snapchat_arroyo_messages(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'arroyo.db')
+    friends = _friends(_find(files_found, 'main.db'))
+    participants = _participants(source_path, friends)
+    local_user_id = _local_user_id(files_found, source_path, friends)
+
+    data_list = []
+    for row in _rows(source_path, '''
+            SELECT creation_timestamp, read_timestamp, sender_id, content_type, message_content,
+                   message_state_type, is_saved, is_viewed_by_user, created_on_device,
+                   remote_media_count, replies_count, quoted_server_message_id,
+                   client_conversation_id, client_message_id, server_message_id
+            FROM conversation_message ORDER BY creation_timestamp
+    '''):
+        (created, read, sender_id, content_type, blob, state, saved, viewed, on_device,
+         media_count, replies, quoted_id, conversation_id, client_message_id, server_message_id) = row
+        text = _pb_text(_decode(blob), '4', '4', '2', '1') if content_type == 1 else ''
+        if not local_user_id or not sender_id:
+            direction = ''
+        else:
+            direction = 'Outgoing' if sender_id == local_user_id else 'Incoming'
+        data_list.append((
+            _ms_to_utc(created), _ms_to_utc(read),
+            _friend_name(friends, sender_id), _friend_name(friends, sender_id, 1), sender_id,
+            direction, participants.get(conversation_id, ('', ''))[1], text, content_type, state,
+            _yes_no(saved), _yes_no(viewed), _yes_no(on_device), media_count, replies, quoted_id,
+            conversation_id, client_message_id, server_message_id))
+
+    data_headers = (('Creation Timestamp', 'datetime'), ('Read Timestamp', 'datetime'),
+                    'Sender Username', 'Sender Display Name', 'Sender ID', 'Message Direction',
+                    'Conversation Participants', 'Message Text', 'Content Type (as stored)',
+                    'Message State Type', 'Is Saved', 'Is Viewed By User', 'Created On Device',
+                    'Remote Media Count', 'Replies Count', 'Quoted Server Message ID',
+                    'Conversation ID', 'Client Message ID', 'Server Message ID')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_snapchat_arroyo_conversations(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'arroyo.db')
+    friends = _friends(_find(files_found, 'main.db'))
+    participants = _participants(source_path, friends)
+
+    conversations = {row[0]: row[1:] for row in _rows(source_path, '''
+        SELECT client_conversation_id, creation_timestamp, tombstoned_at_timestamp, send_state_type
+        FROM conversation
+    ''')}
+    feeds = {row[0]: row[1:] for row in _rows(source_path, '''
+        SELECT client_conversation_id, last_updated_timestamp, display_timestamp,
+               streak_expiration_timestamp_ms, conversation_title, conversation_type, streak_count,
+               feedItemCreator, last_chat_sender, tombstoned
+        FROM feed_entry
+    ''')}
+    counts = dict(_rows(source_path, '''
+        SELECT client_conversation_id, COUNT(*) FROM conversation_message
+        GROUP BY client_conversation_id
+    '''))
+
+    data_list = []
+    for conversation_id in sorted(set(conversations) | set(feeds)):
+        created, tombstoned_at, send_state = conversations.get(conversation_id, (None, None, ''))
+        (updated, displayed, streak_expiry, title, conversation_type, streak, creator,
+         last_sender, tombstoned) = feeds.get(conversation_id, (None,) * 9)
+        data_list.append((
+            _ms_to_utc(created), _ms_to_utc(updated), _ms_to_utc(displayed),
+            _ms_to_utc(tombstoned_at), _ms_to_utc(streak_expiry), title,
+            participants.get(conversation_id, ('', ''))[1],
+            participants.get(conversation_id, ('', ''))[0],
+            counts.get(conversation_id, 0), streak, conversation_type, send_state,
+            _friend_name(friends, creator), creator, _friend_name(friends, last_sender), last_sender,
+            _yes_no(tombstoned), conversation_id))
+
+    data_headers = (('Creation Timestamp', 'datetime'), ('Last Updated Timestamp', 'datetime'),
+                    ('Display Timestamp', 'datetime'), ('Tombstoned At Timestamp', 'datetime'),
+                    ('Streak Expiration Timestamp', 'datetime'), 'Conversation Title',
+                    'Participants', 'Participant IDs', 'Message Count', 'Streak Count',
+                    'Conversation Type (as stored)', 'Send State Type', 'Feed Item Creator',
+                    'Feed Item Creator ID', 'Last Chat Sender', 'Last Chat Sender ID',
+                    'Tombstoned', 'Conversation ID')
     return data_headers, data_list, source_path
 
 
