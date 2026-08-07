@@ -61,7 +61,9 @@ def get_torrentResumeinfo(context):
             elif key.decode() == 'pieces':
                 pass
             elif key.decode() == 'creation date':
-                aggregate = aggregate + f'{key.decode()}: {timestampcalc(value)} <br>'
+                # The branch above pins the key to this literal, so say it outright
+                # rather than re-decoding it, and escape the formatted timestamp.
+                aggregate = aggregate + f'creation date: {esc(timestampcalc(value))} <br>'
             else:
                 aggregate = aggregate + f'{esc(key.decode())}: {esc(value)} <br>' #add if value is binary decode
 
