@@ -666,3 +666,29 @@ def lava_finalize_output(output_path):
 
     # Close the SQLite database
     lava_db.close()
+
+def lava_open_existing(output_path: str) -> None:
+    """Connect to the existing lava db created by the parent process.
+
+    Called in a subprocess — never creates tables, only opens a connection.
+    """
+    global lava_data, lava_db
+    lava_data = {
+        "artifacts": OrderedDict(),
+        "modules": [],
+        "meta": {
+            "modules": []
+        }
+    }
+    db_path = os.path.join(output_path, lava_db_name)
+    lava_db = sqlite3.connect(db_path)
+
+def lava_close_db() -> None:
+    """Close the SQLite connection. Safe to call even if already closed."""
+    global lava_db
+    if lava_db is not None:
+        try:
+            lava_db.close()
+        except Exception:
+            pass
+        lava_db = None

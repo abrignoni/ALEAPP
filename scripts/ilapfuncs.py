@@ -74,7 +74,20 @@ class OutputParameters:
         os.makedirs(self.data_folder)
         os.makedirs(self.media_folder, exist_ok=True)
         os.makedirs(self.html_media_folder, exist_ok=True)
-        
+
+def output_params_from_existing_output_folder_base(output_folder_base: str) -> None:
+    """Set OutputParameters class-level paths from an already-created report folder.
+
+    Used in subprocesses so logfunc() writes to the correct log file.
+    The folder must already exist — this function never creates directories.
+    """
+    OutputParameters.screen_output_file_path = os.path.join(
+        output_folder_base, '_HTML', '_Script_Logs', 'Screen_Output.html'
+    )
+    OutputParameters.screen_output_file_path_devinfo = os.path.join(
+        output_folder_base, '_HTML', '_Script_Logs', 'DeviceInfo.html'
+    )
+
 class GuiWindow:
     '''This only exists to hold window handle if script is run from GUI'''
     window_handle = None  # static variable
