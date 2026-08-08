@@ -51,11 +51,12 @@ __artifacts_v2__ = {
                  "is filed under and is reported as Account UID; _mid is the post id, which is "
                  "the same identifier the timeline artifact reports as Post ID, so rows can be "
                  "matched between the two.\n"
-                 "Several columns in this table store more than one value in a single field, "
-                 "joined by the literal separator '#sina#'. That applies to the page title, the "
-                 "short and original URLs and the page type. They are reported as stored, "
-                 "separator included, rather than split on an assumption about which value "
-                 "belongs to which link.\n"
+                 "Some rows in this table store more than one value in a single field, joined "
+                 "by the literal separator '#sina#', across the page title, the short and "
+                 "original URLs and the page type. One of the five rows in the tested corpus did "
+                 "so. Those fields are reported as stored, separator included, rather than split "
+                 "on an assumption about which value belongs to which link, so most rows show a "
+                 "single plain value and some show the joined form.\n"
                  "Topics are read from the _mblog_topic JSON where present and reported as the "
                  "topic titles.",
         "paths": ('*/com.sina.weibo/databases/ArticleDb.db*',),

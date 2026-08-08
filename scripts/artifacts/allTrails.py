@@ -52,8 +52,11 @@ __artifacts_v2__ = {
                  "it as documented, and they spell metres per second out in full, because an "
                  "abbreviated m/s sanitizes to a column name ending in _ms that reads as "
                  "milliseconds.\n"
-                 "time_start and time_end are Unix epoch milliseconds and agree with the first "
-                 "and last trackpoint of the matching track, which cross-checks both readings.\n"
+                 "time_start and time_end are Unix epoch milliseconds. They are not identical to "
+                 "the first and last trackpoint of the matching track: on the tested corpus "
+                 "time_start is 0.9 seconds before the first point and time_end 2.6 seconds after "
+                 "the last, so the stats bracket the track rather than matching it exactly. That "
+                 "still cross-checks the epoch and the scale of both readings.\n"
                  "Activity ID and Privacy Level are reported as stored: the database carries no "
                  "table mapping the activity id to an activity name, and the privacy level is a "
                  "URN string.\n"
@@ -69,8 +72,8 @@ __artifacts_v2__ = {
     "alltrails_photos": {
         "name": "AllTrails - Photos",
         "description": "Photos attached to AllTrails maps and trails, with the recorded local "
-                       "path, the owning activity and the picture itself where it is present in "
-                       "the extraction",
+                       "path, any coordinates stored against the photo, the owning activity and "
+                       "the picture itself where it is present in the extraction",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -86,10 +89,12 @@ __artifacts_v2__ = {
                  "trail_photos rows carried no local_path in the tested corpus, so those rows are "
                  "reported without a picture. That is the absence of a locally stored copy, not "
                  "evidence the photo never existed.\n"
-                 "Where a photo is tied to a location record, the city, region and country from "
-                 "that record are reported. Those are place names stored against the photo, not "
-                 "coordinates: the locations table held no latitude or longitude on the tested "
-                 "corpus.",
+                 "Where a photo is tied to a location record, both the coordinates and the place "
+                 "names from that record are reported. On the tested corpus one of the five "
+                 "locations rows carried a latitude and longitude and it is the one the map photo "
+                 "points at, so that photo has coordinates while the rows holding only city, "
+                 "region and country do not. A place name is not a coordinate and the two are "
+                 "reported in separate columns for that reason.",
         "paths": ('*/com.alltrails.alltrails/databases/alltrails*',
                   '*/com.alltrails.alltrails/files/Pictures/*'),
         "output_types": "standard",
@@ -290,12 +295,18 @@ def alltrails_photos(context):
     pictures = _pictures(files_found)
 
     def place(location_id):
+        """Return (coordinates, place names). A locations row may carry either, or
+        neither; they are different kinds of claim and are kept apart."""
         if not location_id:
-            return ''
-        query = ('SELECT city, region, country_name FROM locations WHERE _id = ?')
-        for record in get_sqlite_db_records(source_path, query.replace('?', str(int(location_id)))):
-            return ', '.join(str(p) for p in record if p)
-        return ''
+            return '', '', ''
+        query = ('SELECT lat, lng, city, region, country_name FROM locations '
+                 f'WHERE _id = {int(location_id)}')
+        for record in get_sqlite_db_records(source_path, query):
+            names = ', '.join(str(part) for part in record[2:] if part)
+            lat = record[0] if record[0] is not None else ''
+            lng = record[1] if record[1] is not None else ''
+            return lat, lng, names
+        return '', '', ''
 
     def media_for(local_path):
         if not local_path:
@@ -314,9 +325,11 @@ def alltrails_photos(context):
         '''
         for record in get_sqlite_db_records(source_path, query):
             media, name = media_for(record[1])
+            lat, lng, names = place(record[5])
             data_list.append((
-                record[0], media, name, record[2] or '', record[3] or '', record[4] or '',
-                place(record[5]), record[6], record[7], 'map_photos', record[8], record[1] or '',
+                record[0], media, name, lat, lng, record[2] or '', record[3] or '',
+                record[4] or '', names, record[6], record[7], 'map_photos', record[8],
+                record[1] or '',
             ))
 
     if does_table_exist_in_db(source_path, 'trail_photos'):
@@ -327,10 +340,10 @@ def alltrails_photos(context):
         '''
         for record in get_sqlite_db_records(source_path, query):
             media, name = media_for(record[1])
+            lat, lng, names = place(record[4])
             data_list.append((
-                record[0], media, name, record[2] or '', record[3] or '', '',
-                place(record[4]), record[5], record[6], 'trail_photos', record[7],
-                record[1] or '',
+                record[0], media, name, lat, lng, record[2] or '', record[3] or '', '',
+                names, record[5], record[6], 'trail_photos', record[7], record[1] or '',
             ))
 
     return _PHOTO_HEADERS, data_list, source_path
@@ -340,6 +353,8 @@ _PHOTO_HEADERS = (
     'Created',
     ('Picture', 'media'),
     'File Name',
+    'Latitude',
+    'Longitude',
     'Title',
     'Description',
     'Activity Name',
