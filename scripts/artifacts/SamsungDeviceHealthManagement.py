@@ -87,7 +87,7 @@ __artifacts_v2__ = {
 # Author:  Marco Neumann (kalinko@be-binary.de)
 #
 # Requirements:
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, null_absent_columns
 
 @artifact_processor
 def sdhms_config_reloads(context):
@@ -105,7 +105,8 @@ def sdhms_config_reloads(context):
 
     data_list = []
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
+    source_path = str(files_found[0])
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for row in db_records:
         config_reload_time = convert_unix_ts_to_utc(int(row[0])/1000)
@@ -142,7 +143,8 @@ def sdhms_netstat(context):
 
     data_list = []
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
+    source_path = str(files_found[0])
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for row in db_records:
         start_time = convert_unix_ts_to_utc(int(row[0])/1000)
@@ -165,6 +167,26 @@ def sdhms_netstat(context):
 
     return data_headers, data_list, files_found[0]
 
+# Older releases of this store call the temperature timestamp "time" rather than
+# "timestamp". Both hold the same millisecond epoch in the same table, so the
+# column is aliased rather than reported empty; substituting NULL would drop the
+# time from every row on those devices. Observed on galaxys10_a10 (time) and
+# sharon_a14 (timestamp).
+TEMPERATURE_TIME_ALIASES = ('timestamp', 'time')
+
+
+def _temperature_query(source_path, query):
+    """Point the timestamp column at whichever spelling this database uses."""
+    columns = {column[1].lower() for column in
+               get_sqlite_db_records(source_path, 'PRAGMA table_info("TEMPERATURE")')}
+    if not columns or 'timestamp' in columns:
+        return query
+    for candidate in TEMPERATURE_TIME_ALIASES[1:]:
+        if candidate in columns:
+            return query.replace('timestamp,', f'{candidate} AS timestamp,', 1)
+    return query
+
+
 @artifact_processor
 def sdhms_temperature(context):
     files_found = context.get_files_found()
@@ -185,7 +207,9 @@ def sdhms_temperature(context):
 
     data_list = []
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
+    source_path = str(files_found[0])
+    query = _temperature_query(source_path, query)
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for row in db_records:
         timestamp = convert_unix_ts_to_utc(int(row[0])/1000)
@@ -239,7 +263,8 @@ def sdhms_cpustats(context):
 
     data_list = []
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
+    source_path = str(files_found[0])
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for row in db_records:
         start_time = convert_unix_ts_to_utc(int(row[0])/1000)
