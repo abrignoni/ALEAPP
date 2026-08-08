@@ -324,9 +324,9 @@ def weibo_post_images(context):
         'Picture ID',
         'Picture Type',
         'Original Size',
-        ('Original URL', 'url'),
-        ('Largest URL', 'url'),
-        ('Thumbnail URL', 'url'),
+        'Original URL',
+        'Largest URL',
+        'Thumbnail URL',
         'Local Path (as stored)',
         'Object ID',
     )
