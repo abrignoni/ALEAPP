@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Dropbox - Files",
         "description": "Cloud files and folders listed in the Dropbox app database, with the path, "
                        "size, MIME type and the modification times the service recorded",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "name": "Dropbox - Account",
         "description": "The signed-in Dropbox account, with the email, display name, account id and "
                        "plan read from the account preference values",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "name": "Dropbox - Thumbnails",
         "description": "Thumbnails the Dropbox app cached, with the cloud path they belong to and "
                        "the size and format that was cached",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
