@@ -15,8 +15,10 @@ __artifacts_v2__ = {
                  "the local account the row is filed under and is reported as Account User ID; "
                  "user_name is the note author's display name, which is a different party, so the "
                  "two are reported under distinct headers to keep them from being read as the "
-                 "same person. author_id existed in the tested corpus but was an empty string on "
-                 "every row, so it is reported as stored rather than dropped.\n"
+                 "same person. author_id is populated on some rows and an empty string on others: "
+                 "19 of the 45 rows in the tested corpus held an empty string. It is reported as "
+                 "stored, so an empty cell there means the app recorded no author id for that "
+                 "row rather than that the parser dropped it.\n"
                  "The timestamp is Unix epoch milliseconds. What the app records in this table is "
                  "an entry per note; the table is named a play history by the app, and this "
                  "artifact reports its rows without asserting how much of a note was played or "
@@ -41,9 +43,10 @@ __artifacts_v2__ = {
 #
 # Xiaohongshu keeps its messages in databases/msgDB and its contact relations in
 # databases/localRelationDB. In both tested corpora those files carry no SQLite
-# header and measured Shannon entropy of 8.00 over the sampled bytes, while their
-# -wal sidecars carry the standard SQLite WAL magic. That combination is
-# consistent with page-level encryption of the main database, such as SQLCipher.
+# header and measure Shannon entropy of 8.00 (msgDB) and 7.95 (localRelationDB)
+# over the sampled bytes, while their -wal sidecars carry the standard SQLite WAL
+# magic. That combination is consistent with page-level encryption of the main
+# database, such as SQLCipher.
 # A search of the app's shared_prefs found no key. They are therefore not parsed
 # here, and no claim is made about their contents.
 #
