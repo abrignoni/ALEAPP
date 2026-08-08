@@ -675,7 +675,7 @@ def galleryvault_browser_history(context):
     data_headers = (
         ('Last Visit Time', 'datetime'),
         'Title',
-        ('URL', 'url'),
+        'URL',
         'Host',
     )
     return data_headers, data_list, source_path
@@ -697,7 +697,7 @@ def galleryvault_browser_urls(context):
         ('Last Visit Time', 'datetime'),
         ('Create Time', 'datetime'),
         'Title',
-        ('URL', 'url'),
+        'URL',
         'Visit Count',
         'Favicon URL',
     )
@@ -724,8 +724,8 @@ def galleryvault_downloads(context):
         ('Begin Time', 'datetime'),
         ('End Time', 'datetime'),
         'Name',
-        ('Download URL', 'url'),
-        ('Page URL', 'url'),
+        'Download URL',
+        'Page URL',
         'Local Path',
         'MIME Type',
         'Total Size',

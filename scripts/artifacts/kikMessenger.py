@@ -296,7 +296,7 @@ def kik_messages(context):
         ('Attachment', 'media'),
         'Attachment File Name',
         'Attachment File Size',
-        ('Attachment URL', 'url'),
+        'Attachment URL',
         'Attachment Source App',
         'Read State Value',
         'Group Chat',
@@ -350,7 +350,7 @@ def kik_users(context):
         'Admin',
         'Removed',
         'Description',
-        ('Photo URL', 'url'),
+        'Photo URL',
         ('Photo Timestamp', 'datetime'),
     )
     return data_headers, data_list, source_path
@@ -405,8 +405,8 @@ def kik_attachments(context):
         'File Size',
         'Source App',
         'Layout',
-        ('File URL', 'url'),
-        ('Platform URI', 'url'),
+        'File URL',
+        'Platform URI',
         'File Content Type',
         'Allow Forward',
         'Preview Reference',

@@ -229,7 +229,7 @@ def bereal_cached_media(context):
         'Format',
         'Size (bytes)',
         'Cache',
-        ('Source URL', 'url'),
+        'Source URL',
         'Local Path',
     )
     return data_headers, data_list, source_path
@@ -278,7 +278,7 @@ def bereal_friends(context):
         'Status',
         'User ID',
         'Hashed Phone Number',
-        ('Source Endpoint', 'url'),
+        'Source Endpoint',
     )
     return data_headers, data_list, source_path
 
@@ -313,7 +313,7 @@ def bereal_cached_api(context):
         'Endpoint',
         'Body Size (bytes)',
         'Body Summary',
-        ('Full URL', 'url'),
+        'Full URL',
         'Local Path',
     )
     return data_headers, data_list, source_path
