@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_ChessComAccount": {
         "name": "Chess.com Account",
         "description": "Parses Chess.com account credentials and session data",
-        "author": "",
+        "author": "@kibaffo33",
         "creation_date": "2022-03-27",
         "last_update_date": "2022-03-27",
         "requirements": "none",

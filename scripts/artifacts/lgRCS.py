@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_lgRCS": {
         "name": "LG RCS Chats",
         "description": "RCS chat messages from LG phones (mmssms.db)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-01-06",
         "last_update_date": "2021-01-06",
         "requirements": "none",

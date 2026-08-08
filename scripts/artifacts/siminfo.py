@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_siminfo": {
         "name": "siminfo",
         "description": "SIM card details (number, IMSI, ICCID, carrier) from the telephony provider database",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-02",
         "last_update_date": "2020-03-02",
         "requirements": "none",

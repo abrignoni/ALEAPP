@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_mewe_chat": {
         "name": "MeWe - Chat",
         "description": "Parses MeWe chat messages (timestamp, thread, user, message text, direction, type and attachments) from the MeWe chat database (app_database on older builds, app_v3.db on newer ones).",
-        "author": "",
+        "author": "@A-725-K",
         "creation_date": "2021-11-10",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -239,7 +239,7 @@ __artifacts_v2__ = {
     "get_mewe_session": {
         "name": "MeWe - SGSession",
         "description": "Parses MeWe session preferences (key and value) from the SGSession.xml file.",
-        "author": "",
+        "author": "@A-725-K",
         "creation_date": "2021-11-10",
         "last_update_date": "2021-11-10",
         "requirements": "none",

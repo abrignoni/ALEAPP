@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_teleguard": {
         "name": "Teleguard - Messages",
         "description": "Teleguard messenger messages",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2024-01-09",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
     "get_teleguard_posts": {
         "name": "Teleguard - Posts",
         "description": "Teleguard channel posts",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2024-01-09",
         "last_update_date": "2024-01-09",
         "requirements": "none",
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
     "get_teleguard_contacts": {
         "name": "Teleguard - Contacts",
         "description": "Teleguard contacts with avatars",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2024-01-09",
         "last_update_date": "2024-01-09",
         "requirements": "none",
@@ -65,7 +65,7 @@ __artifacts_v2__ = {
     "get_teleguard_channels": {
         "name": "Teleguard - Channels",
         "description": "Teleguard channels",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2024-01-09",
         "last_update_date": "2026-08-01",
         "requirements": "none",

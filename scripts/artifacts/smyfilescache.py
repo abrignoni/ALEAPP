@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_smyfilescache": {
         "name": "My Files Cache",
         "description": "Media cached by Samsung My Files (FileCache.db) with the cached thumbnails",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2022-06-23",
         "last_update_date": "2022-06-23",
         "requirements": "none",

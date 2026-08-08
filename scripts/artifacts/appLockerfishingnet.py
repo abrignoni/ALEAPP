@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_appLockerfishingnet": {
         "name": "App Locker",
         "description": "Decrypts media hidden by the App Locker / Calculator vault (.privacy_safe, AES-CBC)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-12-14",
         "last_update_date": "2021-12-14",
         "requirements": "none",

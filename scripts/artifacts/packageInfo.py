@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_package_info": {
         "name": "package_info",
         "description": "Represents an app",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2020-11-03",
         "last_update_date": "2026-07-10",
         "requirements": "none",

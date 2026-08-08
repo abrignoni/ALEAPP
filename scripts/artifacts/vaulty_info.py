@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_vaulty_info": {
         "name": "vaulty_info",
         "description": "Prefs File",
-        "author": "",
+        "author": "@kibaffo33",
         "creation_date": "2022-02-23",
         "last_update_date": "2022-02-23",
         "requirements": "none",

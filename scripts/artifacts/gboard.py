@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_gboardCache": {
         "name": "Gboard - Clipboard",
         "description": "Gboard keyboard clipboard entries (gboard_clipboard.db)",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2021-01-09",
         "last_update_date": "2021-01-09",
         "requirements": "none",
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
     "get_gboardCache_keystrokes": {
         "name": "Gboard - Keystroke Cache",
         "description": "Text entries recorded in the Gboard training cache",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2021-01-09",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -43,7 +43,7 @@ __artifacts_v2__ = {
     "get_gboardCache_sessions": {
         "name": "Gboard - Sessions",
         "description": "Gboard keyboard input sessions (trainingcachev3.db)",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2021-01-09",
         "last_update_date": "2026-08-01",
         "requirements": "none",

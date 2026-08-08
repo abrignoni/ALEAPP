@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_libretorrentFR": {
         "name": "LibretorrentFR",
         "description": "Parses torrent fast-resume data (info hash, name, save path, total downloaded and uploaded counters) from the LibreTorrent libretorrent.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-09-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",

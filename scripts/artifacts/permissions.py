@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_permissions_trees": {
         "name": "Permission Trees",
         "description": "Parses declared permission trees (name and package) from the system packages.xml.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-01-28",
         "last_update_date": "2021-01-28",
         "requirements": "none",
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
     "get_permissions_list": {
         "name": "Permissions",
         "description": "Parses declared permissions (name, package and protection level) from the system packages.xml.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-01-28",
         "last_update_date": "2021-01-28",
         "requirements": "none",
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
     "get_permissions_packages": {
         "name": "Package and Shared User",
         "description": "Parses packages and their shared user IDs with granted permissions from the system packages.xml.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-01-28",
         "last_update_date": "2021-01-28",
         "requirements": "none",

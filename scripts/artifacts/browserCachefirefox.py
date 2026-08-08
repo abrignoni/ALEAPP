@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_browserCachefirefox": {
         "name": "Firefox Browser Cache",
         "description": "Cached web resources extracted from the Firefox browser disk cache (cache2)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-01-30",
         "last_update_date": "2023-01-30",
         "requirements": "none",

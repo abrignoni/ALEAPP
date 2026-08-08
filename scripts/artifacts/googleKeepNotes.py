@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_googleKeepNotes": {
         "name": "Google Keep - Notes",
         "description": "Google Keep notes",
-        "author": "",
+        "author": "@bolisettynihith",
         "creation_date": "2021-05-17",
         "last_update_date": "2021-05-17",
         "requirements": "none",
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
     "get_googleKeepNotes_sharing": {
         "name": "Google Keep - Notes Sharing",
         "description": "Google Keep note sharing",
-        "author": "",
+        "author": "@bolisettynihith",
         "creation_date": "2021-05-17",
         "last_update_date": "2021-05-17",
         "requirements": "none",

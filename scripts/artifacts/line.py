@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_line": {
         "name": "Line - Contacts",
         "description": "Parses LINE contacts (user ID and name) from the LINE databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",
         "requirements": "none",
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
     "get_line_messages": {
         "name": "Line - Messages",
         "description": "Parses LINE messages (time, sender and recipient IDs, direction, thread, message and attachments) from the LINE databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
     "get_line_calls": {
         "name": "Line - Call Logs",
         "description": "Parses LINE call logs (start and end time, participant IDs, direction and call type) from the LINE databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",

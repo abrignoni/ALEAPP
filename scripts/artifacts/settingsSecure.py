@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "settingsSecure",
         "description": "Selected values (android_id, bluetooth name and address, "
                        "mock_location) from settings_secure.xml of each Android user",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-04-02",
         "last_update_date": "2026-07-30",
         "requirements": "none",

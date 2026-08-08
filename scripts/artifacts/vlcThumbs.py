@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_vlcThumbs": {
         "name": "VLC Thumbnails",
         "description": "Thumbnail images cached by VLC in the medialib folder",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-01",
         "last_update_date": "2021-03-01",
         "requirements": "none",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     "get_vlcThumbs_data": {
         "name": "VLC Thumbnail Data",
         "description": "VLC media library entries (play count, dates) with their cached thumbnails",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-01",
         "last_update_date": "2021-03-01",
         "requirements": "none",

@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "table): taken/added times, file path, coordinates with the "
                        "resolved place names, detected scene names, face count and the "
                        "moment each entry belongs to.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "description": "Moments grouped by the Samsung story service (dme.db, moment "
                        "table): the time range each moment covers, its creation time, "
                        "title, media count and recorded place information.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

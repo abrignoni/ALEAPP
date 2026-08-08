@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_appopSetupWiz": {
         "name": "appopSetupWiz",
         "description": "Setup Wizard app-op timestamps from appops.xml",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",
         "requirements": "none",

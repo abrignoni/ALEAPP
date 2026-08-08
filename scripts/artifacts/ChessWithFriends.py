@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_ChessWithFriends": {
         "name": "Chess With Friends",
         "description": "Parses Chess With Friends game data",
-        "author": "",
+        "author": "@mastenp",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",

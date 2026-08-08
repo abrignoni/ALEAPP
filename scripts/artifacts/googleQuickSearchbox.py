@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_quicksearch": {
         "name": "Google Quick Search Queries",
         "description": "Search query sessions from the Google Search widget / Assistant (Google Now)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-22",
         "last_update_date": "2020-03-22",
         "requirements": "none",

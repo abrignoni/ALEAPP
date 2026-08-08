@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "(OneUI.db, item table): each item's title, component, position, "
                        "container and hidden flag. Type and container codes are stored as "
                        "raw values and are reported as-is.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -25,7 +25,7 @@ __artifacts_v2__ = {
         "description": "App icon cache of the Samsung One UI launcher (Icon.db, icon "
                        "table): the component name, displayed label, Android user profile "
                        "and when the entry was last updated.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

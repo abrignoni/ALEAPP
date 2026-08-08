@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_wifiProfiles": {
         "name": "wifiProfiles",
         "description": "Saved Wi-Fi network profiles (SSID, keys, gateway MAC address, timestamps) from WifiConfigStore.xml",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-23",
         "last_update_date": "2026-08-01",
         "requirements": "none",

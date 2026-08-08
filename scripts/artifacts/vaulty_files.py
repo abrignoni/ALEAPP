@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_vaulty_files": {
         "name": "vaulty_files",
         "description": "Vaulty (com.theronrogers.vaultyfree) media database. Research at https://kibaffo33.data.blog/2022/03/05/decoding-vaulty/",
-        "author": "",
+        "author": "@kibaffo33",
         "creation_date": "2022-02-23",
         "last_update_date": "2026-08-01",
         "requirements": "none",
