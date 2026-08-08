@@ -55,6 +55,8 @@ def _sec_to_utc(value):
 def _slopes_db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if os.path.basename(file_found) == 'slopes.db':
             return file_found
     return ''

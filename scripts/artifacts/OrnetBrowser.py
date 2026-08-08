@@ -143,7 +143,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
-        "paths": ('*/com.ornet.torbrowser/files/mozilla/*/cookies.sqlite'),
+        "paths": ('*/com.ornet.torbrowser/files/mozilla/*/cookies.sqlite*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"
     },

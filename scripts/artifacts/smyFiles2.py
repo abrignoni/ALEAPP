@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "My Files",
         "notes": "",
-        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db',),
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db*',),
         "output_types": "standard",
         "artifact_icon": "download",
         "sample_data": {
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "My Files",
         "notes": "",
-        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db',
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db*',
                   '*/com.sec.android.app.myfiles/cache/*.*'),
         "output_types": "standard",
         "artifact_icon": "cloud",

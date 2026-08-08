@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Hikvision",
         "notes": "",
-        "paths": ('*/com.connect.enduser/databases/ezvizlog.db',),
+        "paths": ('*/com.connect.enduser/databases/ezvizlog.db*',),
         "output_types": "standard",
         "artifact_icon": "video",
     },
@@ -74,6 +74,8 @@ def _ms_to_utc(value):
 def _db(files_found, db_name):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if os.path.basename(file_found) == db_name:
             return file_found
     return ''

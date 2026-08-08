@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Grok",
         "notes": "Tested on version 1.0.71 (Nov 11th, 2025). The cache last touch timestamp is not updated at all when the app uses a non-LRU evictor. Reference: AndroidX Media3, 'CacheSpan.lastTouchTimestamp / SimpleCache.touchSpan (LRU cache bookkeeping updated on any read, not a user view)', https://github.com/androidx/media/blob/release/libraries/datasource/src/main/java/androidx/media3/datasource/cache/SimpleCache.java",
-        "paths": ('*/ai.x.grok/cache/*/video-cache/*/*exo','*/ai.x.grok/databases/exoplayer_internal.db'),
+        "paths": ('*/ai.x.grok/cache/*/video-cache/*/*exo','*/ai.x.grok/databases/exoplayer_internal.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "video"
     },
@@ -138,12 +138,16 @@ def grok_generatedvideos(context):
     exo_files_present = set()
     for f in files_found:
         f = str(f)
+        if f.endswith(('-wal', '-shm', '-journal')):
+            continue
         p = Path(f)
         if p.is_file() and p.suffix.lower() == '.exo':
             exo_files_present.add(p.name)
 
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         media_path = Path(file_found)
 
         if not media_path.is_file():

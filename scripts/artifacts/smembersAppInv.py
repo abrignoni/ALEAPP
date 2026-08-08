@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "App Interaction",
         "notes": "",
-        "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db',),
+        "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
     }

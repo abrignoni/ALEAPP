@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GEO Location",
         "notes": "",
-        "paths": ('*/com.android.browser/app_geolocation/CachedGeoposition.db',),
+        "paths": ('*/com.android.browser/app_geolocation/CachedGeoposition.db*',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
     }
@@ -28,6 +28,8 @@ def get_browserlocation(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if file_found.endswith('-db'):
             continue
 

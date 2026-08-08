@@ -14,7 +14,7 @@ __artifacts_v2__ = {
                  "decoded with different epochs, date_added as seconds and date_modified as "
                  "milliseconds, as set by that original research; the divergence has not been "
                  "re-verified against a test image.",
-        "paths": ('*/com.theronrogers.vaultyfree/databases/media.db',),
+        "paths": ('*/com.theronrogers.vaultyfree/databases/media.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "lock",
     }

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "App Interaction",
         "notes": "",
-        "paths": ('*/com.samsung.android.sm/databases/sm.db',),
+        "paths": ('*/com.samsung.android.sm/databases/sm.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
     }

@@ -15,7 +15,7 @@ __artifacts_v2__ = {
                  "reported by this artifact. "
                  "Reference: Swisstopo-WGS84-LV03, 'wgs84_ch1903.py', "
                  "https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/master/scripts/py/wgs84_ch1903.py",
-        "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
+        "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite*', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite*'),
         "output_types": "standard",
         "html_columns": ['Meteo of the city (link)', 'Recorded Coordinates'],
         "artifact_icon": "flag"
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Meteo",
         "notes": "",
-        "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite'),
+        "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite*', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite*'),
         "output_types": "standard",
         "html_columns": ['Map link'],
         "artifact_icon": "flag"
