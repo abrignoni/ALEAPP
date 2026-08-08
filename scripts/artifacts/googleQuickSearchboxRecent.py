@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/com.google.android.googlequicksearchbox/files/recently/*',
                   '*/com.google.android.googlequicksearchbox/files/accounts/*/RecentsDataStore.pb',
-                  '*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db'),
+                  '*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db*'),
         "output_types": "standard",
         "artifact_icon": "search",
         "sample_data": {

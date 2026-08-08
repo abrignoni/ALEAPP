@@ -29,7 +29,7 @@ __artifacts_v2__ = {
                   "the absence of a name does not mean the absence of an attachment.\n"
                   "Timestamps are UTC, converted from whole Unix seconds."),
         "paths": ('*/com.mewe/databases/app_database',
-                  '*/com.mewe/databases/app_v3.db'),
+                  '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
@@ -70,7 +70,7 @@ __artifacts_v2__ = {
                   "Timestamps are UTC, converted from whole Unix seconds. An Edited value of 0 "
                   "renders blank and means never edited."),
         "paths": ('*/com.mewe/databases/app_database',
-                  '*/com.mewe/databases/app_v3.db'),
+                  '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
         "artifact_icon": "news",
         "sample_data": {
@@ -95,7 +95,7 @@ __artifacts_v2__ = {
                   "reported rather than dropped; use Post Id to correlate.\n"
                   "Timestamps are UTC, from whole Unix seconds."),
         "paths": ('*/com.mewe/databases/app_database',
-                  '*/com.mewe/databases/app_v3.db'),
+                  '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
         "sample_data": {
@@ -123,7 +123,7 @@ __artifacts_v2__ = {
                   "Post Created, Post Author and Group Name columns are blank and the media row is "
                   "still reported (3 of 69 rows in the Android 14 test image)."),
         "paths": ('*/com.mewe/databases/app_database',
-                  '*/com.mewe/databases/app_v3.db'),
+                  '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
         "artifact_icon": "photo",
         "sample_data": {
@@ -146,7 +146,7 @@ __artifacts_v2__ = {
                   "the test image.\n"
                   "Counts are a snapshot from when the post was cached, not live values."),
         "paths": ('*/com.mewe/databases/app_database',
-                  '*/com.mewe/databases/app_v3.db'),
+                  '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
         "artifact_icon": "chart-bar",
         "sample_data": {
@@ -172,7 +172,7 @@ __artifacts_v2__ = {
                   "no longer cached.\n"
                   "Counts are a snapshot from when the object was cached, not live values."),
         "paths": ('*/com.mewe/databases/app_database',
-                  '*/com.mewe/databases/app_v3.db'),
+                  '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
         "artifact_icon": "mood-smile",
         "sample_data": {
@@ -200,7 +200,7 @@ __artifacts_v2__ = {
                   "Last Opened is converted from milliseconds and reflects the last time the app "
                   "surfaced the entity, which is not necessarily a deliberate visit by the user."),
         "paths": ('*/com.mewe/databases/app_database',
-                  '*/com.mewe/databases/app_v3.db'),
+                  '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
         "artifact_icon": "users-group",
         "sample_data": {
@@ -228,7 +228,7 @@ __artifacts_v2__ = {
                   "rows in that table yields no participants here; why rows are absent for a given "
                   "thread was not established."),
         "paths": ('*/com.mewe/databases/app_database',
-                  '*/com.mewe/databases/app_v3.db'),
+                  '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
@@ -372,6 +372,8 @@ def get_mewe_chat(context):
     sources = []
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith(DB_NAMES):
             continue
         # Newer installs keep an empty 'mewe_old' alongside app_v3.db, and a
@@ -412,6 +414,8 @@ def get_mewe_session(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith(SGSESSION_FILE):
             continue
 
@@ -436,6 +440,8 @@ def _chat_databases(files_found):
     """Yield MeWe chat databases, skipping the empty 'mewe_old' left by upgrades."""
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if file_found.endswith(DB_NAMES):
             yield file_found
 

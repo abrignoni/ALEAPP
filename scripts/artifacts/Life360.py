@@ -108,6 +108,8 @@ def _ms_to_utc(value):
 def _find(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if file_found.endswith(suffix):
             return file_found
     return ''

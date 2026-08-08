@@ -49,6 +49,8 @@ def get_vlcThumbs(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith('.jpg'):
             continue
         source_path = os.path.dirname(file_found)

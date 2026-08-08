@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Speedtest",
         "notes": "",
-        "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db',),
+        "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db*',),
         "output_types": "all",
         "artifact_icon": "loader"
     },

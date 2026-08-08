@@ -91,6 +91,8 @@ _DBID_RE = re.compile(r'dbid:[A-Za-z0-9_-]+')
 def _db_by_suffix(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if file_found.endswith(suffix):
             return file_found
     return ''

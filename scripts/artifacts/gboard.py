@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Gboard Keyboard",
         "notes": "",
-        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db',),
+        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db*',),
         "output_types": "standard",
         "artifact_icon": "brand-chrome",
         "sample_data": {
@@ -49,7 +49,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Gboard Keyboard",
         "notes": "",
-        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcachev3.db',),
+        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcachev3.db*',),
         "output_types": "standard",
         "artifact_icon": "brand-chrome",
         "sample_data": {
@@ -230,6 +230,8 @@ def get_gboardCache(context):
             if file_key:
                 for match in files_found:
                     match = str(match)
+                    if match.endswith(('-wal', '-shm', '-journal')):
+                        continue
                     if file_key in match:
                         image = check_in_media(match, os.path.basename(match))
                         break

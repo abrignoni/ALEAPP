@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Chats",
         "notes": "",
-        "paths": ('*/com.zynga.words/db/wf_database.sqlite',),
+        "paths": ('*/com.zynga.words/db/wf_database.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "message",
     }

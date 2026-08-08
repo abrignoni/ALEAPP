@@ -47,7 +47,7 @@ __artifacts_v2__ = {
         'category': 'Accounts',
         'notes': '',
         'paths': (
-            '*/com.planetromeo.android.app/databases/accounts.db'
+            '*/com.planetromeo.android.app/databases/accounts.db*'
             ),
         'output_types': 'standard',
         'artifact_icon': 'user'

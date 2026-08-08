@@ -60,6 +60,8 @@ def _ms_to_utc(value):
 def _keep_db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if os.path.basename(file_found) == 'keep.db':
             return file_found
     return ''

@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Tor Browser",
         "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
-        "paths": ('*/org.torproject.torbrowser/files/places.sqlite'),
+        "paths": ('*/org.torproject.torbrowser/files/places.sqlite*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "bookmark",
         "sample_data": {

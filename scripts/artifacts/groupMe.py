@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "Message Count (stored) and Attachment Count (stored) are the counter values held in "
                  "the groups table; they are not counts of the messages and attachments recovered by "
                  "this artifact.",
-        "paths": ('*/com.groupme.android/databases/groupme.db',),
+        "paths": ('*/com.groupme.android/databases/groupme.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "requirements": "None",
         "category": "GroupMe",
         "notes": "",
-        "paths": ('*/com.groupme.android/databases/groupme.db',),
+        "paths": ('*/com.groupme.android/databases/groupme.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {

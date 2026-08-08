@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "blackboxprotobuf",
         "category": "Settings Services - Battery Usage v9 - Battery States",
         "notes": "Getting battery usage data from Settings Services - Android 14 - Based on post https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html. Battery Status decodes the AOSP BatteryManager constants 1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging and 5 Fully charged; any other code is reported as the raw number. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager",
-        "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9',),
+        "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9*',),
         "output_types": "standard",
         "artifact_icon": "battery",
         "sample_data": {
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "requirements": "blackboxprotobuf",
         "category": "Settings Services - Battery Usage v9 - App Battery Usage Events",
         "notes": "Getting App Battery Usage Event from Settings Services - Based on https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html. App Usage Event Type decodes the AppUsageEventEntity.appUsageEventType values defined by the Settings app usage event proto, 0 Unknown, 1 Activity Resumed, 2 Activity Stopped and 3 Device Shutdown; any other code is reported as the raw number. Reference: AOSP Settings, 'app_usage_event.proto', https://android.googlesource.com/platform/packages/apps/Settings/+/main/src/com/android/settings/fuelgauge/protos/app_usage_event.proto",
-        "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9',),
+        "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9*',),
         "output_types": "standard",
         "artifact_icon": "battery",
         "sample_data": {

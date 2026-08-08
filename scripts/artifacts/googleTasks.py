@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "notes": "Protobuf field positions for created/modified/completed times were established "
                  "through testing. Task Due Date is reported as stored in the DueDate column, without "
                  "conversion, unlike the three converted UTC time columns.",
-        "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db',),
+        "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
     }
@@ -56,6 +56,8 @@ def get_googleTasks(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         source_path = file_found
 
         db = open_sqlite_db_readonly(file_found)
