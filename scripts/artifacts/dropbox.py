@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "user",
         "sample_data": {
-            "hc_pixel8pro_a17": "Android 17 | com.dropbox.android | account reported",
+            "hc_pixel8pro_a17": "Android 17 | com.dropbox.android | 11 rows",
         },
     },
     "dropbox_thumbnails": {
