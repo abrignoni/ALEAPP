@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Chat messages from the JusTalk Realm store, with the message body, the "
                        "direction, the sender, the media type and the cached media file where it "
                        "is present in the extraction",
-        "author": "@AlexisBrignoni, @Antho4n6, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "name": "JusTalk - Call Logs",
         "description": "Audio and video calls from the JusTalk Realm store, with the direction, "
                        "the duration and the server call identifier",
-        "author": "@AlexisBrignoni, @Antho4n6, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -85,7 +85,7 @@ __artifacts_v2__ = {
         "name": "JusTalk - Media",
         "description": "File records from the JusTalk Realm store with the cached copies found in "
                        "the extraction, plus any cached files the store does not account for",
-        "author": "@AlexisBrignoni, @Antho4n6, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -121,7 +121,7 @@ __artifacts_v2__ = {
         "description": "Contacts from the JusTalk Realm store, with the JusTalk ID, the display "
                        "and nickname, the client version reported for that account and the last "
                        "online time",
-        "author": "@AlexisBrignoni, @Antho4n6, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -143,7 +143,7 @@ __artifacts_v2__ = {
         "name": "JusTalk - Account",
         "description": "The local JusTalk account identifiers taken from the Realm store file "
                        "name, the app's provisioning file and the Realm schema version",
-        "author": "@AlexisBrignoni, @Antho4n6, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -206,7 +206,7 @@ __artifacts_v2__ = {
         "description": "Key and value pairs from the app's default MMKV store, covering the "
                        "device identifier, the signed-in account id, the push token and the "
                        "install channel, including values that later writes superseded",
-        "author": "@AlexisBrignoni, @Antho4n6, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
