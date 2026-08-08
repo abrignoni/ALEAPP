@@ -38,6 +38,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
         "output_types": "standard",
         "artifact_icon": "clock",
+        "sample_data": {
+            "galaxys10_a10": "1 row",
+            "sharon_a14": "1 row",
+        },
     }
 }
 

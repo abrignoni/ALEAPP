@@ -11,6 +11,11 @@ __artifacts_v2__ = {
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "hc_pixel8pro_a16": "20 rows",
+            "pixel7a_a14": "34 rows",
+            "sharon_a14": "45 rows",
+        },
     },
     "get_signalCalls": {
         "name": "Signal - Calls",
@@ -24,6 +29,11 @@ __artifacts_v2__ = {
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
         "output_types": "standard",
         "artifact_icon": "phone",
+        "sample_data": {
+            "hc_pixel8pro_a16": "3 rows",
+            "pixel7a_a14": "4 rows",
+            "sharon_a14": "3 rows",
+        },
     },
     "get_signalContacts": {
         "name": "Signal - Contacts",
@@ -37,6 +47,12 @@ __artifacts_v2__ = {
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "hc_pixel8pro_a16": "4 rows",
+            "pixel7a_a14": "15 rows",
+            "russell_pixel6a_a13": "6 rows",
+            "sharon_a14": "25 rows",
+        },
     },
     "get_signalGroups": {
         "name": "Signal - Groups",
@@ -50,6 +66,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "sharon_a14": "1 row",
+        },
     },
     "get_signalAttachments": {
         "name": "Signal - Attachments",
@@ -64,6 +83,11 @@ __artifacts_v2__ = {
                   '*/org.thoughtcrime.securesms/app_parts/*'),
         "output_types": "standard",
         "artifact_icon": "paperclip",
+        "sample_data": {
+            "hc_pixel8pro_a16": "7 rows",
+            "pixel7a_a14": "9 rows",
+            "sharon_a14": "10 rows",
+        },
     },
 }
 
