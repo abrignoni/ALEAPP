@@ -149,15 +149,33 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "JusTalk",
         "notes": "The per-account Realm store is named after the local account's own user id, so "
-                 "the file name is reported as the account UID. The profile user name comes from "
-                 "the cur_prof_user attribute of files/JusTalk/profiles/provisions.xml, which the "
-                 "app also uses as the name of the per-profile directory beside it.\n"
+                 "the file name is reported as the account UID. That reading is corroborated by "
+                 "the senderUid on outgoing message rows, which carries the same value.\n"
+                 "The cur_prof_user attribute of files/JusTalk/profiles/provisions.xml holds a "
+                 "scheme token joined to the account's JusTalk id, for example "
+                 "'username)lola6593'. It is reported both as stored and split, because the "
+                 "scheme token is not part of the id. The split is derived from the same "
+                 "extraction: class_CallLog writes the peer form of that value as a URI reading "
+                 "'[username:<id>@justalk.com]' on a row whose class_ServerFriend justalkId "
+                 "column holds exactly the <id> part, so the token before the separator is the "
+                 "scheme. The separator differs between the two because the value is also used "
+                 "as a directory name under files/JusTalk/profiles/. A value not in that shape "
+                 "is reported unchanged in both columns.\n"
+                 "In the sample the split value was independently confirmed twice more, by a "
+                 "justalkId key in files/mmkv/JusProfileManager<account uid> and by a bare value "
+                 "in the per-profile provision-v1.xml. Neither of those files is parsed here; "
+                 "see the validation boundary below.\n"
                  "The Realm header reports two top references, which is the store's normal "
                  "committed and uncommitted pair. Both are read and their row counts compared; "
                  "where they differ, content is present in one view and not the other. In the "
                  "sample they matched exactly.\n"
                  "shared_prefs/com.juphoon.justalk_preferences.xml was checked and carries only "
-                 "advertising consent framework keys, no account identity, so it is not parsed.",
+                 "advertising consent framework keys, no account identity, so it is not parsed.\n"
+                 "Not covered. files/mmkv/JusProfileManager<account uid> holds a fuller record of "
+                 "the local account than this artifact reports, including a nickname, an email "
+                 "address, a birthday, sign-up and last-login times and a session token. "
+                 "files/mmkv/mmkv.default holds a device id and the store channel. Both are MMKV "
+                 "stores and are not parsed yet.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',
                   '*/com.juphoon.justalk/files/JusTalk/profiles/provisions.xml'),
         "output_types": "standard",
@@ -528,6 +546,22 @@ def _profile_user(files_found):
     return '', ''
 
 
+def _justalk_id(profile_user):
+    """cur_prof_user is a scheme token joined to the account's JusTalk id, as in
+    'username)lola6593'. The same store writes the peer form of that value as a URI,
+    '[username:johnlucas90@justalk.com]', against a class_ServerFriend row whose justalkId
+    column reads 'johnlucas90', so the token before the separator is the scheme and the
+    part after it is the id. The separator differs because the value is also used as a
+    directory name under files/JusTalk/profiles/. Anything not in that shape is returned
+    unchanged rather than guessed at."""
+    if not profile_user:
+        return ''
+    scheme, separator, identifier = profile_user.partition(')')
+    if separator and scheme == 'username' and identifier:
+        return identifier
+    return profile_user
+
+
 @artifact_processor
 def justalk_account(context):
     files_found = context.get_files_found()
@@ -555,13 +589,14 @@ def justalk_account(context):
 
     data_list.append((
         account_uid,
+        _justalk_id(profile_user),
         profile_user,
         metadata[0].get('version') if metadata else '',
         counts.get('active', ''),
         counts.get('inactive', ''),
         'Yes' if counts and counts.get('active') != counts.get('inactive') else 'No',
-        source_path,
-        profile_path,
+        context.get_relative_path(source_path) if source_path else '',
+        context.get_relative_path(profile_path) if profile_path else '',
     ))
 
     return _account_headers(), data_list, source_path or profile_path
@@ -570,7 +605,8 @@ def justalk_account(context):
 def _account_headers():
     return (
         'Account UID',
-        'Profile User Name',
+        'JusTalk ID',
+        'Profile User (as stored)',
         'Realm Schema Version',
         'Rows in Committed View',
         'Rows in Uncommitted View',
