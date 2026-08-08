@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Recovers files hidden by GalleryVault from the encrypted objects stored "
                        "under the vault folder on external storage, together with the original "
                        "file name and creation time held in each object's own trailer",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "name": "GalleryVault - Hidden Files (database)",
         "description": "Files hidden in GalleryVault as recorded in the file_v1 table, including "
                        "the path each file was taken from",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
     "galleryvault_folders": {
         "name": "GalleryVault - Folders",
         "description": "GalleryVault folders, their child counts and creation times",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "name": "GalleryVault - Break-in Reports",
         "description": "Failed unlock attempts recorded by GalleryVault, with the code that was "
                        "entered and the photo captured at the time",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -85,7 +85,7 @@ __artifacts_v2__ = {
         "name": "GalleryVault - Break-in Report Images",
         "description": "Images written to the BreakInReports folder on external storage, with the "
                        "capture time taken from the file name",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -104,7 +104,7 @@ __artifacts_v2__ = {
     "galleryvault_locked_apps": {
         "name": "GalleryVault - Locked Apps",
         "description": "Applications locked by the GalleryVault AppLock feature",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -121,7 +121,7 @@ __artifacts_v2__ = {
     "galleryvault_applock_break_ins": {
         "name": "GalleryVault - AppLock Break-in Reports",
         "description": "Failed unlock attempts recorded against individual locked applications",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -140,7 +140,7 @@ __artifacts_v2__ = {
         "description": "Entries in the browser_history table of the browser built into "
                        "GalleryVault, with the URL, host, title and last visit time the app "
                        "recorded",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -157,7 +157,7 @@ __artifacts_v2__ = {
     "galleryvault_browser_urls": {
         "name": "GalleryVault - Browser Start Pages",
         "description": "Entries in the web_url table used by the built-in browser start page",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -175,7 +175,7 @@ __artifacts_v2__ = {
     "galleryvault_downloads": {
         "name": "GalleryVault - Downloads",
         "description": "Download tasks created by the browser built into GalleryVault",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -193,7 +193,7 @@ __artifacts_v2__ = {
         "name": "GalleryVault - Unhide and Export History",
         "description": "Records of files taken back out of the vault, including the path they were "
                        "written to",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -211,7 +211,7 @@ __artifacts_v2__ = {
         "name": "GalleryVault - Recycle Bin",
         "description": "Vault files sitting in the GalleryVault recycle bin and when they were "
                        "deleted",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -229,7 +229,7 @@ __artifacts_v2__ = {
         "name": "GalleryVault - File Action Log",
         "description": "Action log kept next to the vault on external storage, recording vault "
                        "file paths and the time each action was carried out",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",

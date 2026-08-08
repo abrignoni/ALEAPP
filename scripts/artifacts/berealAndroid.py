@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "BeReal Cached Media",
         "description": "Photos and videos recovered from the BeReal caches on disk, with the "
                        "source URL and cache date read from the OkHttp cache metadata where present",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "description": "Friends recovered from cached responses of the relationships and friend "
                        "recommendation endpoints, with the user name, full name and status BeReal "
                        "returned",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "name": "BeReal Cached API Responses",
         "description": "Index of the BeReal API responses held in the OkHttp network cache, with "
                        "the endpoint URL, the cached response date and a short summary of the body",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
