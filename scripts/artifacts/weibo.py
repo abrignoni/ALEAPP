@@ -77,14 +77,26 @@ __artifacts_v2__ = {
         "notes": "Read from mblog_pic_table in the sina_weibo database. The table records the "
                  "remote URLs Weibo serves each image from at several sizes, together with the "
                  "picture id and the id of the post the image belongs to.\n"
-                 "These are URLs, not local files. The localpath column existed in the tested "
-                 "corpus but was empty on every row, so this artifact reports no on-device image "
-                 "and checks nothing in as media. An entry here records that the client held a "
-                 "reference to the image; it does not establish that the image was downloaded to "
-                 "the device.\n"
-                 "Post ID matches the Post ID reported by the Weibo - Timeline Posts and Weibo - "
-                 "Long Posts artifacts.",
-        "paths": ('*/com.sina.weibo/databases/sina_weibo*',),
+                 "No image bytes are reported, because none were found. The image files "
+                 "themselves were searched for in the tested corpus and were not located: the "
+                 "localpath column is empty on every row; no picture id appears in any file name "
+                 "anywhere under the package, including its external storage directory; and "
+                 "neither the MD5 of a picture id nor the MD5 of any of the stored URLs matches "
+                 "any of the hash-named cache files present. The image-bearing files that are "
+                 "present under the package are emoji packs and interface card graphics. So this "
+                 "artifact checks nothing in as media, and an entry records that the client held "
+                 "a reference to an image rather than that the image was stored on the device.\n"
+                 "The URL columns are reported as links. Following one requests the image from "
+                 "Sina's servers, which is a live network request, so whether to follow it is a "
+                 "decision for the examiner rather than something this artifact does.\n"
+                 "Post Author Name and Post Text are looked up by post id from the timeline and "
+                 "long post stores so a row carries its own context; they are blank when the "
+                 "post is in neither store. Post ID matches the Post ID reported by the Weibo - "
+                 "Timeline Posts and Weibo - Long Posts artifacts, and Picture ID matches the "
+                 "Image IDs column of Weibo - Timeline Posts.",
+        "paths": ('*/com.sina.weibo/databases/sina_weibo*',
+                  '*/com.sina.weibo/databases/feed_database*',
+                  '*/com.sina.weibo/databases/ArticleDb.db*'),
         "output_types": "standard",
         "artifact_icon": "image",
         "sample_data": {
@@ -173,6 +185,7 @@ def weibo_timeline(context):
                 post.get('comments_count'),
                 post.get('reposts_count'),
                 post.get('pic_num'),
+                ', '.join(str(x) for x in post.get('pic_ids') or []),
                 _topics(post.get('topic_struct')),
                 post.get('source', ''),
                 str(post.get('idstr') or post.get('id') or ''),
@@ -193,6 +206,7 @@ def weibo_timeline(context):
         'Comments',
         'Reposts',
         'Image Count',
+        'Image IDs',
         'Topics',
         'Author Subtitle',
         'Post ID',
@@ -242,10 +256,40 @@ def weibo_long_posts(context):
     return data_headers, data_list, source_path
 
 
+def _post_text_by_id(files_found):
+    """Post text lives in a different database from the image rows, so build a
+    lookup keyed on the post id the two share."""
+    posts = {}
+
+    article_path = get_file_path(files_found, 'ArticleDb.db')
+    if article_path and does_table_exist_in_db(article_path, 'long_text_table'):
+        for record in get_sqlite_db_records(
+                article_path, 'SELECT _mid, _content FROM long_text_table'):
+            if record[0]:
+                posts[str(record[0])] = ('', record[1] or '')
+
+    feed_path = get_file_path(files_found, 'feed_database')
+    if feed_path and does_table_exist_in_db(feed_path, 'child_flow_item_table'):
+        query = ('SELECT serialized_data FROM child_flow_item_table '
+                 'WHERE serialized_data IS NOT NULL')
+        for record in get_sqlite_db_records(feed_path, query):
+            post = _json_or_none(record[0])
+            if not post:
+                continue
+            post_id = str(post.get('idstr') or post.get('id') or '')
+            if not post_id:
+                continue
+            user = post.get('user') if isinstance(post.get('user'), dict) else {}
+            posts[post_id] = (user.get('screen_name', ''), post.get('text', ''))
+
+    return posts
+
+
 @artifact_processor
 def weibo_post_images(context):
     source_path = get_file_path(context.get_files_found(), 'sina_weibo')
     data_list = []
+    posts = _post_text_by_id(context.get_files_found())
 
     if source_path and does_table_exist_in_db(source_path, 'mblog_pic_table'):
         query = '''
@@ -254,8 +298,11 @@ def weibo_post_images(context):
         FROM mblog_pic_table
         '''
         for record in get_sqlite_db_records(source_path, query):
+            author, text = posts.get(str(record[0]), ('', ''))
             data_list.append((
                 record[0],
+                author,
+                text,
                 record[1],
                 record[3],
                 f'{record[5]} x {record[6]}' if record[5] and record[6] else '',
@@ -268,6 +315,8 @@ def weibo_post_images(context):
 
     data_headers = (
         'Post ID',
+        'Post Author Name',
+        'Post Text',
         'Picture ID',
         'Picture Type',
         'Original Size',
