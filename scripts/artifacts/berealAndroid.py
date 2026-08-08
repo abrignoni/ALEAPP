@@ -27,8 +27,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "image",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | com.bereal.ft | media recovered from caches",
-            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | media recovered from caches",
+            "pixel7a_a14": "Android 14 | com.bereal.ft | 71 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | 13 rows",
         },
     },
     "bereal_friends": {
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | com.bereal.ft | cached relationships responses",
+            "pixel7a_a14": "Android 14 | com.bereal.ft | 0 rows",
             "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | 1 friend cached",
         },
     },
@@ -68,8 +68,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "server",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | com.bereal.ft | cached API responses",
-            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | cached API responses",
+            "pixel7a_a14": "Android 14 | com.bereal.ft | 15 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | 4 rows",
         },
     },
 }
