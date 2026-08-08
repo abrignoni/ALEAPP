@@ -56,6 +56,15 @@ __artifacts_v2__ = {
                   '*/org.telegram.messenger*/files/Telegram/**'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "anne_a15": "240 rows",
+            "hc_pixel8pro_a16": "6 rows",
+            "hc_pixel8pro_a17": "17 | 6 rows",
+            "kevin_pocox7_a15": "1609 rows",
+            "pixel7a_a14": "34 rows",
+            "russell_pixel6a_a13": "3 rows",
+            "sharon_a14": "1 row",
+        },
     },
     "get_telegramContacts": {
         "name": "Telegram - Contacts",
@@ -76,6 +85,15 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "address-book",
+        "sample_data": {
+            "anne_a15": "4 rows",
+            "hc_pixel8pro_a16": "1 row",
+            "hc_pixel8pro_a17": "17 | 1 row",
+            "kevin_pocox7_a15": "9 rows",
+            "pixel7a_a14": "4 rows",
+            "russell_pixel6a_a13": "1 row",
+            "sharon_a14": "15 rows",
+        },
     },
     "get_telegramUsers": {
         "name": "Telegram - Users",
@@ -98,6 +116,16 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "111 rows",
+            "hc_pixel8pro_a16": "48 rows",
+            "hc_pixel8pro_a17": "17 | 80 rows",
+            "kevin_pocox7_a15": "523 rows",
+            "pixel7a_a14": "46 rows",
+            "russell_pixel6a_a13": "2 rows",
+            "samsungs20_a13": "4 rows",
+            "sharon_a14": "8 rows",
+        },
     },
     "get_telegramChats": {
         "name": "Telegram - Chats",
@@ -117,6 +145,15 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "messages",
+        "sample_data": {
+            "anne_a15": "6 rows",
+            "hc_pixel8pro_a16": "1 row",
+            "hc_pixel8pro_a17": "17 | 1 row",
+            "kevin_pocox7_a15": "42 rows",
+            "pixel7a_a14": "4 rows",
+            "russell_pixel6a_a13": "1 row",
+            "sharon_a14": "1 row",
+        },
     },
     "get_telegramAccounts": {
         "name": "Telegram - Accounts",
@@ -145,6 +182,15 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/shared_prefs/userconf*.xml',),
         "output_types": "standard",
         "artifact_icon": "user-circle",
+        "sample_data": {
+            "hc_pixel8pro_a16": "1 row",
+            "hc_pixel8pro_a17": "17 | 1 row",
+            "kevin_pocox7_a15": "1 row",
+            "pixel7a_a14": "1 row",
+            "russell_pixel6a_a13": "1 row",
+            "samsungs20_a13": "1 row",
+            "sharon_a14": "1 row",
+        },
     },
     "get_telegramPeerDetails": {
         "name": "Telegram - Peer Details",
@@ -171,6 +217,16 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "address-book",
+        "sample_data": {
+            "anne_a15": "6 rows",
+            "hc_pixel8pro_a16": "2 rows",
+            "hc_pixel8pro_a17": "17 | 2 rows",
+            "kevin_pocox7_a15": "45 rows",
+            "pixel7a_a14": "3 rows",
+            "russell_pixel6a_a13": "2 rows",
+            "samsungs20_a13": "1 row",
+            "sharon_a14": "3 rows",
+        },
     },
     "get_telegramChatDetails": {
         "name": "Telegram - Chat Details",
@@ -197,6 +253,10 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "users-group",
+        "sample_data": {
+            "anne_a15": "1 row",
+            "kevin_pocox7_a15": "4 rows",
+        },
     },
     "get_telegramSaveToGallery": {
         "name": "Telegram - Save to Gallery Settings",
@@ -223,6 +283,16 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/shared_prefs/mainconfig.xml',),
         "output_types": "standard",
         "artifact_icon": "photo",
+        "sample_data": {
+            "anne_a15": "3 rows",
+            "hc_pixel8pro_a16": "3 rows",
+            "hc_pixel8pro_a17": "17 | 3 rows",
+            "kevin_pocox7_a15": "3 rows",
+            "pixel7a_a14": "3 rows",
+            "russell_pixel6a_a13": "3 rows",
+            "samsungs20_a13": "3 rows",
+            "sharon_a14": "3 rows",
+        },
     },
     "get_telegramChannelMembers": {
         "name": "Telegram - Channel & Group Members",
@@ -246,6 +316,10 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "users-group",
+        "sample_data": {
+            "anne_a15": "32 rows",
+            "kevin_pocox7_a15": "64 rows",
+        },
     },
     "get_telegramChatHints": {
         "name": "Telegram - Frequent Chats",
@@ -267,6 +341,14 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "star",
+        "sample_data": {
+            "anne_a15": "4 rows",
+            "hc_pixel8pro_a16": "1 row",
+            "hc_pixel8pro_a17": "17 | 1 row",
+            "pixel7a_a14": "1 row",
+            "russell_pixel6a_a13": "1 row",
+            "sharon_a14": "1 row",
+        },
     },
     "get_telegramVoipLogs": {
         "name": "Telegram - VoIP Call Logs",
@@ -293,6 +375,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/cache/voip_logs/*',),
         "output_types": "standard",
         "artifact_icon": "phone",
+        "sample_data": {
+            "pixel7a_a14": "1 row",
+        },
     },
     "get_telegramAutoDownload": {
         "name": "Telegram - Auto-Download Settings",
@@ -319,6 +404,16 @@ __artifacts_v2__ = {
         "paths": ('*/org.telegram.messenger*/shared_prefs/mainconfig.xml',),
         "output_types": "standard",
         "artifact_icon": "download",
+        "sample_data": {
+            "anne_a15": "12 rows",
+            "hc_pixel8pro_a16": "12 rows",
+            "hc_pixel8pro_a17": "17 | 12 rows",
+            "kevin_pocox7_a15": "12 rows",
+            "pixel7a_a14": "12 rows",
+            "russell_pixel6a_a13": "12 rows",
+            "samsungs20_a13": "12 rows",
+            "sharon_a14": "12 rows",
+        },
     },
 }
 

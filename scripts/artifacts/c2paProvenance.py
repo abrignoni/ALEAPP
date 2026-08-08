@@ -34,6 +34,13 @@ __artifacts_v2__ = {
         ),
         "output_types": "all",
         "artifact_icon": "certificate",
+        "sample_data": {
+            "anne_a15": "2 rows",
+            "kevin_pocox7_a15": "11 rows",
+            "pixel7a_a14": "3 rows",
+            "samsungs20_a13": "4 rows",
+            "sharon_a14": "44 rows",
+        },
     }
 }
 
