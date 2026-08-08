@@ -92,8 +92,12 @@ __artifacts_v2__ = {
                  "Post Author Name and Post Text are looked up by post id from the timeline and "
                  "long post stores so a row carries its own context; they are blank when the "
                  "post is in neither store. Post ID matches the Post ID reported by the Weibo - "
-                 "Timeline Posts and Weibo - Long Posts artifacts, and Picture ID matches the "
-                 "Image IDs column of Weibo - Timeline Posts.",
+                 "Timeline Posts and Weibo - Long Posts artifacts.\n"
+                 "Picture ID and the Image IDs column of Weibo - Timeline Posts use the same "
+                 "identifier, but the two stores held overlapping rather than identical sets in "
+                 "the tested corpus: 37 picture ids in each, 9 of them in common. So a picture "
+                 "id present in one is not necessarily present in the other, and neither store "
+                 "should be read as the complete set of images the app had referenced.",
         "paths": ('*/com.sina.weibo/databases/sina_weibo*',
                   '*/com.sina.weibo/databases/feed_database*',
                   '*/com.sina.weibo/databases/ArticleDb.db*'),
