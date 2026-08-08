@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses messages from the encrypted Signal database, including sender, recipient, direction and body.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-08",
         "requirements": "none",
         "category": "Signal",
         "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json, produced by the extraction tool. Without it the database cannot be read. Signal stores expires_in in milliseconds, so the disappearing-message timer is divided by 1000 and reported in seconds. Direction and status are decoded from the MessageTypes base type, the low five bits of the message type column. Reference: Signal-Android, 'MessageTable.kt (expires_in stored in milliseconds)', https://github.com/signalapp/Signal-Android/blob/main/app/src/main/java/org/thoughtcrime/securesms/database/MessageTable.kt. Reference: Signal-Android, 'MessageTypes.java and CallTable.kt', https://github.com/signalapp/Signal-Android/blob/main/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
@@ -14,6 +14,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "hc_pixel8pro_a16": "20 rows",
             "pixel7a_a14": "34 rows",
+            "russell_pixel6a_a13": "61 rows",
             "sharon_a14": "45 rows",
         },
     },
@@ -22,7 +23,7 @@ __artifacts_v2__ = {
         "description": "Parses the Signal call log, including call type, direction and outcome.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-08",
         "requirements": "none",
         "category": "Signal",
         "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json. Call type, direction and outcome are the Type, Direction and Event values defined by CallTable, which lists call types 0 Audio, 1 Video, 3 Group and 4 Ad hoc with no type 2; codes outside those sets are reported with their raw value. Reference: Signal-Android, 'MessageTypes.java and CallTable.kt', https://github.com/signalapp/Signal-Android/blob/main/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
@@ -32,6 +33,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "hc_pixel8pro_a16": "3 rows",
             "pixel7a_a14": "4 rows",
+            "russell_pixel6a_a13": "0 rows",
             "sharon_a14": "3 rows",
         },
     },
@@ -40,7 +42,7 @@ __artifacts_v2__ = {
         "description": "Parses Signal recipients, including phone numbers, ACI/PNI identifiers, usernames and profile names.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-07-25",
+        "last_update_date": "2026-08-08",
         "requirements": "none",
         "category": "Signal",
         "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json.",
@@ -59,7 +61,7 @@ __artifacts_v2__ = {
         "description": "Parses Signal groups and their membership, including group title, member names and creation time.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-07-25",
+        "last_update_date": "2026-08-08",
         "requirements": "none",
         "category": "Signal",
         "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json.",
@@ -67,6 +69,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
+            "russell_pixel6a_a13": "0 rows",
             "sharon_a14": "1 row",
         },
     },
@@ -75,10 +78,10 @@ __artifacts_v2__ = {
         "description": "Parses metadata for attachments referenced by Signal messages.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-08",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Attachment files are decrypted with the modernKey from secrets.json and each attachment's data_random. The stored file format is detected from its content, which can differ from the content type recorded in the database. The Direction column is decoded from the MessageTypes base type of the message the attachment belongs to. Reference: Signal-Android, 'MessageTypes.java and CallTable.kt', https://github.com/signalapp/Signal-Android/blob/main/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
+        "notes": "Attachment files are decrypted with the modernKey from secrets.json and each attachment's data_random. The stored file format is detected from its content, which can differ from the content type recorded in the database. The Direction column is decoded from the MessageTypes base type of the message the attachment belongs to. Attachments are read from the attachment table where a release has one and from the part table otherwise, whose equivalent columns are mid, ct and _data; both are joined to the message table on the message id, so each attachment carries the date, thread, sender and direction of the message it belongs to. The part schema has no transfer_state column, so Transfer State is empty for databases using it. Reference: Signal-Android, 'MessageTypes.java and CallTable.kt', https://github.com/signalapp/Signal-Android/blob/main/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
                   '*/org.thoughtcrime.securesms/app_parts/*'),
         "output_types": "standard",
@@ -86,6 +89,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "hc_pixel8pro_a16": "7 rows",
             "pixel7a_a14": "9 rows",
+            "russell_pixel6a_a13": "8 rows",
             "sharon_a14": "10 rows",
         },
     },
@@ -312,6 +316,45 @@ def _modern_key(context):
         return None
 
 
+# Older Signal releases keep attachments in a "part" table with a different
+# column vocabulary. Both generations are read by resolving the table and the
+# column names per database, the same way the recipient and message columns are.
+ATTACHMENT_TABLE_NAMES = ('attachment', 'part')
+LEGACY_ATTACHMENT_COLUMNS = {
+    'message_id': 'mid',
+    'content_type': 'ct',
+    'data_file': '_data',
+}
+
+
+def _attachment_table(connection):
+    """Return (table name, columns) for whichever attachment store exists."""
+    for table in ATTACHMENT_TABLE_NAMES:
+        columns = _table_columns(connection, table)
+        if columns:
+            return table, columns
+    return '', set()
+
+
+def _attachment_name(columns, name):
+    """Return the column this schema uses for a modern attachment column."""
+    for candidate in (name, LEGACY_ATTACHMENT_COLUMNS.get(name)):
+        if candidate and candidate in columns:
+            return candidate
+    return ''
+
+
+def _attachment_column(columns, table, name):
+    """Qualified attachment column for this schema, or NULL when absent."""
+    resolved = _attachment_name(columns, name)
+    return f'{table}.{resolved}' if resolved else 'NULL'
+
+
+def _attachment_select(columns, table, names):
+    """SELECT expressions for attachment columns across both schemas."""
+    return ', '.join(_attachment_column(columns, table, name) for name in names)
+
+
 def _checked_in_attachments(connection, modern_key, stored_files):
     """Decrypt every attachment and group the media references by message.
 
@@ -328,16 +371,18 @@ def _checked_in_attachments(connection, modern_key, stored_files):
     if not modern_key:
         return references, detected_types, thumbnails
 
-    attachment_columns = _table_columns(connection, 'attachment')
-    if not {'data_file', 'data_random'} <= attachment_columns:
+    attachment_table, attachment_columns = _attachment_table(connection)
+    if not attachment_table or not all(
+            _attachment_name(attachment_columns, name) for name in ('data_file', 'data_random')):
         return references, detected_types, thumbnails
 
     cursor = connection.cursor()
     cursor.execute(f'''
-    SELECT {_select_list(attachment_columns, 'attachment',
-                         ['_id', 'message_id', 'data_file', 'data_random',
-                          'content_type', 'file_name', 'thumbnail_file', 'thumbnail_random'])}
-    FROM attachment
+    SELECT {_attachment_select(attachment_columns, attachment_table,
+                               ['_id', 'message_id', 'data_file', 'data_random',
+                                'content_type', 'file_name', 'thumbnail_file',
+                                'thumbnail_random'])}
+    FROM {attachment_table}
     ''')
     for row in cursor:
         (attachment_id, message_id, data_file, data_random,
@@ -700,27 +745,25 @@ def get_signalAttachments(context):
         decrypted_count += len(detected_types)
 
         cursor = connection.cursor()
-        attachment_columns = _table_columns(connection, 'attachment')
-        if not attachment_columns:
-            # Older Signal releases keep attachments in a "part" table with a
-            # different column vocabulary. That schema is not read here, so say
-            # so rather than failing: no rows is not evidence of no attachments.
-            logfunc(f'Signal: {source_path} has no "attachment" table, so this '
-                    'release\'s attachment schema is not covered and no '
+        attachment_table, attachment_columns = _attachment_table(connection)
+        if not attachment_table:
+            logfunc(f'Signal: {source_path} carries no attachment table, so no '
                     'attachments are reported for it')
             connection.close()
             continue
+        message_id_column = _attachment_column(
+            attachment_columns, attachment_table, 'message_id')
         cursor.execute(f'''
         SELECT
             message.date_sent,
-            {_select_list(attachment_columns, 'attachment',
-                          ['_id', 'file_name', 'content_type', 'data_size', 'data_file',
-                           'transfer_state', 'voice_note', 'video_gif', 'width', 'height',
-                           'caption', 'upload_timestamp', 'message_id'])},
+            {_attachment_select(attachment_columns, attachment_table,
+                                ['_id', 'file_name', 'content_type', 'data_size', 'data_file',
+                                 'transfer_state', 'voice_note', 'video_gif', 'width', 'height',
+                                 'caption', 'upload_timestamp', 'message_id'])},
             message.thread_id, message.type,
             {_recipient_column(recipient_columns, 'sender', 'e164')}, {_recipient_column(recipient_columns, 'sender', 'profile_joined_name')}, {_recipient_column(recipient_columns, 'sender', 'system_joined_name')}, {_recipient_column(recipient_columns, 'sender', 'username')}
-        FROM attachment
-        LEFT JOIN message ON attachment.message_id = message._id
+        FROM {attachment_table}
+        LEFT JOIN message ON {message_id_column} = message._id
         LEFT JOIN recipient AS sender ON message.from_recipient_id = sender._id
         ORDER BY message.date_sent
         ''')
