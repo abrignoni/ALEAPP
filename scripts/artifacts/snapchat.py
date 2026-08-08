@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_snapchat_feeds": {
         "name": "Snapchat - Feeds",
         "description": "Snapchat feed (last interaction per conversation)",
-        "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
         "output_types": "standard", "artifact_icon": "rss",
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
     "get_snapchat_friends": {
         "name": "Snapchat - Friends",
         "description": "Snapchat friends / contacts",
-        "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
         "output_types": "standard", "artifact_icon": "users",
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
     "get_snapchat_messages": {
         "name": "Snapchat - Messages",
         "description": "Snapchat chat messages",
-        "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
         "output_types": "standard", "artifact_icon": "message",
@@ -134,7 +134,7 @@ __artifacts_v2__ = {
     "get_snapchat_memories": {
         "name": "Snapchat - Memories",
         "description": "Snapchat memories entries",
-        "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
         "output_types": "standard", "artifact_icon": "photo",
@@ -148,7 +148,7 @@ __artifacts_v2__ = {
     "get_snapchat_meo": {
         "name": "Snapchat - MEO My Eyes Only",
         "description": "Snapchat My Eyes Only confidential data; recovers the 4-digit passcode via bcrypt",
-        "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat",
         "notes": "Passcode recovery brute-forces the 4-digit MEO code (bcrypt); can be slow.",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
@@ -163,7 +163,7 @@ __artifacts_v2__ = {
     "get_snapchat_snap_media": {
         "name": "Snapchat - Snap Media",
         "description": "Snapchat memories snap media (incl. geolocation)",
-        "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
         "output_types": "all", "artifact_icon": "photo",
@@ -177,7 +177,7 @@ __artifacts_v2__ = {
     "get_snapchat_identity": {
         "name": "Snapchat - Identity Persistent Store",
         "description": "Snapchat identity_persistent_store.xml",
-        "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/shared_prefs/identity_persistent_store.xml',),
         "output_types": "standard", "artifact_icon": "user",
@@ -193,7 +193,7 @@ __artifacts_v2__ = {
     "get_snapchat_login_signup": {
         "name": "Snapchat - Login Signup Store",
         "description": "Snapchat LoginSignupStore.xml",
-        "author": "", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
         "requirements": "none", "category": "Snapchat", "notes": "",
         "paths": ('*/com.snapchat.android/shared_prefs/LoginSignupStore.xml',),
         "output_types": "standard", "artifact_icon": "login-2",

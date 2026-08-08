@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_scontextLog": {
         "name": "scontextLog",
         "description": "Parses app foreground usage sessions (start and stop time, timezone, app ID and duration) from the Samsung ContextLog.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-04-18",
         "last_update_date": "2020-04-18",
         "requirements": "none",

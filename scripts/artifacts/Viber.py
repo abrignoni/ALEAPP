@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_Viber": {
         "name": "Viber - Call Logs",
         "description": "Parses Viber call logs (timestamp, phone number, direction, duration and call type) from the Viber databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2020-12-24",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
     "get_Viber_contacts": {
         "name": "Viber - Contacts",
         "description": "Parses Viber contacts (display name and phone number) from the Viber databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",
         "requirements": "none",
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
     "get_Viber_messages": {
         "name": "Viber - Messages",
         "description": "Parses Viber messages (date, sender and recipients, thread, content, direction, unread flag and attachments) from the Viber databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2020-12-24",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -80,7 +80,7 @@ __artifacts_v2__ = {
     "get_Viber_additional": {
         "name": "Viber - Additional",
         "description": "Hidden chat PIN (brute-forced from the stored hash)",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",
         "requirements": "none",

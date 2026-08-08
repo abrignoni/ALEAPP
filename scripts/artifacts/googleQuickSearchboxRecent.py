@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_quicksearch_recent": {
         "name": "Google Quick Search Recent",
         "description": "Recent search terms and page entries recorded by the Google app (Google Now)",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2020-03-22",
         "last_update_date": "2026-08-01",
         "requirements": "none",

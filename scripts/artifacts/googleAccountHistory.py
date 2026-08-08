@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "History of Google accounts on the device recorded by Google Play "
                        "services (google_account_history.db, AccountHistory table). The "
                        "change type is stored as a raw integer and is reported as-is.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

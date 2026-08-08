@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_chromeTopSites": {
         "name": "Top Sites",
         "description": "Parses Top Sites from Chromium Based Browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",

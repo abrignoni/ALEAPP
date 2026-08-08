@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_wifiConfigstore": {
         "name": "WiFi Config Store",
         "description": "Saved Wi-Fi network configuration details from WifiConfigStore.xml",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-05-11",
         "last_update_date": "2023-05-11",
         "requirements": "none",

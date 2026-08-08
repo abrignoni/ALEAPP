@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Snapshot of device contacts kept by Google Play services "
                        "(icing_contacts.db, contacts table). Kept independently "
                        "of the Contacts database, so the two may diverge.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -32,7 +32,7 @@ __artifacts_v2__ = {
                        "from the Google Play services contacts index (icing_contacts.db, "
                        "phones/emails/postals tables). The type is stored as a raw integer "
                        "and is reported as-is.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

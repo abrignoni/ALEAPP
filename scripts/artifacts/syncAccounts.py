@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Per-account sync authorities from /data/system/sync/accounts.xml: "
                        "which data types each account on the device syncs, whether syncing "
                        "is enabled and the syncable state.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

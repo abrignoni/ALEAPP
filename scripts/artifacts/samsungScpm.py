@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Devices recorded by the Samsung Cloud Platform Manager (scpmv2.db, "
                        "devices table): device alias, model, OS version, country and SIM "
                        "codes, with the registration and last access times.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

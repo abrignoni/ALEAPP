@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_smyFiles2": {
         "name": "My Files - Download History (FileInfo)",
         "description": "Download history recorded by Samsung My Files (FileInfo.db)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-12-17",
         "last_update_date": "2020-12-17",
         "requirements": "none",
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
     "get_smyFiles2_gdrive": {
         "name": "My Files - Google Drive",
         "description": "Google Drive entries cached by Samsung My Files (FileInfo.db) with thumbnails",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-12-17",
         "last_update_date": "2020-12-17",
         "requirements": "none",

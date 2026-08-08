@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_skout_messages": {
         "name": "Skout Messages",
         "description": "Parses Skout messages (timestamp, user, message, type, picture and gift URLs and thread) from the Skout database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-05-10",
         "last_update_date": "2021-05-10",
         "requirements": "none",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     "get_skout_users": {
         "name": "Skout Users",
         "description": "Parses Skout users (last message timestamp, user name, picture URL and user ID) from the Skout database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-05-10",
         "last_update_date": "2021-05-10",
         "requirements": "none",

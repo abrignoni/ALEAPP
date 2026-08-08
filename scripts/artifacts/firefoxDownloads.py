@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_firefoxDownloads": {
         "name": "Firefox - Downloads",
         "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database. The Tor Browser path is also matched; in the samples examined it carried the same database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-01",
         "notes": "Two schema variants are handled: destination_directory and directory_path. Reference: Mozilla android-components, 'DownloadState.Status (PAUSED=3, CANCELLED=4, FAILED=5, COMPLETED=6)', https://github.com/mozilla-firefox/firefox/blob/main/mobile/android/android-components/components/browser/state/src/main/java/mozilla/components/browser/state/state/content/DownloadState.kt",
