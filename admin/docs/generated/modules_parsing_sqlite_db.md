@@ -58,6 +58,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungWifiDatabases |
 | sbbmobile |
 | shistorylog |
+| slack |
 | swellbeing |
 | swissmeteo |
 | telegramAndroid |
