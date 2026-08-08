@@ -27,6 +27,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | WithingsHealthMate |
 | ZangiChats |
 | airtagAndroid |
+| allTrails |
 | androidauto |
 | appicons |
 | calculatorLockVault |
