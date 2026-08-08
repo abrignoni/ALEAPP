@@ -21,6 +21,7 @@ __artifacts_v2__ = {
 from datetime import datetime, timezone
 from scripts.ilapfuncs import (
     artifact_processor,
+    null_absent_columns,
     get_file_path,
     get_sqlite_db_records,
     logfunc
@@ -56,7 +57,7 @@ def Life360_MemberCircles(context):
     '''
 
     try:
-        db_records = get_sqlite_db_records(source_path, query)
+        db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
         for record in db_records:
 
