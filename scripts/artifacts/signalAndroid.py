@@ -390,6 +390,25 @@ def _expires_in_seconds(value):
     return milliseconds // 1000 if milliseconds % 1000 == 0 else milliseconds / 1000
 
 
+# Signal renames recipient columns between releases. Older schemas store the
+# phone number in "phone" and the contact name in "system_display_name", where
+# newer ones use "e164" and "system_joined_name". Resolve per database rather
+# than pinning to one release, the same way _select_list already does for the
+# message table.
+RECIPIENT_COLUMN_ALIASES = {
+    'e164': ('e164', 'phone'),
+    'system_joined_name': ('system_joined_name', 'system_display_name'),
+}
+
+
+def _recipient_column(available, table_alias, column):
+    """Return the qualified column this Signal version actually has, or NULL."""
+    for candidate in RECIPIENT_COLUMN_ALIASES.get(column, (column,)):
+        if candidate in available:
+            return f'{table_alias}.{candidate}'
+    return 'NULL'
+
+
 def _select_list(available, table_alias, columns):
     """Build SELECT expressions, substituting NULL for columns this Signal version lacks.
 
@@ -413,6 +432,7 @@ def get_signalMessages(context):
     stored_files = _attachment_files(context) if modern_key else {}
 
     for connection, source_path in _open_signal_database(context):
+        recipient_columns = _table_columns(connection, 'recipient')
         attachments_by_message, _, _ = _checked_in_attachments(
             connection, modern_key, stored_files)
 
@@ -429,14 +449,14 @@ def get_signalMessages(context):
         SELECT
             {_select_list(message_columns, 'message',
                           ['date_sent', 'date_received', 'thread_id', 'type', 'body', '_id'])},
-            sender.e164, sender.profile_joined_name, sender.system_joined_name, sender.username,
-            receiver.e164, receiver.profile_joined_name, receiver.system_joined_name, receiver.username,
+            {_recipient_column(recipient_columns, 'sender', 'e164')}, {_recipient_column(recipient_columns, 'sender', 'profile_joined_name')}, {_recipient_column(recipient_columns, 'sender', 'system_joined_name')}, {_recipient_column(recipient_columns, 'sender', 'username')},
+            {_recipient_column(recipient_columns, 'receiver', 'e164')}, {_recipient_column(recipient_columns, 'receiver', 'profile_joined_name')}, {_recipient_column(recipient_columns, 'receiver', 'system_joined_name')}, {_recipient_column(recipient_columns, 'receiver', 'username')},
             {_select_list(message_columns, 'message',
                           ['read', 'remote_deleted', 'view_once', 'quote_body', 'expires_in',
                            'quote_id', 'quote_missing'])},
-            COALESCE(NULLIF(quoted.profile_joined_name, ''),
-                     NULLIF(quoted.system_joined_name, ''),
-                     NULLIF(quoted.e164, ''), NULLIF(quoted.username, ''), '')
+            COALESCE(NULLIF({_recipient_column(recipient_columns, 'quoted', 'profile_joined_name')}, ''),
+                     NULLIF({_recipient_column(recipient_columns, 'quoted', 'system_joined_name')}, ''),
+                     NULLIF({_recipient_column(recipient_columns, 'quoted', 'e164')}, ''), NULLIF({_recipient_column(recipient_columns, 'quoted', 'username')}, ''), '')
         FROM message
         LEFT JOIN recipient AS sender ON message.from_recipient_id = sender._id
         LEFT JOIN recipient AS receiver ON message.to_recipient_id = receiver._id
@@ -505,13 +525,14 @@ def get_signalCalls(context):
     data_list = []
     source_path = ''
     for connection, source_path in _open_signal_database(context):
+        recipient_columns = _table_columns(connection, 'recipient')
         cursor = connection.cursor()
         call_columns = _table_columns(connection, 'call')
         cursor.execute(f'''
         SELECT
             {_select_list(call_columns, 'call',
                           ['timestamp', 'call_id', 'type', 'direction', 'event'])},
-            peer.e164, peer.profile_joined_name, peer.system_joined_name, peer.username,
+            {_recipient_column(recipient_columns, 'peer', 'e164')}, {_recipient_column(recipient_columns, 'peer', 'profile_joined_name')}, {_recipient_column(recipient_columns, 'peer', 'system_joined_name')}, {_recipient_column(recipient_columns, 'peer', 'username')},
             {_select_list(call_columns, 'call', ['read', 'deletion_timestamp'])}
         FROM call
         LEFT JOIN recipient AS peer ON call.peer = peer._id
@@ -550,6 +571,7 @@ def get_signalGroups(context):
     data_list = []
     source_path = ''
     for connection, source_path in _open_signal_database(context):
+        recipient_columns = _table_columns(connection, 'recipient')
         group_columns = _table_columns(connection, 'groups')
         if not group_columns:
             connection.close()
@@ -558,12 +580,12 @@ def get_signalGroups(context):
         # Membership lives in its own table, keyed by the textual group id
         members_by_group = {}
         if _table_columns(connection, 'group_membership'):
-            for group_id, name in connection.execute('''
+            for group_id, name in connection.execute(f'''
                 SELECT group_membership.group_id,
-                       COALESCE(NULLIF(recipient.profile_joined_name, ''),
-                                NULLIF(recipient.system_joined_name, ''),
-                                NULLIF(recipient.e164, ''),
-                                NULLIF(recipient.username, ''))
+                       COALESCE(NULLIF({_recipient_column(recipient_columns, 'recipient', 'profile_joined_name')}, ''),
+                                NULLIF({_recipient_column(recipient_columns, 'recipient', 'system_joined_name')}, ''),
+                                NULLIF({_recipient_column(recipient_columns, 'recipient', 'e164')}, ''),
+                                NULLIF({_recipient_column(recipient_columns, 'recipient', 'username')}, ''))
                 FROM group_membership
                 LEFT JOIN recipient ON group_membership.recipient_id = recipient._id
             '''):
@@ -574,8 +596,8 @@ def get_signalGroups(context):
         SELECT {_select_list(group_columns, 'groups',
                              ['_id', 'group_id', 'title', 'timestamp', 'active', 'mms',
                               'revision', 'last_force_update_timestamp'])},
-               COALESCE(NULLIF(recipient.profile_joined_name, ''),
-                        NULLIF(recipient.system_joined_name, ''), '')
+               COALESCE(NULLIF({_recipient_column(recipient_columns, 'recipient', 'profile_joined_name')}, ''),
+                        NULLIF({_recipient_column(recipient_columns, 'recipient', 'system_joined_name')}, ''), '')
         FROM groups
         LEFT JOIN recipient ON groups.recipient_id = recipient._id
         ORDER BY groups.timestamp
@@ -614,6 +636,7 @@ def get_signalContacts(context):
     data_list = []
     source_path = ''
     for connection, source_path in _open_signal_database(context):
+        recipient_columns = _table_columns(connection, 'recipient')
         cursor = connection.cursor()
         recipient_columns = _table_columns(connection, 'recipient')
         cursor.execute(f'''
@@ -671,12 +694,22 @@ def get_signalAttachments(context):
     decrypted_count = 0
 
     for connection, source_path in _open_signal_database(context):
+        recipient_columns = _table_columns(connection, 'recipient')
         references, detected_types, thumbnails = _checked_in_attachments(
             connection, modern_key, stored_files)
         decrypted_count += len(detected_types)
 
         cursor = connection.cursor()
         attachment_columns = _table_columns(connection, 'attachment')
+        if not attachment_columns:
+            # Older Signal releases keep attachments in a "part" table with a
+            # different column vocabulary. That schema is not read here, so say
+            # so rather than failing: no rows is not evidence of no attachments.
+            logfunc(f'Signal: {source_path} has no "attachment" table, so this '
+                    'release\'s attachment schema is not covered and no '
+                    'attachments are reported for it')
+            connection.close()
+            continue
         cursor.execute(f'''
         SELECT
             message.date_sent,
@@ -685,7 +718,7 @@ def get_signalAttachments(context):
                            'transfer_state', 'voice_note', 'video_gif', 'width', 'height',
                            'caption', 'upload_timestamp', 'message_id'])},
             message.thread_id, message.type,
-            sender.e164, sender.profile_joined_name, sender.system_joined_name, sender.username
+            {_recipient_column(recipient_columns, 'sender', 'e164')}, {_recipient_column(recipient_columns, 'sender', 'profile_joined_name')}, {_recipient_column(recipient_columns, 'sender', 'system_joined_name')}, {_recipient_column(recipient_columns, 'sender', 'username')}
         FROM attachment
         LEFT JOIN message ON attachment.message_id = message._id
         LEFT JOIN recipient AS sender ON message.from_recipient_id = sender._id
