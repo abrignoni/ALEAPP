@@ -161,35 +161,89 @@ __artifacts_v2__ = {
                  "scheme. The separator differs between the two because the value is also used "
                  "as a directory name under files/JusTalk/profiles/. A value not in that shape "
                  "is reported unchanged in both columns.\n"
-                 "In the sample the split value was independently confirmed twice more, by a "
-                 "justalkId key in files/mmkv/JusProfileManager<account uid> and by a bare value "
-                 "in the per-profile provision-v1.xml. Neither of those files is parsed here; "
-                 "see the validation boundary below.\n"
+                 "The JusTalk ID column prefers the justalkId key of the local profile in "
+                 "files/mmkv/JusProfileManager<account uid>, which names the value directly, and "
+                 "falls back to splitting cur_prof_user when that store is absent. In the sample "
+                 "the two agreed, and a bare value in the per-profile provision-v1.xml agreed "
+                 "with both.\n"
+                 "The remaining account fields come from that same MMKV profile, which holds one "
+                 "JSON document under a single key. Field names there are the app's own: "
+                 "Basic.NickName, Ue.Email, Basic.Birthday, Phone.Country, loginCountry, "
+                 "signUpDate, lastLoginTimeMillis, uuid and loginToken. Birthday is reported as "
+                 "the app stored it, a plain date string with no time or zone. signUpDate is in "
+                 "seconds and lastLoginTimeMillis in milliseconds, as their names state.\n"
+                 "Ue.Facebook, Ue.Google and Ue.Huawei are linked-account slots. They were all "
+                 "empty in the sample, so an empty value here means the slot carries no value, "
+                 "not that a linked account was removed.\n"
+                 "loginToken is a bearer credential for the account, reported in full at the "
+                 "examiner's request. It is a JSON Web Token (RFC 7519), so its payload segment "
+                 "is base64url and carries the standard 'exp' expiry claim; Token Expiry is that "
+                 "claim decoded, and Token Subject is the payload's uid claim as stored. The "
+                 "signature is not verified and the token is not tested against any server, so "
+                 "these columns describe what the token asserts about itself and not whether it "
+                 "is currently valid.\n"
                  "The Realm header reports two top references, which is the store's normal "
                  "committed and uncommitted pair. Both are read and their row counts compared; "
                  "where they differ, content is present in one view and not the other. In the "
                  "sample they matched exactly.\n"
                  "shared_prefs/com.juphoon.justalk_preferences.xml was checked and carries only "
                  "advertising consent framework keys, no account identity, so it is not parsed.\n"
-                 "Not covered. files/mmkv/JusProfileManager<account uid> holds a fuller record of "
-                 "the local account than this artifact reports, including a nickname, an email "
-                 "address, a birthday, sign-up and last-login times and a session token. "
-                 "files/mmkv/mmkv.default holds a device id and the store channel. Both are MMKV "
-                 "stores and are not parsed yet.",
+                 "Validation boundary. Built from a single private sample holding one signed-in "
+                 "account, so every field here was seen populated exactly once, and the "
+                 "linked-account and family fields were never seen populated at all. An MMKV "
+                 "store can be written in an AES-encrypted mode, which this reader does not "
+                 "decrypt; a store written that way yields no keys, so an empty result is not "
+                 "evidence the store was empty.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',
-                  '*/com.juphoon.justalk/files/JusTalk/profiles/provisions.xml'),
+                  '*/com.juphoon.justalk/files/JusTalk/profiles/provisions.xml',
+                  '*/com.juphoon.justalk/files/mmkv/*'),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {},
+    },
+    "justalk_app_state": {
+        "name": "JusTalk - App State",
+        "description": "Key and value pairs from the app's default MMKV store, covering the "
+                       "device identifier, the signed-in account id, the push token and the "
+                       "install channel, including values that later writes superseded",
+        "author": "@AlexisBrignoni, @Antho4n6, Claude",
+        "creation_date": "2026-08-07",
+        "last_update_date": "2026-08-07",
+        "requirements": "none",
+        "category": "JusTalk",
+        "notes": "Read from files/mmkv/mmkv.default with the shared mmkv_parser. Keys and values "
+                 "are reported as the app wrote them and are not renamed or interpreted.\n"
+                 "MMKV appends rather than edits, so changing a key writes a new entry and leaves "
+                 "the previous one in the file. Every entry is reported in file order. The Current "
+                 "Value column marks the last entry for a key, which is the one the app reads; "
+                 "rows marked otherwise are earlier values still present in the store. In the "
+                 "sample this preserved one superseded value, an empty VersionCheckerNewVersion "
+                 "written before the current one.\n"
+                 "A repeated entry is not by itself evidence the value changed. The app rewrites "
+                 "some keys with the value they already held, which is why most repeats here are "
+                 "identical.\n"
+                 "A zero-length value is how MMKV records a removal, and is shown as an empty "
+                 "Value with the type reported as removed. That is distinct from a key holding "
+                 "an empty string.\n"
+                 "Values are typed by the calling app, not on disk. The reader reports a string "
+                 "where the stored bytes are a length-prefixed string and an integer where they "
+                 "are a bare scalar, which is the only distinction the bytes support; a value "
+                 "shown as an integer may have been written as a boolean.",
+        "paths": ('*/com.juphoon.justalk/files/mmkv/*',),
+        "output_types": "standard",
+        "artifact_icon": "settings",
         "sample_data": {},
     },
 }
 
 import base64
 import hashlib
+import json
 import os
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, convert_unix_ts_to_utc
+from scripts.mmkv_parser import MMKVError, decode_value, read_dict, read_entries
 from scripts.realm_parser import parse_realm_file, realm_rows
 
 # Rows of class_CallLog carrying these type values are call records rather than chat
@@ -546,6 +600,79 @@ def _profile_user(files_found):
     return '', ''
 
 
+def _mmkv_path(files_found, basename_prefix, account_uid=''):
+    """Return the MMKV store whose file name starts with basename_prefix. The app writes one
+    profile store per identity it has held, so prefer the one named for the account uid."""
+    candidates = []
+    for file_found in files_found:
+        file_found = str(file_found)
+        parent, name = os.path.split(file_found)
+        if os.path.basename(parent) != 'mmkv' or not name.startswith(basename_prefix):
+            continue
+        if name.endswith('.crc'):
+            continue
+        candidates.append(file_found)
+    preferred = [p for p in candidates if account_uid and os.path.basename(p).endswith(account_uid)]
+    for path in preferred + candidates:
+        try:
+            if read_entries(path):
+                return path
+        except (MMKVError, OSError):
+            continue
+    return ''
+
+
+def _local_profile(files_found, account_uid):
+    """The local account's own profile, stored as one JSON document under a single MMKV key."""
+    path = _mmkv_path(files_found, 'JusProfileManager', account_uid)
+    if not path:
+        return {}, ''
+    try:
+        store = read_dict(path)
+    except (MMKVError, OSError):
+        return {}, path
+    for value in store.values():
+        if not isinstance(value, str):
+            continue
+        try:
+            document = json.loads(value)
+        except ValueError:
+            continue
+        if isinstance(document, dict):
+            return document, path
+    return {}, path
+
+
+def _epoch(value):
+    """The MMKV profile stores some epochs as JSON numbers and others as quoted strings,
+    so coerce before handing the value to the shared converter."""
+    try:
+        value = int(value)
+    except (TypeError, ValueError):
+        return ''
+    if value <= 0:
+        return ''
+    return convert_unix_ts_to_utc(value)
+
+
+def _jwt_claims(token):
+    """Return the payload claims of a JSON Web Token (RFC 7519) without verifying it.
+
+    The signature is not checked and the token is not presented to any server, so this
+    reports what the token asserts about itself, nothing more."""
+    if not token or not isinstance(token, str):
+        return {}
+    parts = token.split('.')
+    if len(parts) != 3:
+        return {}
+    payload = parts[1] + '=' * (-len(parts[1]) % 4)
+    try:
+        claims = json.loads(base64.urlsafe_b64decode(payload))
+    except (ValueError, TypeError):
+        return {}
+    return claims if isinstance(claims, dict) else {}
+
+
 def _justalk_id(profile_user):
     """cur_prof_user is a scheme token joined to the account's JusTalk id, as in
     'username)lola6593'. The same store writes the peer form of that value as a URI,
@@ -587,9 +714,32 @@ def justalk_account(context):
     metadata = _rows(source_path, 'metadata')
     account_uid = os.path.basename(source_path)[:-len('.realm')] if source_path else ''
 
+    profile, mmkv_profile_path = _local_profile(files_found, account_uid)
+    token = profile.get('loginToken', '')
+    claims = _jwt_claims(token)
+
     data_list.append((
+        _epoch(profile.get('lastLoginTimeMillis')),
+        _epoch(profile.get('signUpDate')),
+        _epoch(claims.get('exp')),
         account_uid,
-        _justalk_id(profile_user),
+        profile.get('justalkId') or _justalk_id(profile_user),
+        profile.get('Basic.NickName', ''),
+        profile.get('Ue.Email', ''),
+        profile.get('phone', ''),
+        profile.get('Basic.Birthday', ''),
+        profile.get('Phone.Country', ''),
+        profile.get('loginCountry', ''),
+        profile.get('uuid', ''),
+        token,
+        claims.get('uid', ''),
+        profile.get('Ue.Facebook', ''),
+        profile.get('Ue.Google', ''),
+        profile.get('Ue.Huawei', ''),
+        profile.get('familyId', ''),
+        profile.get('parentPhone', ''),
+        profile.get('consecutiveLoginDays', ''),
+        profile.get('blockStrangers', ''),
         profile_user,
         metadata[0].get('version') if metadata else '',
         counts.get('active', ''),
@@ -597,6 +747,7 @@ def justalk_account(context):
         'Yes' if counts and counts.get('active') != counts.get('inactive') else 'No',
         context.get_relative_path(source_path) if source_path else '',
         context.get_relative_path(profile_path) if profile_path else '',
+        context.get_relative_path(mmkv_profile_path) if mmkv_profile_path else '',
     ))
 
     return _account_headers(), data_list, source_path or profile_path
@@ -604,8 +755,27 @@ def justalk_account(context):
 
 def _account_headers():
     return (
+        ('Last Login', 'datetime'),
+        ('Sign-Up Date', 'datetime'),
+        ('Token Expiry', 'datetime'),
         'Account UID',
         'JusTalk ID',
+        'Nickname',
+        'Email',
+        'Phone',
+        'Birthday (as stored)',
+        'Phone Country',
+        'Login Country (as stored)',
+        'Profile UUID',
+        'Login Token',
+        'Token Subject (as stored)',
+        'Linked Facebook',
+        'Linked Google',
+        'Linked Huawei',
+        'Family ID',
+        'Parent Phone',
+        'Consecutive Login Days',
+        'Block Strangers (as stored)',
         'Profile User (as stored)',
         'Realm Schema Version',
         'Rows in Committed View',
@@ -613,4 +783,51 @@ def _account_headers():
         'Views Differ',
         'Realm Store Path',
         'Provisioning File Path',
+        'MMKV Profile Path',
     )
+
+
+@artifact_processor
+def justalk_app_state(context):
+    files_found = context.get_files_found()
+    source_path = _mmkv_path(files_found, 'mmkv.default')
+    data_list = []
+
+    if source_path:
+        try:
+            entries = read_entries(source_path)
+        except (MMKVError, OSError):
+            entries = []
+        # The last entry for a key is the one the app reads; earlier ones are superseded
+        # values the append-only store still holds.
+        last_index = {key: index for index, (key, _) in enumerate(entries)}
+        for index, (key, container) in enumerate(entries):
+            value = decode_value(container)
+            if value is None:
+                value_type = 'removed'
+                rendered = ''
+            elif isinstance(value, str):
+                value_type = 'string'
+                rendered = value
+            elif isinstance(value, int):
+                value_type = 'integer'
+                rendered = value
+            else:
+                value_type = 'bytes'
+                rendered = value.hex()
+            data_list.append((
+                key,
+                rendered,
+                value_type,
+                'Yes' if last_index.get(key) == index else 'No',
+                index,
+            ))
+
+    data_headers = (
+        'Key',
+        'Value',
+        'Value Type',
+        'Current Value',
+        'Entry Order',
+    )
+    return data_headers, data_list, source_path
