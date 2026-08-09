@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_vlcthumbsADB": {
         "name": "VLC Thumbnails (ADB)",
         "description": "VLC thumbnail cache from an ADB extraction (ef/medialib/thumbnails)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2022-08-23",
         "last_update_date": "2022-08-23",
         "requirements": "none",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     "get_vlcthumbsADB_medialib": {
         "name": "VLC Media Lib (ADB)",
         "description": "VLC media library images from an ADB extraction (ef/medialib)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2022-08-23",
         "last_update_date": "2022-08-23",
         "requirements": "none",

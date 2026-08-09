@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "None",
         "category": "Burner",
         "notes": "",
-        "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
+        "paths": ('*/com.adhoclabs.burner/databases/burners.db*',),
         "output_types": "standard",
         "artifact_icon": "shield",
     },
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
         "requirements": "None",
         "category": "Burner",
         "notes": "",
-        "paths": ('*/com.adhoclabs.burner/databases/burners.db',),
+        "paths": ('*/com.adhoclabs.burner/databases/burners.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
         "data_views": {

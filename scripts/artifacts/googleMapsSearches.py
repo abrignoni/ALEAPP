@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_googleMapsSearches": {
         "name": "Google Maps Searches",
         "description": "Recent Google Maps search history (new_recent_history_cache_search.cs)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-10-15",
         "last_update_date": "2023-10-15",
         "requirements": "none",

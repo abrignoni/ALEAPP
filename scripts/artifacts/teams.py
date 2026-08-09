@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_teams": {
         "name": "Teams - Messages",
         "description": "Parses Microsoft Teams messages (timestamp, user, content, topic, delete time and conversation) from SkypeTeams.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
         "requirements": "none",
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
     "get_teams_users": {
         "name": "Teams - Users",
         "description": "Parses Microsoft Teams users (last sync, name, email, phone numbers and account flags) from SkypeTeams.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
         "requirements": "none",
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
     "get_teams_calllog": {
         "name": "Teams - Call Log",
         "description": "Parses Microsoft Teams call logs (connect and end time, state, type, originator, direction and participant) from SkypeTeams.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
         "requirements": "none",
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
     "get_teams_activity": {
         "name": "Teams - Activity Feed",
         "description": "Parses the Microsoft Teams activity feed (timestamp, display name, message preview, activity type and read state) from SkypeTeams.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
         "requirements": "none",
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
     "get_teams_fileinfo": {
         "name": "Teams - File Info",
         "description": "Parses Microsoft Teams file references (modified time, file name, type, object URL, folder flag and last modified by) from SkypeTeams.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
         "requirements": "none",

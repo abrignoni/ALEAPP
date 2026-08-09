@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_chrome": {
         "name": "Web History",
         "description": "Parses Web History from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
     "get_chromeWebVisits": {
         "name": "Web Visits",
         "description": "Parses Web Visits from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
     "get_chromeSearchTerms": {
         "name": "Search Terms",
         "description": "Parses Search Terms from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",
@@ -83,7 +83,7 @@ __artifacts_v2__ = {
     "get_chromeDownloads": {
         "name": "Downloads",
         "description": "Parses Downloads from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -112,7 +112,7 @@ __artifacts_v2__ = {
     "get_chromeKeywordSearchTerms": {
         "name": "Keyword Search Terms",
         "description": "Parses Keyword Search Terms from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",

@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_chromeMediaHistorySessions": {
         "name": "Media History - Sessions",
         "description": "Parses Media History playback sessions from Chromium Based Browsers",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-01-26",
         "last_update_date": "2021-01-26",
         "requirements": "none",
@@ -18,7 +18,7 @@ __artifacts_v2__ = {
     "get_chromeMediaHistoryPlaybacks": {
         "name": "Media History - Playbacks",
         "description": "Parses Media History playbacks from Chromium Based Browsers",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-01-26",
         "last_update_date": "2021-01-26",
         "requirements": "none",
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
     "get_chromeMediaHistoryOrigins": {
         "name": "Media History - Origins",
         "description": "Parses Media History origins from Chromium Based Browsers",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-01-26",
         "last_update_date": "2021-01-26",
         "requirements": "none",

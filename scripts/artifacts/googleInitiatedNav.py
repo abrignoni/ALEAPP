@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_googleInitiatedNav": {
         "name": "Google Initiated Navigation",
         "description": "Recent navigation destinations (new_recent_history_cache_navigated.cs)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-10-16",
         "last_update_date": "2023-10-16",
         "requirements": "none",

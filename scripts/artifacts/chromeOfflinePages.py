@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_chromeOfflinePages": {
         "name": "Offline Pages",
         "description": "Parses Offline Pages from Chromium Based Browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-04-02",
         "last_update_date": "2020-04-02",
         "requirements": "none",

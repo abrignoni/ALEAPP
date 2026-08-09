@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_appops": {
         "name": "App Ops Permissions",
         "description": "App permission op timestamps from appops.xml (modern schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -25,7 +25,7 @@ __artifacts_v2__ = {
     "get_appops_legacy": {
         "name": "App Ops Permissions - Legacy",
         "description": "App permission op timestamps from appops.xml (Android 9 and below schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",

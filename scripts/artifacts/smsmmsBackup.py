@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_mms_from_backup": {
         "name": "SMS and MMS Backup - MMS",
         "description": "MMS messages recovered from backup.ab telephony backup files",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2024-08-15",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
     "get_sms_from_backup": {
         "name": "SMS and MMS Backup - SMS",
         "description": "SMS messages recovered from backup.ab telephony backup files",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2024-08-15",
         "last_update_date": "2026-07-03",
         "requirements": "none",

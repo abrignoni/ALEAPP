@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_chromeNetworkActionPredictor": {
         "name": "Network Action Predictor",
         "description": "Parses the Network Action Predictor from Chromium Based Browsers",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-07-10",
         "requirements": "none",

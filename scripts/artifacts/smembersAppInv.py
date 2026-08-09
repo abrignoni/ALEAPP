@@ -2,13 +2,13 @@ __artifacts_v2__ = {
     "get_smembersAppInv": {
         "name": "smembersAppInv",
         "description": "Parses the Samsung Members app inventory (last used, display and package name, system-app flag, hashes and classification) from the com_pocketgeek_sdk_app_inventory database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
         "category": "App Interaction",
         "notes": "",
-        "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db',),
+        "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk_app_inventory.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
     }

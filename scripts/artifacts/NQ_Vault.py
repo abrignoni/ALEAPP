@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_NQVault": {
         "name": "NQ Vault Decrypted PINs",
         "description": "Recovers NQ Vault (com.netqin.ps) PINs by reversing the stored Java hashcode",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-05-19",
         "last_update_date": "2023-05-19",
         "requirements": "none",
@@ -16,7 +16,7 @@ __artifacts_v2__ = {
     "get_NQVault_media": {
         "name": "NQ Vault Decrypted Media",
         "description": "Decrypts media hidden by NQ Vault (com.netqin.ps) using the recovered PIN XOR key",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-05-19",
         "last_update_date": "2023-05-19",
         "requirements": "none",

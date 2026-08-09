@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Settings Global",
         "description": "Device-wide settings (name, value and owning package) parsed "
                        "from the settings_global.xml file of each Android user.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "name": "Settings System",
         "description": "Per-user settings (name, value and owning package) parsed "
                        "from the settings_system.xml file of each Android user.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

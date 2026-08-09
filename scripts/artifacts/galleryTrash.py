@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_galleryTrash": {
         "name": "Gallery Trash",
         "description": "Deleted media held in the Samsung Gallery trash (local.db trash table)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-04-25",
         "last_update_date": "2023-04-25",
         "requirements": "none",

@@ -44,9 +44,6 @@ from scripts import blackboxprotobuf
 from scripts.filetype import guess_mime, guess_extension
 from functools import wraps
 
-# LEAPP version unique imports
-from geopy.geocoders import Nominatim
-
 from scripts.html_safe import esc, safe_local_path
 from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_get_media_item, \
     lava_insert_sqlite_media_item, lava_insert_sqlite_media_references, lava_get_media_references, \
@@ -785,6 +782,72 @@ def does_table_exist_in_db(path, table_name):
             logfunc(f"Query error, query={query} Error={str(ex)}")
     return False
 
+def null_absent_columns(path, query):
+    '''Replace references to columns the database lacks with NULL.
+
+    Apps add columns between releases, so a query written against a newer store
+    names columns an older one does not have and the whole statement fails with
+    "no such column", returning nothing. Substituting NULL keeps every column in
+    place, which matters because artifacts consume rows positionally, and keeps
+    the column's name, because they also read rows by name.
+
+    SQLite itself names the missing column, so the query is compiled with EXPLAIN
+    and whatever it objects to is replaced, repeatedly, until it compiles. That
+    avoids guessing which bare words in a statement are column references, which
+    no amount of regex gets reliably right. EXPLAIN compiles without running, so
+    this costs nothing on a large table.
+
+    Returns the query unchanged if the database cannot be read or the error is
+    anything other than a missing column.
+    '''
+    db = open_sqlite_db_readonly(path)
+    if not db:
+        return query
+
+    replaced = []
+    for _ in range(50):                      # a query cannot need more than this
+        try:
+            db.execute('EXPLAIN ' + query)
+            break
+        except sqlite3.OperationalError as ex:
+            match = re.match(r'no such column:\s*(\S+)', str(ex))
+            if not match:
+                break
+            reference = match.group(1)
+            if reference in replaced:
+                break                        # not making progress, leave it alone
+            replaced.append(reference)
+            query = _null_out_column(query, reference)
+        except sqlite3.Error:
+            break
+
+    if replaced:
+        logfunc(f'{os.path.basename(path)}: column(s) absent from this version are reported '
+                f'empty: {", ".join(sorted(replaced))}')
+    return query
+
+
+def _null_out_column(query, reference):
+    '''Replace one column reference with NULL, keeping the output column name.
+
+    A bare NULL renames the output column, and artifacts read rows by name, so
+    where the reference is a select item in its own right it becomes
+    "NULL AS <name>". Inside an expression the enclosing alias already names the
+    column and a plain NULL is correct.
+    '''
+    name = reference.split('.')[-1].strip('"[]`')
+    pattern = re.compile(r'(?<![\w.])' + re.escape(reference) + r'\b'
+                         r'(?P<tail>\s*(?:,|$)|\s+(?i:FROM)\b)?')
+
+    def replace(match):
+        tail = match.group('tail')
+        if tail is None:
+            return 'NULL'
+        return f'NULL AS {name}{tail}'
+
+    return pattern.sub(replace, query)
+
+
 def does_view_exist_in_db(path, table_name):
     '''Checks if a table with specified name exists in an sqlite db'''
     db = open_sqlite_db_readonly(path)
@@ -1482,70 +1545,3 @@ def checkabx(in_path):
         return (False)
     else:
         return (True)
-
-
-def get_raw_fields(latitude, longitude, c, conn):
-    geolocator = Nominatim(user_agent="address-retrieval")
-    location = geolocator.reverse(f"{latitude}, {longitude}")
-    if location:
-        raw_data = location.raw
-        # check if raw_data["address"]["road"] exists
-        not_present = False
-        if "road" in raw_data["address"]:
-            road = raw_data["address"]["road"]
-        elif "hamlet" in raw_data["address"]:
-            road = raw_data["address"]["hamlet"]
-        else:
-            road = 'Not Present'
-            not_present = True
-
-        if "city" in raw_data["address"]:
-            city = raw_data["address"]["city"]
-        elif "town" in raw_data["address"]:
-            city = raw_data["address"]["town"]
-        else:
-            city = 'Not present'
-            not_present = True
-        if not not_present:
-            store_raw_fields(latitude, longitude, road, city,
-                             raw_data["address"]["postcode"], raw_data["address"]["country"], c, conn)
-        # create a dict
-        obtained_data = {"road": road, "city": city, "postcode": raw_data["address"]["postcode"],
-                         "country": raw_data["address"]["country"]}
-        return obtained_data
-    else:
-        print("Location not found.")
-
-
-def store_raw_fields(latitude_value, longitude_value, road_value, city_value, postcode_value, country_value, c, conn):
-    # Check if the entry is already present
-    c.execute('''SELECT * FROM raw_fields WHERE latitude=? AND longitude=?''', (latitude_value, longitude_value))
-    if c.fetchone() is None:
-        # Insert a row of data
-        c.execute('''INSERT INTO raw_fields (latitude, longitude, road, city, postcode, country) 
-                      VALUES (?, ?, ?, ?, ?, ?)''',
-                  (latitude_value, longitude_value, road_value, city_value, postcode_value, country_value))
-
-        # Save (commit) the changes
-        conn.commit()
-
-# Function to check if the raw fields are already present in the database and return them if present or return None
-def check_raw_fields(latitude, longitude, c):
-    # Check if the entry is already present
-    c.execute('''SELECT * FROM raw_fields WHERE latitude=? AND longitude=?''', (latitude, longitude))
-    data = c.fetchone()
-    # convert to dict
-    return data
-
-#Function to check if the user as internet connection to do the geocoding features
-def check_internet_connection():
-    try:
-        geolocator = Nominatim(user_agent="check_internet_connection")
-        geolocator.reverse("39.7495, 8.8077")  # Leiria coordinates
-        logfunc("Internet connection is available.")
-        return True
-    except:  # pylint: disable=bare-except
-        logfunc("Internet connection is not available.")
-        return False
-    
-    

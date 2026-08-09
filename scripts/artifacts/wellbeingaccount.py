@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_wellbeingaccount": {
         "name": "wellbeingaccount",
         "description": "Parses account data from the Google Digital Wellbeing AccountData protobuf file.",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2020-02-25",
         "last_update_date": "2020-02-25",
         "requirements": "none",

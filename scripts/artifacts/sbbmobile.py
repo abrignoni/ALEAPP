@@ -82,7 +82,7 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, \
-    get_sqlite_db_records, logfunc
+    get_sqlite_db_records, logfunc, null_absent_columns
 from scripts.html_safe import esc
 
 
@@ -111,7 +111,7 @@ def cff_purchased_tickets(context):
 
         data_headers = ("Valid from", "Valid until", "Traveler", "Refund State",
                         "Payment method", "Ticket description", "Ticket departure", "Ticket destination")
-        db_records = list(get_sqlite_db_records(source_path, query))
+        db_records = list(get_sqlite_db_records(source_path, null_absent_columns(source_path, query)))
 
         return data_headers, db_records, source_path
     else:
@@ -148,7 +148,7 @@ def cff_searched_places(context):
 
         data_headers = (("Searched timestamp (UTC)", "datetime"), "Title", "Is favorite", "Type",
                         "location of places (link)")
-        db_records = get_sqlite_db_records(source_path, query)
+        db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
         data_list = [
             record[:4] + (coordinate_to_osm(record[4], record[5]),)
@@ -193,7 +193,7 @@ def cff_search_history(context):
 
         data_headers = (("Search timestamp (UTC)", "datetime"), "Departure", "Departure (type)", "Destination",
                         "Destination (type)", "Result Coordinates (link)")
-        db_records = get_sqlite_db_records(source_path, query)
+        db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
         data_list = [
             record[:5] + ((coordinate_to_osm(record[5], record[6]),) if record[5] and record[6] else ("",))
@@ -225,7 +225,7 @@ def cff_travel_cards(context):
         '''
 
         data_headers = ("Name", "Type", "Contract ID", "Valid From", "Valid To", "Contract state")
-        db_records = get_sqlite_db_records(source_path, query)
+        db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
         data_list = [record[:6] for record in db_records]
         return data_headers, data_list, source_path

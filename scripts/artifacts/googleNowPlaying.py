@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_googleNowPlaying": {
         "name": "GoogleNowPlaying",
         "description": "Now Playing history (songs recognised near the device)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-22",
         "last_update_date": "2020-03-22",
         "requirements": "none",

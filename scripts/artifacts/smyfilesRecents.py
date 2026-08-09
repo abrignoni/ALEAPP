@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_smyfilesRecents": {
         "name": "My Files - Recent Files",
         "description": "Parses Samsung My Files recent files (modified timestamp, name, size, path, extension and source) from the My Files database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
     "get_smyfilesRecents_fileinfo": {
         "name": "My Files - Recent Files (FileInfo)",
         "description": "Parses Samsung My Files recent files (recent and modified timestamps, file ID, package, path, size and download, hidden and trashed flags) from the My Files FileInfo database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
@@ -44,7 +44,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, null_absent_columns
 
 
 def _ms_to_utc(value):
@@ -70,10 +70,10 @@ def get_smyfilesRecents(context):
         db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
         try:
-            cursor.execute('''
+            cursor.execute(null_absent_columns(source_path, '''
                 select date_modified, name, size, _data, ext, _source, _description, recent_date
                 from recent_files
-            ''')
+            '''))
             all_rows = cursor.fetchall()
         except Exception as e:
             logfunc(str(e))
@@ -95,7 +95,7 @@ def get_smyfilesRecents_fileinfo(context):
         db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
         try:
-            cursor.execute('''
+            cursor.execute(null_absent_columns(source_path, '''
                 SELECT
                 recent_files.recent_date,
                 recent_files.date_modified,
@@ -107,7 +107,7 @@ def get_smyfilesRecents_fileinfo(context):
                 case recent_files.is_hidden WHEN '1' THEN "True" WHEN '0' THEN "False" end,
                 case recent_files.is_trashed WHEN '1' then "True" when '0' then "False" end
                 from recent_files
-            ''')
+            '''))
             all_rows = cursor.fetchall()
         except Exception as e:
             logfunc(str(e))

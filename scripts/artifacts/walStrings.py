@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_walStrings": {
         "name": "walStrings",
         "description": "If  we only want ascii, use 'ascii_chars_re' below",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-04-17",
         "last_update_date": "2026-07-10",
         "requirements": "none",

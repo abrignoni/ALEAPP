@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_likee": {
         "name": "LIKEE - User Location",
         "description": "Address/location text recovered from LIKEE *_location.kv files",
-        "author": "",
+        "author": "@falcon217836",
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
         "requirements": "none",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     "get_likee_users": {
         "name": "LIKEE - Users",
         "description": "LIKEE user search history (like_pub.db)",
-        "author": "",
+        "author": "@falcon217836",
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
         "requirements": "none",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
     "get_likee_messages": {
         "name": "LIKEE - Messages",
         "description": "LIKEE messages (message_u*.db)",
-        "author": "",
+        "author": "@falcon217836",
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
         "requirements": "none",

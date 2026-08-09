@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_browserCachechrome": {
         "name": "Chrome Browser Cache",
         "description": "Cached web resources extracted from the Chrome browser disk cache",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-01-28",
         "last_update_date": "2023-01-28",
         "requirements": "none",

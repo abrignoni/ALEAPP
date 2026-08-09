@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_skype_call_logs": {
         "name": "Skype - Call Logs",
         "description": "Parses Skype call logs (start and end time, participant IDs and direction) from the Skype live database.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
     "get_skype_messages": {
         "name": "Skype - Messages",
         "description": "Parses Skype messages (send time, thread, content, direction, sender and recipient IDs and attachments) from the Skype live database.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
     "get_skype_contacts": {
         "name": "Skype - Contacts",
         "description": "Parses Skype contacts (entry ID and name) from the Skype live database.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",
         "requirements": "none",

@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "samsung_wellbeing": {
         "name": "Samsung Digital Wellbeing",
         "description": "Parses Samsung Digital Wellbeing app usage events (timestamp, event ID, package and event type) from dwbCommon.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-05-21",
         "last_update_date": "2026-08-03",
         "requirements": "none",
@@ -38,6 +38,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
         "output_types": "standard",
         "artifact_icon": "clock",
+        "sample_data": {
+            "galaxys10_a10": "1 row",
+            "sharon_a14": "1 row",
+        },
     }
 }
 

@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_calllogs": {
         "name": "Call Logs",
         "description": "Parses call logs (number, start and end time, call type, direction and name) from the contacts and logs provider databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-17",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -54,11 +54,19 @@ def get_calllogs(context):
         if os.path.basename(file_name) not in ('contacts2.db', 'contacts.db', 'logs.db'):
             continue  # skip -journal and other files
 
+        if does_table_exist_in_db(file_name, 'calls'):
+            table = 'calls'
+        elif does_table_exist_in_db(file_name, 'logs'):
+            table = 'logs'
+        else:
+            # Current Android keeps the call log in calllog.db rather than the
+            # contacts provider, so contacts2.db carries neither table. That file
+            # has nothing for this artifact; the calllog module covers the rest.
+            continue
+
         source_path = file_name
         db = open_sqlite_db_readonly(file_name)
-        calls_table_exists = does_table_exist_in_db(file_name, 'calls')
         cursor = db.cursor()
-        table = 'calls' if calls_table_exists else 'logs'
         try:
             cursor.execute(f'''
                 SELECT number, date/1000, (date/1000 + duration) as end_date,
