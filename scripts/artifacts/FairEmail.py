@@ -61,7 +61,8 @@ from scripts.html_safe import safe_source
 @artifact_processor
 def get_fair_mail_accounts(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
         
     query = ('''
         SELECT
@@ -98,7 +99,8 @@ def get_fair_mail_accounts(context):
 @artifact_processor
 def get_fair_mail_contacts(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
     
     query = ('''
         SELECT
