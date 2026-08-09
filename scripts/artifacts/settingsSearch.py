@@ -10,6 +10,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": (
             "*/com.android.settings.intelligence/databases/search_index.db*",
+            "*/com.google.android.settings.intelligence/databases/search_index.db*",
         ),
         "output_types": "standard",
         "artifact_icon": "search",
