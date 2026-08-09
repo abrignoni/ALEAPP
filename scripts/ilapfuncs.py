@@ -756,17 +756,20 @@ def does_column_exist_in_db(path, table_name, col_name):
     '''Checks if a specific col exists'''
     db = open_sqlite_db_readonly(path)
     col_name = col_name.lower()
-    try:
-        db.row_factory = sqlite3.Row # For fetching columns by name
+    if db:
         query = f"pragma table_info('{table_name}');"
-        cursor = db.cursor()
-        cursor.execute(query)
-        all_rows = cursor.fetchall()
-        for row in all_rows:
-            if row['name'].lower() == col_name:
-                return True
-    except sqlite3.Error as ex:
-        logfunc(f"Query error, query={query} Error={str(ex)}")
+        try:
+            db.row_factory = sqlite3.Row # For fetching columns by name
+            cursor = db.cursor()
+            cursor.execute(query)
+            all_rows = cursor.fetchall()
+            for row in all_rows:
+                if row['name'].lower() == col_name:
+                    return True
+        except sqlite3.Error as ex:
+            logfunc(f"Query error, query={query} Error={str(ex)}")
+        finally:
+            db.close()
     return False
 
 def does_table_exist_in_db(path, table_name):
@@ -780,6 +783,8 @@ def does_table_exist_in_db(path, table_name):
                 return True
         except sqlite3.Error as ex:
             logfunc(f"Query error, query={query} Error={str(ex)}")
+        finally:
+            db.close()
     return False
 
 def null_absent_columns(path, query):
@@ -805,21 +810,26 @@ def null_absent_columns(path, query):
         return query
 
     replaced = []
-    for _ in range(50):                      # a query cannot need more than this
-        try:
-            db.execute('EXPLAIN ' + query)
-            break
-        except sqlite3.OperationalError as ex:
-            match = re.match(r'no such column:\s*(\S+)', str(ex))
-            if not match:
+    try:
+        for _ in range(50):                  # a query cannot need more than this
+            try:
+                db.execute('EXPLAIN ' + query)
                 break
-            reference = match.group(1)
-            if reference in replaced:
-                break                        # not making progress, leave it alone
-            replaced.append(reference)
-            query = _null_out_column(query, reference)
-        except sqlite3.Error:
-            break
+            except sqlite3.OperationalError as ex:
+                match = re.match(r'no such column:\s*(\S+)', str(ex))
+                if not match:
+                    break
+                reference = match.group(1)
+                if reference in replaced:
+                    break                    # not making progress, leave it alone
+                replaced.append(reference)
+                query = _null_out_column(query, reference)
+            except sqlite3.Error:
+                break
+    finally:
+        # Artifacts call this once per query, so an unclosed handle here is one
+        # leak per query for the whole run rather than a one-off.
+        db.close()
 
     if replaced:
         logfunc(f'{os.path.basename(path)}: column(s) absent from this version are reported '
@@ -859,6 +869,8 @@ def does_view_exist_in_db(path, table_name):
                 return True
         except sqlite3.Error as ex:
             logfunc(f"Query error, query={query} Error={str(ex)}")
+        finally:
+            db.close()
     return False
 
 
