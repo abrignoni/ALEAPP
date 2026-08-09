@@ -128,7 +128,8 @@ from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sq
 @artifact_processor
 def healthmate_accounts(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
     file_found = str(files_found[0])
 
     query = '''
@@ -205,7 +206,8 @@ def healthmate_accounts(context):
 @artifact_processor
 def healthmate_trackings(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     room_db = next((str(f) for f in files_found if 'room-healthmate' in str(f).lower()), None)
     wiscale_db = next((str(f) for f in files_found if 'withings-scale' in str(f).lower()), None)
@@ -283,7 +285,8 @@ def healthmate_trackings(context):
 @artifact_processor
 def healthmate_locations(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     file_found = str(files_found[0])
     query = '''
@@ -334,7 +337,8 @@ def healthmate_locations(context):
 @artifact_processor
 def healthmate_messages(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT *
@@ -375,7 +379,8 @@ def healthmate_messages(context):
 @artifact_processor
 def healthmate_contacts(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = '''
         SELECT *
@@ -422,7 +427,8 @@ def healthmate_contacts(context):
 @artifact_processor
 def healthmate_measurements(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = '''
         Select *
@@ -501,7 +507,8 @@ def healthmate_measurements(context):
 @artifact_processor
 def healthmate_devices(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT *

@@ -22,7 +22,8 @@ def get_MSAuth_accounts(context):
     files_found = context.get_files_found()
     logfunc("Processing data for Microsoft Authenticator - Accounts")
 
-    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')]
+    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')
+                   and not str(x).endswith('journal')]
 
     data_list = []
     source_path = ''

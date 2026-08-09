@@ -60,7 +60,8 @@ from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sq
 @artifact_processor
 def romeo_dating_messages(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     main_db = ''
     data_list = []
@@ -138,7 +139,8 @@ def romeo_dating_messages(context):
 @artifact_processor
 def romeo_dating_contacts(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
 
     main_db = ''
@@ -237,7 +239,8 @@ def romeo_dating_contacts(context):
 @artifact_processor
 def romeo_dating_accounts(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
     main_db = ''
 
     for file_found in files_found:

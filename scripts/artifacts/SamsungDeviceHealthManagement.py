@@ -92,7 +92,8 @@ from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sq
 @artifact_processor
 def sdhms_config_reloads(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT
@@ -128,7 +129,8 @@ def sdhms_config_reloads(context):
 @artifact_processor
 def sdhms_netstat(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT
@@ -190,7 +192,8 @@ def _temperature_query(source_path, query):
 @artifact_processor
 def sdhms_temperature(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT
@@ -247,7 +250,8 @@ def sdhms_temperature(context):
 @artifact_processor
 def sdhms_cpustats(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT
