@@ -75,7 +75,8 @@ FIELDS = [
 def get_garmin_dailies(context):
     files_found = context.get_files_found()
     logfunc("Processing data for Garmin User Dailies")
-    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')]
+    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')
+                   and not str(x).endswith('journal')]
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()

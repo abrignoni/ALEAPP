@@ -46,7 +46,7 @@ __artifacts_v2__ = {
     },
 }
 
-from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, \
+from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, null_absent_columns, \
     convert_unix_ts_to_utc
 
 
@@ -91,13 +91,13 @@ def samsungStoryServiceInfo(context):
     source_path = ''
 
     for file_found in _unique_db_files(context, 'dme.db'):
-        db_records = get_sqlite_db_records(file_found, '''
+        db_records = get_sqlite_db_records(file_found, null_absent_columns(file_found, '''
             SELECT datetaken, date_added, title, _data, media_type, latitude, longitude,
                    country_name, locality, poi_name, poi_city, street_name, scene_names,
                    face_count, is_delete, moment_id
             FROM info
             ORDER BY datetaken DESC
-        ''')
+        '''))
 
         for row in db_records:
             source_path = file_found
@@ -148,12 +148,12 @@ def samsungStoryServiceMoments(context):
     source_path = ''
 
     for file_found in _unique_db_files(context, 'dme.db'):
-        db_records = get_sqlite_db_records(file_found, '''
+        db_records = get_sqlite_db_records(file_found, null_absent_columns(file_found, '''
             SELECT start_time, end_time, creation_time, title, media_count, country_name,
                    location, poi_info, street_name_info, type, story_id, moment_id
             FROM moment
             ORDER BY start_time DESC
-        ''')
+        '''))
 
         for row in db_records:
             source_path = file_found

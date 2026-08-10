@@ -25,7 +25,7 @@ import inspect
 from html import escape
 from scripts.ilapfuncs import artifact_processor, \
     get_file_path, get_sqlite_db_records, check_in_embedded_media, \
-    logfunc, convert_unix_ts_to_utc
+    logfunc, convert_unix_ts_to_utc, null_absent_columns
 
 class App:
     def __init__(self, package):
@@ -63,7 +63,7 @@ def appIcons(context):
 
     data_headers = ('App name', 'Package name', ('Main icon', 'media'), ('Icons', 'media'))
 
-    db_records = get_sqlite_db_records(source_path, query)
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for record in db_records:
         icon_last_update = convert_unix_ts_to_utc(record[2])

@@ -1584,8 +1584,16 @@ def get_telegramChatHints(context):
     names = _name_lookup(db_file)
     query = 'SELECT did, type, rating, date FROM chat_hints ORDER BY rating DESC'
     for did, kind, rating, date in get_sqlite_db_records(db_file, query) or []:
+        # chat_hints has been seen holding a negative date, which is not a Unix
+        # timestamp and made the conversion raise, losing every row of the
+        # artifact. What such a value means is not established, so it is left
+        # blank rather than guessed at, and the other columns still report.
+        try:
+            timestamp = convert_unix_ts_to_utc(date) if date and date > 0 else ''
+        except (ValueError, OSError, OverflowError):
+            timestamp = ''
         data_list.append((
-            convert_unix_ts_to_utc(date) if date else '',
+            timestamp,
             did,
             names.get(did, '') or names.get(abs(did), ''),
             rating,

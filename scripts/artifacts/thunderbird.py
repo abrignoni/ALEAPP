@@ -73,7 +73,8 @@ def _map_uuid_to_account(file):
 @artifact_processor
 def thunderbird_accounts(context):
     files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
      
     query = ('''
         SELECT *

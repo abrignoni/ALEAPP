@@ -59,6 +59,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungStoryService |
 | samsungWifiDatabases |
 | sbbmobile |
+| settingsSearch |
 | shistorylog |
 | slack |
 | swellbeing |

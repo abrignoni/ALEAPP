@@ -98,6 +98,7 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import os
 from hashlib import sha256
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
@@ -110,16 +111,20 @@ def _ms_to_utc(value):
 
 
 def _viber_dbs(files_found):
-    data_db = messages_db = prefs_db = ''
+    """Pick the three Viber stores by exact name.
+
+    The glob returns every file in the databases directory, and matching on a
+    suffix is not selective enough: viberpay_data and viber_unicode_emoji_data
+    also end in "_data", so the last one seen won and the queries ran against
+    the wrong store.
+    """
+    wanted = {'viber_data': '', 'viber_messages': '', 'viber_prefs': ''}
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith('_messages'):
-            messages_db = file_found
-        elif file_found.endswith('_data'):
-            data_db = file_found
-        elif file_found.endswith('viber_prefs'):
-            prefs_db = file_found
-    return data_db, messages_db, prefs_db
+        name = os.path.basename(file_found)
+        if name in wanted and not wanted[name]:
+            wanted[name] = file_found
+    return wanted['viber_data'], wanted['viber_messages'], wanted['viber_prefs']
 
 
 @artifact_processor

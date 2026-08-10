@@ -23,7 +23,7 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records, convert_unix_ts_to_utc
+from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records, null_absent_columns, convert_unix_ts_to_utc
 
 @artifact_processor
 def extract_android_auto(context):
@@ -50,7 +50,7 @@ def extract_android_auto(context):
 
     data_headers = (('Connection Time', 'datetime'), 'Manufacturer', 'Model', 'Year', 'Bluetooth MAC', 'Wi-Fi SSID', 'Wi-Fi BSSID', 'Wi-Fi Password', 'Head Unit Make', 'Head Unit Model', 'Head Unit Software Version', 'Vehicle Client ID')
 
-    db_records = get_sqlite_db_records(source_path, query)
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for record in db_records:
         connectiontime = convert_unix_ts_to_utc(record[0])
