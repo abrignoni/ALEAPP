@@ -37,8 +37,9 @@ __artifacts_v2__ = {
             "under Download/.com_coloros_smartsidebar/transferdock/ in a "
             "Base64-named folder encoding the time it was added to the dock. "
             "Media dragged out of apps is saved as OPLUSDRAG_<source app>_"
-            "<view>_<local time> files, preserving content from ephemeral apps "
-            "(e.g. Snapchat) long after it is gone from the source app. Text "
+            "<view>_<local time> files; the cached copy persists independently "
+            "of the source app (observed with Snapchat content on the test "
+            "devices this artifact was built from). Text "
             "selections and links are stored as transferdock_<ms>.txt and "
             "link_file_<ms>.link files; other files keep their original names."
         ),
@@ -189,7 +190,7 @@ def get_smartSidebarFileDock(context):
     data_headers = (
         ('Added Timestamp', 'datetime'), 'Item Type', ('Media', 'media'), 'Content',
         'Source App', 'Source View', 'Capture Time (Device Local)', 'File Name',
-        ('File Size', 'bytes'), 'Local File ID', 'Group UUID', 'Source Path')
+        'File Size', 'Local File ID', 'Group UUID', 'Source Path')
     return data_headers, data_list, source_path
 
 
@@ -367,6 +368,6 @@ def get_smartSidebarFileDockDb(context):
     data_headers = (
         ('Created Timestamp', 'datetime'), ('Updated Timestamp', 'datetime'), 'Record',
         'Item Type', 'Content', 'Content Complete', 'File Name', 'Original Source',
-        'MIME Type', ('File Size', 'bytes'), 'MD5', 'Status', 'Cached Path',
+        'MIME Type', 'File Size', 'MD5', 'Status', 'Cached Path',
         'Local File ID', 'Group UUID', 'MediaStore URI', 'User ID')
     return data_headers, data_list, '\n'.join(source_paths)
