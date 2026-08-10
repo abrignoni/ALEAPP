@@ -2,7 +2,7 @@
 
 block_cipher = None
 
-from PyInstaller.utils.hooks import collect_data_files
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 # mister_skinnylegs discovers its plugins at runtime via a filesystem glob
 # (PLUGIN_PATH.glob("*_plugin.py")), so PyInstaller's import-graph analysis
@@ -21,6 +21,16 @@ a = Analysis(
       *msl_plugin_datas
    ],
    hiddenimports=[
+      # Artifacts are bundled as data files and imported from disk at runtime,
+      # so PyInstaller's import-graph analysis never sees what they import.
+      # hook-plugin_loader.py was meant to cover this but targets a bare
+      # 'plugin_loader' module that no longer exists (it moved to
+      # scripts.plugin_loader), so it never fires. Collect the packages
+      # artifacts import wholesale; a missing submodule here is a startup
+      # crash in the frozen build only.
+      *collect_submodules('Crypto'),
+      *collect_submodules('google.protobuf'),
+      *collect_submodules('leapp_functions'),
       'bcrypt',
       'bencoding',
       'bs4',
