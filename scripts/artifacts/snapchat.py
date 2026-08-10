@@ -52,9 +52,11 @@ __artifacts_v2__ = {
         "name": "Snapchat - Messages (arroyo.db)",
         "description": "Chat message records from the conversation_message table in arroyo.db, "
                        "both the rows a normal read returns and rows that are present only before "
-                       "the write-ahead log is applied. Sender and participant UUIDs are resolved "
-                       "against the Friend table in main.db, and message text is decoded from the "
-                       "message_content protobuf on rows where content_type is 1.",
+                       "the write-ahead log is applied, distinguished by the Record Origin column. "
+                       "Sender and participant UUIDs are resolved against the Friend table in "
+                       "main.db, and message text is decoded from the message_content protobuf on "
+                       "rows where content_type is 1. WAL frames are not parsed, so absence of a "
+                       "message here is not evidence it did not exist.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07", "last_update_date": "2026-08-07",
         "requirements": "blackboxprotobuf", "category": "Snapchat",
@@ -111,6 +113,20 @@ __artifacts_v2__ = {
                  "among rows where created_on_device is set (the schema comments in arroyo.db "
                  "define that column as set when the message was created on this device). Both "
                  "paths agreed on the tested image. The column is left blank when neither resolves.\n"
+                 "WHAT THIS DOES NOT RECOVER, measured rather than assumed. This artifact does not "
+                 "parse WAL frames. On the tested image a one-off frame parser written during "
+                 "development read a further 29 conversation_message rows that neither view "
+                 "reports, across 10 conversations, 9 of which appear in neither view of the "
+                 "conversation table; creation timestamps were readable for 21 of those 29 and "
+                 "span 2025-11-18 to 2026-07-24. ABSENCE OF A MESSAGE FROM THIS ARTIFACT IS NOT "
+                 "EVIDENCE THAT THE MESSAGE DID NOT EXIST. A shared SQLite recovery capability "
+                 "covering WAL frames is being built separately. The run log records how many "
+                 "frames the write-ahead log of the image being processed actually holds, which "
+                 "is the per-device measure of what is left uncovered.\n"
+                 "To re-derive a Recovered row without this tool, query the database with its log "
+                 "ignored and confirm the same row is absent from a normal read, for example: "
+                 "sqlite3 \"file:arroyo.db?immutable=1\" \"SELECT * FROM conversation_message "
+                 "WHERE client_message_id = 962\"\n"
                  "Not covered: media files on disk are not linked to message rows, and reactions, "
                  "message_state history and Kraken epoch encrypted content are not parsed.",
         "paths": ('*/com.snapchat.android/databases/arroyo.db*',
@@ -136,9 +152,11 @@ __artifacts_v2__ = {
         "name": "Snapchat - Conversations (arroyo.db)",
         "description": "Conversation records from the conversation and feed_entry tables in "
                        "arroyo.db, both the rows a normal read returns and rows that are present "
-                       "only before the write-ahead log is applied. Participant UUIDs are decoded "
-                       "from the conversation_metadata protobuf and resolved against the Friend "
-                       "table in main.db.",
+                       "only before the write-ahead log is applied, distinguished by the Record "
+                       "Origin column. Participant UUIDs are decoded from the conversation_metadata "
+                       "protobuf and resolved against the Friend table in main.db. WAL frames are "
+                       "not parsed, so absence of a conversation here is not evidence it did not "
+                       "exist.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07", "last_update_date": "2026-08-07",
         "requirements": "blackboxprotobuf", "category": "Snapchat",
@@ -171,7 +189,14 @@ __artifacts_v2__ = {
                  "arroyo.db describe as when the conversation was locally left by the user.\n"
                  "Message Count is a count of conversation_message rows carrying that "
                  "client_conversation_id in the matching view, which is not necessarily the number "
-                 "of messages exchanged in the conversation.",
+                 "of messages exchanged in the conversation.\n"
+                 "WHAT THIS DOES NOT RECOVER, measured rather than assumed. This artifact does not "
+                 "parse WAL frames. On the tested image a one-off frame parser written during "
+                 "development read conversation_message rows belonging to 9 conversations that "
+                 "appear in neither view of the conversation table and are therefore absent from "
+                 "this artifact entirely. ABSENCE OF A CONVERSATION HERE IS NOT EVIDENCE THAT IT "
+                 "DID NOT EXIST. A shared SQLite recovery capability covering WAL frames is being "
+                 "built separately.",
         "paths": ('*/com.snapchat.android/databases/arroyo.db*',
                   '*/com.snapchat.android/databases/main.db*'),
         "output_types": "standard", "artifact_icon": "messages",
@@ -260,12 +285,13 @@ __artifacts_v2__ = {
 import datetime
 import os
 import sqlite3
+import struct
 import xml.etree.ElementTree as ET
 
 import bcrypt
 
 from scripts.ilapfuncs import artifact_processor, decode_protobuf, get_sqlite_db_path, \
-    open_sqlite_db_readonly
+    logfunc, open_sqlite_db_readonly
 
 _MEO_CODES = {}
 _XML_UNIX_KEYS = {'INSTALL_ON_DEVICE_TIMESTAMP', 'LONG_CLIENT_ID_DEVICE_TIMESTAMP',
@@ -581,6 +607,46 @@ def _provenance(source_path, origin):
     return (_ORIGIN_RECOVERED, _METHOD_WAL_DIFF, f'{name} (pre-checkpoint)')
 
 
+def _log_wal_extent(files_found):
+    '''Log how much write-ahead log this artifact leaves unparsed, per image.
+
+    Reads the WAL header and the 24-byte frame headers only; no page images are loaded.
+    A frame whose salt pair does not match the WAL header belongs to a previous log
+    generation that the current one has cycled past, so it holds older content still on
+    disk. Reporting both counts gives the examiner the size of what is not covered here.
+    '''
+    wal_path = _find(files_found, 'arroyo.db-wal')
+    if not wal_path:
+        return
+    try:
+        with open(wal_path, 'rb') as handle:
+            header = handle.read(32)
+            if len(header) < 32:
+                return
+            magic, page_size = struct.unpack('>I', header[:4])[0], struct.unpack('>I', header[8:12])[0]
+            if magic not in (0x377F0682, 0x377F0683) or page_size < 512:
+                return
+            salts = struct.unpack('>2I', header[16:24])
+            frame_size = 24 + page_size
+            total = max(0, (os.path.getsize(wal_path) - 32) // frame_size)
+            current = 0
+            for index in range(total):
+                handle.seek(32 + index * frame_size)
+                frame_header = handle.read(24)
+                if len(frame_header) < 24:
+                    total = index
+                    break
+                if struct.unpack('>2I', frame_header[8:16]) == salts:
+                    current += 1
+    except (OSError, struct.error, ValueError):
+        return
+    logfunc(f'Snapchat arroyo.db-wal holds {total} frames of {page_size} bytes '
+            f'({current} in the current log generation, {total - current} from previous '
+            f'generations). This artifact does not parse WAL frames, so records held only in '
+            f'them are not reported and absence of a message from the Snapchat arroyo.db '
+            f'artifacts is not evidence that it did not exist.')
+
+
 def _by_creation(row):
     '''Sort key on the first column, tolerating rows whose timestamp is blank.
 
@@ -668,6 +734,7 @@ def get_snapchat_arroyo_messages(context):
     source_path = _find(files_found, 'arroyo.db')
     friends = _friends(_find(files_found, 'main.db'))
     local_user_id = _local_user_id(files_found, source_path, friends)
+    _log_wal_extent(files_found)
 
     data_list = _message_rows(
         _rows(source_path, _MESSAGE_SQL), friends, _participants(source_path, friends),
