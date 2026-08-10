@@ -58,7 +58,7 @@ __artifacts_v2__ = {
                        "rows where content_type is 1. WAL frames are not parsed, so absence of a "
                        "message here is not evidence it did not exist.",
         "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-07", "last_update_date": "2026-08-10",
+        "creation_date": "2026-08-07", "last_update_date": "2026-08-11",
         "requirements": "blackboxprotobuf", "category": "Snapchat",
         "notes": "Newer Snapchat builds keep conversations in arroyo.db; the older Snapchat - "
                  "Messages artifact reads main.db and tcspahn.db and returns nothing on them.\n"
@@ -112,6 +112,10 @@ __artifacts_v2__ = {
                 "directionSentValue": "Outgoing",
                 "timeColumn": "Creation Timestamp",
                 "senderColumn": "Sender Username",
+                # Shows Live or Recovered under every bubble, so a recovered row cannot be
+                # read as a live message. Record Origin is populated on every row, unlike
+                # Recovery Method and Recovery Location, which stay available in the picker.
+                "extraColumns": ["Record Origin"],
             }
         },
     },
