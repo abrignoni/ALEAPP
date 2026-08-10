@@ -41,7 +41,7 @@ __artifacts_v2__ = {
         },
         "artifact_icon": "message",
         "sample_data": {
-            "anne_a15": "Android 15 | com.linkedin.android vc 198600 | 0 rows",
+            "anne_a15": "Android 15 | com.linkedin.android vc 198600 | 1 row",
         }
     }
 }

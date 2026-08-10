@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "artifact_icon": "chart-bar-popular",
         "sample_data": {
             "anne_a15": "Android 15 | com.sec.android.sdhms | 1582 rows",
-            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 0 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 839 rows",
             "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 1154 rows",
             "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 324 rows",
             "sharon_a14": "Android 14 | com.sec.android.sdhms | 1160 rows",
@@ -54,10 +54,10 @@ __artifacts_v2__ = {
         "artifact_icon": "thermometer",
         "sample_data": {
             "anne_a15": "Android 15 | com.sec.android.sdhms | 567 rows",
-            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 0 rows",
-            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 0 rows",
-            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 0 rows",
-            "sharon_a14": "Android 14 | com.sec.android.sdhms | 0 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 1237 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 356 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 535 rows",
+            "sharon_a14": "Android 14 | com.sec.android.sdhms | 443 rows",
         }
     },
     "sdhms_cpustats": {

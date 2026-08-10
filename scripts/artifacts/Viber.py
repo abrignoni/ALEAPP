@@ -19,8 +19,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "phone-call",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 0 rows",
-            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 5 rows",
             "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 0 rows",
         },
     },
@@ -37,9 +37,9 @@ __artifacts_v2__ = {
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 0 rows",
-            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 0 rows",
-            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.viber.voip vc 1281010 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.viber.voip vc 1231070 | 14 rows",
+            "sharon_a14": "Android 14 | com.viber.voip vc 1233020 | 23 rows",
         },
     },
     "get_Viber_messages": {
