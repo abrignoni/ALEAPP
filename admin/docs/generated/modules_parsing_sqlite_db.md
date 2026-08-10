@@ -165,6 +165,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chromeTopSites |
 | citymapper |
 | cmh |
+| cmhTags |
 | contacts |
 | deviceHealthServices_Battery |
 | discordChats |
