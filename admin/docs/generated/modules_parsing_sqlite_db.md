@@ -63,6 +63,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | settingsSearch |
 | shistorylog |
 | slack |
+| smartSidebarFileDock |
 | swellbeing |
 | swissmeteo |
 | telegramAndroid |
