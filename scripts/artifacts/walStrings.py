@@ -1,67 +1,89 @@
+__artifacts_v2__ = {
+    "get_walStrings": {
+        "name": "walStrings",
+        "description": "If  we only want ascii, use 'ascii_chars_re' below",
+        "author": "@abrignoni",
+        "creation_date": "2020-04-17",
+        "last_update_date": "2026-07-10",
+        "requirements": "none",
+        "category": "SQLite Journaling",
+        "notes": "",
+        "paths": ('*/*-wal', '*/*-journal'),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "file",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | 721 rows",
+            "samsunga53_a14": "Android 14 | 1916 rows",
+            "anne_a15": "Android 15 | 870 rows",
+            "hc_pixel8pro_a16": "Android 16 | 528 rows",
+            "kevin_pocox7_a15": "Android 15 | 520 rows",
+            "pixel7a_a14": "Android 14 | 511 rows",
+            "samsungs20_a13": "Android 13 | 792 rows",
+            "sharon_a14": "Android 14 | 901 rows",
+            "russell_pixel6a_a13": "Android 13 | 456 rows",
+            "userb2_a13": "Android 13 | 527 rows",
+        },
+        "html_columns": ['Report'],
+    }
+}
+
 import os
 import re
 import string
-
 from pathlib import Path
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, is_platform_windows
 
-control_chars = ''.join(map(chr, range(0,32))) + ''.join(map(chr, range(127,160)))
+from scripts.html_safe import safe_local_link
+from scripts.ilapfuncs import artifact_processor
+
+control_chars = ''.join(map(chr, range(0, 32))) + ''.join(map(chr, range(127, 160)))
 not_control_char_re = re.compile(f'[^{control_chars}]' + '{4,}')
 # If  we only want ascii, use 'ascii_chars_re' below
 printable_chars_for_re = string.printable.replace('\\', '\\\\').replace('[', '\\[').replace(']', '\\]')
 ascii_chars_re = re.compile(f'[{printable_chars_for_re}]' + '{4,}')
 
-def get_walStrings(files_found, report_folder, seeker, wrap_text):
+
+@artifact_processor
+def get_walStrings(context):
+    files_found = context.get_files_found()
+    report_folder = context.get_report_folder()
     x = 1
     data_list = []
     for file_found in files_found:
-        filesize = Path(file_found).stat().st_size
-        if filesize == 0:
+        # The seeker can list files it could not extract (e.g. zero-byte
+        # archive members), so the path may not exist on disk.
+        path = Path(file_found)
+        if not path.is_file() or path.stat().st_size == 0:
             continue
 
         journalName = os.path.basename(file_found)
-        outputpath = os.path.join(report_folder, str(x) + '_' + journalName + '.txt') # name of file in txt
+        outputpath = os.path.join(report_folder, str(x) + '_' + journalName + '.txt')  # name of file in txt
 
-        level2, level1 = (os.path.split(outputpath))
-        level2 = (os.path.split(level2)[1])
+        level2, level1 = os.path.split(outputpath)
+        level2 = os.path.split(level2)[1]
         final = level2 + '/' + level1
-        
-        unique_items = set() # For deduplication of strings found
-        with open(outputpath, 'w') as g:
-            with open(file_found, errors="ignore") as f:  # Python 3.x
-                data =  f.read()
-                #for match in not_control_char_re.finditer(data): # This gets all unicode chars, can include lot of garbage if you only care about English, will miss out other languages
-                for match in ascii_chars_re.finditer(data): # Matches ONLY Ascii (old behavior) , good if you only care about English
+
+        unique_items = set()  # For deduplication of strings found
+        with open(outputpath, 'w', encoding='utf-8', errors='ignore') as g:
+            with open(file_found, encoding='utf-8', errors="ignore") as f:
+                data = f.read()
+                for match in ascii_chars_re.finditer(data):  # Matches ONLY Ascii
                     if match.group() not in unique_items:
                         g.write(match.group())
                         g.write('\n')
                         unique_items.add(match.group())
-            g.close()
 
         if unique_items:
-            out = (f'<a href="{final}" style = "color:blue" target="_blank">{journalName}</a>')
-            data_list.append((out, file_found))
+            # Report-relative link to the strings file written beside the report.
+            # safe_local_link() escapes the label and refuses any target that would
+            # leave the report folder.
+            out = safe_local_link(final, journalName)
+            data_list.append((out, context.get_relative_path(file_found)))
         else:
             try:
-                os.remove(outputpath) # delete empty file
+                os.remove(outputpath)  # delete empty file
             except OSError:
                 pass
         x = x + 1
 
-    location = ''
-    description = 'ASCII strings extracted from SQLite journal and WAL files.'
-    report = ArtifactHtmlReport('Strings - SQLite Journal & WAL')
-    report.start_artifact_report(report_folder, 'Strings - SQLite Journal & WAL', description)
-    report.add_script()
     data_headers = ('Report', 'Location')
-    report.write_artifact_data_table(data_headers, data_list, location, html_escape=False)
-    report.end_artifact_report()
-
-__artifacts__ = {
-        "walStrings": (
-                "SQLite Journaling",
-                ('*/*-wal', '*/*-journal'),
-                get_walStrings)
-}
-    
+    return data_headers, data_list, ''

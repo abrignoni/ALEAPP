@@ -1,13 +1,41 @@
-import sqlite3
-import textwrap
+# pylint: disable=W0702
+__artifacts_v2__ = {
+    "get_DocList": {
+        "name": "DocList",
+        "description": "Parses Google Drive file metadata (name, owner, type, created/modified/opened dates, URIs, MD5 and size) from the DocList.db database.",
+        "author": "@stark4n6",
+        "creation_date": "2020-12-21",
+        "last_update_date": "2020-12-21",
+        "requirements": "none",
+        "category": "Google Drive",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.docs/databases/DocList.db*',),
+        "output_types": "standard",
+        "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.apps.docs vc 214164863 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.apps.docs vc 211210540 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.docs vc 214512167 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.docs vc 214173331 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.docs vc 213440084 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.docs vc 214258185 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.apps.docs vc 214207580 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.apps.docs vc 213692448 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.docs vc 213183212 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.docs vc 213806576 | 0 rows",
+        },
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
-def get_DocList(files_found, report_folder, seeker, wrap_text):
-    
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
+
+@artifact_processor
+def get_DocList(context):
+    files_found = context.get_files_found()
+
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     try:
         cursor.execute('''
@@ -20,7 +48,7 @@ def get_DocList(files_found, report_folder, seeker, wrap_text):
             owner,
             case lastModifiedTime
                 when 0 then ''
-                else datetime("lastModifiedTime"/1000, 'unixepoch') 
+                else datetime("lastModifiedTime"/1000, 'unixepoch')
             end as lastModifiedTime,
             case lastOpenedTime
                 when 0 then ''
@@ -35,37 +63,19 @@ def get_DocList(files_found, report_folder, seeker, wrap_text):
             size
         from EntryView
         ''')
-
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
     except:
-        usageentries = 0
-    
-    if usageentries > 0:
-        report = ArtifactHtmlReport('DocList')
-        report.start_artifact_report(report_folder, 'DocList')
-        report.add_script()
-        data_headers = ('Created Date','File Name','Owner','Modified Date','Opened Date','Last Modifier Account Alias','Last Modifier Account Name','File Type','Shareable URI','HTML URI','MD5 Checkusm','Size') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],))
+        all_rows = []
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Google Drive - DocList'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Google Drive - DocList'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No Google Drive - DocList data available')
-    
+    data_list = []
+    for row in all_rows:
+        data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],convert_human_ts_to_utc(row[3]),convert_human_ts_to_utc(row[4]),row[5],row[6],row[7],row[8],row[9],row[10],row[11],))
+
     db.close()
 
-__artifacts__ = {
-        "DocList'": (
-                "Google Drive",
-                ('*/com.google.android.apps.docs/databases/DocList.db*'),
-                get_DocList)
-}
+    data_headers = (
+        ('Created Date', 'datetime'), 'File Name', 'Owner', ('Modified Date', 'datetime'),
+        ('Opened Date', 'datetime'), 'Last Modifier Account Alias', 'Last Modifier Account Name',
+        'File Type', 'Shareable URI', 'HTML URI', 'MD5 Checksum', 'Size',
+    )
+    return data_headers, data_list, source_path

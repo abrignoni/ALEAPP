@@ -3,7 +3,6 @@ __artifacts_v2__ = {
         "name": "Samsung Trash",
         "description": "Parses Samsung trash records from com.samsung.android.providers.trash",
         "author": "Kalinko",
-        "version": "0.1",
         "creation_date": "2026-02-21",
         "last_update_date": "2026-02-21",
         "requirements": "inspect, pathlib",
@@ -15,20 +14,23 @@ __artifacts_v2__ = {
             "*/storage/*/Android/.Trash/*",
         ),
         "output_types": "standard",
-        "artifact_icon": "trash-2",
+        "artifact_icon": "trash",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.providers.trash | 3 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.providers.trash | 0 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.providers.trash | 29 rows",
+        },
     }
 }
 
-import inspect
 from pathlib import Path
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, convert_unix_ts_to_utc, get_sqlite_db_records
 
 
 @artifact_processor
-def samsungTrash(files_found, report_folder, seeker, _wrap_text):
-    artifact_info = inspect.stack()[0]
-
+def samsungTrash(context):
+    files_found = context.get_files_found()
     query = """
         SELECT
             _id [File ID],
@@ -71,7 +73,7 @@ def samsungTrash(files_found, report_folder, seeker, _wrap_text):
 
             if matched_media_path:
                 media_item = check_in_media(
-                    artifact_info, report_folder, seeker, files_found + [matched_media_path], matched_media_path, Path(matched_media_path).name
+                    matched_media_path, Path(matched_media_path).name
                 )
 
             data_list.append((
@@ -88,7 +90,7 @@ def samsungTrash(files_found, report_folder, seeker, _wrap_text):
                 row[7],   # package context of deletion
                 row[8],   # user_id of deletion
                 row[11],  # extra with JSON oinside - addtional info not parsed atm.
-                file_found
+                context.get_relative_path(file_found)
             ))
 
     data_headers = (

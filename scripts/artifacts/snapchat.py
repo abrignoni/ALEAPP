@@ -1,411 +1,607 @@
-import bcrypt
-import xml.etree.ElementTree as ET
+# pylint: disable=W0718
+__artifacts_v2__ = {
+    "get_snapchat_feeds": {
+        "name": "Snapchat - Feeds",
+        "description": "Snapchat feed (last interaction per conversation)",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "requirements": "none", "category": "Snapchat", "notes": "",
+        "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
+        "output_types": "standard", "artifact_icon": "rss",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
+        },
+    },
+    "get_snapchat_friends": {
+        "name": "Snapchat - Friends",
+        "description": "Snapchat friends / contacts",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "requirements": "none", "category": "Snapchat", "notes": "",
+        "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
+        "output_types": "standard", "artifact_icon": "users",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 4 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 4 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 6 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 5 rows",
+        },
+    },
+    "get_snapchat_messages": {
+        "name": "Snapchat - Messages",
+        "description": "Snapchat chat messages",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "requirements": "none", "category": "Snapchat", "notes": "",
+        "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
+        "output_types": "standard", "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
+        },
+    },
+    "get_snapchat_arroyo_messages": {
+        "name": "Snapchat - Messages (arroyo.db)",
+        "description": "Chat message records from the conversation_message table in arroyo.db. "
+                       "Sender and participant UUIDs are resolved against the Friend table in "
+                       "main.db, and message text is decoded from the message_content protobuf on "
+                       "rows where content_type is 1.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-07", "last_update_date": "2026-08-07",
+        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "notes": "Newer Snapchat builds store conversations in arroyo.db. The Snapchat - Messages "
+                 "artifact reads main.db and tcspahn.db and returns no rows against those builds.\n"
+                 "The glob keeps the -wal and -shm sidecars, because the write-ahead log carries "
+                 "much of the live state. On the tested image the database file read on its own "
+                 "(immutable=1) yielded 11 conversation_message rows, while the same file read with "
+                 "its WAL applied yielded 8.\n"
+                 "Message text is taken from the message_content protobuf at nested field path "
+                 "4 > 4 > 2 > 1. That path is derived from the structure observed in the tested "
+                 "image, not from a published schema. The decode is cross-checked against the SQL "
+                 "columns of the same row: protobuf 2 > 1 matches sender_id, 3 > 1 > 1 > 1 matches "
+                 "client_conversation_id, 4 > 2 matches content_type, and 6 > 1 and 6 > 2 match "
+                 "creation_timestamp and read_timestamp.\n"
+                 "In the tested image the 3 rows with content_type 1 carried a UTF-8 string at that "
+                 "path. The 5 rows with content_type 0, 2 and 3 carried media and sticker file "
+                 "names, CDN URLs, media dimensions and encryption key and IV fields, but no "
+                 "plaintext body; this artifact does not decrypt media payloads. Values of "
+                 "content_type other than 1 are reported as the stored integer with no label, "
+                 "because no source documenting the enum has been verified.\n"
+                 "Message Direction compares sender_id against the local account id, which is taken "
+                 "from LAST_LOGGED_IN_USERNAME in identity_persistent_store.xml resolved through "
+                 "Friend.userId in main.db, and failing that from the single distinct sender_id "
+                 "among rows where created_on_device is set (the schema comments in arroyo.db "
+                 "define that column as set when the message was created on this device). Both "
+                 "paths agreed on the tested image. The column is left blank when neither resolves.\n"
+                 "Not covered: media files on disk are not linked to message rows, and reactions, "
+                 "message_state history and Kraken epoch encrypted content are not parsed.",
+        "paths": ('*/com.snapchat.android/databases/arroyo.db*',
+                  '*/com.snapchat.android/databases/main.db*',
+                  '*/com.snapchat.android/shared_prefs/identity_persistent_store.xml'),
+        "output_types": "standard", "artifact_icon": "message",
+        "sample_data": {
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 8 rows",
+        },
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Conversation ID",
+                "textColumn": "Message Text",
+                "directionColumn": "Message Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Creation Timestamp",
+                "senderColumn": "Sender Username",
+            }
+        },
+    },
+    "get_snapchat_arroyo_conversations": {
+        "name": "Snapchat - Conversations (arroyo.db)",
+        "description": "Conversation records from the conversation and feed_entry tables in "
+                       "arroyo.db. Participant UUIDs are decoded from the conversation_metadata "
+                       "protobuf and resolved against the Friend table in main.db.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-07", "last_update_date": "2026-08-07",
+        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "notes": "Rows are the union of client_conversation_id in the conversation and feed_entry "
+                 "tables, so a conversation present in only one of the two is still reported.\n"
+                 "Participant IDs are read from the conversation_metadata protobuf, at repeated "
+                 "field 3, sub-path 1 > 1, as 16 raw bytes formatted as a UUID. On the tested image "
+                 "this agreed for each of the 4 conversations with the feed_entry.participants "
+                 "column, which stores the same UUIDs as a plain concatenation of 16-byte values, "
+                 "and each of the 4 distinct sender_id values in conversation_message appeared in "
+                 "a resolved participant list.\n"
+                 "Conversation Type is reported as the stored integer with no label, because no "
+                 "source documenting the enum has been verified. Tombstoned At Timestamp is the "
+                 "conversation.tombstoned_at_timestamp column, which the schema comments in "
+                 "arroyo.db describe as when the conversation was locally left by the user.\n"
+                 "Message Count is a count of conversation_message rows carrying that "
+                 "client_conversation_id in this database, which is not necessarily the number of "
+                 "messages exchanged in the conversation.",
+        "paths": ('*/com.snapchat.android/databases/arroyo.db*',
+                  '*/com.snapchat.android/databases/main.db*'),
+        "output_types": "standard", "artifact_icon": "messages",
+        "sample_data": {
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 4 rows",
+        },
+    },
+    "get_snapchat_memories": {
+        "name": "Snapchat - Memories",
+        "description": "Snapchat memories entries",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "requirements": "none", "category": "Snapchat", "notes": "",
+        "paths": ('*/com.snapchat.android/databases/memories.db*',),
+        "output_types": "standard", "artifact_icon": "photo",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 4 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
+        },
+    },
+    "get_snapchat_meo": {
+        "name": "Snapchat - MEO My Eyes Only",
+        "description": "Snapchat My Eyes Only confidential data; recovers the 4-digit passcode via bcrypt",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "requirements": "none", "category": "Snapchat",
+        "notes": "Passcode recovery brute-forces the 4-digit MEO code (bcrypt); can be slow.",
+        "paths": ('*/com.snapchat.android/databases/memories.db*',),
+        "output_types": "standard", "artifact_icon": "eye-off",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 1 row",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
+        },
+    },
+    "get_snapchat_snap_media": {
+        "name": "Snapchat - Snap Media",
+        "description": "Snapchat memories snap media (incl. geolocation)",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "requirements": "none", "category": "Snapchat", "notes": "",
+        "paths": ('*/com.snapchat.android/databases/memories.db*',),
+        "output_types": "all", "artifact_icon": "photo",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 5 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 0 rows",
+        },
+    },
+    "get_snapchat_identity": {
+        "name": "Snapchat - Identity Persistent Store",
+        "description": "Snapchat identity_persistent_store.xml",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "requirements": "none", "category": "Snapchat", "notes": "",
+        "paths": ('*/com.snapchat.android/shared_prefs/identity_persistent_store.xml',),
+        "output_types": "standard", "artifact_icon": "user",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 12 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 10 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 12 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 13 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 12 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 12 rows",
+        },
+    },
+    "get_snapchat_login_signup": {
+        "name": "Snapchat - Login Signup Store",
+        "description": "Snapchat LoginSignupStore.xml",
+        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
+        "requirements": "none", "category": "Snapchat", "notes": "",
+        "paths": ('*/com.snapchat.android/shared_prefs/LoginSignupStore.xml',),
+        "output_types": "standard", "artifact_icon": "login-2",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 2 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 3 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 2 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 3 rows",
+        },
+    }
+}
+
 import datetime
+import sqlite3
+import xml.etree.ElementTree as ET
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.artifacts.mewe import APP_NAME
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
+import bcrypt
 
-APP_NAME = 'Snapchat'
+from scripts.ilapfuncs import artifact_processor, decode_protobuf, open_sqlite_db_readonly
 
-# Last actions taken in the application and who did them
-FEED_QUERY = '''
-    SELECT
-        DATETIME(lastInteractionTimestamp/1000, 'unixepoch', 'localtime'),
-        key,
-        displayInteractionType,
-        DATETIME(lastReadTimestamp/1000, 'unixepoch', 'localtime'),
-        lastReader,
-        DATETIME(lastWriteTimestamp/1000, 'unixepoch', 'localtime'),
-        lastWriter,
-        lastWriteType
-    FROM Feed
-'''
+_MEO_CODES = {}
+_XML_UNIX_KEYS = {'INSTALL_ON_DEVICE_TIMESTAMP', 'LONG_CLIENT_ID_DEVICE_TIMESTAMP',
+                  'FIRST_LOGGED_IN_ON_DEVICE_TIMESTAMP'}
+# blackboxprotobuf raises these when a blob does not decode as protobuf.
+_PB_ERRORS = (ValueError, TypeError, IndexError, KeyError, AttributeError)
 
-# Contacts and friends
-#
-# NOTE(s) FOR EXAMINERS:
-#   1. it is possible to remove the WHERE clause to see a more extensive
-#      list, but there could be old data not related to the current
-#      accounts'
-#   2. since everyone is linked to "teamsnapchat" user, the addedTimestamp
-#      field indicates when the user was created
-FRIEND_QUERY = '''
-    SELECT 
-        case addedTimestamp
-			when 0 then ''
-			else datetime(addedTimestamp/1000, 'unixepoch', 'localtime')
-		end,
-        username,
-        userId,
-        displayName,
-        phone,
-        birthday
-    FROM Friend
-    WHERE addedTimestamp IS NOT NULL;
-'''
 
-# Chat messages
-CHAT_MESSAGE_QUERY = '''
-    SELECT
-        DATETIME(timestamp/1000, 'unixepoch', 'localtime') as timestamp,
-        CASE
-            WHEN seenTimestamp IS NULL THEN "UNREAD"
-            ELSE DATETIME(seenTimestamp/1000, 'unixepoch', 'localtime')
-        END seenTimestamp,
-        senderId,
-        username as senderName,
-        displayName as senderDisplayName,
-        type,
-        content
-    FROM Message
-    JOIN Friend on senderId = Friend._id;
-'''
-
-MEMORIES_ENTRY_QUERY = '''
-    SELECT
-        DATETIME(create_time/1000, 'unixepoch', 'localtime'),
-        _id,
-        snap_ids,
-        CASE is_private
-            WHEN 1 THEN "YES"
-            ELSE "NO"
-        END is_private,
-        cached_servlet_media_formats
-    FROM memories_entry
-'''
-
-MEO_QUERY = '''
-    SELECT
-        user_id,
-        hashed_passcode,
-        master_key,
-        master_key_iv
-    FROM memories_meo_confidential
-'''
-
-SNAP_MEDIA_QUERY = '''
-    SELECT
-        DATETIME(create_time/1000, 'unixepoch', 'localtime'),
-        memories_snap._id,
-        media_id,
-        memories_entry_id,
-        time_zone_id,
-        format,
-        width,
-        height,
-        duration,
-        CASE has_overlay_image
-            WHEN 1 THEN "YES"
-            ELSE "NO"
-        END has_overlay_image,
-        overlay_size,
-        overlay_redirect_info,
-        CASE front_facing
-            WHEN 1 THEN "YES"
-            ELSE "NO"
-        END front_facing,
-        size,
-        CASE has_location
-            WHEN 1 THEN "YES"
-            ELSE "NO"
-        END has_location,
-        latitude,
-        longitude,
-        snap_create_user_agent,
-        thumbnail_size,
-        thumbnail_redirect_info
-    FROM memories_snap
-    JOIN memories_media ON memories_media._id = media_id;
-'''
-
-# ATTENTION: this function can slow down the processing
-meo_codes = {} # to optimize the search in case of multiple meo with same hash
-def _decrypt_meo_code(hash):
+def _ms_to_utc(value):
+    if not value:
+        return ''
     try:
-        return meo_codes[hash]
-    except KeyError:
-        # the passcode is 4-digit and numeric, O(10^4)
-        for p1 in range(10):
-            for p2 in range(10):
-                for p3 in range(10):
-                    for p4 in range(10):
-                        psw = f'{p1}{p2}{p3}{p4}'
-                        if bcrypt.checkpw(psw.encode(), hash.encode()):
-                            meo_codes[hash] = psw
-                            return psw
-        return 'Could not find any passcode'
-
-
-def _get_text_from_blob(blob, start_byte, len_byte, type=None):
-    if type != None and type != 'text':
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
         return ''
 
-    length = blob[len_byte]
-    msg = blob[start_byte:start_byte+length].decode()
-    return msg
+
+def _find(files_found, *suffixes):
+    for f in files_found:
+        f = str(f)
+        if f.endswith(suffixes):
+            return f
+    return ''
 
 
-def _perform_query(cursor, query):
+def _rows(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
     try:
-        cursor.execute(query)
+        cursor.execute(sql)
         rows = cursor.fetchall()
-        return len(rows), rows
-    except Exception as e:
-        return 0, None
-
-
-def _make_reports(title, data_headers, data_list, report_folder, db_file_name, tl_bool):
-    report = ArtifactHtmlReport(title)
-    report.start_artifact_report(report_folder, title)
-    report.add_script()
-    report.write_artifact_data_table(data_headers, data_list, db_file_name)
-    report.end_artifact_report()
-
-    tsv(report_folder, data_headers, data_list, title, db_file_name)
-    if tl_bool == True:
-        timeline(report_folder, title, data_list, data_headers)
-
-def _parse_feeds(feeds_count, rows, report_folder, db_file_name):
-    logfunc(f'{feeds_count} feeds found')
-
-    data_headers = (
-        'Last Interaction Timestamp','Key', 'Display Interaction Type',
-        'Last Read Timestamp', 'Last Reader', 'Last Write Timestamp',
-        'Last Writer', 'Last Write Type'
-    )
-    data_list = [(
-        row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]
-    ) for row in rows]
-    
-    tl_bool = True
-
-    _make_reports(f'{APP_NAME} - Feeds', data_headers, data_list, report_folder, db_file_name, tl_bool)
-
-
-def _parse_friends(friends_count, rows, report_folder, db_file_name):
-    logfunc(f'{friends_count} friends found')
-
-    data_headers = (
-        'Added Timestamp', 'Username', 'User ID', 'Display Name', 'Phone Nr',
-        'Birthday'
-    )
-    data_list = [(
-        row[0], row[1], row[2], row[3], row[4], row[5]
-    ) for row in rows]
-    
-    tl_bool = True
-
-    _make_reports(f'{APP_NAME} - Friends', data_headers, data_list, report_folder, db_file_name, tl_bool)
-
-
-def _parse_messages(messages_count, rows, report_folder, db_file_name):
-    logfunc(f'{messages_count} messages found')
-
-    data_headers = (
-        'Creation Timestamp', 'Seen Timestamp', 'Sender ID', 'Sender Username',
-        'Sender Display Name', 'Message Type', 'Text',
-    )
-    data_list = [(
-        row[0], row[1], row[2], row[3], row[4], row[5],
-        _get_text_from_blob(row[6], 0x2c, 0x28, row[5])
-    ) for row in rows]
-
-    tl_bool = True
-
-    _make_reports(f'{APP_NAME} - Messages', data_headers, data_list, report_folder, db_file_name, tl_bool)
-
-
-def _parse_memories_entry(memories_count, rows, report_folder, db_file_name):
-    logfunc(f'{memories_count} memories found')
-
-    data_headers = (
-        'Timestamp', 'Memory ID', 'Snap ID', 'Is Private', 'Media Format',
-    )
-    data_list = [(
-        row[0], row[1], _get_text_from_blob(row[2], 0x20, 0x1c),
-        row[3], _get_text_from_blob(row[4], 0x20, 0x1c)
-    ) for row in rows]
-
-    tl_bool = True
-
-    _make_reports(f'{APP_NAME} - Memories', data_headers, data_list, report_folder, db_file_name, tl_bool)
-
-
-def _parse_meo(meo_count, rows, report_folder, db_file_name):
-    logfunc(f'{meo_count} MEO (My Eyes Only) found')
-
-    # NOTE(s) FOR EXAMINERS:
-    #   if the processing gets to slow, remove the 'Passcode' column and
-    #   also the _decrypt_meo_code() function invocation
-    data_headers = (
-        'User ID', 'Hashed Passcode', 'Passcode', 'Master Key', 'Master Key IV'
-    )
-    data_list = [(
-        row[0], row[1], _decrypt_meo_code(row[1]), row[2], row[3]
-    ) for row in rows]
-    
-    tl_bool = False
-
-    _make_reports(f'{APP_NAME} - MEO (My Eyes Only)', data_headers, data_list, report_folder, db_file_name, tl_bool)
-
-
-def _parse_snap_media(snap_media_count, rows, report_folder, db_file_name):
-    logfunc(f'{snap_media_count} Snap Media found')
-
-    data_headers = (
-        'Create Time', 'ID', 'Media ID', 'Memories Entry ID', 'Time Zone ID', 'Format',
-        'Width', 'Heigth', 'Duration', 'Has Overlay', 'Overlay Size', 'Overlay Info',
-        'Front Facing', 'Size', 'Has Location Info', 'Latitude', 'Longitude',
-        'Snap User Agent', 'Thumbnail Size', 'Thumbnail Info'
-    )
-    data_list = [(
-        row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7],
-        row[8], row[9], row[10], row[11], row[12], row[13], row[14],
-        row[15], row[16], row[17], row[18], row[19]
-    ) for row in rows]
-    
-    tl_bool = True
-
-    _make_reports(f'{APP_NAME} - Snap Media', data_headers, data_list, report_folder, db_file_name, tl_bool)
-
-
-def _parse_main_db(db_file, db_file_name, report_folder):
-    db = open_sqlite_db_readonly(db_file)
-    cursor = db.cursor()
-
-    feeds_count, rows = _perform_query(cursor, FEED_QUERY)
-    if feeds_count > 0 and rows:
-        _parse_feeds(feeds_count, rows, report_folder, db_file_name)
-    else:
-        logfunc(f'No {APP_NAME} feeds data found')
-
-    friends_count, rows = _perform_query(cursor, FRIEND_QUERY)
-    if friends_count > 0 and rows:
-        _parse_friends(friends_count, rows, report_folder, db_file_name)
-    else:
-        logfunc(f'No {APP_NAME} friends data found')
-
-    messages_count, rows = _perform_query(cursor, CHAT_MESSAGE_QUERY)
-    if messages_count > 0 and rows:
-        _parse_messages(messages_count, rows, report_folder, db_file_name)
-    else:
-        logfunc(f'No {APP_NAME} messages data found')
-
-    cursor.close()
+    except sqlite3.Error:
+        rows = []
     db.close()
+    return rows
 
 
-def _parse_memories_db(db_file, db_file_name, report_folder):
-    db = open_sqlite_db_readonly(db_file)
-    cursor = db.cursor()
-
-    memories_count, rows = _perform_query(cursor, MEMORIES_ENTRY_QUERY)
-    if memories_count > 0 and rows:
-        _parse_memories_entry(memories_count, rows, report_folder, db_file_name)
-    else:
-        logfunc(f'No {APP_NAME} memories data found')
-
-    meo_count, rows = _perform_query(cursor, MEO_QUERY)
-    if meo_count > 0 and rows:
-        _parse_meo(meo_count, rows, report_folder, db_file_name)
-    else:
-        logfunc(f'No {APP_NAME} MEO (My Eyes Only) data found')
-
-    snap_media_count, rows = _perform_query(cursor, SNAP_MEDIA_QUERY)
-    if snap_media_count > 0 and rows:
-        _parse_snap_media(snap_media_count, rows, report_folder, db_file_name)
-    else:
-        logfunc(f'No {APP_NAME} snap media memories data found')
-
-    cursor.close()
-    db.close()
+def _text_from_blob(blob, start_byte, len_byte, type_=None):
+    if type_ is not None and type_ != 'text':
+        return ''
+    try:
+        length = blob[len_byte]
+        return blob[start_byte:start_byte + length].decode('utf-8', 'replace')
+    except (TypeError, IndexError, AttributeError):
+        return ''
 
 
-def _parse_xml(xml_file, xml_file_name, report_folder, title, report_name):
-    logfunc(f'{title} found')
-
-    tree = ET.parse(xml_file)
-    data_headers = ('Key', 'Value')
-    data_list = []
-    unix_stamps = ['INSTALL_ON_DEVICE_TIMESTAMP','LONG_CLIENT_ID_DEVICE_TIMESTAMP','FIRST_LOGGED_IN_ON_DEVICE_TIMESTAMP']
-
-    root = tree.getroot()
-    for node in root:
-        value = None
+def _decrypt_meo_code(hashed):
+    if hashed in _MEO_CODES:
+        return _MEO_CODES[hashed]
+    try:
+        hash_bytes = hashed.encode()
+    except (AttributeError, UnicodeEncodeError):
+        return ''
+    for code in range(10000):  # 4-digit numeric passcode, O(10^4)
+        psw = f'{code:04d}'
         try:
-            value = node.attrib['value']
-        except:
-            value = node.text
-            
-        if node.attrib['name'] in unix_stamps:
-            value = datetime.datetime.utcfromtimestamp(int(value)/1000).strftime('%Y-%m-%d %H:%M:%S.%f')
+            if bcrypt.checkpw(psw.encode(), hash_bytes):
+                _MEO_CODES[hashed] = psw
+                return psw
+        except (ValueError, TypeError):
+            return ''
+    return 'Could not find any passcode'
+
+
+@artifact_processor
+def get_snapchat_feeds(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'main.db', 'tcspahn.db')
+    rows = _rows(source_path, '''
+        SELECT lastInteractionTimestamp, key, displayInteractionType, lastReadTimestamp, lastReader,
+               lastWriteTimestamp, lastWriter, lastWriteType FROM Feed
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], _ms_to_utc(r[3]), r[4], _ms_to_utc(r[5]), r[6], r[7])
+                 for r in rows]
+    data_headers = (('Last Interaction Timestamp', 'datetime'), 'Key', 'Display Interaction Type',
+                    ('Last Read Timestamp', 'datetime'), 'Last Reader',
+                    ('Last Write Timestamp', 'datetime'), 'Last Writer', 'Last Write Type')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_snapchat_friends(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'main.db', 'tcspahn.db')
+    rows = _rows(source_path, '''
+        SELECT addedTimestamp, username, userId, displayName, phone, birthday
+        FROM Friend WHERE addedTimestamp IS NOT NULL
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5]) for r in rows]
+    data_headers = (('Added Timestamp', 'datetime'), 'Username', 'User ID', 'Display Name',
+                    'Phone Nr', 'Birthday')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_snapchat_messages(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'main.db', 'tcspahn.db')
+    rows = _rows(source_path, '''
+        SELECT timestamp, seenTimestamp, senderId, username, displayName, type, content
+        FROM Message JOIN Friend on senderId = Friend._id
+    ''')
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5],
+                  _text_from_blob(r[6], 0x2c, 0x28, r[5])) for r in rows]
+    data_headers = (('Creation Timestamp', 'datetime'), ('Seen Timestamp', 'datetime'), 'Sender ID',
+                    'Sender Username', 'Sender Display Name', 'Message Type', 'Text')
+    return data_headers, data_list, source_path
+
+
+def _pb_get(node, key):
+    '''Read one field out of a blackboxprotobuf dict.
+
+    blackboxprotobuf splits a field whose repeats decode to different typedefs into
+    'N-1', 'N-2' keys, so fall back to the first such variant when the plain key is absent.
+    '''
+    if not isinstance(node, dict):
+        return None
+    if key in node:
+        return node[key]
+    for name in sorted(node):
+        if name.startswith(f'{key}-'):
+            return node[name]
+    return None
+
+
+def _pb_walk(node, *path):
+    '''Walk a blackboxprotobuf dict, taking the first element of any repeated field.'''
+    current = node
+    for key in path:
+        if isinstance(current, list):
+            current = current[0] if current else None
+        current = _pb_get(current, key)
+    if isinstance(current, list):
+        current = current[0] if current else None
+    return current
+
+
+def _pb_text(node, *path):
+    value = _pb_walk(node, *path)
+    if isinstance(value, (bytes, bytearray)):
+        return bytes(value).decode('utf-8', 'replace')
+    if isinstance(value, str):
+        return value
+    return ''
+
+
+def _uuid_from_bytes(value):
+    '''Format a 16-byte protobuf value as a canonical UUID string.'''
+    if not isinstance(value, (bytes, bytearray)) or len(value) != 16:
+        return ''
+    digits = bytes(value).hex()
+    return (f'{digits[0:8]}-{digits[8:12]}-{digits[12:16]}-'
+            f'{digits[16:20]}-{digits[20:32]}')
+
+
+def _decode(blob):
+    if not blob:
+        return None
+    try:
+        values, _typedef = decode_protobuf(bytes(blob))
+    except _PB_ERRORS:
+        return None
+    return values if isinstance(values, dict) else None
+
+
+def _friends(main_db_path):
+    '''Map Friend.userId to (username, displayName) from main.db.'''
+    friends = {}
+    for user_id, username, display_name in _rows(
+            main_db_path, 'SELECT userId, username, displayName FROM Friend'):
+        if user_id:
+            friends[user_id] = (username or '', display_name or '')
+    return friends
+
+
+def _friend_name(friends, user_id, index=0):
+    return friends.get(user_id, ('', ''))[index]
+
+
+def _participants(arroyo_path, friends):
+    '''Map client_conversation_id to (participant ids, participant usernames).'''
+    participants = {}
+    for conversation_id, blob in _rows(
+            arroyo_path, 'SELECT client_conversation_id, conversation_metadata FROM conversation'):
+        entries = _pb_get(_decode(blob), '3')
+        if isinstance(entries, dict):
+            entries = [entries]
+        ids = []
+        for entry in entries if isinstance(entries, list) else []:
+            user_id = _uuid_from_bytes(_pb_walk(entry, '1', '1'))
+            if user_id and user_id not in ids:
+                ids.append(user_id)
+        names = [_friend_name(friends, user_id) or user_id for user_id in ids]
+        participants[conversation_id] = (', '.join(ids), ', '.join(names))
+    return participants
+
+
+def _local_user_id(files_found, arroyo_path, friends):
+    '''The signed-in account's user id, or '' when it cannot be established.
+
+    Preferred source is LAST_LOGGED_IN_USERNAME in identity_persistent_store.xml resolved
+    through Friend.userId. Failing that, the single distinct sender of the messages the
+    arroyo.db schema comments describe as created on this device.
+    '''
+    username = ''
+    for key, value in _parse_xml_rows(_find(files_found, 'identity_persistent_store.xml')):
+        if key == 'LAST_LOGGED_IN_USERNAME' and value:
+            username = value
+    if username:
+        for user_id, (friend_username, _display) in friends.items():
+            if friend_username == username:
+                return user_id
+    senders = {row[0] for row in _rows(
+        arroyo_path,
+        'SELECT DISTINCT sender_id FROM conversation_message WHERE created_on_device = 1') if row[0]}
+    return senders.pop() if len(senders) == 1 else ''
+
+
+def _yes_no(value):
+    return 'YES' if value else 'NO'
+
+
+@artifact_processor
+def get_snapchat_arroyo_messages(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'arroyo.db')
+    friends = _friends(_find(files_found, 'main.db'))
+    participants = _participants(source_path, friends)
+    local_user_id = _local_user_id(files_found, source_path, friends)
+
+    data_list = []
+    for row in _rows(source_path, '''
+            SELECT creation_timestamp, read_timestamp, sender_id, content_type, message_content,
+                   message_state_type, is_saved, is_viewed_by_user, created_on_device,
+                   remote_media_count, replies_count, quoted_server_message_id,
+                   client_conversation_id, client_message_id, server_message_id
+            FROM conversation_message ORDER BY creation_timestamp
+    '''):
+        (created, read, sender_id, content_type, blob, state, saved, viewed, on_device,
+         media_count, replies, quoted_id, conversation_id, client_message_id, server_message_id) = row
+        text = _pb_text(_decode(blob), '4', '4', '2', '1') if content_type == 1 else ''
+        if not local_user_id or not sender_id:
+            direction = ''
         else:
-            pass
-        
-        data_list.append((node.attrib['name'], value))
+            direction = 'Outgoing' if sender_id == local_user_id else 'Incoming'
+        data_list.append((
+            _ms_to_utc(created), _ms_to_utc(read),
+            _friend_name(friends, sender_id), _friend_name(friends, sender_id, 1), sender_id,
+            direction, participants.get(conversation_id, ('', ''))[1], text, content_type, state,
+            _yes_no(saved), _yes_no(viewed), _yes_no(on_device), media_count, replies, quoted_id,
+            conversation_id, client_message_id, server_message_id))
 
-    tl_bool = False
-    
-    _make_reports(f'{APP_NAME} - {report_name}', data_headers, data_list, report_folder, xml_file_name, tl_bool)
+    data_headers = (('Creation Timestamp', 'datetime'), ('Read Timestamp', 'datetime'),
+                    'Sender Username', 'Sender Display Name', 'Sender ID', 'Message Direction',
+                    'Conversation Participants', 'Message Text', 'Content Type (as stored)',
+                    'Message State Type', 'Is Saved', 'Is Viewed By User', 'Created On Device',
+                    'Remote Media Count', 'Replies Count', 'Quoted Server Message ID',
+                    'Conversation ID', 'Client Message ID', 'Server Message ID')
+    return data_headers, data_list, source_path
 
 
-def get_snapchat(files_found, report_folder, seeker, wrap_text):
-    db_file = None
-    db_file_name = None
-    xml_file = None
-    xml_file_name = None
+@artifact_processor
+def get_snapchat_arroyo_conversations(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'arroyo.db')
+    friends = _friends(_find(files_found, 'main.db'))
+    participants = _participants(source_path, friends)
 
-    main_processed = False
-    memories_processed = False
-    identity_persistent_processed = False
-    login_signup_store_processed = False
-    user_session_processed = False
+    conversations = {row[0]: row[1:] for row in _rows(source_path, '''
+        SELECT client_conversation_id, creation_timestamp, tombstoned_at_timestamp, send_state_type
+        FROM conversation
+    ''')}
+    feeds = {row[0]: row[1:] for row in _rows(source_path, '''
+        SELECT client_conversation_id, last_updated_timestamp, display_timestamp,
+               streak_expiration_timestamp_ms, conversation_title, conversation_type, streak_count,
+               feedItemCreator, last_chat_sender, tombstoned
+        FROM feed_entry
+    ''')}
+    counts = dict(_rows(source_path, '''
+        SELECT client_conversation_id, COUNT(*) FROM conversation_message
+        GROUP BY client_conversation_id
+    '''))
 
-    for ff in files_found:
-        ###
-        # Note:
-        # the rest of the functions ware tested against a "main.db" instance.
-        # Snapchat decided to change name of their DBs in latest versions of
-        # the app. The queries can fail on "tcspahn" but the interesting
-        # tables have a very similar schema, so I hope they won't :)
-        ###
-        if (ff.endswith('main.db') or ff.endswith('tcspahn.db')) and not main_processed:
-            db_file = ff
-            db_file_name = ff.replace(seeker.data_folder, '')
-            _parse_main_db(db_file, db_file_name, report_folder)
-            main_processed = True
-        elif ff.endswith('memories.db') and not memories_processed:
-            db_file = ff
-            db_file_name = ff.replace(seeker.data_folder, '')
-            _parse_memories_db(db_file, db_file_name, report_folder)
-            memories_processed = True
-        elif ff.endswith('identity_persistent_store.xml') and not identity_persistent_processed:
-            xml_file = ff
-            xml_file_name = ff.replace(seeker.data_folder, '')
-            _parse_xml(xml_file, xml_file_name, report_folder, 'identity_persistent_store.xml', 'Identity Persistent')
-            identity_persistent_processed = True
-        elif ff.endswith('LoginSignupStore.xml') and not login_signup_store_processed:
-            xml_file = ff
-            xml_file_name = ff.replace(seeker.data_folder, '')
-            _parse_xml(xml_file, xml_file_name, report_folder, 'LoginSignupStore.xml', 'Login Signup')
-            login_signup_store_processed = True
-        elif ff.endswith('user_session_shared_pref.xml') and not user_session_processed:
-            xml_file = ff
-            xml_file_name = ff.replace(seeker.data_folder, '')
-            _parse_xml(xml_file, xml_file_name, report_folder, 'user_session_shared_pref.xml', 'User Session Shared')
-            user_session_processed = True
+    data_list = []
+    for conversation_id in sorted(set(conversations) | set(feeds)):
+        created, tombstoned_at, send_state = conversations.get(conversation_id, (None, None, ''))
+        (updated, displayed, streak_expiry, title, conversation_type, streak, creator,
+         last_sender, tombstoned) = feeds.get(conversation_id, (None,) * 9)
+        data_list.append((
+            _ms_to_utc(created), _ms_to_utc(updated), _ms_to_utc(displayed),
+            _ms_to_utc(tombstoned_at), _ms_to_utc(streak_expiry), title,
+            participants.get(conversation_id, ('', ''))[1],
+            participants.get(conversation_id, ('', ''))[0],
+            counts.get(conversation_id, 0), streak, conversation_type, send_state,
+            _friend_name(friends, creator), creator, _friend_name(friends, last_sender), last_sender,
+            _yes_no(tombstoned), conversation_id))
 
-    artifacts = [
-        main_processed, memories_processed, identity_persistent_processed,
-        login_signup_store_processed, user_session_processed
-    ]
-    if not (True in artifacts):
-        logfunc(f'{APP_NAME} data not found')
+    data_headers = (('Creation Timestamp', 'datetime'), ('Last Updated Timestamp', 'datetime'),
+                    ('Display Timestamp', 'datetime'), ('Tombstoned At Timestamp', 'datetime'),
+                    ('Streak Expiration Timestamp', 'datetime'), 'Conversation Title',
+                    'Participants', 'Participant IDs', 'Message Count', 'Streak Count',
+                    'Conversation Type (as stored)', 'Send State Type', 'Feed Item Creator',
+                    'Feed Item Creator ID', 'Last Chat Sender', 'Last Chat Sender ID',
+                    'Tombstoned', 'Conversation ID')
+    return data_headers, data_list, source_path
 
-__artifacts__ = {
-        "snapchat": (
-                "Snapchat",
-                ('*/com.snapchat.android/databases/*.db', '*/com.snapchat.android/shared_prefs/*.xml'),
-                get_snapchat)
-}
+
+@artifact_processor
+def get_snapchat_memories(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'memories.db')
+    rows = _rows(source_path, '''
+        SELECT create_time, _id, snap_ids, CASE is_private WHEN 1 THEN 'YES' ELSE 'NO' END,
+               cached_servlet_media_formats FROM memories_entry
+    ''')
+    data_list = [(_ms_to_utc(r[0]), r[1], _text_from_blob(r[2], 0x20, 0x1c), r[3],
+                  _text_from_blob(r[4], 0x20, 0x1c)) for r in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Memory ID', 'Snap ID', 'Is Private', 'Media Format')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_snapchat_meo(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'memories.db')
+    rows = _rows(source_path,
+                 'SELECT user_id, hashed_passcode, master_key, master_key_iv FROM memories_meo_confidential')
+    data_list = [(r[0], r[1], _decrypt_meo_code(r[1]), r[2], r[3]) for r in rows]
+    data_headers = ('User ID', 'Hashed Passcode', 'Passcode', 'Master Key', 'Master Key IV')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_snapchat_snap_media(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'memories.db')
+    rows = _rows(source_path, '''
+        SELECT create_time, memories_snap._id, media_id, memories_entry_id, time_zone_id, format,
+               width, height, duration,
+               CASE has_overlay_image WHEN 1 THEN 'YES' ELSE 'NO' END,
+               overlay_size, overlay_redirect_info,
+               CASE front_facing WHEN 1 THEN 'YES' ELSE 'NO' END, size,
+               CASE has_location WHEN 1 THEN 'YES' ELSE 'NO' END, latitude, longitude,
+               snap_create_user_agent, thumbnail_size, thumbnail_redirect_info
+        FROM memories_snap JOIN memories_media ON memories_media._id = media_id
+    ''')
+    data_list = [(_ms_to_utc(r[0]),) + tuple(r[1:]) for r in rows]
+    data_headers = (('Create Time', 'datetime'), 'ID', 'Media ID', 'Memories Entry ID', 'Time Zone ID',
+                    'Format', 'Width', 'Height', 'Duration', 'Has Overlay', 'Overlay Size',
+                    'Overlay Info', 'Front Facing', 'Size', 'Has Location Info', 'Latitude',
+                    'Longitude', 'Snap User Agent', 'Thumbnail Size', 'Thumbnail Info')
+    return data_headers, data_list, source_path
+
+
+def _parse_xml_rows(xml_file):
+    data_list = []
+    if not xml_file:
+        return data_list
+    try:
+        root = ET.parse(xml_file).getroot()
+    except (ET.ParseError, OSError, ValueError):
+        return data_list
+    for node in root:
+        name = node.attrib.get('name', '')
+        value = node.attrib.get('value', node.text)
+        if name in _XML_UNIX_KEYS and value:
+            try:
+                value = datetime.datetime.fromtimestamp(
+                    int(value) / 1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+            except (ValueError, TypeError, OverflowError, OSError):
+                pass
+        data_list.append((name, value))
+    return data_list
+
+
+@artifact_processor
+def get_snapchat_identity(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'identity_persistent_store.xml')
+    return ('Key', 'Value'), _parse_xml_rows(source_path), source_path
+
+
+@artifact_processor
+def get_snapchat_login_signup(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'LoginSignupStore.xml')
+    return ('Key', 'Value'), _parse_xml_rows(source_path), source_path

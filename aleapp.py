@@ -7,13 +7,17 @@ import scripts.report as report
 import traceback
 import sys
 
+import pathlib
 import scripts.plugin_loader as plugin_loader
+import leapp_functions.app.history as history
 
-from scripts.search_files import *
-from scripts.ilapfuncs import *
-from scripts.version_info import aleapp_version
+from scripts.search_files import *  # pylint: disable=wildcard-import,unused-wildcard-import
+from scripts.ilapfuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
+from leapp_functions.app.output import validate_output_folder_available
+from scripts.version_info import leapp_name, leapp_version, check_runtime_dependencies
 from time import process_time, gmtime, strftime, perf_counter
-from scripts.lavafuncs import *
+from scripts.lavafuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
+from scripts.context import Context
 
 def validate_args(args):
     if args.artifact_paths or args.create_profile_casedata:
@@ -28,10 +32,19 @@ def validate_args(args):
 
     # Check existence of paths
     if not os.path.exists(args.input_path):
-        raise argparse.ArgumentError(None, 'INPUT file/folder does not exist! Run the program again.')
+        raise argparse.ArgumentError(None, f'INPUT path \'{args.input_path}\' does not exist! Run the program again.')
 
     if not os.path.exists(args.output_path):
         raise argparse.ArgumentError(None, 'OUTPUT folder does not exist! Run the program again.')
+    if not os.path.isdir(os.path.abspath(args.output_path)):
+        raise argparse.ArgumentError(None, f'OUTPUT path \'{args.output_path}\' must be a directory! Run the program again.')
+
+    # Validate new folder name for output path
+    output_folder_valid, output_folder_error = validate_output_folder_available(
+        os.path.abspath(args.output_path), args.custom_output_folder)
+    if not output_folder_valid:
+        raise argparse.ArgumentError(None, output_folder_error)
+
 
     if args.load_case_data and not os.path.exists(args.load_case_data):
         raise argparse.ArgumentError(None, 'LEAPP Case Data file not found! Run the program again.')
@@ -130,6 +143,7 @@ def create_casedata(path):
     return
 
 def main():
+    check_runtime_dependencies()
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
     parser.add_argument('-t', choices=['fs', 'tar', 'zip', 'gz'], required=False, action="store",
                         help=("Specify the input type. "
@@ -150,9 +164,8 @@ def main():
                         help=("Generate a text file list of artifact paths. "
                               "This argument is meant to be used alone, without any other arguments."))
     parser.add_argument('--custom_output_folder', required=False, action="store", help="Custom name for the output folder")
+    parser.add_argument('--custom_artifacts_path', required=False, action="store", help="Additional path to load artifacts from (e.g., scripts/alternate_artifacts)")
 
-    loader = plugin_loader.PluginLoader()
-    available_plugins = list(loader.plugins)
     profile_filename = None
     casedata = {}
 
@@ -162,6 +175,12 @@ def main():
         sys.exit()
 
     args = parser.parse_args()
+
+    loader_paths = [plugin_loader.PLUGINPATH]
+    if args.custom_artifacts_path:
+        loader_paths.append(pathlib.Path(args.custom_artifacts_path))
+    loader = plugin_loader.PluginLoader(plugin_paths=loader_paths)
+    available_plugins = list(loader.plugins)
 
     plugins = []
     plugins_parsed_first = []
@@ -182,13 +201,13 @@ def main():
     if args.artifact_paths:
         print('Artifact path list generation started.')
         print('')
-        with open('path_list.txt', 'a') as paths:
+        with open('path_list.txt', 'a', encoding='utf-8') as paths:
             for plugin in loader.plugins:
                 if isinstance(plugin.search, tuple):
                     for x in plugin.search:
                         paths.write(x + '\n')
                         print(x)
-                else:  # TODO check that this is actually a string?
+                else:  # search should be a string here
                     paths.write(plugin.search + '\n')
                     print(plugin.search)
         print('')
@@ -229,7 +248,7 @@ def main():
         with open(case_data_filename, "rt", encoding="utf-8") as case_data_file:
             try:
                 case_data = json.load(case_data_file)
-            except:
+            except:  # pylint: disable=bare-except
                 case_data_load_error = "File was not a valid case data file: invalid format"
                 print(case_data_load_error)
                 return
@@ -254,7 +273,7 @@ def main():
         with open(profile_filename, "rt", encoding="utf-8") as profile_file:
             try:
                 profile = json.load(profile_file)
-            except:
+            except:  # pylint: disable=bare-except
                 profile_load_error = "File was not a valid case data file: invalid format"
                 print(profile_load_error)
                 return
@@ -287,14 +306,19 @@ def main():
         if output_path[1] == ':': output_path = '\\\\?\\' + output_path.replace('/', '\\')
 
     out_params = OutputParameters(output_path, custom_output_folder)
+    Context.set_output_params(out_params)
 
     selected_plugins = plugins_parsed_first + selected_plugins
     
-    initialize_lava(input_path, out_params.report_folder_base, extracttype)
+    initialize_lava(input_path, out_params.output_folder_base, extracttype)
+
+    # Record history if enabled
+    history.record_input_path(input_path)
+    history.record_output_path(output_path)
 
     crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, profile_filename)
 
-    lava_finalize_output(out_params.report_folder_base)
+    lava_finalize_output(out_params.output_folder_base)
 
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
@@ -305,7 +329,7 @@ def crunch_artifacts(
     logfunc('Processing started. Please wait. This may take a few minutes...')
 
     logfunc('\n--------------------------------------------------------------------------------------')
-    logfunc(f'ALEAPP v{aleapp_version}: ALEAPP Logs, Events, and Protobuf Parser')
+    logfunc(f'ALEAPP v{leapp_version}: ALEAPP Logs, Events, and Protobuf Parser')
     logfunc('Objective: Triage Android Full System Extractions.')
     logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
     logfunc('By: Yogesh Khatri   | @SwiftForensics | swiftforensics.com\n')
@@ -325,7 +349,7 @@ def crunch_artifacts(
         else:
             logfunc('Error on argument -o (input type)')
             return False
-    except Exception as ex:
+    except Exception:  # pylint: disable=broad-exception-caught
         logfunc('Had an exception in Seeker - see details below. Terminating Program!')
         temp_file = io.StringIO()
         traceback.print_exc(file=temp_file)
@@ -341,37 +365,51 @@ def crunch_artifacts(
     logfunc(f'File/Directory selected: {input_path}')
     logfunc('\n--------------------------------------------------------------------------------------')
 
-    log = open(os.path.join(out_params.report_folder_base, 'Script Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
+    log = open(os.path.join(out_params.output_folder_base, '_HTML', '_Script_Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
     log.write(f'Extraction/Path selected: {input_path}<br><br>')
     
     parsed_modules = 0
+    artifact_search_pattern_id = 0
+    file_path_ids = set()
+
 
     # Search for the files per the arguments
-    for plugin in plugins:
+    for plugin_number, plugin in enumerate(plugins, start=1):
         logfunc()
-        logfunc('{} [{}] artifact started'.format(plugin.name, plugin.module_name))
+        logfunc('[{}/{}] {} [{}] artifact started'.format(plugin_number, len(plugins),
+                                                              plugin.name, plugin.module_name))
         if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
             search_regexes = plugin.search
         else:
             search_regexes = [plugin.search]
-        parsed_modules += 1
-        GuiWindow.SetProgressBar(parsed_modules, len(plugins))
         files_found = []
         log.write(f'<b>For {plugin.name} module</b>')
         for artifact_search_regex in search_regexes:
+            artifact_search_pattern_id += 1
+            lava_insert_sqlite_artifact_search_pattern(
+                artifact_search_pattern_id, plugin.module_name, plugin.name, artifact_search_regex)
+            pattern_already_searched = artifact_search_regex in seeker.searched
             found = seeker.search(artifact_search_regex)
             if not found:
                 log.write(f'<ul><li>No file found for regex <i>{artifact_search_regex}</i></li></ul>')
             else:
                 log.write(f'<ul><li>{len(found)} {"files" if len(found) > 1 else "file"} for regex <i>{artifact_search_regex}</i> located at:')
                 for pathh in found:
-                    if pathh.startswith('\\\\?\\'):
-                        pathh = pathh[4:]
-                    log.write(f'<ul><li>{pathh}</li></ul>')
-                log.write(f'</li></ul>')
+                    # Strip \\?\ only for log display; file_infos is keyed with the
+                    # original long-path form on Windows.
+                    display_path = pathh[4:] if pathh.startswith('\\\\?\\') else pathh
+                    log.write(f'<ul><li>{display_path}</li></ul>')
+                    if seeker.file_infos.get(pathh):
+                        file_path_id = id(seeker.file_infos.get(pathh))
+                        if not pattern_already_searched and file_path_id not in file_path_ids:
+                            lava_insert_sqlite_file_path(file_path_id,seeker.file_infos.get(pathh).source_path)
+                            file_path_ids.add(file_path_id)
+                        lava_insert_sqlite_artifact_link_pattern_to_file(artifact_search_pattern_id, file_path_id)
+                log.write('</li></ul>')
                 files_found.extend(found)
         if files_found:
-            category_folder = os.path.join(out_params.report_folder_base, '_HTML', plugin.category)
+            category_folder = os.path.join(out_params.output_folder_base, '_HTML',
+                                           sanitize_report_name(plugin.category, 'category'))
             if not os.path.exists(category_folder):
                 try:
                     os.makedirs(category_folder)
@@ -381,14 +419,17 @@ def crunch_artifacts(
                     continue  # cannot do work
             try:
                 plugin.method(files_found, category_folder, seeker, wrap_text)
-            except Exception as ex:
+            except Exception as ex:  # pylint: disable=broad-exception-caught
                 logfunc('Reading {} artifact had errors!'.format(plugin.name))
                 logfunc('Error was {}'.format(str(ex)))
                 logfunc('Exception Traceback: {}'.format(traceback.format_exc()))
                 continue  # nope
         else:
-            logfunc(f"No file found")
+            logfunc("No file found")
         logfunc('{} [{}] artifact completed'.format(plugin.name, plugin.module_name))
+        parsed_modules += 1
+        GuiWindow.SetProgressBar(parsed_modules, len(plugins))
+        log.flush()
     log.close()
 
     write_device_info()
@@ -407,15 +448,20 @@ def crunch_artifacts(
     logfunc('Report generation started.')
     # remove the \\?\ prefix we added to input and output paths, so it does not reflect in report
     if is_platform_windows(): 
-        if out_params.report_folder_base.startswith('\\\\?\\'):
-            out_params.report_folder_base = out_params.report_folder_base[4:]
+        if out_params.output_folder_base.startswith('\\\\?\\'):
+            out_params.output_folder_base = out_params.output_folder_base[4:]
         if input_path.startswith('\\\\?\\'):
             input_path = input_path[4:]
     
-    report.generate_report(out_params.report_folder_base, run_time_secs, run_time_HMS, extracttype, input_path, casedata, profile_filename, icons)
+    report.generate_report(out_params.output_folder_base, run_time_secs, run_time_HMS, extracttype, input_path, casedata, profile_filename, icons)
     logfunc('Report generation Completed.')
+
+    # Record the run in history
+    lava_project_path = os.path.join(out_params.output_folder_base, lava_json_name)
+    history.record_recent_run(leapp_name.lower(), leapp_version, lava_project_path)
+
     logfunc('')
-    logfunc(f'Report location: {out_params.report_folder_base}')
+    logfunc(f'Report location: {out_params.output_folder_base}')
 
     return True
 

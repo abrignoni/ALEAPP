@@ -1,70 +1,99 @@
-# Android Samsung Device Health Management Service SDHMS (com.sec.android.sdhms)
-# Author:  Marco Neumann (kalinko@be-binary.de)
-#
-# Requirements:
-
 __artifacts_v2__ = {
   
     "sdhms_config_reloads": {
         "name": "SDHMS Config Reload History",
         "description": "SDHMS Config Reload History - Shows e.g. Reboot of Device. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/anomaly.db*'),
-        "artifact_icon": "settings"
+        "output_types": "all",
+        "artifact_icon": "settings",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.sdhms | 29 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 11 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 9 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 28 rows",
+            "sharon_a14": "Android 14 | com.sec.android.sdhms | 100 rows",
+        }
     },
     "sdhms_netstat": {
         "name": "SDHMS Netstat",
         "description": "SDHMS Network Usage per App. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
-        "artifact_icon": "bar-chart"
+        "output_types": "all",
+        "artifact_icon": "chart-bar-popular",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.sdhms | 1582 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 839 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 1154 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 324 rows",
+            "sharon_a14": "Android 14 | com.sec.android.sdhms | 1160 rows",
+        }
     },
     "sdhms_temperature": {
         "name": "SDHMS Temperature Logs",
         "description": "SDHMS Temperature Logs per Sensor in degree Celsius. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
-        "artifact_icon": "thermometer"
+        "output_types": "all",
+        "artifact_icon": "thermometer",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.sdhms | 567 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 1237 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 356 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 535 rows",
+            "sharon_a14": "Android 14 | com.sec.android.sdhms | 443 rows",
+        }
     },
     "sdhms_cpustats": {
         "name": "SDHMS CPU Stats",
         "description": "SDHMS CPU Usage per Process. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
-        "artifact_icon": "cpu"
+        "output_types": "all",
+        "artifact_icon": "cpu",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.sdhms | 963 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.sdhms | 1045 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.sdhms | 491 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.sdhms | 595 rows",
+            "sharon_a14": "Android 14 | com.sec.android.sdhms | 483 rows",
+        }
     }
 
 }
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+# Android Samsung Device Health Management Service SDHMS (com.sec.android.sdhms)
+# Author:  Marco Neumann (kalinko@be-binary.de)
+#
+# Requirements:
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, null_absent_columns
 
 @artifact_processor
-def sdhms_config_reloads(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def sdhms_config_reloads(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT
@@ -77,7 +106,8 @@ def sdhms_config_reloads(files_found, _report_folder, _seeker, _wrap_text):
 
     data_list = []
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
+    source_path = str(files_found[0])
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for row in db_records:
         config_reload_time = convert_unix_ts_to_utc(int(row[0])/1000)
@@ -97,8 +127,10 @@ def sdhms_config_reloads(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def sdhms_netstat(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def sdhms_netstat(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT
@@ -113,7 +145,8 @@ def sdhms_netstat(files_found, _report_folder, _seeker, _wrap_text):
 
     data_list = []
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
+    source_path = str(files_found[0])
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for row in db_records:
         start_time = convert_unix_ts_to_utc(int(row[0])/1000)
@@ -136,9 +169,31 @@ def sdhms_netstat(files_found, _report_folder, _seeker, _wrap_text):
 
     return data_headers, data_list, files_found[0]
 
+# Older releases of this store call the temperature timestamp "time" rather than
+# "timestamp". Both hold the same millisecond epoch in the same table, so the
+# column is aliased rather than reported empty; substituting NULL would drop the
+# time from every row on those devices. Observed on galaxys10_a10 (time) and
+# sharon_a14 (timestamp).
+TEMPERATURE_TIME_ALIASES = ('timestamp', 'time')
+
+
+def _temperature_query(source_path, query):
+    """Point the timestamp column at whichever spelling this database uses."""
+    columns = {column[1].lower() for column in
+               get_sqlite_db_records(source_path, 'PRAGMA table_info("TEMPERATURE")')}
+    if not columns or 'timestamp' in columns:
+        return query
+    for candidate in TEMPERATURE_TIME_ALIASES[1:]:
+        if candidate in columns:
+            return query.replace('timestamp,', f'{candidate} AS timestamp,', 1)
+    return query
+
+
 @artifact_processor
-def sdhms_temperature(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def sdhms_temperature(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT
@@ -155,7 +210,9 @@ def sdhms_temperature(files_found, _report_folder, _seeker, _wrap_text):
 
     data_list = []
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
+    source_path = str(files_found[0])
+    query = _temperature_query(source_path, query)
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for row in db_records:
         timestamp = convert_unix_ts_to_utc(int(row[0])/1000)
@@ -191,8 +248,10 @@ def sdhms_temperature(files_found, _report_folder, _seeker, _wrap_text):
     return data_headers, data_list, files_found[0]
 
 @artifact_processor
-def sdhms_cpustats(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def sdhms_cpustats(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
         SELECT
@@ -208,7 +267,8 @@ def sdhms_cpustats(files_found, _report_folder, _seeker, _wrap_text):
 
     data_list = []
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
+    source_path = str(files_found[0])
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for row in db_records:
         start_time = convert_unix_ts_to_utc(int(row[0])/1000)

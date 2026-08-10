@@ -1,72 +1,54 @@
-# Get Information relative to the weight data in the database cache-database from the table weight in the Garmin Connect app
-# Author: Fabian Nunes {fabiannunes12@gmail.com}
-# Date: 2023-02-24
-# Version: 1.0
-# Requirements: Python 3.7 or higher
-
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly
-
-
-def get_garmin_weight(files_found, report_folder, seeker, wrap_text):
-    logfunc("Processing data for Garmin Weight")
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
-
-    #This query is retreiving the data from the table weight, which contains the weight data for the user
-    cursor = db.cursor()
-    cursor.execute('''
-        Select
-        samplePk,
-        datetime("date"/1000,'unixepoch'),
-        weight
-        from weight
-    ''')
-
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        logfunc(f"Found {usageentries} weight entries")
-        report = ArtifactHtmlReport('Weight')
-        report.start_artifact_report(report_folder, 'Weight')
-        report.add_script()
-        data_headers = ('samplePk', 'Date', 'Weight')
-        data_list = []
-        date = []
-        weight = []
-
-        for row in all_rows:
-            data_list.append((row[0], row[1], row[2]))
-            # get only the date from the datetime
-            date.append(row[1].split(' ')[0])
-            # convert weight in kg
-            weight.append(row[2] / 1000)
-
-
-
-        table_id = "GarminWeight"
-        report.filter_by_date(table_id, 1)
-        report.write_artifact_data_table(data_headers, data_list, file_found, table_id=table_id)
-        report.add_chart()
-        report.add_chart_script("myChart", "bar", weight, date, "Weight over time", "Weight (kg)", "Date")
-        report.end_artifact_report()
-
-        tsvname = f'Garmin - Weight'
-        tsv(report_folder, data_headers, data_list, tsvname)
-
-        tlactivity = f'Garmin - Weight'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-
-    else:
-        logfunc('No Garmin Weight data available')
-
-    db.close()
-
-
-__artifacts__ = {
-    "GarminWeight": (
-        "Garmin-Cache",
-        ('*/com.garmin.android.apps.connectmobile/databases/cache-database*'),
-        get_garmin_weight)
+__artifacts_v2__ = {
+    "get_garmin_weight": {
+        "name": "GarminWeight",
+        "description": "Get Information relative to the weight data in the database cache-database from the table weight in the Garmin Connect app",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "creation_date": "2023-02-24",
+        "last_update_date": "2026-07-10",
+        "requirements": "Python 3.7 or higher",
+        "category": "Garmin",
+        "notes": "Newer Garmin Connect versions no longer populate cache-database; current app data lives in gcm_cache.db and garmin.api files (parsed by the GarminJson, GarminGcmJsonActivities, garmin and Garmin*API artifacts).",
+        "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
+        "output_types": "standard",
+        "artifact_icon": "activity",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.garmin.android.apps.connectmobile vc 8806 | 0 rows",
+        },
+    }
 }
+
+import datetime
+import sqlite3
+
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+
+
+@artifact_processor
+def get_garmin_weight(context):
+    files_found = context.get_files_found()
+    logfunc("Processing data for Garmin Weight")
+    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')
+                   and not str(x).endswith('journal')]
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
+    cursor = db.cursor()
+    try:
+        cursor.execute('''
+            Select samplePk, "date", weight
+            from weight
+        ''')
+        all_rows = cursor.fetchall()
+    except sqlite3.OperationalError as ex:
+        # Newer Garmin Connect versions restructured the cache-database
+        logfunc(f'Unable to query the Garmin cache-database (unsupported schema version?): {ex}')
+        all_rows = []
+    db.close()
+    logfunc(f"Found {len(all_rows)} weight entries")
+
+    data_list = []
+    for row in all_rows:
+        date = datetime.datetime.fromtimestamp(int(row[1]) / 1000, datetime.timezone.utc) if row[1] else ''
+        data_list.append((row[0], date, row[2]))
+
+    data_headers = ('samplePk', ('Date', 'datetime'), 'Weight')
+    return data_headers, data_list, source_path

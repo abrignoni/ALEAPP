@@ -1,16 +1,18 @@
 bcrypt==3.2.0
 beautifulsoup4==4.8.2
 bencoding
-blackboxprotobuf
 fitdecode==0.10.0
 folium==0.14.0
-geopy==2.3.0
 packaging==20.1
-pillow==12.1.1
+pillow==12.3.0
 polyline==2.0.0
-protobuf==3.10.0
+# Do NOT pip install the PyPI 'blackboxprotobuf' into this environment: it
+# force-downgrades protobuf to 3.10.0 (reintroducing patched CVEs). ALEAPP
+# uses the vendored copy in scripts/blackboxprotobuf instead.
+protobuf==5.29.6
 PyCryptodome
 pytz
+mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18
 simplekml
 wheel
 xlsxwriter==3.1.1

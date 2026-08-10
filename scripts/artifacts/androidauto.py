@@ -1,50 +1,60 @@
 __artifacts_v2__ = {
-    "androidauto": {
-        "name": "Android Auto Connected Cars",
+    "extract_android_auto": {
+        "name": "Android Auto - Connected Cars",
         "description": "Android Auto connected cars",
         "author": "its5Q",
-        "version": "0.0.1",
-        "date": "2025-07-28",
+        "creation_date": "2025-07-28",
+        "last_update_date": "2026-05-28",
         "requirements": "none",
         "category": "Android Auto",
         "notes": "",
-        "paths": ('*/com.google.android.projection.gearhead/databases/carservicedata.db'),
+        "paths": ('*/com.google.android.projection.gearhead/databases/carservicedata.db*'),
         "output_types": "standard",
-        "function": "extract_android_auto",
         "artifact_icon": "truck",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.projection.gearhead vc 151653424 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.projection.gearhead vc 152653624 | 3 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.projection.gearhead vc 123642624 | 1 row",
+            "samsunga53_a14": "Android 14 | com.google.android.projection.gearhead vc 156654484 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.projection.gearhead vc 124642854 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.projection.gearhead vc 97632214 | 2 rows",
+            "userb2_a13": "Android 13 | com.google.android.projection.gearhead vc 132644464 | 0 rows",
+        },
     }
 }
 
-import json
-from datetime import datetime, timezone
-from collections import defaultdict
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records, null_absent_columns, convert_unix_ts_to_utc
 
 @artifact_processor
-def extract_android_auto(files_found, report_folder, seeker, wrap_text):
+def extract_android_auto(context):
     data_list = []
+    files_found = context.get_files_found()
+    source_path = get_file_path(files_found, "carservicedata.db") 
 
-    db_path = files_found[0]
-    db = open_sqlite_db_readonly(db_path)
-    cursor = db.cursor()
-    cursor.execute('''
-    SELECT connectiontime, manufacturer, model,
-           modelyear, bluetoothaddress, wifissid,
-           wifibssid, wifipassword
+    query = '''
+    SELECT
+    connectiontime,
+    manufacturer,
+    model,
+    modelyear,
+    bluetoothaddress,
+    wifissid,
+    wifibssid,
+    wifipassword,
+    headUnitMake,
+    headUnitModel,
+    headUnitSoftwareVersion,
+    vehicleidclient
     FROM allowedcars;
-    ''')
+    '''
 
-    rows = cursor.fetchall()
-    for row in rows:
-        row = list(row)
-        try:
-            row[0] = datetime.fromtimestamp(row[0] / 1000, timezone.utc)
-        except Exception as ex:
-            logfunc('Error processing timestamp: ', ex)
+    data_headers = (('Connection Time', 'datetime'), 'Manufacturer', 'Model', 'Year', 'Bluetooth MAC', 'Wi-Fi SSID', 'Wi-Fi BSSID', 'Wi-Fi Password', 'Head Unit Make', 'Head Unit Model', 'Head Unit Software Version', 'Vehicle Client ID')
 
-        data_list.append(row)
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
-    data_headers = (('Connection Time', 'datetime'), 'Manufacturer', 'Model', 'Year', 'Bluetooth MAC', 'Wi-Fi SSID', 'Wi-Fi BSSID', 'Wi-Fi Password')
+    for record in db_records:
+        connectiontime = convert_unix_ts_to_utc(record[0])
 
-    return data_headers, data_list, db_path
+        data_list.append((connectiontime, record[1], record[2], record[3], record[4], record[5], record[6], record[7], record[8], record[9], record[10], record[11]))
+
+    return data_headers, data_list, source_path

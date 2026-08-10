@@ -1,10 +1,148 @@
-import os
-import textwrap
-import urllib.parse
-import re
+# pylint: disable=W0718
+__artifacts_v2__ = {
+    "get_chrome": {
+        "name": "Web History",
+        "description": "Parses Web History from Chromium based browsers",
+        "author": "@abrignoni",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2020-03-19",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
+        "output_types": "standard",
+        "artifact_icon": "globe",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 94 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 191 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 20 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 46 rows",
+            "pixel7a_a14": "Android 14 | 76 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 132 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 65 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 137 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 118 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 62 rows",
+        },
+    },
+    "get_chromeWebVisits": {
+        "name": "Web Visits",
+        "description": "Parses Web Visits from Chromium based browsers",
+        "author": "@abrignoni",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2026-08-01",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "Transition Type decodes the core type held in the low byte of the visits.transition "
+                 "value and Qualifier(s) decodes the qualifier bits set in its high byte. The "
+                 "0xC0000000 IS_REDIRECT_MASK is a mask covering the CLIENT_REDIRECT and "
+                 "SERVER_REDIRECT bits rather than a qualifier of its own, so it is not reported as a "
+                 "separate qualifier. Reference: Chromium, 'page_transition_types.h', "
+                 "https://chromium.googlesource.com/chromium/src",
+        "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
+        "output_types": "standard",
+        "artifact_icon": "globe",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 127 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 291 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 39 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 71 rows",
+            "pixel7a_a14": "Android 14 | 89 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 174 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 86 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 198 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 207 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 76 rows",
+        },
+    },
+    "get_chromeSearchTerms": {
+        "name": "Search Terms",
+        "description": "Parses Search Terms from Chromium based browsers",
+        "author": "@abrignoni",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2020-03-19",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
+        "output_types": "standard",
+        "artifact_icon": "search",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 44 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 20 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 3 rows",
+            "pixel7a_a14": "Android 14 | 7 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 39 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 18 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 18 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 37 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 16 rows",
+        },
+    },
+    "get_chromeDownloads": {
+        "name": "Downloads",
+        "description": "Parses Downloads from Chromium based browsers",
+        "author": "@abrignoni",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2026-08-01",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "Tab URL is the downloads.tab_url column, the page the download was started from. The "
+                 "source URL of the downloaded file is held in the downloads_url_chains table, which "
+                 "this artifact does not parse. Danger Type and Interrupt Reason decode the stored "
+                 "Chromium enum values. Reference: Chromium, 'download_danger_type.h, "
+                 "download_interrupt_reason_values.h', https://chromium.googlesource.com/chromium/src",
+        "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
+        "output_types": "standard",
+        "artifact_icon": "download",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 0 rows",
+            "pixel7a_a14": "Android 14 | 4 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 2 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 108 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 1 row",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 2 rows",
+        },
+    },
+    "get_chromeKeywordSearchTerms": {
+        "name": "Keyword Search Terms",
+        "description": "Parses Keyword Search Terms from Chromium based browsers",
+        "author": "@abrignoni",
+        "creation_date": "2020-03-19",
+        "last_update_date": "2020-03-19",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
+        "output_types": "standard",
+        "artifact_icon": "search",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 88 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 15 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 4 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 3 rows",
+            "pixel7a_a14": "Android 14 | 7 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 48 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 18 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 23 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 44 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 16 rows",
+        },
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, get_next_unused_name, open_sqlite_db_readonly, does_column_exist_in_db
+import datetime
+import os
+import re
+import urllib.parse
+
+from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, does_column_exist_in_db, artifact_processor
+
 
 def get_browser_name(file_name):
 
@@ -25,68 +163,76 @@ def get_browser_name(file_name):
     else:
         return 'Unknown'
 
-def get_chrome(files_found, report_folder, seeker, wrap_text):
-    
+
+def _webkit_to_utc(value):
+    '''Chromium/WebKit timestamp = microseconds since 1601-01-01 UTC'''
+    if value in (None, 0, ''):
+        return ''
+    return datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(microseconds=int(value))
+
+
+def _history_files(files_found):
+    '''Yield (file_found, browser_name) for the real History DBs, skipping journals/mirrors.'''
     for file_found in files_found:
         file_found = str(file_found)
-        if not os.path.basename(file_found) == 'History': # skip -journal and other files
+        if not os.path.basename(file_found) == 'History':  # skip -journal and other files
             continue
+        if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
+            continue  # Skip mirror, it should be duplicate data
         browser_name = get_browser_name(file_found)
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
-        elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
-            continue # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data??
+        yield file_found, browser_name
 
+
+@artifact_processor
+def get_chrome(context):
+    files_found = context.get_files_found()
+    all_data = []
+    data_headers = ['Last Visit Time', 'URL', 'Title', 'Visit Count', 'Typed Count', 'ID', 'Hidden']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
+    for file_found, browser_name in _history_files(files_found):
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        
-        #Web History
         cursor.execute('''
-        SELECT
-        datetime(last_visit_time/1000000 + (strftime('%s','1601-01-01')),'unixepoch') AS LastVisitDate,
-        url AS URL,
-        title AS Title,
-        visit_count AS VisitCount,
-        typed_count AS TypedCount,
-        id AS ID,
-        CASE hidden
-            WHEN 0 THEN ''
-            WHEN 1 THEN 'Yes'
-        END as Hidden
-        FROM urls  
+        SELECT last_visit_time, url, title, visit_count, typed_count, id,
+        CASE hidden WHEN 0 THEN '' WHEN 1 THEN 'Yes' END as Hidden
+        FROM urls
         ''')
+        rows = cursor.fetchall()
+        db.close()
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Web History')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Web History.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Last Visit Time','URL','Title','Visit Count','Typed Count','ID','Hidden')
-            data_list = []
-            for row in all_rows:
-                if wrap_text:
-                    data_list.append((row[0],textwrap.fill(row[1], width=100),row[2],row[3],row[4],row[5],row[6]))
-                else:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Web History'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Web History'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+        data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
+        if data_list:
+            all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Web History data available')
-        
-        #Web Visits
+
+    return all_data_headers, all_data, report_file
+
+
+@artifact_processor
+def get_chromeWebVisits(context):
+    files_found = context.get_files_found()
+    all_data = []
+    data_headers = ['Visit Timestamp', 'URL', 'Title', 'Duration', 'Transition Type', 'Qualifier(s)', 'From Visit URL']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
+    for file_found, browser_name in _history_files(files_found):
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
         cursor.execute('''
         SELECT
-        datetime(visits.visit_time/1000000 + (strftime('%s','1601-01-01')),'unixepoch'),
+        visits.visit_time,
         urls.url,
         urls.title,
         CASE visits.visit_duration
@@ -115,116 +261,88 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
         CASE WHEN visits.transition & 0x10000000 THEN 'CHAIN_START, ' ELSE '' END ||
         CASE WHEN visits.transition & 0x20000000 THEN 'CHAIN_END, ' ELSE '' END ||
         CASE WHEN visits.transition & 0x40000000 THEN 'CLIENT_REDIRECT, ' ELSE '' END ||
-        CASE WHEN visits.transition & 0x80000000 THEN 'SERVER_REDIRECT, ' ELSE '' END ||
-        CASE WHEN visits.transition & 0xC0000000 THEN 'IS_REDIRECT_MASK, ' ELSE '' END),', ')
+        CASE WHEN visits.transition & 0x80000000 THEN 'SERVER_REDIRECT, ' ELSE '' END),', ')
         AS Qualifiers,
         Query2.url AS FromURL
         FROM visits
         LEFT JOIN urls ON visits.url = urls.id
-        LEFT JOIN (SELECT urls.url,urls.title,visits.visit_time,visits.id FROM visits LEFT JOIN urls ON visits.url = urls.id) Query2 ON visits.from_visit = Query2.id  
+        LEFT JOIN (SELECT urls.url,urls.title,visits.visit_time,visits.id FROM visits LEFT JOIN urls ON visits.url = urls.id) Query2 ON visits.from_visit = Query2.id
         ''')
+        rows = cursor.fetchall()
+        db.close()
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Web Visits')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Web Visits.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Visit Timestamp','URL','Title','Duration','Transition Type','Qualifier(s)','From Visit URL')
-            data_list = []
-            for row in all_rows:
-                if wrap_text:
-                    data_list.append((row[0],textwrap.fill(row[1], width=100),row[2],row[3],row[4],row[5],row[6]))
-                else:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Web Visits'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Web Visits'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+        data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
+        if data_list:
+            all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Web Visits data available')
-            
-        #Web Search    
+
+    return all_data_headers, all_data, report_file
+
+
+@artifact_processor
+def get_chromeSearchTerms(context):
+    files_found = context.get_files_found()
+    all_data = []
+    data_headers = ['Last Visit Time', 'Search Term', 'URL', 'Title', 'Visit Count']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
+    for file_found, browser_name in _history_files(files_found):
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
         cursor.execute('''
-        SELECT
-            url,
-            title,
-            visit_count,
-            datetime(last_visit_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
+        SELECT url, title, visit_count, last_visit_time
         FROM urls
         WHERE url like '%search?q=%'
         ''')
+        rows = cursor.fetchall()
+        db.close()
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Search Terms')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Search Terms.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Last Visit Time','Search Term','URL', 'Title', 'Visit Count')
-            data_list = []
-            for row in all_rows:
-                search = row[0].split('search?q=')[1].split('&')[0]
-                search = urllib.parse.unquote(search).replace('+', ' ')
-                if wrap_text:
-                    data_list.append((row[3], search, (textwrap.fill(row[0], width=100)),row[1],row[2]))
-                else:
-                    data_list.append((row[3], search, row[0], row[1], row[2]))
+        data_list = []
+        for r in rows:
+            search = r[0].split('search?q=')[1].split('&')[0]
+            search = urllib.parse.unquote(search).replace('+', ' ')
+            data_list.append((_webkit_to_utc(r[3]), search, r[0], r[1], r[2]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Search Terms'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Search Terms'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+        if data_list:
+            all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Search Terms data available')
-            
-        #Downloads
-        # check for last_access_time column, an older version of chrome db (32) does not have it
-        if does_column_exist_in_db(file_found, 'downloads', 'last_access_time') == True:
-            last_access_time_query = '''
-            CASE last_access_time 
-                WHEN "0" 
-                THEN "" 
-                ELSE datetime(last_access_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
-            END AS "Last Access Time"'''
-        else:
-            last_access_time_query = "'' as last_access_query"
 
-        # check for tab_url column, the older versions (pre-v65) does not have it
-        if does_column_exist_in_db(file_found, 'downloads', 'tab_url') == True:
-            tab_url_column = "tab_url"
-        else:
-            tab_url_column = "'' as tab_url"
+    return all_data_headers, all_data, report_file
 
+
+@artifact_processor
+def get_chromeDownloads(context):
+    files_found = context.get_files_found()
+    all_data = []
+    data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State',
+                    'Danger Type', 'Interrupt Reason', 'Opened?', 'Received Bytes', 'Total Bytes']
+    lava_data_headers = data_headers.copy()
+    for i in (0, 1, 2):
+        lava_data_headers[i] = (lava_data_headers[i], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
+    for file_found, browser_name in _history_files(files_found):
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        # older chrome db (32) lacks last_access_time; pre-v65 lacks tab_url
+        last_access_sel = 'last_access_time' if does_column_exist_in_db(file_found, 'downloads', 'last_access_time') else "'' as last_access_time"
+        tab_url_sel = 'tab_url' if does_column_exist_in_db(file_found, 'downloads', 'tab_url') else "'' as tab_url"
+
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
         cursor.execute(f'''
-        SELECT 
-        CASE start_time  
-            WHEN "0" 
-            THEN "" 
-            ELSE datetime(start_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
-        END AS "Start Time", 
-        CASE end_time 
-            WHEN "0" 
-            THEN "" 
-            ELSE datetime(end_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
-        END AS "End Time", 
-        {last_access_time_query},
-        {tab_url_column}, 
-        target_path, 
+        SELECT
+        start_time,
+        end_time,
+        {last_access_sel},
+        {tab_url_sel},
+        target_path,
         CASE state
             WHEN "0" THEN "In Progress"
             WHEN "1" THEN "Complete"
@@ -290,86 +408,53 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
             WHEN "41" THEN "Browser Shutdown"
             WHEN "50" THEN "Browser Crashed"
         END,
-        CASE opened
-            WHEN 0 THEN ''
-            WHEN 1 THEN 'Yes'
-        END, 
-        received_bytes, 
+        CASE opened WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,
+        received_bytes,
         total_bytes
         FROM downloads
         ''')
+        rows = cursor.fetchall()
+        db.close()
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Downloads')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Downloads.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Start Time','End Time','Last Access Time','URL','Target Path','State','Danger Type','Interrupt Reason','Opened?','Received Bytes','Total Bytes')
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10]))
+        data_list = []
+        for r in rows:
+            data_list.append((_webkit_to_utc(r[0]), _webkit_to_utc(r[1]), _webkit_to_utc(r[2]),
+                              r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Downloads'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Downloads'
-            timeline(report_folder, tlactivity, data_list, data_headers)
+        if data_list:
+            all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Downloads data available')
-            
-        #Search Terms
+
+    return all_data_headers, all_data, report_file
+
+
+@artifact_processor
+def get_chromeKeywordSearchTerms(context):
+    files_found = context.get_files_found()
+    all_data = []
+    data_headers = ['Last Visit Time', 'Term', 'URL']
+    lava_data_headers = data_headers.copy()
+    lava_data_headers[0] = (lava_data_headers[0], 'datetime')
+    all_data_headers = lava_data_headers + ['Browser Name']
+    report_file = 'Unknown'
+
+    for file_found, browser_name in _history_files(files_found):
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
         cursor.execute('''
-        SELECT
-            url_id,
-            term,
-            id,
-            url,
-            datetime(last_visit_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch")
+        SELECT url_id, term, id, url, last_visit_time
         FROM keyword_search_terms, urls
         WHERE url_id = id
         ''')
-
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport(f'{browser_name} - Keyword Search Terms')
-            #check for existing and get next name for report file, so report from another file does not get overwritten
-            report_path = os.path.join(report_folder, f'{browser_name} - Keyword Search Terms.temphtml')
-            report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-            report.start_artifact_report(report_folder, os.path.basename(report_path))
-            report.add_script()
-            data_headers = ('Last Visit Time','Term','URL')
-            data_list = []
-            for row in all_rows:
-                if wrap_text:
-                    data_list.append((row[4], row[1],(textwrap.fill(row[3], width=100))))
-                else:
-                    data_list.append((row[4], row[1], row[3]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'{browser_name} - Keyword Search Terms'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'{browser_name} - Keyword Search Terms'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc(f'No {browser_name} - Keyword Search Terms data available')
-        
-        
+        rows = cursor.fetchall()
         db.close()
 
-__artifacts__ = {
-        "Chrome": (
-                "Chromium",
-                ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
-                get_chrome)
-}
+        data_list = [(_webkit_to_utc(r[4]), r[1], r[3]) for r in rows]
+        if data_list:
+            all_data.extend([row + (browser_name,) for row in data_list])
+        else:
+            logfunc(f'No {browser_name} - Keyword Search Terms data available')
+
+    return all_data_headers, all_data, report_file

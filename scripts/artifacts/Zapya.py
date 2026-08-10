@@ -1,56 +1,53 @@
-import sqlite3
+__artifacts_v2__ = {
+    "get_Zapya": {
+        "name": "Zapya",
+        "description": "Parses Zapya file transfer records (device, name, direction, timestamp, path and title) from the transfer20.db database.",
+        "author": "@markmckinnon",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2026-08-01",
+        "requirements": "none",
+        "category": "File Transfer",
+        "notes": ("direction is decoded from the transfer table 'direction' column. "
+                  "Direction/status value mappings were established through testing; unrecognized "
+                  "values are reported as stored.\n"
+                  "fromid and toid are populated only when the direction value is recognized; the "
+                  "other device recorded on the row is always present in the Device column."),
+        "paths": ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*',),
+        "output_types": "standard",
+        "artifact_icon": "download",
+    }
+}
+
 import datetime
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-def get_Zapya(files_found, report_folder, seeker, wrap_text):
-    file_found = str(files_found[0])
-    source_file = file_found.replace(seeker.data_folder, '')
-    db = open_sqlite_db_readonly(file_found)
+
+@artifact_processor
+def get_Zapya(context):
+    files_found = context.get_files_found()
+
+    source_path = str(files_found[0])
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''
-    SELECT device, name, direction, createtime/1000, path, title FROM transfer
+        SELECT device, name, direction, createtime/1000, path, title FROM transfer
     ''')
-
     all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Zapya')
-        report.start_artifact_report(report_folder, 'Zapya')
-        report.add_script()
-        data_headers = ('Device','Name','direction', 'fromid', 'toid', 'createtime','path', 'title') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-        data_list = []
-                        
-        for row in all_rows:
-            from_id = ''
-            to_id = ''
-            if (row[2] == 1):
-                direction = 'Outgoing'
-                to_id = row[0]
-            else:
-                direction = 'Incoming'
-                from_id = row[0]
-            
-            createtime = datetime.datetime.utcfromtimestamp(int(row[3])).strftime('%Y-%m-%d %H:%M:%S')            
-            data_list.append((row[0], row[1], direction, from_id, to_id, createtime, row[4], row[5]))
-
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Zapya'
-        tsv(report_folder, data_headers, data_list, tsvname, source_file)
-        
-        tlactivity = f'Zapya'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No Zapya data available')
-    
     db.close()
 
-__artifacts__ = {
-        "Zapya": (
-                "File Transfer",
-                ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*'),
-                get_Zapya)
-}
+    data_list = []
+    for row in all_rows:
+        from_id = ''
+        to_id = ''
+        # Only direction = 1 is identified; any other value is reported as stored and
+        # neither party is claimed.
+        direction = {1: 'Outgoing'}.get(row[2], '' if row[2] is None else row[2])
+        if direction == 'Outgoing':
+            to_id = row[0]
+
+        createtime = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc) if row[3] else ''
+        data_list.append((row[0], row[1], direction, from_id, to_id, createtime, row[4], row[5]))
+
+    data_headers = ('Device', 'Name', 'direction', 'fromid', 'toid', ('createtime', 'datetime'), 'path', 'title')
+    return data_headers, data_list, source_path

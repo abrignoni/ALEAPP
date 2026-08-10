@@ -1,14 +1,9 @@
-# Samsung Android History Log
-# Author:  Alexis Brignoni (linqapp.com/abrignoni)
-
-
 __artifacts_v2__ = {
     
     "history_log": {
         "name": "Samsung Knox History Log",
         "description": "Samsung Knox History Log",
         "author": "Alexis Brignoni {linqapp.com/abrignoni}",
-        "version": "0.0.1",
         "creation_date": "2026-02-27",
         "last_update_date": "2025-02-27",
         "requirements": "sqlite",
@@ -19,12 +14,17 @@ __artifacts_v2__ = {
         "artifact_icon": "database"
     }
 }
+
+# Samsung Android History Log
+# Author:  Alexis Brignoni (linqapp.com/abrignoni)
 from datetime import datetime, timezone
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
 @artifact_processor
-def history_log(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def history_log(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
      
     query = ('''
         SELECT 
@@ -54,5 +54,3 @@ def history_log(files_found, _report_folder, _seeker, _wrap_text):
     data_headers = ( ('Timestamp', 'datetime'), 'ID', 'Tag', 'Message')
 
     return data_headers, data_list, files_found[0]
-
-

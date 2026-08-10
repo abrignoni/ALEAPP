@@ -1,25 +1,32 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from PyInstaller.utils.hooks import collect_data_files
+
+# mister_skinnylegs discovers its plugins at runtime via a filesystem glob
+# (PLUGIN_PATH.glob("*_plugin.py")), so PyInstaller's import-graph analysis
+# never sees them. 
+
+msl_plugin_datas = collect_data_files('mister_skinnylegs.plugins', include_py_files=True)
 
 a = Analysis(
     ['../../aleapp.py'],
     pathex=['../scripts/artifacts'],
     binaries=[],
-    datas=[('../', 'scripts')],
+    datas=[('../', 'scripts'), *msl_plugin_datas],
     hiddenimports=[
         'bcrypt',
         'bencoding',
-        'blackboxprotobuf',
         'bs4',
         'Crypto.Cipher.AES',
         'Crypto.Util.Padding',
         'fitdecode',
-        'folium',
         'html.parser',
+        'mister_skinnylegs',
         'PIL.Image',
         'polyline',
+        'uuid',
         'xmltodict',
-        'xlsxwriter',
+        'zoneinfo'
     ],
     hookspath=[],
     hooksconfig={},

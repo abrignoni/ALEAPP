@@ -1,32 +1,45 @@
+__artifacts_v2__ = {
+    "get_wellbeingaccount": {
+        "name": "wellbeingaccount",
+        "description": "Parses account data from the Google Digital Wellbeing AccountData protobuf file.",
+        "author": "@ydkhatri",
+        "creation_date": "2020-02-25",
+        "last_update_date": "2020-02-25",
+        "requirements": "none",
+        "category": "Digital Wellbeing",
+        "notes": "",
+        "paths": ('*/com.google.android.apps.wellbeing/files/AccountData.pb',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "battery",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.wellbeing vc 839927 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.wellbeing vc 762847 | 1 row",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.wellbeing vc 550467 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.wellbeing vc 495937 | 1 row",
+            "userb2_a13": "Android 13 | com.google.android.apps.wellbeing vc 668567 | 1 row",
+        },
+        "html_columns": ['Protobuf Parsed Data'],
+    }
+}
+
 import json
-import os
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows 
+from scripts.ilapfuncs import artifact_processor
 from scripts.parse3 import ParseProto
+from scripts.html_safe import esc
 
-def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text):
-    file_found = str(files_found[0])
-    content = ParseProto(file_found)
-    
+
+@artifact_processor
+def get_wellbeingaccount(context):
+    files_found = context.get_files_found()
+    source_path = str(files_found[0])
+    content = ParseProto(source_path)
+
     content_json_dump = json.dumps(content, indent=4, sort_keys=True, ensure_ascii=False)
     parsedContent = str(content_json_dump).encode(encoding='UTF-8',errors='ignore')
-    
-    report = ArtifactHtmlReport('Wellbeing Account')
-    report.start_artifact_report(report_folder, 'Account Data')
-    report.add_script()
-    data_headers = ('Protobuf Parsed Data', 'Protobuf Data')
-    data_list = []
-    data_list.append(('<pre id=\"json\">'+str(parsedContent).replace("\\n", "<br>")+'</pre>', str(content)))
-    report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
-    report.end_artifact_report()
-    
-    tsvname = f'wellbeing account'
-    tsv(report_folder, data_headers, data_list, tsvname)
 
-__artifacts__ = {
-        "wellbeingaccount": (
-                "Digital Wellbeing",
-                ('*/com.google.android.apps.wellbeing/files/AccountData.pb'),
-                get_wellbeingaccount)
-}
+    data_list = []
+    data_list.append(('<pre id=\"json\">'+esc(str(parsedContent)).replace("\\n", "<br>")+'</pre>', str(content)))
+
+    data_headers = ('Protobuf Parsed Data', 'Protobuf Data')
+    return data_headers, data_list, source_path

@@ -1,57 +1,66 @@
-import sqlite3
+__artifacts_v2__ = {
+    "get_installedappsGass": {
+        "name": "installedappsGass",
+        "description": "Parses application records (bundle ID, version code and SHA-256 hash) from the app_info table of the Google Play services gass.db.",
+        "author": "@abrignoni",
+        "creation_date": "2020-03-01",
+        "last_update_date": "2026-08-01",
+        "requirements": "none",
+        "category": "Installed Apps",
+        "notes": "A row records an application known to the app_info table. Whether the application "
+                 "was still installed at the time of extraction is not established by its presence "
+                 "here.",
+        "paths": ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "package",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 408 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 81 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 696 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 1310 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 214 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 404 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 240 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 1585 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 532 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 513 rows",
+        },
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, is_platform_windows, open_sqlite_db_readonly
 
-def get_installedappsGass(files_found, report_folder, seeker, wrap_text):
+
+@artifact_processor
+def get_installedappsGass(context):
+    files_found = context.get_files_found()
 
     slash = '\\' if is_platform_windows() else '/'
+    data_list = []
+    source_path = ''
 
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith('.db'):
-            
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            SELECT 
-                distinct(package_name),
-                version_code,
-                digest_sha256
-                FROM
-                app_info  
-            ''')
-            
-            if 'user' in file_found:
-                usernum = file_found.split(slash)
-                usernum = str(usernum[-4])
-            else:
-                usernum = '0'
+        if not file_found.endswith('.db'):
+            continue
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                report = ArtifactHtmlReport('Installed Apps')
-                report.start_artifact_report(report_folder, f'Installed Apps (GMS) for user {usernum}')
-                report.add_script()
-                data_headers = ('Bundle ID','Version Code','SHA-256 Hash') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-                data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2]))
-        
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'installed apps - GMS for user {usernum}'
-                tsv(report_folder, data_headers, data_list, tsvname)
-            else:
-                logfunc('No Installed Apps data available for user {usernum}')
-            
-            db.close()
+        source_path = file_found
+        if 'user' in file_found:
+            usernum = str(file_found.split(slash)[-4])
+        else:
+            usernum = '0'
 
-__artifacts__ = {
-        "installedappsGass": (
-                "Installed Apps",
-                ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
-                get_installedappsGass)
-}
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        cursor.execute('''
+            SELECT distinct(package_name), version_code, digest_sha256
+            FROM app_info
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
+
+        for row in all_rows:
+            data_list.append((usernum, row[0], row[1], row[2]))
+
+    data_headers = ('User', 'Bundle ID', 'Version Code', 'SHA-256 Hash')
+    return data_headers, data_list, source_path

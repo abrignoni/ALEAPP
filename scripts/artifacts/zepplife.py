@@ -1,16 +1,16 @@
+# pylint: disable=E1121,W0718
 __artifacts_v2__ = {
-    "zepplife_heartrate": {
+    "extract_zepplife_heartrate": {
         "name": "Zepp Life - Heart Rate",
         "description": "Heart rate history from Zepp Life",
         "author": "its5Q",
-        "version": "0.0.1",
-        "date": "2025-07-28",
+        "creation_date": "2025-07-28",
+        "last_update_date": "2025-07-28",
         "requirements": "none",
         "category": "Zepp Life",
         "notes": "",
         "paths": ('*/com.xiaomi.hm.health/databases/origin_db*',),
         "output_types": "standard",
-        "function": "extract_zepplife_heartrate",
         "artifact_icon": "heart",
     }
 }
@@ -19,7 +19,8 @@ from datetime import datetime, timezone
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 @artifact_processor
-def extract_zepplife_heartrate(files_found, report_folder, seeker, wrap_text):
+def extract_zepplife_heartrate(context):
+    files_found = context.get_files_found()
     data_list = []
 
     origin = None
@@ -38,7 +39,7 @@ def extract_zepplife_heartrate(files_found, report_folder, seeker, wrap_text):
                 try:
                     row[0] = datetime.fromtimestamp(row[0], timezone.utc)
                 except Exception as ex:
-                    logfunc('Error processing timestamp: ', ex)
+                    logfunc(f'Error processing timestamp: {ex}')
 
                 data_list.append(row)
             

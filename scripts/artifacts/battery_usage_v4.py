@@ -1,29 +1,57 @@
-import sqlite3
-import textwrap
+__artifacts_v2__ = {
+    "get_battery_usage_v4": {
+        "name": "battery_usage_v4",
+        "description": "Parses per-app battery usage (timestamp, application, power consumed, foreground and background usage, battery level and status) from the settings intelligence battery-usage-db-v4 database.",
+        "author": "@stark4n6",
+        "creation_date": "2021-12-21",
+        "last_update_date": "2026-08-01",
+        "requirements": "none",
+        "category": "Settings Services",
+        "notes": "Battery Status decodes the AOSP BatteryManager constants 1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging and 5 Fully Charged; any other value is reported as the raw number. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager",
+        "paths": ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*',),
+        "output_types": "standard",
+        "artifact_icon": "battery",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.settings.intelligence vc 1000282241 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.settings.intelligence vc 1000230247 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.settings.intelligence vc 1000217934 | 98857 rows",
+            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 216 rows",
+        },
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+import datetime
 
-def get_battery_usage_v4(files_found, report_folder, seeker, wrap_text):
-    
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+
+
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
+
+
+@artifact_processor
+def get_battery_usage_v4(context):
+    files_found = context.get_files_found()
+
     data_list = []
-    
+    source_path = ''
     for file_found in files_found:
         file_name = str(file_found)
-    
-        if file_name.endswith('battery-usage-db-v4'):
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
+        if not file_name.endswith('battery-usage-db-v4'):
+            continue  # Skip -shm, -wal, etc.
+
+        source_path = file_name
+        db = open_sqlite_db_readonly(file_name)
+        cursor = db.cursor()
+        cursor.execute('''
             select
-            datetime(timestamp/1000,'unixepoch'),
+            timestamp,
             appLabel,
             packageName,
-            case isHidden
-                when 0 then ''
-                when 1 then 'Yes'
-            end,
-            datetime((timestamp-bootTimestamp)/1000,'unixepoch'),
+            case isHidden when 0 then '' when 1 then 'Yes' end,
+            (timestamp-bootTimestamp),
             zoneId,
             totalPower,
             consumePower,
@@ -31,46 +59,16 @@ def get_battery_usage_v4(files_found, report_folder, seeker, wrap_text):
             foregroundUsageTimeInMs*.001 as 'Foreground Usage (Seconds)',
             backgroundUsageTimeInMs*.001 as 'Background Usage (Seconds)',
             batteryLevel,
-            case BatteryStatus
-                when 2 then 'Charging'
-                when 3 then 'Not Charging'
-                when 5 then 'Fully Charged'
-            end,
-            batteryHealth
+            case BatteryStatus when 1 then 'Unknown' when 2 then 'Charging' when 3 then 'Discharging'
+                               when 4 then 'Not Charging' when 5 then 'Fully Charged'
+                               else BatteryStatus end
             from BatteryState
-            ''')
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
 
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],file_found))
-            
-            db.close()
-        else:
-            continue # Skip all other files (-shm, -wal, etc.)
-    
-    if data_list:
-        description = 'This is battery usage details pulled from Settings Services'
-        report = ArtifactHtmlReport('Settings Services - Battery Usage')
-        report.start_artifact_report(report_folder, 'Settings Services - Battery Usage', description)
-        report.add_script()
-        data_headers = ('Timestamp','Application','Package Name','Hidden','Boot Timestamp','Timezone','Total Power','Consumed Power','% Of Consumed','Foreground Usage (Seconds)','Background Usage (Seconds)','Battery Level (%)','Battery Status','Source File') 
+        for row in all_rows:
+            data_list.append((_ms_to_utc(row[0]), row[1], row[2], row[3], _ms_to_utc(row[4]), row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Settings Services - Battery Usage'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Settings Services - Battery Usage'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    else:
-        logfunc('No Settings Services - Battery Usage data available')
-
-__artifacts__ = {
-        "battery_usage_v4": (
-                "Settings Services",
-                ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*'),
-                get_battery_usage_v4)
-}
+    data_headers = (('Timestamp', 'datetime'), 'Application', 'Package Name', 'Hidden', ('Boot Timestamp', 'datetime'), 'Timezone', 'Total Power', 'Consumed Power', '% Of Consumed', 'Foreground Usage (Seconds)', 'Background Usage (Seconds)', 'Battery Level (%)', 'Battery Status')
+    return data_headers, data_list, source_path
