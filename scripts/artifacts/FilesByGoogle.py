@@ -4,20 +4,27 @@ __artifacts_v2__ = {
         "description": "Parses the master files list from the Files by Google application",
         "author": "@KevinPagano3",
         "creation_date": "2021-01-18",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Files By Google",
         "notes": "",
         "paths": ('*/com.google.android.apps.nbu.files/databases/files_master_database*'),
         "output_types": "standard",
-        "artifact_icon": "file"
+        "artifact_icon": "file",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.nbu.files vc 1849879 | 71 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.nbu.files vc 1508395 | 434 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.nbu.files vc 695143 | 228 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.nbu.files vc 492527 | 95 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.nbu.files vc 1107071 | 16 rows",
+        }
     },
     "fbg_searchhistory": {
         "name": "Files By Google - Search History",
         "description": "Parses the Files by Google application search history",
         "author": "@KevinPagano3",
-        "date": "2021-01-18",
-        "last_updated_date": "2025-09-09",
+        "creation_date": "2021-01-18",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Files By Google",
         "notes": "",
@@ -30,7 +37,8 @@ __artifacts_v2__ = {
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
-def fbg_master(files_found, report_folder, seeker, wrap_text):
+def fbg_master(context):
+    files_found = context.get_files_found()
     data_list_master = []
 
     for file_found in files_found:
@@ -78,14 +86,15 @@ def fbg_master(files_found, report_folder, seeker, wrap_text):
                     else:
                         last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),'UTC')
                 
-                    data_list_master.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],file_found))
+                    data_list_master.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],context.get_relative_path(file_found)))
             db.close()
             
     data_headers = (('Date Modified','datetime'),'Root Path','Root Relative Path','File Name','Size','Mime Type','Media Type','URI','Hidden','Title','Parent Folder','Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
     return data_headers, data_list_master, 'See source file(s) below'
             
 @artifact_processor
-def fbg_searchhistory(files_found, report_folder, seeker, wrap_text):
+def fbg_searchhistory(context):
+    files_found = context.get_files_found()
     data_list_search = []
     
     for file_found in files_found:
@@ -114,7 +123,7 @@ def fbg_searchhistory(files_found, report_folder, seeker, wrap_text):
                         pass
                     else:
                         timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp),'UTC')
-                    data_list_search.append((timestamp,row[1],file_found))
+                    data_list_search.append((timestamp,row[1],context.get_relative_path(file_found)))
             db.close()
             
         else:

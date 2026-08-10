@@ -1,177 +1,129 @@
-# Module Description: Parses Chromium DIPS (Detect Incidental Party State)
-# Author: @KevinPagano3
-# Date: 2023-04-07
-# Artifact version: 0.0.1
-# Requirements: none
+__artifacts_v2__ = {
+    "get_chromeDIPS": {
+        "name": "ChromeDIPS",
+        "description": "Module Description: Parses Chromium DIPS (Detect Incidental Party State)",
+        "author": "@KevinPagano3",
+        "creation_date": "2023-04-07",
+        "last_update_date": "2026-07-10",
+        "requirements": "none",
+        "category": "Chromium",
+        "notes": "",
+        "paths": ('*/app_chrome/Default/DIPS*', '*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*', '*/app_webview/Default/DIPS*'),
+        "output_types": "standard",
+        "artifact_icon": "globe",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533 | 13 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 19 rows",
+            "pixel7a_a14": "Android 14 | com.android.chrome vc 616710133, com.microsoft.emmx vc 259210005 | 36 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 19 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 3 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 15 rows",
+            "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 13 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033 | 19 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 10 rows",
+        },
+    }
+}
+
 # Thanks to Ryan Benson for awareness https://github.com/obsidianforensics/hindsight/pull/146/commits/015ee189c97c0a4e48deb59568dfe4f536ace8aa
 
-import os
-import sqlite3
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, get_next_unused_name, open_sqlite_db_readonly
+import datetime
+
+from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
 
-def get_chromeDIPS(files_found, report_folder, seeker, wrap_text):
+
+def _webkit_to_utc(value):
+    if value in (None, 0, ''):
+        return ''
+    return datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(microseconds=int(value))
+
+
+def _first_column(columns, candidates):
+    """Returns the first candidate column present in the table, or NULL —
+    the bounces schema varies between Chromium versions."""
+    return next((column for column in candidates if column in columns), 'NULL')
+
+
+@artifact_processor
+def get_chromeDIPS(context):
+    files_found = context.get_files_found()
+    # all_data is a consolidated list of all browsers with an extra column to discriminate the browser
+    all_data = []
+
+    data_headers = [
+        'Site',
+        'First Site Storage Timestamp',
+        'Last Site Storage Timestamp',
+        'First User Interaction Timestamp',
+        'Last User Interaction Timestamp',
+        'First Stateful Bounce Timestamp',
+        'Last Stateful Bounce Timestamp',
+        'First Stateless Bounce Timestamp',
+        'Last Stateless Bounce Timestamp',
+    ]
+
+    lava_data_headers = data_headers.copy()
+    for i in range(1, 9):
+        lava_data_headers[i] = (lava_data_headers[i], 'datetime')
+
+    all_data_headers = lava_data_headers + ['Browser Name']
+
+    report_file = 'Unknown'
 
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('DIPS'):
-            continue # Skip all other files
+            continue  # Skip all other files
+        if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
+            continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
 
         browser_name = get_browser_name(file_found)
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
-        elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
-            continue # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data??
-        
+
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        
         columns = [i[1] for i in cursor.execute('PRAGMA table_info(bounces)')]
-        
-        if 'first_stateless_bounce_time' not in columns:
-            cursor.execute('''
+
+        if not columns:
+            logfunc(f'No bounces table available in {file_found}')
+            db.close()
+            continue
+
+        first_user_col = _first_column(columns, ('first_user_interaction_time', 'first_user_activation_time'))
+        last_user_col = _first_column(columns, ('last_user_interaction_time', 'last_user_activation_time'))
+        first_bounce_col = _first_column(columns, ('first_stateless_bounce_time', 'first_bounce_time'))
+        last_bounce_col = _first_column(columns, ('last_stateless_bounce_time', 'last_bounce_time'))
+
+        cursor.execute(f'''
             select
             site,
-            case first_site_storage_time
-                when 0 then ''
-                else datetime((first_site_storage_time/1000000)-11644473600,'unixepoch')
-            end,
-            case last_site_storage_time
-                when 0 then ''
-                else datetime((last_site_storage_time/1000000)-11644473600,'unixepoch')
-            end,
-            case first_user_interaction_time
-                when 0 then ''
-                else datetime((first_user_interaction_time/1000000)-11644473600,'unixepoch')
-            end,
-            case last_user_interaction_time
-                when 0 then ''
-                else datetime((last_user_interaction_time/1000000)-11644473600,'unixepoch')
-            end,
-            case first_stateful_bounce_time
-                when 0 then ''
-                else datetime((first_stateful_bounce_time/1000000)-11644473600,'unixepoch')
-            end,
-            case last_stateful_bounce_time
-                when 0 then ''
-                else datetime((last_stateful_bounce_time/1000000)-11644473600,'unixepoch')
-            end,
-            case first_bounce_time
-                when 0 then ''
-                else datetime((first_bounce_time/1000000)-11644473600,'unixepoch')
-            end,
-            case last_bounce_time
-                when 0 then ''
-                else datetime((last_bounce_time/1000000)-11644473600,'unixepoch')
-            end
+            {_first_column(columns, ('first_site_storage_time',))},
+            {_first_column(columns, ('last_site_storage_time',))},
+            {first_user_col},
+            {last_user_col},
+            {_first_column(columns, ('first_stateful_bounce_time',))},
+            {_first_column(columns, ('last_stateful_bounce_time',))},
+            {first_bounce_col},
+            {last_bounce_col}
             from bounces
-            ''')
-            
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                description = 'DIPS - Incidental parties are sites without meaningful user interactions, such as bounce trackers'
-                report = ArtifactHtmlReport(f'{browser_name} - Detect Incidental Party State')
-                #check for existing and get next name for report file, so report from another file does not get overwritten
-                report_path = os.path.join(report_folder, f'{browser_name} - Detect Incidental Party State.temphtml')
-                report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-                report.start_artifact_report(report_folder, os.path.basename(report_path), description)
-                report.add_script()
-                data_headers = ('Site','First Site Storage Timestamp','Last Site Storage Timestamp','First User Interaction Timestamp','Last User Interaction Timestamp','First Stateful Bounce Timestamp','Last Stateful Bounce Timestamp','First Stateless Bounce Timestamp','Last Stateless Bounce Timestamp') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-                tl_data_headers = ('First Site Storage Timestamp','Site','Last Site Storage Timestamp','First User Interaction Timestamp','Last User Interaction Timestamp','First Stateful Bounce Timestamp','Last Stateful Bounce Timestamp','First Bounce Timestamp','Last Bounce Timestamp')
-                data_list = []
-                tl_data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
-                    
-                    tl_data_list.append((row[1],row[0],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
-
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'{browser_name} - Detect Incidental Party State'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'{browser_name} - Detect Incidental Party State'
-                timeline(report_folder, tlactivity, tl_data_list, tl_data_headers)
-            else:
-                logfunc(f'No {browser_name} - Detect Incidental Party State data available')
-        
-        else:
-            cursor.execute('''
-            select
-            site,
-            case first_site_storage_time
-                when 0 then ''
-                else datetime((first_site_storage_time/1000000)-11644473600,'unixepoch')
-            end,
-            case last_site_storage_time
-                when 0 then ''
-                else datetime((last_site_storage_time/1000000)-11644473600,'unixepoch')
-            end,
-            case first_user_interaction_time
-                when 0 then ''
-                else datetime((first_user_interaction_time/1000000)-11644473600,'unixepoch')
-            end,
-            case last_user_interaction_time
-                when 0 then ''
-                else datetime((last_user_interaction_time/1000000)-11644473600,'unixepoch')
-            end,
-            case first_stateful_bounce_time
-                when 0 then ''
-                else datetime((first_stateful_bounce_time/1000000)-11644473600,'unixepoch')
-            end,
-            case last_stateful_bounce_time
-                when 0 then ''
-                else datetime((last_stateful_bounce_time/1000000)-11644473600,'unixepoch')
-            end,
-            case first_stateless_bounce_time
-                when 0 then ''
-                else datetime((first_stateless_bounce_time/1000000)-11644473600,'unixepoch')
-            end,
-            case last_stateless_bounce_time
-                when 0 then ''
-                else datetime((last_stateless_bounce_time/1000000)-11644473600,'unixepoch')
-            end
-            from bounces
-            ''')
-
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                description = 'DIPS - Incidental parties are sites without meaningful user interactions, such as bounce trackers'
-                report = ArtifactHtmlReport(f'{browser_name} - Detect Incidental Party State')
-                #check for existing and get next name for report file, so report from another file does not get overwritten
-                report_path = os.path.join(report_folder, f'{browser_name} - Detect Incidental Party State.temphtml')
-                report_path = get_next_unused_name(report_path)[:-9] # remove .temphtml
-                report.start_artifact_report(report_folder, os.path.basename(report_path), description)
-                report.add_script()
-                data_headers = ('Site','First Site Storage Timestamp','Last Site Storage Timestamp','First User Interaction Timestamp','Last User Interaction Timestamp','First Stateful Bounce Timestamp','Last Stateful Bounce Timestamp','First Stateless Bounce Timestamp','Last Stateless Bounce Timestamp') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-                tl_data_headers = ('First Site Storage Timestamp','Site','Last Site Storage Timestamp','First User Interaction Timestamp','Last User Interaction Timestamp','First Stateful Bounce Timestamp','Last Stateful Bounce Timestamp','First Stateless Bounce Timestamp','Last Stateless Bounce Timestamp')
-                data_list = []
-                tl_data_list = []
-                for row in all_rows:
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
-                    
-                    tl_data_list.append((row[1],row[0],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
-
-                report.write_artifact_data_table(data_headers, data_list, file_found)
-                report.end_artifact_report()
-                
-                tsvname = f'{browser_name} - Detect Incidental Party State'
-                tsv(report_folder, data_headers, data_list, tsvname)
-                
-                tlactivity = f'{browser_name} - Detect Incidental Party State'
-                timeline(report_folder, tlactivity, tl_data_list, tl_data_headers)
-            else:
-                logfunc(f'No {browser_name} - Detect Incidental Party State data available')
-        
+        ''')
+        all_rows = cursor.fetchall()
         db.close()
 
-__artifacts__ = {
-        "ChromeDIPS": (
-                "Chromium",
-                ('*/app_chrome/Default/DIPS*','*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*','*/app_webview/Default/DIPS*'),
-                get_chromeDIPS)
-}
+        data_list = []
+        for row in all_rows:
+            data_list.append((row[0], _webkit_to_utc(row[1]), _webkit_to_utc(row[2]), _webkit_to_utc(row[3]),
+                              _webkit_to_utc(row[4]), _webkit_to_utc(row[5]), _webkit_to_utc(row[6]),
+                              _webkit_to_utc(row[7]), _webkit_to_utc(row[8])))
+
+        if len(data_list) > 0:
+            data_list = [row + (browser_name,) for row in data_list]
+            all_data.extend(data_list)
+        else:
+            logfunc(f'No {browser_name} - Detect Incidental Party State data available')
+
+    return all_data_headers, all_data, report_file

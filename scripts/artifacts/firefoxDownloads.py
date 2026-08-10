@@ -1,20 +1,47 @@
+__artifacts_v2__ = {
+    "get_firefoxDownloads": {
+        "name": "Firefox - Downloads",
+        "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database. The Tor Browser path is also matched; in the samples examined it carried the same database.",
+        "author": "@stark4n6",
+        "creation_date": "2022-01-12",
+        "last_update_date": "2026-08-01",
+        "notes": "Two schema variants are handled: destination_directory and directory_path. Reference: Mozilla android-components, 'DownloadState.Status (PAUSED=3, CANCELLED=4, FAILED=5, COMPLETED=6)', https://github.com/mozilla-firefox/firefox/blob/main/mobile/android/android-components/components/browser/state/src/main/java/mozilla/components/browser/state/state/content/DownloadState.kt",
+        "requirements": "none",
+        "category": "Firefox",
+        "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',
+                  '*/org.torproject.torbrowser/databases/mozac_downloads_database*'),
+        "output_types": "standard",
+        "artifact_icon": "globe",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 0 rows",
+        },
+    }
+}
+
 import os
-import sqlite3
-import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
-def get_firefoxDownloads(files_found, report_folder, seeker, wrap_text):
-    
+
+@artifact_processor
+def get_firefoxDownloads(context):
+    files_found = context.get_files_found()
+    data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not os.path.basename(file_found) == 'mozac_downloads_database': # skip -journal and other files
+        if not os.path.basename(file_found) == 'mozac_downloads_database':  # skip -journal and other files
             continue
-        
+
+        source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+
+        # Two schema variants are handled: destination_directory and directory_path
+        table_columns = [row[1] for row in cursor.execute('PRAGMA table_info(downloads)')]
+        directory_column = 'directory_path' if 'directory_path' in table_columns else 'destination_directory'
+
+        cursor.execute(f'''
         SELECT
         datetime(created_at/1000,'unixepoch') AS CreatedDate,
         file_name AS FileName,
@@ -27,37 +54,23 @@ def get_firefoxDownloads(files_found, report_folder, seeker, wrap_text):
             WHEN 5 THEN 'Failed'
             WHEN 6 THEN 'Finished'
         END AS Status,
-        destination_directory AS DestDir
+        {directory_column} AS DestDir
         FROM downloads
         ''')
 
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Firefox - Downloads')
-            report.start_artifact_report(report_folder, 'Firefox - Downloads')
-            report.add_script()
-            data_headers = ('Created Timestamp','File Name','URL','MIME Type','File Size (Bytes)','Status','Destination Directory') 
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+        for row in all_rows:
+            data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6]))
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Firefox - Downloads'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Firefox - Downloads'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Firefox - Downloads data available')
-        
         db.close()
-    
-__artifacts__ = {
-        "FirefoxDownloads": (
-                "Firefox",
-                ('*/org.mozilla.firefox/databases/mozac_downloads_database*'),
-                get_firefoxDownloads)
-}
+
+    data_headers = (
+        ('Created Timestamp', 'datetime'),
+        'File Name',
+        'URL',
+        'MIME Type',
+        'File Size (Bytes)',
+        'Status',
+        'Destination Directory',
+    )
+    return data_headers, data_list, source_path

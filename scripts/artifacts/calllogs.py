@@ -1,86 +1,91 @@
-import os
-import sqlite3
+# pylint: disable=W0718
+__artifacts_v2__ = {
+    "get_calllogs": {
+        "name": "Call Logs",
+        "description": "Parses call logs (number, start and end time, call type, direction and name) from the contacts and logs provider databases.",
+        "author": "@markmckinnon",
+        "creation_date": "2021-03-17",
+        "last_update_date": "2026-08-01",
+        "requirements": "none",
+        "category": "Call Logs",
+        "notes": "The same 'type' column is read from two different schemas, the AOSP 'calls' table in the contacts provider and the Samsung LogsProvider 'logs' table, and the AOSP CallLog.Calls code set is applied to both. Call type decodes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally; any other code is reported as its raw value. Direction is only filled in for the incoming (1) and outgoing (2) codes and is left blank for the rest, so the from_id and to_id columns stay empty for those rows and the number column carries the other party. Reference: AOSP, 'CallLog.Calls constants', https://developer.android.com/reference/android/provider/CallLog.Calls",
+        "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
+        "output_types": "standard",
+        "artifact_icon": "phone",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 0 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.contacts | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.contacts | 0 rows",
+            "userb2_a13": "Android 13 | com.android.providers.contacts | 0 rows",
+        },
+    }
+}
+
 import datetime
+import os
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly, does_table_exist_in_db
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, does_table_exist_in_db
 
-def get_calllogs(files_found, report_folder, seeker, wrap_text):
+# AOSP CallLog.Calls type codes, applied to both the AOSP calls table and the
+# Samsung LogsProvider logs table, which reuses the same column name
+CALL_TYPES = {
+    1: 'Incoming',
+    2: 'Outgoing',
+    3: 'Missed',
+    4: 'Voicemail',
+    5: 'Rejected',
+    6: 'Blocked',
+    7: 'Answered Externally',
+}
+# Only these two codes state who called whom; the others say what happened to
+# an entry without the record itself naming a direction
+CALL_DIRECTIONS = {1: 'Incoming', 2: 'Outgoing'}
 
-    source_file = ''
+
+@artifact_processor
+def get_calllogs(context):
+    files_found = context.get_files_found()
+
+    data_list = []
+    source_path = ''
     for file_found in files_found:
-        
         file_name = str(file_found)
-        if not os.path.basename(file_name) == 'contacts2.db' and \
-           not os.path.basename(file_name) == 'contacts.db'  and \
-           not os.path.basename(file_name) == 'logs.db': # skip -journal and other files
-            continue
-        source_file = file_found.replace(seeker.data_folder, '')
+        if os.path.basename(file_name) not in ('contacts2.db', 'contacts.db', 'logs.db'):
+            continue  # skip -journal and other files
 
+        if does_table_exist_in_db(file_name, 'calls'):
+            table = 'calls'
+        elif does_table_exist_in_db(file_name, 'logs'):
+            table = 'logs'
+        else:
+            # Current Android keeps the call log in calllog.db rather than the
+            # contacts provider, so contacts2.db carries neither table. That file
+            # has nothing for this artifact; the calllog module covers the rest.
+            continue
+
+        source_path = file_name
         db = open_sqlite_db_readonly(file_name)
-        calls_table_exists = does_table_exist_in_db(file_name, 'calls')
         cursor = db.cursor()
         try:
-            if calls_table_exists:
-                cursor.execute('''
-                    SELECT number, date/1000, (date/1000 + duration) as duration, 
-                           case type when 1 then "Incoming"
-                                     when 3 then "Incoming"
-                                     when 2 then "Outgoing"
-                                     when 5 then "Outgoing"
-                                     else "Unknown" end as direction,
-                            name FROM calls ORDER BY date DESC;''')
-            else:
-                cursor.execute('''
-                    SELECT number, date/1000, (date/1000 + duration) as duration, 
-                           case type when 1 then "Incoming"
-                                     when 3 then "Incoming"
-                                     when 2 then "Outgoing"
-                                     when 5 then "Outgoing"
-                                     else "Unknown" end as direction,
-                           name FROM logs ORDER BY date DESC;''')
+            cursor.execute(f'''
+                SELECT number, date/1000, (date/1000 + duration) as end_date,
+                       type, name FROM {table} ORDER BY date DESC;''')
             all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
         except Exception as e:
-            print (e)
-            usageentries = 0
-            
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Call Logs2')
-            report.start_artifact_report(report_folder, 'Call Logs2')
-            report.add_script()
-            data_headers = ('from_id', 'to_id','start_date', 'end_date', 'direction', 'name') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-            data_list = []
-            for row in all_rows:
-                callerId = None
-                calleeId = None
-                if row[3] == "Incoming":
-                    callerId = row[0]                                   
-                else:
-                    calleeId = row[0]
-                starttime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
-                endtime = datetime.datetime.utcfromtimestamp(int(row[2])).strftime('%Y-%m-%d %H:%M:%S')
-                data_list.append((callerId, calleeId, starttime, endtime, row[3], row[4]))
-
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Call Logs2'
-            tsv(report_folder, data_headers, data_list, tsvname, source_file)
-
-            tlactivity = f'Call Logs2'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-            
-        else:
-            logfunc('No Call Logs found')
-
+            logfunc(str(e))
+            all_rows = []
         db.close()
-    
-    return
 
-__artifacts__ = {
-    "Call Logs":(
-        "Call Logs",
-        ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
-        get_calllogs)
-}
+        for row in all_rows:
+            type_code = row[3]
+            call_type = CALL_TYPES.get(type_code, type_code)  # unknown codes stay raw
+            direction = CALL_DIRECTIONS.get(type_code, '')
+            callerId = row[0] if direction == 'Incoming' else None
+            calleeId = row[0] if direction == 'Outgoing' else None
+            starttime = datetime.datetime.fromtimestamp(int(row[1]), datetime.timezone.utc)
+            endtime = datetime.datetime.fromtimestamp(int(row[2]), datetime.timezone.utc)
+            data_list.append((callerId, calleeId, starttime, endtime, direction, call_type, row[0], row[4]))
+
+    data_headers = ('from_id', 'to_id', ('start_date', 'datetime'), ('end_date', 'datetime'), 'direction', 'call_type', ('number', 'phonenumber'), 'name')
+    return data_headers, data_list, source_path

@@ -10,7 +10,19 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system_ce/*/accounts_ce.db*'),
         "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "user"
+        "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | 9 rows",
+            "galaxys10_a10": "Android 10 | 4 rows",
+            "hc_pixel8pro_a16": "Android 16 | 9 rows",
+            "kevin_pocox7_a15": "Android 15 | 8 rows",
+            "pixel7a_a14": "Android 14 | 20 rows",
+            "samsunga53_a14": "Android 14 | 8 rows",
+            "samsungs20_a13": "Android 13 | 16 rows",
+            "sharon_a14": "Android 14 | 14 rows",
+            "russell_pixel6a_a13": "Android 13 | 8 rows",
+            "userb2_a13": "Android 13 | 2 rows",
+        }
     },
     "accounts_ce_authtokens": {
         "name": "Authentication tokens",
@@ -23,7 +35,19 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/system_ce/*/accounts_ce.db*'),
         "output_types": ["html", "lava", "tsv"],
-        "artifact_icon": "key"
+        "artifact_icon": "key",
+        "sample_data": {
+            "anne_a15": "Android 15 | 75 rows",
+            "galaxys10_a10": "Android 10 | 78 rows",
+            "hc_pixel8pro_a16": "Android 16 | 160 rows",
+            "kevin_pocox7_a15": "Android 15 | 122 rows",
+            "pixel7a_a14": "Android 14 | 162 rows",
+            "samsunga53_a14": "Android 14 | 130 rows",
+            "samsungs20_a13": "Android 13 | 107 rows",
+            "sharon_a14": "Android 14 | 107 rows",
+            "russell_pixel6a_a13": "Android 13 | 227 rows",
+            "userb2_a13": "Android 13 | 108 rows",
+        }
     }
 }
 
@@ -33,7 +57,8 @@ from scripts.ilapfuncs import artifact_processor, \
 
 
 @artifact_processor
-def accounts_ce(files_found, report_folder, seeker, wrap_text):
+def accounts_ce(context):
+    files_found = context.get_files_found()
     source_path_list = get_file_path_list_checking_uid(files_found, "accounts_ce.db", -2, "mirror")
     source_path = ""
     data_list = []
@@ -55,7 +80,8 @@ def accounts_ce(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def accounts_ce_authtokens(files_found, report_folder, seeker, wrap_text):
+def accounts_ce_authtokens(context):
+    files_found = context.get_files_found()
     source_path_list = get_file_path_list_checking_uid(files_found, "accounts_ce.db", -2, "mirror")
     source_path = ""
     data_list = []

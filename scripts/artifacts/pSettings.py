@@ -1,50 +1,54 @@
-import sqlite3
-import textwrap
+__artifacts_v2__ = {
+    "get_pSettings": {
+        "name": "pSettings",
+        "description": "Parses Google partner settings (name and value) from the Google services framework googlesettings.db.",
+        "author": "@abrignoni",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "Device Information",
+        "notes": "",
+        "paths": ('*/com.google.android.gsf/databases/googlesettings.db*',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "settings",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.google.android.gsf | 13 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gsf | 18 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gsf | 57 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gsf | 33 rows",
+            "sharon_a14": "Android 14 | com.google.android.gsf | 18 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gsf | 30 rows",
+            "userb2_a13": "Android 13 | com.google.android.gsf | 36 rows",
+        },
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
-def get_pSettings(files_found, report_folder, seeker, wrap_text):
-    
+
+@artifact_processor
+def get_pSettings(context):
+    files_found = context.get_files_found()
+
     data_list = []
-    
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith('googlesettings.db'):
-            db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
-            select 
-            name,
-            value
-            from partner
-            ''')
-
-            all_rows = cursor.fetchall()
-            usageentries = len(all_rows)
-            if usageentries > 0:
-                for row in all_rows:
-                    data_list.append((row[0],row[1],file_found))
-            db.close()
-        else:
+        if not file_found.endswith('googlesettings.db'):
             continue
-    if data_list:
-        report = ArtifactHtmlReport('Partner Settings')
-        report.start_artifact_report(report_folder, 'Partner Settings')
-        report.add_script()
-        data_headers = ('Name','Value','Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
 
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'partner settings'
-        tsv(report_folder, data_headers, data_list, tsvname)
-    else:
-        logfunc('No Partner Settings data available')
-            
-__artifacts__ = {
-        "pSettings": (
-                "Device Info",
-                ('*/com.google.android.gsf/databases/googlesettings.db*'),
-                get_pSettings)
-}
+        source_path = file_found
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        cursor.execute('''
+            select name, value
+            from partner
+        ''')
+        all_rows = cursor.fetchall()
+        db.close()
+
+        for row in all_rows:
+            data_list.append((row[0], row[1]))
+
+    data_headers = ('Name', 'Value')
+    return data_headers, data_list, source_path

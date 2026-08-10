@@ -1,19 +1,21 @@
+# pylint: disable=E0606,E1120,E1123,W0611,W0702,W0718
 __artifacts_v2__ = {
-    "chatgpt2": {
-        "name": "ChatGPT",
+    "get_chatpgt2": {
+        "name": "ChatGPT - Conversations",
         "description": "Android ChatGPT conversations",
         "author": "Alexis Brignoni",
-        "version": "0.0.2",
         "creation_date": "2025-07-08",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "ChatGPT",
         "notes": "",
-        "paths": ('*/data/data/com.openai.chatgpt/databases/*conversations.db*'),
+        "paths": ('*/data/com.openai.chatgpt/databases/*conversations.db*'),
         "html_columns": ['Content'],
         "output_types": "standard",
-        "function": "get_chatpgt2",
         "artifact_icon": "loader",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.openai.chatgpt vc 2525902 | 12 rows",
+        },
     }
 }
 
@@ -22,11 +24,12 @@ import textwrap
 import json
 from datetime import datetime, timezone
 from collections import defaultdict
-from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.html_safe import safe_source
 
 @artifact_processor
-def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
+def get_chatpgt2(context):
+    files_found = context.get_files_found()
 
     data_list = []
 
@@ -81,6 +84,9 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
 
             # Print one result as a check
             for message_id, message in list(reconstructed_messages.items()):
+                if not isinstance(message, dict) or not isinstance(message.get('content'), dict):
+                    logfunc(f'Skipping ChatGPT message {message_id}: unrecognized message structure')
+                    continue
                 cdt = ''
                 mdt = ''
                 creationdate = message['content'].get('created_date','')
@@ -101,17 +107,23 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
                         mdt = datetime.strptime(modificationdate, "%Y-%m-%dT%H:%M:%SZ")
                     mdt = mdt.replace(tzinfo=timezone.utc)
 
-                chunkdata = message['content']['content'].get('content')
-                if chunkdata == None:
-                    chunkdata = message['content']['content']
-
-                references = message['content']['content'].get('references')
+                # The nested content value is a dict in most messages but can
+                # also be a plain string (e.g. some tool/voice messages)
+                content = message['content'].get('content')
+                if isinstance(content, dict):
+                    chunkdata = content.get('content')
+                    if chunkdata == None:
+                        chunkdata = content
+                    references = content.get('references')
+                else:
+                    chunkdata = content
+                    references = ''
 
                 # Get conversation title
                 conversation_id = message['content'].get('conversation_id')
                 conversation_title = conversations.get(conversation_id, 'Unknown Conversation')
 
-                data_list.append((mdt, cdt, conversation_title, chunkdata, references, message_id, conversation_id))
+                data_list.append((mdt, cdt, conversation_title, safe_source(chunkdata), references, message_id, conversation_id))
 
     data_headers = (('Modified Time', 'datetime'), ('Creation Time', 'datetime'), 'Conversation Title', 'Content', 'Content References','Message ID','Conversation ID')
 

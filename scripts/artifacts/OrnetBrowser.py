@@ -1,3 +1,4 @@
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "ornetbrowser_bookmarks": {
         "name": "Ornet Browser - Bookmarks",
@@ -12,15 +13,19 @@ __artifacts_v2__ = {
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "bookmark"
     },
-    "ornetbrowser_favorites": {
-        "name": "Ornet Browser - Favorited Sites",
-        "description": "Parses Ornet Browser favorite Sites",
+    "ornetbrowser_suggestions": {
+        "name": "Ornet Browser - Suggestions",
+        "description": "Parses the Ornet Browser suggestions table",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Rows are read from the suggestions "
+            "table of appDatabase. What the app stores in that table is not established, so "
+            "the entries are reported as stored."
+        ),
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "star"
@@ -30,10 +35,14 @@ __artifacts_v2__ = {
         "description": "Parses Ornetbrowser Web Browsing History",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Visit Date joins the stored "
+            "history.date and history.time strings and reproduces them as recorded; the "
+            "file carries no time zone for them."
+        ),
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"
@@ -43,37 +52,51 @@ __artifacts_v2__ = {
         "description": "Parses Ornet Browser Open Tab Information",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
-        "paths": ('*/com.ornet.torbrowser/databases/appDatabase','*/com.ornet.torbrowser/cache/tabPreviews/*/*.jpg'),
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Tab Preview File Name Time is "
+            "decoded from the tab preview file name, which is a number read as a Unix time "
+            "in milliseconds; that reading was established through testing and the file name "
+            "is its only basis. It is rendered in UTC."
+        ),
+        "paths": (
+            '*/com.ornet.torbrowser/databases/appDatabase',
+            '*/com.ornet.torbrowser/cache/tabPreviews/*/*.jpg'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "book-open"
+        "artifact_icon": "book"
     },
-        "ornetbrowser_frequents": {
+    "ornetbrowser_frequents": {
         "name": "Ornet Browser - Frequents",
-        "description": "Parses Ornet Browser Frequently Visited Sites",
+        "description": "Parses the Ornet Browser frequents table",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Rows are read from the frequents "
+            "table of appDatabase. Count is the stored count value; what increments it is "
+            "not established, so it is reported as stored."
+        ),
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"
     },
-    
-        "ornetbrowser_downloads": {
+    "ornetbrowser_downloads": {
         "name": "Ornet Browser - Downloads",
         "description": "Parses Ornet Browser Downloads",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Last Modified is the stored "
+            "downloads.last_modified_at value rendered in UTC; the column name is the "
+            "field's own name and what the app updates it for is not established."
+        ),
         "paths": ('*/com.ornet.torbrowser/databases/kdownloader.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "download"
@@ -83,15 +106,22 @@ __artifacts_v2__ = {
         "description": "Parses Ornet Browser Tab thumbnail Information",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
-        "last_update_date": "2025-11-13",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
-        "paths": ('*/com.ornet.torbrowser/cache/tabPreviews/*/*.jpg','*//comcom.ornet.torbrowser/databases/AppDatabase'),
+        "notes": (
+            "Tested on version 1.9.26 (Oct, 22nd 2025). Timestamp is decoded from the "
+            "thumbnail file name, which is a number read as a Unix time in milliseconds; "
+            "that reading was established through testing and the file name is its only "
+            "basis. It is rendered in UTC."
+        ),
+        "paths": (
+            '*/com.ornet.torbrowser/cache/tabPreviews/*/*.jpg',
+            '*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "timeline", "lava"],
-        "artifact_icon": "image"
+        "artifact_icon": "photo"
     },
-        "ornetbrowser_searchhistory": {
+    "ornetbrowser_searchhistory": {
         "name": "Ornet Browser - Search History",
         "description": "Parses Ornet Browser Search History",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
@@ -104,20 +134,20 @@ __artifacts_v2__ = {
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "search"
     },
-        "ornetbrowser_cookies": {
+    "ornetbrowser_cookies": {
         "name": "Ornet Browser - Cookies",
         "description": "Parses Ornet Browser Cookies",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
-        "paths": ('*/com.ornet.torbrowser/files/mozilla/m6jacqwu.default/cookies.sqlite'),
+        "paths": ('*/com.ornet.torbrowser/files/mozilla/*/cookies.sqlite*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"
     },
-        "ornetbrowser_usageinfo": {
+    "ornetbrowser_usageinfo": {
         "name": "Ornet Browser - Usage Info",
         "description": "Parses Ornet Browser Usage Information",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
@@ -128,23 +158,40 @@ __artifacts_v2__ = {
         "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
         "paths": ('*/com.ornet.torbrowser/shared_prefs/com.ornet.torbrowser_preferences.xml'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "info"
+        "artifact_icon": "info-circle"
     }
 }
 
-import inspect   
-import sqlite3
 import datetime
-import pathlib
 import os
+import re
 from pathlib import Path
 import xml.etree.ElementTree as ET
-from scripts.ilapfuncs import artifact_processor, is_platform_windows, check_in_media, open_sqlite_db_readonly, get_sqlite_db_records, get_file_path, media_to_html, is_platform_windows, logfunc
+from scripts.ilapfuncs import artifact_processor, check_in_media, get_sqlite_db_records, logfunc
+
+INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
+BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
+
+
+def _parse_xml(file_found):
+    """Parse XML, recovering from invalid tokens / unescaped ampersands; empty element if unparseable."""
+    try:
+        return ET.parse(file_found).getroot()
+    except ET.ParseError:
+        with open(file_found, encoding='utf-8', errors='replace') as f:
+            xml = BARE_AMPERSAND.sub('&amp;', INVALID_XML_CHARS.sub('', f.read()))
+        try:
+            return ET.fromstring(xml)
+        except ET.ParseError as ex:
+            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            return ET.Element('empty')
+
 
 @artifact_processor
-def ornetbrowser_bookmarks(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_bookmarks(context):
+    files_found = context.get_files_found()
     data_list = []
-    
+
     def is_sqlite_db(path):
         try:
             with open(path, "rb") as f:
@@ -163,33 +210,29 @@ def ornetbrowser_bookmarks(files_found, report_folder, seeker, wrap_text):
             break
 
     if not source_path:
-         return (), [], "appDatabase not found"
-                       
+        return (), [], "appDatabase not found"
+
     query = '''
-        SELECT 
+        SELECT
             bookmarks.id,
             bookmarks.title,
-            bookmarks.url,	
+            bookmarks.url,
             folders.name
         FROM bookmarks
         LEFT JOIN folders ON bookmarks.folderId = folders.id;
         '''
 
-    db_records = get_sqlite_db_records(source_path, query)
+    data_headers = ('Bookmark ID', 'Title', 'URL', 'Bookmark Folder')
+    data_list = list(get_sqlite_db_records(source_path, query))
 
-    for row in db_records:
+    return data_headers, data_list, context.get_relative_path(source_path)
 
-        data_list.append((row[0],row[1],row[2],row[3]))
 
-    data_headers = ('Bookmark ID','Title','URL','Bookmark Folder') 
-    data_list = get_sqlite_db_records(source_path, query)        
-    
-    return data_headers, data_list, source_path
-    
 @artifact_processor
-def ornetbrowser_favorites(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_suggestions(context):
+    files_found = context.get_files_found()
     data_list = []
-    
+
     def is_sqlite_db(path):
         try:
             with open(path, "rb") as f:
@@ -208,29 +251,27 @@ def ornetbrowser_favorites(files_found, report_folder, seeker, wrap_text):
             break
 
     if not source_path:
-         return (), [], "appDatabase not found"
-                       
+        return (), [], "appDatabase not found"
+
     query = '''
         SELECT
             suggestions.id,
             suggestions.url,
             suggestions.title
         FROM suggestions;
-	'''
-	
-    db_records = get_sqlite_db_records(source_path, query)
-    for row in db_records:
-        data_list.append((row[0],row[1],row[2]))
+    '''
 
-    data_headers = ('ID','URL','Title') 
-    data_list = get_sqlite_db_records(source_path, query)        
-    
-    return data_headers, data_list, source_path
-    
+    data_headers = ('ID', 'URL', 'Title')
+    data_list = list(get_sqlite_db_records(source_path, query))
+
+    return data_headers, data_list, context.get_relative_path(source_path)
+
+
 @artifact_processor
-def ornetbrowser_history(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_history(context):
+    files_found = context.get_files_found()
     data_list = []
-    
+
     def is_sqlite_db(path):
         try:
             with open(path, "rb") as f:
@@ -249,30 +290,27 @@ def ornetbrowser_history(files_found, report_folder, seeker, wrap_text):
             break
 
     if not source_path:
-         return (), [], "appDatabase not found"
-            
+        return (), [], "appDatabase not found"
+
     query = '''
         SELECT
             history.id,
             history.url,
             history.title,
-            CONCAT(history.date, ' ', history.time) AS 'Visit Time (Local)'
+            CONCAT(history.date, ' ', history.time) AS 'Visit Date'
         FROM history;
         '''
 
-    db_records = get_sqlite_db_records(source_path, query)
-    for row in db_records:
-        data_list.append((row[0],row[1],row[2],row[3]))
+    data_headers = ('ID', 'URL', 'Title', ('Visit Date', 'datetime'))
+    data_list = list(get_sqlite_db_records(source_path, query))
 
-    data_headers = ('ID','URL','Title',('Visit Date (Local)','datetime')) 
-    data_list = get_sqlite_db_records(source_path, query)        
-    
-    return data_headers, data_list, source_path
-    
+    return data_headers, data_list, context.get_relative_path(source_path)
+
+
 @artifact_processor
-def ornetbrowser_opentabs(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_opentabs(context):
+    files_found = context.get_files_found()
 
-    artifact_info = inspect.stack()[0]
     data_list = []
 
     def is_sqlite_db(path):
@@ -293,7 +331,7 @@ def ornetbrowser_opentabs(files_found, report_folder, seeker, wrap_text):
             break
 
     if not source_path:
-         return (), [], "appDatabase not found"
+        return (), [], "appDatabase not found"
 
     thumb_lookup = {}
     for file_found in files_found:
@@ -307,18 +345,19 @@ def ornetbrowser_opentabs(files_found, report_folder, seeker, wrap_text):
             tabs.url,
             tabs.title,
             tabs.tabPreviewFile,
-            DATETIME(RTRIM(tabs.tabPreviewFile, '.jpg') / 1000, 'unixepoch','localtime') AS "Cached Tab Preview Date"
+            DATETIME(RTRIM(tabs.tabPreviewFile, '.jpg') / 1000, 'unixepoch')
+                AS "Tab Preview File Name Time (UTC)"
         FROM tabs;
     '''
 
     db_records = get_sqlite_db_records(source_path, query)
 
     for row in db_records:
-        tab_id          = row[0]  # Tab ID
-        url             = row[1]  # URL
-        title           = row[2]  # Title
+        tab_id = row[0]  # Tab ID
+        url = row[1]  # URL
+        title = row[2]  # Title
         cached_filename = row[3]  # Cached Tab Filename
-        cached_time     = row[4]  # Cached Tab Preview Time (Local)
+        cached_time = row[4]  # Tab Preview File Name Time (UTC)
 
         tab_thumbnail_media = None
 
@@ -326,10 +365,6 @@ def ornetbrowser_opentabs(files_found, report_folder, seeker, wrap_text):
             thumb_path = thumb_lookup.get(cached_filename)
             if thumb_path:
                 tab_thumbnail_media = check_in_media(
-                    artifact_info,
-                    report_folder,
-                    seeker,
-                    files_found,
                     thumb_path,
                     cached_filename
                 )
@@ -348,17 +383,18 @@ def ornetbrowser_opentabs(files_found, report_folder, seeker, wrap_text):
         'URL',
         'Title',
         'Cached Tab Filename',
-        ('Cached Tab Preview Time (Local)', 'datetime'),
+        ('Tab Preview File Name Time (UTC)', 'datetime'),
         ('Cached Tab Preview', 'media')
     )
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)
 
 
 @artifact_processor
-def ornetbrowser_frequents(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_frequents(context):
+    files_found = context.get_files_found()
     data_list = []
-    
+
     def is_sqlite_db(path):
         try:
             with open(path, "rb") as f:
@@ -377,36 +413,32 @@ def ornetbrowser_frequents(files_found, report_folder, seeker, wrap_text):
             break
 
     if not source_path:
-         return (), [], "appDatabase not found"
-                       
+        return (), [], "appDatabase not found"
+
     query = '''
-		SELECT
+        SELECT
             frequents.url,
             frequents.title,
             frequents.count
         FROM frequents
-	'''
-	
-    db_records = get_sqlite_db_records(source_path, query)
-    for row in db_records:
-        url = row[0]
-        title = row[1]
-        count = row[2]
-        data_list.append((url,title,count))
+    '''
 
-    data_headers = ('URL','Title','Visit Count') 
-    data_list = get_sqlite_db_records(source_path, query)        
-    
-    return data_headers, data_list, source_path
-    
+    data_headers = ('URL', 'Title', 'Count')
+    data_list = list(get_sqlite_db_records(source_path, query))
+
+    return data_headers, data_list, context.get_relative_path(source_path)
+
+
 @artifact_processor
-def ornetbrowser_downloads(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_downloads(context):
+    files_found = context.get_files_found()
     data_list = []
+    source_path = ''
     for source_path in files_found:
         source_path = str(source_path)
         if source_path.endswith('.db'):
             break
-            
+
     query = '''
         SELECT
             downloads.id AS "Download ID",
@@ -416,30 +448,34 @@ def ornetbrowser_downloads(files_found, report_folder, seeker, wrap_text):
             downloads.downloaded_bytes,
             downloads.total_bytes,
             downloads.dir_path AS "Download Path",
-            DATETIME(downloads.last_modified_at/1000, 'unixepoch') AS "Download Date (Local)"
+            DATETIME(downloads.last_modified_at/1000, 'unixepoch') AS "Last Modified (UTC)"
         FROM downloads
         '''
 
     db_records = get_sqlite_db_records(source_path, query)
     for row in db_records:
-        download_id    = row[0]
+        download_id = row[0]
         download_status = row[1]
-        file_name      = row[2]
-        download_url       = row[3]
-        downloaded_bytes       = row[4]
-        total_bytes  = row[5]
-        download_date  = row[6]
-        download_path  = row[7]
-        
-        data_list.append((download_id, download_status, file_name, download_url, downloaded_bytes, total_bytes, download_date, download_path))
+        file_name = row[2]
+        download_url = row[3]
+        downloaded_bytes = row[4]
+        total_bytes = row[5]
+        download_path = row[6]
+        last_modified = row[7]
 
-    data_headers = ('Download ID','Download Status','File Name','Download URL','Downloaded Bytes','Total Bytes',('Download Date', 'datetime'),'Download Path',)   
-    
-    return data_headers, data_list, source_path
+        data_list.append(
+            (download_id, download_status, file_name, download_url, downloaded_bytes,
+             total_bytes, last_modified, download_path))
+
+    data_headers = ('Download ID', 'Download Status', 'File Name', 'Download URL', 'Downloaded Bytes',
+                    'Total Bytes', ('Last Modified (UTC)', 'datetime'), 'Download Path',)
+
+    return data_headers, data_list, context.get_relative_path(source_path)
+
 
 @artifact_processor
-def ornetbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
-    artifact_info = inspect.stack()[0]
+def ornetbrowser_thumbnails(context):
+    files_found = context.get_files_found()
     data_list = []
 
     for file_found in files_found:
@@ -448,22 +484,23 @@ def ornetbrowser_thumbnails(files_found, report_folder, seeker, wrap_text):
             continue
         filename = (media_path.name)
         utctime = int(media_path.stem)
-        filepath = str(media_path.parents[1])
-        
+
         timestamp = (datetime.datetime.utcfromtimestamp(utctime/1000).strftime('%Y-%m-%d %H:%M:%S'))
-        media_item = check_in_media(artifact_info, report_folder, seeker, files_found, file_found, filename)
+        media_item = check_in_media(file_found, filename)
 
         if media_item:
-            data_list.append((timestamp, media_item, filename, str(file_found)))
+            data_list.append((timestamp, media_item, filename, context.get_relative_path(str(file_found))))
 
-    data_headers = (('Timestamp','datetime'),('Thumbnail','media'),'File Name','Location')
+    data_headers = (('Timestamp', 'datetime'), ('Thumbnail', 'media'), ' File Name', 'Location')
 
     return data_headers, data_list, 'See source path(s) below'
 
+
 @artifact_processor
-def ornetbrowser_searchhistory(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_searchhistory(context):
+    files_found = context.get_files_found()
     data_list = []
-    
+
     def is_sqlite_db(path):
         try:
             with open(path, "rb") as f:
@@ -482,34 +519,31 @@ def ornetbrowser_searchhistory(files_found, report_folder, seeker, wrap_text):
             break
 
     if not source_path:
-         return (), [], "appDatabase not found"
-                       
+        return (), [], "appDatabase not found"
+
     query = '''
         SELECT
             searchHistory.id,
             searchHistory.title AS 'User Search'
         FROM searchHistory;
-	'''
-	
-    db_records = get_sqlite_db_records(source_path, query)
-    for row in db_records:
-        id = row[0]
-        searchquery = row[1]
-        data_list.append((id,searchquery))
+    '''
 
-    data_headers = ('id','Search Query') 
-    data_list = get_sqlite_db_records(source_path, query)        
-    
-    return data_headers, data_list, source_path
+    data_headers = ('id', 'Search Query')
+    data_list = list(get_sqlite_db_records(source_path, query))
+
+    return data_headers, data_list, context.get_relative_path(source_path)
+
 
 @artifact_processor
-def ornetbrowser_cookies(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_cookies(context):
+    files_found = context.get_files_found()
     data_list = []
+    source_path = ''
     for source_path in files_found:
         source_path = str(source_path)
         if source_path.endswith('.sqlite'):
             break
-            
+
     query = '''
         SELECT
             DATETIME(moz_cookies.lastAccessed/1000000,'unixepoch'),
@@ -524,22 +558,26 @@ def ornetbrowser_cookies(files_found, report_folder, seeker, wrap_text):
 
     db_records = get_sqlite_db_records(source_path, query)
     for row in db_records:
-        lastaccessed    = row[0]
+        lastaccessed = row[0]
         creationtime = row[1]
-        host      = row[2]
-        name       = row[3]
-        value       = row[4]
-        expiry  = row[5]
-        path  = row[6]
-        
+        host = row[2]
+        name = row[3]
+        value = row[4]
+        expiry = row[5]
+        path = row[6]
+
         data_list.append((lastaccessed, creationtime, host, name, value, expiry, path))
 
-    data_headers = (('Last Accessed','datetime'),('Creation Time','datetime'),'Host','Name','Value',('Expiry','datetime'),'Path')   
-    
-    return data_headers, data_list, source_path
+    data_headers = (
+        ('Last Accessed', 'datetime'), ('Creation Time', 'datetime'), 'Host', 'Name', 'Value',
+        ('Expiry', 'datetime'), 'Path')
+
+    return data_headers, data_list, context.get_relative_path(source_path)
+
 
 @artifact_processor
-def ornetbrowser_usageinfo(files_found, report_folder, seeker, wrap_text):
+def ornetbrowser_usageinfo(context):
+    files_found = context.get_files_found()
 
     usage_keys = {
         "currentTab",
@@ -558,11 +596,7 @@ def ornetbrowser_usageinfo(files_found, report_folder, seeker, wrap_text):
         if not os.path.isfile(source_path):
             continue
 
-        try:
-            tree = ET.parse(source_path)
-            root = tree.getroot()
-        except Exception:
-            continue 
+        root = _parse_xml(source_path)
 
         filename = Path(source_path).name
         path = source_path
@@ -581,10 +615,10 @@ def ornetbrowser_usageinfo(files_found, report_folder, seeker, wrap_text):
                     dt = datetime.datetime.utcfromtimestamp(ts / 1000.0)
                     value_out = dt.strftime("%Y-%m-%d %H:%M:%S")
                 except Exception:
-                    pass 
+                    pass
 
-            data_list.append((key_name, value_out, filename, path))
+            data_list.append((key_name, value_out, filename, context.get_relative_path(path)))
 
     data_headers = ("Key", "Value", "File Name", "Path")
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, context.get_relative_path(source_path)

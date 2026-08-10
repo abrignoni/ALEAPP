@@ -1,0 +1,26 @@
+# Locked mister_skinnylegs dependency chain for reproducible/offline installs.
+#
+# Why this file exists: mister_skinnylegs declares its ccl_* dependencies as
+# unversioned git URLs (tracking master), so a plain
+#     pip install -r requirements.txt
+# resolves them to whatever master is that day. Pinning them directly in
+# requirements.txt does not work: pip rejects the mismatch between our pinned
+# URL and the unversioned URL in mister_skinnylegs' own metadata
+# (ResolutionImpossible). This lock sidesteps that by installing the exact
+# tested chain with dependency resolution disabled.
+#
+# Usage (after the regular requirements install):
+#     pip install --no-deps -r requirements-msl-lock.txt
+#
+# Versions below are the exact commits/releases validated against the Android
+# test corpus (4 images) on 2026-07-21.
+# Note: zstd 1.5.7.3 is yanked on PyPI (not thread safe) but is what upstream
+# currently resolves to and what was tested; revisit when upstream pins.
+
+mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@35f3890685c45d89af81566d5db1860a279a6520
+ccl_chromium_reader @ git+https://github.com/cclgroupltd/ccl_chrome_indexeddb.git@9639a318ce0f7b546e1d8d02d89423ab6b4ae202
+ccl_mozilla_reader @ git+https://github.com/cclgroupltd/ccl_mozilla_reader.git@b3d0627f747a718e1e30ac02b92e82bdde354eb2
+ccl_simplesnappy @ git+https://github.com/cclgroupltd/ccl_simplesnappy.git@3d085230baa8c46cf2090ebba29bf6e8eab31087
+lz4==4.3.3
+zstd==1.5.7.3
+Brotli==1.2.0

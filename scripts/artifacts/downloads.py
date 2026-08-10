@@ -4,21 +4,33 @@ __artifacts_v2__ = {
         "description": "Parses native downloads database",
         "author": "@KevinPagano3",
         "creation_date": "2023-01-09",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Downloads",
-        "notes": "",
+        "notes": "Reference: AOSP, 'Downloads.Impl.COLUMN_LAST_MODIFICATION (milliseconds; records the last status change)', https://developer.android.com/reference/android/app/DownloadManager#COLUMN_LAST_MODIFIED_TIMESTAMP",
         "paths": ('*/data/com.android.providers.downloads/databases/downloads.db*'),
         "output_types": "standard",
         "artifact_icon": "download",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.providers.downloads | 14 rows",
+            "galaxys10_a10": "Android 10 | com.android.providers.downloads | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.downloads | 18 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.downloads | 23 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.downloads | 6 rows",
+            "samsunga53_a14": "Android 14 | com.android.providers.downloads | 11 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.downloads | 2 rows",
+            "sharon_a14": "Android 14 | com.android.providers.downloads | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.downloads | 16 rows",
+            "userb2_a13": "Android 13 | com.android.providers.downloads | 0 rows",
+        },
     }
 }
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
 @artifact_processor
-def downloads(files_found, report_folder, seeker, wrap_text):
-    
+def downloads(context):
+    files_found = context.get_files_found()
     data_list = []
     
     for file_found in files_found:
@@ -30,7 +42,7 @@ def downloads(files_found, report_folder, seeker, wrap_text):
             cursor = db.cursor()
             cursor.execute('''
             select
-            datetime(lastmod/1000,'unixepoch') as "Modified/Downloaded Timestamp",
+            datetime(lastmod/1000,'unixepoch') as "Last Modified Timestamp",
             title,
             description,
             uri,
@@ -63,11 +75,11 @@ def downloads(files_found, report_folder, seeker, wrap_text):
                     else:
                         last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),'UTC')
                 
-                    data_list.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],file_found))
+                    data_list.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],context.get_relative_path(file_found)))
             db.close()
                     
         else:
             continue
         
-    data_headers = (('Modified/Downloaded Timestamp','datetime'),'Title','Description','Provider URI','Save Location','Mime Type','App Provider Package','Current Bytes','Total Bytes','Status','Error Message','ETAG','Visible in Downloads UI','Deleted','Source File')    
+    data_headers = (('Last Modified Timestamp','datetime'),'Title','Description','Provider URI','Save Location','Mime Type','App Provider Package','Current Bytes','Total Bytes','Status','Error Message','ETAG','Visible in Downloads UI','Deleted','Source File')    
     return data_headers, data_list, 'See source file(s) below'

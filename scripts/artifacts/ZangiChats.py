@@ -5,6 +5,8 @@ __artifacts_v2__ = {
         'author': '@C_Peter',
         'version': '0.0.1',
         'date': '2025-11-20',
+        'creation_date': '2025-11-20',
+        'last_update_date': '2025-11-20',
         'requirements': 'none',
         'category': 'Chats',
         'notes': '',
@@ -12,10 +14,10 @@ __artifacts_v2__ = {
             '*/data/com.beint.zangi/databases/*',
             '*/data/com.beint.zangi/files/zangi/*'),
         'output_types': 'standard',
-        'artifact_icon': 'message-square',
+        'artifact_icon': 'message',
         'data_views': {
             'conversation': {
-                'conversationColumn': 'Chat-ID',
+                'conversationDiscriminatorColumn': 'Chat-ID',
                 'conversationLabelColumn': 'Chat',
                 'textColumn': 'Message',
                 'directionColumn': 'From Me',
@@ -29,15 +31,14 @@ __artifacts_v2__ = {
 }
 
 import datetime
-import inspect
 from pathlib import Path
 from scripts.ilapfuncs import artifact_processor, \
     get_sqlite_db_records, \
     check_in_media
 
 @artifact_processor
-def zangichats(files_found, _report_folder, _seeker, _wrap_text):
-    artifact_info = inspect.stack()[0]
+def zangichats(context):
+    files_found = context.get_files_found()
     source_path = ""
     data_list = []
     for file_found in files_found:
@@ -109,7 +110,7 @@ def zangichats(files_found, _report_folder, _seeker, _wrap_text):
                 media_path = f"files/zangi/Zangi Files/{msgId}.*"
             try:
                 attach_file_name = Path(media_path).name
-                attach_file = check_in_media(artifact_info, _report_folder, _seeker, files_found, media_path, attach_file_name)
+                attach_file = check_in_media(media_path, attach_file_name)
             except TypeError:
                 attach_file = ""
         else:

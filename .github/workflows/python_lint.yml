@@ -35,10 +35,29 @@ jobs:
         if: steps.changed-files-py.outputs.any_changed == 'true'
         run: python -m pip install -r requirements.txt
 
+      # Artifact name and description fields reach the HTML report and the LAVA manifest
+      # and get quoted in casework, so they must not claim more than the data shows.
+      # Runs over the whole artifact tree, not just changed files, so an allowlist entry
+      # removed elsewhere still gets caught. See the script's docstring.
+      - name: Check artifact claim language
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_claim_language.py
+
+      # html_columns cells are written to the report without html.escape, so evidence
+      # placed there can inject markup, and any remote href/src makes opening a report
+      # beacon to a third party. Pre-existing findings are carried in the script's
+      # BASELINE and do not fail; new ones do. See the script's docstring.
+      - name: Guard report output against injection and remote destinations
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_html_safety.py
+
+      # Fails only on warnings this pull request introduces. Long-lived modules carry
+      # deliberate pre-existing warnings, and failing on those pushed contributors toward
+      # unrelated refactors or blanket file-level disables. See the script's docstring.
       - name: Run on changed files
         if: steps.changed-files-py.outputs.any_changed == 'true'
         run: |
-          echo "Linting the following files:"
-          echo "${{ steps.changed-files-py.outputs.all_changed_files }}"
-          
-          PYTHONPATH=. pylint ${{ steps.changed-files-py.outputs.all_changed_files }} --disable=C,R
+          BASE=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
+          echo "Comparing against merge base $BASE"
+          python admin/scripts/lint_changed.py --base-ref "$BASE" \
+            ${{ steps.changed-files-py.outputs.all_changed_files }}
