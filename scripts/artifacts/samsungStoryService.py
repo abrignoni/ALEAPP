@@ -16,7 +16,7 @@ __artifacts_v2__ = {
         "artifact_icon": "image",
         "sample_data": {
             "anne_a15": "Android 15 | com.samsung.storyservice | 0 rows",
-            "galaxys10_a10": "Android 10 | com.samsung.storyservice | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.storyservice | 32 rows",
             "samsunga53_a14": "Android 14 | com.samsung.storyservice | 4 rows",
             "samsungs20_a13": "Android 13 | com.samsung.storyservice | 16 rows",
             "sharon_a14": "Android 14 | com.samsung.storyservice | 1435 rows",
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "artifact_icon": "book-open",
         "sample_data": {
             "anne_a15": "Android 15 | com.samsung.storyservice | 0 rows",
-            "galaxys10_a10": "Android 10 | com.samsung.storyservice | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.storyservice | 6 rows",
             "samsunga53_a14": "Android 14 | com.samsung.storyservice | 2 rows",
             "samsungs20_a13": "Android 13 | com.samsung.storyservice | 4 rows",
             "sharon_a14": "Android 14 | com.samsung.storyservice | 62 rows",
