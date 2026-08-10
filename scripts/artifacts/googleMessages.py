@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Google Messages",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-01-30",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-10",
         "requirements": "None",
         "category": "Google Messages",
         "notes": ("Direction comes from the sending participant's sub_id. AOSP treats -2 as the "
@@ -46,7 +46,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
 
 
 @artifact_processor
@@ -65,7 +65,10 @@ def get_googleMessages(context):
         source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+        # Older bugle_db generations lack file_size_bytes and local_cache_path
+        # on parts (community report, PR #638/#633); absent columns are read
+        # as NULL so the query works across generations.
+        cursor.execute(null_absent_columns(file_found, '''
         SELECT
         parts.timestamp,
         parts.content_type AS "Message Type",
@@ -89,7 +92,7 @@ def get_googleMessages(context):
         JOIN participants ON participants._id=messages.sender_id
         JOIN conversations ON conversations._id=parts.conversation_id
         ORDER BY parts.timestamp ASC
-        ''')
+        '''))
         all_rows = cursor.fetchall()
         db.close()
 

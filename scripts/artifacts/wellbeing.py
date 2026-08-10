@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "description": "Parses Digital Wellbeing events recorded against a package component",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-02-02",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": (
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, open_sqlite_db_readonly
 
 
 def _ms_to_utc(value):
@@ -115,7 +115,9 @@ def get_wellbeing_url(context):
     files_found = context.get_files_found()
     data_list = []
     source_path = _app_usage_db(files_found)
-    if source_path:
+    # Older app_usage generations have no component_events table
+    # (community report, PR #633).
+    if source_path and does_table_exist_in_db(source_path, 'component_events'):
         db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
         cursor.execute('''

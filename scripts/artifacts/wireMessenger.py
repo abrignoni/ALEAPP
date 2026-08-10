@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "description": "Parses messages and call history for Wire Messenger",
         "author": "@cf-eglendye",
         "creation_date": "2024-04-24",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-10",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35. Rows taken from the MsgDeletion table carry "
@@ -71,14 +71,48 @@ MESSAGES_SQL = '''
     json_extract(Messages.content, '$[0].content'),
     CASE Likings."action" WHEN 1 THEN 'Liked' END,
     datetime(Likings."timestamp"/1000,'unixepoch'), Users1.name,
-    time(Messages.duration/1000,'unixepoch'), Assets2.name
+    time(Messages.duration/1000,'unixepoch'), {asset_name}
     FROM Messages
     LEFT JOIN Users ON Users._id = Messages.user_id
     LEFT JOIN Likings ON Messages._id = Likings.message_id
     LEFT JOIN Users Users1 ON Likings.user_id = Users1._id
-    LEFT JOIN Assets2 ON Messages.asset_id = Assets2._id
+    {asset_join}
     ORDER BY Messages.time
 '''
+
+
+def _asset_source(source_path):
+    """Resolve the asset table this Wire release uses.
+
+    Newer databases keep attachments in Assets2, older ones in Assets, and a
+    Messages table without asset_id has nothing to join. Returns the SELECT
+    expression and JOIN clause for MESSAGES_SQL. Only the Assets2 shape is
+    corpus-verified; the Assets fallback comes from a community-reported
+    older database (PR #633) and has not been exercised here.
+    """
+    db = open_sqlite_db_readonly(source_path)
+    try:
+        cursor = db.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = {row[0] for row in cursor.fetchall()}
+        cursor.execute('PRAGMA table_info(Messages)')
+        has_asset_id = 'asset_id' in {row[1] for row in cursor.fetchall()}
+    except sqlite3.Error:
+        tables, has_asset_id = set(), False
+    finally:
+        db.close()
+    for table in ('Assets2', 'Assets'):
+        if has_asset_id and table in tables:
+            db = open_sqlite_db_readonly(source_path)
+            try:
+                has_name = 'name' in {row[1] for row in db.execute(f'PRAGMA table_info({table})')}
+            except sqlite3.Error:
+                has_name = False
+            finally:
+                db.close()
+            name_expr = f'{table}.name' if has_name else "''"
+            return name_expr, f'LEFT JOIN {table} ON Messages.asset_id = {table}._id'
+    return "''", ''
 
 
 def _str_to_utc(value):
@@ -195,7 +229,8 @@ def get_wire_messages(context):
     files_found = context.get_files_found()
     source_path = _user_db(files_found)
     data_list = []
-    for r in _run(source_path, MESSAGES_SQL):
+    asset_name, asset_join = _asset_source(source_path) if source_path else ("''", '')
+    for r in _run(source_path, MESSAGES_SQL.format(asset_name=asset_name, asset_join=asset_join)):
         data_list.append((_str_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], _str_to_utc(r[6]), r[7], r[8], r[9],
                           ''))
 
