@@ -1,20 +1,43 @@
 __artifacts_v2__ = {
-    "WhatsAppLogFiles": {
+    "get_WhatsAppLogFiles": {
         "name": "WhatsApp Log Files",
-        "description": "Parses WhatsApp log files from com.whatsapp/files/Logs and extracts key events based on predefined tokens. Optionally enriches results with contact names from wa.db.",
+        "description": "Key events extracted from the WhatsApp application logs: message send "
+                       "and receive markers, conversation focus changes, typing indicators, "
+                       "notifications and message deletions",
         "author": "Mateus Polastro",
-        "version": "1.0",
         "creation_date": "2025-05-13",
-        "last_update_date": "2026-01-06",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "",
+        "notes": "Each row is a log line matching one of eight event tokens; the token-to-event "
+                 "mapping comes from the author's research on WhatsApp logs and the full line is "
+                 "reported beside it so the reading can be checked. Lines mentioning "
+                 "status@broadcast are skipped by design.\n"
+                 "The logs redact phone numbers, so a JID in a line may carry only trailing "
+                 "digits. The Possible Full Numbers column lists every wa.db contact whose number "
+                 "ends in the same last four digits; that is a candidate list, not an "
+                 "identification, and more than one candidate is shown joined with 'or'. An "
+                 "empty value means no wa.db contact shares the suffix.\n"
+                 "The log declares its own timezone: each logfile header line carries a "
+                 "tz=+/-HHMM offset, and timestamps are converted to UTC using the most recent "
+                 "declared offset. A line seen before any header keeps its timestamp as "
+                 "written.",
         "paths": (
             "*/com.whatsapp/files/Logs/*",
             "*/com.whatsapp/databases/wa.db",
         ),
         "output_types": "standard",
-        "function": "get_WhatsAppLogFiles",
+        "artifact_icon": "message-square",
+        "sample_data": {
+            "anne_a15": "20 rows",
+            "hc_pixel8pro_a16": "0 rows",
+            "hc_pixel8pro_a17": "0 rows",
+            "kevin_pocox7_a15": "34 rows",
+            "pixel7a_a14": "34 rows",
+            "russell_pixel6a_a13": "24 rows",
+            "samsungs20_a13": "1 row",
+            "sharon_a14": "0 rows",
+        },
     }
 }
 
@@ -24,8 +47,9 @@ import re
 import sqlite3
 from collections import defaultdict
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, open_sqlite_db_readonly
+from datetime import datetime, timedelta, timezone
+
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 
 def normalize_jid(jid):
@@ -61,7 +85,6 @@ class WAIndex:
         phone_number = jid.split('@')[0]
         suf = phone_number[-4:]  # Extract the last 4 digits
         self.index[suf].add(jid)  # Add JID to the set for this suffix
-        logfunc(f"Loaded into index: {jid}")
 
     def search_by_sufix(self, jid_input):
         """
@@ -119,13 +142,13 @@ def load_contacts(cursor):
                     f"SELECT DISTINCT {col} FROM {table} "
                     f"WHERE {col} LIKE '%@s.whatsapp.net' OR {col} LIKE '%@g.us'"
                 )
-            except Exception:
+            except sqlite3.Error:
                 cursor.execute(f"SELECT DISTINCT {col} FROM {table}")
 
             for (jid,) in cursor.fetchall():
                 if jid:
                     index.add(str(jid))
-        except Exception:
+        except sqlite3.Error:
             # Ignore and keep trying other candidates
             return
 
@@ -149,7 +172,7 @@ def load_contacts(cursor):
             tables = [t[0] for t in cursor.fetchall() if t and t[0]]
             for table in tables:
                 _try_add_from(table, "jid")
-        except Exception:
+        except sqlite3.Error:
             pass
 
     return index
@@ -241,23 +264,33 @@ class WALogLine:
             str: The extracted timestamp or "N/A" if not found.
         """
         date_match = re.search(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', line)
-        return date_match.group() if date_match else "N/A"
+        if not date_match:
+            return ''
+        try:
+            return datetime.strptime(date_match.group(), '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return date_match.group()
+
+
+# Each logfile header declares the timezone its timestamps are written in,
+# e.g. "==== logfile level=3 tz=+0200 ====".
+TZ_HEADER_RE = re.compile(r'==== logfile .*?tz=([+-])(\d{2})(\d{2})')
+
+
+def _tz_from_header(line):
+    m = TZ_HEADER_RE.search(line)
+    if not m:
+        return None
+    sign = 1 if m.group(1) == '+' else -1
+    return timezone(sign * timedelta(hours=int(m.group(2)), minutes=int(m.group(3))))
 
 
 # Define a specific token for entering/exiting conversations
 enter_exit_conversation_token = WAToken("conversation/window-focus-changed", "")
 
-def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text):
-    """
-    Process WhatsApp log files, extract relevant events, and generate forensic reports.
-    Args:
-        files_found (list): List of file paths to process.
-        report_folder (str): Directory to store the generated reports.
-        seeker (object): Object for accessing file system (from forensic framework).
-        wrap_text (bool): Whether to wrap text in the report.
-    Returns:
-        None
-    """
+@artifact_processor
+def get_WhatsAppLogFiles(context):
+    files_found = [str(f) for f in context.get_files_found()]
     # List of tokens to identify specific events in the logs
     lst_of_tokens = [
         WAToken("WriterThread/write/send-encrypted Key", "Sent message"),
@@ -278,7 +311,6 @@ def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text):
     # Locate the WhatsApp wa.db file and load contacts
     index = None
     for file_found in files_found:
-        logfunc(f"List of files tested: {file_found}")
         file_name = str(file_found)
         if file_name.endswith('wa.db'):
             try:
@@ -286,10 +318,7 @@ def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text):
                     cursor = db.cursor()
                     index = load_contacts(cursor)  # Load contacts into the index
                     if not index.index:
-                        logfunc('No WhatsApp - Contacts found')
-                    else:
-                        logfunc("Index loaded:")
-                        index.print_index()
+                        logfunc('No WhatsApp contacts found in wa.db; the candidate column stays empty')
             except sqlite3.Error as e:
                 logfunc(f"Error accessing database {file_name}: {str(e)}")
                 continue
@@ -298,70 +327,52 @@ def get_WhatsAppLogFiles(files_found, report_folder, seeker, wrap_text):
         logfunc("No WhatsApp database (wa.db) found. Proceeding without contact index.")
         index = WAIndex()  # Create an empty index to avoid errors
 
-    # Process each log file
-    logfunc(f"Number of files found: {len(files_found)}")
-
     for file_found in files_found:
         file_path_complete = str(file_found)
         file_name = os.path.basename(file_path_complete)
 
-        logfunc(f"Processing file: {file_path_complete}")
-
         try:
             # Process both .gz (compressed) and .log (uncompressed) files line by line
             if file_path_complete.endswith('.gz'):
-                with gzip.open(file_path_complete, 'rt', encoding='utf-8', errors='replace') as file:
-                    for line in file:
-                        line = line.strip()
-                        for token_key in token_dict:
-                            if token_key in line and token_ignore_line not in line:
-                                wa_log_line = WALogLine(token_dict[token_key], line, file_name)
-                                data_list.append(wa_log_line.process_line(line, file_name, index))
+                opener = gzip.open(file_path_complete, 'rt', encoding='utf-8', errors='replace')
             elif file_path_complete.endswith('.log'):
-                with open(file_path_complete, 'r', encoding='utf-8', errors='replace') as file:
-                    for line in file:
-                        line = line.strip()
-                        for token_key in token_dict:
-                            if token_key in line and token_ignore_line not in line:
-                                wa_log_line = WALogLine(token_dict[token_key], line, file_name)
-                                data_list.append((wa_log_line.process_line(line, file_name, index)))
+                opener = open(file_path_complete, 'r', encoding='utf-8', errors='replace')
+            else:
+                continue
+            current_tz = None
+            with opener as file:
+                for line in file:
+                    line = line.strip()
+                    header_tz = _tz_from_header(line)
+                    if header_tz is not None:
+                        current_tz = header_tz
+                        continue
+                    for token_key in token_dict:
+                        if token_key in line and token_ignore_line not in line:
+                            wa_log_line = WALogLine(token_dict[token_key], line, file_name)
+                            row = wa_log_line.process_line(line, file_name, index)
+                            if isinstance(row[0], datetime) and current_tz is not None:
+                                row[0] = row[0].replace(tzinfo=current_tz).astimezone(timezone.utc)
+                            data_list.append(row)
         except UnicodeDecodeError as e:
             logfunc(f"Encoding error in file {file_path_complete}: {str(e)}")
             continue
         except gzip.BadGzipFile as e:
             logfunc(f"Invalid gzip file {file_path_complete}: {str(e)}")
             continue
-        except Exception as e:
+        except OSError as e:
             logfunc(f"Error processing file {file_path_complete}: {str(e)}")
             continue
 
-    # Generate reports if data was extracted
-    if data_list:
-        # Pick a representative source file for the report header
-        source_file = ''
-        for ff in files_found:
-            p = str(ff)
-            if p.lower().endswith(('.log', '.gz')):
-                source_file = p
-                break
-        if not source_file and files_found:
-            source_file = str(files_found[0])
+    source_path = next((p for p in files_found if p.lower().endswith(('.log', '.gz'))),
+                       files_found[0] if files_found else '')
 
-        report = ArtifactHtmlReport('WhatsApp Logs Analysis')
-        report.start_artifact_report(report_folder, 'WhatsApp Logs')
-        report.add_script()
-        data_headers = (
-            'Timestamp',
-            'Token',
-            'Description',
-            'Full line',
-            'Source File',
-            'Probable Contact'
-        )
-        report.write_artifact_data_table(data_headers, data_list, source_file)
-        report.end_artifact_report()
-
-        tsvname = 'WhatsApp Logs - Detailed'
-        tsv(report_folder, data_headers, data_list, tsvname)
-    else:
-        logfunc('No relevant data found in the analyzed logs.')
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'Token',
+        'Description',
+        'Full Line',
+        'Source File',
+        'Possible Full Numbers (last-4 match)',
+    )
+    return data_headers, data_list, source_path
