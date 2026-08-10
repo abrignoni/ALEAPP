@@ -3,11 +3,11 @@ __artifacts_v2__ = {
         "name": "User Media Submissions",
         "description": "Extracts Nova AI media. Identifies files via database indexing (MediaStore) and performs a filesystem sweep for orphaned camera captures.",
         "author": "Guilherme Guilherme",
-        "version": "3.6",
-        "date": "2026-05-30",
+        "creation_date": "2026-05-30",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
-        "notes": "Integrates chat-ai.db history with physical filesystem discovery. Note: chat-ai.db contains text data only, not media files.",
+        "notes": ("Integrates chat-ai.db history with filesystem discovery; chat-ai.db holds text records only, not the media bytes. A path shown as Not in MediaStore means no MediaStore row matched the file name. The MIME column is the value the database records where present and blank otherwise; the file bytes are not sniffed. Developed against the author's own installation; no registered corpus image carries this app."),
         "paths": (
             "**/com.scaleup.chatai/databases/chat-ai.db",
             "**/com.android.providers.media/databases/external*.db",
@@ -20,8 +20,9 @@ __artifacts_v2__ = {
     }
 }
 
+import datetime
 import os
-from types import SimpleNamespace
+import sqlite3
 from scripts.ilapfuncs import (
     artifact_processor,
     logfunc,
@@ -31,14 +32,25 @@ from scripts.ilapfuncs import (
 )
 
 
+def _epoch_to_utc(value):
+    """chat-ai.db epochs are milliseconds; values below 1e11 are read as
+    seconds (the magnitudes cannot overlap for plausible dates)."""
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return ''
+    if value <= 0:
+        return ''
+    if value > 1e11:
+        value /= 1000
+    try:
+        return datetime.datetime.fromtimestamp(value, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError):
+        return ''
+
+
 @artifact_processor
-def get_nova_user_submissions(files_found, report_folder, seeker, _wrap_text):
-    logfunc("Processing Nova User Media (Logic + Physical Sweep)")
-
-    # Use the artifact_info injected by the framework (cleaner than inspect.stack)
-    artifact_info = SimpleNamespace(**get_nova_user_submissions.artifact_info)
-    artifact_info.filename = __file__
-
+def get_nova_user_submissions(files_found, _report_folder, _seeker, _wrap_text):
     # Find databases
     nova_db = get_file_path(files_found, "chat-ai.db")
     media_db = next(
@@ -64,12 +76,18 @@ def get_nova_user_submissions(files_found, report_folder, seeker, _wrap_text):
     # 1. Database Indexed Lookup (MediaStore)
     media_lookup = {}
     if media_db:
-        with open_sqlite_db_readonly(media_db) as db:
-            cur = db.cursor()
-            cur.execute("SELECT _display_name, _data FROM files WHERE _data IS NOT NULL")
-            for name, path in cur.fetchall():
-                key = (name or os.path.basename(str(path))).lower()
-                media_lookup[key] = path
+        # A MediaStore database matches on every image whether or not Nova is
+        # installed, and some builds carry no files table; a failed lookup
+        # build must not kill the artifact.
+        try:
+            with open_sqlite_db_readonly(media_db) as db:
+                cur = db.cursor()
+                cur.execute("SELECT _display_name, _data FROM files WHERE _data IS NOT NULL")
+                for name, path in cur.fetchall():
+                    key = (name or os.path.basename(str(path))).lower()
+                    media_lookup[key] = path
+        except sqlite3.Error as exc:
+            logfunc(f"Nova user submissions - MediaStore lookup unavailable ({exc})")
 
     # 2. Extract from Nova Chat DB
     if nova_db:
@@ -86,9 +104,7 @@ def get_nova_user_submissions(files_found, report_folder, seeker, _wrap_text):
                 media_ref = ""
                 ext_path = nova_files_lookup.get(key)
                 if ext_path:
-                    media_ref = check_in_media(
-                        artifact_info, report_folder, seeker, files_found, ext_path, name
-                    )
+                    media_ref = check_in_media(ext_path, name=name) or '' 
                     processed_paths.add(ext_path)
 
                 all_items.append(
@@ -98,11 +114,11 @@ def get_nova_user_submissions(files_found, report_folder, seeker, _wrap_text):
                         msg,
                         "",
                         "",
-                        float(ts) / 1000 if ts else None,
+                        _epoch_to_utc(ts),
                         "",
-                        mime,
+                        mime or "",
                         media_ref,
-                        dev_path or "Cloud-only",
+                        dev_path or "Not in MediaStore",
                     )
                 )
 
@@ -117,14 +133,7 @@ def get_nova_user_submissions(files_found, report_folder, seeker, _wrap_text):
                 media_ref = ""
                 ext_path = nova_files_lookup.get(key)
                 if ext_path:
-                    media_ref = check_in_media(
-                        artifact_info,
-                        report_folder,
-                        seeker,
-                        files_found,
-                        ext_path,
-                        fname,
-                    )
+                    media_ref = check_in_media(ext_path, name=fname) or '' 
                     processed_paths.add(ext_path)
 
                 all_items.append(
@@ -134,11 +143,11 @@ def get_nova_user_submissions(files_found, report_folder, seeker, _wrap_text):
                         f"Msg: {msg} | Prompt: {prompt}",
                         "",
                         "",
-                        float(ts) / 1000 if ts else None,
+                        _epoch_to_utc(ts),
                         "",
-                        "image/jpeg",
+                        "",
                         media_ref,
-                        dev_path or "Cloud-only",
+                        dev_path or "Not in MediaStore",
                     )
                 )
 
@@ -146,9 +155,7 @@ def get_nova_user_submissions(files_found, report_folder, seeker, _wrap_text):
     for file_path in files_found:
         if nova_path_part in str(file_path) and str(file_path) not in processed_paths:
             fname = os.path.basename(file_path)
-            media_ref = check_in_media(
-                artifact_info, report_folder, seeker, files_found, str(file_path), fname
-            )
+            media_ref = check_in_media(str(file_path), name=fname) or '' 
             all_items.append(
                 (
                     fname,
@@ -158,7 +165,7 @@ def get_nova_user_submissions(files_found, report_folder, seeker, _wrap_text):
                     "",
                     None,
                     "",
-                    "image/jpeg",
+                    "",
                     media_ref,
                     str(file_path),
                 )

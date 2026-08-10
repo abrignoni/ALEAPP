@@ -9,11 +9,11 @@ __artifacts_v2__ = {
             "documents and user-submitted images."
         ),
         "author": "Guilherme Guilherme",
-        "version": "1.2",
-        "date": "2026-05-30",
+        "creation_date": "2026-05-30",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
-        "notes": "Sources: chat-ai.db and Android MediaStore databases.",
+        "notes": ("Sources: chat-ai.db and the Android MediaStore databases. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. A path shown as Not in MediaStore means no MediaStore row matched the file name, not that the file never existed locally. Attachment URLs are concatenated by SQLite and split on commas, so a URL containing a comma would split wrong; only the first image attachment is rendered as media. Developed against the author's own installation; no registered corpus image carries this app."),
         "paths": (
             "**/com.scaleup.chatai/databases/chat-ai.db",
             "**/com.android.providers.media/databases/external*.db",
@@ -25,8 +25,8 @@ __artifacts_v2__ = {
     }
 }
 
+import datetime
 import os
-from types import SimpleNamespace
 from scripts.ilapfuncs import (
     artifact_processor,
     logfunc,
@@ -132,6 +132,23 @@ def get_assistant(assistant_id):
         return str(assistant_id)
 
 
+def _epoch_to_utc(value):
+    """chat-ai.db epochs are milliseconds; values below 1e11 are read as
+    seconds (the magnitudes cannot overlap for plausible dates)."""
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return ''
+    if value <= 0:
+        return ''
+    if value > 1e11:
+        value /= 1000
+    try:
+        return datetime.datetime.fromtimestamp(value, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError):
+        return ''
+
+
 QUERY = """
 SELECT
     h.id                        AS conv_id,
@@ -171,13 +188,7 @@ ORDER BY h.id ASC, hd.createdAt ASC
 
 
 @artifact_processor
-def get_nova_chatbot_conversations(files_found, report_folder, seeker, _wrap_text):
-    logfunc("Processing data for Nova Full Conversations")
-
-    # Use framework-injected artifact_info
-    artifact_info = SimpleNamespace(**get_nova_chatbot_conversations.artifact_info)
-    artifact_info.filename = __file__
-
+def get_nova_chatbot_conversations(files_found, _report_folder, _seeker, _wrap_text):
     nova_db = get_file_path(files_found, "chat-ai.db")
     media_db = next(
         (
@@ -276,27 +287,20 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, _wrap_tex
         # A. Documents
         doc_names_raw = row[17]
         doc_media_ref = ""
-        doc_dev_path = "Cloud-only"
+        doc_dev_path = "Not in MediaStore"
 
         if doc_names_raw:
             primary_doc = doc_names_raw.split(",")[0].strip()
             key = primary_doc.lower()
-            doc_dev_path = media_lookup.get(key, "Cloud-only")
+            doc_dev_path = media_lookup.get(key, "Not in MediaStore")
             ext_path = nova_files_lookup.get(key)
             if ext_path:
-                doc_media_ref = check_in_media(
-                    artifact_info,
-                    report_folder,
-                    seeker,
-                    files_found,
-                    ext_path,
-                    primary_doc,
-                )
+                doc_media_ref = check_in_media(ext_path, name=primary_doc) or ''
 
         # B. Images
         img_urls_raw = row[15]
         img_media_refs = []
-        img_dev_path = "Cloud-only"
+        img_dev_path = "Not in MediaStore"
 
         if img_urls_raw:
             # Handle comma separated images
@@ -307,18 +311,11 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, _wrap_tex
 
                 # We map dev path for the first one for the column
                 if i == 0:
-                    img_dev_path = media_lookup.get(key, "Cloud-only")
+                    img_dev_path = media_lookup.get(key, "Not in MediaStore")
 
                 ext_path = nova_files_lookup.get(key)
                 if ext_path:
-                    ref = check_in_media(
-                        artifact_info,
-                        report_folder,
-                        seeker,
-                        files_found,
-                        ext_path,
-                        img_name,
-                    )
+                    ref = check_in_media(ext_path, name=img_name)
                     if ref:
                         img_media_refs.append(ref)
 
@@ -336,7 +333,7 @@ def get_nova_chatbot_conversations(files_found, report_folder, seeker, _wrap_tex
                 row[10] or "",
                 row[11] if row[11] is not None else "",
                 row[12] or "",
-                float(row[13]) / 1000 if row[13] else None,
+                _epoch_to_utc(row[13]),
                 row[16] or "",
                 img_media_refs[0] if img_media_refs else "",
                 img_dev_path,

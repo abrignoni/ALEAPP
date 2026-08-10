@@ -3,10 +3,11 @@ __artifacts_v2__ = {
         "name": "History",
         "description": "Extracts conversation index from Nova AI Chatbot",
         "author": "Guilherme Guilherme",
-        "version": "6.1",
-        "date": "2026-05-29",
+        "creation_date": "2026-05-29",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
+        "notes": ("The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as ASSISTANT on the same basis. Developed against the author's own installation; no registered corpus image carries this app, so the parser is exercised by a synthetic round-trip until test data exists."),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
         "function": "get_nova_chatbot_history",
         "output_types": "all",
@@ -16,10 +17,11 @@ __artifacts_v2__ = {
         "name": "HistoryDetail",
         "description": "Extracts individual messages from Nova AI Chatbot",
         "author": "Guilherme Guilherme",
-        "version": "6.1",
-        "date": "2026-05-29",
+        "creation_date": "2026-05-29",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
+        "notes": ("The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as ASSISTANT on the same basis. Developed against the author's own installation; no registered corpus image carries this app, so the parser is exercised by a synthetic round-trip until test data exists."),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
         "function": "get_nova_chatbot_history_detail",
         "output_types": "all",
@@ -29,10 +31,11 @@ __artifacts_v2__ = {
         "name": "HistoryDetailDocuments",
         "description": "Extracts document records from Nova AI Chatbot (Firebase URLs)",
         "author": "Guilherme Guilherme",
-        "version": "6.1",
-        "date": "2026-05-29",
+        "creation_date": "2026-05-29",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
+        "notes": ("The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as ASSISTANT on the same basis. Developed against the author's own installation; no registered corpus image carries this app, so the parser is exercised by a synthetic round-trip until test data exists."),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
         "function": "get_nova_chatbot_documents",
         "output_types": "all",
@@ -42,10 +45,11 @@ __artifacts_v2__ = {
         "name": "HistoryDetailImages",
         "description": "Extracts image records from Nova AI Chatbot (Firebase URLs)",
         "author": "Guilherme Guilherme",
-        "version": "6.1",
-        "date": "2026-05-29",
+        "creation_date": "2026-05-29",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
+        "notes": ("The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as ASSISTANT on the same basis. Developed against the author's own installation; no registered corpus image carries this app, so the parser is exercised by a synthetic round-trip until test data exists."),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
         "function": "get_nova_chatbot_images",
         "output_types": "all",
@@ -55,16 +59,19 @@ __artifacts_v2__ = {
         "name": "HistoryDetailLinks",
         "description": "Extracts link records from Nova AI Chatbot",
         "author": "Guilherme Guilherme",
-        "version": "6.1",
-        "date": "2026-05-29",
+        "creation_date": "2026-05-29",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
+        "notes": ("The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as ASSISTANT on the same basis. Developed against the author's own installation; no registered corpus image carries this app, so the parser is exercised by a synthetic round-trip until test data exists."),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
         "function": "get_nova_chatbot_links",
         "output_types": "all",
         "artifact_icon": "link",
     },
 }
+
+import datetime
 
 from scripts.ilapfuncs import (
     artifact_processor,
@@ -161,6 +168,28 @@ ASSISTANT_MAP = {
 
 IMAGE_STATE_MAP = {0: "Pending", 1: "Success", 2: "Failed"}
 
+def _epoch_to_utc(value):
+    """Convert a stored epoch to an aware UTC datetime.
+
+    chat-ai.db stores epochs in milliseconds; the two magnitudes do not
+    overlap for any plausible date (milliseconds are ~1e12, seconds ~1e9),
+    so a value below 1e11 is read as seconds. Returns '' for empty or
+    unparseable values.
+    """
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return ''
+    if value <= 0:
+        return ''
+    if value > 1e11:
+        value /= 1000
+    try:
+        return datetime.datetime.fromtimestamp(value, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError):
+        return ''
+
+
 
 def get_model(model_id):
     if model_id is None:
@@ -235,32 +264,32 @@ def get_nova_chatbot_history(files_found, _report_folder, _seeker, _wrap_text):
                 "Yes" if row[7] else "No",  # softDeleted
                 row[8] or "",  # syncState
                 row[9] or 0,  # syncRetryCount
-                row[10],  # createdAt (Raw Epoch)
-                row[11],  # updatedAt (Raw Epoch)
-                row[12],  # lastModifiedAt (Raw Epoch)
+                _epoch_to_utc(row[10]),  # createdAt
+                _epoch_to_utc(row[11]),  # updatedAt
+                _epoch_to_utc(row[12]),  # lastModifiedAt
                 row[13] or 0,  # message count
-                row[14],  # last message at (Raw Epoch)
+                _epoch_to_utc(row[14]),  # last message at
                 row[15] or "",  # first user message
             )
         )
 
     headers = (
-        ("Conv ID", "text"),
-        ("UUID", "text"),
-        ("Title", "text"),
-        ("AI Model", "text"),
-        ("Assistant", "text"),
-        ("Caption History ID", "text"),
-        ("Starred", "text"),
-        ("Soft Deleted", "text"),
-        ("Sync State", "text"),
-        ("Sync Retry Count", "text"),
-        ("Created At", "date time"),
-        ("Updated At", "date time"),
-        ("Last Modified At", "date time"),
-        ("Message Count", "text"),
-        ("Last Message At", "date time"),
-        ("First User Message", "text"),
+        "Conv ID",
+        "UUID",
+        "Title",
+        "AI Model",
+        "Assistant",
+        "Caption History ID",
+        "Starred",
+        "Soft Deleted",
+        "Sync State",
+        "Sync Retry Count",
+        ("Created At", "datetime"),
+        ("Updated At", "datetime"),
+        ("Last Modified At", "datetime"),
+        "Message Count",
+        ("Last Message At", "datetime"),
+        "First User Message",
     )
 
     return headers, data_list, db_path
@@ -301,8 +330,8 @@ def get_nova_chatbot_history_detail(files_found, _report_folder, _seeker, _wrap_
                 row[9] or "",  # text
                 row[10] or "",  # token
                 row[11] or "",  # reasoningContent
-                row[12],  # createdAt (Raw Epoch)
-                row[13],  # lastModifiedAt (Raw Epoch)
+                _epoch_to_utc(row[12]),  # createdAt
+                _epoch_to_utc(row[13]),  # lastModifiedAt
                 row[14] or "",  # syncState
                 row[15] or 0,  # syncRetryCount
                 "Yes" if row[16] else "No",  # has image
@@ -312,25 +341,25 @@ def get_nova_chatbot_history_detail(files_found, _report_folder, _seeker, _wrap_
         )
 
     headers = (
-        ("Msg ID", "text"),
-        ("Msg UUID", "text"),
-        ("Conv ID", "text"),
-        ("Conv UUID", "text"),
-        ("Conv Title", "text"),
-        ("AI Model", "text"),
-        ("Assistant Persona", "text"),
-        ("Conv Deleted", "text"),
-        ("Role", "text"),
-        ("Message Text", "text"),
-        ("Token Count", "text"),
-        ("Reasoning Content", "text"),
-        ("Message Timestamp", "date time"),
-        ("Last Modified At", "date time"),
-        ("Sync State", "text"),
-        ("Sync Retry Count", "text"),
-        ("Has Image", "text"),
-        ("Has Document", "text"),
-        ("Has Link", "text"),
+        "Msg ID",
+        "Msg UUID",
+        "Conv ID",
+        "Conv UUID",
+        "Conv Title",
+        "AI Model",
+        "Assistant Persona",
+        "Conv Deleted",
+        "Role",
+        "Message Text",
+        "Token Count",
+        "Reasoning Content",
+        ("Message Timestamp", "datetime"),
+        ("Last Modified At", "datetime"),
+        "Sync State",
+        "Sync Retry Count",
+        "Has Image",
+        "Has Document",
+        "Has Link",
     )
 
     return headers, data_list, db_path
@@ -374,7 +403,7 @@ def get_nova_chatbot_documents(files_found, _report_folder, _seeker, _wrap_text)
                 "Yes" if row[15] else "No",  # softDeleted
                 get_role(row[8]),  # submitted by
                 row[9] or "",  # message text
-                row[10],  # createdAt (Raw Epoch)
+                _epoch_to_utc(row[10]),  # createdAt
                 row[3] or "Unknown",  # file name
                 row[6] or "",  # mimeType
                 format_size(row[5]),  # size
@@ -384,25 +413,22 @@ def get_nova_chatbot_documents(files_found, _report_folder, _seeker, _wrap_text)
         )
 
     headers = (
-        ("Doc ID", "text"),
-        ("Msg ID", "text"),
-        ("Conv ID", "text"),
-        ("Conv UUID", "text"),
-        ("Conv Title", "text"),
-        ("AI Model", "text"),
-        ("Assistant Persona", "text"),
-        ("Conv Deleted", "text"),
-        ("Submitted By", "text"),
-        ("Msg Text", "text"),
-        ("Msg Timestamp", "date time"),
-        ("File Name", "text"),
-        ("MIME Type", "text"),
-        ("Size", "text"),
-        ("Source Type", "text"),
-        (
-            "Cloud Storage URL",
-            "text",
-        ),  # Kept as text to natively display remote paths safely
+        "Doc ID",
+        "Msg ID",
+        "Conv ID",
+        "Conv UUID",
+        "Conv Title",
+        "AI Model",
+        "Assistant Persona",
+        "Conv Deleted",
+        "Submitted By",
+        "Msg Text",
+        ("Msg Timestamp", "datetime"),
+        "File Name",
+        "MIME Type",
+        "Size",
+        "Source Type",
+        "Cloud Storage URL",  # plain text; a URL column must never render as a live link
     )
 
     return headers, data_list, db_path
@@ -445,7 +471,7 @@ def get_nova_chatbot_images(files_found, _report_folder, _seeker, _wrap_text):
                 "Yes" if row[16] else "No",  # softDeleted
                 get_role(row[9]),  # submitted by
                 row[10] or "",  # message text
-                row[11],  # createdAt (Raw Epoch)
+                _epoch_to_utc(row[11]),  # createdAt
                 row[3] or "",  # prompt
                 state,  # state
                 row[7] or "",  # pipeline
@@ -456,26 +482,23 @@ def get_nova_chatbot_images(files_found, _report_folder, _seeker, _wrap_text):
         )
 
     headers = (
-        ("Image ID", "text"),
-        ("Msg ID", "text"),
-        ("Conv ID", "text"),
-        ("Conv UUID", "text"),
-        ("Conv Title", "text"),
-        ("AI Model", "text"),
-        ("Assistant Persona", "text"),
-        ("Conv Deleted", "text"),
-        ("Submitted By", "text"),
-        ("Msg Text", "text"),
-        ("Msg Timestamp", "date time"),
-        ("Prompt", "text"),
-        ("State", "text"),
-        ("Pipeline", "text"),
-        ("Style ID", "text"),
-        ("MIME Type", "text"),
-        (
-            "Cloud Storage URL",
-            "text",
-        ),  # Kept as text to natively display remote paths safely
+        "Image ID",
+        "Msg ID",
+        "Conv ID",
+        "Conv UUID",
+        "Conv Title",
+        "AI Model",
+        "Assistant Persona",
+        "Conv Deleted",
+        "Submitted By",
+        "Msg Text",
+        ("Msg Timestamp", "datetime"),
+        "Prompt",
+        "State",
+        "Pipeline",
+        "Style ID",
+        "MIME Type",
+        "Cloud Storage URL",  # plain text; a URL column must never render as a live link
     )
 
     return headers, data_list, db_path
@@ -519,24 +542,24 @@ def get_nova_chatbot_links(files_found, _report_folder, _seeker, _wrap_text):
                 "Yes" if row[11] else "No",  # softDeleted
                 get_role(row[4]),  # msg role
                 row[5] or "",  # message text
-                row[6],  # createdAt (Raw Epoch)
+                _epoch_to_utc(row[6]),  # createdAt
                 row[2] or "",  # URL string output safely as text
             )
         )
 
     headers = (
-        ("Link ID", "text"),
-        ("Msg ID", "text"),
-        ("Conv ID", "text"),
-        ("Conv UUID", "text"),
-        ("Conv Title", "text"),
-        ("AI Model", "text"),
-        ("Assistant Persona", "text"),
-        ("Conv Deleted", "text"),
-        ("Msg Role", "text"),
-        ("Msg Text", "text"),
-        ("Msg Timestamp", "date time"),
-        ("URL", "text"),  # Kept as text to natively display remote paths safely
+        "Link ID",
+        "Msg ID",
+        "Conv ID",
+        "Conv UUID",
+        "Conv Title",
+        "AI Model",
+        "Assistant Persona",
+        "Conv Deleted",
+        "Msg Role",
+        "Msg Text",
+        ("Msg Timestamp", "datetime"),
+        "URL",  # Kept as text to natively display remote paths safely
     )
 
     return headers, data_list, db_path
