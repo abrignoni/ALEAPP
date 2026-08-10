@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "package, permission group, access time and whether the access "
                        "happened in the background. The operation code is stored as a raw "
                        "integer and is reported as-is.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_whatsapp_contacts": {
         "name": "WhatsApp - Contacts",
         "description": "WhatsApp contacts (wa.db)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
     "get_whatsapp_call_logs": {
         "name": "WhatsApp - Call Logs",
         "description": "WhatsApp call logs (msgstore.db)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -46,7 +46,7 @@ __artifacts_v2__ = {
     "get_whatsapp_messages": {
         "name": "WhatsApp - Messages",
         "description": "WhatsApp messages (legacy msgstore.db schema with messages.data)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -68,7 +68,7 @@ __artifacts_v2__ = {
     "get_whatsapp_one_to_one_messages": {
         "name": "WhatsApp - One To One Messages",
         "description": "WhatsApp 1:1 messages (modern msgstore.db schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -104,7 +104,7 @@ __artifacts_v2__ = {
     "get_whatsapp_group_messages": {
         "name": "WhatsApp - Group Messages",
         "description": "WhatsApp group messages (modern msgstore.db schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -139,7 +139,7 @@ __artifacts_v2__ = {
     "get_whatsapp_group_details": {
         "name": "WhatsApp - Group Details",
         "description": "WhatsApp group details (modern msgstore.db schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -162,7 +162,7 @@ __artifacts_v2__ = {
     "get_whatsapp_user_profile": {
         "name": "WhatsApp - User Profile",
         "description": "WhatsApp local user profile (shared_prefs xml)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",

@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Speedtest",
         "notes": "",
-        "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db',),
+        "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db*',),
         "output_types": "all",
         "artifact_icon": "loader"
     },
@@ -60,15 +60,15 @@ def speedtest_tests(context):
         cur.execute('SELECT date, connectionType, ssid, userLatitude, userLongitude, externalIp, internalIp, downloadKbps, uploadKbps FROM UnivSpeedTestResult')
         result = cur.fetchall()
     except Exception as ex:
-        logfunc('Error retrieving Speedtest test results: ', ex)
+        logfunc(f'Error retrieving Speedtest test results: {ex}')
 
     timestamped_result = []
     for row in result:
         row = list(row)
         try:
             row[0] = convert_unix_ts_to_utc(row[0])
-        except Exception:
-            logfunc('Error converting timestamp for Speedtest test result: ', ex)
+        except Exception as ex:
+            logfunc(f'Error converting timestamp for Speedtest test result: {ex}')
         timestamped_result.append(row)
 
     return headers, timestamped_result, file_path
@@ -88,7 +88,7 @@ def speedtest_reports_location(context):
         cur.execute('SELECT DATA FROM REPORT')
         result = cur.fetchall()
     except Exception as ex:
-        logfunc('Error retrieving Speedtest reports: ', ex)
+        logfunc(f'Error retrieving Speedtest reports: {ex}')
 
     if result:
         for row in result:
@@ -104,7 +104,7 @@ def speedtest_reports_location(context):
 
                     reports.append((report_timestamp, latitude, longitude, altitude, accuracy))
             except Exception as ex:
-                logfunc('Error retrieving Speedtest reports: ', ex)
+                logfunc(f'Error retrieving Speedtest reports: {ex}')
 
     return headers, reports, file_path
 
@@ -122,7 +122,7 @@ def speedtest_reports_wifi(context):
         cur.execute('SELECT DATA FROM REPORT')
         result = cur.fetchall()
     except Exception as ex:
-        logfunc('Error retrieving Speedtest reports: ', ex)
+        logfunc(f'Error retrieving Speedtest reports: {ex}')
 
     if result:
         for row in result:
@@ -141,11 +141,11 @@ def speedtest_reports_wifi(context):
                         ssid = scan_result.get('SSID')
                         level = scan_result.get('level')
                     except Exception as ex:
-                        logfunc('Error retrieving Speedtest Wi-Fi scan data: ', ex)
+                        logfunc(f'Error retrieving Speedtest Wi-Fi scan data: {ex}')
 
                     results.append((timestamp, bssid, ssid, level))
 
             except Exception as ex:
-                logfunc('Error retrieving Speedtest reports: ', ex)
+                logfunc(f'Error retrieving Speedtest reports: {ex}')
 
     return headers, results, file_path

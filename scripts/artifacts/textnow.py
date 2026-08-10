@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_textnow_call_logs": {
         "name": "Text Now - Call Logs",
         "description": "Parses TextNow call logs (start and end time, participant IDs and direction) from the TextNow textnow_data.db.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
     "get_textnow_messages": {
         "name": "Text Now - Messages",
         "description": "Parses TextNow messages (timestamp, sender and recipient IDs, direction, message, read state and attachments) from the TextNow textnow_data.db.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
     "get_textnow_contacts": {
         "name": "Text Now - Contacts",
         "description": "Parses TextNow contacts (number and name) from the TextNow textnow_data.db.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",
         "requirements": "none",

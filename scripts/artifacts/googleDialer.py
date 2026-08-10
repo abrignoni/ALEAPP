@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Google Dialer Annotated Call Log",
         "description": "Call log kept by the Google Phone app (annotated_call_log.db). "
                        "Call types follow the Android CallLog.Calls constants.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
                        "app (phone_lookup_history.db). The contact name, label and lookup "
                        "URI come from the device contacts (Cp2Info) and the CNAP name from "
                        "the carrier, per the app's phone_lookup_info protobuf.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -47,7 +47,7 @@ __artifacts_v2__ = {
         "name": "Google Dialer Smartdial",
         "description": "Contacts indexed for smart dialing by the Google Phone app "
                        "(dialer.db, smartdial_table).",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "name": "Google Dialer Cached Number Contacts",
         "description": "Caller-id lookups cached per phone number by the Google Phone app "
                        "(dialer.db, cached_number_contacts).",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

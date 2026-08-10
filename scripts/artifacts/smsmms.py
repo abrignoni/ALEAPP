@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_sms_mms": {
         "name": "SMS Messages",
         "description": "SMS messages from mmssms.db (incl. LG extended types and Samsung spam_sms)",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2020-03-10",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
     "get_sms_mms_mms": {
         "name": "MMS Messages",
         "description": "MMS messages and attachments from mmssms.db",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2020-03-10",
         "last_update_date": "2026-08-01",
         "requirements": "none",

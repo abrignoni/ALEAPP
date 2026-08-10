@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_appLockerfishingnetpat": {
         "name": "App Locker Pat",
         "description": "Parses the App Locker unlock pattern (encrypted and decrypted) from the share_privacy_safe.xml preferences file.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-12-14",
         "last_update_date": "2021-12-14",
         "requirements": "none",

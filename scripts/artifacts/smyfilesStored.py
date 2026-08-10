@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_smyfilesStored": {
         "name": "smyfilesStored",
         "description": "Parses cached file records (timestamp, storage, path, size and latest access) from the Samsung My Files FileCache.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",

@@ -39,7 +39,7 @@ def extract_zepplife_heartrate(context):
                 try:
                     row[0] = datetime.fromtimestamp(row[0], timezone.utc)
                 except Exception as ex:
-                    logfunc('Error processing timestamp: ', ex)
+                    logfunc(f'Error processing timestamp: {ex}')
 
                 data_list.append(row)
             

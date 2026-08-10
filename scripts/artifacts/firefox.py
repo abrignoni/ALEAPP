@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_firefox_history": {
         "name": "Firefox - Web History",
         "description": "Firefox places.sqlite web history",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -18,7 +18,7 @@ __artifacts_v2__ = {
     "get_firefox_visits": {
         "name": "Firefox - Web Visits",
         "description": "Firefox places.sqlite individual page visits",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
     "get_firefox_bookmarks": {
         "name": "Firefox - Bookmarks",
         "description": "Firefox places.sqlite bookmarks",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
     "get_firefox_searches": {
         "name": "Firefox - Search Terms",
         "description": "Firefox places.sqlite search queries",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",
         "requirements": "none",
@@ -84,6 +84,8 @@ def _ms_to_utc(value):
 def _db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if os.path.basename(file_found) == 'places.sqlite':
             return file_found
     return ''

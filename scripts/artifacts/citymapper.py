@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "Interactive online folium map removed; locations are exported to KML by the framework.",
-        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db'),
+        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db*'),
         "output_types": ['html', 'tsv', 'timeline', 'lava', 'kml'],
         "artifact_icon": "map-pin",
     },
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "Interactive online folium map removed; home/work coordinates are shown in the table.",
-        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db'),
+        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db*'),
         "output_types": ['html', 'tsv', 'timeline', 'lava'],
         "artifact_icon": "map-pin",
     },
@@ -168,6 +168,8 @@ def get_citymapperAppPreferences(context):
     for file_found in files_found:
         file_found = str(file_found)
 
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not source:
             source = file_found
 

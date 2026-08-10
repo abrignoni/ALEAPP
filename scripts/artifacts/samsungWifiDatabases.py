@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Saved Wi-Fi networks recorded in the Samsung WifiConfigStore.db "
                        "(configs table): SSID with security type and, where present, the "
                        "creation time.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
                        "longitude come from the base columns when set and from the "
                        "*_major columns otherwise; the Coordinate Source column names which "
                        "pair supplied them.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

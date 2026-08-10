@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_pikpakCloudlist": {
         "name": "PikPak Cloud List",
         "description": "Parses PikPak cloud-stored files (create, modify, delete and update times, user, name, kind, URL and thumbnail) from the PikPak files database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-03-24",
         "last_update_date": "2023-03-24",
         "requirements": "none",

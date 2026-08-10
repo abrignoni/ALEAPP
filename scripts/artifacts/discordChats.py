@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_discordChats": {
         "name": "discordChats",
         "description": "Parses Discord chat messages from the kv-storage key-value store",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-09-18",
         "last_update_date": "2026-08-01",
         "requirements": "none",

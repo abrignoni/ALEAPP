@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Kik Messages",
         "description": "Messages from the Kik messagesTable, with the conversation partner, the "
                        "body, and the attachment metadata held against the message content id",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "name": "Kik Users",
         "description": "Entries in the Kik contacts table, covering individual users and groups "
                        "with their display name, user name and roster flags",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
         "name": "Kik Attachments",
         "description": "Attachment properties from the Kik content table, pivoted so each content "
                        "id gives one row with its file name, size, source app and URLs",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -83,7 +83,7 @@ __artifacts_v2__ = {
         "name": "Kik Chat Metadata",
         "description": "Rows from chatMetaInfTable, including the chat end time and the flags Kik "
                        "keeps for anonymously matched chats",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -101,7 +101,7 @@ __artifacts_v2__ = {
         "name": "Kik Local Account",
         "description": "Account rows from kikCoreDatabase, giving the core id used to name the "
                        "other databases and the user name held against it",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -119,7 +119,7 @@ __artifacts_v2__ = {
         "name": "Kik Roster and Contact Profiles",
         "description": "Bare JIDs held in the user roster and contact profile databases, with the "
                        "profile update time where the app records one",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -184,6 +184,8 @@ def _main_db(files_found):
 def _db_ending_with(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if file_found.endswith(suffix):
             return file_found
     return ''
@@ -209,6 +211,8 @@ def _media_index(files_found):
     unmatched = []
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not os.path.isfile(file_found):
             continue
         lowered = file_found.lower()
@@ -296,7 +300,7 @@ def kik_messages(context):
         ('Attachment', 'media'),
         'Attachment File Name',
         'Attachment File Size',
-        ('Attachment URL', 'url'),
+        'Attachment URL',
         'Attachment Source App',
         'Read State Value',
         'Group Chat',
@@ -350,7 +354,7 @@ def kik_users(context):
         'Admin',
         'Removed',
         'Description',
-        ('Photo URL', 'url'),
+        'Photo URL',
         ('Photo Timestamp', 'datetime'),
     )
     return data_headers, data_list, source_path
@@ -405,8 +409,8 @@ def kik_attachments(context):
         'File Size',
         'Source App',
         'Layout',
-        ('File URL', 'url'),
-        ('Platform URI', 'url'),
+        'File URL',
+        'Platform URI',
         'File Content Type',
         'Allow Forward',
         'Preview Reference',

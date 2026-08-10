@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_firefoxRecentlyClosedTabs": {
         "name": "Firefox - Recently Closed Tabs",
         "description": "Parses Firefox recently closed tabs (timestamp, title and URL) from the recently_closed_tabs database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",
         "requirements": "none",

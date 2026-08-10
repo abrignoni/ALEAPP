@@ -2,13 +2,13 @@ __artifacts_v2__ = {
     "get_siminfo": {
         "name": "siminfo",
         "description": "SIM card details (number, IMSI, ICCID, carrier) from the telephony provider database",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-02",
         "last_update_date": "2020-03-02",
         "requirements": "none",
         "category": "Device Information",
         "notes": "",
-        "paths": ('*/user_de/*/com.android.providers.telephony/databases/telephony.db',),
+        "paths": ('*/user_de/*/com.android.providers.telephony/databases/telephony.db*',),
         "output_types": "standard",
         "artifact_icon": "info-circle",
         "sample_data": {
@@ -48,6 +48,10 @@ def get_siminfo(context):
     source_paths = []
     for file_found in files_found:
         file_found = str(file_found).replace('\\', '/')
+        # The glob collects the database's -wal/-shm sidecars so SQLite can apply
+        # them; they are not databases themselves and must not be opened as one.
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         # Skip mirrored copies (e.g. magisk mirror) which duplicate the data
         if '/mirror/' in file_found:
             continue

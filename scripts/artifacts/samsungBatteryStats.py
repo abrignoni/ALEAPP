@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "Manager Service (sec_batterystats_history, APP_HISTORY table): power "
                        "drain, foreground/background time, CPU, wakelocks, network packets, "
                        "GPS and audio use per uid.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
         "description": "Device-wide screen and discharge figures recorded in time windows by "
                        "the Samsung Device Health Manager Service (sec_batterystats_history, "
                        "DEVICE_HISTORY table).",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
                        "(sec_batterystats_history, BATTERY_EVENT_HISTORY table). Event type "
                        "and value are stored as raw integers and their encoding differs "
                        "between One UI versions, so they are reported as-is.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
                        "Health Manager Service (sec_batterystats_history, SYSTEM_HISTORY "
                        "table). The drain type is stored as a raw integer and is reported "
                        "as-is.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

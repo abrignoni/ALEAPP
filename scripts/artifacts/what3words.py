@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "what3words - Saved Places",
         "description": "Places saved in what3words, with the three word address, the label given to "
                        "it, the nearest place and the coordinates",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
         "name": "what3words - Location Lists",
         "description": "Lists that group saved what3words locations, with the list label, the number "
                        "of locations in it, who created it and when",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",

@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_chromeBookmarks": {
         "name": "Bookmarks",
         "description": "Parses Bookmarks from Chromium Based Browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-20",
         "last_update_date": "2020-03-20",
         "requirements": "none",

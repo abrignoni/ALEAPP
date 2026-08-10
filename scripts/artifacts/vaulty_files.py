@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_vaulty_files": {
         "name": "vaulty_files",
         "description": "Vaulty (com.theronrogers.vaultyfree) media database. Research at https://kibaffo33.data.blog/2022/03/05/decoding-vaulty/",
-        "author": "",
+        "author": "@kibaffo33",
         "creation_date": "2022-02-23",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -14,7 +14,7 @@ __artifacts_v2__ = {
                  "decoded with different epochs, date_added as seconds and date_modified as "
                  "milliseconds, as set by that original research; the divergence has not been "
                  "re-verified against a test image.",
-        "paths": ('*/com.theronrogers.vaultyfree/databases/media.db',),
+        "paths": ('*/com.theronrogers.vaultyfree/databases/media.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "lock",
     }

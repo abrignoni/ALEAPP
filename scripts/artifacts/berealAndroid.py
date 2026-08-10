@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "BeReal Cached Media",
         "description": "Photos and videos recovered from the BeReal caches on disk, with the "
                        "source URL and cache date read from the OkHttp cache metadata where present",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -27,8 +27,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "image",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | com.bereal.ft | media recovered from caches",
-            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | media recovered from caches",
+            "pixel7a_a14": "Android 14 | com.bereal.ft | 71 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | 13 rows",
         },
     },
     "bereal_friends": {
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "description": "Friends recovered from cached responses of the relationships and friend "
                        "recommendation endpoints, with the user name, full name and status BeReal "
                        "returned",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | com.bereal.ft | cached relationships responses",
+            "pixel7a_a14": "Android 14 | com.bereal.ft | 0 rows",
             "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | 1 friend cached",
         },
     },
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "name": "BeReal Cached API Responses",
         "description": "Index of the BeReal API responses held in the OkHttp network cache, with "
                        "the endpoint URL, the cached response date and a short summary of the body",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -68,8 +68,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "server",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | com.bereal.ft | cached API responses",
-            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | cached API responses",
+            "pixel7a_a14": "Android 14 | com.bereal.ft | 15 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | 4 rows",
         },
     },
 }
@@ -229,7 +229,7 @@ def bereal_cached_media(context):
         'Format',
         'Size (bytes)',
         'Cache',
-        ('Source URL', 'url'),
+        'Source URL',
         'Local Path',
     )
     return data_headers, data_list, source_path
@@ -278,7 +278,7 @@ def bereal_friends(context):
         'Status',
         'User ID',
         'Hashed Phone Number',
-        ('Source Endpoint', 'url'),
+        'Source Endpoint',
     )
     return data_headers, data_list, source_path
 
@@ -313,7 +313,7 @@ def bereal_cached_api(context):
         'Endpoint',
         'Body Size (bytes)',
         'Body Summary',
-        ('Full URL', 'url'),
+        'Full URL',
         'Local Path',
     )
     return data_headers, data_list, source_path

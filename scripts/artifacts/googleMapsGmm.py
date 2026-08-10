@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GEO Location",
         "notes": "Updated 2023-12-12 by @segumarc",
-        "paths": ('*/com.google.android.apps.maps/databases/gmm_storage.db',),
+        "paths": ('*/com.google.android.apps.maps/databases/gmm_storage.db*',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
         "sample_data": {
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
                   "protobuf.\n"
                   "Latitude and Longitude are the stored values multiplied by 0.000001 and rounded "
                   "to six decimal places, that is read as E6-scaled integers."),
-        "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db',),
+        "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
         "sample_data": {

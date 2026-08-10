@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Dropbox - Files",
         "description": "Cloud files and folders listed in the Dropbox app database, with the path, "
                        "size, MIME type and the modification times the service recorded",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "name": "Dropbox - Account",
         "description": "The signed-in Dropbox account, with the email, display name, account id and "
                        "plan read from the account preference values",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -38,14 +38,14 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "user",
         "sample_data": {
-            "hc_pixel8pro_a17": "Android 17 | com.dropbox.android | account reported",
+            "hc_pixel8pro_a17": "Android 17 | com.dropbox.android | 11 rows",
         },
     },
     "dropbox_thumbnails": {
         "name": "Dropbox - Thumbnails",
         "description": "Thumbnails the Dropbox app cached, with the cloud path they belong to and "
                        "the size and format that was cached",
-        "author": "",
+        "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -91,6 +91,8 @@ _DBID_RE = re.compile(r'dbid:[A-Za-z0-9_-]+')
 def _db_by_suffix(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if file_found.endswith(suffix):
             return file_found
     return ''

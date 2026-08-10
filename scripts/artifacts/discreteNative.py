@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_discreteNative": {
         "name": "DiscreteNative",
         "description": "Parses discrete app-ops permission usage (timestamp, package, permission module and operation, and usage duration) from the system appops discrete records.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2022-01-19",
         "last_update_date": "2026-08-01",
         "requirements": "none",

@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Podcast Addict",
         "notes": "",
-        "paths": ('*/com.bambuna.podcastaddict/databases/podcastAddict.db',),
+        "paths": ('*/com.bambuna.podcastaddict/databases/podcastAddict.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "headphones",
     }

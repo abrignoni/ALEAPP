@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "usageapps",
         "description": "App usage events from the Device Personalization Services "
                        "reflection_gel_events database (includes deleted apps)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-04-11",
         "last_update_date": "2020-04-11",
         "requirements": "none",

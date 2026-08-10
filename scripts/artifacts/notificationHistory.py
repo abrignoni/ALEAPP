@@ -169,6 +169,10 @@ def get_notificationHistory(context):
 
     for file_found in files_found:
         file_found = str(file_found)
+        if not os.path.isfile(file_found):
+            # The glob also returns the enclosing history directory on some
+            # extractions; only the per-notification files are protobufs.
+            continue
         file_name = os.path.basename(file_found)
         source_path = os.path.dirname(file_found)
         try:

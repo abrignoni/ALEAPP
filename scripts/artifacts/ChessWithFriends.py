@@ -2,13 +2,13 @@ __artifacts_v2__ = {
     "get_ChessWithFriends": {
         "name": "Chess With Friends",
         "description": "Parses Chess With Friends game data",
-        "author": "",
+        "author": "@mastenp",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
         "category": "Chats",
         "notes": "",
-        "paths": ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite', '*/data/com.zynga.chess.googleplay/db/wf_database.sqlite'),
+        "paths": ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite*', '*/data/com.zynga.chess.googleplay/db/wf_database.sqlite*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "layout-grid",
     }

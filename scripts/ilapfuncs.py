@@ -756,17 +756,20 @@ def does_column_exist_in_db(path, table_name, col_name):
     '''Checks if a specific col exists'''
     db = open_sqlite_db_readonly(path)
     col_name = col_name.lower()
-    try:
-        db.row_factory = sqlite3.Row # For fetching columns by name
+    if db:
         query = f"pragma table_info('{table_name}');"
-        cursor = db.cursor()
-        cursor.execute(query)
-        all_rows = cursor.fetchall()
-        for row in all_rows:
-            if row['name'].lower() == col_name:
-                return True
-    except sqlite3.Error as ex:
-        logfunc(f"Query error, query={query} Error={str(ex)}")
+        try:
+            db.row_factory = sqlite3.Row # For fetching columns by name
+            cursor = db.cursor()
+            cursor.execute(query)
+            all_rows = cursor.fetchall()
+            for row in all_rows:
+                if row['name'].lower() == col_name:
+                    return True
+        except sqlite3.Error as ex:
+            logfunc(f"Query error, query={query} Error={str(ex)}")
+        finally:
+            db.close()
     return False
 
 def does_table_exist_in_db(path, table_name):
@@ -780,7 +783,80 @@ def does_table_exist_in_db(path, table_name):
                 return True
         except sqlite3.Error as ex:
             logfunc(f"Query error, query={query} Error={str(ex)}")
+        finally:
+            db.close()
     return False
+
+def null_absent_columns(path, query):
+    '''Replace references to columns the database lacks with NULL.
+
+    Apps add columns between releases, so a query written against a newer store
+    names columns an older one does not have and the whole statement fails with
+    "no such column", returning nothing. Substituting NULL keeps every column in
+    place, which matters because artifacts consume rows positionally, and keeps
+    the column's name, because they also read rows by name.
+
+    SQLite itself names the missing column, so the query is compiled with EXPLAIN
+    and whatever it objects to is replaced, repeatedly, until it compiles. That
+    avoids guessing which bare words in a statement are column references, which
+    no amount of regex gets reliably right. EXPLAIN compiles without running, so
+    this costs nothing on a large table.
+
+    Returns the query unchanged if the database cannot be read or the error is
+    anything other than a missing column.
+    '''
+    db = open_sqlite_db_readonly(path)
+    if not db:
+        return query
+
+    replaced = []
+    try:
+        for _ in range(50):                  # a query cannot need more than this
+            try:
+                db.execute('EXPLAIN ' + query)
+                break
+            except sqlite3.OperationalError as ex:
+                match = re.match(r'no such column:\s*(\S+)', str(ex))
+                if not match:
+                    break
+                reference = match.group(1)
+                if reference in replaced:
+                    break                    # not making progress, leave it alone
+                replaced.append(reference)
+                query = _null_out_column(query, reference)
+            except sqlite3.Error:
+                break
+    finally:
+        # Artifacts call this once per query, so an unclosed handle here is one
+        # leak per query for the whole run rather than a one-off.
+        db.close()
+
+    if replaced:
+        logfunc(f'{os.path.basename(path)}: column(s) absent from this version are reported '
+                f'empty: {", ".join(sorted(replaced))}')
+    return query
+
+
+def _null_out_column(query, reference):
+    '''Replace one column reference with NULL, keeping the output column name.
+
+    A bare NULL renames the output column, and artifacts read rows by name, so
+    where the reference is a select item in its own right it becomes
+    "NULL AS <name>". Inside an expression the enclosing alias already names the
+    column and a plain NULL is correct.
+    '''
+    name = reference.split('.')[-1].strip('"[]`')
+    pattern = re.compile(r'(?<![\w.])' + re.escape(reference) + r'\b'
+                         r'(?P<tail>\s*(?:,|$)|\s+(?i:FROM)\b)?')
+
+    def replace(match):
+        tail = match.group('tail')
+        if tail is None:
+            return 'NULL'
+        return f'NULL AS {name}{tail}'
+
+    return pattern.sub(replace, query)
+
 
 def does_view_exist_in_db(path, table_name):
     '''Checks if a table with specified name exists in an sqlite db'''
@@ -793,6 +869,8 @@ def does_view_exist_in_db(path, table_name):
                 return True
         except sqlite3.Error as ex:
             logfunc(f"Query error, query={query} Error={str(ex)}")
+        finally:
+            db.close()
     return False
 
 

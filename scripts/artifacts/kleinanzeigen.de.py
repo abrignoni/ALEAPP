@@ -122,6 +122,8 @@ def _recent_searches(files_found, marker):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if marker not in file_found:
             continue
         source_path = file_found
@@ -160,6 +162,8 @@ def get_kleinanzeigenaccount(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if 'com.ebay.kleinanzeigen_preferences.xml' not in file_found:
             continue
         source_path = file_found
