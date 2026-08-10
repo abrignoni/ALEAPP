@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_burnerUser": {
         "name": "Burner - User",
@@ -6,7 +5,7 @@ __artifacts_v2__ = {
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
         "version": "0.0.1",
         "creation_date": "2024-02-15",
-        "last_update_date": "2024-02-15",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Burner",
         "notes": "",
@@ -25,7 +24,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_burnerUser(files_found, report_folder, seeker, wrap_text):
+def get_burnerUser(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''
@@ -41,7 +41,7 @@ def get_burnerUser(files_found, report_folder, seeker, wrap_text):
             SELECT
             json_extract(BurnerEntity.value, '$.dateCreated') as 'Date Created',
             id as 'User ID',
-            json_extract(BurnerEntity.value, '$.phoneNumberId') as 'Phone Number',
+            json_extract(BurnerEntity.value, '$.phoneNumberId') as 'Phone Number ID',
             json_extract(BurnerEntity.value, '$.autoReplyText') as 'Auto Reply Message'
             FROM BurnerEntity
         ''')
@@ -52,5 +52,5 @@ def get_burnerUser(files_found, report_folder, seeker, wrap_text):
             created = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
             data_list.append((created, row[1], row[2], row[3]))
 
-    data_headers = (('Timestamp', 'datetime'), 'User ID', ('Phone Number', 'phonenumber'), 'Auto Reply Message')
+    data_headers = (('Timestamp', 'datetime'), 'User ID', 'Phone Number ID', 'Auto Reply Message')
     return data_headers, data_list, source_path

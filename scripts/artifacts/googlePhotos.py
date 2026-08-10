@@ -1,14 +1,15 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_googlePhotos": {
         "name": "Google Photos - Local Media",
         "description": "Local media indexed by Google Photos (gphotos*.db local_media)",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-04-14",
-        "last_update_date": "2021-04-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Photos",
-        "notes": "",
+        "notes": "Timezone Offset (hours, truncated) is the stored timezone_offset value divided "
+                 "by 3,600,000, that is read as milliseconds and reported in whole hours with the "
+                 "remainder truncated. A +5:30 offset therefore renders as 5.",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "all",
         "artifact_icon": "photo",
@@ -28,12 +29,16 @@ __artifacts_v2__ = {
     "get_googlePhotos_remote": {
         "name": "Google Photos - Remote Media",
         "description": "Remote (cloud) media indexed by Google Photos (gphotos*.db remote_media)",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-04-14",
-        "last_update_date": "2021-04-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Photos",
-        "notes": "",
+        "notes": "Timezone Offset (hours, truncated) is the stored timezone_offset value divided "
+                 "by 3,600,000, that is read as milliseconds and reported in whole hours with the "
+                 "remainder truncated. A +5:30 offset therefore renders as 5.\n"
+                 "Upload Status is the remote_media.upload_status value as stored; it is not a "
+                 "percentage.",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "all",
         "artifact_icon": "photo",
@@ -53,12 +58,16 @@ __artifacts_v2__ = {
     "get_googlePhotos_shared": {
         "name": "Google Photos - Shared Media",
         "description": "Shared media indexed by Google Photos (gphotos*.db shared_media)",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-04-14",
-        "last_update_date": "2021-04-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Photos",
-        "notes": "",
+        "notes": "Timezone Offset (hours, truncated) is the stored timezone_offset value divided "
+                 "by 3,600,000, that is read as milliseconds and reported in whole hours with the "
+                 "remainder truncated. A +5:30 offset therefore renders as 5.\n"
+                 "Upload Status is the shared_media.upload_status value as stored; it is not a "
+                 "percentage.",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -76,14 +85,15 @@ __artifacts_v2__ = {
         },
     },
     "get_googlePhotos_folders": {
-        "name": "Google Photos - Backed Up Folders",
-        "description": "Folders backed up by Google Photos (gphotos*.db backup_folders)",
-        "author": "",
+        "name": "Google Photos - Backup Folders",
+        "description": "Folders listed in the backup_folders table (gphotos*.db)",
+        "author": "@stark4n6",
         "creation_date": "2021-04-14",
-        "last_update_date": "2021-04-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Photos",
-        "notes": "",
+        "notes": "A row records a folder listed in the backup_folders table. That listing does not "
+                 "establish that any file in the folder was uploaded.",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -103,7 +113,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_cache": {
         "name": "Google Photos - Cache",
         "description": "Google Photos disk/glide cache entries with cached images",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-04-14",
         "last_update_date": "2021-04-14",
         "requirements": "none",
@@ -128,13 +138,15 @@ __artifacts_v2__ = {
     },
     "get_googlePhotos_trash": {
         "name": "Google Photos - Local Trash",
-        "description": "Google Photos local trash with recovered media (local_trash.db)",
-        "author": "",
+        "description": "Google Photos local trash entries and the trash files still present (local_trash.db)",
+        "author": "@stark4n6",
         "creation_date": "2021-04-14",
-        "last_update_date": "2021-04-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Photos",
-        "notes": "",
+        "notes": "Media shown here is the file still present under files/trash_files matched to a "
+                 "local_trash.db row. Nothing is carved or otherwise recovered.\n"
+                 "Local Path is the local_trash.db local_path value as stored.",
         "paths": ('*/com.google.android.apps.photos/databases/local_trash.db*',
                   '*/com.google.android.apps.photos/files/trash_files/*'),
         "output_types": "standard",
@@ -194,7 +206,8 @@ def _find_media(files_found, key):
 
 
 @artifact_processor
-def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -225,13 +238,14 @@ def get_googlePhotos(files_found, report_folder, seeker, wrap_text):
                               r[7], r[8], r[9], r[10], r[11], r[12], _str_to_utc(r[13]), _str_to_utc(r[14])))
 
     data_headers = ('Source', ('Timestamp', 'datetime'), 'File Name', 'File Path', ('Captured Timestamp', 'datetime'),
-                    'Timezone Offset', 'Width', 'Height', 'Size', 'Duration', 'Latitude', 'Longitude',
+                    'Timezone Offset (hours, truncated)', 'Width', 'Height', 'Size', 'Duration', 'Latitude', 'Longitude',
                     'Folder Name', 'Media Store ID', ('Trashed Timestamp', 'datetime'), ('Purge Timestamp', 'datetime'))
     return data_headers, data_list, source_path
 
 
 @artifact_processor
-def get_googlePhotos_remote(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_remote(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -260,13 +274,14 @@ def get_googlePhotos_remote(files_found, report_folder, seeker, wrap_text):
                               r[7], r[8], r[9], r[10]))
 
     data_headers = ('Source', ('Timestamp', 'datetime'), 'File Name', 'Remote URL', ('Captured Timestamp', 'datetime'),
-                    'Timezone Offset', 'Duration', 'Latitude', 'Longitude', 'Inferred Latitude',
-                    'Inferred Longitude', 'Upload Status %')
+                    'Timezone Offset (hours, truncated)', 'Duration', 'Latitude', 'Longitude',
+                    'Inferred Latitude', 'Inferred Longitude', 'Upload Status')
     return data_headers, data_list, source_path
 
 
 @artifact_processor
-def get_googlePhotos_shared(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_shared(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -290,12 +305,13 @@ def get_googlePhotos_shared(files_found, report_folder, seeker, wrap_text):
             data_list.append((source, _str_to_utc(r[0]), r[1], r[2], r[3], _str_to_utc(r[4]), r[5], r[6]))
 
     data_headers = ('Source', ('Timestamp', 'datetime'), 'File Name', 'Remote URL', 'Size',
-                    ('Captured Timestamp', 'datetime'), 'Timezone Offset', 'Upload Status %')
+                    ('Captured Timestamp', 'datetime'), 'Timezone Offset (hours, truncated)', 'Upload Status')
     return data_headers, data_list, source_path
 
 
 @artifact_processor
-def get_googlePhotos_folders(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_folders(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -319,12 +335,13 @@ def get_googlePhotos_folders(files_found, report_folder, seeker, wrap_text):
             source_path = db_path
             data_list.append((source, r[0], r[1], r[2]))
 
-    data_headers = ('Source', 'Bucket ID', 'Backed Up Folder Name', 'Backed Up Folder Path')
+    data_headers = ('Source', 'Bucket ID', 'Folder Name', 'Folder Path')
     return data_headers, data_list, source_path
 
 
 @artifact_processor
-def get_googlePhotos_cache(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_cache(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -352,7 +369,8 @@ def get_googlePhotos_cache(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googlePhotos_trash(files_found, report_folder, seeker, wrap_text):
+def get_googlePhotos_trash(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -376,6 +394,6 @@ def get_googlePhotos_trash(files_found, report_folder, seeker, wrap_text):
         for r in rows:
             data_list.append((_str_to_utc(r[0]), r[1], r[2], r[3], _find_media(files_found, r[3]), r[5], r[4]))
 
-    data_headers = (('Timestamp', 'datetime'), 'Original Path', 'Content URI', 'File Name', ('Image', 'media'),
+    data_headers = (('Timestamp', 'datetime'), 'Local Path', 'Content URI', 'File Name', ('Image', 'media'),
                     'Is Video', 'Media Store ID')
     return data_headers, data_list, source_path

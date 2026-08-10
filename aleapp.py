@@ -14,7 +14,7 @@ import leapp_functions.app.history as history
 from scripts.search_files import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from scripts.ilapfuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from leapp_functions.app.output import validate_output_folder_available
-from scripts.version_info import leapp_name, leapp_version
+from scripts.version_info import leapp_name, leapp_version, check_runtime_dependencies
 from time import process_time, gmtime, strftime, perf_counter
 from scripts.lavafuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from scripts.context import Context
@@ -143,6 +143,7 @@ def create_casedata(path):
     return
 
 def main():
+    check_runtime_dependencies()
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
     parser.add_argument('-t', choices=['fs', 'tar', 'zip', 'gz'], required=False, action="store",
                         help=("Specify the input type. "
@@ -394,9 +395,10 @@ def crunch_artifacts(
             else:
                 log.write(f'<ul><li>{len(found)} {"files" if len(found) > 1 else "file"} for regex <i>{artifact_search_regex}</i> located at:')
                 for pathh in found:
-                    if pathh.startswith('\\\\?\\'):
-                        pathh = pathh[4:]
-                    log.write(f'<ul><li>{pathh}</li></ul>')
+                    # Strip \\?\ only for log display; file_infos is keyed with the
+                    # original long-path form on Windows.
+                    display_path = pathh[4:] if pathh.startswith('\\\\?\\') else pathh
+                    log.write(f'<ul><li>{display_path}</li></ul>')
                     if seeker.file_infos.get(pathh):
                         file_path_id = id(seeker.file_infos.get(pathh))
                         if not pattern_already_searched and file_path_id not in file_path_ids:
@@ -406,7 +408,8 @@ def crunch_artifacts(
                 log.write('</li></ul>')
                 files_found.extend(found)
         if files_found:
-            category_folder = os.path.join(out_params.output_folder_base, '_HTML', plugin.category)
+            category_folder = os.path.join(out_params.output_folder_base, '_HTML',
+                                           sanitize_report_name(plugin.category, 'category'))
             if not os.path.exists(category_folder):
                 try:
                     os.makedirs(category_folder)

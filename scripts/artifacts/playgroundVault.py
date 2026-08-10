@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_playgroundVault": {
         "name": "Playground Vault",
         "description": "Decrypts media hidden by the Playground AppLocker vault (AES-GCM)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2022-01-16",
         "last_update_date": "2022-01-16",
         "requirements": "none",

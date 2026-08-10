@@ -1,14 +1,14 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_emulatedSmeta": {
         "name": "Emulated Storage Metadata - Downloads",
         "description": "Parses media store metadata (downloads)",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-10-19",
-        "last_update_date": "2020-10-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "",
+        "notes": "MediaStore records DATE_ADDED and DATE_MODIFIED in seconds since epoch and DATE_TAKEN in milliseconds, and this parser decodes them that way. Reference: AOSP, 'MediaStore.MediaColumns', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -30,10 +30,10 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (images)",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-10-19",
-        "last_update_date": "2020-10-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "",
+        "notes": "MediaStore records ORIENTATION as a rotation in degrees, so 0 and 180 are reported as Horizontal and 90 and 270 as Vertical; any other value, including NULL, is passed through unchanged. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -55,10 +55,10 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (files)",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-10-19",
-        "last_update_date": "2020-10-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "",
+        "notes": "MediaStore records ORIENTATION as a rotation in degrees, so 0 and 180 are reported as Horizontal and 90 and 270 as Vertical; any other value, including NULL, is passed through unchanged. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -80,10 +80,10 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (videos)",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-10-19",
-        "last_update_date": "2020-10-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "",
+        "notes": "MediaStore records ORIENTATION as a rotation in degrees, so 0 and 180 are reported as Horizontal and 90 and 270 as Vertical; any other value, including NULL, is passed through unchanged. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -105,10 +105,10 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (audio)",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-10-19",
-        "last_update_date": "2020-10-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "",
+        "notes": "MediaStore records DATE_ADDED and DATE_MODIFIED in seconds since epoch and DATE_TAKEN in milliseconds, and this parser decodes them that way. Reference: AOSP, 'MediaStore.MediaColumns', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "music",
@@ -130,10 +130,10 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (files, older schema)",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-10-19",
-        "last_update_date": "2020-10-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "",
+        "notes": "MediaStore records ORIENTATION as a rotation in degrees, so 0 and 180 are reported as Horizontal and 90 and 270 as Vertical; any other value, including NULL, is passed through unchanged. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -156,7 +156,9 @@ import datetime
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
-ORIENTATION = "case orientation when 0 then 'Horizontal' else 'Vertical' end"
+# MediaStore stores ORIENTATION as a rotation in degrees; unexpected values stay raw
+ORIENTATION = ("case orientation when 0 then 'Horizontal' when 180 then 'Horizontal' "
+               "when 90 then 'Vertical' when 270 then 'Vertical' else orientation end")
 YESNO = "case {0} when 0 then '' when 1 then 'Yes' end"
 
 
@@ -208,7 +210,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size,
@@ -228,7 +231,8 @@ def get_emulatedSmeta(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_images(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_images(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size, latitude, longitude,
@@ -245,7 +249,8 @@ def get_emulatedSmeta_images(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_files(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_files(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size, latitude, longitude,
@@ -262,7 +267,8 @@ def get_emulatedSmeta_files(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_videos(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_videos(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size, latitude, longitude,
@@ -279,7 +285,8 @@ def get_emulatedSmeta_videos(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_audio(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_audio(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, True)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size,
@@ -296,7 +303,8 @@ def get_emulatedSmeta_audio(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_emulatedSmeta_files_legacy(files_found, report_folder, seeker, wrap_text):
+def get_emulatedSmeta_files_legacy(context):
+    files_found = context.get_files_found()
     source_path = _external_db(files_found, False)
     rows = _run(source_path, f'''
         SELECT date_added, date_modified, datetaken, _data, title, _display_name, _size, latitude, longitude,

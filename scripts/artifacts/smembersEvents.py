@@ -1,15 +1,14 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_smembersEvents": {
         "name": "smembersEvents",
         "description": "Parses Samsung Members device events (created time, type, value and snapshot flag) from the com_pocketgeek_sdk database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
         "category": "App Interaction",
         "notes": "",
-        "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk.db',),
+        "paths": ('*/com.samsung.oh/databases/com_pocketgeek_sdk.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
     }
@@ -21,7 +20,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_smembersEvents(files_found, report_folder, seeker, wrap_text):
+def get_smembersEvents(context):
+    files_found = context.get_files_found()
 
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)

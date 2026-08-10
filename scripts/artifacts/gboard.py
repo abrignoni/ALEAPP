@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_gboardCache": {
         "name": "Gboard - Clipboard",
         "description": "Gboard keyboard clipboard entries (gboard_clipboard.db)",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2021-01-09",
         "last_update_date": "2021-01-09",
         "requirements": "none",
@@ -23,14 +22,14 @@ __artifacts_v2__ = {
     },
     "get_gboardCache_keystrokes": {
         "name": "Gboard - Keystroke Cache",
-        "description": "Keystrokes typed by the user in app input fields, temporarily cached by Gboard",
-        "author": "",
+        "description": "Text entries recorded in the Gboard training cache",
+        "author": "@ydkhatri",
         "creation_date": "2021-01-09",
-        "last_update_date": "2021-01-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Gboard Keyboard",
         "notes": "",
-        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db',),
+        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db*',),
         "output_types": "standard",
         "artifact_icon": "brand-chrome",
         "sample_data": {
@@ -44,13 +43,13 @@ __artifacts_v2__ = {
     "get_gboardCache_sessions": {
         "name": "Gboard - Sessions",
         "description": "Gboard keyboard input sessions (trainingcachev3.db)",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2021-01-09",
-        "last_update_date": "2021-01-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Gboard Keyboard",
         "notes": "",
-        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcachev3.db',),
+        "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcachev3.db*',),
         "output_types": "standard",
         "artifact_icon": "brand-chrome",
         "sample_data": {
@@ -67,7 +66,7 @@ import datetime
 import os
 import sqlite3
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, \
     does_table_exist_in_db, check_in_media
@@ -111,7 +110,7 @@ def _events_trainingcache2(file_found):
                               {'2': {'type': 'message', 'message_typedef':
                                      {'1': {'name': '', 'type': 'bytes'}}}}}}
             for row in cursor.fetchall():
-                data, _ = blackboxprotobuf.decode_message(row['_payload'], pb_types)
+                data, _ = decode_protobuf(row['_payload'], pb_types)
                 texts = data.get('7', {}).get('2', [])
                 text_typed = ''
                 if texts:
@@ -166,7 +165,7 @@ def _events_trainingcachev2(file_found):
                 ke = keyboard_event(row['id'], '', '', '', '', row['ts2'], row['ts1'], row['ts1'])
                 desc_proto = row['desc_proto']
                 if desc_proto:
-                    desc, _ = blackboxprotobuf.decode_message(desc_proto, None)
+                    desc, _ = decode_protobuf(desc_proto, None)
                     try:
                         ke.textbox_name = desc.get('6', b'').decode('utf8', 'ignore')
                     except AttributeError:
@@ -178,7 +177,7 @@ def _events_trainingcachev2(file_found):
             ke.end_date = row['ts1']
             data_proto = row['data_proto']
             if data_proto:
-                data, _ = blackboxprotobuf.decode_message(data_proto, None)
+                data, _ = decode_protobuf(data_proto, None)
                 input_dict = data.get('6', None)
                 if input_dict:
                     chars_items = input_dict.get('4', {})
@@ -204,7 +203,8 @@ def _events_trainingcachev2(file_found):
 
 
 @artifact_processor
-def get_gboardCache(files_found, report_folder, seeker, wrap_text):
+def get_gboardCache(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -230,6 +230,8 @@ def get_gboardCache(files_found, report_folder, seeker, wrap_text):
             if file_key:
                 for match in files_found:
                     match = str(match)
+                    if match.endswith(('-wal', '-shm', '-journal')):
+                        continue
                     if file_key in match:
                         image = check_in_media(match, os.path.basename(match))
                         break
@@ -241,7 +243,8 @@ def get_gboardCache(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_gboardCache_keystrokes(files_found, report_folder, seeker, wrap_text):
+def get_gboardCache_keystrokes(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -265,7 +268,8 @@ def get_gboardCache_keystrokes(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_gboardCache_sessions(files_found, report_folder, seeker, wrap_text):
+def get_gboardCache_sessions(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -289,5 +293,6 @@ def get_gboardCache_sessions(files_found, report_folder, seeker, wrap_text):
         for row in rows:
             data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3]))
 
-    data_headers = (('Start', 'datetime'), ('Finish', 'datetime'), 'Session ID', 'Application')
+    data_headers = (('_session_id (as timestamp)', 'datetime'), ('_timestamp_', 'datetime'),
+                    'Session ID', 'Application')
     return data_headers, data_list, source_path

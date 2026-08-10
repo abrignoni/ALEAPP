@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "protondrive_useraccount": {
         "name": "Proton Drive - User Account",
@@ -18,24 +17,26 @@ __artifacts_v2__ = {
         "description": "Parses Proton Drive File Information",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Proton Drive",
-        "notes": "Tested on version 2.29.1 (Nov 10th, 2025)",
+        "notes": "Tested on version 2.29.1 (Nov 10th, 2025). Reference: Proton Drive Android, 'LinkDto (TYPE_FOLDER=1, TYPE_FILE=2, TYPE_ALBUM=3; STATE_DRAFT=0, ACTIVE=1, TRASHED=2, DELETED=3, RESTORING=4)', https://github.com/ProtonDriveApps/android-drive/blob/main/drive/link/data/src/main/kotlin/me/proton/core/drive/link/data/api/entity/LinkDto.kt",
         "paths": ('*/me.proton.android.drive/databases/db-drive'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "file"
-    }   
+    }
 }
 
 from pathlib import Path
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
+
 @artifact_processor
-def protondrive_useraccount(files_found, report_folder, seeker, wrap_text):
+def protondrive_useraccount(context):
+    files_found = context.get_files_found()
     data_list = []
-    
+
     def is_sqlite_db(path):
         try:
             with open(path, "rb") as f:
@@ -67,28 +68,19 @@ def protondrive_useraccount(files_found, report_folder, seeker, wrap_text):
             FROM UserEntity;
         '''
 
-    db_records = get_sqlite_db_records(source_path, query)
+    data_headers = ('User ID', 'Email Address', 'Username', ('Created Date', 'datetime'),
+                    'Used Space (MB)', 'Max Space (MB)')
+    data_list = list(get_sqlite_db_records(source_path, query))
 
-    for row in db_records:
-        user_id         = row[0]  # UserID
-        emailaddress    = row[1]  # Email Address
-        username        = row[2]  # proton username
-        createddate     = row[3]  # account created date
-        usedspace       = row[4]  # used space (MB)
-        maxspace        = row[5]  # max space (MB)
-
-        data_list.append((user_id,emailaddress,username,createddate,usedspace,maxspace))
-
-    data_headers = ('User ID','Email Address','Username',('Created Date','datetime'),'Used Space (MB)','Max Space (MB)') 
-    data_list = get_sqlite_db_records(source_path, query)        
-    
     return data_headers, data_list, source_path
 
+
 @artifact_processor
-def protondrive_fileinfo(files_found, report_folder, seeker, wrap_text):
+def protondrive_fileinfo(context):
+    files_found = context.get_files_found()
 
     data_list = []
-    
+
     def is_sqlite_db(path):
         try:
             with open(path, "rb") as f:
@@ -119,12 +111,16 @@ def protondrive_fileinfo(files_found, report_folder, seeker, wrap_text):
             CASE LinkEntity.type
                 WHEN 1 THEN 'Folder'
                 WHEN 2 THEN 'File'
+                WHEN 3 THEN 'Album'
                 ELSE LinkEntity.type
             END AS type,
             LinkEntity.name,
             CASE LinkEntity.state
+                WHEN 0 THEN 'Draft'
                 WHEN 1 THEN 'Active'
                 WHEN 2 THEN 'Trashed'
+                WHEN 3 THEN 'Deleted'
+                WHEN 4 THEN 'Restoring'
                 ELSE LinkEntity.state
             END AS state,
             datetime(LinkEntity.creation_time, 'unixepoch'),
@@ -144,22 +140,25 @@ def protondrive_fileinfo(files_found, report_folder, seeker, wrap_text):
     db_records = get_sqlite_db_records(source_path, query)
 
     for row in db_records:
-        link_id             = row[0]
-        user_id             = row[2]
-        type_val            = row[4]
-        name                = row[5]
-        state_val           = row[6]
-        creation_time       = row[7]
-        last_modified       = row[8]
-        trashed_time        = row[9]
-        size                = row[10]
-        mime_type           = row[11]
-        is_shared           = row[12]
-        number_of_accesses  = row[13]
+        link_id = row[0]
+        user_id = row[2]
+        type_val = row[4]
+        name = row[5]
+        state_val = row[6]
+        creation_time = row[7]
+        last_modified = row[8]
+        trashed_time = row[9]
+        size = row[10]
+        mime_type = row[11]
+        is_shared = row[12]
+        number_of_accesses = row[13]
 
-        data_list.append((link_id, user_id, type_val, name, state_val, creation_time, last_modified, trashed_time, size, mime_type, is_shared, number_of_accesses))
+        data_list.append(
+            (link_id, user_id, type_val, name, state_val, creation_time, last_modified,
+             trashed_time, size, mime_type, is_shared, number_of_accesses))
 
-    data_headers = ('ID','File Owner ID','Type','Name','State',('Creation Time','datetime'),('Last Modified','datetime'),('Trashed Time','datetime'),'Size','MIME Type','Is Shared','Number of Accesses')
-
+    data_headers = ('ID', 'File Owner ID', 'Type', 'Name', 'State', ('Creation Time', 'datetime'),
+                    ('Last Modified', 'datetime'), ('Trashed Time', 'datetime'), 'Size', 'MIME Type',
+                    'Is Shared', 'Number of Accesses')
 
     return data_headers, data_list, source_path

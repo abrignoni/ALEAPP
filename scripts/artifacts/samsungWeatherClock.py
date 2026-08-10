@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_samsungWeatherClockInfo": {
         "name": "Samsung Weather Clock - Info",
         "description": "Parses current conditions from the Samsung Weather Clock (timestamp, timezone, location, temperature, conditions, sunrise and sunset) from the WeatherClock database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-10-13",
         "last_update_date": "2021-10-13",
         "requirements": "none",
@@ -23,7 +22,7 @@ __artifacts_v2__ = {
     "get_samsungWeatherClockDaily": {
         "name": "Samsung Weather Clock - Daily",
         "description": "Parses the Samsung Weather Clock daily forecast (timestamp, location, temperature, conditions and daily high and low) from the WeatherClock database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-10-13",
         "last_update_date": "2021-10-13",
         "requirements": "none",
@@ -43,7 +42,7 @@ __artifacts_v2__ = {
     "get_samsungWeatherClockHourly": {
         "name": "Samsung Weather Clock - Hourly",
         "description": "Parses the Samsung Weather Clock hourly forecast (timestamp, location, temperature, conditions, rain probability and wind) from the WeatherClock database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-10-13",
         "last_update_date": "2021-10-13",
         "requirements": "none",
@@ -74,7 +73,8 @@ def _weatherclock_db(files_found):
 
 
 @artifact_processor
-def get_samsungWeatherClockInfo(files_found, report_folder, seeker, wrap_text):
+def get_samsungWeatherClockInfo(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _weatherclock_db(files_found) or ''
     if source_path:
@@ -117,7 +117,8 @@ def get_samsungWeatherClockInfo(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_samsungWeatherClockDaily(files_found, report_folder, seeker, wrap_text):
+def get_samsungWeatherClockDaily(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _weatherclock_db(files_found) or ''
     if source_path:
@@ -150,7 +151,8 @@ def get_samsungWeatherClockDaily(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_samsungWeatherClockHourly(files_found, report_folder, seeker, wrap_text):
+def get_samsungWeatherClockHourly(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _weatherclock_db(files_found) or ''
     if source_path:

@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_installedappsLibrary": {
         "name": "InstalledappsLibrary",
         "description": "Parses app purchase and ownership records (purchase time, account and doc ID) from the Play Store library.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-01",
         "last_update_date": "2020-03-01",
         "requirements": "none",
@@ -34,7 +33,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_installedappsLibrary(files_found, report_folder, seeker, wrap_text):
+def get_installedappsLibrary(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

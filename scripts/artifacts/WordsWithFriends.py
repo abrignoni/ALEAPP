@@ -1,15 +1,14 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_WordsWithFriends": {
         "name": "WordsWithFriends",
         "description": "Parses in-game chat messages (creation time, message, sender name and email) from the Words With Friends wf_database.sqlite.",
-        "author": "",
+        "author": "@mastenp",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
         "category": "Chats",
         "notes": "",
-        "paths": ('*/com.zynga.words/db/wf_database.sqlite',),
+        "paths": ('*/com.zynga.words/db/wf_database.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "message",
     }
@@ -21,7 +20,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_WordsWithFriends(files_found, report_folder, seeker, wrap_text):
+def get_WordsWithFriends(context):
+    files_found = context.get_files_found()
 
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)

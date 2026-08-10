@@ -1,4 +1,4 @@
-# pylint: disable=E0606,E1120,E1123,W0611,W0613,W0702,W0718
+# pylint: disable=E0606,E1120,E1123,W0611,W0702,W0718
 __artifacts_v2__ = {
     "get_chatpgt2": {
         "name": "ChatGPT - Conversations",
@@ -25,9 +25,11 @@ import json
 from datetime import datetime, timezone
 from collections import defaultdict
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.html_safe import safe_source
 
 @artifact_processor
-def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
+def get_chatpgt2(context):
+    files_found = context.get_files_found()
 
     data_list = []
 
@@ -121,7 +123,7 @@ def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
                 conversation_id = message['content'].get('conversation_id')
                 conversation_title = conversations.get(conversation_id, 'Unknown Conversation')
 
-                data_list.append((mdt, cdt, conversation_title, chunkdata, references, message_id, conversation_id))
+                data_list.append((mdt, cdt, conversation_title, safe_source(chunkdata), references, message_id, conversation_id))
 
     data_headers = (('Modified Time', 'datetime'), ('Creation Time', 'datetime'), 'Conversation Title', 'Content', 'Content References','Message ID','Conversation ID')
 

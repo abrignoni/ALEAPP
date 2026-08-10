@@ -32,7 +32,8 @@ import xml.etree.ElementTree as etree
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, abxread, checkabx
 
 @artifact_processor
-def battery_stats_daily(files_found, _report_folder, _seeker, _wrap_text):
+def battery_stats_daily(context):
+    files_found = context.get_files_found()
     
     abx_file = ''
 

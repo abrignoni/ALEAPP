@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_rarlabPreferences": {
         "name": "rarlabPreferences",
         "description": "Parses RAR (RARLAB) application preferences (key, text and value) from the com.rarlab.rar preferences XML.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-03-29",
         "last_update_date": "2023-03-29",
         "requirements": "none",
@@ -21,6 +20,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, abxread, checkabx, logfunc
+from scripts.html_safe import esc
 
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
@@ -42,7 +42,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_rarlabPreferences(files_found, report_folder, seeker, wrap_text):
+def get_rarlabPreferences(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
 
@@ -67,10 +68,10 @@ def get_rarlabPreferences(files_found, report_folder, seeker, wrap_text):
                         items = json.loads(text)
                         agg = ''
                         for x in items:
-                            agg = agg + f'{x}<br>'
+                            agg = agg + f'{esc(x)}<br>'
                         data_list.append((name,agg,value))
                     else:
-                        data_list.append((name,text,value))
+                        data_list.append((name,esc(text),value))
 
     data_headers = ('Key', 'Text', 'Value')
     return data_headers, data_list, source_path

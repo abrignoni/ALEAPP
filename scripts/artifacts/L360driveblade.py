@@ -5,10 +5,12 @@ __artifacts_v2__ = {
         'description': 'Parses Life360 Drives',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
-        'last_update_date': '2026-06-10',
+        'last_update_date': '2026-08-01',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': '',
+        'notes': 'The stored speed columns are reported as stored. The MPH columns multiply them by '
+                 '2.23694, which assumes the stored value is in metres per second; the database does '
+                 'not record the unit.',
         'paths': ('*/com.life360.android.safetymapd/databases/DriveBladeDB*',),
         'output_types': 'standard',
         'artifact_icon': 'map-pin',
@@ -21,10 +23,11 @@ __artifacts_v2__ = {
         'description': 'Parses Life360 Drive Events (DriveBladeDB)',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
-        'last_update_date': '2026-06-10',
+        'last_update_date': '2026-08-01',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': '',
+        'notes': 'Speed is reported as stored. The MPH column multiplies it by 2.23694, which assumes '
+                 'the stored value is in metres per second; the database does not record the unit.',
         'paths': ('*/com.life360.android.safetymapd/databases/DriveBladeDB*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
         'artifact_icon': 'map-pin',
@@ -37,10 +40,11 @@ __artifacts_v2__ = {
         'description': 'Parses Life360 Drive Waypoints',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
-        'last_update_date': '2026-06-10',
+        'last_update_date': '2026-08-01',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': '',
+        'notes': 'Speed is reported as stored. The MPH column multiplies it by 2.23694, which assumes '
+                 'the stored value is in metres per second; the database does not record the unit.',
         'paths': ('*/com.life360.android.safetymapd/databases/DriveBladeDB*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
         'artifact_icon': 'map-pin',
@@ -125,8 +129,8 @@ def Life360_Drives(context):
     data_headers = (
         'Drive ID', 'User ID',
         ('Start Time', 'datetime'), ('End Time', 'datetime'),
-        'Top Speed MPS', 'Top Speed MPH',
-        'Average Speed MPS', 'Average Speed MPH',
+        'Top Speed (as stored)', 'Top Speed MPH (assumes m/s)',
+        'Average Speed (as stored)', 'Average Speed MPH (assumes m/s)',
         'Distance', 'Duration',
         'Speeding Events', 'Hard Braking Events',
         'Rapid Acceleration Events', 'Distracted Events', 'Crash Events',
@@ -172,7 +176,7 @@ def Life360_DriveEvents(context):
         'Event ID', 'Drive ID', 'User ID',
         ('Event Time', 'datetime'),
         'Event Type', 'Latitude', 'Longitude',
-        'Speed MPS', 'Speed MPH', 'Accuracy'
+        'Speed (as stored)', 'Speed MPH (assumes m/s)', 'Accuracy'
     )
     return data_headers, data_list, source
 
@@ -212,6 +216,6 @@ def Life360_DriveWaypoints(context):
         'Drive ID', 'User ID',
         ('Timestamp', 'datetime'),
         'Latitude', 'Longitude',
-        'Speed MPS', 'Speed MPH', 'Accuracy'
+        'Speed (as stored)', 'Speed MPH (assumes m/s)', 'Accuracy'
     )
     return data_headers, data_list, source

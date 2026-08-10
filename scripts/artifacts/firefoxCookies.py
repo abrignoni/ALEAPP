@@ -1,14 +1,13 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_firefoxCookies": {
         "name": "Firefox - Cookies",
         "description": "Parses Firefox cookies (host, name, value, path, created, last accessed and expiration timestamps) from cookies.sqlite.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
-        "last_update_date": "2022-01-12",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "",
+        "notes": "Mozilla converted moz_cookies.expiry from seconds to milliseconds in cookies schema 16, shipped with Firefox 142, so the expiry is divided by 1000 when the database reports schema version 16 or later in PRAGMA user_version. When that version cannot be read, the expiry falls back to a magnitude test: a value above 100000000000 is read as milliseconds, because an expiry expressed in seconds is around 1e9 to 2e9 while the same date in milliseconds is around 1e12 to 2e12. The lastAccessed and creationTime columns are microseconds in every schema and are decoded as such. Reference: Mozilla, 'CookiePersistentStorage.cpp schema 15->16 migration (expiry converted to milliseconds)', https://github.com/mozilla-firefox/firefox/blob/main/netwerk/cookie/CookiePersistentStorage.cpp",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -19,12 +18,38 @@ __artifacts_v2__ = {
 }
 
 import os
+import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
+# Cookies schema 16 (Firefox 142) rewrote expiry from seconds to milliseconds
+EXPIRY_IN_MS_SCHEMA = 16
+# Above this, a value cannot be an expiry in seconds, so it is one in milliseconds
+EXPIRY_IN_MS_THRESHOLD = 100000000000
+
+
+def _cookies_schema_version(cursor):
+    '''Cookies schema version from PRAGMA user_version, or None when unreadable.'''
+    try:
+        row = cursor.execute('PRAGMA user_version').fetchone()
+        return int(row[0]) if row and row[0] else None
+    except (sqlite3.Error, TypeError, ValueError):
+        return None
+
+
+def _expiry_in_seconds(schema_version):
+    '''SQL expression turning the expiry column into seconds for this schema.'''
+    if schema_version is None:
+        # Version unavailable, so fall back to the magnitude of each stored value
+        return f'CASE WHEN expiry > {EXPIRY_IN_MS_THRESHOLD} THEN expiry/1000 ELSE expiry END'
+    if schema_version >= EXPIRY_IN_MS_SCHEMA:
+        return 'expiry/1000'
+    return 'expiry'
+
 
 @artifact_processor
-def get_firefoxCookies(files_found, report_folder, seeker, wrap_text):
+def get_firefoxCookies(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -35,14 +60,15 @@ def get_firefoxCookies(files_found, report_folder, seeker, wrap_text):
         source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+        expiry_seconds = _expiry_in_seconds(_cookies_schema_version(cursor))
+        cursor.execute(f'''
         SELECT
         datetime(lastAccessed/1000000,'unixepoch') AS LastAccessedDate,
         datetime(creationTime/1000000,'unixepoch') AS CreationDate,
         host AS Host,
         name AS Name,
         value AS Value,
-        datetime(expiry,'unixepoch') AS ExpirationDate,
+        datetime({expiry_seconds},'unixepoch') AS ExpirationDate,
         path AS Path
         from moz_cookies
         ORDER BY lastAccessedDate ASC

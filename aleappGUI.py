@@ -12,7 +12,7 @@ import leapp_functions.app.history as history
 
 from PIL import Image, ImageTk
 from tkinter import ttk, filedialog as tk_filedialog, messagebox as tk_msgbox
-from scripts.version_info import leapp_version
+from scripts.version_info import leapp_version, check_runtime_dependencies
 from scripts.search_files import *
 from scripts.modules_to_exclude import modules_to_exclude
 from scripts.lavafuncs import *
@@ -26,6 +26,8 @@ from leapp_functions.app.platform import sanitize_file_name
 from leapp_functions.app.output import default_output_folder_name, validate_output_folder_available
 from scripts.context import Context
 from scripts.lavafuncs import lava_json_name
+
+check_runtime_dependencies()
 
 
 def allow_output_folder_name_chars(proposed):
@@ -86,18 +88,28 @@ def get_selected_modules():
     return selected_modules
 
 
+def module_matches_filter(module_infos, filter_term=None):
+    '''Return True when a module matches the active filter, meaning it is one of the modules
+    currently shown in the list. An empty filter matches every module.'''
+    if filter_term is None:
+        filter_term = modules_filter_var.get().lower()
+    return filter_term in f"{module_infos[0]} {module_infos[1]}".lower()
+
+
 def select_all():
-    '''Select all modules in the list of available modules and execute get_selected_modules'''
+    '''Select the modules currently shown in the list and execute get_selected_modules'''
     for module_infos in mlist.values():
-        module_infos[-1].set(True)
+        if module_matches_filter(module_infos):
+            module_infos[-1].set(True)
 
     get_selected_modules()
 
 
 def deselect_all():
-    '''Unselect all modules in the list of available modules and execute get_selected_modules'''
+    '''Unselect the modules currently shown in the list and execute get_selected_modules'''
     for module_infos in mlist.values():
-        module_infos[-1].set(False)
+        if module_matches_filter(module_infos):
+            module_infos[-1].set(False)
 
     get_selected_modules()
 
@@ -109,13 +121,33 @@ def filter_modules(*args):
     mlist_text.delete('0.0', tk.END)
 
     for artifact_name, module_infos in mlist.items():
-        filter_modules_info = f"{module_infos[0]} {module_infos[1]}".lower()
-        if filter_term in filter_modules_info:
-            cb = tk.Checkbutton(mlist_text, name=f'mcb_{artifact_name}',
-                                text=f'{module_infos[0]} [{module_infos[1]} | {module_infos[2]}.py]',
-                                variable=module_infos[-1], onvalue=True, offvalue=False, command=get_selected_modules)
-            cb.config(background=theme_bgcolor, fg=theme_fgcolor, selectcolor=theme_bgcolor, 
-                    highlightthickness=0, activebackground=theme_bgcolor, activeforeground=theme_fgcolor)
+        if module_matches_filter(module_infos, filter_term):
+            if is_platform_macos():
+                cb = ttk.Checkbutton(
+                    mlist_text,
+                    name=f'mcb_{artifact_name}',
+                    text=f'{module_infos[0]} [{module_infos[1]} | {module_infos[2]}.py]',
+                    variable=module_infos[-1],
+                    onvalue=True,
+                    offvalue=False,
+                    command=get_selected_modules,
+                    style='Module.TCheckbutton')
+            else:
+                cb = tk.Checkbutton(
+                    mlist_text,
+                    name=f'mcb_{artifact_name}',
+                    text=f'{module_infos[0]} [{module_infos[1]} | {module_infos[2]}.py]',
+                    variable=module_infos[-1],
+                    onvalue=True,
+                    offvalue=False,
+                    command=get_selected_modules)
+                cb.config(
+                    background=theme_bgcolor,
+                    fg=theme_fgcolor,
+                    selectcolor=theme_bgcolor,
+                    highlightthickness=0,
+                    activebackground=theme_bgcolor,
+                    activeforeground=theme_fgcolor)
             mlist_text.window_create('insert', window=cb)
             mlist_text.insert('end', '\n')
     mlist_text.config(state='disabled')
@@ -798,6 +830,14 @@ style.map('TCombobox',
           )
 style.configure('TScrollbar', background=theme_button, arrowcolor='black', troughcolor=theme_inputcolor)
 style.configure('TProgressbar', thickness=4, background='DarkGreen')
+style.configure(
+    'Module.TCheckbutton',
+    background=theme_bgcolor,
+    foreground=theme_fgcolor)
+style.map(
+    'Module.TCheckbutton',
+    background=[('active', theme_bgcolor)],
+    foreground=[('active', theme_fgcolor)])
 
 ## Main Window Layout
 ### Top part of the window
@@ -889,6 +929,9 @@ mlist_text.config(state='disabled')
 main_window.bind_class('Checkbutton', '<MouseWheel>', scroll)
 main_window.bind_class('Checkbutton', '<Button-4>', scroll)
 main_window.bind_class('Checkbutton', '<Button-5>', scroll)
+main_window.bind_class('TCheckbutton', '<MouseWheel>', scroll)
+main_window.bind_class('TCheckbutton', '<Button-4>', scroll)
+main_window.bind_class('TCheckbutton', '<Button-5>', scroll)
 main_window.bind("<Control-f>", lambda event: modules_filter_entry.focus_set()) # Focus on The Filter Field
 main_window.bind("<Control-i>", lambda event: input_entry.focus_set()) # Focus on the Input Field
 main_window.bind("<Control-o>", lambda event: output_entry.focus_set()) # Focus on the Output Field

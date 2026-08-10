@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "airtagAlerts": {
         "name": "Android Airtag Alerts",
@@ -11,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": '*/com.google.android.gms/databases/personalsafety_db*',
         "output_types": "standard",
-        "artifact_icon": "alert-circle",
+        "artifact_icon": "bell-ringing",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
@@ -34,7 +33,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": '*/com.google.android.gms/databases/personalsafety_db*',
         "output_types": "all",
-        "artifact_icon": "alert-circle",
+        "artifact_icon": "radar",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
@@ -57,7 +56,7 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": '*/files/personalsafety/shared/personalsafety_info.pb',
         "output_types": "standard",
-        "artifact_icon": "alert-circle",
+        "artifact_icon": "clock-search",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gms | 1 row",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 1 row",
@@ -78,19 +77,20 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": '*/files/personalsafety/shared/personalsafety_optin.pb',
         "output_types": "standard",
-        "artifact_icon": "alert-circle"
+        "artifact_icon": "radar-2"
     }
 }
 
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 from scripts.ilapfuncs import artifact_processor, \
     get_file_path, get_sqlite_db_records, get_binary_file_content, \
     convert_unix_ts_to_utc
 
 
 @artifact_processor
-def airtagAlerts(files_found, report_folder, seeker, wrap_text):
+def airtagAlerts(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "personalsafety_db")
     data_list = []
     
@@ -130,7 +130,8 @@ def airtagAlerts(files_found, report_folder, seeker, wrap_text):
 
         
 @artifact_processor
-def airtagScans(files_found, report_folder, seeker, wrap_text):
+def airtagScans(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "personalsafety_db")
     data_list = []
     
@@ -162,10 +163,10 @@ def airtagScans(files_found, report_folder, seeker, wrap_text):
         creation_timestamp = convert_unix_ts_to_utc(record[0])
         last_updated_timestamp = convert_unix_ts_to_utc(record[1])
 
-        blescan_proto, _ = blackboxprotobuf.decode_message(blescan)
+        blescan_proto, _ = decode_protobuf(blescan)
         posrssi = (blescan_proto['2'])
         
-        location_scan_proto, _ = blackboxprotobuf.decode_message(location_scan)
+        location_scan_proto, _ = decode_protobuf(location_scan)
         latitude = (location_scan_proto['4']/1e7)
         longitude = (location_scan_proto['5']/1e7)
         
@@ -177,13 +178,14 @@ def airtagScans(files_found, report_folder, seeker, wrap_text):
 
         
 @artifact_processor
-def airtagLastScan(files_found, report_folder, seeker, wrap_text):
+def airtagLastScan(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "personalsafety_info.pb")
     data_list = []
     
     proto_data = get_binary_file_content(source_path)
 
-    lastscan, _ = blackboxprotobuf.decode_message(proto_data)
+    lastscan, _ = decode_protobuf(proto_data)
     lastscan = (lastscan['1'])
     lastscan = convert_unix_ts_to_utc(lastscan)
     data_list.append((lastscan, ))
@@ -194,13 +196,14 @@ def airtagLastScan(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def airtagPassiveScan(files_found, report_folder, seeker, wrap_text):
+def airtagPassiveScan(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "personalsafety_optin.pb")
     data_list = []
     
     proto_data = get_binary_file_content(source_path)
 
-    pass_scan, _ = blackboxprotobuf.decode_message(proto_data)
+    pass_scan, _ = decode_protobuf(proto_data)
     pass_scan = (pass_scan['1'])
     
     if pass_scan == 1:

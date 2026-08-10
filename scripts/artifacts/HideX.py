@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_HideX": {
         "name": "HideX",
         "description": "Parses the list of apps hidden or locked by the HideX privacy app (package name and active state) from hidex.db.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-10-12",
         "last_update_date": "2021-10-12",
         "requirements": "none",
@@ -19,7 +18,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_HideX(files_found, report_folder, seeker, wrap_text):
+def get_HideX(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

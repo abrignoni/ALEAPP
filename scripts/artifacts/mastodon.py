@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_mastodon": {
         "name": "Mastodon - Hashtag Searches",
@@ -161,7 +161,8 @@ def _query(source_path, sql):
 
 
 @artifact_processor
-def get_mastodon(files_found, report_folder, seeker, wrap_text):
+def get_mastodon(context):
+    files_found = context.get_files_found()
     source_path = _mastodon_db(files_found)
     rows = _query(source_path, '''
         select time,
@@ -175,7 +176,8 @@ def get_mastodon(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_mastodon_account_searches(files_found, report_folder, seeker, wrap_text):
+def get_mastodon_account_searches(context):
+    files_found = context.get_files_found()
     source_path = _mastodon_db(files_found)
     rows = _query(source_path, '''
         select time,
@@ -191,7 +193,8 @@ def get_mastodon_account_searches(files_found, report_folder, seeker, wrap_text)
 
 
 @artifact_processor
-def get_mastodon_notifications(files_found, report_folder, seeker, wrap_text):
+def get_mastodon_notifications(context):
+    files_found = context.get_files_found()
     source_path = _mastodon_db(files_found)
     rows = _query(source_path, '''
         select
@@ -211,7 +214,8 @@ def get_mastodon_notifications(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_mastodon_timeline(files_found, report_folder, seeker, wrap_text):
+def get_mastodon_timeline(context):
+    files_found = context.get_files_found()
     source_path = _mastodon_db(files_found)
     rows = _query(source_path, '''
         select
@@ -244,7 +248,8 @@ def get_mastodon_timeline(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_mastodon_accounts(files_found, report_folder, seeker, wrap_text):
+def get_mastodon_accounts(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -271,7 +276,8 @@ def get_mastodon_accounts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_mastodon_instance(files_found, report_folder, seeker, wrap_text):
+def get_mastodon_instance(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:

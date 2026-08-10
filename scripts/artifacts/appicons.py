@@ -1,4 +1,4 @@
-# pylint: disable=W0612,W0613,W0631
+# pylint: disable=W0612,W0631
 __artifacts_v2__ = {
     "appIcons": {
         "name": "App Icon",
@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "output_types": ["html", "lava"],
         "artifact_icon": "package",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.nexuslauncher | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.nexuslauncher | 70 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.nexuslauncher | 100 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.nexuslauncher | 293 rows",
             "userb2_a13": "Android 13 | com.google.android.apps.nexuslauncher | 88 rows",
@@ -25,7 +25,7 @@ import inspect
 from html import escape
 from scripts.ilapfuncs import artifact_processor, \
     get_file_path, get_sqlite_db_records, check_in_embedded_media, \
-    logfunc, convert_unix_ts_to_utc
+    logfunc, convert_unix_ts_to_utc, null_absent_columns
 
 class App:
     def __init__(self, package):
@@ -36,7 +36,8 @@ class App:
         self.icons = {} # { Component: ('Label', icon, last_update), .. }
 
 @artifact_processor
-def appIcons(files_found, report_folder, seeker, wrap_text):
+def appIcons(context):
+    files_found = context.get_files_found()
     artifact_info = inspect.stack()[0]
     source_path = get_file_path(files_found, "app_icons.db", "mirror")
     data_list = []
@@ -62,7 +63,7 @@ def appIcons(files_found, report_folder, seeker, wrap_text):
 
     data_headers = ('App name', 'Package name', ('Main icon', 'media'), ('Icons', 'media'))
 
-    db_records = get_sqlite_db_records(source_path, query)
+    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
     for record in db_records:
         icon_last_update = convert_unix_ts_to_utc(record[2])

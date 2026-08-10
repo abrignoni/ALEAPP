@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Oruxmaps": {
         "name": "Oruxmaps - POI",
         "description": "Parses saved points of interest (latitude, longitude, altitude, time and name) from the OruxMaps oruxmapstracks.db database.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -16,7 +15,7 @@ __artifacts_v2__ = {
     "get_Oruxmaps_tracks": {
         "name": "Oruxmaps - Tracks",
         "description": "Parses recorded GPS tracks and their trackpoints (name, description, latitude, longitude, altitude and time) from the OruxMaps oruxmapstracks.db database.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -40,7 +39,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
+def get_Oruxmaps(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
@@ -57,7 +57,8 @@ def get_Oruxmaps(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Oruxmaps_tracks(files_found, report_folder, seeker, wrap_text):
+def get_Oruxmaps_tracks(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()

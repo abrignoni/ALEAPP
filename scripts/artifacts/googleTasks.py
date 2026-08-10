@@ -1,22 +1,24 @@
-# pylint: disable=E0606,W0613
+# pylint: disable=E0606
 __artifacts_v2__ = {
     "get_googleTasks": {
         "name": "GoogleTasks",
         "description": "Parses Google Tasks (created, modified, completed and due times, task name, details and status) from the Google Tasks data.db.",
-        "author": "",
+        "author": "@bolisettynihith",
         "creation_date": "2021-08-21",
-        "last_update_date": "2021-08-21",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Tasks",
-        "notes": "",
-        "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db',),
+        "notes": "Protobuf field positions for created/modified/completed times were established "
+                 "through testing. Task Due Date is reported as stored in the DueDate column, without "
+                 "conversion, unlike the three converted UTC time columns.",
+        "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
     }
 }
 
 from datetime import datetime, timezone as dtimezone
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
@@ -26,7 +28,7 @@ def b2s(a):
 
 
 def protobuf_parse_not_completed(data):
-    pb = blackboxprotobuf.decode_message(data, 'None')
+    pb = decode_protobuf(data, 'None')
     completed = pb[0].get('2',{}).get('5',{}).get('1','')
     created = datetime.fromtimestamp(pb[0].get('11',{}).get('1',''), dtimezone.utc)
     modified = datetime.fromtimestamp(pb[0].get('3',{}).get('1',''), dtimezone.utc)
@@ -37,7 +39,7 @@ def protobuf_parse_not_completed(data):
 
 
 def protobuf_parse_completed(data):
-    pb = blackboxprotobuf.decode_message(data, None)
+    pb = decode_protobuf(data, None)
     task = pb[0].get('2',{}).get('2','').decode()
     task_details = b2s(pb[0].get('2',{}).get('3',''))
     completed = datetime.fromtimestamp(pb[0].get('2',{}).get('5',{}).get('1',''), dtimezone.utc)
@@ -48,11 +50,14 @@ def protobuf_parse_completed(data):
 
 
 @artifact_processor
-def get_googleTasks(files_found, report_folder, seeker, wrap_text):
+def get_googleTasks(context):
+    files_found = context.get_files_found()
     all_new_rows = []
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         source_path = file_found
 
         db = open_sqlite_db_readonly(file_found)
@@ -80,7 +85,7 @@ def get_googleTasks(files_found, report_folder, seeker, wrap_text):
         ('Created Time', 'datetime'),
         ('Last Modified Time', 'datetime'),
         ('Completed Time', 'datetime'),
-        'Task Due Date',
+        'Task Due Date (as stored)',
         'Time Zone',
         'Task ID',
         'Task List ID',

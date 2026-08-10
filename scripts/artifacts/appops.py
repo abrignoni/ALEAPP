@@ -1,14 +1,13 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_appops": {
         "name": "App Ops Permissions",
         "description": "App permission op timestamps from appops.xml (modern schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-08-15",
-        "last_update_date": "2021-08-15",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Permissions",
-        "notes": "",
+        "notes": "Reference: AOSP, 'AppOpsManager op constants and AppOpsService XML attributes (times in milliseconds)', https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/app/AppOpsManager.java",
         "paths": ('*/system/appops.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -26,12 +25,12 @@ __artifacts_v2__ = {
     "get_appops_legacy": {
         "name": "App Ops Permissions - Legacy",
         "description": "App permission op timestamps from appops.xml (Android 9 and below schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-08-15",
-        "last_update_date": "2021-08-15",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Permissions",
-        "notes": "",
+        "notes": "Reference: AOSP, 'AppOpsManager op constants and AppOpsService XML attributes (times in milliseconds)', https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/app/AppOpsManager.java",
         "paths": ('*/system/appops.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -61,7 +60,7 @@ PERMISSION_OP = {
     "0": "COARSE_LOCATION", "1": "FINE_LOCATION", "2": "GPS", "3": "VIBRATE", "4": "READ_CONTACTS",
     "5": "WRITE_CONTACTS", "6": "READ_CALL_LOG", "7": "WRITE_CALL_LOG", "8": "READ_CALENDAR",
     "9": "WRITE_CALENDAR", "10": "WIFI_SCAN", "11": "POST_NOTIFICATION", "12": "NEIGHBORING_CELLS",
-    "13": "CALL_PHONE", "14": "READ_SMS", "15": "WRITE_SMS", "16": "RECEIVE_SMS", "17": "RECEIVE_EMERGECY_SMS",
+    "13": "CALL_PHONE", "14": "READ_SMS", "15": "WRITE_SMS", "16": "RECEIVE_SMS", "17": "RECEIVE_EMERGENCY_SMS",
     "18": "RECEIVE_MMS", "19": "RECEIVE_WAP_PUSH", "20": "SEND_SMS", "21": "READ_ICC_SMS", "22": "WRITE_ICC_SMS",
     "23": "WRITE_SETTINGS", "24": "SYSTEM_ALERT_WINDOW", "25": "ACCESS_NOTIFICATIONS", "26": "CAMERA",
     "27": "RECORD_AUDIO", "28": "PLAY_AUDIO", "29": "READ_CLIPBOARD", "30": "WRITE_CLIPBOARD",
@@ -76,12 +75,12 @@ PERMISSION_OP = {
     "64": "AUDIO_ACCESSIBILITY_VOLUME", "65": "READ_PHONE_NUMBERS", "66": "REQUEST_INSTALL_PACKAGES",
     "67": "ENTER_PICTURE_IN_PICTURE_ON_HIDE", "68": "INSTANT_APP_START_FOREGROUND", "69": "ANSWER_PHONE_CALLS",
     "70": "OP_RUN_ANY_IN_BACKGROUND", "71": "OP_CHANGE_WIFI_STATE", "72": "OP_REQUEST_DELETE_PACKAGES",
-    "73": "OP_BIND_ACCESSIBILITY_SERVICE", "74": "ACCEPT_HANDOVER", "75": "MANAGE_IPSEC_HANDOVERS",
+    "73": "OP_BIND_ACCESSIBILITY_SERVICE", "74": "ACCEPT_HANDOVER", "75": "MANAGE_IPSEC_TUNNELS",
     "76": "START_FOREGROUND", "77": "BLUETOOTH_SCAN", "78": "BIOMETRIC", "79": "ACTIVITY_RECOGNITION",
     "80": "SMS_FINANCIAL_TRANSACTIONS", "81": "READ_MEDIA_AUDIO", "82": "WRITE_MEDIA_AUDIO", "83": "READ_MEDIA_VIDEO",
     "84": "WRITE_MEDIA_VIDEO", "85": "READ_MEDIA_IMAGES", "86": "WRITE_MEDIA_IMAGES", "87": "LEGACY_STORAGE",
     "88": "ACCESS_ACCESSIBILITY", "89": "READ_DEVICE_IDENTIFIERS", "90": "ACCESS_MEDIA_LOCATION", "91": "QUERY_ALL_PACKAGES",
-    "92": "MANAGE_EXTERNAL_STORAGE", "93": "NTERACT_ACROSS_PROFILES", "94": "ACTIVATE_PLATFORM_VPN",
+    "92": "MANAGE_EXTERNAL_STORAGE", "93": "INTERACT_ACROSS_PROFILES", "94": "ACTIVATE_PLATFORM_VPN",
     "95": "LOADER_USAGE_STATS", "96": "deprecated", "97": "AUTO_REVOKE_PERMISSIONS_IF_UNUSED",
     "98": "OP_AUTO_REVOKE_MANAGED_BY_INSTALLER", "99": "NO_ISOLATED_STORAGE", "100": "OP_PHONE_CALL_MICROPHONE",
     "101": "OP_PHONE_CALL_CAMERA", "102": "RECORD_AUDIO_HOTWORD", "103": "MANAGE_ONGOING_CALLS",
@@ -124,7 +123,8 @@ def _appops_file(files_found):
 
 
 @artifact_processor
-def get_appops(files_found, report_folder, seeker, wrap_text):
+def get_appops(context):
+    files_found = context.get_files_found()
     source_path = _appops_file(files_found)
     data_list = []
     if source_path:
@@ -145,7 +145,8 @@ def get_appops(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_appops_legacy(files_found, report_folder, seeker, wrap_text):
+def get_appops_legacy(context):
+    files_found = context.get_files_found()
     source_path = _appops_file(files_found)
     data_list = []
     if source_path:

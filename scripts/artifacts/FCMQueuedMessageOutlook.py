@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "fcm_outlook": {
         "name": "FCM-Outlook Notifications",
@@ -64,7 +63,8 @@ __contact__ = "Alex Caithness (research [at] cclsolutionsgroup.com)"
 from scripts.ilapfuncs import logfunc, artifact_processor
 
 @artifact_processor
-def fcm_outlook(files_found, report_folder, seeker, wrap_text):
+def fcm_outlook(context):
+    files_found = context.get_files_found()
     # we only need the input data dirs not every matching file
     in_dirs = set(pathlib.Path(x).parent for x in files_found)
     rows = []

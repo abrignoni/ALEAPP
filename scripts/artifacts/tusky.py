@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_tusky": {
         "name": "Tusky - Timeline",
@@ -70,7 +70,8 @@ def _attachment_urls(value):
 
 
 @artifact_processor
-def get_tusky(files_found, report_folder, seeker, wrap_text):
+def get_tusky(context):
+    files_found = context.get_files_found()
     source_path = _tusky_db(files_found)
     data_list = []
     if source_path:
@@ -113,7 +114,8 @@ def get_tusky(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_tusky_accounts(files_found, report_folder, seeker, wrap_text):
+def get_tusky_accounts(context):
+    files_found = context.get_files_found()
     source_path = _tusky_db(files_found)
     data_list = []
     if source_path:

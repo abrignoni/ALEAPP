@@ -1,15 +1,14 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_scontextLog": {
         "name": "scontextLog",
         "description": "Parses app foreground usage sessions (start and stop time, timezone, app ID and duration) from the Samsung ContextLog.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-04-18",
         "last_update_date": "2020-04-18",
         "requirements": "none",
         "category": "App Interaction",
         "notes": "",
-        "paths": ('*/com.samsung.android.providers.context/databases/ContextLog.db',),
+        "paths": ('*/com.samsung.android.providers.context/databases/ContextLog.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
     }
@@ -21,7 +20,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_scontextLog(files_found, report_folder, seeker, wrap_text):
+def get_scontextLog(context):
+    files_found = context.get_files_found()
 
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)

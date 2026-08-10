@@ -1,15 +1,15 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_browserlocation": {
         "name": "Browser Location",
         "description": "Parses cached geolocation positions (timestamp, latitude, longitude and accuracy) from the Android Browser CachedGeoposition.db.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",
         "requirements": "none",
         "category": "GEO Location",
         "notes": "",
-        "paths": ('*/com.android.browser/app_geolocation/CachedGeoposition.db',),
+        "paths": ('*/com.android.browser/app_geolocation/CachedGeoposition.db*',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
     }
@@ -21,12 +21,15 @@ from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readon
 
 
 @artifact_processor
-def get_browserlocation(files_found, report_folder, seeker, wrap_text):
+def get_browserlocation(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if file_found.endswith('-db'):
             continue
 

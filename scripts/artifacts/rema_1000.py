@@ -1,14 +1,14 @@
 __artifacts_v2__ = {
-        "rema1000_receipt_raw": {
+    "rema1000_receipt_raw": {
         "name": "Rema1000 Receipts, raw",
-        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan Selv'. All raw data.",
+        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan Selv'. Raw ReceiptEntity columns.",
         "author": "Nicolai Martini",
         "version": "1.2",
         "creation_date": "2026-04-17",
-        "last_update_date": "2026-06-09",
+        "last_update_date": "2026-08-01",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "Rema1000 | Scan Selv",
-        "notes": "forensics data of supermarket habit and location insights.",
+        "notes": "Raw contents of the ReceiptEntity table, one column per header.",
         "paths": ("*/dk.rema1000.app/databases/receipts.db*",),
         "output_types": "standard",
         "artifact_icon": "shopping-cart"
@@ -19,10 +19,15 @@ __artifacts_v2__ = {
         "author": "Nicolai Martini",
         "version": "1.2",
         "creation_date": "2026-04-17",
-        "last_update_date": "2026-06-09",
+        "last_update_date": "2026-08-01",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "Rema1000 | Scan Selv",
-        "notes": "forensics data of supermarket habit and location insights.",
+        "notes": "Date and time is paymentDate read as a Unix epoch in milliseconds and converted to "
+                 "Europe/Copenhagen; both the epoch unit and that timezone are assumptions, neither is "
+                 "recorded in the database. Total price is totalPrice divided by 100, which assumes the "
+                 "value is stored in minor units; no currency is recorded in the database. Items lists "
+                 "only those searchText tokens that also appear as a shelfText1 value in "
+                 "ReceiptItemEntity, so tokens with no match are not shown.",
         "paths": ("*/dk.rema1000.app/databases/receipts.db*"),
         "output_types": "standard",
         "artifact_icon": "shopping-cart"
@@ -31,48 +36,53 @@ __artifacts_v2__ = {
 
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records, logfunc
+from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
+
 
 @artifact_processor
 def rema1000_receipt_raw(context):
     files_found = context.get_files_found()
     source_path = get_file_path(files_found, "receipts.db")
-    data_headers = ("id","displayId","paymentDate","paymentSource",
-                    "storeNumber","totalPrice","totalPriceString",
-                    "totalDiscount","totalVat","Chargeback",
-                    "searchText","zipString","pp_id","pp_cardType","pp_maskedPan")
-    query = """SELECT * FROM ReceiptEntity;"""
+    data_headers = ("id", "displayId", "paymentDate", "paymentSource",
+                    "storeNumber", "totalPrice", "totalPriceString",
+                    "totalDiscount", "totalVat", "Chargeback",
+                    "searchText", "zipString", "pp_id", "pp_cardType", "pp_maskedPan")
+    query = """SELECT id, displayId, paymentDate, paymentSource,
+                      storeNumber, totalPrice, totalPriceString,
+                      totalDiscount, totalVat, Chargeback,
+                      searchText, zipString, pp_id, pp_cardType, pp_maskedPan
+               FROM ReceiptEntity;"""
     raw_records = get_sqlite_db_records(source_path, query)
-    entries=len(raw_records)
-    if entries>0:
-        entries_list=[]
-        for record in raw_records:
-            list_receipt=list(record)
-            for index, item in enumerate(list_receipt):
-                if item is None:
-                    list_receipt[index] = "None"
-            entries_list.append(list_receipt)
-        return data_headers, entries_list, source_path
-    else:
-        logfunc("No Rema1000 | Scan & Go data available")
+
+    entries_list = []
+    for record in raw_records:
+        list_receipt = list(record)
+        for index, item in enumerate(list_receipt):
+            if item is None:
+                list_receipt[index] = "None"
+        entries_list.append(list_receipt)
+    return data_headers, entries_list, source_path
 
 
 @artifact_processor
 def rema1000_receipt_prettified(context):
     files_found = context.get_files_found()
     source_path = get_file_path(files_found, "receipts.db")
-    available_products=[]
+    available_products = []
     translation_table = str.maketrans({
         "Æ": "AE", "æ": "ae",
         "Ø": "OE", "ø": "oe",
         "Å": "AA", "å": "aa",
         ".": ""
     })
-    data_headers = ("Date and time, DK","Location","Items","Total price, DKK", "Payment method","Payment Card Type", "Payment Card PAN")
+    data_headers = ("Date and time (Europe/Copenhagen)", "Location", "Items",
+                    "Total price (totalPrice/100)", "Payment method", "Payment Card Type",
+                    "Masked PAN")
     query = """SELECT shelfText1 FROM ReceiptItemEntity;"""
     product_records = get_sqlite_db_records(source_path, query)
     for product in product_records:
-        product=product[0].replace("SMÅKAGER","SMAKAGER") # Danish norm to replace Å/å with AA/aa but this one item diverts from norm.
+        # Danish norm to replace Å/å with AA/aa but this one item diverts from norm.
+        product = product[0].replace("SMÅKAGER", "SMAKAGER")
         available_products.append(product.translate(translation_table).lower())
     query = """
                 SELECT paymentDate, paymentSource,
@@ -81,24 +91,24 @@ def rema1000_receipt_prettified(context):
                 FROM ReceiptEntity;
                 """
     receipt_records = get_sqlite_db_records(source_path, query)
-    entries=len(receipt_records)
-    if entries>0:
-        entries_list=[]
-        for receipt in receipt_records:
-            prettified_list=["","","","","","",""]
-            list_receipt=list(receipt)
-            for index, item in enumerate(list_receipt):
-                if item is None:
-                    list_receipt[index] = "None"
-            prettified_list[0]=f"{datetime.fromtimestamp(list_receipt[0]/1000, tz=ZoneInfo('Europe/Copenhagen')).strftime('%Y-%m-%d %H:%M:%S')}"
-            prettified_list[1]= f"{list_receipt[3].split(';')[1].capitalize()}, {list_receipt[4]}, {list_receipt[3].split(';')[2].capitalize()}"
-            split_items = [item.translate(translation_table) for item in list_receipt[3].split(";")[3:]]
-            prettified_list[2]=", ".join([item for item in split_items if item in available_products])
-            prettified_list[3]=f"{list_receipt[2]/100:.2f}"
-            prettified_list[4]=list_receipt[1]
-            prettified_list[5]=list_receipt[5]
-            prettified_list[6]=list_receipt[6]
-            entries_list.append(prettified_list)
-        return data_headers, entries_list, source_path
-    else:
-        logfunc("No Rema1000 | Scan & Go data available")
+
+    entries_list = []
+    for receipt in receipt_records:
+        prettified_list = ["", "", "", "", "", "", ""]
+        list_receipt = list(receipt)
+        for index, item in enumerate(list_receipt):
+            if item is None:
+                list_receipt[index] = "None"
+        payment_date = datetime.fromtimestamp(list_receipt[0] / 1000,
+                                              tz=ZoneInfo('Europe/Copenhagen'))
+        prettified_list[0] = payment_date.strftime('%Y-%m-%d %H:%M:%S')
+        prettified_list[1] = f"{list_receipt[3].split(';')[1].capitalize()}, {list_receipt[4]}, "\
+            f"{list_receipt[3].split(';')[2].capitalize()}"
+        split_items = [item.translate(translation_table) for item in list_receipt[3].split(";")[3:]]
+        prettified_list[2] = ", ".join([item for item in split_items if item in available_products])
+        prettified_list[3] = f"{list_receipt[2]/100:.2f}"
+        prettified_list[4] = list_receipt[1]
+        prettified_list[5] = list_receipt[5]
+        prettified_list[6] = list_receipt[6]
+        entries_list.append(prettified_list)
+    return data_headers, entries_list, source_path

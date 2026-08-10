@@ -1,14 +1,13 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_sms_mms": {
         "name": "SMS Messages",
         "description": "SMS messages from mmssms.db (incl. LG extended types and Samsung spam_sms)",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2020-03-10",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "SMS & MMS",
-        "notes": "",
+        "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds, per the AOSP telephony provider. LG extended type mappings were established through testing and are not vendor-documented.",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -39,12 +38,12 @@ __artifacts_v2__ = {
     "get_sms_mms_mms": {
         "name": "MMS Messages",
         "description": "MMS messages and attachments from mmssms.db",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2020-03-10",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "SMS & MMS",
-        "notes": "",
+        "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds, per the AOSP telephony provider. Reference: AOSP, 'Telephony.BaseMmsColumns MESSAGE_BOX constants (ALL=0, INBOX=1, SENT=2, DRAFTS=3, OUTBOX=4, FAILED=5)', https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',
                   '*/com.android.providers.telephony/app_parts/*',
                   '*/com.android.providers.telephony/parts/*'),
@@ -112,7 +111,7 @@ _MMS_QUERY = '''
 
 
 # Telephony.Mms msg_box values; wording mirrors the SMS type CASE
-_MMS_BOX_DIRECTION = {1: 'Received', 2: 'Sent', 3: 'Draft', 4: 'Outbox'}
+_MMS_BOX_DIRECTION = {0: 'All messages', 1: 'Received', 2: 'Sent', 3: 'Draft', 4: 'Outbox', 5: 'Failed'}
 
 
 def _ms_to_utc(value):
@@ -154,7 +153,8 @@ def _mmssms_dbs(files_found):
 
 
 @artifact_processor
-def get_sms_mms(files_found, report_folder, seeker, wrap_text):
+def get_sms_mms(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for source_path in _mmssms_dbs(files_found):
@@ -175,7 +175,8 @@ def get_sms_mms(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_sms_mms_mms(files_found, report_folder, seeker, wrap_text):
+def get_sms_mms_mms(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for source_path in _mmssms_dbs(files_found):

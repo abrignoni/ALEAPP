@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "DeepSeek",
         "notes": "",
-        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat.db'),
+        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat.db*'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "user"
     }
@@ -21,7 +21,8 @@ __artifacts_v2__ = {
 
 
 @artifact_processor
-def deepseek_user_info(files_found, report_folder, seeker, wrap_text):
+def deepseek_user_info(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ""
@@ -65,7 +66,7 @@ def deepseek_user_info(files_found, report_folder, seeker, wrap_text):
                     mobile_number
                 ))
 
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             print(f"Error processing {source_path}: {e}")
 
         finally:

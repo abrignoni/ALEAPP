@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_chrome": {
         "name": "Web History",
         "description": "Parses Web History from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",
@@ -28,12 +28,17 @@ __artifacts_v2__ = {
     "get_chromeWebVisits": {
         "name": "Web Visits",
         "description": "Parses Web Visits from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "",
+        "notes": "Transition Type decodes the core type held in the low byte of the visits.transition "
+                 "value and Qualifier(s) decodes the qualifier bits set in its high byte. The "
+                 "0xC0000000 IS_REDIRECT_MASK is a mask covering the CLIENT_REDIRECT and "
+                 "SERVER_REDIRECT bits rather than a qualifier of its own, so it is not reported as a "
+                 "separate qualifier. Reference: Chromium, 'page_transition_types.h', "
+                 "https://chromium.googlesource.com/chromium/src",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -53,7 +58,7 @@ __artifacts_v2__ = {
     "get_chromeSearchTerms": {
         "name": "Search Terms",
         "description": "Parses Search Terms from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",
@@ -78,12 +83,16 @@ __artifacts_v2__ = {
     "get_chromeDownloads": {
         "name": "Downloads",
         "description": "Parses Downloads from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "",
+        "notes": "Tab URL is the downloads.tab_url column, the page the download was started from. The "
+                 "source URL of the downloaded file is held in the downloads_url_chains table, which "
+                 "this artifact does not parse. Danger Type and Interrupt Reason decode the stored "
+                 "Chromium enum values. Reference: Chromium, 'download_danger_type.h, "
+                 "download_interrupt_reason_values.h', https://chromium.googlesource.com/chromium/src",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -103,7 +112,7 @@ __artifacts_v2__ = {
     "get_chromeKeywordSearchTerms": {
         "name": "Keyword Search Terms",
         "description": "Parses Keyword Search Terms from Chromium based browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",
@@ -177,7 +186,8 @@ def _history_files(files_found):
 
 
 @artifact_processor
-def get_chrome(files_found, report_folder, seeker, wrap_text):
+def get_chrome(context):
+    files_found = context.get_files_found()
     all_data = []
     data_headers = ['Last Visit Time', 'URL', 'Title', 'Visit Count', 'Typed Count', 'ID', 'Hidden']
     lava_data_headers = data_headers.copy()
@@ -207,7 +217,8 @@ def get_chrome(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_chromeWebVisits(files_found, report_folder, seeker, wrap_text):
+def get_chromeWebVisits(context):
+    files_found = context.get_files_found()
     all_data = []
     data_headers = ['Visit Timestamp', 'URL', 'Title', 'Duration', 'Transition Type', 'Qualifier(s)', 'From Visit URL']
     lava_data_headers = data_headers.copy()
@@ -250,8 +261,7 @@ def get_chromeWebVisits(files_found, report_folder, seeker, wrap_text):
         CASE WHEN visits.transition & 0x10000000 THEN 'CHAIN_START, ' ELSE '' END ||
         CASE WHEN visits.transition & 0x20000000 THEN 'CHAIN_END, ' ELSE '' END ||
         CASE WHEN visits.transition & 0x40000000 THEN 'CLIENT_REDIRECT, ' ELSE '' END ||
-        CASE WHEN visits.transition & 0x80000000 THEN 'SERVER_REDIRECT, ' ELSE '' END ||
-        CASE WHEN visits.transition & 0xC0000000 THEN 'IS_REDIRECT_MASK, ' ELSE '' END),', ')
+        CASE WHEN visits.transition & 0x80000000 THEN 'SERVER_REDIRECT, ' ELSE '' END),', ')
         AS Qualifiers,
         Query2.url AS FromURL
         FROM visits
@@ -271,7 +281,8 @@ def get_chromeWebVisits(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_chromeSearchTerms(files_found, report_folder, seeker, wrap_text):
+def get_chromeSearchTerms(context):
+    files_found = context.get_files_found()
     all_data = []
     data_headers = ['Last Visit Time', 'Search Term', 'URL', 'Title', 'Visit Count']
     lava_data_headers = data_headers.copy()
@@ -306,9 +317,10 @@ def get_chromeSearchTerms(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_chromeDownloads(files_found, report_folder, seeker, wrap_text):
+def get_chromeDownloads(context):
+    files_found = context.get_files_found()
     all_data = []
-    data_headers = ['Start Time', 'End Time', 'Last Access Time', 'URL', 'Target Path', 'State',
+    data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State',
                     'Danger Type', 'Interrupt Reason', 'Opened?', 'Received Bytes', 'Total Bytes']
     lava_data_headers = data_headers.copy()
     for i in (0, 1, 2):
@@ -418,7 +430,8 @@ def get_chromeDownloads(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_chromeKeywordSearchTerms(files_found, report_folder, seeker, wrap_text):
+def get_chromeKeywordSearchTerms(context):
+    files_found = context.get_files_found()
     all_data = []
     data_headers = ['Last Visit Time', 'Term', 'URL']
     lava_data_headers = data_headers.copy()

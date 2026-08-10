@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_torrentResumeinfo": {
         "name": "torrentResumeinfo",
         "description": "Parses torrent resume data (file, info hash and data) from .resume files.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-03-26",
         "last_update_date": "2023-03-26",
         "requirements": "none",
@@ -22,6 +22,7 @@ import datetime
 import textwrap
 
 from scripts.ilapfuncs import artifact_processor
+from scripts.html_safe import esc
 
 
 def timestampcalc(timevalue):
@@ -30,7 +31,8 @@ def timestampcalc(timevalue):
 
 
 @artifact_processor
-def get_torrentResumeinfo(files_found, report_folder, seeker, wrap_text):
+def get_torrentResumeinfo(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''
@@ -54,13 +56,16 @@ def get_torrentResumeinfo(files_found, report_folder, seeker, wrap_text):
                     if x == b'pieces':
                         pass
                     else:
-                        aggregate = aggregate + f'{x.decode()}: {y} <br>'
+                        xs = x.decode()
+                        aggregate = aggregate + f'{esc(xs)}: {esc(y)} <br>'
             elif key.decode() == 'pieces':
                 pass
             elif key.decode() == 'creation date':
-                aggregate = aggregate + f'{key.decode()}: {timestampcalc(value)} <br>'
+                # The branch above pins the key to this literal, so say it outright
+                # rather than re-decoding it, and escape the formatted timestamp.
+                aggregate = aggregate + f'creation date: {esc(timestampcalc(value))} <br>'
             else:
-                aggregate = aggregate + f'{key.decode()}: {value} <br>' #add if value is binary decode
+                aggregate = aggregate + f'{esc(key.decode())}: {esc(value)} <br>' #add if value is binary decode
 
         data_list.append((textwrap.fill(file_found, width=25),infohash,aggregate.strip()))
 

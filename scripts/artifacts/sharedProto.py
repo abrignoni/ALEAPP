@@ -1,14 +1,14 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_sharedProto": {
         "name": "Shared Proto Data",
         "description": "Shared Proto data from Samsung Browser",
         "author": "@AlexisBrignoni",
         "creation_date": "2024-07-23",
-        "last_update_date": "2024-07-23",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Samsung Browser",
-        "notes": "",
+        "notes": "Field 16 is decoded as milliseconds since the 1601 epoch on an empirical basis: in a Samsung Android 14 image with 261 records, the 14-digit field-16 values resolve to May 2023 as milliseconds, whereas the Chromium base::Time microsecond convention would place them in the 1601 era. The protobuf field positions behind the URL One, URL Two, Domain and Data columns were established through testing.",
         "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*',),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -23,14 +23,20 @@ __artifacts_v2__ = {
 import datetime
 import pathlib
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor, logfunc
 
 
 def _win_to_utc(value):
-    '''Field 16 is milliseconds since the 1601 (Windows FILETIME) epoch.'''
+    '''Decode field 16 as milliseconds since the 1601 epoch.
+
+    Basis is empirical: in a Samsung Android 14 image with 261 records, the
+    14-digit field-16 values resolve to May 2023 when read as milliseconds,
+    while the Chromium base::Time microsecond convention would yield 1601-era
+    dates, so this proto does not follow the Chromium convention.
+    '''
     try:
         return (datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc)
                 + datetime.timedelta(seconds=int(value) / 1000))
@@ -45,7 +51,8 @@ def _txt(value):
 
 
 @artifact_processor
-def get_sharedProto(files_found, report_folder, seeker, wrap_text):
+def get_sharedProto(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)
@@ -62,7 +69,7 @@ def get_sharedProto(files_found, report_folder, seeker, wrap_text):
             pf = f'{pathlib.Path(origin).parent.name}/{pathlib.Path(origin).name}'
             try:
                 record_key = record.user_key.decode('utf-8', 'replace')
-                protostuff, _ = blackboxprotobuf.decode_message(record.value)
+                protostuff, _ = decode_protobuf(record.value)
             except Exception:
                 continue
             outer = protostuff.get('1')

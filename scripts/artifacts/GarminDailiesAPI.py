@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_dailies_api": {
         "name": "GarminDailiesAPI",
@@ -71,7 +70,8 @@ FIELDS = [
 
 
 @artifact_processor
-def get_dailies_api(files_found, report_folder, seeker, wrap_text):
+def get_dailies_api(context):
+    files_found = context.get_files_found()
     logfunc("Processing data for Dailies API")
     data_list = []
     source_path = ''

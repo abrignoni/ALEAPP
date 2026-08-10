@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_chromeMediaHistorySessions": {
         "name": "Media History - Sessions",
         "description": "Parses Media History playback sessions from Chromium Based Browsers",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-01-26",
         "last_update_date": "2021-01-26",
         "requirements": "none",
@@ -19,7 +18,7 @@ __artifacts_v2__ = {
     "get_chromeMediaHistoryPlaybacks": {
         "name": "Media History - Playbacks",
         "description": "Parses Media History playbacks from Chromium Based Browsers",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-01-26",
         "last_update_date": "2021-01-26",
         "requirements": "none",
@@ -35,7 +34,7 @@ __artifacts_v2__ = {
     "get_chromeMediaHistoryOrigins": {
         "name": "Media History - Origins",
         "description": "Parses Media History origins from Chromium Based Browsers",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-01-26",
         "last_update_date": "2021-01-26",
         "requirements": "none",
@@ -68,7 +67,8 @@ def _media_history_files(files_found):
 
 
 @artifact_processor
-def get_chromeMediaHistorySessions(files_found, report_folder, seeker, wrap_text):
+def get_chromeMediaHistorySessions(context):
+    files_found = context.get_files_found()
     all_data = []
     data_headers = ['Last Updated', 'Origin ID', 'URL', 'Position', 'Duration', 'Title', 'Artist', 'Album', 'Source Title']
     lava_data_headers = data_headers.copy()
@@ -110,7 +110,8 @@ def get_chromeMediaHistorySessions(files_found, report_folder, seeker, wrap_text
 
 
 @artifact_processor
-def get_chromeMediaHistoryPlaybacks(files_found, report_folder, seeker, wrap_text):
+def get_chromeMediaHistoryPlaybacks(context):
+    files_found = context.get_files_found()
     all_data = []
     data_headers = ['Last Updated', 'ID', 'Origin ID', 'URL', 'Watch Time', 'Has Audio', 'Has Video']
     lava_data_headers = data_headers.copy()
@@ -156,7 +157,8 @@ def get_chromeMediaHistoryPlaybacks(files_found, report_folder, seeker, wrap_tex
 
 
 @artifact_processor
-def get_chromeMediaHistoryOrigins(files_found, report_folder, seeker, wrap_text):
+def get_chromeMediaHistoryOrigins(context):
+    files_found = context.get_files_found()
     all_data = []
     data_headers = ['Last Updated', 'ID', 'Origin', 'Aggregate Watchtime']
     lava_data_headers = data_headers.copy()

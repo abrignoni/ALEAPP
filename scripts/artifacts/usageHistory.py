@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_usageHistory": {
         "name": "Usagehistory",
         "description": "Parses application usage history (timestamp, package and component) from the usage-history.xml file.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2022-07-06",
         "last_update_date": "2022-07-06",
         "requirements": "none",
@@ -41,7 +40,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_usageHistory(files_found, report_folder, seeker, wrap_text):
+def get_usageHistory(context):
+    files_found = context.get_files_found()
 
     source_path = ''
     for file_found in files_found:

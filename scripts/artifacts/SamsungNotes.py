@@ -29,7 +29,8 @@ import os
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, check_in_media
 
 @artifact_processor
-def snotes(files_found, _report_folder, _seeker, _wrap_text):
+def snotes(context):
+    files_found = context.get_files_found()
 
     main_db = ''
     medias = []

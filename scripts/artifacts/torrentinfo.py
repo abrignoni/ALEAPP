@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0702,W0718
+# pylint: disable=W0702,W0718
 __artifacts_v2__ = {
     "get_torrentinfo": {
         "name": "torrentinfo",
         "description": "Parses torrent file metadata (file, info hash and data) from .torrent files.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-03-26",
         "last_update_date": "2023-03-26",
         "requirements": "none",
@@ -22,6 +22,7 @@ import datetime
 import textwrap
 
 from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.html_safe import esc
 
 
 def timestampcalc(timevalue):
@@ -30,7 +31,8 @@ def timestampcalc(timevalue):
 
 
 @artifact_processor
-def get_torrentinfo(files_found, report_folder, seeker, wrap_text):
+def get_torrentinfo(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''
@@ -60,16 +62,18 @@ def get_torrentinfo(files_found, report_folder, seeker, wrap_text):
                                     for y in itemvalue:
                                         if len(y[b'path']) == 1:
                                             file = (y[b'path'][0].decode())
-                                            aggregate = aggregate + f'Files: {file} <br>'
+                                            aggregate = aggregate + f'Files: {esc(file)} <br>'
                         else:
-                            aggregate = aggregate + f'{x.decode()}: {y.decode()} <br>'
+                            aggregate = aggregate + f'{esc(x.decode())}: {esc(y.decode())} <br>'
 
                 elif key.decode() == 'pieces':
                     pass
                 elif key.decode() == 'creation date':
-                    aggregate = aggregate + f'{key.decode()}: {timestampcalc(value)} <br>'
+                    # The branch above pins the key to this literal, so say it outright
+                    # rather than re-decoding it, and escape the formatted timestamp.
+                    aggregate = aggregate + f'creation date: {esc(timestampcalc(value))} <br>'
                 else:
-                    aggregate = aggregate + f'{key.decode()}: {value.decode()} <br>' #add if value is binary decode
+                    aggregate = aggregate + f'{esc(key.decode())}: {esc(value.decode())} <br>' #add if value is binary decode
 
             data_list.append((textwrap.fill(file_found.strip(), width=25),infohash,aggregate))
         except Exception as e: logfunc(str(e))

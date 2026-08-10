@@ -1,11 +1,10 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_keepNotes": {
         "name": "Google Keep Notes",
         "description": "Parses Google Keep Notes",
         "author": "Heather Charpentier",
         "creation_date": "2024-12-02",
-        "last_update_date": "2024-12-02",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Google Keep Notes",
         "notes": "",
@@ -24,11 +23,12 @@ __artifacts_v2__ = {
 
 import os
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
+from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, open_sqlite_db_readonly, convert_human_ts_to_utc
 
 
 @artifact_processor
-def get_keepNotes(files_found, report_folder, seeker, wrap_text):
+def get_keepNotes(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -39,17 +39,35 @@ def get_keepNotes(files_found, report_folder, seeker, wrap_text):
             source_path = file_found
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
-            cursor.execute('''
-            SELECT
-                datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
-                datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
-                datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
-                tree_entity.title AS Title,
-                text_search_note_content_content.c0text AS "Text",
-                tree_entity.last_modifier_email AS "Last Modifier Email"
-            FROM text_search_note_content_content
-            INNER JOIN tree_entity ON text_search_note_content_content.docid = tree_entity._id
-            ''')
+            if does_table_exist_in_db(file_found, 'text_search_note_content_content'):
+                cursor.execute('''
+                SELECT
+                    datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
+                    datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
+                    datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
+                    tree_entity.title AS Title,
+                    text_search_note_content_content.c0text AS "Text",
+                    tree_entity.last_modifier_email AS "Last Modifier Email"
+                FROM text_search_note_content_content
+                INNER JOIN tree_entity ON text_search_note_content_content.docid = tree_entity._id
+                ''')
+            else:
+                # Older keep.db generations have no FTS shadow table; note text
+                # lives in list_item instead. Fallback from community PR #638,
+                # exercised against the contributor's database only, not a
+                # registered corpus image.
+                cursor.execute('''
+                SELECT
+                    datetime(tree_entity.time_created/1000, 'unixepoch') AS "Time Created",
+                    datetime(tree_entity.time_last_updated/1000, 'unixepoch') AS "Time Last Updated",
+                    datetime(tree_entity.user_edited_timestamp/1000, 'unixepoch') AS "User Edited Timestamp",
+                    tree_entity.title AS Title,
+                    list_item.text AS "Text",
+                    tree_entity.last_modifier_email AS "Last Modifier Email"
+                FROM tree_entity
+                LEFT JOIN list_item ON tree_entity._id = list_item._id
+                WHERE tree_entity.title IS NOT NULL OR list_item.text IS NOT NULL
+                ''')
 
             all_rows = cursor.fetchall()
             for row in all_rows:

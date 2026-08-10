@@ -47,7 +47,7 @@ __artifacts_v2__ = {
         'category': 'Accounts',
         'notes': '',
         'paths': (
-            '*/com.planetromeo.android.app/databases/accounts.db'
+            '*/com.planetromeo.android.app/databases/accounts.db*'
             ),
         'output_types': 'standard',
         'artifact_icon': 'user'
@@ -58,8 +58,10 @@ __artifacts_v2__ = {
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
 
 @artifact_processor
-def romeo_dating_messages(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def romeo_dating_messages(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     main_db = ''
     data_list = []
@@ -135,8 +137,10 @@ def romeo_dating_messages(files_found, _report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def romeo_dating_contacts(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def romeo_dating_contacts(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
 
     main_db = ''
@@ -233,8 +237,10 @@ def romeo_dating_contacts(files_found, _report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def romeo_dating_accounts(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def romeo_dating_accounts(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
     main_db = ''
 
     for file_found in files_found:

@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_slopes": {
         "name": "Slopes - Resort Details",
         "description": "Parses ski resort details (name, location, coordinates, contact numbers, altitudes and run counts) recorded by the Slopes app from slopes.db.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-04-27",
         "last_update_date": "2022-04-27",
         "requirements": "none",
@@ -16,7 +15,7 @@ __artifacts_v2__ = {
     "get_slopes_actions": {
         "name": "Slopes - Actions",
         "description": "Parses recorded ski and snowboard actions (start and end time, duration, type, distance, coordinates, speed and altitude) from the Slopes slopes.db.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-04-27",
         "last_update_date": "2022-04-27",
         "requirements": "none",
@@ -29,7 +28,7 @@ __artifacts_v2__ = {
     "get_slopes_lift": {
         "name": "Slopes - Lift Details",
         "description": "Parses ski lift details (name, type, capacity, start and end coordinates and resort) from the Slopes slopes.db.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-04-27",
         "last_update_date": "2022-04-27",
         "requirements": "none",
@@ -56,13 +55,16 @@ def _sec_to_utc(value):
 def _slopes_db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if os.path.basename(file_found) == 'slopes.db':
             return file_found
     return ''
 
 
 @artifact_processor
-def get_slopes(files_found, report_folder, seeker, wrap_text):
+def get_slopes(context):
+    files_found = context.get_files_found()
     source_path = _slopes_db(files_found)
     data_list = []
     if source_path:
@@ -83,7 +85,8 @@ def get_slopes(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_slopes_actions(files_found, report_folder, seeker, wrap_text):
+def get_slopes_actions(context):
+    files_found = context.get_files_found()
     source_path = _slopes_db(files_found)
     data_list = []
     if source_path:
@@ -106,7 +109,8 @@ def get_slopes_actions(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_slopes_lift(files_found, report_folder, seeker, wrap_text):
+def get_slopes_lift(context):
+    files_found = context.get_files_found()
     source_path = _slopes_db(files_found)
     data_list = []
     if source_path:

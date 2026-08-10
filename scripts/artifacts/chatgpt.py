@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Metadata related to the user's ChatGPT conversations. Validated up to app 1.2024.177.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
-        "last_update_date": "2024-07-09",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "ChatGPT",
         "notes": "",
@@ -17,10 +17,10 @@ __artifacts_v2__ = {
     },
     "get_chatgpt_conversations": {
         "name": "ChatGPT - Messages (Legacy)",
-        "description": "User messages with ChatGPT, older DBMessage.messageNode schema (see ChatGPT - Conversations / chatgpt2 for the newer DBMessageChunk schema)",
+        "description": "Messages in ChatGPT conversations (the role column indicates the author), older DBMessage.messageNode schema (see ChatGPT - Conversations / chatgpt2 for the newer DBMessageChunk schema)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
-        "last_update_date": "2026-07-10",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "ChatGPT",
         "notes": "",
@@ -128,11 +128,11 @@ __artifacts_v2__ = {
         },
     },
     "get_chatgpt_media": {
-        "name": "ChatGPT - Media Uploads",
-        "description": "Images uploaded to / cached by ChatGPT",
+        "name": "ChatGPT - Cached Media",
+        "description": "Image files present in the ChatGPT cache directory",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
-        "last_update_date": "2024-07-09",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "ChatGPT",
         "notes": "",
@@ -149,7 +149,7 @@ import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 from PIL import Image, UnidentifiedImageError
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_media, \
@@ -182,7 +182,7 @@ def _pb_json(file_found):
     '''Decode a *.preferences_pb file and return the embedded JSON dict (or None).'''
     try:
         with open(file_found, 'rb') as f:
-            values, _ = blackboxprotobuf.decode_message(f.read())
+            values, _ = decode_protobuf(f.read())
         if isinstance(values, dict):
             pb = values.get('1', {}).get('2', {}).get('5', b'{}')
             return json.loads(pb.decode('utf-8'))
@@ -226,7 +226,7 @@ def get_chatgpt(context):
         db.close()
 
     data_headers = ('Account', ('Creation Date', 'datetime'), ('Modification Date', 'datetime'), 'Title',
-                    'Custom Instructions', 'Model', 'ID', 'Conversation ID', 'Remote ID')
+                    'Moderation Results', 'Gizmo ID', 'ID', 'Conversation ID', 'Remote ID')
     return data_headers, data_list, context.get_relative_path(source_path)
 
 
@@ -282,6 +282,8 @@ def get_chatgpt_user(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith('_user.preferences_pb'):
             continue
         source_path = file_found
@@ -301,6 +303,8 @@ def get_chatgpt_accountstatus(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith('_accountstatus.preferences_pb'):
             continue
         source_path = file_found
@@ -324,6 +328,8 @@ def get_chatgpt_accountuserstate(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith('_accountuser_state.preferences_pb'):
             continue
         source_path = file_found
@@ -358,6 +364,8 @@ def get_chatgpt_custominstructions(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith('_custom_instructions.preferences_pb'):
             continue
         source_path = file_found
@@ -377,6 +385,8 @@ def get_chatgpt_usersettings(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith('_user_settings.preferences_pb'):
             continue
         source_path = file_found
@@ -399,6 +409,8 @@ def get_chatgpt_analytics(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if os.path.basename(file_found) != 'analytics-android-oai.xml':
             continue
         source_path = file_found
@@ -433,6 +445,8 @@ def get_chatgpt_media(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not os.path.isfile(file_found) or not ('cache' in file_found and 'files' in file_found):
             continue
         if not _is_image(file_found):

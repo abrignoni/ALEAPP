@@ -1,14 +1,16 @@
-# pylint: disable=W0613,W0631,W0702,W0718
+# pylint: disable=W0631,W0702,W0718
 __artifacts_v2__ = {
     "get_tangomessage": {
         "name": "tangomessage",
         "description": "Parses Tango messages (create time, direction and message) from the Tango tc.db.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Tango",
-        "notes": "",
+        "notes": ("Direction is decoded from the messages table 'direction' column. "
+                  "Direction/status value mappings were established through testing; unrecognized "
+                  "values are reported as stored."),
         "paths": ('*/com.sgiggle.production/files/tc.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -33,7 +35,8 @@ def _decodeMessage(wrapper, message):
 
 
 @artifact_processor
-def get_tangomessage(files_found, report_folder, seeker, wrap_text):
+def get_tangomessage(context):
+    files_found = context.get_files_found()
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -48,7 +51,7 @@ def get_tangomessage(files_found, report_folder, seeker, wrap_text):
     try:
         cursor.execute('''
         SELECT conv_id, payload, create_time/1000 as create_time,
-               case direction when 1 then "Incoming" else "Outgoing" end direction
+               case direction when 1 then "Incoming" when 2 then "Outgoing" else direction end direction
           FROM messages ORDER BY create_time DESC
         ''')
 

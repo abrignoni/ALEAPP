@@ -6,7 +6,7 @@ import inspect
 import json
 import math
 import os
-import re
+import re  # pylint: disable=unused-import
 import shutil
 import sqlite3
 import sys
@@ -17,11 +17,11 @@ from pathlib import Path
 from urllib.parse import quote
 import scripts.artifact_report as artifact_report
 from scripts.context import Context
-from scripts.version_info import leapp_name
+from scripts.version_info import leapp_name  # pylint: disable=unused-import
 
 # new location for modules imported for backward compatibility
 # existing functions that are moved should leave a commented out def line
-from leapp_functions.app.platform import (
+from leapp_functions.app.platform import (  # pylint: disable=unused-import
     ILLEGAL_FILENAME_CHARS,
     format_illegal_filename_chars,
     illegal_chars_in_filename,
@@ -29,7 +29,7 @@ from leapp_functions.app.platform import (
     sanitize_file_path,
     validate_filename,
 )
-from leapp_functions.app.output import (
+from leapp_functions.app.output import (  # pylint: disable=unused-import
     get_output_folder_base,
     resolve_output_folder_name,
     validate_output_folder_available,
@@ -40,12 +40,11 @@ _console_write = sys.stdout.write
 # common third party imports
 import pytz
 import simplekml
+from scripts import blackboxprotobuf
 from scripts.filetype import guess_mime, guess_extension
 from functools import wraps
 
-# LEAPP version unique imports
-from geopy.geocoders import Nominatim
-
+from scripts.html_safe import esc, safe_local_path
 from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_get_media_item, \
     lava_insert_sqlite_media_item, lava_insert_sqlite_media_references, lava_get_media_references, \
     lava_get_full_media_info
@@ -353,20 +352,25 @@ def html_media_tag(media_path, mimetype, style, title=''):
         filename = Path(source).name
         return f"media/{filename}"
 
-    filename = Path(media_path).name
-    media_path = quote(relative_paths(media_path))
+    # The media name comes from the evidence, so every place it is emitted is
+    # escaped: percent-encoded in src/href by safe_local_path(), which also refuses a
+    # target that would leave the report folder, and HTML-escaped in title= and in the
+    # fallback link text. Before this, a crafted attachment filename broke out of the
+    # title attribute and ran in the examiner's report (CWE-79).
+    filename = esc(Path(media_path).name)
+    media_path = safe_local_path(relative_paths(media_path))
 
-    if mimetype == None:
+    if mimetype is None:
         mimetype = ''
     if 'video' in mimetype:
         thumb = f'<video width="320" height="240" controls="controls"><source src="{media_path}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
     elif 'image' in mimetype:
-        image_style = style if style else "max-height:300px; max-width:400px;"
-        thumb = f'<a href="{media_path}" target="_blank"><img title="{title}"  src="{media_path}" style="{image_style}"></img></a>'
+        image_style = esc(style) if style else "max-height:300px; max-width:400px;"
+        thumb = f'<a href="{media_path}" target="_blank"><img title="{esc(title)}"  src="{media_path}" style="{image_style}"></img></a>'
     elif 'audio' in mimetype:
         thumb = f'<audio controls><source src="{media_path}" type="audio/ogg"><source src="{media_path}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
     else:
-        thumb = f'<a href="{media_path}" target="_blank"> Link to {filename} file</>'
+        thumb = f'<a href="{media_path}" target="_blank"> Link to {filename} file</a>'
     return thumb
 
 def get_data_list_with_media(media_header_info, data_list):
@@ -432,6 +436,35 @@ def get_data_list_with_media(media_header_info, data_list):
 
     return html_data_list, txt_data_list
 
+
+_reported_unsafe_report_names = set()
+
+def sanitize_report_name(name, kind='name'):
+    """
+    Replaces path separators in an artifact name or category so it is usable as a file
+    or folder name.
+
+    Artifact names become HTML/TSV/KML filenames and categories become _HTML subfolder
+    names. A name such as 'Twitter/X' makes os.path.join() read the '/' as a path
+    separator, so the artifact either fails to write its report or lands in an
+    unintended folder, even though the parser ran fine. The original name is kept for
+    display and for LAVA; only the on-disk name is rewritten.
+
+    Args:
+        name (str): The artifact name or category to make path safe.
+        kind (str): What is being sanitized, used in the warning ('name' or 'category').
+    Returns:
+        str: The name with '/' and '\\' replaced by '_'.
+    """
+
+    safe_name = name.replace('/', '_').replace('\\', '_')
+    if safe_name != name and name not in _reported_unsafe_report_names:
+        _reported_unsafe_report_names.add(name)
+        logfunc(f"Warning: artifact {kind} '{name}' contains a path separator. "
+                f"Report files use '{safe_name}' instead; rename it to avoid the mismatch.")
+    return safe_name
+
+
 def artifact_processor(func):
     @wraps(func)
     def wrapper(files_found, report_folder, seeker, wrap_text):
@@ -472,13 +505,18 @@ def artifact_processor(func):
             source_path = '\n'.join(
                 Context.get_relative_path(p) for p in str(source_path).split('\n'))
 
+        if isinstance(data_list, tuple):
+            data_list, html_data_list = data_list
+        else:
+            html_data_list = data_list
         if len(data_list):
-            if isinstance(data_list, tuple):
-                data_list, html_data_list = data_list
-            else:
-                html_data_list = data_list
-            logfunc(f"Found {len(data_list):,} {'records' if len(data_list)>1 else 'record'} for {artifact_name}")
-            icons.setdefault(category, {artifact_name: icon}).update({artifact_name: icon})
+            logfunc(f"Found {len(data_list):,} {'records' if len(data_list) > 1 else 'record'} for {artifact_name}")
+            # Path separators would break (or misplace) the report files, so the HTML, TSV
+            # and KML outputs are written under a path safe name. The sidebar keys off the
+            # on-disk names, so the icon lookup has to use the same safe names.
+            safe_artifact_name = sanitize_report_name(artifact_name)
+            safe_category = sanitize_report_name(category, 'category')
+            icons.setdefault(safe_category, {safe_artifact_name: icon}).update({safe_artifact_name: icon})
 
             # Strip tuples from headers for HTML, TSV, and timeline
             stripped_headers = strip_tuple_from_headers(data_headers)
@@ -491,16 +529,18 @@ def artifact_processor(func):
 
             if check_output_types('html', output_types):
                 report = artifact_report.ArtifactHtmlReport(artifact_name)
-                report.start_artifact_report(report_folder, artifact_name, description)
+                report.start_artifact_report(report_folder, safe_artifact_name, description)
                 report.add_script()
-                report.write_artifact_data_table(stripped_headers, html_data_list, source_path, html_no_escape=html_columns)
+                report.write_artifact_data_table(stripped_headers, html_data_list, source_path,
+                                                 html_no_escape=html_columns)
                 report.end_artifact_report()
 
             if check_output_types('tsv', output_types):
-                tsv(report_folder, stripped_headers, txt_data_list if media_header_info else data_list, artifact_name)
+                tsv(report_folder, stripped_headers, txt_data_list if media_header_info else data_list, safe_artifact_name)
 
             if check_output_types('timeline', output_types):
-                timeline(report_folder, artifact_name, txt_data_list if media_header_info else data_list, stripped_headers)
+                timeline(report_folder, artifact_name, txt_data_list if media_header_info else data_list,
+                         stripped_headers)
 
             if check_output_types('lava', output_types):
                 table_name, object_columns, column_map = lava_process_artifact(category,
@@ -509,19 +549,22 @@ def artifact_processor(func):
                                                                                data_headers,
                                                                                len(data_list),
                                                                                func_name=func_name,
-                                                                               data_views=artifact_info.get("data_views"),
+                                                                               data_views=artifact_info.get(
+                                                                                   "data_views"),
                                                                                artifact_icon=icon,
                                                                                source_path=source_path)
                 lava_insert_sqlite_data(table_name, data_list, object_columns, data_headers, column_map)
 
             if check_output_types('kml', output_types):
-                kmlgen(report_folder, artifact_name, txt_data_list if media_header_info else data_list, stripped_headers)
+                kmlgen(report_folder, safe_artifact_name, txt_data_list if media_header_info else data_list,
+                       stripped_headers)
 
         else:
             if output_types != 'none':
                 logfunc(f"No data found for {artifact_name}")
-        
+
         return data_headers, data_list, source_path
+
     return wrapper
 
 
@@ -620,6 +663,18 @@ def get_binary_file_content(file_path):
         logfunc(f"Unexpected error reading file {file_path}: {str(e)}")
     return bytes()
 
+def decode_protobuf(data, typedef=None):
+    '''Decode schemaless protobuf data via the vendored blackboxprotobuf.
+
+    Single entry point for artifacts that parse protobuf without a schema.
+    Returns (values, typedef) from blackboxprotobuf.decode_message with the
+    1.0.1 output contract artifacts are written against: length-delimited
+    fields that are not messages decode as bytes, and fields with alternate
+    typedefs split into 'N-M' keys. See scripts/blackboxprotobuf/README.md
+    for why the library is vendored.
+    '''
+    return blackboxprotobuf.decode_message(data, typedef)
+
 def get_sqlite_db_path(path):
     if is_platform_windows():
         path_str = str(path)
@@ -665,8 +720,9 @@ def get_sqlite_db_records(path, query, attach_query=None):
             if attach_query:
                 cursor.execute(attach_query)
             cursor.execute(query)
-            records = cursor.fetchall()
-            return records
+            # NOTE: we return the cursor directly, to be iterated by the caller
+            #   to keep it as a generator
+            return cursor
         except sqlite3.OperationalError as e:
             logfunc(f"Error with {path}:")
             logfunc(f" - {str(e)}")
@@ -700,17 +756,20 @@ def does_column_exist_in_db(path, table_name, col_name):
     '''Checks if a specific col exists'''
     db = open_sqlite_db_readonly(path)
     col_name = col_name.lower()
-    try:
-        db.row_factory = sqlite3.Row # For fetching columns by name
+    if db:
         query = f"pragma table_info('{table_name}');"
-        cursor = db.cursor()
-        cursor.execute(query)
-        all_rows = cursor.fetchall()
-        for row in all_rows:
-            if row['name'].lower() == col_name:
-                return True
-    except sqlite3.Error as ex:
-        logfunc(f"Query error, query={query} Error={str(ex)}")
+        try:
+            db.row_factory = sqlite3.Row # For fetching columns by name
+            cursor = db.cursor()
+            cursor.execute(query)
+            all_rows = cursor.fetchall()
+            for row in all_rows:
+                if row['name'].lower() == col_name:
+                    return True
+        except sqlite3.Error as ex:
+            logfunc(f"Query error, query={query} Error={str(ex)}")
+        finally:
+            db.close()
     return False
 
 def does_table_exist_in_db(path, table_name):
@@ -724,7 +783,80 @@ def does_table_exist_in_db(path, table_name):
                 return True
         except sqlite3.Error as ex:
             logfunc(f"Query error, query={query} Error={str(ex)}")
+        finally:
+            db.close()
     return False
+
+def null_absent_columns(path, query):
+    '''Replace references to columns the database lacks with NULL.
+
+    Apps add columns between releases, so a query written against a newer store
+    names columns an older one does not have and the whole statement fails with
+    "no such column", returning nothing. Substituting NULL keeps every column in
+    place, which matters because artifacts consume rows positionally, and keeps
+    the column's name, because they also read rows by name.
+
+    SQLite itself names the missing column, so the query is compiled with EXPLAIN
+    and whatever it objects to is replaced, repeatedly, until it compiles. That
+    avoids guessing which bare words in a statement are column references, which
+    no amount of regex gets reliably right. EXPLAIN compiles without running, so
+    this costs nothing on a large table.
+
+    Returns the query unchanged if the database cannot be read or the error is
+    anything other than a missing column.
+    '''
+    db = open_sqlite_db_readonly(path)
+    if not db:
+        return query
+
+    replaced = []
+    try:
+        for _ in range(50):                  # a query cannot need more than this
+            try:
+                db.execute('EXPLAIN ' + query)
+                break
+            except sqlite3.OperationalError as ex:
+                match = re.match(r'no such column:\s*(\S+)', str(ex))
+                if not match:
+                    break
+                reference = match.group(1)
+                if reference in replaced:
+                    break                    # not making progress, leave it alone
+                replaced.append(reference)
+                query = _null_out_column(query, reference)
+            except sqlite3.Error:
+                break
+    finally:
+        # Artifacts call this once per query, so an unclosed handle here is one
+        # leak per query for the whole run rather than a one-off.
+        db.close()
+
+    if replaced:
+        logfunc(f'{os.path.basename(path)}: column(s) absent from this version are reported '
+                f'empty: {", ".join(sorted(replaced))}')
+    return query
+
+
+def _null_out_column(query, reference):
+    '''Replace one column reference with NULL, keeping the output column name.
+
+    A bare NULL renames the output column, and artifacts read rows by name, so
+    where the reference is a select item in its own right it becomes
+    "NULL AS <name>". Inside an expression the enclosing alias already names the
+    column and a plain NULL is correct.
+    '''
+    name = reference.split('.')[-1].strip('"[]`')
+    pattern = re.compile(r'(?<![\w.])' + re.escape(reference) + r'\b'
+                         r'(?P<tail>\s*(?:,|$)|\s+(?i:FROM)\b)?')
+
+    def replace(match):
+        tail = match.group('tail')
+        if tail is None:
+            return 'NULL'
+        return f'NULL AS {name}{tail}'
+
+    return pattern.sub(replace, query)
+
 
 def does_view_exist_in_db(path, table_name):
     '''Checks if a table with specified name exists in an sqlite db'''
@@ -737,6 +869,8 @@ def does_view_exist_in_db(path, table_name):
                 return True
         except sqlite3.Error as ex:
             logfunc(f"Query error, query={query} Error={str(ex)}")
+        finally:
+            db.close()
     return False
 
 
@@ -901,17 +1035,27 @@ def media_to_html(media_path, files_found, report_folder):
             source = relative_paths(str(source), splitter)
 
         mimetype = guess_mime(match)
-        if mimetype == None:
+        if mimetype is None:
             mimetype = ''
 
+        # allow_parent: relative_paths() above deliberately emits ../data/... to reach
+        # the extraction folder beside the report. The evidence filename in the
+        # fallback link text is escaped -- it used to be interpolated raw.
+        # Bind the escaped values to their own names rather than writing back over
+        # `source`, which is assigned several times above. Reading a name that only
+        # ever holds a checked value makes the safety local and obvious, to a reader
+        # and to admin/scripts/check_html_safety.py alike.
+        safe_source = safe_local_path(source, allow_parent=True)
+        safe_filename = esc(filename)
+
         if 'video' in mimetype:
-            thumb = f'<video width="320" height="240" controls="controls"><source src="{source}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
+            thumb = f'<video width="320" height="240" controls="controls"><source src="{safe_source}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
         elif 'image' in mimetype:
-            thumb = f'<a href="{source}" target="_blank"><img src="{source}"width="300"></img></a>'
+            thumb = f'<a href="{safe_source}" target="_blank"><img src="{safe_source}" width="300"></img></a>'
         elif 'audio' in mimetype:
-            thumb = f'<audio controls><source src="{source}" type="audio/ogg"><source src="{source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
+            thumb = f'<audio controls><source src="{safe_source}" type="audio/ogg"><source src="{safe_source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
         else:
-            thumb = f'<a href="{source}" target="_blank"> Link to {filename} file</>'
+            thumb = f'<a href="{safe_source}" target="_blank"> Link to {safe_filename} file</a>'
     return thumb
 
 
@@ -1413,70 +1557,3 @@ def checkabx(in_path):
         return (False)
     else:
         return (True)
-
-
-def get_raw_fields(latitude, longitude, c, conn):
-    geolocator = Nominatim(user_agent="address-retrieval")
-    location = geolocator.reverse(f"{latitude}, {longitude}")
-    if location:
-        raw_data = location.raw
-        # check if raw_data["address"]["road"] exists
-        not_present = False
-        if "road" in raw_data["address"]:
-            road = raw_data["address"]["road"]
-        elif "hamlet" in raw_data["address"]:
-            road = raw_data["address"]["hamlet"]
-        else:
-            road = 'Not Present'
-            not_present = True
-
-        if "city" in raw_data["address"]:
-            city = raw_data["address"]["city"]
-        elif "town" in raw_data["address"]:
-            city = raw_data["address"]["town"]
-        else:
-            city = 'Not present'
-            not_present = True
-        if not not_present:
-            store_raw_fields(latitude, longitude, road, city,
-                             raw_data["address"]["postcode"], raw_data["address"]["country"], c, conn)
-        # create a dict
-        obtained_data = {"road": road, "city": city, "postcode": raw_data["address"]["postcode"],
-                         "country": raw_data["address"]["country"]}
-        return obtained_data
-    else:
-        print("Location not found.")
-
-
-def store_raw_fields(latitude_value, longitude_value, road_value, city_value, postcode_value, country_value, c, conn):
-    # Check if the entry is already present
-    c.execute('''SELECT * FROM raw_fields WHERE latitude=? AND longitude=?''', (latitude_value, longitude_value))
-    if c.fetchone() is None:
-        # Insert a row of data
-        c.execute('''INSERT INTO raw_fields (latitude, longitude, road, city, postcode, country) 
-                      VALUES (?, ?, ?, ?, ?, ?)''',
-                  (latitude_value, longitude_value, road_value, city_value, postcode_value, country_value))
-
-        # Save (commit) the changes
-        conn.commit()
-
-# Function to check if the raw fields are already present in the database and return them if present or return None
-def check_raw_fields(latitude, longitude, c):
-    # Check if the entry is already present
-    c.execute('''SELECT * FROM raw_fields WHERE latitude=? AND longitude=?''', (latitude, longitude))
-    data = c.fetchone()
-    # convert to dict
-    return data
-
-#Function to check if the user as internet connection to do the geocoding features
-def check_internet_connection():
-    try:
-        geolocator = Nominatim(user_agent="check_internet_connection")
-        geolocator.reverse("39.7495, 8.8077")  # Leiria coordinates
-        logfunc("Internet connection is available.")
-        return True
-    except:  # pylint: disable=bare-except
-        logfunc("Internet connection is not available.")
-        return False
-    
-    

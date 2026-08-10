@@ -7,6 +7,7 @@ from scripts.ilapfuncs import (
     artifact_processor,
     open_sqlite_db_readonly
 )
+from scripts.html_safe import safe_source
 
 __artifacts_v2__ = {
     "deepseek_chat_messages": {
@@ -18,7 +19,7 @@ __artifacts_v2__ = {
         "requirements": "",
         "category": "DeepSeek",
         "notes": "",
-        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db'),
+        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db*'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "message",
         "html_columns": ["Message Content"]
@@ -66,7 +67,8 @@ def extract_content_from_fragments(fragments):
 
 
 @artifact_processor
-def deepseek_chat_messages(files_found, _report_folder, _seeker, _wrap_text):
+def deepseek_chat_messages(context):
+    files_found = context.get_files_found()
 
     data_headers = (
         ('Timestamp', 'datetime'),
@@ -165,7 +167,7 @@ def deepseek_chat_messages(files_found, _report_folder, _seeker, _wrap_text):
                             table_name,
                             inserted_at_utc,
                             role,
-                            content
+                            safe_source(content)
                         ))
 
                 except Exception as e:  # pylint: disable=broad-exception-caught

@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_chromeNetworkActionPredictor": {
         "name": "Network Action Predictor",
         "description": "Parses the Network Action Predictor from Chromium Based Browsers",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-07-10",
         "requirements": "none",
@@ -25,7 +24,8 @@ from scripts.artifacts.chrome import get_browser_name
 
 
 @artifact_processor
-def get_chromeNetworkActionPredictor(files_found, report_folder, seeker, wrap_text):
+def get_chromeNetworkActionPredictor(context):
+    files_found = context.get_files_found()
     all_data = []
 
     data_headers = ['User Text', 'URL', 'Number of Hits', 'Number of Misses']

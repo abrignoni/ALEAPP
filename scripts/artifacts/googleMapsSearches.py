@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleMapsSearches": {
         "name": "Google Maps Searches",
         "description": "Recent Google Maps search history (new_recent_history_cache_search.cs)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-10-15",
         "last_update_date": "2023-10-15",
         "requirements": "none",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor
 
@@ -61,7 +61,8 @@ def _extract_search(item):
 
 
 @artifact_processor
-def get_googleMapsSearches(files_found, report_folder, seeker, wrap_text):
+def get_googleMapsSearches(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -70,7 +71,7 @@ def get_googleMapsSearches(files_found, report_folder, seeker, wrap_text):
         try:
             with open(file_found, 'rb') as f:
                 data = f.read()
-            values, _ = blackboxprotobuf.decode_message(data[8:], TYPEDEF)
+            values, _ = decode_protobuf(data[8:], TYPEDEF)
         except Exception:
             continue
         entry = values.get('1')

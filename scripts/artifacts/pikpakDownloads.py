@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_pikpakDownloads": {
         "name": "PikPak Downloads",
         "description": "Parses PikPak downloads (create and modify times, title, local storage path and URL) from the PikPak downloads database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-03-24",
         "last_update_date": "2023-03-24",
         "requirements": "none",
@@ -27,7 +26,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_pikpakDownloads(files_found, report_folder, seeker, wrap_text):
+def get_pikpakDownloads(context):
+    files_found = context.get_files_found()
 
     source_path = ''
     for file_found in files_found:

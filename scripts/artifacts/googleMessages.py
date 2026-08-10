@@ -1,14 +1,21 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_googleMessages": {
         "name": "GoogleMessages",
         "description": "Google Messages",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-01-30",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-10",
         "requirements": "None",
         "category": "Google Messages",
-        "notes": "",
+        "notes": ("Direction comes from the sending participant's sub_id. AOSP treats -2 as the "
+                  "marker for a participant other than the device's own, so a sender whose sub_id "
+                  "is anything else is the self participant and the message is outgoing. A row "
+                  "whose sub_id is NULL is left blank rather than assigned a direction, because a "
+                  "NULL comparison is neither true nor false and would otherwise fall through to "
+                  "Incoming.\n"
+                  "Reference: AOSP Messaging, 'ParticipantData (OTHER_THAN_SELF_SUB_ID = -2, "
+                  "isSelf())', https://android.googlesource.com/platform/packages/apps/Messaging/"
+                  "+/refs/heads/main/src/com/android/messaging/datamodel/data/ParticipantData.java"),
         "paths": ('*/com.google.android.apps.messaging/databases/bugle_db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -39,23 +46,29 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_googleMessages(files_found, report_folder, seeker, wrap_text):
+def get_googleMessages(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith('bugle_db'):
             continue  # Skip all other files
 
         source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+        # Older bugle_db generations lack file_size_bytes and local_cache_path
+        # on parts (community report, PR #638/#633); absent columns are read
+        # as NULL so the query works across generations.
+        cursor.execute(null_absent_columns(file_found, '''
         SELECT
         parts.timestamp,
         parts.content_type AS "Message Type",
@@ -68,14 +81,18 @@ def get_googleMessages(files_found, report_folder, seeker, wrap_text):
         END AS "Attachment Byte Size",
         parts.local_cache_path AS "Attachment Location",
         parts.conversation_id AS "Conversation ID",
-        CASE WHEN participants.sub_id != -2 THEN 'Outgoing' ELSE 'Incoming' END AS "Direction"
+        CASE
+        WHEN participants.sub_id IS NULL THEN ''
+        WHEN participants.sub_id != -2 THEN 'Outgoing'
+        ELSE 'Incoming'
+        END AS "Direction"
         FROM
         parts
         JOIN messages ON messages._id=parts.message_id
         JOIN participants ON participants._id=messages.sender_id
         JOIN conversations ON conversations._id=parts.conversation_id
         ORDER BY parts.timestamp ASC
-        ''')
+        '''))
         all_rows = cursor.fetchall()
         db.close()
 

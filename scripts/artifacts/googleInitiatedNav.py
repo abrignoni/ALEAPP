@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleInitiatedNav": {
         "name": "Google Initiated Navigation",
         "description": "Recent navigation destinations (new_recent_history_cache_navigated.cs)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-10-16",
         "last_update_date": "2023-10-16",
         "requirements": "none",
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor
 
@@ -37,7 +37,8 @@ def _us_to_utc(value):
 
 
 @artifact_processor
-def get_googleInitiatedNav(files_found, report_folder, seeker, wrap_text):
+def get_googleInitiatedNav(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -46,7 +47,7 @@ def get_googleInitiatedNav(files_found, report_folder, seeker, wrap_text):
         try:
             with open(file_found, 'rb') as f:
                 data = f.read()
-            values, _ = blackboxprotobuf.decode_message(data[8:])
+            values, _ = decode_protobuf(data[8:])
         except Exception:
             continue
         if not isinstance(values, dict):

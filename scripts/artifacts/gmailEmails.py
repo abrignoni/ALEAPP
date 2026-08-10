@@ -1,14 +1,14 @@
-# pylint: disable=W0613,W0631,W0612,W0622
+# pylint: disable=W0631,W0612,W0622
 __artifacts_v2__ = {
     "gmailEmails": {
         "name": "Gmail - App Emails",
         "description": "Parses emails from Gmail",
         "author": "Alexis Brignoni, Patrick Dalla, @stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2026-07-10",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Email",
-        "notes": "",
+        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from numbered fields of the zipped message protobuf. Protobuf field positions were established through testing; Mailed By and Signed by reflect stored header values and are not verified against Authentication-Results.",
         "paths": ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*'),
         "output_types": "standard",
         "html_columns": ["Message"],
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "description": "Parses download requests from Gmail",
         "author": "@stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2025-07-30",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Email",
         "notes": "",
@@ -73,15 +73,18 @@ __artifacts_v2__ = {
 }
 
 import zlib
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 import os
 from datetime import datetime
 
 from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor, \
     logfunc
+from scripts.html_safe import safe_source
 
 @artifact_processor
-def gmailEmails(files_found, report_folder, seeker, wrap_text):
+def gmailEmails(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     bigTopDataDB = ''
     source_bigTop = ''
     
@@ -132,7 +135,7 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                     arreglo = bytearray(data)
                     arreglo = arreglo[1:]
                     decompressed_data = zlib.decompress(arreglo)
-                    message, typedef = blackboxprotobuf.decode_message(decompressed_data)
+                    message, typedef = decode_protobuf(decompressed_data)
                    
                     timestamp = (datetime.utcfromtimestamp(message['17'] / 1000))              
                 else:
@@ -207,13 +210,15 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                             if attachpath.endswith(attachname):
                                 attachment = check_in_media(attachpath, name=attachname) or ''
 
-                data_list.append((timestamp,serverid,messagehtml,attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,bigTopDataDB))
+                data_list.append((timestamp,serverid,safe_source(messagehtml),attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,bigTopDataDB))
 
     data_headers = (('Timestamp','datetime'),'Email ID','Message',('Attachment','media'),'Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
     return data_headers, data_list, 'See source file(s) below:'
 
 @artifact_processor      
-def gmailLabels(files_found, report_folder, seeker, wrap_text):
+def gmailLabels(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     bigTopDataDB = ''
     source_bigTop = ''
     
@@ -257,7 +262,9 @@ def gmailLabels(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, 'See source file(s) below:'
       
 @artifact_processor        
-def gmailDownloadRequests(files_found, report_folder, seeker, wrap_text):
+def gmailDownloadRequests(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     downloaderDB = ''
     source_downloader = ''
     data_list = []
@@ -293,5 +300,5 @@ def gmailDownloadRequests(files_found, report_folder, seeker, wrap_text):
         for record in db_records:
             data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7]))
     
-    data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Message ID','URL','Target File Path','Target File Size','Priority')
+    data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Caller ID','URL','Target File Path','Target File Size','Priority')
     return data_headers, data_list, downloaderDB

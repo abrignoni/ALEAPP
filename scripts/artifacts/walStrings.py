@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_walStrings": {
         "name": "walStrings",
         "description": "If  we only want ascii, use 'ascii_chars_re' below",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-04-17",
         "last_update_date": "2026-07-10",
         "requirements": "none",
@@ -14,13 +14,13 @@ __artifacts_v2__ = {
         "sample_data": {
             "galaxys10_a10": "Android 10 | 721 rows",
             "samsunga53_a14": "Android 14 | 1916 rows",
-            "anne_a15": "Android 15 | 869 rows",
-            "hc_pixel8pro_a16": "Android 16 | 527 rows",
-            "kevin_pocox7_a15": "Android 15 | 519 rows",
-            "pixel7a_a14": "Android 14 | 510 rows",
-            "samsungs20_a13": "Android 13 | 791 rows",
-            "sharon_a14": "Android 14 | 900 rows",
-            "russell_pixel6a_a13": "Android 13 | 455 rows",
+            "anne_a15": "Android 15 | 870 rows",
+            "hc_pixel8pro_a16": "Android 16 | 528 rows",
+            "kevin_pocox7_a15": "Android 15 | 520 rows",
+            "pixel7a_a14": "Android 14 | 511 rows",
+            "samsungs20_a13": "Android 13 | 792 rows",
+            "sharon_a14": "Android 14 | 901 rows",
+            "russell_pixel6a_a13": "Android 13 | 456 rows",
             "userb2_a13": "Android 13 | 527 rows",
         },
         "html_columns": ['Report'],
@@ -32,6 +32,7 @@ import re
 import string
 from pathlib import Path
 
+from scripts.html_safe import safe_local_link
 from scripts.ilapfuncs import artifact_processor
 
 control_chars = ''.join(map(chr, range(0, 32))) + ''.join(map(chr, range(127, 160)))
@@ -72,7 +73,10 @@ def get_walStrings(context):
                         unique_items.add(match.group())
 
         if unique_items:
-            out = f'<a href="{final}" style = "color:blue" target="_blank">{journalName}</a>'
+            # Report-relative link to the strings file written beside the report.
+            # safe_local_link() escapes the label and refuses any target that would
+            # leave the report folder.
+            out = safe_local_link(final, journalName)
             data_list.append((out, context.get_relative_path(file_found)))
         else:
             try:

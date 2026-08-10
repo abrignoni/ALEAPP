@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_garmin_sync": {
         "name": "Garmin - Sync",
@@ -28,7 +27,8 @@ from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readon
 
 
 @artifact_processor
-def get_garmin_sync(files_found, report_folder, seeker, wrap_text):
+def get_garmin_sync(context):
+    files_found = context.get_files_found()
     logfunc("Processing data for Garmin Sync")
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)

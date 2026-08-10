@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_appSemloc": {
         "name": "App Semantic Locations",
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
 import datetime
 import pathlib
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor
@@ -45,7 +45,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_appSemloc(files_found, report_folder, seeker, wrap_text):
+def get_appSemloc(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)
@@ -57,7 +58,7 @@ def get_appSemloc(files_found, report_folder, seeker, wrap_text):
             continue
         for record in leveldb_records.iterate_records_raw():
             try:
-                value, _ = blackboxprotobuf.decode_message(record.value)
+                value, _ = decode_protobuf(record.value)
             except Exception:
                 continue
             outer = value.get('1') if isinstance(value, dict) else None

@@ -1,15 +1,14 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_battery_usage_v9": {
         "name": "Settings Services - Battery Usages v9 - Battery States",
         "description": "Getting Battery Usage data out of the database battery-usage-db-v9. Introduced with Android 14",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-05-12",
-        "last_update_date": "2024-05-12",
+        "last_update_date": "2026-08-01",
         "requirements": "blackboxprotobuf",
         "category": "Settings Services - Battery Usage v9 - Battery States",
-        "notes": "Getting battery usage data from Settings Services - Android 14 - Based on post https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html",
-        "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9',),
+        "notes": "Getting battery usage data from Settings Services - Android 14 - Based on post https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html. Battery Status decodes the AOSP BatteryManager constants 1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging and 5 Fully charged; any other code is reported as the raw number. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager",
+        "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9*',),
         "output_types": "standard",
         "artifact_icon": "battery",
         "sample_data": {
@@ -21,11 +20,11 @@ __artifacts_v2__ = {
         "description": "Getting Battery Usage data out of the database battery-usage-db-v9. Introduced with Android 14",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-05-12",
-        "last_update_date": "2024-05-12",
+        "last_update_date": "2026-08-01",
         "requirements": "blackboxprotobuf",
         "category": "Settings Services - Battery Usage v9 - App Battery Usage Events",
-        "notes": "Getting App Battery Usage Event from Settings Services - Based on https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html",
-        "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9',),
+        "notes": "Getting App Battery Usage Event from Settings Services - Based on https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html. App Usage Event Type decodes the AppUsageEventEntity.appUsageEventType values defined by the Settings app usage event proto, 0 Unknown, 1 Activity Resumed, 2 Activity Stopped and 3 Device Shutdown; any other code is reported as the raw number. Reference: AOSP Settings, 'app_usage_event.proto', https://android.googlesource.com/platform/packages/apps/Settings/+/main/src/com/android/settings/fuelgauge/protos/app_usage_event.proto",
+        "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9*',),
         "output_types": "standard",
         "artifact_icon": "battery",
         "sample_data": {
@@ -38,12 +37,12 @@ import base64
 import datetime
 import sqlite3
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 from scripts.context import Context
 
-_STATUS = {2: 'Charging', 3: 'Discharging', 5: 'Fully charged'}
+_STATUS = {1: 'Unknown', 2: 'Charging', 3: 'Discharging', 4: 'Not Charging', 5: 'Fully charged'}
 _HEALTH = {1: 'Unknown', 2: 'Good', 3: 'Overheat', 4: 'Dead', 5: 'Over Voltage',
            6: 'Unspecified Failure', 7: 'Cold'}
 
@@ -62,6 +61,14 @@ def _as_int(value):
         return int(value)
     except (ValueError, TypeError):
         return None
+
+
+def _status(value):
+    '''Battery status name from the BatteryManager set; the raw code when unrecognized.'''
+    code = _as_int(value)
+    if code is None:
+        return ''
+    return _STATUS.get(code, code)
 
 
 def _txt(value):
@@ -109,7 +116,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text):
+def get_battery_usage_v9(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     data_list = []
     rows = _run(source_path, '''
@@ -119,7 +127,7 @@ def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text):
     ''')
     for row in rows:
         try:
-            proto, _ = blackboxprotobuf.decode_message(base64.b64decode(row[5]))
+            proto, _ = decode_protobuf(base64.b64decode(row[5]))
         except Exception:  # pylint: disable=W0718
             continue
         if not isinstance(proto, dict):
@@ -139,7 +147,7 @@ def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text):
             _ms_field(proto, '20'),                            # Foreground Service (optional - was KeyError)
             _ms_field(proto, '15'),                            # Background
             info.get('1', ''),                                 # Battery Level
-            _STATUS.get(_as_int(info.get('2')), 'Unknown'),    # Battery Status
+            _status(info.get('2')),                            # Battery Status
             _HEALTH.get(_as_int(info.get('3')), 'None'),       # Battery Health
             _txt(proto.get('13')),                             # Drain Type
             Context.get_relative_path(source_path)))
@@ -153,11 +161,14 @@ def get_battery_usage_v9(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_app_usage_events(files_found, report_folder, seeker, wrap_text):
+def get_app_usage_events(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT uid, userId, timestamp,
-        CASE appUsageEventType WHEN 1 THEN 'Paused' WHEN 2 THEN 'Resumed' END,
+        CASE appUsageEventType WHEN 0 THEN 'Unknown' WHEN 1 THEN 'Activity Resumed'
+                               WHEN 2 THEN 'Activity Stopped' WHEN 3 THEN 'Device Shutdown'
+                               ELSE appUsageEventType END,
         packageName, taskRootPackageName, instanceId
         FROM AppUsageEventEntity
     ''')

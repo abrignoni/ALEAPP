@@ -41,7 +41,7 @@ __artifacts_v2__ = {
         },
         "artifact_icon": "message",
         "sample_data": {
-            "anne_a15": "Android 15 | com.linkedin.android vc 198600 | 0 rows",
+            "anne_a15": "Android 15 | com.linkedin.android vc 198600 | 1 row",
         }
     }
 }
@@ -76,7 +76,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def linkedin_account(files_found, _report_folder, _seeker, _wrap_text):
+def linkedin_account(context):
+    files_found = context.get_files_found()
     
     # Get data from xml into a dict to work with
     xml_dict = {}
@@ -131,8 +132,10 @@ def linkedin_account(files_found, _report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def linkedin_messages(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def linkedin_messages(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
 
     query = ('''
             SELECT

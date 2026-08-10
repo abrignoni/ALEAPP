@@ -1,14 +1,14 @@
-# pylint: disable=W0613,W0631
+# pylint: disable=W0631
 __artifacts_v2__ = {
     "factory_reset": {
         "name": "Factory Reset",
-        "description": "Timestamp of when a factory reset occurred",
+        "description": "Reports the factory_reset bootstat record; AOSP stores the event value in the file's modification time.",
         "author": "Kevin Pagano",
         "creation_date": "2022-01-05",
-        "last_update_date": "2025-09-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Wipe & Setup",
-        "notes": "",
+        "notes": "Extraction and acquisition handling can disturb file timestamps, so validate the value against other sources. Reference: AOSP bootstat, 'boot_event_record_store.cpp (event values are stored in the file mtime attribute)', https://android.googlesource.com/platform/system/core/+/refs/heads/main/bootstat/boot_event_record_store.cpp",
         "paths": ('*/misc/bootstat/factory_reset'),
         "output_types": "standard",
         "artifact_icon": "loader",
@@ -33,7 +33,8 @@ import time
 from scripts.ilapfuncs import artifact_processor, logdevinfo
 
 @artifact_processor
-def factory_reset(files_found, report_folder, seeker, wrap_text):
+def factory_reset(context):
+    files_found = context.get_files_found()
 
     for file_found in files_found:
         file_found = str(file_found)

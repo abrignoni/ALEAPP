@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_smanagerLow": {
         "name": "smanagerLow",
         "description": "Parses app usage sessions logged by the Samsung low-power context service (start and end time, package and timestamps) from the lowpowercontext-system database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
@@ -27,7 +26,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_smanagerLow(files_found, report_folder, seeker, wrap_text):
+def get_smanagerLow(context):
+    files_found = context.get_files_found()
 
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)

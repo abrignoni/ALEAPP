@@ -1,29 +1,9 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_smyfilesRecents": {
         "name": "My Files - Recent Files",
         "description": "Parses Samsung My Files recent files (modified timestamp, name, size, path, extension and source) from the My Files database.",
-        "author": "",
-        "creation_date": "2020-03-21",
-        "last_update_date": "2020-03-21",
-        "requirements": "none",
-        "category": "My Files",
-        "notes": "",
-        "paths": ('*/com.sec.android.app.myfiles/databases/myfiles.db*', '*/com.sec.android.app.myfiles/databases/FileInfo.db*'),
-        "output_types": "standard",
-        "artifact_icon": "file",
-        "sample_data": {
-            "anne_a15": "Android 15 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
-            "galaxys10_a10": "Android 10 | com.sec.android.app.myfiles vc 1150303551 | 13 rows",
-            "samsunga53_a14": "Android 14 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
-            "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 0 rows",
-            "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 0 rows",
-        },
-    },
-    "get_smyfilesRecents_fileinfo": {
-        "name": "My Files - Recent Files (FileInfo)",
-        "description": "Parses Samsung My Files recent files (recent and modified timestamps, file ID, package, path, size and download, hidden and trashed flags) from the My Files FileInfo database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
@@ -34,7 +14,27 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
         "sample_data": {
             "anne_a15": "Android 15 | com.sec.android.app.myfiles vc 1520402000 | 97 rows",
-            "galaxys10_a10": "Android 10 | com.sec.android.app.myfiles vc 1150303551 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.app.myfiles vc 1150303551 | 13 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 0 rows",
+            "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 102 rows",
+        },
+    },
+    "get_smyfilesRecents_fileinfo": {
+        "name": "My Files - Recent Files (FileInfo)",
+        "description": "Parses Samsung My Files recent files (recent and modified timestamps, file ID, package, path, size and download, hidden and trashed flags) from the My Files FileInfo database.",
+        "author": "@abrignoni",
+        "creation_date": "2020-03-21",
+        "last_update_date": "2020-03-21",
+        "requirements": "none",
+        "category": "My Files",
+        "notes": "",
+        "paths": ('*/com.sec.android.app.myfiles/databases/myfiles.db*', '*/com.sec.android.app.myfiles/databases/FileInfo.db*'),
+        "output_types": "standard",
+        "artifact_icon": "file",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.app.myfiles vc 1520402000 | 97 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.app.myfiles vc 1150303551 | 13 rows",
             "samsunga53_a14": "Android 14 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
             "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 0 rows",
             "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 102 rows",
@@ -44,7 +44,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, null_absent_columns
 
 
 def _ms_to_utc(value):
@@ -62,17 +62,18 @@ def _myfiles_db(files_found):
 
 
 @artifact_processor
-def get_smyfilesRecents(files_found, report_folder, seeker, wrap_text):
+def get_smyfilesRecents(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _myfiles_db(files_found)
     if source_path:
         db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
         try:
-            cursor.execute('''
+            cursor.execute(null_absent_columns(source_path, '''
                 select date_modified, name, size, _data, ext, _source, _description, recent_date
                 from recent_files
-            ''')
+            '''))
             all_rows = cursor.fetchall()
         except Exception as e:
             logfunc(str(e))
@@ -86,14 +87,15 @@ def get_smyfilesRecents(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_smyfilesRecents_fileinfo(files_found, report_folder, seeker, wrap_text):
+def get_smyfilesRecents_fileinfo(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _myfiles_db(files_found)
     if source_path:
         db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
         try:
-            cursor.execute('''
+            cursor.execute(null_absent_columns(source_path, '''
                 SELECT
                 recent_files.recent_date,
                 recent_files.date_modified,
@@ -105,7 +107,7 @@ def get_smyfilesRecents_fileinfo(files_found, report_folder, seeker, wrap_text):
                 case recent_files.is_hidden WHEN '1' THEN "True" WHEN '0' THEN "False" end,
                 case recent_files.is_trashed WHEN '1' then "True" when '0' then "False" end
                 from recent_files
-            ''')
+            '''))
             all_rows = cursor.fetchall()
         except Exception as e:
             logfunc(str(e))

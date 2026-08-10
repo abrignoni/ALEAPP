@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_etc_hosts": {
         "name": "Etc_hosts",
         "description": "Parses host-to-IP mappings (IP address and hostname) from the system etc/hosts file.",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2020-10-09",
         "last_update_date": "2020-10-09",
         "requirements": "none",
@@ -23,17 +22,17 @@ __artifacts_v2__ = {
     }
 }
 
-import codecs
 
 from scripts.ilapfuncs import artifact_processor
 
 
 @artifact_processor
-def get_etc_hosts(files_found, report_folder, seeker, wrap_text):
+def get_etc_hosts(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = str(files_found[0])
 
-    with codecs.open(source_path, 'r', 'utf-8-sig') as csvfile:
+    with open(source_path, 'r', encoding='utf-8-sig') as csvfile:
         for row in csvfile:
             sline = '\t'.join(row.split())
             sline = sline.split('\t')

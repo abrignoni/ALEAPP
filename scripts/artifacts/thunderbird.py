@@ -44,6 +44,7 @@ import json
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
 from scripts.context import Context
+from scripts.html_safe import safe_source
 
 def _map_uuid_to_account(file):
     # Helper method to get the mapping of the uuid to the set up accounts
@@ -70,8 +71,10 @@ def _map_uuid_to_account(file):
     return uuid_mapping
 
 @artifact_processor
-def thunderbird_accounts(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]
+def thunderbird_accounts(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]
      
     query = ('''
         SELECT *
@@ -127,7 +130,8 @@ def thunderbird_accounts(files_found, _report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def thunderbird_messages(files_found, _report_folder, _seeker, _wrap_text):
+def thunderbird_messages(context):
+    files_found = context.get_files_found()
 
     preferences_file = [x for x in files_found if "preferences_storage" in x and not x.endswith('journal')]
     uuid_mapping = _map_uuid_to_account(str(preferences_file[0]))
@@ -186,7 +190,7 @@ def thunderbird_messages(files_found, _report_folder, _seeker, _wrap_text):
             content = row[14]
 
 
-            data_list.append((sent, stored, account, sender, receiver, cc, bcc, subject, preview, content, attachments, read, flagged, answered, forwarded, folder, Context.get_relative_path(str(file))))
+            data_list.append((sent, stored, account, sender, receiver, cc, bcc, subject, preview, safe_source(content), attachments, read, flagged, answered, forwarded, folder, Context.get_relative_path(str(file))))
 
     data_headers = ( 'Timestamp Sent', 'Timestamp Stored', 'Account', 'Sender', 'Receiver', 'CC', 'BCC', 'Subject', 'Preview', 'Content', 'Attachments', 'Read?', 'Flagged?', 'Answered?', 'Forwarded?', 'Folder Name', 'Source File')
 

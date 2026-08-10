@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_packageGplinks": {
         "name": "packageGplinks",
         "description": "Parses installed package names and their possible Google Play Store links from the system packages.list.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-18",
         "last_update_date": "2021-03-18",
         "requirements": "none",
@@ -27,11 +26,13 @@ __artifacts_v2__ = {
     }
 }
 
+from scripts.html_safe import esc
 from scripts.ilapfuncs import artifact_processor
 
 
 @artifact_processor
-def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
+def get_packageGplinks(context):
+    files_found = context.get_files_found()
 
     source_path = ''
     for file_found in files_found:
@@ -46,7 +47,9 @@ def get_packageGplinks(files_found, report_folder, seeker, wrap_text):
 
         for x in values:
             bundleid = x.split(' ', 1)
-            url = f'<a href="https://play.google.com/store/apps/details?id={bundleid[0]}" target="_blank"><font color="blue">https://play.google.com/store/apps/details?id={bundleid[0]}</font></a>'
+            # The Play Store URL is reported as text, not an anchor: a report
+            # reaches nothing outside its own folder.
+            url = esc(f'https://play.google.com/store/apps/details?id={bundleid[0]}')
             data_list.append((bundleid[0], url))
 
     data_headers = ('Bundle ID', 'Possible Google Play Store Link')

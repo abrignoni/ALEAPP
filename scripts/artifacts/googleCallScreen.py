@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleCallScreen": {
         "name": "Google Call Screen",
         "description": "Transcripts and recordings from Google Assistant's Call Screen feature",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-08-06",
         "last_update_date": "2021-08-06",
         "requirements": "none",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
 import datetime
 import os
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
 
@@ -51,7 +51,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
+def get_googleCallScreen(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -74,7 +75,7 @@ def get_googleCallScreen(files_found, report_folder, seeker, wrap_text):
             # Decode the transcript protobuf into a plain-text conversation
             conversation = ''
             try:
-                data, _ = blackboxprotobuf.decode_message(row[2], PB_TYPES)
+                data, _ = decode_protobuf(row[2], PB_TYPES)
                 messages = data.get('1', [])
                 if isinstance(messages, dict):
                     messages = [messages]

@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_protonmail_messages": {
         "name": "ProtonMail - Messages",
         "description": "Parses ProtonMail messages (timestamp, subject, sender, direction, status, size, folder, attachments and recipient lists) from the ProtonMail messages database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "none",
@@ -16,7 +15,7 @@ __artifacts_v2__ = {
     "get_protonmail_contacts": {
         "name": "ProtonMail - Contacts",
         "description": "Parses ProtonMail contacts (creation and modified timestamps, name and email) from the ProtonMail contacts database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "none",
@@ -32,7 +31,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 
 
 @artifact_processor
-def get_protonmail_messages(files_found, report_folder, seeker, wrap_text):
+def get_protonmail_messages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -118,7 +118,8 @@ def get_protonmail_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_protonmail_contacts(files_found, report_folder, seeker, wrap_text):
+def get_protonmail_contacts(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

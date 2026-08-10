@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 """
 Copyright 2022, CCL Forensics
 
@@ -185,7 +184,8 @@ def _load(files_found):
 
 
 @artifact_processor
-def get_fcm_tumblr(files_found, report_folder, seeker, wrap_text):
+def get_fcm_tumblr(context):
+    files_found = context.get_files_found()
     messages, _flagged, _notifications, _logs, source = _load(files_found)
     data_headers = (('Timestamp', 'datetime'), 'FCM Key', 'Title', 'Body', 'Notification',
                     'Recipient', 'Uuid', 'Unread Count')
@@ -193,21 +193,24 @@ def get_fcm_tumblr(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_tumblr_flagged(files_found, report_folder, seeker, wrap_text):
+def get_fcm_tumblr_flagged(context):
+    files_found = context.get_files_found()
     _messages, flagged, _notifications, _logs, source = _load(files_found)
     data_headers = (('Timestamp', 'datetime'), 'FCM Key', 'Blog Name', 'Post ID', 'Type')
     return data_headers, flagged, source
 
 
 @artifact_processor
-def get_fcm_tumblr_notifications(files_found, report_folder, seeker, wrap_text):
+def get_fcm_tumblr_notifications(context):
+    files_found = context.get_files_found()
     _messages, _flagged, notifications, _logs, source = _load(files_found)
     data_headers = (('Timestamp', 'datetime'), 'FCM Key', 'Notification')
     return data_headers, notifications, source
 
 
 @artifact_processor
-def get_fcm_tumblr_logs(files_found, report_folder, seeker, wrap_text):
+def get_fcm_tumblr_logs(context):
+    files_found = context.get_files_found()
     _messages, _flagged, _notifications, logs, source = _load(files_found)
     data_headers = (('Timestamp', 'datetime'), 'FCM Key', 'Push ID', 'Push Type')
     return data_headers, logs, source

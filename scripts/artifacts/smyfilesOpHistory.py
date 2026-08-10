@@ -1,14 +1,20 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_smyfiles_OpHistory": {
         "name": "My Files Operation History",
         "description": "Extracts Operation History from My Files database",
         "author": "@PensiveHike",
         "creation_date": "2024-06-05",
-        "last_update_date": "2024-06-05",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "My Files",
-        "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown characters will be replaced with '?'.",
+        "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown "
+                 "characters will be replaced with '?'. The substitution table used to turn the stored "
+                 "item paths into cleartext was established through testing, not from app or vendor "
+                 "documentation. Columns of operation_history are read by position over "
+                 "'Select * from operation_history'; that mapping was likewise established against the "
+                 "Android 10-12 versions above and may not hold on other versions. The operation date "
+                 "is reported exactly as stored; the timezone it is recorded in has not been verified.",
         "paths": ('*/com.sec.android.app.myfiles/databases/OperationHistory.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "clock",
@@ -66,14 +72,15 @@ def get_user(file_found):
 
 
 @artifact_processor
-def get_smyfiles_OpHistory(files_found, report_folder, seeker, wrap_text):
+def get_smyfiles_OpHistory(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     Androidversion = aG.versionf
 
     if not 9 < int(Androidversion) < 13:
         logfunc(f'Android artifact My Files Operation History is not compatible with Android version {Androidversion}')
-        data_headers = ('Account', 'Item Path', 'Operation Date (Handset Timezone)', 'Operation Type', 'Item Count', 'Folder Count', 'Page Type')
+        data_headers = ('Account', 'Item Path', 'Operation Date (timezone unverified)', 'Operation Type', 'Item Count', 'Folder Count', 'Page Type')
         return data_headers, data_list, source_path
 
     for file_found in files_found:
@@ -89,13 +96,13 @@ def get_smyfiles_OpHistory(files_found, report_folder, seeker, wrap_text):
 
         for entry in all_rows:
             cipher = entry[1]
-            if cipher != '':
-                clear_path = process_string(cipher)
+            if not cipher:
+                clear_path = '*blank entry*'
             elif cipher[:3] == '#G$':  # not supported, have seen in Android 13/14.
                 clear_path = '*unsupported entry*'
             else:
-                clear_path = '*blank entry*'
+                clear_path = process_string(cipher)
             data_list.append((user, clear_path, entry[2], entry[3], entry[4], entry[5], entry[6]))
 
-    data_headers = ('Account', 'Item Path', 'Operation Date (Handset Timezone)', 'Operation Type', 'Item Count', 'Folder Count', 'Page Type')
+    data_headers = ('Account', 'Item Path', 'Operation Date (timezone unverified)', 'Operation Type', 'Item Count', 'Folder Count', 'Page Type')
     return data_headers, data_list, source_path

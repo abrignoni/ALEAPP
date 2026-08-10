@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_TorrentData": {
         "name": "TorrentData",
         "description": "Parses torrent metadata (torrent name, info hash and file paths) from .torrent files.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-09-15",
         "last_update_date": "2023-09-15",
         "requirements": "none",
@@ -20,10 +20,12 @@ import hashlib
 import bencoding
 
 from scripts.ilapfuncs import artifact_processor
+from scripts.html_safe import esc
 
 
 @artifact_processor
-def get_TorrentData(files_found, report_folder, seeker, wrap_text):
+def get_TorrentData(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''
@@ -64,7 +66,7 @@ def get_TorrentData(files_found, report_folder, seeker, wrap_text):
                                             filen = iivalue[0].decode()
                                         except:
                                             filen = iivalue[0]
-                            aggf = aggf + f'<tr><td>{dirr}</td><td>{filen}</td></tr>'
+                            aggf = aggf + f'<tr><td>{esc(dirr)}</td><td>{esc(filen)}</td></tr>'
                         aggf = aggf + '</table>'
 
         data_list.append((torrentname, info_hash, aggf))

@@ -1,14 +1,14 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_wifiProfiles": {
         "name": "wifiProfiles",
-        "description": "Saved Wi-Fi network profiles (SSID, keys, MAC, timestamps) from WifiConfigStore.xml",
-        "author": "",
+        "description": "Saved Wi-Fi network profiles (SSID, keys, gateway MAC address, timestamps) from WifiConfigStore.xml",
+        "author": "@abrignoni",
         "creation_date": "2020-03-23",
-        "last_update_date": "2020-03-23",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "WiFi Profiles",
-        "notes": "",
+        "notes": "DefaultGwMacAddress is the MAC address recorded for the network's default "
+                 "gateway, not the address of the device or of any client on the network.",
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": "standard",
         "artifact_icon": "wifi",
@@ -66,7 +66,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_wifiProfiles(files_found, report_folder, seeker, wrap_text):
+def get_wifiProfiles(context):
+    files_found = context.get_files_found()
     data_list = []
     source_paths = []
     for file_found in files_found:
