@@ -88,7 +88,7 @@ def honorMediaLibrary(context):
         'Path',
         'Title',
         'Display Name',
-        ('File Size', 'bytes'),
+        'File Size',
         'Latitude',
         'Longitude',
         'Time Zone',
