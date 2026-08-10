@@ -4,15 +4,19 @@ __artifacts_v2__ = {
         "description": "Parses the account information for the Claude app",
         "author": "Brandon Baye",
         "creation_date": "2026-07-23",
-        "last_updated_date": "2026-08-06",
+        "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Claude",
-        "notes": "timestamps stored as  ISO 8601 combined date-time format"
-                 "display name is what AI addresses user as"
-                 "email address stored in additional XML, does not contain any other account info",
+        "notes": "Timestamps stored as ISO 8601 combined date-time format. "
+                 "Display name is what the AI addresses the user as. "
+                 "Email address is also stored in additional XML, which does not contain any other account info.",
         "paths": ('*/com.anthropic.claude/cache/app_start/acc_*/org_*/cache.json'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "s20fe_a13": "1 row",
+            "hc_pixel8pro_a17": "1 row",
+        },
     },
 
     "claudeConversations": {
@@ -20,14 +24,18 @@ __artifacts_v2__ = {
         "description": "Parses Claude Conversations",
         "author": "Brandon Baye",
         "creation_date": "2026-07-22",
-        "last_updated_date": "2026-08-06",
+        "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Claude",
-        "notes": "Data stored as json throughout the database and contained relevant information for overall conversations"
-                 "timestamps stored as ISO 8601 combined date-time format and converted for LAVA",
+        "notes": "Data stored as json throughout the database and contained relevant information for overall conversations. "
+                 "Timestamps stored as ISO 8601 combined date-time format and converted for LAVA.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "s20fe_a13": "14 rows",
+            "hc_pixel8pro_a17": "1 row",
+        },
     },
 
     "claudeMessages": {
@@ -35,18 +43,22 @@ __artifacts_v2__ = {
         "description": "Parses Claude Messages with some Conversation info",
         "author": "Brandon Baye",
         "creation_date": "2026-07-21",
-        "last_updated_date": "2026-08-06",
+        "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Claude",
-        "notes": "Join used to provide context of conversation when messages cannot be followed in order by conversation"
-                 "Timestamps stored as ISO 8601 combined date-time format and converted for LAVA"
-                 "Images used in conversations appear to be temporary and the path folder remains empty"
-                 "provide file name in context of which image was used"
-                 "json each utilized where AI is reaching out for sources"
-                 "each reference url is provided in json as well",
+        "notes": "Join used to provide context of conversation when messages cannot be followed in order by conversation. "
+                 "Timestamps stored as ISO 8601 combined date-time format and converted for LAVA. "
+                 "Images used in conversations appear to be temporary and the path folder remains empty; "
+                 "the file name is provided for context of which image was used. "
+                 "json_each is utilized where the AI is reaching out for sources; "
+                 "each reference url is provided in json as well.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "s20fe_a13": "78 rows",
+            "hc_pixel8pro_a17": "8 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Conversation ID",
@@ -56,7 +68,6 @@ __artifacts_v2__ = {
                 "directionSentValue": "human",
                 "timeColumn": "Message Created Time",
                 "senderColumn": "Sender",
-                "Attachment": "Image File Name",
             }
         }
     },
@@ -66,16 +77,20 @@ __artifacts_v2__ = {
         "description": "Parses projects made within Claude",
         "author": "Brandon Baye",
         "creation_date": "2026-07-24",
-        "last_updated_date": "2026-08-06",
+        "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Claude",
-        "notes": "projects can include document and file uploads to each separate project"
-                 "user can add conversations to a project to keep context for usage"
-                 "project creator is stored as the full name in profile"
-                 "timestamps are ISO 8601 combined date-time format",
+        "notes": "Projects can include document and file uploads to each separate project. "
+                 "The user can add conversations to a project to keep context for usage. "
+                 "Project creator is stored as the full name in the profile. "
+                 "Timestamps are ISO 8601 combined date-time format.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "s20fe_a13": "1 row",
+            "hc_pixel8pro_a17": "0 rows",
+        },
     }
 }
 
@@ -206,7 +221,7 @@ def claudeMessages(context):
         json_extract(cachedConversations.conversation_json, '$.name') as 'Conversation Name',
         cachedConversations.uuid AS 'Conversation ID'
 	FROM cachedMessages
-	JOIN cachedConversations ON cachedConversations.uuid = cachedMessages.conversation_uuid
+	LEFT JOIN cachedConversations ON cachedConversations.uuid = cachedMessages.conversation_uuid
 	'''
     
     records = get_sqlite_db_records(source_path, query)
