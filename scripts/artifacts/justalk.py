@@ -40,7 +40,7 @@ __artifacts_v2__ = {
                   '*/com.juphoon.justalk/files/image_manager_disk_cache/*',
                   '*/com.juphoon.justalk/files/http410cache/*',
                   '*/com.juphoon.justalk/files/JusTalk/profiles/*'),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "message-circle",
         "sample_data": {},
         "data_views": {
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
                  "extraction documents their values. A duration of zero is not by itself evidence "
                  "that a call was not answered.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "phone",
         "sample_data": {},
     },
@@ -112,7 +112,7 @@ __artifacts_v2__ = {
                   '*/com.juphoon.justalk/files/image_manager_disk_cache/*',
                   '*/com.juphoon.justalk/files/http410cache/*',
                   '*/com.juphoon.justalk/files/JusTalk/profiles/*'),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "image",
         "sample_data": {},
     },
@@ -135,7 +135,7 @@ __artifacts_v2__ = {
                  "calling code, but nothing in the extraction documents the format.\n"
                  "relationType and serverRelationType are reported as stored.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {},
     },
@@ -197,7 +197,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.juphoon.justalk/files/*.realm',
                   '*/com.juphoon.justalk/files/JusTalk/profiles/provisions.xml',
                   '*/com.juphoon.justalk/files/mmkv/*'),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "user",
         "sample_data": {},
     },
@@ -230,11 +230,10 @@ __artifacts_v2__ = {
                  "are a bare scalar, which is the only distinction the bytes support; a value "
                  "shown as an integer may have been written as a boolean.",
         "paths": ('*/com.juphoon.justalk/files/mmkv/*',),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "settings",
         "sample_data": {},
     },
-    
     "justalk_kids_messages": {
         "name": "JusTalk Kids - Messages",
         "description": "Chat messages from the JusTalk Realm store, with the message body, the "
@@ -276,63 +275,7 @@ __artifacts_v2__ = {
                   '*/com.justalk.kids.android/files/image_manager_disk_cache/*',
                   '*/com.justalk.kids.android/files/http410cache/*',
                   '*/com.justalk.kids.android/files/JusTalk/profiles/*'),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "message-circle",
-        "sample_data": {},
-        "data_views": {
-            "conversation": {
-                "conversationDiscriminatorColumn": "Chat Partner",
-                "textColumn": "Message",
-                "directionColumn": "Direction",
-                "directionSentValue": "Outgoing",
-                "timeColumn": "Timestamp",
-                "senderColumn": "Sender Name",
-                "mediaColumn": "Media",
-            }
-        },
-    
-    "justalk_kids_messages": {
-        "name": "JusTalk Kids - Messages",
-        "description": "Chat messages from the JusTalk Realm store, with the message body, the "
-                       "direction, the sender, the media type and the cached media file where it "
-                       "is present in the extraction",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
-        "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
-        "requirements": "none",
-        "category": "JusTalk Kids",
-        "notes": "Messages are read from the class_CallLog table of the per-account Realm store "
-                 "(files/<account uid>.realm), not from class_MessageChat, which was present in "
-                 "the schema but empty in the sample this artifact was built from. class_CallLog "
-                 "holds chat messages and call records in the same table; rows whose type is "
-                 "AudioCall or VideoCall are reported by the JusTalk - Call Logs artifact instead.\n"
-                 "Direction is taken from the boolean 'incoming' column. The separate 'state' "
-                 "column is reported as stored: nothing in the extraction documents its values.\n"
-                 "Media is linked without guessing. The message's 'fileUrl' column is a row index "
-                 "into the class_ROFileUrl table, and that row's 'md5' column is base64 of the MD5 "
-                 "of the media file's contents. Every file in the paths above is hashed and matched "
-                 "against it, so a message is tied to a file by content rather than by name, size "
-                 "or timestamp proximity. A message with no matching file means no copy of that "
-                 "media was found in the extraction; it does not establish that the media never "
-                 "existed on the device.\n"
-                 "Duration is stored in seconds on voice and video message rows. That was derived "
-                 "by dividing the stored byte length by the stored duration across the sampled "
-                 "rows, which gave consistent audio and video bitrates; it is an inference from "
-                 "the data, not a documented unit.\n"
-                 "Validation boundary. This was built from a single private sample holding one "
-                 "one-to-one conversation, so the fields are mapped from that sample and the "
-                 "counts here are not from a public corpus. The class_ServerGroup, "
-                 "class_ServerMember, class_Moment and class_ROKids* tables were all empty in it, "
-                 "so group chats, Moments posts and JusTalk Kids parental controls are not "
-                 "covered. The reply, reaction, sticker, poll and link columns of class_CallLog "
-                 "were unpopulated and are not reported. A sample exercising any of those would "
-                 "be welcome.",
-        "paths": ('*/com.justalk.kids.android/files/*.realm',
-                  '*/com.justalk.kids.android/files/imfilecache/*',
-                  '*/com.justalk.kids.android/files/image_manager_disk_cache/*',
-                  '*/com.justalk.kids.android/files/http410cache/*',
-                  '*/com.justalk.kids.android/files/JusTalk/profiles/*'),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "message-circle",
         "sample_data": {},
         "data_views": {
@@ -369,7 +312,7 @@ __artifacts_v2__ = {
                  "extraction documents their values. A duration of zero is not by itself evidence "
                  "that a call was not answered.",
         "paths": ('*/com.justalk.kids.android/files/*.realm',),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "phone",
         "sample_data": {},
     },
@@ -404,7 +347,7 @@ __artifacts_v2__ = {
                   '*/com.justalk.kids.android/files/image_manager_disk_cache/*',
                   '*/com.justalk.kids.android/files/http410cache/*',
                   '*/com.justalk.kids.android/files/JusTalk/profiles/*'),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "image",
         "sample_data": {},
     },
@@ -427,7 +370,7 @@ __artifacts_v2__ = {
                  "calling code, but nothing in the extraction documents the format.\n"
                  "relationType and serverRelationType are reported as stored.",
         "paths": ('*/com.justalk.kids.android/files/*.realm',),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {},
     },
@@ -489,7 +432,7 @@ __artifacts_v2__ = {
         "paths": ('*/com.justalk.kids.android/files/*.realm',
                   '*/com.justalk.kids.android/files/JusTalk/profiles/provisions.xml',
                   '*/com.justalk.kids.android/files/mmkv/*'),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "user",
         "sample_data": {},
     },
@@ -522,191 +465,10 @@ __artifacts_v2__ = {
                  "are a bare scalar, which is the only distinction the bytes support; a value "
                  "shown as an integer may have been written as a boolean.",
         "paths": ('*/com.justalk.kids.android/files/mmkv/*',),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "settings",
-        "sample_data": {},
-    
-},
-    "justalk_kids_calls": {
-        "name": "JusTalk Kids - Call Logs",
-        "description": "Audio and video calls from the JusTalk Realm store, with the direction, "
-                       "the duration and the server call identifier",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
-        "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
-        "requirements": "none",
-        "category": "JusTalk Kids",
-        "notes": "Read from the rows of class_CallLog whose type is AudioCall or VideoCall. "
-                 "Direction is taken from the boolean 'incoming' column.\n"
-                 "Duration on these rows is reported both as stored and converted from "
-                 "milliseconds. Milliseconds is an inference: in the sample, three calls were "
-                 "followed by a further message 15.4, 31.6 and 24.0 seconds after the call record, "
-                 "each slightly longer than the duration read as milliseconds and not reconcilable "
-                 "with the same value read as seconds. Note that this differs from the duration on "
-                 "voice and video message rows, which is in seconds. The stored value is kept in "
-                 "its own column so the conversion can be checked.\n"
-                 "The 'state' and 'reason' columns are reported as stored; nothing in the "
-                 "extraction documents their values. A duration of zero is not by itself evidence "
-                 "that a call was not answered.",
-        "paths": ('*/com.justalk.kids.android/files/*.realm',),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "phone",
-        "sample_data": {},
-    },
-    "justalk_kids_media": {
-        "name": "JusTalk Kids - Media",
-        "description": "File records from the JusTalk Realm store with the cached copies found in "
-                       "the extraction, plus any cached files the store does not account for",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
-        "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
-        "requirements": "none",
-        "category": "JusTalk Kids",
-        "notes": "Each row is one class_ROFileUrl record. The record's 'md5' column is base64 of "
-                 "the MD5 of the file's contents, so cached copies are located by hashing every "
-                 "file in the paths above and matching, rather than by file name. The same content "
-                 "is often cached in more than one place: files/imfilecache holds the app's own "
-                 "copy, files/image_manager_disk_cache and files/http410cache held further copies "
-                 "of some items in the sample. All matches are reported.\n"
-                 "Cached files that no class_ROFileUrl record accounts for are listed as their own "
-                 "rows with an empty File Key so they are not dropped. Thumbnails, avatars and "
-                 "sticker assets are expected to appear there. Files in these caches are often "
-                 "stored with no extension or a '.0' extension; in the sample they were still "
-                 "images, so the extension is reported as found and the content is checked in on "
-                 "its own sniffed type.\n"
-                 "The class_ROFileUrl table also carries sticker pack assets, which have a "
-                 "filePath but no encryptedUrl and are not messages. 'localPath' and "
-                 "'thumbnailLocalPath' are the paths the app recorded; in the sample they pointed "
-                 "into the app's own cache, not to a user-initiated export to shared storage. They "
-                 "are reported as stored and are not resolved against the extraction.",
-        "paths": ('*/com.justalk.kids.android/files/*.realm',
-                  '*/com.justalk.kids.android/files/imfilecache/*',
-                  '*/com.justalk.kids.android/files/image_manager_disk_cache/*',
-                  '*/com.justalk.kids.android/files/http410cache/*',
-                  '*/com.justalk.kids.android/files/JusTalk/profiles/*'),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "image",
-        "sample_data": {},
-    },
-    "justalk_kids_contacts": {
-        "name": "JusTalk Kids - Contacts",
-        "description": "Contacts from the JusTalk Realm store, with the JusTalk ID, the display "
-                       "and nickname, the client version reported for that account and the last "
-                       "online time",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
-        "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
-        "requirements": "none",
-        "category": "JusTalk Kids",
-        "notes": "Read from the class_ServerFriend table. The class_Contact table, which holds "
-                 "device address book matches, was empty in the sample this artifact was built "
-                 "from and is not covered here.\n"
-                 "The 'version' column carries a platform-prefixed client version string for the "
-                 "other party's account, for example a value beginning 'ios.'. 'loginCountry' is "
-                 "reported as stored; in the sample it held a value matching a telephone country "
-                 "calling code, but nothing in the extraction documents the format.\n"
-                 "relationType and serverRelationType are reported as stored.",
-        "paths": ('*/com.justalk.kids.android/files/*.realm',),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "users",
-        "sample_data": {},
-    },
-    "justalk_kids_account": {
-        "name": "JusTalk Kids - Account",
-        "description": "The local JusTalk account identifiers taken from the Realm store file "
-                       "name, the app's provisioning file and the Realm schema version",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
-        "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
-        "requirements": "none",
-        "category": "JusTalk Kids",
-        "notes": "The per-account Realm store is named after the local account's own user id, so "
-                 "the file name is reported as the account UID. That reading is corroborated by "
-                 "the senderUid on outgoing message rows, which carries the same value.\n"
-                 "The cur_prof_user attribute of files/JusTalk/profiles/provisions.xml holds a "
-                 "scheme token joined to the account's JusTalk id, for example "
-                 "'username)lola6593'. It is reported both as stored and split, because the "
-                 "scheme token is not part of the id. The split is derived from the same "
-                 "extraction: class_CallLog writes the peer form of that value as a URI reading "
-                 "'[username:<id>@justalk.com]' on a row whose class_ServerFriend justalkId "
-                 "column holds exactly the <id> part, so the token before the separator is the "
-                 "scheme. The separator differs between the two because the value is also used "
-                 "as a directory name under files/JusTalk/profiles/. A value not in that shape "
-                 "is reported unchanged in both columns.\n"
-                 "The JusTalk ID column prefers the justalkId key of the local profile in "
-                 "files/mmkv/JusProfileManager<account uid>, which names the value directly, and "
-                 "falls back to splitting cur_prof_user when that store is absent. In the sample "
-                 "the two agreed, and a bare value in the per-profile provision-v1.xml agreed "
-                 "with both.\n"
-                 "The remaining account fields come from that same MMKV profile, which holds one "
-                 "JSON document under a single key. Field names there are the app's own: "
-                 "Basic.NickName, Ue.Email, Basic.Birthday, Phone.Country, loginCountry, "
-                 "signUpDate, lastLoginTimeMillis, uuid and loginToken. Birthday is reported as "
-                 "the app stored it, a plain date string with no time or zone. signUpDate is in "
-                 "seconds and lastLoginTimeMillis in milliseconds, as their names state.\n"
-                 "Ue.Facebook, Ue.Google and Ue.Huawei are linked-account slots. They were all "
-                 "empty in the sample, so an empty value here means the slot carries no value, "
-                 "not that a linked account was removed.\n"
-                 "loginToken is a bearer credential for the account, reported in full at the "
-                 "examiner's request. It is a JSON Web Token (RFC 7519), so its payload segment "
-                 "is base64url and carries the standard 'exp' expiry claim; Token Expiry is that "
-                 "claim decoded, and Token Subject is the payload's uid claim as stored. The "
-                 "signature is not verified and the token is not tested against any server, so "
-                 "these columns describe what the token asserts about itself and not whether it "
-                 "is currently valid.\n"
-                 "The Realm header reports two top references, which is the store's normal "
-                 "committed and uncommitted pair. Both are read and their row counts compared; "
-                 "where they differ, content is present in one view and not the other. In the "
-                 "sample they matched exactly.\n"
-                 "shared_prefs/com.justalk.kids.android_preferences.xml was checked and carries only "
-                 "advertising consent framework keys, no account identity, so it is not parsed.\n"
-                 "Validation boundary. Built from a single private sample holding one signed-in "
-                 "account, so every field here was seen populated exactly once, and the "
-                 "linked-account and family fields were never seen populated at all. An MMKV "
-                 "store can be written in an AES-encrypted mode, which this reader does not "
-                 "decrypt; a store written that way yields no keys, so an empty result is not "
-                 "evidence the store was empty.",
-        "paths": ('*/com.justalk.kids.android/files/*.realm',
-                  '*/com.justalk.kids.android/files/JusTalk/profiles/provisions.xml',
-                  '*/com.justalk.kids.android/files/mmkv/*'),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "user",
-        "sample_data": {},
-    },
-    "justalk_kids_app_state": {
-        "name": "JusTalk Kids - App State",
-        "description": "Key and value pairs from the app's default MMKV store, covering the "
-                       "device identifier, the signed-in account id, the push token and the "
-                       "install channel, including values that later writes superseded",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
-        "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
-        "requirements": "none",
-        "category": "JusTalk Kids",
-        "notes": "Read from files/mmkv/mmkv.default with the shared mmkv_parser. Keys and values "
-                 "are reported as the app wrote them and are not renamed or interpreted.\n"
-                 "MMKV appends rather than edits, so changing a key writes a new entry and leaves "
-                 "the previous one in the file. Every entry is reported in file order. The Current "
-                 "Value column marks the last entry for a key, which is the one the app reads; "
-                 "rows marked otherwise are earlier values still present in the store. In the "
-                 "sample this preserved one superseded value, an empty VersionCheckerNewVersion "
-                 "written before the current one.\n"
-                 "A repeated entry is not by itself evidence the value changed. The app rewrites "
-                 "some keys with the value they already held, which is why most repeats here are "
-                 "identical.\n"
-                 "A zero-length value is how MMKV records a removal, and is shown as an empty "
-                 "Value with the type reported as removed. That is distinct from a key holding "
-                 "an empty string.\n"
-                 "Values are typed by the calling app, not on disk. The reader reports a string "
-                 "where the stored bytes are a length-prefixed string and an integer where they "
-                 "are a bare scalar, which is the only distinction the bytes support; a value "
-                 "shown as an integer may have been written as a boolean.",
-        "paths": ('*/com.justalk.kids.android/files/mmkv/*',),
-        "output_types": ["html", "tsv", "lava"],
+        "output_types": "standard",
         "artifact_icon": "settings",
         "sample_data": {},
     },
-},
 }
 
 import base64
@@ -801,7 +563,7 @@ def _hash_index(files_found):
 
 def enforce_extension(filename, magic_bytes=None):
     if not filename: return ""
-    base, ext = os.path.splitext(filename)
+    ext = os.path.splitext(filename)[1]
     detected_ext = None
     if magic_bytes:
         if magic_bytes.startswith(b'\xff\xd8\xff'): detected_ext = '.jpg'
@@ -814,8 +576,6 @@ def enforce_extension(filename, magic_bytes=None):
         elif magic_bytes.startswith(b'RIFF') and b'WAVE' in magic_bytes[:16]: detected_ext = '.wav'
     if detected_ext:
         return detected_ext
-    if ext == '.0':
-        return '.jpg' # Fallback
     return ext
 
 def _check_in(paths):
@@ -823,7 +583,7 @@ def _check_in(paths):
         try:
             with open(path, 'rb') as f:
                 magic_bytes = f.read(16)
-        except:
+        except OSError:
             magic_bytes = None
         ext = enforce_extension(os.path.basename(path), magic_bytes)
         ref = check_in_media(path, os.path.basename(path), force_extension=ext)
@@ -1361,27 +1121,3 @@ def justalk_kids_account(context):
 def justalk_kids_app_state(context):
     return justalk_app_state.__wrapped__(context)
 
-
-@artifact_processor
-def justalk_kids_messages(context):
-    return justalk_messages.__wrapped__(context)
-
-@artifact_processor
-def justalk_kids_calls(context):
-    return justalk_calls.__wrapped__(context)
-
-@artifact_processor
-def justalk_kids_media(context):
-    return justalk_media.__wrapped__(context)
-
-@artifact_processor
-def justalk_kids_contacts(context):
-    return justalk_contacts.__wrapped__(context)
-
-@artifact_processor
-def justalk_kids_account(context):
-    return justalk_account.__wrapped__(context)
-
-@artifact_processor
-def justalk_kids_app_state(context):
-    return justalk_app_state.__wrapped__(context)
