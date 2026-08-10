@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         ),
         "author": "4n6Wizard",
         "creation_date": "2026-06-30",
-        "last_update_date": "2026-06-30",
+        "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Knox Secure Folder",
         "notes": (
@@ -484,6 +484,11 @@ def samsungSecureFolderHistoryLog(context):
 
     for file_found in context.get_files_found():
         file_found = str(file_found)
+        # The glob matches every file in the databases directory, so skip the
+        # SQLite sidecars before probing; opening a -wal/-shm/-journal file
+        # logs "file is not a database" without ever holding the table.
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not does_table_exist_in_db(file_found, HISTORY_TABLE):
             continue
 
