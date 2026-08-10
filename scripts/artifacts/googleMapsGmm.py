@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "description": "Parse Google Maps GMM labeled places (gmm_myplaces.db)",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-12-30",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "GEO Location",
         "notes": ("Updated 2023-12-12 by @segumarc\n"
@@ -65,7 +65,7 @@ import struct
 
 from scripts.ilapfuncs import decode_protobuf
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, logfunc, open_sqlite_db_readonly
 
 
 def _ms_to_utc(value):
@@ -143,6 +143,11 @@ def get_googleMapsGmm_places(context):
         if not file_found.endswith('gmm_myplaces.db'):
             continue
         source_path = file_found
+        # Older gmm_myplaces.db generations have no sync_item table
+        # (community report, PR #633).
+        if not does_table_exist_in_db(file_found, 'sync_item'):
+            logfunc(f'sync_item table not present in {file_found}; this gmm_myplaces.db generation is not covered')
+            continue
         rows = _run(file_found, '''
             SELECT rowid, key_string, round(latitude*.000001, 6), round(longitude*.000001, 6),
             sync_item, timestamp

@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Google Duo / Meet call history",
         "author": "@stark4n6",
         "creation_date": "2021-07-28",
-        "last_update_date": "2021-07-28",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Google Duo",
         "notes": "",
@@ -54,7 +54,7 @@ __artifacts_v2__ = {
         "description": "Google Duo / Meet notes (media messages)",
         "author": "@stark4n6",
         "creation_date": "2021-07-28",
-        "last_update_date": "2021-07-28",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Google Duo",
         "notes": "",
@@ -81,7 +81,7 @@ import datetime
 import os
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly, check_in_media
 
 
 def _ms_to_utc(value):
@@ -128,7 +128,9 @@ def _run(source_path, sql):
 def get_googleDuo(context):
     files_found = context.get_files_found()
     source_path = _tachyon_db(files_found)
-    rows = _run(source_path, '''
+    # Older TachyonDb generations lack some activity_history columns
+    # (community report, PR #633); absent columns are read as NULL.
+    rows = _run(source_path, null_absent_columns(source_path, '''
         SELECT timestamp_usec, substr(self_id, 0, instr(self_id, '|')),
         substr(other_id, 0, instr(other_id, '|')), duo_users.contact_display_name,
         CASE activity_type WHEN 1 THEN 'Call' WHEN 2 THEN 'Note' WHEN 4 THEN 'Reaction' END,
@@ -136,7 +138,7 @@ def get_googleDuo(context):
         CASE outgoing WHEN 0 THEN 'Incoming' WHEN 1 THEN 'Outgoing' END
         FROM activity_history
         LEFT JOIN duo_users ON duo_users.user_id = substr(other_id, 0, instr(other_id, '|'))
-    ''')
+    '''))
     data_list = [(_us_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
     data_headers = (('Timestamp', 'datetime'), 'Local User', 'Remote User', 'Contact Name',
                     'Activity Type', 'Call Status', 'Direction')
@@ -162,14 +164,14 @@ def get_googleDuo_contacts(context):
 def get_googleDuo_notes(context):
     files_found = context.get_files_found()
     source_path = _tachyon_db(files_found)
-    rows = _run(source_path, '''
+    rows = _run(source_path, null_absent_columns(source_path, '''
         SELECT sent_timestamp_millis, received_timestamp_millis, seen_timestamp_millis,
         sender_id, recipient_id, content_uri,
         replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), ''),
         content_size_bytes,
         CASE saved_status WHEN 0 THEN '' WHEN 1 THEN 'Yes' END
         FROM messages
-    ''')
+    '''))
     data_list = []
     for r in rows:
         file_name = r[6]
