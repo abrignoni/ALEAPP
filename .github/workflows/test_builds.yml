@@ -1,0 +1,134 @@
+name: Test builds
+
+# Build the CLI and GUI binaries with PyInstaller on every platform PyInstaller
+# cannot cross-build for, smoke-test them on their own architecture, and upload
+# them as workflow artifacts.
+#
+# Manual only. This is not the release pipeline; it exists so testable binaries can
+# be produced and actually executed per platform without anyone owning the hardware.
+#
+# The smoke tests are the point, not decoration: iLEAPP's frozen builds shipped a
+# startup crash for a long time (missing hidden imports) precisely because nothing
+# ever ran a built binary. Every step here that runs a binary is a regression test
+# for that class of failure. Ported from iLEAPP's test_builds.yml minus its
+# unifiedlog parser steps, which have no ALEAPP counterpart.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          # Latest supported Python. On x64 every pinned dependency resolves to a
+          # wheel (bcrypt 3.2.0 ships a cp36-abi3 win_amd64 wheel). On arm64 pip
+          # must build bcrypt 3.2.0 from source with the runner's Rust toolchain;
+          # that leg is exploratory until a run proves it.
+          python-version: '3.14'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Build CLI and GUI with PyInstaller
+        working-directory: scripts/pyinstaller
+        run: |
+          pyinstaller aleapp.spec --distpath ..\..\dist_build --workpath ..\..\build_tmp --noconfirm
+          pyinstaller aleappGUI.spec --distpath ..\..\dist_build --workpath ..\..\build_tmp --noconfirm
+
+      - name: Smoke test the frozen CLI
+        # --help proves the exe survives its imports (the historical crash class).
+        # The empty-input run proves module loading, report generation, and clean
+        # exit end to end; it must succeed with "no data found" everywhere.
+        run: |
+          dist_build\aleapp.exe --help
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          New-Item -ItemType Directory -Path smoke_in, smoke_out | Out-Null
+          "placeholder" | Out-File smoke_in\placeholder.txt
+          dist_build\aleapp.exe -t fs -i smoke_in -o smoke_out
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      - name: Package artifact
+        run: |
+          New-Item -ItemType Directory -Path artifact | Out-Null
+          Copy-Item dist_build\aleapp.exe artifact\
+          Copy-Item dist_build\aleappGUI.exe artifact\
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aleapp-windows-${{ matrix.arch }}-test
+          path: artifact/
+          retention-days: 14
+
+  build-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Install tk libraries for the GUI build
+        # The GUI imports tkinter; PyInstaller needs the import to succeed at
+        # analysis time. The hard check turns a missing-toolkit problem into a
+        # readable failure instead of a cryptic PyInstaller one.
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q libtcl8.6 libtk8.6
+          python -c "import tkinter" || { echo "tkinter unavailable in this Python"; exit 1; }
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Build CLI and GUI with PyInstaller
+        working-directory: scripts/pyinstaller
+        run: |
+          pyinstaller aleapp_Linux.spec --distpath ../../dist_build --workpath ../../build_tmp --noconfirm
+          pyinstaller aleappGUI_Linux.spec --distpath ../../dist_build --workpath ../../build_tmp --noconfirm
+
+      - name: Smoke test the frozen CLI
+        run: |
+          dist_build/aleapp --help
+          mkdir smoke_in smoke_out
+          echo placeholder > smoke_in/placeholder.txt
+          dist_build/aleapp -t fs -i smoke_in -o smoke_out
+
+      - name: Package artifact
+        run: |
+          mkdir artifact
+          cp dist_build/aleapp dist_build/aleappGUI artifact/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aleapp-linux-${{ matrix.arch }}-test
+          path: artifact/
+          retention-days: 14
