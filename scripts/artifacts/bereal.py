@@ -9,17 +9,18 @@ __artifacts_v2__ = {
         "category": "BeReal - Social Media",
         "notes": "High/Medium confidence requires a current-user endpoint/context or explicit isMe/current-user flag. Low confidence is reported only when a persisted shared_prefs account identifier matches a cached profile with no corroborating endpoint or flag. Generic cached profiles are excluded.",
         "paths": (
-            "*/data/data/com.bereal.ft/cache/network/*",
-            "*/data/user/0/com.bereal.ft/cache/network/*",
-            "*/data/data/com.bereal.ft/shared_prefs/*.xml",
-            "*/data/user/0/com.bereal.ft/shared_prefs/*.xml",
-            "*/data/data/com.bereal.ft/files/*",
-            "*/data/user/0/com.bereal.ft/files/*",
+                        "*/com.bereal.ft/cache/network/*",
+                        "*/com.bereal.ft/shared_prefs/*.xml",
+                        "*/com.bereal.ft/files/*",
         ),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "1 row",
+            "hc_pixel8pro_a17": "1 row",
+        },
     },
-    "bereal_friends": {
+    "bereal_accepted_friends": {
         "name": "BeReal Android - Accepted Friends",
         "description": "Reports only profiles supported by explicit accepted-friend evidence.",
         "author": "@Gear-I",
@@ -29,13 +30,15 @@ __artifacts_v2__ = {
         "category": "BeReal - Social Media",
         "notes": "Accepted friends are confirmed to come from the /friends-v1 endpoint. Pending requests (/friend-requests/received, /friend-requests/sent) and suggestions (/friends-of-friends) are confirmed as distinct endpoints and are excluded.",
         "paths": (
-            "*/data/data/com.bereal.ft/cache/network/*",
-            "*/data/user/0/com.bereal.ft/cache/network/*",
-            "*/data/data/com.bereal.ft/files/*",
-            "*/data/user/0/com.bereal.ft/files/*",
+                        "*/com.bereal.ft/cache/network/*",
+                        "*/com.bereal.ft/files/*",
         ),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "pixel7a_a14": "1 row",
+            "hc_pixel8pro_a17": "1 row",
+        },
     },
     "bereal_posts": {
         "name": "BeReal Android - Posts",
@@ -47,17 +50,17 @@ __artifacts_v2__ = {
         "category": "BeReal - Social Media",
         "notes": "Field names (id, primaryContent/secondaryContent/btsContent, myPosts/friendsPosts, comments, realMojis) confirmed against the BeReal Android client's own serialization DTOs (reverse-engineered from base.apk). Authorship is derived structurally from myPosts/friendsPosts or the posts[] wrapper's sibling user, not guessed from context.",
         "paths": (
-            "*/data/data/com.bereal.ft/cache/network/*",
-            "*/data/user/0/com.bereal.ft/cache/network/*",
-            "*/data/data/com.bereal.ft/cache/bereal_*video_cache/*",
-            "*/data/user/0/com.bereal.ft/cache/bereal_*video_cache/*",
-            "*/data/data/com.bereal.ft/cache/friend_timeline_cache/*",
-            "*/data/user/0/com.bereal.ft/cache/friend_timeline_cache/*",
-            "*/data/data/com.bereal.ft/files/*",
-            "*/data/user/0/com.bereal.ft/files/*",
+                        "*/com.bereal.ft/cache/network/*",
+                        "*/com.bereal.ft/cache/bereal_*video_cache/*",
+                        "*/com.bereal.ft/cache/friend_timeline_cache/*",
+                        "*/com.bereal.ft/files/*",
         ),
         "output_types": "standard",
         "artifact_icon": "camera",
+        "sample_data": {
+            "pixel7a_a14": "3 rows",
+            "hc_pixel8pro_a17": "0 rows",
+        },
     },
     "bereal_profile_pictures": {
         "name": "BeReal Android - Correlated Profile Pictures",
@@ -69,13 +72,15 @@ __artifacts_v2__ = {
         "category": "BeReal - Social Media",
         "notes": "Unassociated cache images are not reported. DiskLruCache .0 metadata is paired with .1 content.",
         "paths": (
-            "*/data/data/com.bereal.ft/cache/profile_picture_friends_cache/*",
-            "*/data/user/0/com.bereal.ft/cache/profile_picture_friends_cache/*",
-            "*/data/data/com.bereal.ft/cache/network/*",
-            "*/data/user/0/com.bereal.ft/cache/network/*",
+                        "*/com.bereal.ft/cache/profile_picture_friends_cache/*",
+                        "*/com.bereal.ft/cache/network/*",
         ),
         "output_types": "standard",
         "artifact_icon": "photo",
+        "sample_data": {
+            "pixel7a_a14": "2 rows",
+            "hc_pixel8pro_a17": "1 row",
+        },
     },
     "bereal_comments": {
         "name": "BeReal Android - Comments",
@@ -87,11 +92,14 @@ __artifacts_v2__ = {
         "category": "BeReal - Social Media",
         "notes": "Comments are extracted from a post's own embedded \"comments\" array (confirmed schema) or a standalone {postId, comments:[...]} endpoint response, not from generic keyword matching.",
         "paths": (
-            "*/data/data/com.bereal.ft/cache/network/*",
-            "*/data/user/0/com.bereal.ft/cache/network/*",
+                        "*/com.bereal.ft/cache/network/*",
         ),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "sample_data": {
+            "pixel7a_a14": "0 rows",
+            "hc_pixel8pro_a17": "0 rows",
+        },
     },
     "bereal_realmojis": {
         "name": "BeReal Android - RealMojis",
@@ -103,13 +111,15 @@ __artifacts_v2__ = {
         "category": "BeReal - Social Media",
         "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array (confirmed schema), distinguishing Instant vs standard RealMojis.",
         "paths": (
-            "*/data/data/com.bereal.ft/cache/network/*",
-            "*/data/user/0/com.bereal.ft/cache/network/*",
-            "*/data/data/com.bereal.ft/cache/profile_picture_friends_cache/*",
-            "*/data/user/0/com.bereal.ft/cache/profile_picture_friends_cache/*",
+                        "*/com.bereal.ft/cache/network/*",
+                        "*/com.bereal.ft/cache/profile_picture_friends_cache/*",
         ),
         "output_types": "standard",
         "artifact_icon": "thumbs-up",
+        "sample_data": {
+            "pixel7a_a14": "0 rows",
+            "hc_pixel8pro_a17": "0 rows",
+        },
     },
 }
 
@@ -680,7 +690,7 @@ def bereal_device_user(context):
 
 
 @artifact_processor
-def bereal_friends(context):
+def bereal_accepted_friends(context):
     files_found = context.get_files_found()
     by_url, _ = _media_index(files_found)
     rows, used = [], []
