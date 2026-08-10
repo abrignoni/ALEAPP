@@ -1,24 +1,48 @@
 __artifacts_v2__ = {
     "netstats": {
-        "name": "netstats",
-        "description": "Application accounts used on the device",
+        "name": "Netstats",
+        "description": "Per-application and device-wide network data usage from the binary "
+                       "system netstats collections, bucketed over time, with the connection "
+                       "type and network identifiers for each interface",
         "author": "Alex Caithness",
         "creation_date": "2026-08-05",
-        "last_update_date": "2026-08-05",
+        "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Network Usage",
-        "notes": "",
+        "notes": "The binary format is read per the AOSP sources named in this module "
+                 "(NetworkStatsCollection, NetworkIdentitySet and NetworkStatsHistory in "
+                 "packages/modules/Connectivity). Only the unified collection format "
+                 "(version 16, in use since Android 4.0) is parsed; older versions are "
+                 "rejected rather than guessed at.\n"
+                 "UIDs are resolved to package names through packages.xml where it parses. "
+                 "One tested image stored packages.xml encrypted; usage is still reported "
+                 "there with bare UIDs. A UID of -1 is UID_ALL ('aggregate/unspecified') in "
+                 "AOSP NetworkStats.java and carries no per-application attribution.\n"
+                 "Timeline output is deliberately off: the buckets produce tens of thousands "
+                 "of timestamped rows per image.",
         "paths": ("*/netstats/dev*", "*/netstats/uid*", "*/netstats/xt*", "*/system/packages.xml"),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "wifi",
-
+        "sample_data": {
+            "anne_a15": "29876 rows",
+            "galaxys10_a10": "4110 rows",
+            "hc_pixel8pro_a16": "27711 rows",
+            "hc_pixel8pro_a17": "12695 rows",
+            "kevin_pocox7_a15": "62999 rows",
+            "pixel7a_a14": "50819 rows",
+            "russell_pixel6a_a13": "45469 rows",
+            "s20fe_a13": "1894 rows",
+            "samsunga53_a14": "9825 rows",
+            "samsungs20_a13": "6794 rows",
+            "sharon_a14": "53032 rows",
+            "userb2_a13": "7343 rows",
+        },
     }
 }
 
 import dataclasses
 import datetime
 import enum
-import re
 import struct
 import typing
 import xml.etree.ElementTree as etree
@@ -161,7 +185,7 @@ class NetworkIdentitySet:
             raise ValueError(f"Unexpected network identity version: {version}")
         size = read_int(stream)
         identities: list[NetworkIdentity] = []
-        for i in range(size):
+        for _ in range(size):
             if version <= NetworkIdentitySet.IDENT_VERSION_INIT:
                 _ = read_int(stream)
             net_type = ConnectionType(read_int(stream))
@@ -235,9 +259,8 @@ class NetworkStatsHistory:
             bucket_duration = read_long(stream)
             bucket_starts = read_varlong_array(stream)
             if version >= NetworkStatsHistory.HISTORY_VERSION_ADD_ACTIVE:
-                active_time = read_varlong_array(stream)
-            else:
-                active_time = [0 for _ in range(len(bucket_starts))]
+                # consumed for stream position; the values are not reported
+                _ = read_varlong_array(stream)
             rx_bytes = read_varlong_array(stream)
             rx_packets = read_varlong_array(stream)
             tx_bytes = read_varlong_array(stream)
@@ -307,15 +330,18 @@ class NetstatsCollection:
         if magic != NetstatsCollection.MAGIC:
             raise ValueError(f"Invalid file signature (expected: {NetstatsCollection.MAGIC}; got: {magic})")
         version = read_int(stream)
-        if version != NetstatsCollection.COLLECTION_VERSION_UID_INIT:
+        # Only the unified layout is parsed. The legacy UID formats (versions
+        # 2-4) lay their records out differently, so reading them with this
+        # layout would misparse rather than fail; reject them instead.
+        if version == NetstatsCollection.COLLECTION_VERSION_UNIFIED_INIT:
             stats = []
             ident_size = read_int(stream)
-            for i in range(ident_size):
+            for _ in range(ident_size):
                 identity_set = NetworkIdentitySet.read(stream)
                 this_stat = NetStats(identity_set)
                 stats.append(this_stat)
                 history_size = read_int(stream)
-                for j in range(history_size):
+                for _ in range(history_size):
                     # uid, set_, tag are used together to make a "Key" object
                     # Per the comments in the Key object in
                     # packages/modules/Connectivity/framework-t/src/android/net/NetworkStatsCollection.java:
@@ -345,10 +371,12 @@ def map_uids(packages: etree.ElementTree):
         if uid := shared_user.get("userId"):
             uid_map[int(uid)] = shared_user.get("name")
 
-    # add special UIDS:
+    # Special UIDs per android.net.TrafficStats (UID_TETHERING = -5,
+    # UID_REMOVED = -4) and android.net.NetworkStats (UID_ALL = -1, the
+    # aggregate/unspecified value the device-wide collections use).
     uid_map[-5] = "[Tethering]"
     uid_map[-4] = "[Removed Application]"
-    uid_map[-1] = "[UID Details Unavailable]"
+    uid_map[-1] = "[All UIDs (aggregate)]"
 
     return uid_map
 
@@ -356,14 +384,20 @@ def map_uids(packages: etree.ElementTree):
 def netstats(context):
     files_found = context.get_files_found()
 
+    # packages.xml is an enrichment, not a requirement: it only maps UIDs to
+    # package names. One tested image stores it encrypted, and an unreadable
+    # copy must not cost the netstats rows themselves.
     packages = None
     for file in files_found:
         if file.endswith("packages.xml"):
-            if checkabx(file):
-                packages = abxread(file, False)
-            else:
-                packages = etree.parse(file)
-
+            try:
+                if checkabx(file):
+                    packages = abxread(file, False)
+                else:
+                    packages = etree.parse(file)
+            except (etree.ParseError, OSError, ValueError) as ex:
+                logfunc(f"Could not parse {file} for UID resolution ({ex}); "
+                        "usage is reported with bare UIDs")
 
     uid_map = map_uids(packages) if packages is not None else {}
 
