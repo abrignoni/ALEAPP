@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "whose semantic_segment protobuf embeds a coordinate pair the "
                        "latitude and longitude are decoded; the segment type is stored "
                        "as a raw integer and is reported as-is.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "description": "Entries in the edited_segment_table of Google's On Device Location "
                        "History (odlh-storage.db): segment time ranges with the block range "
                        "they belong to and whether the edit was uploaded.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

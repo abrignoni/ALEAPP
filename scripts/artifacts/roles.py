@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_roles": {
         "name": "roles",
         "description": "Parses assigned system role holders (source path variant, user, role and holder package) from the roles.xml file.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-01-25",
         "last_update_date": "2026-08-01",
         "requirements": "none",

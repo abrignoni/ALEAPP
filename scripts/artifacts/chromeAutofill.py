@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_chromeAutofill": {
         "name": "Chrome Autofill - Entries",
         "description": "Parses Chrome autofill entries",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-07-10",
         "requirements": "none",
@@ -28,25 +28,27 @@ __artifacts_v2__ = {
     "get_chromeAutofillProfiles": {
         "name": "Chrome Autofill - Profiles",
         "description": "Parses Chrome autofill profiles",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-08-08",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "",
+        "notes": "Chrome stores autofill address profiles in two layouts and both are read. Older releases use autofill_profiles joined to autofill_profile_names, _emails and _phones. Current releases use a single addresses table whose field values live in address_type_tokens, keyed by Chromium's FieldType enum; the values read are 3 NAME_FIRST, 4 NAME_MIDDLE, 5 NAME_LAST, 9 EMAIL_ADDRESS, 14 PHONE_HOME_WHOLE_NUMBER, 33 ADDRESS_HOME_CITY, 34 ADDRESS_HOME_STATE, 35 ADDRESS_HOME_ZIP, 60 COMPANY_NAME and 77 ADDRESS_HOME_STREET_ADDRESS. Field types outside that set are not reported rather than labelled, so a later Chrome field cannot reach the report under a guessed column; ADDRESS_HOME_COUNTRY and NAME_FULL are present in tested samples and are among those not reported. A third spelling, local_addresses, was seen empty on two tested images and is not read. Reference: Chromium, 'components/autofill/core/browser/field_types.h', https://github.com/chromium/chromium/blob/e90fec8693b4bd68806f3a5addec6722c0bc3939/components/autofill/core/browser/field_types.h",
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
             "anne_a15": "Android 15 | 0 rows",
             "galaxys10_a10": "Android 10 | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | 2 rows",
+            "hc_pixel8pro_a17": "Android 17 | 2 rows",
             "kevin_pocox7_a15": "Android 15 | 0 rows",
             "pixel7a_a14": "Android 14 | 0 rows",
-            "samsunga53_a14": "Android 14 | 0 rows",
-            "samsungs20_a13": "Android 13 | 0 rows",
-            "sharon_a14": "Android 14 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | 0 rows",
+            "s20fe_a13": "Android 13 | 0 rows",
+            "samsunga53_a14": "Android 14 | 0 rows",
+            "samsungs20_a13": "Android 13 | 3 rows",
+            "sharon_a14": "Android 14 | 0 rows",
             "userb2_a13": "Android 13 | 0 rows",
         },
     }
@@ -125,6 +127,53 @@ def get_chromeAutofill(context):
     return all_data_headers, all_data, report_file
 
 
+# Chrome retired the autofill_profiles / autofill_profile_* join in favour of a
+# single addresses table whose field values live in address_type_tokens, keyed by
+# the FieldType enum. Both layouts are read, so one parser covers both generations.
+# The type numbers are Chromium's own, checked against the pinned blob below.
+# Reference: Chromium, 'components/autofill/core/browser/field_types.h',
+# https://github.com/chromium/chromium/blob/e90fec8693b4bd68806f3a5addec6722c0bc3939/components/autofill/core/browser/field_types.h
+CHROME_FIELD_TYPES = {
+    'first_name': 3,     # NAME_FIRST
+    'middle_name': 4,    # NAME_MIDDLE
+    'last_name': 5,      # NAME_LAST
+    'email': 9,          # EMAIL_ADDRESS
+    'phone': 14,         # PHONE_HOME_WHOLE_NUMBER
+    'city': 33,          # ADDRESS_HOME_CITY
+    'state': 34,         # ADDRESS_HOME_STATE
+    'zip': 35,           # ADDRESS_HOME_ZIP
+    'company': 60,       # COMPANY_NAME
+    'street': 77,        # ADDRESS_HOME_STREET_ADDRESS
+}
+
+
+def _table_exists(cursor, table):
+    cursor.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,))
+    return cursor.fetchone() is not None
+
+
+def _modern_autofill_profiles(cursor):
+    """Read the addresses / address_type_tokens layout.
+
+    Field types the map does not name are left out rather than guessed, so a
+    later Chrome field cannot reach the report under an invented column.
+    """
+    tokens = {}
+    cursor.execute('SELECT guid, type, value FROM address_type_tokens')
+    for guid, field_type, value in cursor.fetchall():
+        tokens.setdefault(guid, {})[field_type] = value
+
+    cursor.execute('SELECT guid, date_modified, use_date, use_count FROM addresses')
+    rows = []
+    for guid, date_modified, use_date, use_count in cursor.fetchall():
+        field = tokens.get(guid, {})
+        rows.append((date_modified, guid) + tuple(
+            field.get(CHROME_FIELD_TYPES[name], '') for name in
+            ('first_name', 'middle_name', 'last_name', 'email', 'phone',
+             'company', 'street', 'city', 'state', 'zip')) + (use_date, use_count))
+    return rows
+
+
 @artifact_processor
 def get_chromeAutofillProfiles(context):
     files_found = context.get_files_found()
@@ -152,28 +201,34 @@ def get_chromeAutofillProfiles(context):
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         try:
-            cursor.execute('''
-                select
-                    date_modified,
-                    autofill_profiles.guid,
-                    autofill_profile_names.first_name,
-                    autofill_profile_names.middle_name,
-                    autofill_profile_names.last_name,
-                    autofill_profile_emails.email,
-                    autofill_profile_phones.number,
-                    autofill_profiles.company_name,
-                    autofill_profiles.street_address,
-                    autofill_profiles.city,
-                    autofill_profiles.state,
-                    autofill_profiles.zipcode,
-                    use_date,
-                    autofill_profiles.use_count
-                from autofill_profiles
-                inner join autofill_profile_emails ON autofill_profile_emails.guid = autofill_profiles.guid
-                inner join autofill_profile_phones ON autofill_profiles.guid = autofill_profile_phones.guid
-                inner join autofill_profile_names ON autofill_profile_phones.guid = autofill_profile_names.guid
-            ''')
-            rows = cursor.fetchall()
+            if _table_exists(cursor, 'autofill_profiles'):
+                cursor.execute('''
+                    select
+                        date_modified,
+                        autofill_profiles.guid,
+                        autofill_profile_names.first_name,
+                        autofill_profile_names.middle_name,
+                        autofill_profile_names.last_name,
+                        autofill_profile_emails.email,
+                        autofill_profile_phones.number,
+                        autofill_profiles.company_name,
+                        autofill_profiles.street_address,
+                        autofill_profiles.city,
+                        autofill_profiles.state,
+                        autofill_profiles.zipcode,
+                        use_date,
+                        autofill_profiles.use_count
+                    from autofill_profiles
+                    inner join autofill_profile_emails ON autofill_profile_emails.guid = autofill_profiles.guid
+                    inner join autofill_profile_phones ON autofill_profiles.guid = autofill_profile_phones.guid
+                    inner join autofill_profile_names ON autofill_profile_phones.guid = autofill_profile_names.guid
+                ''')
+                rows = cursor.fetchall()
+            elif _table_exists(cursor, 'addresses'):
+                # Chrome release without the legacy tables
+                rows = _modern_autofill_profiles(cursor)
+            else:
+                rows = []
         except Exception as e:
             logfunc(str(e))
             rows = []

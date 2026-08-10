@@ -27,9 +27,14 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | WithingsHealthMate |
 | ZangiChats |
 | airtagAndroid |
+| allTrails |
 | androidauto |
 | appicons |
+| breadWallet |
+| calculatorLockVault |
+| dropbox |
 | frosting |
+| galleryVault |
 | gmailEmails |
 | googleAccountHistory |
 | googleCalendar |
@@ -40,6 +45,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleOdlh |
 | googlePlaySearches |
 | honorMediaLibrary |
+| kikMessenger |
 | knuddels |
 | rema_1000 |
 | samsungBadgeProvider |
@@ -53,12 +59,16 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungStoryService |
 | samsungWifiDatabases |
 | sbbmobile |
+| settingsSearch |
 | shistorylog |
+| slack |
 | swellbeing |
 | swissmeteo |
 | telegramAndroid |
 | thunderbird |
 | waze |
+| weibo |
+| xiaohongshu |
 <!-- GET_RECORDS_END -->
 
 ### open_sqlite_db_readonly() Usage

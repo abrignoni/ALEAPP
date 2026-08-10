@@ -25,7 +25,8 @@ from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readon
 def get_badoo_conn(context):
     files_found = context.get_files_found()
 
-    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')]
+    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')
+                   and not str(x).endswith('journal')]
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
@@ -40,7 +41,10 @@ def get_badoo_conn(context):
     data_list = []
     for row in all_rows:
         sort_timestamp = datetime.datetime.fromtimestamp(int(row[4]) / 1000, datetime.timezone.utc) if row[4] else ''
-        avatar_url = '<img src="' + esc(row[5]) + '" width="100" height="100">' if row[5] else ''
+        # The avatar URL is remote, so an <img> here would make opening the report
+        # fetch it and disclose the examination to the service. Report the URL as
+        # escaped text instead; the evidence is preserved, nothing is fetched.
+        avatar_url = esc(row[5]) if row[5] else ''
         data_list.append((row[0], row[1], row[2], row[3], sort_timestamp, avatar_url, row[6]))
 
     data_headers = ('ID', 'Name', 'Gender', 'Origin', ('Sort Timestamp', 'datetime'), 'Avatar URL', 'Display Message')

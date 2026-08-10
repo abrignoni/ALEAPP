@@ -57,6 +57,8 @@ def get_googleMessages(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith('bugle_db'):
             continue  # Skip all other files
 

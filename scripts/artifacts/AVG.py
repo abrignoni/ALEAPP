@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_AVG": {
         "name": "AVG - Encryption Details",
         "description": "Recovers the AVG (com.antivirus) vault PIN/pattern and derives the decryption keys",
-        "author": "",
+        "author": "@Theincidentalchewtoy",
         "creation_date": "2022-05-03",
         "last_update_date": "2022-05-03",
         "requirements": "none",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     "get_AVG_media": {
         "name": "AVG - Media Files",
         "description": "Decrypts media hidden in the AVG (com.antivirus) vault",
-        "author": "",
+        "author": "@Theincidentalchewtoy",
         "creation_date": "2022-05-03",
         "last_update_date": "2022-05-03",
         "requirements": "none",

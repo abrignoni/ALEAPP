@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_ChessComGames": {
         "name": "Chess.com Games",
         "description": "Parses Chess.com game records",
-        "author": "",
+        "author": "@kibaffo33",
         "creation_date": "2022-03-27",
         "last_update_date": "2022-03-27",
         "requirements": "none",

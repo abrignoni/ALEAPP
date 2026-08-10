@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_googlemapaudio": {
         "name": "Google Maps Voice Guidance",
         "description": "Google Maps text-to-speech voice guidance audio (app_tts-cache)",
-        "author": "",
+        "author": "@kibaffo33",
         "creation_date": "2021-12-27",
         "last_update_date": "2021-12-27",
         "requirements": "none",

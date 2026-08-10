@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_samsungWeatherClockInfo": {
         "name": "Samsung Weather Clock - Info",
         "description": "Parses current conditions from the Samsung Weather Clock (timestamp, timezone, location, temperature, conditions, sunrise and sunset) from the WeatherClock database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-10-13",
         "last_update_date": "2021-10-13",
         "requirements": "none",
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
     "get_samsungWeatherClockDaily": {
         "name": "Samsung Weather Clock - Daily",
         "description": "Parses the Samsung Weather Clock daily forecast (timestamp, location, temperature, conditions and daily high and low) from the WeatherClock database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-10-13",
         "last_update_date": "2021-10-13",
         "requirements": "none",
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
     "get_samsungWeatherClockHourly": {
         "name": "Samsung Weather Clock - Hourly",
         "description": "Parses the Samsung Weather Clock hourly forecast (timestamp, location, temperature, conditions, rain probability and wind) from the WeatherClock database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-10-13",
         "last_update_date": "2021-10-13",
         "requirements": "none",

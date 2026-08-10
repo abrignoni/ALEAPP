@@ -25,7 +25,8 @@ from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readon
 def get_puma_users(context):
     files_found = context.get_files_found()
 
-    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')]
+    files_found = [x for x in files_found if not str(x).endswith('wal') and not str(x).endswith('shm')
+                   and not str(x).endswith('journal')]
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
@@ -43,7 +44,10 @@ def get_puma_users(context):
     for row in all_rows:
         dob = datetime.datetime.fromtimestamp(int(row[4]) / 1000, datetime.timezone.utc) if row[4] else ''
         work_time = row[16] / 60 if row[16] else 'N/A'
-        image = '<img src="' + esc(row[10]) + '" alt="' + esc(row[10]) + '" width="50" height="50">' if row[10] else 'N/A'
+        # The avatar URL is remote, so an <img> here would make opening the report
+        # fetch it and disclose the examination to the service. Report the URL as
+        # escaped text instead; the evidence is preserved, nothing is fetched.
+        image = esc(row[10]) if row[10] else 'N/A'
         data_list.append((row[0], row[1], row[2], row[3], dob, row[5], row[6], row[7], row[8], row[9], image, row[11], row[12], row[13], row[14], row[15], work_time))
 
     data_headers = ('ID', 'Email', 'Name', 'Gender', ('Date of Birth', 'datetime'), 'Weight', 'Height', 'Country', 'Location', 'Interests', 'Profile Image URL', 'Total Score', 'Following Count', 'Followers Count', 'Goal', 'Workout Time of Day', 'Workout Duration')

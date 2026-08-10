@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_googleCallScreen": {
         "name": "Google Call Screen",
         "description": "Transcripts and recordings from Google Assistant's Call Screen feature",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-08-06",
         "last_update_date": "2021-08-06",
         "requirements": "none",

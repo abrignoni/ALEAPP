@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses device build properties (key and value) from the vendor "
                        "and system build.prop files. When both files are present the "
                        "vendor values are reported.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

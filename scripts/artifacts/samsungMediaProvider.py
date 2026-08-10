@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "table): file path and name, taken/added/modified times, "
                        "coordinates and packed address, the URL and app a captured file "
                        "came from, and the favorite/hidden/trashed/deleted flags.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
         "description": "Reverse-geocoded places recorded by the Samsung media provider "
                        "(media.db, location table): coordinates with the resolved country, "
                        "locality, street and full address text.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

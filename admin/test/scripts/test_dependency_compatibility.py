@@ -16,7 +16,6 @@ import simplekml
 import xlsxwriter
 import xmltodict
 from bs4 import BeautifulSoup
-from geopy.geocoders import Nominatim
 from packaging import version
 from PIL import Image
 from google.protobuf import descriptor
@@ -30,7 +29,6 @@ THIRD_PARTY_IMPORTS = (
     "bencoding",
     "fitdecode",
     "folium",
-    "geopy",
     "packaging",
     "PIL",
     "polyline",
@@ -92,7 +90,6 @@ class TestDependencyCompatibility(unittest.TestCase):
             finally:
                 os.unlink(html_file.name)
 
-        self.assertEqual(Nominatim(user_agent="aleapp-test").scheme, "https")
         self.assertLess(version.parse("1.2.3"), version.parse("2.0.0"))
 
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as image_file:

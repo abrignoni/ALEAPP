@@ -99,3 +99,7 @@ instance/
 .ipynb_checkpoints
 .python-version
 
+
+# Personal Claude Code context, not shared with the team
+CLAUDE.local.md
+.claude/settings.local.json

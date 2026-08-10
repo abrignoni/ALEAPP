@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_chromeLoginData": {
         "name": "Login Data",
         "description": "Parses saved Login Data from Chromium Based Browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-20",
         "last_update_date": "2020-03-20",
         "requirements": "none",

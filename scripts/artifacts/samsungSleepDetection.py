@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "detection (SleepDetection.db, screen_data table), with the user "
                        "present and keyguard flags. State values are stored as raw integers "
                        "and are reported as-is.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
         "description": "Sleep windows computed by the Samsung Continuity Service sleep "
                        "detection (SleepDetection.db, sleep_time table): the recorded start "
                        "and end of each window and when the record was written.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

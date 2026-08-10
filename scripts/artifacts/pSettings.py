@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_pSettings": {
         "name": "pSettings",
         "description": "Parses Google partner settings (name and value) from the Google services framework googlesettings.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",

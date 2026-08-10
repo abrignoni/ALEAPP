@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_firefoxPermissions": {
         "name": "Firefox - Permissions",
         "description": "Parses Firefox site permissions (origin, permission type, status, modification and expiration timestamps) from permissions.sqlite.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-01",
         "requirements": "none",

@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_TorrentData": {
         "name": "TorrentData",
         "description": "Parses torrent metadata (torrent name, info hash and file paths) from .torrent files.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-09-15",
         "last_update_date": "2023-09-15",
         "requirements": "none",

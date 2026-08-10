@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_googleLastTrip": {
         "name": "Google Maps Last Trip",
         "description": "Last saved trip start/end from Google Maps (saved_directions.data.cs)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-10-16",
         "last_update_date": "2023-10-16",
         "requirements": "none",

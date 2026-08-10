@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "App icon badge counts recorded by the Samsung badge provider "
                        "(badge.db, apps table): the package and activity each badge belongs "
                        "to, its count and whether it is hidden.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

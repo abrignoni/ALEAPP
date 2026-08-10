@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_chromeCookies": {
         "name": "Cookies",
         "description": "Parses Cookies from Chromium Based Browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",

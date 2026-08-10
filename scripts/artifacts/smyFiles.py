@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_smyFiles": {
         "name": "My Files - Download History",
         "description": "Parses Samsung My Files download history (timestamp, name, full path, hidden and trashed flags and source) from the My Files database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-12-17",
         "last_update_date": "2020-12-17",
         "requirements": "none",
@@ -16,7 +16,7 @@ __artifacts_v2__ = {
     "get_smyFiles_legacy": {
         "name": "My Files - Download History (Legacy)",
         "description": "Pre-Android 12 download_history schema",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-12-17",
         "last_update_date": "2020-12-17",
         "requirements": "none",
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
     "get_smyFiles_recent": {
         "name": "My Files - Recent Files (MyFiles DB)",
         "description": "Parses Samsung My Files recent files (timestamp, name, full path, hidden and trashed flags and source) from the My Files database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-12-17",
         "last_update_date": "2020-12-17",
         "requirements": "none",

@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_walStrings": {
         "name": "walStrings",
         "description": "If  we only want ascii, use 'ascii_chars_re' below",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-04-17",
         "last_update_date": "2026-07-10",
         "requirements": "none",
@@ -32,6 +32,7 @@ import re
 import string
 from pathlib import Path
 
+from scripts.html_safe import safe_local_link
 from scripts.ilapfuncs import artifact_processor
 
 control_chars = ''.join(map(chr, range(0, 32))) + ''.join(map(chr, range(127, 160)))
@@ -72,7 +73,10 @@ def get_walStrings(context):
                         unique_items.add(match.group())
 
         if unique_items:
-            out = f'<a href="{final}" style = "color:blue" target="_blank">{journalName}</a>'
+            # Report-relative link to the strings file written beside the report.
+            # safe_local_link() escapes the label and refuses any target that would
+            # leave the report folder.
+            out = safe_local_link(final, journalName)
             data_list.append((out, context.get_relative_path(file_found)))
         else:
             try:
