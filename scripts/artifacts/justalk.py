@@ -29,9 +29,8 @@ __artifacts_v2__ = {
                  "the data, not a documented unit.\n"
                  "Validation boundary. This was built from a single private sample holding one "
                  "one-to-one conversation, so the fields are mapped from that sample and the "
-                 "counts here are not from a public corpus. The class_ServerGroup, "
-                 "class_ServerMember, class_Moment and class_ROKids* tables were all empty in it, "
-                 "so group chats, Moments posts and JusTalk Kids parental controls are not "
+                 "counts here are not from a public corpus. The class_ServerGroup and "
+                 "class_ROKids* tables were all empty in it, so group chats and JusTalk Kids parental controls are not "
                  "covered. The reply, reaction, sticker, poll and link columns of class_CallLog "
                  "were unpopulated and are not reported. A sample exercising any of those would "
                  "be welcome.",
@@ -137,6 +136,34 @@ __artifacts_v2__ = {
         "paths": ('*/com.juphoon.justalk/files/*.realm',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {},
+    },
+    "justalk_members": {
+        "name": "JusTalk - Members",
+        "description": "Server members (contacts/groups) from the JusTalk Realm store",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "creation_date": "2026-08-10",
+        "last_update_date": "2026-08-10",
+        "requirements": "none",
+        "category": "JusTalk",
+        "notes": "Read from the class_ServerMember table.",
+        "paths": ('*/com.juphoon.justalk/files/*.realm',),
+        "output_types": "standard",
+        "artifact_icon": "users",
+        "sample_data": {},
+    },
+    "justalk_moments": {
+        "name": "JusTalk - Moments",
+        "description": "Moments (timeline posts) from the JusTalk Realm store",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "creation_date": "2026-08-10",
+        "last_update_date": "2026-08-10",
+        "requirements": "none",
+        "category": "JusTalk",
+        "notes": "Read from the class_Moment table.",
+        "paths": ('*/com.juphoon.justalk/files/*.realm',),
+        "output_types": "standard",
+        "artifact_icon": "layout",
         "sample_data": {},
     },
     "justalk_account": {
@@ -264,9 +291,8 @@ __artifacts_v2__ = {
                  "the data, not a documented unit.\n"
                  "Validation boundary. This was built from a single private sample holding one "
                  "one-to-one conversation, so the fields are mapped from that sample and the "
-                 "counts here are not from a public corpus. The class_ServerGroup, "
-                 "class_ServerMember, class_Moment and class_ROKids* tables were all empty in it, "
-                 "so group chats, Moments posts and JusTalk Kids parental controls are not "
+                 "counts here are not from a public corpus. The class_ServerGroup and "
+                 "class_ROKids* tables were all empty in it, so group chats and JusTalk Kids parental controls are not "
                  "covered. The reply, reaction, sticker, poll and link columns of class_CallLog "
                  "were unpopulated and are not reported. A sample exercising any of those would "
                  "be welcome.",
@@ -372,6 +398,34 @@ __artifacts_v2__ = {
         "paths": ('*/com.justalk.kids.android/files/*.realm',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {},
+    },
+    "justalk_kids_members": {
+        "name": "JusTalk Kids - Members",
+        "description": "Server members (contacts/groups) from the JusTalk Realm store",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "creation_date": "2026-08-10",
+        "last_update_date": "2026-08-10",
+        "requirements": "none",
+        "category": "JusTalk Kids",
+        "notes": "Read from the class_ServerMember table.",
+        "paths": ('*/com.justalk.kids.android/files/*.realm',),
+        "output_types": "standard",
+        "artifact_icon": "users",
+        "sample_data": {},
+    },
+    "justalk_kids_moments": {
+        "name": "JusTalk Kids - Moments",
+        "description": "Moments (timeline posts) from the JusTalk Realm store",
+        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "creation_date": "2026-08-10",
+        "last_update_date": "2026-08-10",
+        "requirements": "none",
+        "category": "JusTalk Kids",
+        "notes": "Read from the class_Moment table.",
+        "paths": ('*/com.justalk.kids.android/files/*.realm',),
+        "output_types": "standard",
+        "artifact_icon": "layout",
         "sample_data": {},
     },
     "justalk_kids_account": {
@@ -492,32 +546,41 @@ SKIP_SUFFIXES = ('.realm', '.lock', '.crc', '.log', '.backup-log', '.xml', '.ini
 
 def _is_justalk_realm(path):
     """The realm glob picks up default.realm and the versioned backup copy as well as the
-    account store, so confirm the file carries JusTalk classes before reading it."""
+    account store, so confirm the file carries JusTalk classes before reading it.
+    Empty templates (0 rows in key tables) are ignored to prevent returning No Data."""
     try:
         tables = parse_realm_file(path).get('active', {})
     except Exception:  # pylint: disable=broad-exception-caught
         return False
-    return 'class_CallLog' in tables and 'class_ROFileUrl' in tables
+    
+    if 'metadata' not in tables:
+        return False
+        
+    for cls in ('class_CallLog', 'class_ROFileUrl', 'class_ServerFriend', 'class_ServerMember', 'class_Moment'):
+        if cls in tables and tables[cls].get('row_count', 0) > 0:
+            return True
+            
+    return False
 
 
-def _account_realm(files_found):
-    """Return the per-account Realm store. The account store is named after the local
-    account uid; default.realm is a separate empty store and the .v23.backup.realm copy is
-    a pre-upgrade snapshot, so both are passed over when a live account store is present."""
+def _account_realms(files_found):
+    """Return all valid per-account Realm stores. default.realm and .realm are empty stores
+    and .v23.backup.realm copies are pre-upgrade snapshots, so they are passed over."""
     candidates = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('.realm'):
             continue
         name = os.path.basename(file_found)
-        if name == 'default.realm':
+        if name in ('default.realm', '.realm'):
             continue
         candidates.append(file_found)
     live = [path for path in candidates if '.backup.' not in os.path.basename(path)]
-    for path in live + candidates:
+    valid_realms = []
+    for path in live:
         if _is_justalk_realm(path):
-            return path
-    return ''
+            valid_realms.append(path)
+    return valid_realms
 
 
 def _rows(realm_path, class_name):
@@ -615,49 +678,62 @@ def _seconds_from_ms(value):
     return round(value / 1000, 3)
 
 
+def _epoch(value):
+    """The MMKV profile stores some epochs as JSON numbers and others as quoted strings,
+    so coerce before handing the value to the shared converter."""
+    try:
+        value = int(value)
+    except (TypeError, ValueError):
+        return ''
+    if value <= 0:
+        return ''
+    return convert_unix_ts_to_utc(value)
+
+
 @artifact_processor
 def justalk_messages(context):
     files_found = context.get_files_found()
-    source_path = _account_realm(files_found)
+    source_paths = _account_realms(files_found)
     data_list = []
 
-    file_records = _rows(source_path, 'class_ROFileUrl')
     hash_index = _hash_index(files_found)
 
-    for row in sorted(_rows(source_path, 'class_CallLog'), key=lambda r: r.get('timestamp') or 0):
-        if row.get('type') in CALL_TYPES:
-            continue
-        outgoing = not row.get('incoming')
-        media = _file_record(file_records, row.get('fileUrl'))
-        matches = hash_index.get(_md5_hex(media.get('md5')), []) if media else []
-        
-        mtype = row.get('type')
-        msg_content = row.get('content')
-        if mtype in ("Photo", "Video", "Movie", "Voice", "Location") and media:
-            msg_content = f"[{mtype}]"
+    for source_path in source_paths:
+        file_records = _rows(source_path, 'class_ROFileUrl')
+        for row in sorted(_rows(source_path, 'class_CallLog'), key=lambda r: r.get('timestamp') or 0):
+            if row.get('type') in CALL_TYPES:
+                continue
+            outgoing = not row.get('incoming')
+            media = _file_record(file_records, row.get('fileUrl'))
+            matches = hash_index.get(_md5_hex(media.get('md5')), []) if media else []
             
-        data_list.append((
-            convert_unix_ts_to_utc(row.get('timestamp')),
-            'Outgoing' if outgoing else 'Incoming',
-            row.get('senderName'),
-            row.get('name'),
-            mtype,
-            msg_content,
-            _check_in(matches),
-            '' if not media else ('Recovered' if matches else 'Not in extraction'),
-            media.get('encryptedUrl', ''),
-            _int_or_blank(media.get('length')) if media else '',
-            media.get('suffix', ''),
-            _int_or_blank(media.get('duration')) if media else '',
-            media.get('localPath', ''),
-            media.get('thumbnailLocalPath', ''),
-            row.get('senderUid'),
-            row.get('uid'),
-            row.get('imdnId'),
-            row.get('logId'),
-            row.get('state'),
-            row.get('readState'),
-        ))
+            mtype = row.get('type')
+            msg_content = row.get('content')
+            if mtype in ("Photo", "Video", "Movie", "Voice", "Location") and media:
+                msg_content = f"[{mtype}]"
+                
+            data_list.append((
+                convert_unix_ts_to_utc(row.get('timestamp')),
+                'Outgoing' if outgoing else 'Incoming',
+                row.get('senderName'),
+                row.get('name'),
+                mtype,
+                msg_content,
+                _check_in(matches),
+                '' if not media else ('Recovered' if matches else 'Not in extraction'),
+                media.get('encryptedUrl', ''),
+                _int_or_blank(media.get('length')) if media else '',
+                media.get('suffix', ''),
+                _int_or_blank(media.get('duration')) if media else '',
+                media.get('localPath', ''),
+                media.get('thumbnailLocalPath', ''),
+                row.get('senderUid'),
+                row.get('uid'),
+                row.get('imdnId'),
+                row.get('logId'),
+                row.get('state'),
+                row.get('readState'),
+            ))
 
     data_headers = (
         ('Timestamp', 'datetime'),
@@ -681,30 +757,31 @@ def justalk_messages(context):
         'State (as stored)',
         'Read State (as stored)',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, source_paths[0] if source_paths else ''
 
 
 @artifact_processor
 def justalk_calls(context):
-    source_path = _account_realm(context.get_files_found())
+    source_paths = _account_realms(context.get_files_found())
     data_list = []
 
-    for row in sorted(_rows(source_path, 'class_CallLog'), key=lambda r: r.get('timestamp') or 0):
-        if row.get('type') not in CALL_TYPES:
-            continue
-        data_list.append((
-            convert_unix_ts_to_utc(row.get('timestamp')),
-            'Outgoing' if not row.get('incoming') else 'Incoming',
-            row.get('type'),
-            row.get('name'),
-            _seconds_from_ms(row.get('duration')),
-            _int_or_blank(row.get('duration')),
-            row.get('uid'),
-            row.get('serverCallId'),
-            row.get('logId'),
-            row.get('state'),
-            row.get('reason'),
-        ))
+    for source_path in source_paths:
+        for row in sorted(_rows(source_path, 'class_CallLog'), key=lambda r: r.get('timestamp') or 0):
+            if row.get('type') not in CALL_TYPES:
+                continue
+            data_list.append((
+                convert_unix_ts_to_utc(row.get('timestamp')),
+                'Outgoing' if not row.get('incoming') else 'Incoming',
+                row.get('type'),
+                row.get('name'),
+                _seconds_from_ms(row.get('duration')),
+                _int_or_blank(row.get('duration')),
+                row.get('uid'),
+                row.get('serverCallId'),
+                row.get('logId'),
+                row.get('state'),
+                row.get('reason'),
+            ))
 
     data_headers = (
         ('Timestamp', 'datetime'),
@@ -719,52 +796,53 @@ def justalk_calls(context):
         'State (as stored)',
         'Reason (as stored)',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, source_paths[0] if source_paths else ''
 
 
 @artifact_processor
 def justalk_media(context):
     files_found = context.get_files_found()
-    source_path = _account_realm(files_found)
+    source_paths = _account_realms(files_found)
     data_list = []
 
     hash_index = _hash_index(files_found)
     accounted = set()
 
-    file_records = _rows(source_path, 'class_ROFileUrl')
-    # A message row points at its file record by index, so build the reverse map to report
-    # which message each file belongs to.
-    message_by_index = {}
-    for row in _rows(source_path, 'class_CallLog'):
-        link = row.get('fileUrl')
-        if link is not None:
-            message_by_index.setdefault(int(link), row)
+    for source_path in source_paths:
+        file_records = _rows(source_path, 'class_ROFileUrl')
+        # A message row points at its file record by index, so build the reverse map to report
+        # which message each file belongs to.
+        message_by_index = {}
+        for row in _rows(source_path, 'class_CallLog'):
+            link = row.get('fileUrl')
+            if link is not None:
+                message_by_index.setdefault(int(link), row)
 
-    for index, media in enumerate(file_records):
-        digest = _md5_hex(media.get('md5'))
-        matches = hash_index.get(digest, [])
-        accounted.update(matches)
-        message = message_by_index.get(index, {})
-        data_list.append((
-            convert_unix_ts_to_utc(message.get('timestamp')) if message else '',
-            _check_in(matches),
-            media.get('suffix'),
-            _int_or_blank(media.get('length')),
-            _int_or_blank(media.get('duration')),
-            digest,
-            media.get('encryptedUrl'),
-            media.get('fileKey'),
-            media.get('fileName'),
-            media.get('fileUrl'),
-            media.get('filePath'),
-            media.get('localPath'),
-            media.get('thumbnailLocalPath'),
-            _int_or_blank(media.get('width')),
-            _int_or_blank(media.get('height')),
-            message.get('type', ''),
-            message.get('logId', ''),
-            '; '.join(os.path.basename(path) for path in matches),
-        ))
+        for index, media in enumerate(file_records):
+            digest = _md5_hex(media.get('md5'))
+            matches = hash_index.get(digest, [])
+            accounted.update(matches)
+            message = message_by_index.get(index, {})
+            data_list.append((
+                convert_unix_ts_to_utc(message.get('timestamp')) if message else '',
+                _check_in(matches),
+                media.get('suffix'),
+                _int_or_blank(media.get('length')),
+                _int_or_blank(media.get('duration')),
+                digest,
+                media.get('encryptedUrl'),
+                media.get('fileKey'),
+                media.get('fileName'),
+                media.get('fileUrl'),
+                media.get('filePath'),
+                media.get('localPath'),
+                media.get('thumbnailLocalPath'),
+                _int_or_blank(media.get('width')),
+                _int_or_blank(media.get('height')),
+                message.get('type', ''),
+                message.get('logId', ''),
+                '; '.join(os.path.basename(path) for path in matches),
+            ))
 
     for digest, paths in sorted(hash_index.items()):
         for path in paths:
@@ -797,35 +875,36 @@ def justalk_media(context):
         'Message Log ID',
         'Cached File Names',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, source_paths[0] if source_paths else ''
 
 
 @artifact_processor
 def justalk_contacts(context):
-    source_path = _account_realm(context.get_files_found())
+    source_paths = _account_realms(context.get_files_found())
     data_list = []
 
-    for row in _rows(source_path, 'class_ServerFriend'):
-        data_list.append((
-            convert_unix_ts_to_utc(row.get('timestamp')),
-            convert_unix_ts_to_utc(row.get('lastOnlineTime')),
-            convert_unix_ts_to_utc(row.get('birthday')),
-            row.get('justalkId'),
-            row.get('name'),
-            row.get('nickName'),
-            row.get('uid'),
-            row.get('phone'),
-            row.get('gender'),
-            row.get('loginCountry'),
-            row.get('version'),
-            row.get('packageName'),
-            row.get('avatarUrl'),
-            row.get('relationType'),
-            row.get('serverRelationType'),
-            row.get('onlineState'),
-            'Yes' if row.get('mute') else 'No',
-            'Yes' if row.get('sticky') else 'No',
-        ))
+    for source_path in source_paths:
+        for row in _rows(source_path, 'class_ServerFriend'):
+            data_list.append((
+                _epoch(row.get('timestamp')),
+                _epoch(row.get('lastOnlineTime')),
+                _epoch(row.get('birthday')),
+                row.get('justalkId'),
+                row.get('name'),
+                row.get('nickName'),
+                row.get('uid'),
+                row.get('phone'),
+                row.get('gender'),
+                row.get('loginCountry'),
+                row.get('version'),
+                row.get('packageName'),
+                row.get('avatarUrl'),
+                row.get('relationType'),
+                row.get('serverRelationType'),
+                row.get('onlineState'),
+                'Yes' if row.get('mute') else 'No',
+                'Yes' if row.get('sticky') else 'No',
+            ))
 
     data_headers = (
         ('Timestamp', 'datetime'),
@@ -847,7 +926,7 @@ def justalk_contacts(context):
         'Muted',
         'Pinned',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, source_paths[0] if source_paths else ''
 
 
 def _profile_user(files_found):
@@ -907,18 +986,6 @@ def _local_profile(files_found, account_uid):
     return {}, path
 
 
-def _epoch(value):
-    """The MMKV profile stores some epochs as JSON numbers and others as quoted strings,
-    so coerce before handing the value to the shared converter."""
-    try:
-        value = int(value)
-    except (TypeError, ValueError):
-        return ''
-    if value <= 0:
-        return ''
-    return convert_unix_ts_to_utc(value)
-
-
 def _jwt_claims(token):
     """Return the payload claims of a JSON Web Token (RFC 7519) without verifying it.
 
@@ -956,65 +1023,66 @@ def _justalk_id(profile_user):
 @artifact_processor
 def justalk_account(context):
     files_found = context.get_files_found()
-    source_path = _account_realm(files_found)
+    source_paths = _account_realms(files_found)
     data_list = []
 
     profile_user, profile_path = _profile_user(files_found)
-    if not source_path and not profile_user:
+    if not source_paths and not profile_user:
         return _account_headers(), data_list, ''
 
-    counts = {}
-    if source_path:
-        for section in ('active', 'inactive'):
-            total = 0
-            for class_name in ('class_CallLog', 'class_ROFileUrl', 'class_ServerFriend',
-                               'class_Conversation'):
-                try:
-                    total += len(list(realm_rows(source_path, class_name, section=section)))
-                except Exception:  # pylint: disable=broad-exception-caught
-                    pass
-            counts[section] = total
+    for source_path in source_paths or ['']:
+        counts = {}
+        if source_path:
+            for section in ('active', 'inactive'):
+                total = 0
+                for class_name in ('class_CallLog', 'class_ROFileUrl', 'class_ServerFriend',
+                                   'class_Conversation'):
+                    try:
+                        total += len(list(realm_rows(source_path, class_name, section=section)))
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        pass
+                counts[section] = total
 
-    metadata = _rows(source_path, 'metadata')
-    account_uid = os.path.basename(source_path)[:-len('.realm')] if source_path else ''
+        metadata = _rows(source_path, 'metadata')
+        account_uid = os.path.basename(source_path)[:-len('.realm')] if source_path else ''
 
-    profile, mmkv_profile_path = _local_profile(files_found, account_uid)
-    token = profile.get('loginToken', '')
-    claims = _jwt_claims(token)
+        profile, mmkv_profile_path = _local_profile(files_found, account_uid)
+        token = profile.get('loginToken', '')
+        claims = _jwt_claims(token)
 
-    data_list.append((
-        _epoch(profile.get('lastLoginTimeMillis')),
-        _epoch(profile.get('signUpDate')),
-        _epoch(claims.get('exp')),
-        account_uid,
-        profile.get('justalkId') or _justalk_id(profile_user),
-        profile.get('Basic.NickName', ''),
-        profile.get('Ue.Email', ''),
-        profile.get('phone', ''),
-        profile.get('Basic.Birthday', ''),
-        profile.get('Phone.Country', ''),
-        profile.get('loginCountry', ''),
-        profile.get('uuid', ''),
-        token,
-        claims.get('uid', ''),
-        profile.get('Ue.Facebook', ''),
-        profile.get('Ue.Google', ''),
-        profile.get('Ue.Huawei', ''),
-        profile.get('familyId', ''),
-        profile.get('parentPhone', ''),
-        profile.get('consecutiveLoginDays', ''),
-        profile.get('blockStrangers', ''),
-        profile_user,
-        metadata[0].get('version') if metadata else '',
-        counts.get('active', ''),
-        counts.get('inactive', ''),
-        'Yes' if counts and counts.get('active') != counts.get('inactive') else 'No',
-        context.get_relative_path(source_path) if source_path else '',
-        context.get_relative_path(profile_path) if profile_path else '',
-        context.get_relative_path(mmkv_profile_path) if mmkv_profile_path else '',
-    ))
+        data_list.append((
+            _epoch(profile.get('lastLoginTimeMillis')),
+            _epoch(profile.get('signUpDate')),
+            _epoch(claims.get('exp')),
+            account_uid,
+            profile.get('justalkId') or _justalk_id(profile_user),
+            profile.get('Basic.NickName', ''),
+            profile.get('Ue.Email', ''),
+            profile.get('phone', ''),
+            profile.get('Basic.Birthday', ''),
+            profile.get('Phone.Country', ''),
+            profile.get('loginCountry', ''),
+            profile.get('uuid', ''),
+            token,
+            claims.get('uid', ''),
+            profile.get('Ue.Facebook', ''),
+            profile.get('Ue.Google', ''),
+            profile.get('Ue.Huawei', ''),
+            profile.get('familyId', ''),
+            profile.get('parentPhone', ''),
+            profile.get('consecutiveLoginDays', ''),
+            profile.get('blockStrangers', ''),
+            profile_user,
+            metadata[0].get('version') if metadata else '',
+            counts.get('active', ''),
+            counts.get('inactive', ''),
+            'Yes' if counts and counts.get('active') != counts.get('inactive') else 'No',
+            context.get_relative_path(source_path) if source_path else '',
+            context.get_relative_path(profile_path) if profile_path else '',
+            context.get_relative_path(mmkv_profile_path) if mmkv_profile_path else '',
+        ))
 
-    return _account_headers(), data_list, source_path or profile_path
+    return _account_headers(), data_list, source_paths[0] if source_paths else profile_path
 
 
 def _account_headers():
@@ -1098,6 +1166,78 @@ def justalk_app_state(context):
 
 
 @artifact_processor
+def justalk_members(context):
+    source_paths = _account_realms(context.get_files_found())
+    data_list = []
+
+    for source_path in source_paths:
+        for row in _rows(source_path, 'class_ServerMember'):
+            data_list.append((
+                row.get('id', ''),
+                row.get('uid', ''),
+                row.get('name', ''),
+                row.get('sortKey', ''),
+                row.get('relationType', ''),
+                row.get('serverFriend', ''),
+            ))
+
+    data_headers = (
+        'Member ID',
+        'UID',
+        'Name',
+        'Sort Key',
+        'Relation Type (as stored)',
+        'Server Friend (as stored)',
+    )
+    return data_headers, data_list, source_paths[0] if source_paths else ''
+
+
+@artifact_processor
+def justalk_moments(context):
+    source_paths = _account_realms(context.get_files_found())
+    data_list = []
+
+    for source_path in source_paths:
+        for row in sorted(_rows(source_path, 'class_Moment'), key=lambda r: r.get('createTime') or 0):
+            data_list.append((
+                _epoch(row.get('createTime')),
+                _epoch(row.get('serverCreateTime')),
+                _epoch(row.get('serverUpdateTime')),
+                row.get('momentUuid', ''),
+                row.get('uid', ''),
+                row.get('name', ''),
+                row.get('description', ''),
+                row.get('type', ''),
+                row.get('status', ''),
+                row.get('userStatus', ''),
+                row.get('fileList', ''),
+                row.get('likeList', ''),
+                row.get('commentList', ''),
+                row.get('link', ''),
+                row.get('isLiked', ''),
+            ))
+
+    data_headers = (
+        ('Create Time', 'datetime'),
+        ('Server Create Time', 'datetime'),
+        ('Server Update Time', 'datetime'),
+        'Moment UUID',
+        'UID',
+        'Name',
+        'Description',
+        'Type',
+        'Status (as stored)',
+        'User Status (as stored)',
+        'File List',
+        'Like List',
+        'Comment List',
+        'Link',
+        'Is Liked (as stored)',
+    )
+    return data_headers, data_list, source_paths[0] if source_paths else ''
+
+
+@artifact_processor
 def justalk_kids_messages(context):
     return justalk_messages.__wrapped__(context)
 
@@ -1121,3 +1261,12 @@ def justalk_kids_account(context):
 def justalk_kids_app_state(context):
     return justalk_app_state.__wrapped__(context)
 
+
+@artifact_processor
+def justalk_kids_members(context):
+    return justalk_members.__wrapped__(context)
+
+
+@artifact_processor
+def justalk_kids_moments(context):
+    return justalk_moments.__wrapped__(context)
