@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_blueskyposts": {
         "name": "Bluesky - Posts",
@@ -44,7 +43,8 @@ def _extract_post(post, collection):
 
 
 @artifact_processor
-def get_blueskyposts(files_found, report_folder, seeker, wrap_text):
+def get_blueskyposts(context):
+    files_found = context.get_files_found()
     seen = set()
     data_list = []
     source_path = ''

@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_bluetoothConnections": {
         "name": "Bluetooth Connections",
         "description": "Parses previously connected Bluetooth devices (first connected timestamp, device name, MAC address and link key) from bt_config.conf.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-06-23",
         "last_update_date": "2021-06-23",
         "requirements": "none",
@@ -28,7 +27,7 @@ __artifacts_v2__ = {
     "get_bluetoothAdapter": {
         "name": "Bluetooth Adapter Information",
         "description": "Parses the local Bluetooth adapter information (key and value) from bt_config.conf.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-06-23",
         "last_update_date": "2021-06-23",
         "requirements": "none",
@@ -61,7 +60,8 @@ MAC_RE = re.compile(r'(\[[0-9a-f]{2}(?::[0-9a-f]{2}){5}\])', re.IGNORECASE)
 
 
 @artifact_processor
-def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
+def get_bluetoothConnections(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = str(files_found[0])
 
@@ -96,7 +96,8 @@ def get_bluetoothConnections(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_bluetoothAdapter(files_found, report_folder, seeker, wrap_text):
+def get_bluetoothAdapter(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = str(files_found[0])
 

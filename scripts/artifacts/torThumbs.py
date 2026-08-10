@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_torThumbs": {
         "name": "TOR Thumbnails",
         "description": "Page thumbnails cached by the Tor Browser (mozac_browser_thumbnails)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-12-23",
         "last_update_date": "2021-12-23",
         "requirements": "none",
@@ -34,7 +33,8 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_torThumbs(files_found, report_folder, seeker, wrap_text):
+def get_torThumbs(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

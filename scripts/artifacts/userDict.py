@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_userDict": {
         "name": "userDict",
         "description": "Parses the personal user dictionary (word, frequency, locale, app ID and shortcut) from the user dictionary database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
@@ -30,7 +29,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_userDict(files_found, report_folder, seeker, wrap_text):
+def get_userDict(context):
+    files_found = context.get_files_found()
 
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)

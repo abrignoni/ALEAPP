@@ -1,14 +1,20 @@
-# pylint: disable=W0613,W0631
+# pylint: disable=W0631
 __artifacts_v2__ = {
     "get_schats": {
         "name": "Sideline Chats and Calls",
         "description": "Parses Sideline's textfree database",
         "author": "Matt Beers",
         "creation_date": "2024-02-08",
-        "last_update_date": "2024-02-08",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Chats",
-        "notes": "",
+        "notes": (
+            "Timestamps are rendered in UTC. The Method names for the stored numeric "
+            "'method' field (1, 3 and 8) were established through testing; a value with no "
+            "matching name is shown as 'Unknown'. Rows come from conversation_item, and "
+            "contact_address is joined on the stored address, so an item whose address has "
+            "no matching contact record is still listed, with empty name columns."
+        ),
         "paths": ('*/data/com.sideline.phone.number/databases/textfree*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -19,7 +25,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 
 
 @artifact_processor
-def get_schats(files_found, report_folder, seeker, wrap_text):
+def get_schats(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''
@@ -33,7 +40,7 @@ def get_schats(files_found, report_folder, seeker, wrap_text):
             cursor = db.cursor()
             cursor.execute('''
             SELECT
-            datetime(conversation_item.timestamp / 1000, 'unixepoch', 'localtime') AS TIMESTAMP,
+            datetime(conversation_item.timestamp / 1000, 'unixepoch') AS TIMESTAMP,
             contact_address.native_first_name,
             contact_address.native_last_name,
             CASE conversation_item.method
@@ -46,9 +53,9 @@ def get_schats(files_found, report_folder, seeker, wrap_text):
             conversation_item.duration,
             conversation_item.address
             FROM
-            contact_address
-            JOIN
-            conversation_item ON contact_address.address_e164 = conversation_item.address
+            conversation_item
+            LEFT JOIN
+            contact_address ON contact_address.address_e164 = conversation_item.address
             ORDER BY
             conversation_item.timestamp DESC
             ''')
@@ -64,7 +71,7 @@ def get_schats(files_found, report_folder, seeker, wrap_text):
             continue
 
     data_headers = (
-        ('Timestamp', 'datetime'),
+        ('Timestamp (UTC)', 'datetime'),
         'First Name',
         'Last Name',
         'Method',

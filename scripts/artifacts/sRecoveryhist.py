@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_sRecoveryhist": {
         "name": "sRecoveryhist",
         "description": "Parses Samsung recovery history (timestamp, wipe events, reason, reboot reason and locale) from the efs recovery history file.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",
         "requirements": "none",
@@ -25,7 +24,8 @@ from scripts.ilapfuncs import artifact_processor
 
 
 @artifact_processor
-def get_sRecoveryhist(files_found, report_folder, seeker, wrap_text):
+def get_sRecoveryhist(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

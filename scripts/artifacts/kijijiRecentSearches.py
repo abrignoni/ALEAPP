@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_kijijiRecentSearches": {
         "name": "kijijiRecentSearches",
@@ -38,7 +37,8 @@ recent_searches_query = '''
 
 
 @artifact_processor
-def get_kijijiRecentSearches(files_found, report_folder, seeker, wrap_text):
+def get_kijijiRecentSearches(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     logfunc(f'Database file {source_path} is being interrogated...')
 

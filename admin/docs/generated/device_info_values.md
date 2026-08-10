@@ -25,18 +25,13 @@ This document outlines the various device information collected by LEAPP modules
 <!-- LOGDEVINFO_START -->
 | Key | Source Modules |
 |-----|----------------|
-| Android version per build.props: {value} | build |
 | Bluetooth address: {val} | settingsSecure |
 | Bluetooth name: {val} | settingsSecure |
-| Brand: {value} | build |
-| Device: {value} | build |
+| Device name (user {uid}): {value} | settingsGlobalSystem |
 | Factory Reset Timestamp: {reset_time} | factory_reset |
 | Last Boot Timestamp: {last_boot_time} | last_boot_time |
-| Manufacturer: {value} | build |
-| Model: {value} | build |
-| SDK: {value} | build |
 | SIM Display Name: {row[2]} | siminfo |
 | SIM Number & IMSI: {row[0]} - {imsi} | siminfo |
-| Version release: {value} | build |
+| {DEVINFO_TEXT.get(label, label)}: {value} | build |
 <!-- LOGDEVINFO_END -->
 

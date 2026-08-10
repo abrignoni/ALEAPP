@@ -1,9 +1,8 @@
-# pylint: disable=W0613,W0702
 __artifacts_v2__ = {
     "get_protonvpn_device_info": {
         "name": "ProtonVPN - Device Info",
         "description": "Parses ProtonVPN device and server-list-updater information (key and value) from the ServerListUpdater.xml preferences.",
-        "author": "",
+        "author": "@nxb1t",
         "creation_date": "2022-09-04",
         "last_update_date": "2022-09-04",
         "requirements": "none",
@@ -16,12 +15,15 @@ __artifacts_v2__ = {
     "get_protonvpn_connection_history": {
         "name": "ProtonVPN - Connection History",
         "description": "Parses ProtonVPN connection history (server address and timestamp) from the ProtonVPN Data.log.",
-        "author": "",
+        "author": "@nxb1t",
         "creation_date": "2022-09-04",
-        "last_update_date": "2022-09-04",
+        "last_update_date": "2026-07-31",
         "requirements": "none",
         "category": "ProtonVPN",
-        "notes": "",
+        "notes": "The server address is reported exactly as recorded in Data.log. Earlier versions "
+                 "resolved the hostname to an IP address at parse time; that lookup was removed "
+                 "because it generated network traffic from the examiner's workstation and the "
+                 "resolved address reflected DNS at the time of analysis, not the logged connection.",
         "paths": ('*/ch.protonvpn.android/log/Data.log',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -29,12 +31,17 @@ __artifacts_v2__ = {
     "get_protonvpn_user_info": {
         "name": "ProtonVPN - User Info",
         "description": "Parses the ProtonVPN user account (email, name, username, display name and account state) from the ProtonVPN database.",
-        "author": "",
+        "author": "@nxb1t",
         "creation_date": "2022-09-04",
-        "last_update_date": "2022-09-04",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "ProtonVPN",
-        "notes": "",
+        "notes": "Each UserEntity row is matched to its AccountEntity row on the user id column the two "
+                 "tables share. If a database is met whose schema exposes no shared user id, the rows "
+                 "are paired by result order instead, and an unequal number of rows on either side "
+                 "would then attribute an account to the wrong user. Values inside each row are read "
+                 "by position; that mapping was established against the app version this parser was "
+                 "written for and may not hold on other versions.",
         "paths": ('*/ch.protonvpn.android/databases/db',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",
@@ -42,7 +49,6 @@ __artifacts_v2__ = {
 }
 
 import re
-import socket
 import datetime
 import xml.etree.ElementTree as ET
 
@@ -68,7 +74,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_protonvpn_device_info(files_found, report_folder, seeker, wrap_text):
+def get_protonvpn_device_info(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -108,7 +115,8 @@ def get_protonvpn_device_info(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_protonvpn_connection_history(files_found, report_folder, seeker, wrap_text):
+def get_protonvpn_connection_history(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -124,22 +132,17 @@ def get_protonvpn_connection_history(files_found, report_folder, seeker, wrap_te
                 initial_connect = entry.find('to:')
                 if initial_connect != -1:
                     timestamp = convert_human_ts_to_utc(entry[:entry.find('|')-1].split('.')[0].replace('T', ' '))
-                    try:
-                        server_hostname = regex.search(entry)[0]
-                        server_ip = socket.gethostbyname(server_hostname)
-                        data_list.append((server_hostname + f"  -  [ {server_ip} ]", timestamp))
-                    except socket.error:
-                        server_hostname = regex.search(entry)[0]
-                        data_list.append((server_hostname, timestamp))
-                    except:
-                        pass
+                    server_hostname = regex.search(entry)
+                    if server_hostname:
+                        data_list.append((server_hostname[0], timestamp))
 
     data_headers = ('Server Address', ('Timestamp', 'datetime'))
     return data_headers, data_list, source_path
 
 
 @artifact_processor
-def get_protonvpn_user_info(files_found, report_folder, seeker, wrap_text):
+def get_protonvpn_user_info(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -151,15 +154,32 @@ def get_protonvpn_user_info(files_found, report_folder, seeker, wrap_text):
             # Cursor for User Data
             cursor = db.cursor()
             cursor.execute('SELECT * FROM main.UserEntity')
+            user_columns = [column[0] for column in cursor.description]
             user_data_rows = cursor.fetchall()
 
             # Cursor for Account Data
             cursor = db.cursor()
             cursor.execute('SELECT * FROM main.AccountEntity')
+            account_columns = [column[0] for column in cursor.description]
             account_data_rows = cursor.fetchall()
 
-            for user_row, account_row in zip(user_data_rows, account_data_rows):
-                data_list.append((user_row[1], user_row[2], account_row[1], user_row[3], account_row[5]))
+            # Match each user to its own account on the id column both tables carry. Pairing the two
+            # result sets by row order attributes an account to another user as soon as the row
+            # counts or the row order differ.
+            key = next((column for column in user_columns
+                        if column.lower() in ('userid', 'user_id') and column in account_columns), None)
+            if key:
+                accounts_by_user = {row[account_columns.index(key)]: row for row in account_data_rows}
+                paired_rows = [(user_row, accounts_by_user.get(user_row[user_columns.index(key)]))
+                               for user_row in user_data_rows]
+            else:
+                logfunc(f'No shared user id column in {file_found}; '
+                        'UserEntity and AccountEntity rows are paired by result order')
+                paired_rows = list(zip(user_data_rows, account_data_rows))
+
+            for user_row, account_row in paired_rows:
+                data_list.append((user_row[1], user_row[2], account_row[1] if account_row else '',
+                                  user_row[3], account_row[5] if account_row else ''))
 
             db.close()
 

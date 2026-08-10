@@ -1,15 +1,15 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_firefoxDownloads": {
         "name": "Firefox - Downloads",
-        "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database.",
-        "author": "",
+        "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database. The Tor Browser path is also matched; in the samples examined it carried the same database.",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
-        "last_update_date": "2022-01-12",
+        "last_update_date": "2026-08-01",
+        "notes": "Two schema variants are handled: destination_directory and directory_path. Reference: Mozilla android-components, 'DownloadState.Status (PAUSED=3, CANCELLED=4, FAILED=5, COMPLETED=6)', https://github.com/mozilla-firefox/firefox/blob/main/mobile/android/android-components/components/browser/state/src/main/java/mozilla/components/browser/state/state/content/DownloadState.kt",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "",
-        "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',),
+        "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',
+                  '*/org.torproject.torbrowser/databases/mozac_downloads_database*'),
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
@@ -24,7 +24,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 
 
 @artifact_processor
-def get_firefoxDownloads(files_found, report_folder, seeker, wrap_text):
+def get_firefoxDownloads(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -35,7 +36,12 @@ def get_firefoxDownloads(files_found, report_folder, seeker, wrap_text):
         source_path = file_found
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        cursor.execute('''
+
+        # Two schema variants are handled: destination_directory and directory_path
+        table_columns = [row[1] for row in cursor.execute('PRAGMA table_info(downloads)')]
+        directory_column = 'directory_path' if 'directory_path' in table_columns else 'destination_directory'
+
+        cursor.execute(f'''
         SELECT
         datetime(created_at/1000,'unixepoch') AS CreatedDate,
         file_name AS FileName,
@@ -48,7 +54,7 @@ def get_firefoxDownloads(files_found, report_folder, seeker, wrap_text):
             WHEN 5 THEN 'Failed'
             WHEN 6 THEN 'Finished'
         END AS Status,
-        destination_directory AS DestDir
+        {directory_column} AS DestDir
         FROM downloads
         ''')
 

@@ -1,10 +1,9 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_usageapps": {
         "name": "usageapps",
         "description": "App usage events from the Device Personalization Services "
                        "reflection_gel_events database (includes deleted apps)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-04-11",
         "last_update_date": "2020-04-11",
         "requirements": "none",
@@ -21,7 +20,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
@@ -58,7 +57,8 @@ def _scalar(obj):
 
 
 @artifact_processor
-def get_usageapps(files_found, report_folder, seeker, wrap_text):
+def get_usageapps(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -78,7 +78,7 @@ def get_usageapps(files_found, report_folder, seeker, wrap_text):
         for row in all_rows:
             deleted = row[1] if row[1] and 'deleted_app' in row[1] else ''
             bundleid, usage = '', ''
-            values, _ = blackboxprotobuf.decode_message(row[2], PROTO_TYPES)
+            values, _ = decode_protobuf(row[2], PROTO_TYPES)
             values = _to_str(values)
             for key, val in values.items():
                 if key == '1':

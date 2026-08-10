@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_atrackerdetect": {
         "name": "atrackerdetect",
         "description": "Parses preferences from the Apple Tracker Detect Android app (key, value and milliseconds from last boot) from its shared_prefs XML.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2022-01-08",
         "last_update_date": "2022-01-08",
         "requirements": "none",
@@ -40,7 +39,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_atrackerdetect(files_found, report_folder, seeker, wrap_text):
+def get_atrackerdetect(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

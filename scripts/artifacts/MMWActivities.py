@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_mmw_activities": {
         "name": "Map My Walk - Activities",
@@ -64,7 +64,8 @@ def _route_media(source, coords, title, subtitle, base):
 
 
 @artifact_processor
-def get_mmw_activities(files_found, report_folder, seeker, wrap_text):
+def get_mmw_activities(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     data_list = []
     if source_path:

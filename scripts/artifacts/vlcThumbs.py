@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_vlcThumbs": {
         "name": "VLC Thumbnails",
         "description": "Thumbnail images cached by VLC in the medialib folder",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-01",
         "last_update_date": "2021-03-01",
         "requirements": "none",
@@ -16,7 +15,7 @@ __artifacts_v2__ = {
     "get_vlcThumbs_data": {
         "name": "VLC Thumbnail Data",
         "description": "VLC media library entries (play count, dates) with their cached thumbnails",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-01",
         "last_update_date": "2021-03-01",
         "requirements": "none",
@@ -44,11 +43,14 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_vlcThumbs(files_found, report_folder, seeker, wrap_text):
+def get_vlcThumbs(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not file_found.endswith('.jpg'):
             continue
         source_path = os.path.dirname(file_found)
@@ -60,7 +62,8 @@ def get_vlcThumbs(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_vlcThumbs_data(files_found, report_folder, seeker, wrap_text):
+def get_vlcThumbs_data(context):
+    files_found = context.get_files_found()
     jpg_by_name = {os.path.basename(str(f)): str(f) for f in files_found if str(f).endswith('.jpg')}
     data_list = []
     source_path = ''

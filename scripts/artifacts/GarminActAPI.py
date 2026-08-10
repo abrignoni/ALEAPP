@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_act_api": {
         "name": "GarminActAPI",
@@ -27,7 +26,8 @@ def _round2(value):
 
 
 @artifact_processor
-def get_act_api(files_found, report_folder, seeker, wrap_text):
+def get_act_api(context):
+    files_found = context.get_files_found()
     logfunc("Processing data for Garmin Activity API")
     data_list = []
     source_path = ''

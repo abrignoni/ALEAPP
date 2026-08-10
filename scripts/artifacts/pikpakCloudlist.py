@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_pikpakCloudlist": {
         "name": "PikPak Cloud List",
         "description": "Parses PikPak cloud-stored files (create, modify, delete and update times, user, name, kind, URL and thumbnail) from the PikPak files database.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-03-24",
         "last_update_date": "2023-03-24",
         "requirements": "none",
@@ -23,7 +22,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_pikpakCloudlist(files_found, report_folder, seeker, wrap_text):
+def get_pikpakCloudlist(context):
+    files_found = context.get_files_found()
 
     source_path = ''
     for file_found in files_found:

@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_wellbeingaccount": {
         "name": "wellbeingaccount",
         "description": "Parses account data from the Google Digital Wellbeing AccountData protobuf file.",
-        "author": "",
+        "author": "@ydkhatri",
         "creation_date": "2020-02-25",
         "last_update_date": "2020-02-25",
         "requirements": "none",
@@ -31,7 +30,8 @@ from scripts.html_safe import esc
 
 
 @artifact_processor
-def get_wellbeingaccount(files_found, report_folder, seeker, wrap_text):
+def get_wellbeingaccount(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     content = ParseProto(source_path)
 

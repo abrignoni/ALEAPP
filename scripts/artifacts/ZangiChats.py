@@ -37,7 +37,8 @@ from scripts.ilapfuncs import artifact_processor, \
     check_in_media
 
 @artifact_processor
-def zangichats(files_found, _report_folder, _seeker, _wrap_text):
+def zangichats(context):
+    files_found = context.get_files_found()
     source_path = ""
     data_list = []
     for file_found in files_found:

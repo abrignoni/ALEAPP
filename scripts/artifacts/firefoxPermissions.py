@@ -1,14 +1,13 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_firefoxPermissions": {
         "name": "Firefox - Permissions",
         "description": "Parses Firefox site permissions (origin, permission type, status, modification and expiration timestamps) from permissions.sqlite.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
-        "last_update_date": "2022-01-12",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "",
+        "notes": "Reference: Mozilla, 'nsIPermissionManager (ALLOW_ACTION=1, DENY_ACTION=2)', https://github.com/mozilla-firefox/firefox/blob/main/netwerk/base/nsIPermissionManager.idl",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -24,7 +23,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 
 
 @artifact_processor
-def get_firefoxPermissions(files_found, report_folder, seeker, wrap_text):
+def get_firefoxPermissions(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

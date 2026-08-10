@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_whatsapp_contacts": {
         "name": "WhatsApp - Contacts",
         "description": "WhatsApp contacts (wa.db)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -25,7 +24,7 @@ __artifacts_v2__ = {
     "get_whatsapp_call_logs": {
         "name": "WhatsApp - Call Logs",
         "description": "WhatsApp call logs (msgstore.db)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -47,7 +46,7 @@ __artifacts_v2__ = {
     "get_whatsapp_messages": {
         "name": "WhatsApp - Messages",
         "description": "WhatsApp messages (legacy msgstore.db schema with messages.data)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -69,7 +68,7 @@ __artifacts_v2__ = {
     "get_whatsapp_one_to_one_messages": {
         "name": "WhatsApp - One To One Messages",
         "description": "WhatsApp 1:1 messages (modern msgstore.db schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -105,7 +104,7 @@ __artifacts_v2__ = {
     "get_whatsapp_group_messages": {
         "name": "WhatsApp - Group Messages",
         "description": "WhatsApp group messages (modern msgstore.db schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -140,7 +139,7 @@ __artifacts_v2__ = {
     "get_whatsapp_group_details": {
         "name": "WhatsApp - Group Details",
         "description": "WhatsApp group details (modern msgstore.db schema)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -163,7 +162,7 @@ __artifacts_v2__ = {
     "get_whatsapp_user_profile": {
         "name": "WhatsApp - User Profile",
         "description": "WhatsApp local user profile (shared_prefs xml)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
@@ -191,7 +190,7 @@ import sqlite3
 
 import xmltodict
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, open_sqlite_db_readonly, check_in_media
 
 # Re-used location columns shared by the one-to-one and group message queries.
 _LOCATION_HEADERS = ('Shared Latitude/Starting Latitude (Live Location)',
@@ -249,7 +248,7 @@ def _open_msgstore(files_found):
     cursor = db.cursor()
     if wa:
         try:
-            cursor.execute('attach database "%s" as wadb' % wa)
+            cursor.execute(attach_sqlite_db_readonly(wa, 'wadb'))
         except sqlite3.Error:
             pass
     return db, cursor, msg, wa
@@ -264,7 +263,8 @@ def _run(cursor, sql):
 
 
 @artifact_processor
-def get_whatsapp_contacts(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_contacts(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'wa.db')
     data_list = []
     if source:
@@ -292,7 +292,8 @@ def get_whatsapp_contacts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_call_logs(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_call_logs(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -324,7 +325,8 @@ def get_whatsapp_call_logs(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_messages(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_messages(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -358,7 +360,8 @@ def get_whatsapp_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_one_to_one_messages(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_one_to_one_messages(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -403,7 +406,8 @@ def get_whatsapp_one_to_one_messages(files_found, report_folder, seeker, wrap_te
 
 
 @artifact_processor
-def get_whatsapp_group_messages(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_group_messages(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -449,7 +453,8 @@ def get_whatsapp_group_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_group_details(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_group_details(context):
+    files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
@@ -488,7 +493,8 @@ def get_whatsapp_group_details(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_whatsapp_user_profile(files_found, report_folder, seeker, wrap_text):
+def get_whatsapp_user_profile(context):
+    files_found = context.get_files_found()
     keys = ('push_name', 'my_current_status', 'version', 'ph', 'cc')
     data = {k: '' for k in keys}
     source = ''

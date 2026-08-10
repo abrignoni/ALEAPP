@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_citymapperLocationHistory" : {
         "name": "Citymapper - Location History",
@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "Interactive online folium map removed; locations are exported to KML by the framework.",
-        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db'),
+        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db*'),
         "output_types": ['html', 'tsv', 'timeline', 'lava', 'kml'],
         "artifact_icon": "map-pin",
     },
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "Interactive online folium map removed; home/work coordinates are shown in the table.",
-        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db'),
+        "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db*'),
         "output_types": ['html', 'tsv', 'timeline', 'lava'],
         "artifact_icon": "map-pin",
     },
@@ -77,7 +77,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_citymapperLocationHistory(files_found, report_folder, _seeker, _wrap_text):
+def get_citymapperLocationHistory(context):
+    files_found = context.get_files_found()
 
     location_data_list = []
     source = ''
@@ -114,7 +115,8 @@ def get_citymapperLocationHistory(files_found, report_folder, _seeker, _wrap_tex
 
 
 @artifact_processor
-def get_citymapperSavedTrips(files_found, report_folder, _seeker, _wrap_text):
+def get_citymapperSavedTrips(context):
+    files_found = context.get_files_found()
 
     saved_trip_data_list = []
     source = ''
@@ -154,7 +156,8 @@ def get_citymapperSavedTrips(files_found, report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def get_citymapperAppPreferences(files_found, report_folder, _seeker, _wrap_text):
+def get_citymapperAppPreferences(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source = ''
@@ -165,6 +168,8 @@ def get_citymapperAppPreferences(files_found, report_folder, _seeker, _wrap_text
     for file_found in files_found:
         file_found = str(file_found)
 
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if not source:
             source = file_found
 

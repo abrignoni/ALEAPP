@@ -19,7 +19,7 @@ __artifacts_v2__ = {
         "requirements": "",
         "category": "DeepSeek",
         "notes": "",
-        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db'),
+        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db*'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "message",
         "html_columns": ["Message Content"]
@@ -67,7 +67,8 @@ def extract_content_from_fragments(fragments):
 
 
 @artifact_processor
-def deepseek_chat_messages(files_found, _report_folder, _seeker, _wrap_text):
+def deepseek_chat_messages(context):
+    files_found = context.get_files_found()
 
     data_headers = (
         ('Timestamp', 'datetime'),

@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_rarlabPreferences": {
         "name": "rarlabPreferences",
         "description": "Parses RAR (RARLAB) application preferences (key, text and value) from the com.rarlab.rar preferences XML.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-03-29",
         "last_update_date": "2023-03-29",
         "requirements": "none",
@@ -43,7 +42,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_rarlabPreferences(files_found, report_folder, seeker, wrap_text):
+def get_rarlabPreferences(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
 

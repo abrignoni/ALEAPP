@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_nike_notifications": {
         "name": "NikeNotifications",
@@ -24,7 +23,8 @@ from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readon
 
 
 @artifact_processor
-def get_nike_notifications(files_found, report_folder, seeker, wrap_text):
+def get_nike_notifications(context):
+    files_found = context.get_files_found()
 
     files_found = [x for x in files_found if not str(x).endswith('-journal')]
     source_path = str(files_found[0])

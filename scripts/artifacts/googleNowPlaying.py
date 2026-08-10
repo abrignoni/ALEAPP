@@ -1,9 +1,9 @@
-# pylint: disable=E0606,W0612,W0613
+# pylint: disable=E0606,W0612
 __artifacts_v2__ = {
     "get_googleNowPlaying": {
         "name": "GoogleNowPlaying",
         "description": "Now Playing history (songs recognised near the device)",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-22",
         "last_update_date": "2020-03-22",
         "requirements": "none",
@@ -20,7 +20,7 @@ __artifacts_v2__ = {
 }
 
 import time
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from html import escape
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, is_platform_windows
@@ -61,7 +61,8 @@ def AreContentsSame(last_data_set, timezones, songtitle, artist, duration, album
 
 
 @artifact_processor
-def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
+def get_googleNowPlaying(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -105,7 +106,7 @@ def get_googleNowPlaying(files_found, report_folder, seeker, wrap_text):
                 timestamp = row[0]
                 pb = row[1]
 
-                data, actual_types = blackboxprotobuf.decode_message(pb, pb_types)
+                data, actual_types = decode_protobuf(pb, pb_types)
                 data = recursive_convert_bytes_to_str(data)
 
                 try:             timezones = FilterInvalidValue(data["7"])

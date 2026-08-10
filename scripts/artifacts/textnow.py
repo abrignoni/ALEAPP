@@ -1,14 +1,21 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_textnow_call_logs": {
         "name": "Text Now - Call Logs",
         "description": "Parses TextNow call logs (start and end time, participant IDs and direction) from the TextNow textnow_data.db.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2021-03-15",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Text Now",
-        "notes": "",
+        "notes": ("Call Direction is decoded from the messages table 'message_direction' column, the "
+                  "same column and mapping used by Text Now - Messages. Direction/status value "
+                  "mappings were established through testing; unrecognized values are reported as "
+                  "stored.\n"
+                  "End Time is not stored by the app: it is the start time plus the 'message_text' "
+                  "column read as a number of seconds. That column is not established to hold a "
+                  "duration, so this value is a computation and not a recorded end time.\n"
+                  "From ID and To ID are filled only when the direction value is recognized."),
         "paths": ('*/com.enflick.android.TextNow/databases/textnow_data.db*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -16,12 +23,14 @@ __artifacts_v2__ = {
     "get_textnow_messages": {
         "name": "Text Now - Messages",
         "description": "Parses TextNow messages (timestamp, sender and recipient IDs, direction, message, read state and attachments) from the TextNow textnow_data.db.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2021-03-15",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Text Now",
-        "notes": "",
+        "notes": ("Direction is decoded from the messages table 'message_direction' column, the same "
+                  "column and mapping used by Text Now - Call Logs. Direction/status value mappings "
+                  "were established through testing; unrecognized values are reported as stored."),
         "paths": ('*/com.enflick.android.TextNow/databases/textnow_data.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -29,7 +38,7 @@ __artifacts_v2__ = {
     "get_textnow_contacts": {
         "name": "Text Now - Contacts",
         "description": "Parses TextNow contacts (number and name) from the TextNow textnow_data.db.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",
         "requirements": "none",
@@ -47,7 +56,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_textnow_call_logs(files_found, report_folder, seeker, wrap_text):
+def get_textnow_call_logs(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -59,7 +69,7 @@ def get_textnow_call_logs(files_found, report_folder, seeker, wrap_text):
             try:
                 cursor.execute('''
                     SELECT contact_value     AS num,
-                           case message_direction when 2 then "Outgoing" else "Incoming" end AS direction,
+                           case message_direction when 1 then "Incoming" when 2 then "Outgoing" else message_direction end AS direction,
                             date/1000 + message_text      AS duration,
                             date/1000              AS datetime
                       FROM  messages AS M
@@ -74,7 +84,7 @@ def get_textnow_call_logs(files_found, report_folder, seeker, wrap_text):
                 phone_number_to = None
                 if row[1] == "Outgoing":
                     phone_number_to = row[0]
-                else:
+                elif row[1] == "Incoming":
                     phone_number_from = row[0]
                 starttime = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc)
                 endtime = datetime.datetime.fromtimestamp(int(row[2]), datetime.timezone.utc)
@@ -84,7 +94,7 @@ def get_textnow_call_logs(files_found, report_folder, seeker, wrap_text):
 
     data_headers = (
         ('Start Time', 'datetime'),
-        ('End Time', 'datetime'),
+        ('End Time (computed from message_text)', 'datetime'),
         ('From ID', 'phonenumber'),
         ('To ID', 'phonenumber'),
         'Call Direction',
@@ -93,7 +103,8 @@ def get_textnow_call_logs(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_textnow_messages(files_found, report_folder, seeker, wrap_text):
+def get_textnow_messages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -117,7 +128,8 @@ def get_textnow_messages(files_found, report_folder, seeker, wrap_text):
                            END to_address,
                            CASE messages.message_direction
                              WHEN 1 THEN "Incoming"
-                             ELSE "Outgoing"
+                             WHEN 2 THEN "Outgoing"
+                             ELSE messages.message_direction
                            END message_direction,
                            messages.message_text,
                            messages.READ,
@@ -153,7 +165,7 @@ def get_textnow_messages(files_found, report_folder, seeker, wrap_text):
 
     data_headers = (
         ('Send Timestamp', 'datetime'),
-        'Message ID',
+        'Thread ID',
         'From ID',
         'To ID',
         'Direction',
@@ -165,7 +177,8 @@ def get_textnow_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_textnow_contacts(files_found, report_folder, seeker, wrap_text):
+def get_textnow_contacts(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

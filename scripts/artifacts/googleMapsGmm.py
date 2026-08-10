@@ -1,15 +1,15 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleMapsGmm": {
-        "name": "Google Search History Maps",
+        "name": "Google Maps Directions",
         "description": "Parse Google Maps GMM directions (gmm_storage.db)",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-12-30",
-        "last_update_date": "2022-12-30",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "GEO Location",
         "notes": "Updated 2023-12-12 by @segumarc",
-        "paths": ('*/com.google.android.apps.maps/databases/gmm_storage.db',),
+        "paths": ('*/com.google.android.apps.maps/databases/gmm_storage.db*',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
         "sample_data": {
@@ -30,11 +30,19 @@ __artifacts_v2__ = {
         "description": "Parse Google Maps GMM labeled places (gmm_myplaces.db)",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-12-30",
-        "last_update_date": "2022-12-30",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "Updated 2023-12-12 by @segumarc",
-        "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db',),
+        "notes": ("Updated 2023-12-12 by @segumarc\n"
+                  "Label is read from the sync_item key_string. The keys '0:0' and '1:0' are "
+                  "rendered as 'Home' and 'Work'; that key-to-label mapping is not documented in "
+                  "the data and was established through testing. A stored label does not establish "
+                  "that the address is the person's residence or workplace, only that the entry "
+                  "carries that label. Any other key is reported with the label held in the "
+                  "protobuf.\n"
+                  "Latitude and Longitude are the stored values multiplied by 0.000001 and rounded "
+                  "to six decimal places, that is read as E6-scaled integers."),
+        "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
         "sample_data": {
@@ -55,9 +63,9 @@ import datetime
 import sqlite3
 import struct
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, logfunc, open_sqlite_db_readonly
 
 
 def _ms_to_utc(value):
@@ -84,7 +92,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text):
+def get_googleMapsGmm(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -125,7 +134,8 @@ def get_googleMapsGmm(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_googleMapsGmm_places(files_found, report_folder, seeker, wrap_text):
+def get_googleMapsGmm_places(context):
+    files_found = context.get_files_found()
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -133,6 +143,11 @@ def get_googleMapsGmm_places(files_found, report_folder, seeker, wrap_text):
         if not file_found.endswith('gmm_myplaces.db'):
             continue
         source_path = file_found
+        # Older gmm_myplaces.db generations have no sync_item table
+        # (community report, PR #633).
+        if not does_table_exist_in_db(file_found, 'sync_item'):
+            logfunc(f'sync_item table not present in {file_found}; this gmm_myplaces.db generation is not covered')
+            continue
         rows = _run(file_found, '''
             SELECT rowid, key_string, round(latitude*.000001, 6), round(longitude*.000001, 6),
             sync_item, timestamp
@@ -140,7 +155,7 @@ def get_googleMapsGmm_places(files_found, report_folder, seeker, wrap_text):
         ''')
         for row in rows:
             try:
-                pb = blackboxprotobuf.decode_message(row[4], 'None')
+                pb = decode_protobuf(row[4], 'None')
                 if row[1] == '0:0':
                     label = 'Home'
                 elif row[1] == '1:0':

@@ -63,8 +63,10 @@ import os
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, check_in_media
 
 @artifact_processor
-def randochat_messages(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]   
+def randochat_messages(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]   
 
 
     # Get the different files found and store their pathes in corresponding lists to work with them
@@ -131,8 +133,10 @@ def randochat_messages(files_found, _report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def randochat_account(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]   
+def randochat_account(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]   
 
 
     # Get the different files found and store their pathes in corresponding lists to work with them
@@ -189,8 +193,10 @@ def randochat_account(files_found, _report_folder, _seeker, _wrap_text):
 
 
 @artifact_processor
-def randochat_contacts(files_found, _report_folder, _seeker, _wrap_text):
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')]   
+def randochat_contacts(context):
+    files_found = context.get_files_found()
+    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
+                   and not x.endswith('journal')]   
     main_db = ''
 
     for file_found in files_found:

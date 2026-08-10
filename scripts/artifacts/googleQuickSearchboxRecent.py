@@ -2,16 +2,16 @@
 __artifacts_v2__ = {
     "get_quicksearch_recent": {
         "name": "Google Quick Search Recent",
-        "description": "Recently searched terms and pages read from the Google app (Google Now)",
-        "author": "",
+        "description": "Recent search terms and page entries recorded by the Google app (Google Now)",
+        "author": "@ydkhatri",
         "creation_date": "2020-03-22",
-        "last_update_date": "2020-03-22",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Now & QuickSearch",
         "notes": "",
         "paths": ('*/com.google.android.googlequicksearchbox/files/recently/*',
                   '*/com.google.android.googlequicksearchbox/files/accounts/*/RecentsDataStore.pb',
-                  '*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db'),
+                  '*/com.google.android.googlequicksearchbox/databases/accounts.notifications.db*'),
         "output_types": "standard",
         "artifact_icon": "search",
         "sample_data": {
@@ -31,7 +31,7 @@ import json
 import os
 import sqlite3
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
 
@@ -102,7 +102,7 @@ def get_quicksearch_recent(context):
         source_path = file_found
         try:
             with open(file_found, 'rb') as f:
-                values, _ = blackboxprotobuf.decode_message(f.read(), _TYPES)
+                values, _ = decode_protobuf(f.read(), _TYPES)
         except Exception:
             continue
         items = values.get('1')

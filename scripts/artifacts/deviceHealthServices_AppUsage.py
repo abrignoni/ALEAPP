@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Turbo_AppUsage": {
         "name": "Turbo_AppUsage",
@@ -52,7 +51,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_Turbo_AppUsage(files_found, report_folder, seeker, wrap_text):
+def get_Turbo_AppUsage(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

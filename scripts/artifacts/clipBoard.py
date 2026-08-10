@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0631
+# pylint: disable=W0631
 __artifacts_v2__ = {
     "clipboard": {
         "name": "Clipboard Data",
@@ -51,7 +51,8 @@ def triage_text(file_found):
     return str(output.rstrip())
 
 @artifact_processor
-def clipboard(files_found, report_folder, seeker, wrap_text):
+def clipboard(context):
+    files_found = context.get_files_found()
     data_list = []
     for file_found in files_found:
         if file_found.endswith('.DS_Store'):

@@ -1,14 +1,13 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_firefox_history": {
         "name": "Firefox - Web History",
         "description": "Firefox places.sqlite web history",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
-        "last_update_date": "2022-01-12",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "",
+        "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on Android (desktop PRTime is microseconds)', https://github.com/mozilla/application-services/blob/main/components/support/types/src/lib.rs",
         "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -19,12 +18,12 @@ __artifacts_v2__ = {
     "get_firefox_visits": {
         "name": "Firefox - Web Visits",
         "description": "Firefox places.sqlite individual page visits",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
-        "last_update_date": "2022-01-12",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "",
+        "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on Android (desktop PRTime is microseconds)', https://github.com/mozilla/application-services/blob/main/components/support/types/src/lib.rs. Reference: Mozilla, 'nsINavHistoryService TRANSITION_* constants', https://searchfox.org/mozilla-central/source/toolkit/components/places/nsINavHistoryService.idl",
         "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -35,12 +34,12 @@ __artifacts_v2__ = {
     "get_firefox_bookmarks": {
         "name": "Firefox - Bookmarks",
         "description": "Firefox places.sqlite bookmarks",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
-        "last_update_date": "2022-01-12",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "",
+        "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on Android (desktop PRTime is microseconds)', https://github.com/mozilla/application-services/blob/main/components/support/types/src/lib.rs",
         "paths": ('*/org.mozilla.firefox/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",
@@ -51,9 +50,9 @@ __artifacts_v2__ = {
     "get_firefox_searches": {
         "name": "Firefox - Search Terms",
         "description": "Firefox places.sqlite search queries",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
-        "last_update_date": "2022-01-12",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Firefox",
         "notes": "",
@@ -70,7 +69,7 @@ import datetime
 import os
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, logfunc, open_sqlite_db_readonly
 
 
 def _ms_to_utc(value):
@@ -85,6 +84,8 @@ def _ms_to_utc(value):
 def _db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if os.path.basename(file_found) == 'places.sqlite':
             return file_found
     return ''
@@ -105,9 +106,16 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_firefox_history(files_found, report_folder, seeker, wrap_text):
+def get_firefox_history(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
-    rows = _run(source_path, '''
+    # Older Firefox databases have no moz_places_metadata table, and the inner
+    # join silently returned nothing on them (community report, PR #628). The
+    # join selects no columns, so it is only applied where the table exists.
+    metadata_join = ('INNER JOIN moz_places_metadata ON moz_places.id = moz_places_metadata.id'
+                     if source_path and does_table_exist_in_db(source_path, 'moz_places_metadata')
+                     else '')
+    rows = _run(source_path, f'''
         SELECT moz_places.last_visit_date_local, moz_places.url, moz_places.title,
         moz_places.visit_count_local, moz_places.description,
         CASE moz_places.hidden WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' END,
@@ -115,7 +123,7 @@ def get_firefox_history(files_found, report_folder, seeker, wrap_text):
         moz_places.frecency, moz_places.preview_image_url
         FROM moz_places
         INNER JOIN moz_historyvisits ON moz_places.origin_id = moz_historyvisits.id
-        INNER JOIN moz_places_metadata ON moz_places.id = moz_places_metadata.id
+        {metadata_join}
         ORDER BY moz_places.last_visit_date_local ASC
     ''')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8]) for r in rows]
@@ -125,7 +133,8 @@ def get_firefox_history(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_firefox_visits(files_found, report_folder, seeker, wrap_text):
+def get_firefox_visits(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT moz_historyvisits.visit_date, moz_places.url, moz_places.title,
@@ -148,7 +157,8 @@ def get_firefox_visits(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_firefox_bookmarks(files_found, report_folder, seeker, wrap_text):
+def get_firefox_bookmarks(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT moz_bookmarks.dateAdded, moz_bookmarks.lastModified, moz_bookmarks.title, moz_places.url,
@@ -166,11 +176,19 @@ def get_firefox_bookmarks(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_firefox_searches(files_found, report_folder, seeker, wrap_text):
+def get_firefox_searches(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
-    rows = _run(source_path, '''
-        SELECT id, term FROM moz_places_metadata_search_queries ORDER BY id ASC
-    ''')
+    # Older Firefox databases have no search-queries table (community report,
+    # PR #628).
+    if source_path and not does_table_exist_in_db(source_path, 'moz_places_metadata_search_queries'):
+        logfunc('moz_places_metadata_search_queries not present; this Firefox generation records no search terms table')
+        source_path_rows = []
+        rows = source_path_rows
+    else:
+        rows = _run(source_path, '''
+            SELECT id, term FROM moz_places_metadata_search_queries ORDER BY id ASC
+        ''')
     data_list = [(r[0], r[1]) for r in rows]
     data_headers = ('ID', 'Search Term')
     return data_headers, data_list, source_path

@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_vlcMedia": {
         "name": "VLC",
         "description": "Parses VLC media library entries (insertion and last played dates, filename, path and favorite flag) from vlc_media.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-01",
         "last_update_date": "2021-03-01",
         "requirements": "none",
@@ -27,7 +26,8 @@ def _ts_to_utc(value):
 
 
 @artifact_processor
-def get_vlcMedia(files_found, report_folder, seeker, wrap_text):
+def get_vlcMedia(context):
+    files_found = context.get_files_found()
 
     source_path = ''
     for file_found in files_found:

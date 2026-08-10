@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_onedrive": {
         "name": "OneDrive Metadata",
@@ -74,7 +73,9 @@ def _build_preview(found_file, extension):
 
 
 @artifact_processor
-def get_onedrive(files_found, report_folder, seeker, wrap_text):
+def get_onedrive(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
 

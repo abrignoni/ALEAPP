@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses emails from IMAP mailboxes in the Gmail App",
         "author": "ogmini",
         "creation_date": "2025-08-20",
-        "last_update_date": "2025-10-11", 
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Email",
         "notes": "", 
@@ -60,7 +60,8 @@ from scripts.context import Context
 from scripts.html_safe import safe_source
 
 @artifact_processor
-def gmailIMAPEmails(files_found, _report_folder, _seeker, _wrap_text):
+def gmailIMAPEmails(context):
+    files_found = context.get_files_found()
     emailProviderDB = ''    
     emailProviderDB_found = []
 
@@ -182,11 +183,12 @@ def gmailIMAPEmails(files_found, _report_folder, _seeker, _wrap_text):
                 attachment_cell = ''
             data_list.append((row[0], row[1], row[2], tBody, safe_source(hBody), row[3], row[4], row[5], row[6], row[7], row[8], row[9], attachment_cell, row[11], Context.get_relative_path(emailProviderDB)))
 
-    data_headers = (('Timestamp','datetime'),'_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Recipient','Reply To','Subject Line','Mailed By','Signed by', 'Read', 'AttachmentFlag', ('Attachments', 'media'), 'Mailbox Folder', 'Source File')
+    data_headers = (('Timestamp','datetime'),'_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Recipient','Reply To','Subject Line','From','Display Name', 'Read', 'AttachmentFlag', ('Attachments', 'media'), 'Mailbox Folder', 'Source File')
     return data_headers, data_list, 'See source file(s) below:'
     
 @artifact_processor
-def gmailIMAPAccounts(files_found, _report_folder, _seeker, _wrap_text):
+def gmailIMAPAccounts(context):
+    files_found = context.get_files_found()
     emailProviderDB = '' 
     emailProviderDB_found = []
 

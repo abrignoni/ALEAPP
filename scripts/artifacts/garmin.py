@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_garmin_gcm_cache_activities": {
         "name": "Garmin - GCM Cache Activities",
@@ -156,7 +155,8 @@ def _q(cursor, sql):
 
 
 @artifact_processor
-def get_garmin_gcm_cache_activities(files_found, report_folder, seeker, wrap_text):
+def get_garmin_gcm_cache_activities(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'gcm_cache.db')
     data_list = []
     if source:
@@ -203,7 +203,8 @@ def get_garmin_gcm_cache_activities(files_found, report_folder, seeker, wrap_tex
 
 
 @artifact_processor
-def get_garmin_devices(files_found, report_folder, seeker, wrap_text):
+def get_garmin_devices(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'gcm_cache.db')
     data_list = []
     if source:
@@ -226,7 +227,8 @@ def get_garmin_devices(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_garmin_weather(files_found, report_folder, seeker, wrap_text):
+def get_garmin_weather(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'gcm_cache.db')
     data_list = []
     if source:
@@ -266,7 +268,8 @@ def get_garmin_weather(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_garmin_notification_details(files_found, report_folder, seeker, wrap_text):
+def get_garmin_notification_details(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'notification-database')
     data_list = []
     if source:
@@ -293,7 +296,8 @@ def get_garmin_notification_details(files_found, report_folder, seeker, wrap_tex
 
 
 @artifact_processor
-def get_garmin_cache_db_activities(files_found, report_folder, seeker, wrap_text):
+def get_garmin_cache_db_activities(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'cache-database')
     data_list = []
     if source:
@@ -343,7 +347,8 @@ def get_garmin_cache_db_activities(files_found, report_folder, seeker, wrap_text
 
 
 @artifact_processor
-def get_garmin_sleep_activities(files_found, report_folder, seeker, wrap_text):
+def get_garmin_sleep_activities(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'cache-database')
     data_list = []
     if source:

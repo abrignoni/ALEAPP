@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_persistentProp": {
         "name": "persistentProp",
         "description": "Parses persistent system properties and their set times (timestamp and event) from the persistent_properties file.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-08-18",
         "last_update_date": "2021-08-18",
         "requirements": "none",
@@ -33,7 +32,8 @@ from scripts.ilapfuncs import artifact_processor
 
 
 @artifact_processor
-def get_persistentProp(files_found, report_folder, seeker, wrap_text):
+def get_persistentProp(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

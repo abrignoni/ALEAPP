@@ -1,14 +1,19 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_nike_activities": {
         "name": "Nike - Activities",
         "description": "User activities from the Nike Run app database (com.nike.nrc.room)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-18",
-        "last_update_date": "2023-03-18",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Nike-Run",
-        "notes": "",
+        "notes": "The activity id, start time, end time and duration are resolved by column name "
+                 "(as2_sa_id, as2_sa_start_utc_ms, as2_sa_end_utc_ms, as2_sa_active_duration_ms), the "
+                 "same names the Nike - Activity Route artifact selects, so a schema change fails "
+                 "instead of relabelling another column. The value reported under 'Source', and the "
+                 "columns read from activity_tag and activity_summary, are still read by position; "
+                 "that mapping was established against the app version this parser was written for "
+                 "and may not hold on other versions.",
         "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
         "output_types": "standard",
         "artifact_icon": "activity",
@@ -58,16 +63,24 @@ def _q(cursor, sql, params):
 
 
 @artifact_processor
-def get_nike_activities(files_found, report_folder, seeker, wrap_text):
+def get_nike_activities(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     data_list = []
     if source_path:
         db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
         activities = _q(cursor, 'SELECT * FROM activity', ())
+        # Resolve the id, timestamp and duration columns by name -- the names NikePolyline selects --
+        # so a schema change raises here instead of relabelling another column as a start or end time.
+        columns = [column[0] for column in cursor.description] if activities else []
         for row in activities:
-            act_id = row[0]
-            duration = _round(row[5] / 60000) if row[5] else ''
+            act_id = row[columns.index('as2_sa_id')]
+            start_time = _ms_to_utc(row[columns.index('as2_sa_start_utc_ms')])
+            end_time = _ms_to_utc(row[columns.index('as2_sa_end_utc_ms')])
+            active_duration = row[columns.index('as2_sa_active_duration_ms')]
+            duration = _round(active_duration / 60000) if active_duration else ''
+            source = row[2]  # column name not established; read by position
             name = location = version = temperature = weather = None
             calories = max_speed = mean_speed = steps = distance = pace = cadence = None
 
@@ -101,7 +114,7 @@ def get_nike_activities(files_found, report_folder, seeker, wrap_text):
                 elif metric == 'cadence':
                     cadence = _round(val)
 
-            data_list.append((act_id, name, _ms_to_utc(row[3]), _ms_to_utc(row[4]), location, row[2],
+            data_list.append((act_id, name, start_time, end_time, location, source,
                               version, temperature, weather, duration, calories, max_speed, mean_speed,
                               steps, distance, pace, cadence))
         db.close()

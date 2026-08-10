@@ -1,14 +1,15 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_installedappsGass": {
         "name": "installedappsGass",
-        "description": "Parses installed applications (bundle ID, version code and SHA-256 hash) from the Google Play services gass.db.",
-        "author": "",
+        "description": "Parses application records (bundle ID, version code and SHA-256 hash) from the app_info table of the Google Play services gass.db.",
+        "author": "@abrignoni",
         "creation_date": "2020-03-01",
-        "last_update_date": "2020-03-01",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Installed Apps",
-        "notes": "",
+        "notes": "A row records an application known to the app_info table. Whether the application "
+                 "was still installed at the time of extraction is not established by its presence "
+                 "here.",
         "paths": ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",
@@ -31,7 +32,8 @@ from scripts.ilapfuncs import artifact_processor, is_platform_windows, open_sqli
 
 
 @artifact_processor
-def get_installedappsGass(files_found, report_folder, seeker, wrap_text):
+def get_installedappsGass(context):
+    files_found = context.get_files_found()
 
     slash = '\\' if is_platform_windows() else '/'
     data_list = []

@@ -15,7 +15,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "DeepSeek",
         "notes": "",
-        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db'),
+        "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db*'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "message-circle"
     }
@@ -23,7 +23,8 @@ __artifacts_v2__ = {
 
 
 @artifact_processor
-def deepseek_chat_info(files_found, report_folder, seeker, wrap_text):
+def deepseek_chat_info(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ""
@@ -78,7 +79,7 @@ def deepseek_chat_info(files_found, report_folder, seeker, wrap_text):
                             tz=timezone.utc
                         ).strftime('%Y-%m-%d %H:%M:%S')
 
-                    except Exception:
+                    except Exception:  # pylint: disable=broad-exception-caught
 
                         updated_at_utc = str(updated_at)
 
@@ -89,7 +90,7 @@ def deepseek_chat_info(files_found, report_folder, seeker, wrap_text):
                     updated_at_utc
                 ))
 
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             print(f"Error processing {source_path}: {e}")
 
         finally:

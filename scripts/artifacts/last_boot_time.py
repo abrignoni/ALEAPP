@@ -1,14 +1,14 @@
-# pylint: disable=W0611,W0613,W0621,W0631
+# pylint: disable=W0611,W0621,W0631
 __artifacts_v2__ = {
     "last_boot_time": {
         "name": "Last Boot Time",
-        "description": "Parses the last boot timestamp of the device",
+        "description": "Reports the last_boot_time_utc bootstat record; AOSP stores the event value in the file's modification time.",
         "author": "@stark4n6",
         "creation_date": "2022-01-05",
-        "last_update_date": "2025-08-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Power Events",
-        "notes": "",
+        "notes": "Reference: AOSP bootstat, 'boot_event_record_store.cpp (event values are stored in the file mtime attribute)', https://android.googlesource.com/platform/system/core/+/refs/heads/main/bootstat/boot_event_record_store.cpp",
         "paths": ('*/misc/bootstat/last_boot_time_utc'),
         "output_types": "standard",
         "artifact_icon": "power",
@@ -32,7 +32,8 @@ import time
 from scripts.ilapfuncs import logfunc, logdevinfo, artifact_processor
 
 @artifact_processor
-def last_boot_time(files_found, report_folder, seeker, wrap_text):
+def last_boot_time(context):
+    files_found = context.get_files_found()
 
     data_list = []
 

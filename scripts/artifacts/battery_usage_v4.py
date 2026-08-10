@@ -1,14 +1,13 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_battery_usage_v4": {
         "name": "battery_usage_v4",
         "description": "Parses per-app battery usage (timestamp, application, power consumed, foreground and background usage, battery level and status) from the settings intelligence battery-usage-db-v4 database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2021-12-21",
-        "last_update_date": "2021-12-21",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Settings Services",
-        "notes": "",
+        "notes": "Battery Status decodes the AOSP BatteryManager constants 1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging and 5 Fully Charged; any other value is reported as the raw number. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager",
         "paths": ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*',),
         "output_types": "standard",
         "artifact_icon": "battery",
@@ -33,7 +32,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_battery_usage_v4(files_found, report_folder, seeker, wrap_text):
+def get_battery_usage_v4(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''
@@ -59,7 +59,9 @@ def get_battery_usage_v4(files_found, report_folder, seeker, wrap_text):
             foregroundUsageTimeInMs*.001 as 'Foreground Usage (Seconds)',
             backgroundUsageTimeInMs*.001 as 'Background Usage (Seconds)',
             batteryLevel,
-            case BatteryStatus when 2 then 'Charging' when 3 then 'Not Charging' when 5 then 'Fully Charged' end
+            case BatteryStatus when 1 then 'Unknown' when 2 then 'Charging' when 3 then 'Discharging'
+                               when 4 then 'Not Charging' when 5 then 'Fully Charged'
+                               else BatteryStatus end
             from BatteryState
         ''')
         all_rows = cursor.fetchall()

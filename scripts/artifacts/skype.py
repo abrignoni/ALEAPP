@@ -1,14 +1,20 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_skype_call_logs": {
         "name": "Skype - Call Logs",
         "description": "Parses Skype call logs (start and end time, participant IDs and direction) from the Skype live database.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2021-03-15",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Skype",
-        "notes": "",
+        "notes": ("Call Direction is decoded from the chatitem 'is_sender_me' flag. Direction/status "
+                  "value mappings were established through testing; unrecognized values, including "
+                  "NULL, are left blank rather than assigned a direction.\n"
+                  "End Time is not stored by the app: it is the message time plus the duration "
+                  "column, which is treated as whole seconds. The unit of that column has not been "
+                  "established.\n"
+                  "To ID is filled only for rows recognized as outgoing."),
         "paths": ('*/com.skype.raider/databases/live*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -16,12 +22,17 @@ __artifacts_v2__ = {
     "get_skype_messages": {
         "name": "Skype - Messages",
         "description": "Parses Skype messages (send time, thread, content, direction, sender and recipient IDs and attachments) from the Skype live database.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Skype",
-        "notes": "",
+        "notes": ("Direction is decoded from the chatitem 'is_sender_me' flag. Direction/status "
+                  "value mappings were established through testing; unrecognized values, including "
+                  "NULL, are left blank rather than assigned a direction.\n"
+                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "device owner; a row whose direction is blank is not attributed to the owner.\n"
+                  "To ID is filled only for rows recognized as outgoing."),
         "paths": ('*/com.skype.raider/databases/live*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -39,7 +50,7 @@ __artifacts_v2__ = {
     "get_skype_contacts": {
         "name": "Skype - Contacts",
         "description": "Parses Skype contacts (entry ID and name) from the Skype live database.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",
         "requirements": "none",
@@ -65,7 +76,8 @@ def _skype_db(files_found):
 
 
 @artifact_processor
-def get_skype_call_logs(files_found, report_folder, seeker, wrap_text):
+def get_skype_call_logs(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _skype_db(files_found) or ''
     if source_path:
@@ -78,8 +90,8 @@ def get_skype_call_logs(files_found, report_folder, seeker, wrap_text):
                            contact_book_w_groups.participant_ids,
                            messages.time/1000 as start_date,
                            messages.time/1000 + messages.duration as end_date,
-                           case messages.is_sender_me when 0 then "Incoming" else "Outgoing"
-                           end is_sender_me,
+                           case messages.is_sender_me when 0 then "Incoming" when 1 then "Outgoing"
+                           else "" end is_sender_me,
                            messages.person_id AS sender_id
                     FROM   (SELECT conversation_id,
                                    Group_concat(person_id) AS participant_ids
@@ -109,12 +121,13 @@ def get_skype_call_logs(files_found, report_folder, seeker, wrap_text):
             data_list.append((starttime, endtime, row[5], to_id, row[4]))
         db.close()
 
-    data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'), 'From ID', 'To ID', 'Call Direction')
+    data_headers = (('Start Time', 'datetime'), ('End Time (computed)', 'datetime'), 'From ID', 'To ID', 'Call Direction')
     return data_headers, data_list, source_path
 
 
 @artifact_processor
-def get_skype_messages(files_found, report_folder, seeker, wrap_text):
+def get_skype_messages(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _skype_db(files_found) or ''
     if source_path:
@@ -127,8 +140,8 @@ def get_skype_messages(files_found, report_folder, seeker, wrap_text):
                            messages.time/1000,
                            messages.content,
                            messages.device_gallery_path,
-                           case messages.is_sender_me when 0 then "Incoming" else "Outgoing"
-                           end is_sender_me,
+                           case messages.is_sender_me when 0 then "Incoming" when 1 then "Outgoing"
+                           else "" end is_sender_me,
                            messages.person_id
                            FROM   (SELECT conversation_id,
                                    Group_concat(person_id) AS participant_ids
@@ -168,7 +181,8 @@ def get_skype_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_skype_contacts(files_found, report_folder, seeker, wrap_text):
+def get_skype_contacts(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = _skype_db(files_found) or ''
     if source_path:

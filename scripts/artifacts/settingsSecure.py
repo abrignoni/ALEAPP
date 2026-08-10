@@ -1,11 +1,11 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_settingsSecure": {
         "name": "settingsSecure",
-        "description": "Filter for path xxx/yyy/system_ce/0",
-        "author": "",
+        "description": "Selected values (android_id, bluetooth name and address, "
+                       "mock_location) from settings_secure.xml of each Android user",
+        "author": "@abrignoni",
         "creation_date": "2020-04-02",
-        "last_update_date": "2020-04-02",
+        "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Device Information",
         "notes": "",
@@ -38,10 +38,10 @@ INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
 
 
-def _parse_root(file_found):
+def parse_settings_root(file_found, artifact_label='settingsSecure'):
     '''Return the XML root, tolerating ABX, Android-11 rootless files, and invalid XML tokens.
 
-    settings_secure.xml occasionally contains raw control characters or unescaped
+    The settings_*.xml files occasionally contain raw control characters or unescaped
     ampersands inside setting values, which make a plain ET.parse() raise
     "not well-formed (invalid token)". We recover by sanitizing the text; if it is
     still unparseable the file is skipped (None) rather than erroring the artifact.
@@ -61,12 +61,13 @@ def _parse_root(file_found):
         try:
             return ET.fromstring(xml)
         except ET.ParseError as ex:
-            logfunc(f'settingsSecure: skipping unparseable {file_found}: {ex}')
+            logfunc(f'{artifact_label}: skipping unparseable {file_found}: {ex}')
             return None
 
 
 @artifact_processor
-def get_settingsSecure(files_found, report_folder, seeker, wrap_text):
+def get_settingsSecure(context):
+    files_found = context.get_files_found()
 
     slash = '\\' if is_platform_windows() else '/'
     data_list = []
@@ -83,7 +84,7 @@ def get_settingsSecure(files_found, report_folder, seeker, wrap_text):
         if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
             continue  # Skip mirror, it should be duplicate data
 
-        root = _parse_root(file_found)
+        root = parse_settings_root(file_found)
         if root is None:
             continue
 

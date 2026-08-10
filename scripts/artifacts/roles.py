@@ -1,14 +1,15 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_roles": {
         "name": "roles",
-        "description": "Parses assigned system role holders (Android version, user, role and holder package) from the roles.xml file.",
-        "author": "",
+        "description": "Parses assigned system role holders (source path variant, user, role and holder package) from the roles.xml file.",
+        "author": "@abrignoni",
         "creation_date": "2021-01-25",
-        "last_update_date": "2021-01-25",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "App Roles",
-        "notes": "",
+        "notes": "Source Path Variant records which of the two collected paths a row was read from. "
+                 "It is not an Android version: both path forms are seen across Android releases, "
+                 "and the path a file sits at does not establish the OS version of the device.",
         "paths": ('*/system/users/*/roles.xml', '*/misc_de/*/apexdata/com.android.permission/roles.xml'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",
@@ -52,7 +53,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_roles(files_found, report_folder, seeker, wrap_text):
+def get_roles(context):
+    files_found = context.get_files_found()
 
     slash = '\\' if is_platform_windows() else '/'
     data_list = []
@@ -62,15 +64,17 @@ def get_roles(files_found, report_folder, seeker, wrap_text):
         file_found = str(file_found)
 
         parts = file_found.split(slash)
-        ver = ''
+        # Which path the file was collected from, not an OS version: both forms occur
+        # across Android releases, so the path cannot establish one.
+        path_variant = ''
         if 'mirror' in parts:
             continue
         elif 'users' in parts:
             user = parts[-2]
-            ver = 'Android 10'
+            path_variant = 'system/users/*/roles.xml'
         elif 'misc_de' in parts:
             user = parts[-4]
-            ver = 'Android 11'
+            path_variant = 'misc_de/*/apexdata/com.android.permission/roles.xml'
         else:
             continue
 
@@ -81,7 +85,7 @@ def get_roles(files_found, report_folder, seeker, wrap_text):
             role = elem.attrib['name']
             for subelem in elem:
                 holder = subelem.attrib['name']
-            data_list.append((ver, user, role, holder))
+            data_list.append((path_variant, user, role, holder))
 
-    data_headers = ('Android Version', 'User', 'Role', 'Holder')
+    data_headers = ('Source Path Variant', 'User', 'Role', 'Holder')
     return data_headers, data_list, source_path

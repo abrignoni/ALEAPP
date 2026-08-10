@@ -333,8 +333,9 @@ def split_dumpsys_log(dumpsys_file) -> dict:
 
 # Dumpsys - Wifi - Configured Networks
 @artifact_processor
-def alex_live_wifi_conf_net(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_wifi_conf_net(context):
     """Parses the dumpsys wifi dump for configured networks"""
+    files_found = context.get_files_found()
     source_path = files_found[0]
     data_list = []
     split_dumpsys_log(source_path)
@@ -457,8 +458,9 @@ def alex_live_wifi_conf_net(files_found, _report_folder, _seeker, _wrap_text):
 
 # Dumpsys - Usagestats - Events
 @artifact_processor
-def alex_live_usagestats_events(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_usagestats_events(context):
     """Parses the dumpsys usagestats dump for event logs"""
+    files_found = context.get_files_found()
     source_path = files_found[0]
     data_list = []
     split_dumpsys_log(source_path)
@@ -502,8 +504,9 @@ def alex_live_usagestats_events(files_found, _report_folder, _seeker, _wrap_text
 
 # Dumpsys - Usagestats - Packages (yearly)
 @artifact_processor
-def alex_live_usagestats_yearly(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_usagestats_yearly(context):
     """Parses the dumpsys usagestats dump for event logs"""
+    files_found = context.get_files_found()
     source_path = files_found[0]
     data_list = []
     data_headers = []
@@ -566,8 +569,9 @@ def alex_live_usagestats_yearly(files_found, _report_folder, _seeker, _wrap_text
 
 # Dumpsys - Bluetooth Manager - Bonded Devices
 @artifact_processor
-def alex_live_bt_bonded(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_bt_bonded(context):
     """Parses the dumpsys bluetooth_manager dump for bonded devices"""
+    files_found = context.get_files_found()
     source_path = files_found[0]
     data_list = []
     split_dumpsys_log(source_path)
@@ -613,8 +617,9 @@ def alex_live_bt_bonded(files_found, _report_folder, _seeker, _wrap_text):
 
 # Dumpsys - Companiondevice
 @artifact_processor
-def alex_live_companiondevice(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_companiondevice(context):
     """Parses the dumpsys companiondevice dump for entries"""
+    files_found = context.get_files_found()
 
     source_path = files_found[0]
     data_list = []
@@ -667,8 +672,9 @@ def alex_live_companiondevice(files_found, _report_folder, _seeker, _wrap_text):
 
 # Dumpsys - Role (Default Apps)
 @artifact_processor
-def alex_live_role(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_role(context):
     """Parses the dumpsys role dump for entries"""
+    files_found = context.get_files_found()
     source_path = files_found[0]
     data_list = []
     split_dumpsys_log(source_path)
@@ -703,8 +709,9 @@ def alex_live_role(files_found, _report_folder, _seeker, _wrap_text):
 
 # Dumpsys - Accounts
 @artifact_processor
-def alex_live_account(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_account(context):
     """Parses the dumpsys account dump for entires"""
+    files_found = context.get_files_found()
     source_path = files_found[0]
     data_list = []
     split_dumpsys_log(source_path)
@@ -732,8 +739,9 @@ def alex_live_account(files_found, _report_folder, _seeker, _wrap_text):
 
 # Dumpsys - Batterystats
 @artifact_processor
-def alex_live_batterystats(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_batterystats(context):
     """Parses the dumpsys batterystats dump for entires"""
+    files_found = context.get_files_found()
     source_path = ""
     alex_device = ""
     for file_found in files_found:
@@ -881,8 +889,9 @@ def alex_live_batterystats(files_found, _report_folder, _seeker, _wrap_text):
 
 # App Ops
 @artifact_processor
-def alex_live_appops(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_appops(context):
     """Parses the app_ops.json included in an ALEX PRFS Backup"""
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "app_ops.json")
     data_list = []
     try:
@@ -932,8 +941,9 @@ def alex_live_appops(files_found, _report_folder, _seeker, _wrap_text):
 
 # Logcat (Android 10 and up as these allow the epoch-timestamps)
 @artifact_processor
-def alex_live_logcat(files_found, _report_folder, _seeker, _wrap_text):
+def alex_live_logcat(context):
     """Parses the logcat logs"""
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "logcat.txt")
     data_list = []
     log_pattern = re.compile(

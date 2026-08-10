@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_k9mail_accounts": {
         "name": "K-9 Mail - Accounts",
@@ -56,7 +56,8 @@ def _account_uuids(cursor):
 
 
 @artifact_processor
-def get_k9mail_accounts(files_found, report_folder, seeker, wrap_text):
+def get_k9mail_accounts(context):
+    files_found = context.get_files_found()
     source_path = _prefs_db(files_found)
     data_list = []
     if source_path:
@@ -106,7 +107,8 @@ def _account_emails(files_found):
 
 
 @artifact_processor
-def get_k9mail_messages(files_found, report_folder, seeker, wrap_text):
+def get_k9mail_messages(context):
+    files_found = context.get_files_found()
     emails = _account_emails(files_found)
     data_list = []
     source_path = ''

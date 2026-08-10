@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "accounts_ce": {
         "name": "Accounts_ce",
@@ -58,7 +57,8 @@ from scripts.ilapfuncs import artifact_processor, \
 
 
 @artifact_processor
-def accounts_ce(files_found, report_folder, seeker, wrap_text):
+def accounts_ce(context):
+    files_found = context.get_files_found()
     source_path_list = get_file_path_list_checking_uid(files_found, "accounts_ce.db", -2, "mirror")
     source_path = ""
     data_list = []
@@ -80,7 +80,8 @@ def accounts_ce(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def accounts_ce_authtokens(files_found, report_folder, seeker, wrap_text):
+def accounts_ce_authtokens(context):
+    files_found = context.get_files_found()
     source_path_list = get_file_path_list_checking_uid(files_found, "accounts_ce.db", -2, "mirror")
     source_path = ""
     data_list = []

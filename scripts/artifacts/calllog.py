@@ -1,14 +1,13 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_calllog": {
         "name": "Call logs ",
         "description": "Parses the call log (date, number, type, duration, location and transcription) from the contacts provider calllog.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-02",
-        "last_update_date": "2020-03-02",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Call Logs",
-        "notes": "",
+        "notes": "AOSP documents the DATE column as milliseconds since epoch and DURATION as seconds, and this parser decodes them that way, so the Call Date column is a converted millisecond timestamp and Duration in Secs is the stored value unchanged. The Type column decodes the AOSP CallLog.Calls codes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally. Reference: AOSP, 'CallLog.Calls constants', https://developer.android.com/reference/android/provider/CallLog.Calls",
         "paths": ('*/com.android.providers.contacts/databases/calllog.db*', '*/com.samsung.android.providers.contacts/databases/calllog.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -44,7 +43,8 @@ CALL_TYPE_ICONS = {
 
 
 @artifact_processor
-def get_calllog(files_found, report_folder, seeker, wrap_text):
+def get_calllog(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

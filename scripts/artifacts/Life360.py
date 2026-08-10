@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Life360_chat_messages": {
         "name": "Life360 - Chat Messages",
@@ -31,10 +30,10 @@ __artifacts_v2__ = {
         "description": "Parses Life360 saved places (L360LocalStoreRoomDatabase)",
         "author": "@KevinPagano3",
         "creation_date": "2024-01-17",
-        "last_update_date": "2024-01-17",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Life360",
-        "notes": "",
+        "notes": "Radius is reported as stored; the database does not record its unit.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360LocalStoreRoomDatabase*',),
         "output_types": ['html', 'tsv', 'lava', 'kml'],
         "artifact_icon": "map-pin",
@@ -48,10 +47,11 @@ __artifacts_v2__ = {
         "description": "Parses Life360 device geolocation events (L360EventStore.db)",
         "author": "@KevinPagano3",
         "creation_date": "2024-01-17",
-        "last_update_date": "2024-01-17",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Life360",
-        "notes": "",
+        "notes": "Speed and the two accuracy values are reported as stored; the JSON records no units "
+                 "for them.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360EventStore.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -108,6 +108,8 @@ def _ms_to_utc(value):
 def _find(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if file_found.endswith(suffix):
             return file_found
     return ''
@@ -154,7 +156,8 @@ def _ble_events(file_found):
 
 
 @artifact_processor
-def get_Life360_chat_messages(files_found, report_folder, seeker, wrap_text):
+def get_Life360_chat_messages(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'messaging.db')
     data_list = []
     if source:
@@ -193,7 +196,8 @@ def get_Life360_chat_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Life360_places(files_found, report_folder, seeker, wrap_text):
+def get_Life360_places(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'L360LocalStoreRoomDatabase')
     data_list = []
     if source:
@@ -204,13 +208,14 @@ def get_Life360_places(files_found, report_folder, seeker, wrap_text):
             data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], Context.get_relative_path(source)))
         db.close()
 
-    data_headers = ('Place Name', 'Latitude', 'Longitude', 'Radius (m)', 'Places Source', 'Source ID',
+    data_headers = ('Place Name', 'Latitude', 'Longitude', 'Radius (as stored)', 'Places Source', 'Source ID',
                     'Owner ID', 'Source File')
     return data_headers, data_list, source
 
 
 @artifact_processor
-def get_Life360_locations(files_found, report_folder, seeker, wrap_text):
+def get_Life360_locations(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'L360EventStore.db')
     data_list = []
     if source:
@@ -219,15 +224,16 @@ def get_Life360_locations(files_found, report_folder, seeker, wrap_text):
                               e['bearing'], e['vert'], e['hor'], e['lmode'], e['bssid'], e['ssid'],
                               e['id'], Context.get_relative_path(source)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Speed (mps)',
-                    'Course', 'Bearing', 'Vertical Accuracy (+/- m)', 'Horizontal Accuracy (+/- m)',
+    data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Altitude', 'Speed (as stored)',
+                    'Course', 'Bearing', 'Vertical Accuracy (as stored)', 'Horizontal Accuracy (as stored)',
                     'Location Mode', 'Connected Access Point BSSID', 'Connected Access Point SSID',
                     'ID', 'Source File')
     return data_headers, data_list, source
 
 
 @artifact_processor
-def get_Life360_device_battery(files_found, report_folder, seeker, wrap_text):
+def get_Life360_device_battery(context):
+    files_found = context.get_files_found()
     source = _find(files_found, 'L360EventStore.db')
     data_list = []
     if source:

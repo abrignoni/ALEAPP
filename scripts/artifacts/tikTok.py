@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_tikTok": {
         "name": "TikTok - Messages",
         "description": "Parses TikTok direct messages (timestamp, user, nickname, message, links, read state and conversation) from the TikTok IM databases.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-02",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -37,7 +36,7 @@ __artifacts_v2__ = {
     "get_tikTok_contacts": {
         "name": "TikTok - Contacts",
         "description": "Parses TikTok contacts (UID, nickname, unique ID, avatar and follow status) from the TikTok IM databases.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2021-03-02",
         "last_update_date": "2021-03-02",
         "requirements": "none",
@@ -64,7 +63,7 @@ import datetime
 import os
 import re
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, open_sqlite_db_readonly
 
 
 def _tiktok_dbs(files_found):
@@ -79,14 +78,15 @@ def _tiktok_dbs(files_found):
 
 
 @artifact_processor
-def get_tikTok(files_found, report_folder, seeker, wrap_text):
+def get_tikTok(context):
+    files_found = context.get_files_found()
     data_list = []
     maindb, attachdb = _tiktok_dbs(files_found)
     source_path = maindb
     if maindb and attachdb:
         db = open_sqlite_db_readonly(maindb)
         cursor = db.cursor()
-        cursor.execute(f"ATTACH DATABASE '{attachdb}' as db_im_xx;")
+        cursor.execute(attach_sqlite_db_readonly(attachdb, 'db_im_xx'))
         cursor.execute('''
             select
             created_time,
@@ -126,14 +126,15 @@ def get_tikTok(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_tikTok_contacts(files_found, report_folder, seeker, wrap_text):
+def get_tikTok_contacts(context):
+    files_found = context.get_files_found()
     data_list = []
     maindb, attachdb = _tiktok_dbs(files_found)
     source_path = maindb
     if maindb and attachdb:
         db = open_sqlite_db_readonly(maindb)
         cursor = db.cursor()
-        cursor.execute(f"ATTACH DATABASE '{attachdb}' as db_im_xx;")
+        cursor.execute(attach_sqlite_db_readonly(attachdb, 'db_im_xx'))
         cursor.execute('''
             select UID, NICK_NAME, UNIQUE_ID, INITIAL_LETTER,
             json_extract(AVATAR_THUMB, '$.url_list[0]') as avatarURL,

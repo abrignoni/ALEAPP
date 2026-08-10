@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_Todoist": {
         "name": "Todoist - Items",
@@ -79,7 +78,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_Todoist(files_found, report_folder, seeker, wrap_text):
+def get_Todoist(context):
+    files_found = context.get_files_found()
     source_path = _todoist_db(files_found)
     rows = _run(source_path, '''
         SELECT items.date_added, items.added_by_uid, items.content, items.description, items.due_date,
@@ -100,7 +100,8 @@ def get_Todoist(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Todoist_notes(files_found, report_folder, seeker, wrap_text):
+def get_Todoist_notes(context):
+    files_found = context.get_files_found()
     source_path = _todoist_db(files_found)
     rows = _run(source_path, '''
         SELECT notes.posted, notes.content, note_file_attachments.resource_type,
@@ -118,7 +119,8 @@ def get_Todoist_notes(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_Todoist_projects(files_found, report_folder, seeker, wrap_text):
+def get_Todoist_projects(context):
+    files_found = context.get_files_found()
     source_path = _todoist_db(files_found)
     rows = _run(source_path, '''
         SELECT name, color, view_style, child_order,

@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googlemaplocation": {
         "name": "Googlemaplocation",
         "description": "Parses Google Maps navigation destinations (timestamp, destination and source coordinates, title and address) from the da_destination_history database.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",
         "requirements": "none",
@@ -28,7 +28,8 @@ def convertGeo(s):
 
 
 @artifact_processor
-def get_googlemaplocation(files_found, report_folder, seeker, wrap_text):
+def get_googlemaplocation(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

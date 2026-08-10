@@ -1,4 +1,4 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_poly_api": {
         "name": "Garmin - API Activities",
@@ -34,7 +34,8 @@ def _ms_to_utc(value):
 
 
 @artifact_processor
-def get_poly_api(files_found, report_folder, seeker, wrap_text):
+def get_poly_api(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

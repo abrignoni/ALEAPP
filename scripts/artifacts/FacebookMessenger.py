@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_fb_user_id": {
         "name": "Facebook Messenger - User ID",
@@ -94,7 +93,7 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger chat messages (threads_db2)",
         "author": "Kevin Pagano",
         "creation_date": "2021-03-03",
-        "last_update_date": "2021-03-03",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "",
@@ -132,7 +131,7 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger contacts (threads_db2)",
         "author": "Kevin Pagano",
         "creation_date": "2021-03-03",
-        "last_update_date": "2021-03-03",
+        "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "",
@@ -151,7 +150,7 @@ __artifacts_v2__ = {
 import datetime
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
 
 
 def _str_to_utc(value):
@@ -186,7 +185,9 @@ def _q(cursor, sql):
 
 
 @artifact_processor
-def get_fb_user_id(files_found, report_folder, seeker, wrap_text):
+def get_fb_user_id(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -209,7 +210,9 @@ def get_fb_user_id(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_msys_chats(files_found, report_folder, seeker, wrap_text):
+def get_fb_msys_chats(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -279,7 +282,9 @@ def get_fb_msys_chats(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_msys_calls(files_found, report_folder, seeker, wrap_text):
+def get_fb_msys_calls(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -315,7 +320,9 @@ def get_fb_msys_calls(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_msys_contacts(files_found, report_folder, seeker, wrap_text):
+def get_fb_msys_contacts(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -352,8 +359,31 @@ def get_fb_msys_contacts(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source
 
 
+_REACTION_TS_COLUMNS = ('reaction_timestamp', 'reaction_timestamp_ms',
+                        'reaction_creation_timestamp_ms', 'reaction_creation_time_ms')
+
+
+def _reaction_ts_expr(cursor):
+    """Pick the reaction-timestamp spelling this database carries.
+
+    Four spellings have been reported across threads_db2 generations
+    (community report, PR #638). Only reaction_timestamp is corpus-verified
+    here; a database with none of the four reports the reaction with no time.
+    """
+    try:
+        cols = {row[1] for row in cursor.execute('PRAGMA table_info(message_reactions)')}
+    except sqlite3.Error:
+        cols = set()
+    for name in _REACTION_TS_COLUMNS:
+        if name in cols:
+            return f"datetime(message_reactions.{name}/1000,'unixepoch')"
+    return 'NULL'
+
+
 @artifact_processor
-def get_fb_threads_chats(files_found, report_folder, seeker, wrap_text):
+def get_fb_threads_chats(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     primary = '''
@@ -370,7 +400,7 @@ def get_fb_threads_chats(files_found, report_folder, seeker, wrap_text):
             json_extract(messages.shares, '$[0].description'),
             json_extract(messages.shares, '$[0].href'),
             message_reactions.reaction,
-            datetime(message_reactions.reaction_timestamp/1000,'unixepoch'),
+            {reaction_ts},
             messages.msg_id
         FROM messages, threads
         LEFT JOIN message_reactions ON message_reactions.msg_id = messages.msg_id
@@ -391,7 +421,7 @@ def get_fb_threads_chats(files_found, report_folder, seeker, wrap_text):
             json_extract(messages.shares, '$[0].description'),
             json_extract(messages.shares, '$[0].href'),
             message_reactions.reaction,
-            datetime(message_reactions.reaction_timestamp/1000,'unixepoch'),
+            {reaction_ts},
             messages.msg_id
         FROM messages, threads
         LEFT JOIN message_reactions ON message_reactions.msg_id = messages.msg_id
@@ -407,11 +437,12 @@ def get_fb_threads_chats(files_found, report_folder, seeker, wrap_text):
         rel = _src(file_found, seeker)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
+        reaction_ts = _reaction_ts_expr(cursor)
         try:
-            cursor.execute(primary)
+            cursor.execute(primary.format(reaction_ts=reaction_ts))
             rows, has_snippet = cursor.fetchall(), True
         except sqlite3.Error:
-            rows, has_snippet = _q(cursor, fallback), False
+            rows, has_snippet = _q(cursor, fallback.format(reaction_ts=reaction_ts)), False
         for row in rows:
             if has_snippet:
                 data_list.append((_str_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5], row[6],
@@ -429,7 +460,9 @@ def get_fb_threads_chats(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_threads_calls(files_found, report_folder, seeker, wrap_text):
+def get_fb_threads_calls(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -465,7 +498,9 @@ def get_fb_threads_calls(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fb_threads_contacts(files_found, report_folder, seeker, wrap_text):
+def get_fb_threads_contacts(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
@@ -476,7 +511,7 @@ def get_fb_threads_contacts(files_found, report_folder, seeker, wrap_text):
         rel = _src(file_found, seeker)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
-        rows = _q(cursor, '''
+        rows = _q(cursor, null_absent_columns(file_found, '''
         SELECT
             substr(user_key,10), first_name, last_name, username,
             json_extract(profile_pic_square, '$[0].url'),
@@ -484,7 +519,7 @@ def get_fb_threads_contacts(files_found, report_folder, seeker, wrap_text):
             CASE is_friend WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' END,
             friendship_status, contact_relationship_status
         FROM thread_users
-        ''')
+        '''))
         for row in rows:
             data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8],
                               rel))

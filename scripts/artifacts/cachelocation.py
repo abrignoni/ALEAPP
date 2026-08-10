@@ -1,9 +1,9 @@
-# pylint: disable=W0612,W0613
+# pylint: disable=W0612
 __artifacts_v2__ = {
     "get_cachelocation": {
         "name": "Cache Location",
         "description": "Parses cached cell and Wi-Fi location fixes (accuracy, confidence, latitude, longitude and read time) from the Google location cache files.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",
         "requirements": "none",
@@ -23,7 +23,8 @@ from scripts.ilapfuncs import artifact_processor
 
 
 @artifact_processor
-def get_cachelocation(files_found, report_folder, seeker, wrap_text):
+def get_cachelocation(context):
+    files_found = context.get_files_found()
 
     data_list = []
     source_path = ''

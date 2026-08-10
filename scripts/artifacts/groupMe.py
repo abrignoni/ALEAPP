@@ -1,15 +1,16 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_groupMe": {
         "name": "GroupMe - Group Information",
         "description": "GroupMe group information",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-01",
-        "last_update_date": "2021-02-01",
+        "last_update_date": "2026-08-01",
         "requirements": "None",
         "category": "GroupMe",
-        "notes": "",
-        "paths": ('*/com.groupme.android/databases/groupme.db',),
+        "notes": "Message Count (stored) and Attachment Count (stored) are the counter values held in "
+                 "the groups table; they are not counts of the messages and attachments recovered by "
+                 "this artifact.",
+        "paths": ('*/com.groupme.android/databases/groupme.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
@@ -22,11 +23,11 @@ __artifacts_v2__ = {
         "description": "GroupMe chat information",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-01",
-        "last_update_date": "2021-02-01",
+        "last_update_date": "2026-08-01",
         "requirements": "None",
         "category": "GroupMe",
         "notes": "",
-        "paths": ('*/com.groupme.android/databases/groupme.db',),
+        "paths": ('*/com.groupme.android/databases/groupme.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
@@ -48,7 +49,8 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_groupMe(files_found, report_folder, seeker, wrap_text):
+def get_groupMe(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
@@ -76,13 +78,14 @@ def get_groupMe(files_found, report_folder, seeker, wrap_text):
                           _sec_to_utc(row[7]), _sec_to_utc(row[8])))
 
     data_headers = (('Group Creation Time', 'datetime'), 'Group Name', 'Group Type', 'Group Creator', 'Creator Role',
-                    'Total Message Count in Group', 'Total Attachment Count in Group',
+                    'Message Count (stored)', 'Attachment Count (stored)',
                     ('Time of Last Message in Group', 'datetime'), ('Time Group Last Updated', 'datetime'))
     return data_headers, data_list, source_path
 
 
 @artifact_processor
-def get_groupMe_chat(files_found, report_folder, seeker, wrap_text):
+def get_groupMe_chat(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
@@ -119,6 +122,6 @@ def get_groupMe_chat(files_found, report_folder, seeker, wrap_text):
 
     data_headers = (('Message Time', 'datetime'), 'Group Name', 'Message Sender', 'Message Sender Type',
                     'Is System Message', 'Message Is Hidden', 'Message Is Read', 'Message', 'Picture URL',
-                    'Picture Local Storage Location', 'Picture Width', 'Picture Height', 'Picture Is GIF',
+                    'Picture URI', 'Picture Width', 'Picture Height', 'Picture Is GIF',
                     'Video URL', 'Message Latitude', 'Message Longitude', 'Location Name')
     return data_headers, data_list, source_path

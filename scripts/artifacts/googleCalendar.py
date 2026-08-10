@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_calendar": {
         "name": "Calendar - Events",
@@ -49,13 +48,39 @@ __artifacts_v2__ = {
             "russell_pixel6a_a13": "Android 13 | com.android.providers.calendar | 3 rows",
             "userb2_a13": "Android 13 | com.android.providers.calendar | 1 row",
         },
-    }
+    },
+    "googleCalendarAppEvents": {
+        "name": "Google Calendar App Events",
+        "description": "Events from the Google Calendar app's own store (cal_v2a, Events "
+                       "table), kept separately from the calendar provider "
+                       "database: start and end, title, description, the calendar and "
+                       "account they belong to and the event web link, decoded from each "
+                       "event's protobuf record.",
+        "author": "@stark4n6",
+        "creation_date": "2026-07-30",
+        "last_update_date": "2026-07-30",
+        "requirements": "none",
+        "category": "Calendar",
+        "notes": "Created and Updated are protobuf fields 4 and 5 of the event record. The "
+                 "event type is stored as a raw integer and is reported as-is.",
+        "paths": ('*/com.google.android.calendar/databases/cal_v2a*',),
+        "output_types": "standard",
+        "artifact_icon": "calendar",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.calendar | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.calendar | 190 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.calendar | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.calendar | 96 rows",
+            "userb2_a13": "Android 13 | com.google.android.calendar | 0 rows",
+        },
+    },
 }
 
 import datetime
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, \
+    get_sqlite_db_records, convert_unix_ts_to_utc, decode_protobuf, does_column_exist_in_db
 
 
 def _ms_to_utc(value):
@@ -90,7 +115,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_calendar(files_found, report_folder, seeker, wrap_text):
+def get_calendar(context):
+    files_found = context.get_files_found()
     source_path = _calendar_db(files_found)
     rows = _run(source_path, '''
         SELECT Events.dtstart, Events.dtend, Events.eventTimezone, Events.title, Events.description,
@@ -109,7 +135,8 @@ def get_calendar(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_calendar_calendars(files_found, report_folder, seeker, wrap_text):
+def get_calendar_calendars(context):
+    files_found = context.get_files_found()
     source_path = _calendar_db(files_found)
     rows = _run(source_path, '''
         SELECT cal_sync8, name, calendar_displayName, account_name, account_type,
@@ -125,4 +152,126 @@ def get_calendar_calendars(files_found, report_folder, seeker, wrap_text):
         ('Created Timestamp', 'datetime'), 'Calendar Name', 'Calendar Display Name', 'Account Name',
         'Account Type', 'Visible', 'Calendar Location', 'Timezone', 'Owner Account', 'Is Primary',
         'Color', 'Color Index')
+    return data_headers, data_list, source_path
+
+
+def _unique_db_files(context, name_suffix):
+    '''Database files matching the suffix, without -wal/-shm sidecars and without the
+    duplicates extractions carry for the same file (data_mirror, and /data/data next
+    to /data/user/0).'''
+    seen = set()
+    result = []
+    for file_found in context.get_files_found():
+        file_found = str(file_found)
+        if not file_found.endswith(name_suffix):
+            continue
+        if 'data_mirror' in file_found:
+            continue
+        normalized = file_found.replace('\\', '/').replace('/data/data/', '/data/user/0/')
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        result.append(file_found)
+    return result
+
+
+def _pb_get(node, *path):
+    '''Defensively walk a blackboxprotobuf dict.'''
+    cur = node
+    for key in path:
+        if isinstance(cur, list):
+            cur = cur[0] if cur else None
+        if not isinstance(cur, dict):
+            return None
+        cur = cur.get(key)
+    return cur
+
+
+def _pb_str(node, *path):
+    value = _pb_get(node, *path)
+    if isinstance(value, list):
+        value = value[0] if value else None
+    if isinstance(value, bytes):
+        return value.decode('utf-8', 'replace')
+    if isinstance(value, str):
+        return value
+    return ''
+
+
+def _pb_ts(node, *path):
+    value = _pb_get(node, *path)
+    if isinstance(value, int) and value > 0:
+        return convert_unix_ts_to_utc(value)
+    return ''
+
+
+@artifact_processor
+def googleCalendarAppEvents(context):
+    data_list = []
+    source_path = ''
+
+    for file_found in _unique_db_files(context, 'cal_v2a'):
+        # older Google Calendar versions do not have the EventType column
+        event_type_column = 'e.EventType' if does_column_exist_in_db(
+            file_found, 'Events', 'EventType') else "''"
+        db_records = get_sqlite_db_records(file_found, f'''
+            SELECT e.Proto, e.EventId, {event_type_column}, e.ToBeRemoved,
+                   a.PlatformAccountName
+            FROM Events AS e
+            LEFT JOIN Accounts AS a ON a.AccountId = e.AccountId
+            ORDER BY e.StartDayUtc DESC
+        ''')
+
+        for row in db_records:
+            source_path = file_found
+            title = description = link = ical_uid = ''
+            calendar_id = calendar_name = ''
+            start = end = created = updated = ''
+            try:
+                event, _ = decode_protobuf(row[0])
+                title = _pb_str(event, '6')
+                description = _pb_str(event, '7')
+                link = _pb_str(event, '3')
+                ical_uid = _pb_str(event, '19')
+                calendar_id = _pb_str(event, '10', '1') or _pb_str(event, '35', '1')
+                calendar_name = _pb_str(event, '10', '2') or _pb_str(event, '35', '2')
+                start = _pb_ts(event, '36', '1')
+                end = _pb_ts(event, '37', '1')
+                created = _pb_ts(event, '4')
+                updated = _pb_ts(event, '5')
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # unparseable protobuf; keep the row with the table columns only
+            data_list.append((
+                start,
+                end,
+                title,
+                description,
+                row[4],
+                calendar_name,
+                calendar_id,
+                created,
+                updated,
+                row[2],
+                row[3],
+                link,
+                ical_uid,
+                row[1],
+            ))
+
+    data_headers = (
+        ('Start', 'datetime'),
+        ('End', 'datetime'),
+        'Title',
+        'Description',
+        'Account',
+        'Calendar Name',
+        'Calendar ID',
+        ('Created', 'datetime'),
+        ('Updated', 'datetime'),
+        'Event Type',
+        'To Be Removed',
+        'Event Web Link',
+        'iCal UID',
+        'Event ID',
+    )
     return data_headers, data_list, source_path

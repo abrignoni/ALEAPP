@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_kijijiLocalUserInfo": {
         "name": "kijijiLocalUserInfo",
@@ -54,7 +53,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_kijijiLocalUserInfo(files_found, report_folder, seeker, wrap_text):
+def get_kijijiLocalUserInfo(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     logfunc(f'XML file {source_path} is being interrogated...')
 

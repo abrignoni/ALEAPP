@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0631
+# pylint: disable=W0631
 __artifacts_v2__ = {
     "get_cashApp": {
         "name": "Cash App",
         "description": "Parses Cash App transactions (date, sender and recipient display names, unique IDs and cashtags, amount, status and note) from cash_money.db.",
-        "author": "",
+        "author": "@gforce4n6",
         "creation_date": "2021-10-06",
         "last_update_date": "2021-10-06",
         "requirements": "none",
@@ -19,7 +19,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 
 
 @artifact_processor
-def get_cashApp(files_found, report_folder, seeker, wrap_text):
+def get_cashApp(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

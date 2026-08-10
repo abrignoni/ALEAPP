@@ -1,9 +1,9 @@
-# pylint: disable=W0612,W0613
+# pylint: disable=W0612
 __artifacts_v2__ = {
     "get_chromeBookmarks": {
         "name": "Bookmarks",
         "description": "Parses Bookmarks from Chromium Based Browsers",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-20",
         "last_update_date": "2020-03-20",
         "requirements": "none",
@@ -30,7 +30,8 @@ from scripts.artifacts.chrome import get_browser_name
 
 
 @artifact_processor
-def get_chromeBookmarks(files_found, report_folder, seeker, wrap_text):
+def get_chromeBookmarks(context):
+    files_found = context.get_files_found()
     # all_data is a consolidated list of all browsers with an extra column to discriminate the browser
     all_data = []
 

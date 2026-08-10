@@ -1,14 +1,14 @@
-# pylint: disable=W0612,W0613,W0631
+# pylint: disable=W0612,W0631
 __artifacts_v2__ = {
     "get_discordChats": {
         "name": "discordChats",
         "description": "Parses Discord chat messages from the kv-storage key-value store",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-09-18",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Discord Chats",
-        "notes": "",
+        "notes": "Reference: Discord Developer Documentation, 'Message Types (DEFAULT=0, CALL=3, USER_JOIN=7, REPLY=19)', https://discord.com/developers/docs/resources/message",
         "paths": ('*/data/com.discord/files/kv-storage/*/a*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -39,7 +39,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 
 @artifact_processor
-def get_discordChats(files_found, report_folder, seeker, wrap_text):
+def get_discordChats(context):
+    files_found = context.get_files_found()
 
     # build a table mapping all non-printable characters to None
     NOPRINT_TRANS_TABLE = {

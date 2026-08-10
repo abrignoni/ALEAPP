@@ -14,15 +14,15 @@ __artifacts_v2__ = {
     }
 }
 
-import codecs
-from scripts.ilapfuncs import logfunc, artifact_processor
+from scripts.ilapfuncs import artifact_processor
 
 @artifact_processor
-def bashHistory(files_found, report_folder, seeker, wrap_text):
+def bashHistory(context):
+    files_found = context.get_files_found()
     data_list = []
     file_found = str(files_found[0])
     counter = 1
-    with codecs.open(file_found, 'r', 'utf-8-sig') as csvfile:
+    with open(file_found, 'r', encoding='utf-8-sig') as csvfile:
         for row in csvfile:
             data_list.append((counter, row))
             counter += 1

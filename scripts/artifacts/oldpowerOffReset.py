@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_oldpowerOffReset": {
         "name": "oldpowerOffReset",
         "description": "Parses power-off and reset reasons (timestamp and reason) from the power_off_reset_reason log files.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2023-03-14",
         "last_update_date": "2023-03-14",
         "requirements": "none",
@@ -27,7 +26,8 @@ from scripts.ilapfuncs import artifact_processor
 
 
 @artifact_processor
-def get_oldpowerOffReset(files_found, report_folder, seeker, wrap_text):
+def get_oldpowerOffReset(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

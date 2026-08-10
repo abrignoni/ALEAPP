@@ -1,4 +1,4 @@
-# pylint: disable=E0606,E1120,E1123,W0611,W0613,W0702,W0718
+# pylint: disable=E0606,E1120,E1123,W0611,W0702,W0718
 __artifacts_v2__ = {
     "get_chatpgt2": {
         "name": "ChatGPT - Conversations",
@@ -28,7 +28,8 @@ from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readon
 from scripts.html_safe import safe_source
 
 @artifact_processor
-def get_chatpgt2(files_found, report_folder, seeker, wrap_text):
+def get_chatpgt2(context):
+    files_found = context.get_files_found()
 
     data_list = []
 

@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_hikvision": {
         "name": "Hikvision - CCTV Channels",
@@ -28,26 +27,28 @@ __artifacts_v2__ = {
     },
     "get_hikvision_activity": {
         "name": "Hikvision - CCTV Activity",
-        "description": "User interaction with the Hik-Connect app (may indicate remote live view / playback)",
+        "description": "Events logged by the Hik-Connect app (ezvizlog.db event table)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-03-23",
-        "last_update_date": "2023-03-23",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Hikvision",
         "notes": "",
-        "paths": ('*/com.connect.enduser/databases/ezvizlog.db',),
+        "paths": ('*/com.connect.enduser/databases/ezvizlog.db*',),
         "output_types": "standard",
         "artifact_icon": "video",
     },
     "get_hikvision_media": {
-        "name": "Hikvision - User Created Media",
-        "description": "Media files the user created while viewing CCTV footage in the Hik-Connect app",
+        "name": "Hikvision - CCTV Media",
+        "description": "Media files recorded in the Hik-Connect image.db",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-03-23",
-        "last_update_date": "2023-03-23",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Hikvision",
-        "notes": "",
+        "notes": ("Video Start Time and Video End Time are reported exactly as stored. Unlike "
+                  "createdTime in the same row, they are not converted, because the format they "
+                  "are written in is not established."),
         "paths": ('*/com.connect.enduser/databases/image.db*', '*/0/Pictures/Hik-Connect Album/*'),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -73,6 +74,8 @@ def _ms_to_utc(value):
 def _db(files_found, db_name):
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if os.path.basename(file_found) == db_name:
             return file_found
     return ''
@@ -93,7 +96,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_hikvision(files_found, report_folder, seeker, wrap_text):
+def get_hikvision(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found, 'database.hik')
     rows = _run(source_path, '''
         SELECT nDeviceID, nChannelNo, chChannelName,
@@ -105,7 +109,8 @@ def get_hikvision(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_hikvision_info(files_found, report_folder, seeker, wrap_text):
+def get_hikvision_info(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found, 'database.hik')
     rows = _run(source_path, '''
         SELECT nDeviceID, chDeviceName, chDeviceSerialNo, nDevicePort, nChannelNum, nStartChan,
@@ -118,7 +123,8 @@ def get_hikvision_info(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_hikvision_activity(files_found, report_folder, seeker, wrap_text):
+def get_hikvision_activity(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found, 'ezvizlog.db')
     rows = _run(source_path, 'SELECT time, systemName, content FROM event')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2]) for r in rows]
@@ -127,7 +133,8 @@ def get_hikvision_activity(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_hikvision_media(files_found, report_folder, seeker, wrap_text):
+def get_hikvision_media(context):
+    files_found = context.get_files_found()
     files_by_name = {os.path.basename(str(f)): str(f) for f in files_found}
     source_path = _db(files_found, 'image.db')
     rows = _run(source_path, '''
@@ -144,5 +151,6 @@ def get_hikvision_media(files_found, report_folder, seeker, wrap_text):
 
     data_headers = (
         ('Creation Timestamp', 'datetime'), 'Camera ID', 'Device ID', 'Type', ('File', 'media'),
-        ('Thumbnail', 'media'), 'User', 'Folder Name', 'Video Start Time', 'Video End Time')
+        ('Thumbnail', 'media'), 'User', 'Folder Name', 'Video Start Time (as stored)',
+        'Video End Time (as stored)')
     return data_headers, data_list, source_path

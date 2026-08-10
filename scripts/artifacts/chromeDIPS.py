@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_chromeDIPS": {
         "name": "ChromeDIPS",
@@ -47,7 +46,8 @@ def _first_column(columns, candidates):
 
 
 @artifact_processor
-def get_chromeDIPS(files_found, report_folder, seeker, wrap_text):
+def get_chromeDIPS(context):
+    files_found = context.get_files_found()
     # all_data is a consolidated list of all browsers with an extra column to discriminate the browser
     all_data = []
 

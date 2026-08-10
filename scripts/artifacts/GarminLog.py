@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_log": {
         "name": "GarminLog",
@@ -22,7 +21,8 @@ from scripts.ilapfuncs import artifact_processor, logfunc
 
 
 @artifact_processor
-def get_log(files_found, report_folder, seeker, wrap_text):
+def get_log(context):
+    files_found = context.get_files_found()
     user_info = {}
     attribute = ["access_token", "expires_in", "refresh_token", "token_type", "id_token", "Authorization"]
     auth = False

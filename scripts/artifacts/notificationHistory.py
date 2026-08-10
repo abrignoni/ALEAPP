@@ -1,15 +1,17 @@
-# pylint: disable=E1101,W0613,W0718
+# pylint: disable=E1101,W0718
 __artifacts_v2__ = {
     "get_notificationHistory": {
         "name": "Android Notification History",
-        "description": "A history of the notifications that landed on the device during the last 24h "
-                       "(system_ce notification_history protobufs). Based on a research project.",
+        "description": "Notifications recorded in the system_ce notification_history protobufs.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2024-07-02",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "Android Notification History",
-        "notes": "",
+        "notes": "Coverage is limited to the protobuf files still present under "
+                 "notification_history/history at the time of extraction, which is a rolling "
+                 "window rather than the device's full notification history. How long that "
+                 "window is was not established from the data.",
         "paths": ('**/system_ce/*/notification_history/history/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -46,10 +48,10 @@ __artifacts_v2__ = {
     },
     "get_notificationHistory_snoozed": {
         "name": "Android Notification History - Snoozed",
-        "description": "Notifications the user chose to snooze for a specific time interval (notification_policy.xml).",
+        "description": "Notifications recorded as snoozed in notification_policy.xml.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2024-07-02",
+        "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "",
@@ -112,7 +114,8 @@ def _xml_root(file_found, multi_root):
 
 
 @artifact_processor
-def get_notificationHistory_status(files_found, report_folder, seeker, wrap_text):
+def get_notificationHistory_status(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -133,7 +136,8 @@ def get_notificationHistory_status(files_found, report_folder, seeker, wrap_text
 
 
 @artifact_processor
-def get_notificationHistory_snoozed(files_found, report_folder, seeker, wrap_text):
+def get_notificationHistory_snoozed(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -154,7 +158,8 @@ def get_notificationHistory_snoozed(files_found, report_folder, seeker, wrap_tex
 
 
 @artifact_processor
-def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
+def get_notificationHistory(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     fields = ['uid', 'user_id', 'package_index', 'channel_name', 'channel_id',
@@ -164,6 +169,10 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
 
     for file_found in files_found:
         file_found = str(file_found)
+        if not os.path.isfile(file_found):
+            # The glob also returns the enclosing history directory on some
+            # extractions; only the per-notification files are protobufs.
+            continue
         file_name = os.path.basename(file_found)
         source_path = os.path.dirname(file_found)
         try:
@@ -218,5 +227,5 @@ def get_notificationHistory(files_found, report_folder, seeker, wrap_text):
         'Channel Name', 'Channel Name Index', 'Channel ID', 'Channel ID Index', 'Conversation ID',
         'Conversation ID Index', 'Major Version', 'Image Type', 'Image Bitmap Filename', 'Image Resource ID',
         'Image Resource ID Package', 'Image Data Length', 'Image Data Offset', 'Image URI',
-        'Protobuf File Name', ('Protobuf File Creation Date', 'datetime'))
+        'Protobuf File Name', ('Timestamp From Protobuf File Name', 'datetime'))
     return data_headers, data_list, source_path

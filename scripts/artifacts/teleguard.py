@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_teleguard": {
         "name": "Teleguard - Messages",
         "description": "Teleguard messenger messages",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2024-01-09",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -32,7 +31,7 @@ __artifacts_v2__ = {
     "get_teleguard_posts": {
         "name": "Teleguard - Posts",
         "description": "Teleguard channel posts",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2024-01-09",
         "last_update_date": "2024-01-09",
         "requirements": "none",
@@ -49,7 +48,7 @@ __artifacts_v2__ = {
     "get_teleguard_contacts": {
         "name": "Teleguard - Contacts",
         "description": "Teleguard contacts with avatars",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2024-01-09",
         "last_update_date": "2024-01-09",
         "requirements": "none",
@@ -66,12 +65,14 @@ __artifacts_v2__ = {
     "get_teleguard_channels": {
         "name": "Teleguard - Channels",
         "description": "Teleguard channels",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2024-01-09",
-        "last_update_date": "2024-01-09",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Teleguard",
-        "notes": "",
+        "notes": "The channels table is read with 'SELECT *' and the first twelve columns are labelled "
+                 "by position; the mapping was established against the app version this parser was "
+                 "written for and may not hold on other versions. Any further columns are not reported.",
         "paths": ('*/data/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": "standard",
         "artifact_icon": "radio",
@@ -122,7 +123,8 @@ def _run(source_path, sql):
 
 
 @artifact_processor
-def get_teleguard(files_found, report_folder, seeker, wrap_text):
+def get_teleguard(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT datetime(createDate/1000,'unixepoch'), datetime(userTime/1000,'unixepoch'),
@@ -177,7 +179,8 @@ def get_teleguard(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teleguard_posts(files_found, report_folder, seeker, wrap_text):
+def get_teleguard_posts(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT datetime(createDate/1000,'unixepoch'), channelId, header, content, type, localStatus,
@@ -191,7 +194,8 @@ def get_teleguard_posts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teleguard_contacts(files_found, report_folder, seeker, wrap_text):
+def get_teleguard_contacts(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT datetime(lastActivityTime/1000,'unixepoch'), serverId, alias, type, color, avatar, options,
@@ -212,7 +216,8 @@ def get_teleguard_contacts(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_teleguard_channels(files_found, report_folder, seeker, wrap_text):
+def get_teleguard_channels(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, 'SELECT * FROM channels')
     data_headers = ('ID', 'Alias', 'Description', 'Category', 'Color', 'Avatar ID', 'Subscribers Count',

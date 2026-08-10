@@ -1,15 +1,14 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_cmh": {
         "name": "cmh",
         "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address and path) from cmh.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-05",
-        "last_update_date": "2026-07-11",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Samsung_CMH",
-        "notes": "Queries the files table directly (media_type 1 = images), which matches the images view older CMH versions defined over it; newer CMH versions dropped that view.",
-        "paths": ('*/cmh.db',),
+        "notes": "Queries the files table directly (media_type 1 = images). In the samples examined, older CMH versions defined an images view over the files table with the same filter and newer CMH versions did not carry that view. Reference: AOSP, 'MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE; DATE_ADDED/DATE_MODIFIED in seconds, DATE_TAKEN in milliseconds', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
+        "paths": ('*/cmh.db*',),
         "output_types": "all",
         "artifact_icon": "file",
         "sample_data": {
@@ -42,7 +41,8 @@ def _sec_to_utc(value):
 
 
 @artifact_processor
-def get_cmh(files_found, report_folder, seeker, wrap_text):
+def get_cmh(context):
+    files_found = context.get_files_found()
     # Extractions can hold several cmh.db copies (e.g. one per user profile);
     # parse every distinct copy that carries the files table. The same
     # database can appear under aliased paths (data/data vs data/user/0,
@@ -52,6 +52,8 @@ def get_cmh(files_found, report_folder, seeker, wrap_text):
     seen_hashes = set()
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
         if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
             continue  # Skip mirror, it should be duplicate data
 

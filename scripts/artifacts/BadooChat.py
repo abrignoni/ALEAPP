@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_badoo_chat": {
         "name": "Badoo - Users",
@@ -101,7 +100,8 @@ def _msg_text(ptype, raw):
 
 
 @artifact_processor
-def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
+def get_badoo_chat(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     rows = _run(source_path, '''
         SELECT user_id, gender, user_name, user_image_url, age, user_photos, work, education,
@@ -118,7 +118,8 @@ def get_badoo_chat(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_badoo_messages(files_found, report_folder, seeker, wrap_text):
+def get_badoo_messages(context):
+    files_found = context.get_files_found()
     source_path = _db(files_found)
     users = {r[0]: r[1] for r in
              _run(source_path, 'SELECT encrypted_user_id, user_name FROM conversation_info')}

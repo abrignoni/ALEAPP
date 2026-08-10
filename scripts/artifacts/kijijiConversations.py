@@ -1,4 +1,3 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_kijijiConversations": {
         "name": "kijijiConversations",
@@ -54,7 +53,8 @@ def AppendMessageRowsToDataList(data_list, conversationId, advertId, advertTitle
 
 
 @artifact_processor
-def get_kijijiConversations(files_found, report_folder, seeker, wrap_text):
+def get_kijijiConversations(context):
+    files_found = context.get_files_found()
     source_path = str(files_found[0])
     logfunc(f'Database file {source_path} is being interrogated...')
 

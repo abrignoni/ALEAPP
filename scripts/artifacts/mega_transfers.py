@@ -1,11 +1,10 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_mega_transfers": {
         "name": "mega_transfers",
-        "description": "Parses completed MEGA uploads and downloads (timestamp, folder, filename, size, direction and state) from the MEGA megapreferences database.",
-        "author": "",
+        "description": "Parses MEGA transfer records (timestamp, folder, filename, size, direction and state) from the completedtransfers table of the MEGA megapreferences database.",
+        "author": "@kibaffo33",
         "creation_date": "2022-06-04",
-        "last_update_date": "2022-06-04",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Mega",
         "notes": "",
@@ -53,7 +52,8 @@ def decrypt(cell):
 
 
 @artifact_processor
-def get_mega_transfers(files_found, report_folder, seeker, wrap_text):
+def get_mega_transfers(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

@@ -1,9 +1,8 @@
-# pylint: disable=W0613
 __artifacts_v2__ = {
     "get_firefoxTopSites": {
         "name": "Firefox - Top Sites",
         "description": "Parses Firefox top sites (created timestamp, title, URL and default flag) from the top_sites database.",
-        "author": "",
+        "author": "@stark4n6",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",
         "requirements": "none",
@@ -24,7 +23,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 
 
 @artifact_processor
-def get_firefoxTopSites(files_found, report_folder, seeker, wrap_text):
+def get_firefoxTopSites(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:

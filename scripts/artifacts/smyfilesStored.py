@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0702
+# pylint: disable=W0702
 __artifacts_v2__ = {
     "get_smyfilesStored": {
         "name": "smyfilesStored",
         "description": "Parses cached file records (timestamp, storage, path, size and latest access) from the Samsung My Files FileCache.db.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",
@@ -25,7 +25,8 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 
 
 @artifact_processor
-def get_smyfilesStored(files_found, report_folder, seeker, wrap_text):
+def get_smyfilesStored(context):
+    files_found = context.get_files_found()
 
     source_path = str(files_found[0])
     all_rows = []

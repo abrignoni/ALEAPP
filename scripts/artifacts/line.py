@@ -1,9 +1,9 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_line": {
         "name": "Line - Contacts",
         "description": "Parses LINE contacts (user ID and name) from the LINE databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",
         "requirements": "none",
@@ -19,12 +19,18 @@ __artifacts_v2__ = {
     "get_line_messages": {
         "name": "Line - Messages",
         "description": "Parses LINE messages (time, sender and recipient IDs, direction, thread, message and attachments) from the LINE databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Line",
-        "notes": "",
+        "notes": ("Direction is decoded from the chat_history 'status' column. Direction/status "
+                  "value mappings were established through testing; unrecognized values are "
+                  "reported as stored.\n"
+                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "device owner; a row whose direction value is blank or unrecognized is not "
+                  "attributed to the owner.\n"
+                  "To ID is filled only for rows recognized as outgoing."),
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -45,12 +51,16 @@ __artifacts_v2__ = {
     "get_line_calls": {
         "name": "Line - Call Logs",
         "description": "Parses LINE call logs (start and end time, participant IDs, direction and call type) from the LINE databases.",
-        "author": "",
+        "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2021-03-15",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Line",
-        "notes": "",
+        "notes": ("Direction is decoded from the last character of the call_history 'call_type' "
+                  "column and Call Type from the 'voip_type' letter. Direction/status value "
+                  "mappings were established through testing; unrecognized values are reported as "
+                  "stored.\n"
+                  "To ID is filled only for rows recognized as outgoing."),
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -62,7 +72,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, logfunc, open_sqlite_db_readonly
 
 
 def _sec_to_utc(value):
@@ -83,7 +93,8 @@ def _line_dbs(files_found):
 
 
 @artifact_processor
-def get_line(files_found, report_folder, seeker, wrap_text):
+def get_line(context):
+    files_found = context.get_files_found()
     msg_db, _ = _line_dbs(files_found)
     data_list = []
     if msg_db:
@@ -101,7 +112,8 @@ def get_line(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_line_messages(files_found, report_folder, seeker, wrap_text):
+def get_line_messages(context):
+    files_found = context.get_files_found()
     msg_db, _ = _line_dbs(files_found)
     data_list = []
     if msg_db:
@@ -112,7 +124,7 @@ def get_line_messages(files_found, report_folder, seeker, wrap_text):
                 SELECT contact_book_w_groups.id, contact_book_w_groups.members, messages.from_mid,
                        messages.content, messages.created_time/1000, messages.attachement_type,
                        messages.attachement_local_uri,
-                       case messages.status when 1 then "Incoming" else "Outgoing" end status
+                       case messages.status when 1 then "Incoming" when 2 then "Outgoing" else messages.status end status
                 FROM   (SELECT id, Group_concat(M.m_id) AS members
                         FROM   membership AS M GROUP BY id
                         UNION
@@ -145,20 +157,21 @@ def get_line_messages(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_line_calls(files_found, report_folder, seeker, wrap_text):
+def get_line_calls(context):
+    files_found = context.get_files_found()
     msg_db, call_db = _line_dbs(files_found)
     data_list = []
     if call_db and msg_db:
         db = open_sqlite_db_readonly(call_db)
         cursor = db.cursor()
-        cursor.execute('attach database "' + msg_db + '" as naver_line ')
+        cursor.execute(attach_sqlite_db_readonly(msg_db, 'naver_line'))
         try:
             cursor.execute('''
-                SELECT case Substr(calls.call_type, -1) when "O" then "Outgoing" else "Incoming" end AS direction,
+                SELECT case Substr(calls.call_type, -1) when "O" then "Outgoing" when "I" then "Incoming" else Substr(calls.call_type, -1) end AS direction,
                        calls.start_time/1000 AS start_time, calls.end_time/1000 AS end_time,
                        case when Substr(calls.call_type, -1) = "O" then contact_book_w_groups.members else null end AS group_members,
                        calls.caller_mid,
-                       case calls.voip_type when "V" then "Video" when "A" then "Audio" when "G" then calls.voip_gc_media_type end AS call_type
+                       case calls.voip_type when "V" then "Video" when "A" then "Audio" when "G" then calls.voip_gc_media_type else calls.voip_type end AS call_type
                 FROM   (SELECT id, Group_concat(M.m_id) AS members
                         FROM   membership AS M GROUP BY id
                         UNION

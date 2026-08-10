@@ -1,11 +1,11 @@
-# pylint: disable=W0613,W0718
+# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_fcm_dump": {
         "name": "FCM Dump",
-        "description": "All records from the fcm_queued_messages.ldb leveldb (com.google.android.gms)",
+        "description": "Records recovered from the fcm_queued_messages.ldb leveldb (com.google.android.gms)",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-07-28",
-        "last_update_date": "2022-07-28",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",
         "notes": "",
@@ -133,7 +133,7 @@ import gzip
 import json
 import pathlib
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.ilapfuncs import artifact_processor, logfunc
@@ -173,7 +173,8 @@ def _load_packages(files_found):
 
 
 @artifact_processor
-def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for package, rows in package_tables.items():
@@ -184,7 +185,8 @@ def get_fcm_dump(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_dump_verizon(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump_verizon(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.verizon.messaging.vzmsgs', []):
@@ -200,7 +202,8 @@ def get_fcm_dump_verizon(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_dump_tiktok(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump_tiktok(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.zhiliaoapp.musically', []):
@@ -217,7 +220,8 @@ def get_fcm_dump_tiktok(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_dump_instagram(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump_instagram(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.instagram.android', []):
@@ -241,7 +245,8 @@ def get_fcm_dump_instagram(files_found, report_folder, seeker, wrap_text):
 
 
 @artifact_processor
-def get_fcm_dump_gqsb(files_found, report_folder, seeker, wrap_text):
+def get_fcm_dump_gqsb(context):
+    files_found = context.get_files_found()
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.google.android.googlequicksearchbox', []):
@@ -250,7 +255,7 @@ def get_fcm_dump_gqsb(files_found, report_folder, seeker, wrap_text):
             continue
         try:
             datos = base64.b64decode(datos)
-            values, _ = blackboxprotobuf.decode_message(datos)
+            values, _ = decode_protobuf(datos)
             values = values['3']
             try:
                 smartspacecheck = values['3'].decode()
@@ -259,7 +264,7 @@ def get_fcm_dump_gqsb(files_found, report_folder, seeker, wrap_text):
             if 'Smartspace' in smartspacecheck:
                 values = values['14']['2']['13']['2']
                 values = gzip.decompress(values)
-                values, _ = blackboxprotobuf.decode_message(values)
+                values, _ = decode_protobuf(values)
                 url = values['2']['14'].decode()
                 lat = url.split('?')[1].split('lat=')[1].split('&')[0]
                 lon = url.split('?')[1].split('lat=')[1].split('&')[1].split('lon=')[1]
@@ -274,7 +279,7 @@ def get_fcm_dump_gqsb(files_found, report_folder, seeker, wrap_text):
                         try:
                             values = values['14']['2']['20']
                             values = gzip.decompress(values)
-                            values, _ = blackboxprotobuf.decode_message(values, GQSB_TYPEDEF)
+                            values, _ = decode_protobuf(values, GQSB_TYPEDEF)
                             lat = values['1']['7']['1']['8']['7']['2']['1']
                             lon = values['1']['7']['1']['8']['7']['2']['2']
                             city = values['1']['7']['1']['8']['7']['2']['3'].decode()

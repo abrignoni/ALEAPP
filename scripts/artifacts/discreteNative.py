@@ -1,14 +1,14 @@
-# pylint: disable=W0612,W0613
+# pylint: disable=W0612
 __artifacts_v2__ = {
     "get_discreteNative": {
         "name": "DiscreteNative",
         "description": "Parses discrete app-ops permission usage (timestamp, package, permission module and operation, and usage duration) from the system appops discrete records.",
-        "author": "",
+        "author": "@abrignoni",
         "creation_date": "2022-01-19",
-        "last_update_date": "2022-01-19",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Privacy Dashboard",
-        "notes": "",
+        "notes": "Op 1 is specifically FINE_LOCATION. Reference: AOSP, 'AppOpsManager op constants and AppOpsService XML attributes (times in milliseconds)', https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/app/AppOpsManager.java",
         "paths": ('*/system/appops/discrete/**',),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -37,7 +37,7 @@ from scripts.ilapfuncs import artifact_processor, abxread, checkabx, logfunc
 def oplist(opvalue):
     thisdict = {
         "26": "Camera",
-        "1": "Location",
+        "1": "Fine Location",
         "27": "Microphone"
     }
     result = thisdict.get(opvalue)
@@ -71,7 +71,8 @@ def _parse_xml(file_found):
 
 
 @artifact_processor
-def get_discreteNative(files_found, report_folder, seeker, wrap_text):
+def get_discreteNative(context):
+    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     for file_found in files_found:
