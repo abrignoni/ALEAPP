@@ -23,7 +23,7 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, \
-    convert_unix_ts_to_utc
+    convert_unix_ts_to_utc, does_table_exist_in_db
 
 
 def _unique_db_files(context, name_suffix):
@@ -52,6 +52,10 @@ def samsungScpmDevices(context):
     source_path = ''
 
     for file_found in _unique_db_files(context, 'scpmv2.db'):
+        # some One UI builds (seen on an SM-G991B image) ship scpmv2.db without a
+        # devices table; skip those rather than raising "no such table: devices"
+        if not does_table_exist_in_db(file_found, 'devices'):
+            continue
         db_records = get_sqlite_db_records(file_found, '''
             SELECT registration_time, last_access_time, alias, type, model_name,
                    model_code, os_type, os_version, platform_version, country_code,

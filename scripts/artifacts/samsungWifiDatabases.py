@@ -87,9 +87,12 @@ def samsungWifiConfigStoreDb(context):
         # older One UI versions do not have the CREATION_TIME column
         creation_column = 'CREATION_TIME' if does_column_exist_in_db(
             file_found, 'configs', 'CREATION_TIME') else "''"
+        # older One UI versions (seen on Android 11) also lack NETWORK_DISABLE_REASON
+        disable_reason_column = 'NETWORK_DISABLE_REASON' if does_column_exist_in_db(
+            file_found, 'configs', 'NETWORK_DISABLE_REASON') else "''"
         db_records = get_sqlite_db_records(file_found, f'''
             SELECT {creation_column}, CONFIG_KEY, NETWORK_SCORE, CAPTIVE_PORTAL, LOCK_DOWN,
-                   NO_INTERNET_ACCESS_EXPECTED, NETWORK_DISABLE_REASON
+                   NO_INTERNET_ACCESS_EXPECTED, {disable_reason_column}
             FROM configs
             ORDER BY _ID
         ''')
