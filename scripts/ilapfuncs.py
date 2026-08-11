@@ -672,8 +672,18 @@ def decode_protobuf(data, typedef=None):
     fields that are not messages decode as bytes, and fields with alternate
     typedefs split into 'N-M' keys. See scripts/blackboxprotobuf/README.md
     for why the library is vendored.
+
+    Speculative nested-message guessing is bounded (see the note above
+    decode_guess in scripts/blackboxprotobuf/lib/types/length_delim.py); when
+    the bound trips, the affected ambiguous fields decode as bytes and the
+    degradation is logged here rather than hanging the run.
     '''
-    return blackboxprotobuf.decode_message(data, typedef)
+    result = blackboxprotobuf.decode_message(data, typedef)
+    from scripts.blackboxprotobuf.lib.types import length_delim
+    if length_delim.budget_exceeded:
+        logfunc('decode_protobuf: speculation budget exceeded; '
+                'ambiguous protobuf fields returned as bytes for this blob')
+    return result
 
 def get_sqlite_db_path(path):
     if is_platform_windows():
