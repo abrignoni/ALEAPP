@@ -85,7 +85,7 @@ __artifacts_v2__ = {
 from scripts.ilapfuncs import decode_protobuf
 from scripts.ilapfuncs import artifact_processor, \
     get_file_path, get_sqlite_db_records, get_binary_file_content, \
-    convert_unix_ts_to_utc
+    convert_unix_ts_to_utc, does_column_exist_in_db
 
 
 @artifact_processor
@@ -93,16 +93,22 @@ def airtagAlerts(context):
     files_found = context.get_files_found()
     source_path = get_file_path(files_found, "personalsafety_db")
     data_list = []
-    
-    query = '''
-    SELECT 
+
+    # older GmsCore personalsafety_db schemas do not carry these two columns
+    device_type_col = 'deviceType' if does_column_exist_in_db(
+        source_path, 'DeviceData', 'deviceType') else "NULL AS deviceType"
+    optional_data_col = 'optionalDeviceData' if does_column_exist_in_db(
+        source_path, 'DeviceData', 'optionalDeviceData') else "NULL AS optionalDeviceData"
+
+    query = f'''
+    SELECT
         creationTimestampMillis,
         lastUpdatedTimestampMillis,
         macAddress,
-        deviceType,
-        optionalDeviceData,
+        {device_type_col},
+        {optional_data_col},
         alertLifecycleId,
-        alertStatus 
+        alertStatus
     FROM DeviceData
     '''
 
@@ -163,15 +169,24 @@ def airtagScans(context):
         creation_timestamp = convert_unix_ts_to_utc(record[0])
         last_updated_timestamp = convert_unix_ts_to_utc(record[1])
 
-        blescan_proto, _ = decode_protobuf(blescan)
-        posrssi = (blescan_proto['2'])
-        
-        location_scan_proto, _ = decode_protobuf(location_scan)
-        latitude = (location_scan_proto['4']/1e7)
-        longitude = (location_scan_proto['5']/1e7)
-        
+        blescan_proto = {}
+        if blescan:
+            blescan_proto, _ = decode_protobuf(blescan)
+            blescan_proto = blescan_proto or {}
+        posrssi = blescan_proto.get('2', '')
+
+        # a scan row without a location fix carries no lat/long fields
+        location_scan_proto = {}
+        if location_scan:
+            location_scan_proto, _ = decode_protobuf(location_scan)
+            location_scan_proto = location_scan_proto or {}
+        lat_raw = location_scan_proto.get('4')
+        lon_raw = location_scan_proto.get('5')
+        latitude = lat_raw / 1e7 if isinstance(lat_raw, (int, float)) else ''
+        longitude = lon_raw / 1e7 if isinstance(lon_raw, (int, float)) else ''
+
         data_list.append((
-            creation_timestamp, last_updated_timestamp, mac_address, 
+            creation_timestamp, last_updated_timestamp, mac_address,
             state, posrssi, latitude, longitude))
 
     return data_headers, data_list, source_path
