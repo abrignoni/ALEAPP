@@ -5,7 +5,7 @@ Leave blank if not available
 """
 
 leapp_name = 'ALEAPP'
-leapp_version = '2026.2.0'
+leapp_version = '2026.3.0'
 
 # Minimum protobuf runtime required by the regenerated *_pb2 bindings and the
 # security pin in requirements.txt. The PyPI 'blackboxprotobuf' package
