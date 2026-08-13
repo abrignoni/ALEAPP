@@ -14,7 +14,11 @@ a = Analysis(
    ['..\\..\\aleapp.py'],
    pathex=['..\\scripts\\artifacts'],
    binaries=[],
-   datas=[('..\\', '.\\scripts'), *msl_plugin_datas],
+   datas=[
+      ('..\\', '.\\scripts'),
+      ('..\\..\\leapp_functions', '.\\leapp_functions'),
+      ('..\\..\\assets', '.\\assets'),
+      *msl_plugin_datas],
    hiddenimports=[
       # Artifacts are bundled as data files and imported from disk at runtime,
       # so PyInstaller's import-graph analysis never sees what they import.
@@ -24,6 +28,7 @@ a = Analysis(
       *collect_submodules('Crypto'),
       *collect_submodules('google.protobuf'),
       *collect_submodules('leapp_functions'),
+      *collect_submodules('PIL'),
       'bcrypt',
       'bencoding',
       'bs4',
@@ -32,7 +37,6 @@ a = Analysis(
       'fitdecode',
       'html.parser',
       'mister_skinnylegs',
-      'PIL.Image',
       'polyline',
       'uuid',
       'xmltodict',
