@@ -25,8 +25,13 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "My Files",
         "notes": "The local_files table is the app's index of local storage. is_hidden and is_trashed "
-                 "are integer flags reported as stored.",
-        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db*',),
+                 "are integer flags reported as stored. The Cached Thumbnail column shows the app's "
+                 "cached preview when FileCache.db links one to the file's path; the preview is a "
+                 "cache and its presence does not establish that the original file is still on the "
+                 "device.",
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db*',
+                  '*/com.sec.android.app.myfiles/databases/FileCache.db*',
+                  '*/com.sec.android.app.myfiles/cache/*.jpg'),
         "output_types": "standard",
         "artifact_icon": "file",
         "sample_data": {
@@ -44,9 +49,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "My Files",
         "notes": "analyze_storage is the file list the app's storage-analysis feature builds. as_type "
-                 "and mediaType are integer category codes reported as stored. Empty on the registered "
-                 "corpora; the layout was mapped against a private Android 16 sample.",
-        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db*',),
+                 "and mediaType are integer category codes reported as stored. The Cached Thumbnail "
+                 "column shows the app's cached preview when FileCache.db links one to the file's "
+                 "path; the preview is a cache and its presence does not establish that the original "
+                 "file is still on the device. Empty on the registered corpora; the layout was mapped "
+                 "against a private Android 16 sample.",
+        "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db*',
+                  '*/com.sec.android.app.myfiles/databases/FileCache.db*',
+                  '*/com.sec.android.app.myfiles/cache/*.jpg'),
         "output_types": "standard",
         "artifact_icon": "hard-drive",
         "sample_data": {
@@ -156,7 +166,48 @@ __artifacts_v2__ = {
 
 from scripts.ilapfuncs import (artifact_processor, open_sqlite_db_readonly,
                                does_table_exist_in_db, null_absent_columns,
-                               convert_unix_ts_to_utc)
+                               convert_unix_ts_to_utc, check_in_media)
+
+_MYFILES = 'com.sec.android.app.myfiles'
+
+
+def _thumbnail_map(files_found):
+    """Map an original file path to its cached thumbnail file on disk.
+
+    FileCache.db records, per cached preview, the original file path (_data) and
+    an index; the preview itself is <container>/cache/<index>.jpg. The index is
+    only unique within one app container, so a preview is matched to its
+    FileCache within the same container.
+    """
+    jpg_by_key = {}
+    marker = f'/{_MYFILES}/cache/'
+    for file_found in files_found:
+        nf = str(file_found).replace('\\', '/')
+        if marker in nf and nf.endswith('.jpg') and '/mirror/' not in nf:
+            container = nf[:nf.index(marker)] + f'/{_MYFILES}'
+            jpg_by_key[(container, nf.rsplit('/', 1)[1])] = str(file_found)
+
+    thumb_by_path = {}
+    db_marker = f'/{_MYFILES}/databases/FileCache.db'
+    for file_found in files_found:
+        nf = str(file_found).replace('\\', '/')
+        if not nf.endswith(db_marker) or '/mirror/' in nf:
+            continue
+        container = nf[:nf.index(db_marker)] + f'/{_MYFILES}'
+        db = open_sqlite_db_readonly(str(file_found))
+        if db is None:
+            continue
+        try:
+            if not does_table_exist_in_db(str(file_found), 'FileCache'):
+                continue
+            for index, data in db.execute(
+                    'SELECT _index, _data FROM FileCache WHERE _data IS NOT NULL'):
+                jpg = jpg_by_key.get((container, f'{index}.jpg'))
+                if jpg:
+                    thumb_by_path[data] = jpg
+        finally:
+            db.close()
+    return thumb_by_path
 
 
 def _dbs(files_found, basename):
@@ -208,26 +259,38 @@ def _collect(context, basename, table, query, shape):
 @artifact_processor
 def get_smyfiles_local_files(context):
     data_headers = (
-        ('Date Modified', 'datetime'), 'Name', 'Ext.', 'MIME Type', 'Size', 'Path', 'Data',
-        'Is Hidden', 'Is Trashed', 'Source File')
+        ('Date Modified', 'datetime'), 'Name', ('Cached Thumbnail', 'media'), 'Ext.', 'MIME Type',
+        'Size', 'Path', 'Data', 'Is Hidden', 'Is Trashed', 'Source File')
+    thumbs = _thumbnail_map(context.get_files_found())
+
+    def shape(r):
+        jpg = thumbs.get(r[6])   # r[6] = _data (the absolute file path)
+        media = check_in_media(jpg, r[1]) if jpg else ''
+        return (convert_unix_ts_to_utc(r[0]), r[1], media, r[2], r[3], r[4], r[5], r[6], r[7], r[8])
+
     data_list, source = _collect(
         context, 'FileInfo.db', 'local_files',
         '''SELECT date_modified, name, ext, mime_type, size, path, _data, is_hidden, is_trashed
-           FROM local_files''',
-        lambda r: (convert_unix_ts_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8]))
+           FROM local_files''', shape)
     return data_headers, data_list, source
 
 
 @artifact_processor
 def get_smyfiles_analyze_storage(context):
     data_headers = (
-        ('Date Modified', 'datetime'), 'Name', 'Ext.', 'MIME Type', 'Size', 'Path',
-        'Storage Type (as stored)', 'Media Type (as stored)', 'Source File')
+        ('Date Modified', 'datetime'), 'Name', ('Cached Thumbnail', 'media'), 'Ext.', 'MIME Type',
+        'Size', 'Path', 'Storage Type (as stored)', 'Media Type (as stored)', 'Source File')
+    thumbs = _thumbnail_map(context.get_files_found())
+
+    def shape(r):
+        jpg = thumbs.get(r[6])   # r[6] = _data (the absolute file path)
+        media = check_in_media(jpg, r[1]) if jpg else ''
+        return (convert_unix_ts_to_utc(r[0]), r[1], media, r[2], r[3], r[4], r[5], r[7], r[8])
+
     data_list, source = _collect(
         context, 'FileInfo.db', 'analyze_storage',
-        '''SELECT date_modified, name, ext, mime_type, size, path, as_type, mediaType
-           FROM analyze_storage''',
-        lambda r: (convert_unix_ts_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7]))
+        '''SELECT date_modified, name, ext, mime_type, size, path, _data, as_type, mediaType
+           FROM analyze_storage''', shape)
     return data_headers, data_list, source
 
 
