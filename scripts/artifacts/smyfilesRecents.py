@@ -66,8 +66,8 @@ def get_smyfilesRecents(context):
     files_found = context.get_files_found()
     data_list = []
     source_path = _myfiles_db(files_found)
-    if source_path:
-        db = open_sqlite_db_readonly(source_path)
+    db = open_sqlite_db_readonly(source_path) if source_path else None
+    if db is not None:
         cursor = db.cursor()
         try:
             cursor.execute(null_absent_columns(source_path, '''
@@ -91,8 +91,8 @@ def get_smyfilesRecents_fileinfo(context):
     files_found = context.get_files_found()
     data_list = []
     source_path = _myfiles_db(files_found)
-    if source_path:
-        db = open_sqlite_db_readonly(source_path)
+    db = open_sqlite_db_readonly(source_path) if source_path else None
+    if db is not None:
         cursor = db.cursor()
         try:
             cursor.execute(null_absent_columns(source_path, '''

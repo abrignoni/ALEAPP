@@ -53,6 +53,8 @@ def process_string(old_string):
 
 def get_db_data(file_found):
     db = open_sqlite_db_readonly(file_found)
+    if db is None:
+        return 0
     cursor = db.cursor()
     try:
         cursor.execute("""Select * from operation_history""")

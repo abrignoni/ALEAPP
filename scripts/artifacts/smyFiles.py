@@ -64,6 +64,8 @@ def _query(source_path, sql):
     if not source_path:
         return []
     db = open_sqlite_db_readonly(source_path)
+    if db is None:
+        return []
     cursor = db.cursor()
     try:
         cursor.execute(sql)
