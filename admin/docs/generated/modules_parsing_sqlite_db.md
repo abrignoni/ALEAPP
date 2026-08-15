@@ -267,6 +267,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | vlcThumbs |
 | waze |
 | wellbeing |
+| whatsAppExtended |
 | wireMessenger |
 | zepplife |
 <!-- READONLY_END -->
