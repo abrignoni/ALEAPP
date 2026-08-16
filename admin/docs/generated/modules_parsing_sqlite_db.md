@@ -140,6 +140,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | Xender |
 | Zapya |
 | airGuard |
+| amazonShopping |
 | battery_usage_v4 |
 | battery_usage_v9 |
 | blueskymessages |
