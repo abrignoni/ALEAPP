@@ -83,9 +83,10 @@ __artifacts_v2__ = {
                  "and encryption keys but no plaintext body. Media is not decrypted, and "
                  "content_type is reported as stored because no source for the enum was verified.\n"
                  "Message Direction compares sender_id against the local account id, from "
-                 "LAST_LOGGED_IN_USERNAME in identity_persistent_store.xml resolved through "
-                 "Friend.userId, else the single distinct sender of rows where created_on_device "
-                 "is set. Both agreed on the tested image. Blank when neither resolves.\n"
+                 "key_user_id in user_session_shared_pref.xml, else LAST_LOGGED_IN_USERNAME "
+                 "in identity_persistent_store.xml resolved through Friend.userId, else the "
+                 "single distinct sender of rows where created_on_device is set. The "
+                 "sources agreed on the tested images. Blank when none resolves.\n"
                  "Older Snapchat builds carry a strict subset of the current columns (the "
                  "tested vc 147872 build lacks created_on_device and replies_count); absent "
                  "columns are substituted with NULL under the same name so the remaining "
@@ -93,19 +94,32 @@ __artifacts_v2__ = {
                  "such builds the direction fallback uses local_message_content_id, which "
                  "that generation's schema comments describe as nullable if the message was "
                  "not created on this device.\n"
+                 "Media. When a message references cached media, the Media column renders it. "
+                 "The link is by the media key the message_content protobuf carries, matched "
+                 "to the trailing token of an EXTERNAL_KEY in "
+                 "native_content_manager/cache_controller.db (chat_snap, snap or "
+                 "chat_media_thumbnail claims), whose CACHE_KEY is the file name under "
+                 "files/native_content_manager/com.snap.file_manager_*_SCContent_*/. A message "
+                 "may render both a full snap and its thumbnail. The bytes are read from disk "
+                 "as stored: on the tested image they were unencrypted MP4 and JPEG. A media "
+                 "message whose local copy is absent (evicted or never downloaded) reports a "
+                 "blank Media cell rather than being dropped. See the Snapchat - Chat Media "
+                 "artifact for the file-centric view including orphans.\n"
                  "Limits. WAL frames are not parsed, so a message absent here is not evidence it "
                  "did not exist: a development-only frame parser read a further 29 rows across 10 "
                  "conversations on this image, 9 of them absent from the conversation table. This "
                  "is not carving, and a row whose key survived while its content changed is not "
-                 "detected. Media on disk is not linked to rows; reactions, message_state history "
-                 "and Kraken epoch content are not parsed. The run log reports the image's WAL "
-                 "frame count.\n"
+                 "detected. Reactions, message_state history and Kraken epoch content are not "
+                 "parsed. The run log reports the image's WAL frame count.\n"
                  "Verify a Recovered row independently: sqlite3 \"file:arroyo.db?immutable=1\" "
                  "\"SELECT * FROM conversation_message WHERE client_message_id = 962\", then "
                  "confirm it is absent from a normal read.",
         "paths": ('*/com.snapchat.android/databases/arroyo.db*',
                   '*/com.snapchat.android/databases/main.db*',
-                  '*/com.snapchat.android/shared_prefs/identity_persistent_store.xml'),
+                  '*/com.snapchat.android/shared_prefs/identity_persistent_store.xml',
+                  '*/com.snapchat.android/shared_prefs/user_session_shared_pref.xml',
+                  '*/com.snapchat.android/databases/native_content_manager/cache_controller.db*',
+                  '*/com.snapchat.android/files/native_content_manager/*SCContent*/*'),
         "output_types": "standard", "artifact_icon": "message",
         "sample_data": {
             "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 16 rows "
@@ -137,6 +151,7 @@ __artifacts_v2__ = {
                 "directionSentValue": "Outgoing",
                 "timeColumn": "Creation Timestamp",
                 "senderColumn": "Sender Username",
+                "mediaColumn": "Media",
                 # Shows Live or Recovered under every bubble, so a recovered row cannot be
                 # read as a live message. Record Origin is populated on every row, unlike
                 # Recovery Method and Recovery Location, which stay available in the picker.
@@ -195,6 +210,47 @@ __artifacts_v2__ = {
                                    "(all Live)",
             "pixel3_a12": "Android 12 | 3 rows (all Live)",
             "pixel3_a11": "Android 11 | 2 rows (all Live)",
+        },
+    },
+    "get_snapchat_chat_media": {
+        "name": "Snapchat - Chat Media",
+        "description": "Cached conversation media (snaps, sent media and their thumbnails) "
+                       "referenced by cache_controller.db, each rendered from the file on "
+                       "disk where present, with the message it belongs to when the media "
+                       "key resolves to one.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-16", "last_update_date": "2026-08-16",
+        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "notes": "Rows come from CACHE_FILE_CLAIM in "
+                 "databases/native_content_manager/cache_controller.db, limited to the "
+                 "chat_snap, snap and chat_media_thumbnail external-key prefixes; the rest "
+                 "of that store is lens, bitmoji and UI assets. Each claim's CACHE_KEY is "
+                 "the file name under "
+                 "files/native_content_manager/com.snap.file_manager_*_SCContent_*/, and the "
+                 "Media column renders that file when it is present. The bytes are read as "
+                 "stored: on the tested image the files were unencrypted MP4 and JPEG.\n"
+                 "A claim whose file is not on disk is still reported, with an empty Media "
+                 "cell and On Disk set to NO, so evicted or server-only media is visible "
+                 "rather than dropped. The Conversation ID and Client Message ID columns are "
+                 "filled when the media key is found inside a conversation_message protobuf "
+                 "in arroyo.db; a claim referenced by no surviving message leaves them "
+                 "blank. Media Type, File Size and the timestamps are reported as stored "
+                 "from the claim and metadata tables.",
+        "paths": ('*/com.snapchat.android/databases/native_content_manager/cache_controller.db*',
+                  '*/com.snapchat.android/files/native_content_manager/*SCContent*/*',
+                  '*/com.snapchat.android/databases/arroyo.db*'),
+        "output_types": "standard", "artifact_icon": "photo",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 6 rows, all on "
+                           "disk, all joined to messages",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 4 rows",
+            "russell_a14": "Android 14 | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 6 rows "
+                                   "(4 on disk, 2 referenced but absent)",
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 0 rows "
+                                "(no chat media claims in cache_controller.db)",
+            "pixel3_a12": "Android 12 | 0 rows (no chat media claims in cache_controller.db)",
         },
     },
     "get_snapchat_memories": {
@@ -271,6 +327,96 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 1 row",
             "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 3 rows",
         },
+    },
+    "get_snapchat_user_session": {
+        "name": "Snapchat - User Session Store",
+        "description": "Values from user_session_shared_pref.xml, reported as stored under "
+                       "the app's own key names.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-16", "last_update_date": "2026-08-16",
+        "requirements": "none", "category": "Snapchat",
+        "notes": "On the tested image the file carried key_user_id (the signed-in "
+                 "account's user id, matching the sender of outgoing arroyo.db messages "
+                 "and the LAST_LOGGED_IN_USERNAME account in identity_persistent_store), "
+                 "a session refresh token, and the advertising id with its timestamp. "
+                 "Keys ending _TIMESTAMP_SEC are converted from Unix seconds; other "
+                 "values are reported as stored.",
+        "paths": ('*/com.snapchat.android/shared_prefs/user_session_shared_pref.xml',),
+        "output_types": "standard", "artifact_icon": "user-check",
+        "sample_data": {
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 8 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 8 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 1 row",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 8 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 8 rows",
+            "russell_a14": "Android 14 | 8 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 7 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 2 rows",
+            "sharon_a13": "Android 13 | 0 rows (file holds an empty map)",
+            "pixel3_a12": "Android 12 | 5 rows",
+            "pixel3_a11": "Android 11 | 13 rows",
+            "cookbook_a11": "Android 11 | 8 rows",
+        },
+    },
+    "get_snapchat_core_preferences": {
+        "name": "Snapchat - Core Preferences",
+        "description": "Rows from the Preferences table in core.db: key and stored value.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-16", "last_update_date": "2026-08-16",
+        "requirements": "none", "category": "Snapchat",
+        "notes": "Each row reports the key and whichever typed value column is populated, "
+                 "with the column's name. Keys are the app's own; what a setting means is "
+                 "not established here.",
+        "paths": ('*/com.snapchat.android/databases/core.db*',),
+        "output_types": "standard", "artifact_icon": "settings",
+        "sample_data": {
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 255 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 247 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 7 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 235 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 229 rows",
+            "russell_a14": "Android 14 | 235 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 301 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 6 rows",
+            "pixel3_a12": "Android 12 | 590 rows",
+            "pixel3_a11": "Android 11 | 1112 rows",
+            "cookbook_a11": "Android 11 | no core.db found",
+        },
+    },
+    "get_snapchat_core_user_store": {
+        "name": "Snapchat - Core User Store",
+        "description": "Rows from the SnapUserStore table in core.db: per-user stored "
+                       "values with the store group and user id decoded from each row's "
+                       "key, values reported as stored.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-16", "last_update_date": "2026-08-16",
+        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "notes": "Each row's itemKey protobuf names the store group (CoreData, UserScore) "
+                 "and the user id it belongs to, and those are decoded and reported. The "
+                 "property NAME of each value is not stored in the database (the itemKey "
+                 "blobs are identical within a group), so values are reported in row "
+                 "order without labels: on the tested image the CoreData group's text "
+                 "values included the account's username, display name, a date, a phone "
+                 "number and a country code, in that row order. Do not read a meaning "
+                 "into a value's position across app versions.\n"
+                 "The SnapchatUserProperties table is not parsed: its rows are keyed by "
+                 "bare numeric property ids with no name source in the file.",
+        "paths": ('*/com.snapchat.android/databases/core.db*',),
+        "output_types": "standard", "artifact_icon": "database",
+        "sample_data": {
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 32 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 32 rows",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 0 rows "
+                                "(SnapUserStore table empty)",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 31 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 31 rows",
+            "russell_a14": "Android 14 | 31 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 27 rows",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows "
+                              "(SnapUserStore table empty)",
+            "pixel3_a12": "Android 12 | 22 rows",
+            "pixel3_a11": "Android 11 | 18 rows",
+        },
     }
 }
 
@@ -282,8 +428,8 @@ import xml.etree.ElementTree as ET
 
 import bcrypt
 
-from scripts.ilapfuncs import artifact_processor, decode_protobuf, get_sqlite_db_path, \
-    logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, check_in_media, decode_protobuf, \
+    get_sqlite_db_path, logfunc, open_sqlite_db_readonly
 
 _MEO_CODES = {}
 _XML_UNIX_KEYS = {'INSTALL_ON_DEVICE_TIMESTAMP', 'LONG_CLIENT_ID_DEVICE_TIMESTAMP',
@@ -545,10 +691,14 @@ def _participants(arroyo_path, friends, reader=_rows):
 def _local_user_id(files_found, arroyo_path, friends):
     '''The signed-in account's user id, or '' when it cannot be established.
 
-    Preferred source is LAST_LOGGED_IN_USERNAME in identity_persistent_store.xml resolved
+    Preferred source is key_user_id in user_session_shared_pref.xml, which carries the id
+    directly. Next is LAST_LOGGED_IN_USERNAME in identity_persistent_store.xml resolved
     through Friend.userId. Failing that, the single distinct sender of the messages the
     arroyo.db schema comments describe as created on this device.
     '''
+    for key, value in _parse_xml_rows(_find(files_found, 'user_session_shared_pref.xml')):
+        if key == 'key_user_id' and value:
+            return value
     username = ''
     for key, value in _parse_xml_rows(_find(files_found, 'identity_persistent_store.xml')):
         if key == 'LAST_LOGGED_IN_USERNAME' and value:
@@ -576,6 +726,99 @@ def _yes_no(value):
     return 'YES' if value else 'NO'
 
 
+# Conversation media external keys in cache_controller.db carry one of these prefixes; the
+# rest of the store is lens, bitmoji and UI assets. Each external key is
+# '<prefix>.<prefix>-<media key>', and the trailing media key is what the conversation_message
+# protobuf carries, so a message can be joined to its cached file without a message id in the
+# cache tables.
+_CHAT_MEDIA_PREFIXES = ('chat_snap', 'snap.', 'chat_media_thumbnail')
+
+
+def _blob_string_leaves(node):
+    '''Every string and utf-8-decodable bytes leaf in a decoded protobuf, flattened.'''
+    leaves = []
+    if isinstance(node, dict):
+        for value in node.values():
+            leaves.extend(_blob_string_leaves(value))
+    elif isinstance(node, list):
+        for value in node:
+            leaves.extend(_blob_string_leaves(value))
+    elif isinstance(node, (bytes, bytearray)):
+        try:
+            leaves.append(bytes(node).decode('utf-8'))
+        except UnicodeDecodeError:
+            pass
+    elif isinstance(node, str):
+        leaves.append(node)
+    return leaves
+
+
+def _chat_media_index(files_found):
+    '''Index the cached conversation media referenced by cache_controller.db.
+
+    Returns (claims, ondisk):
+      claims: media key -> dict(cache_key, media_type, external_key, created, deleted, size)
+              for chat_snap / snap / chat_media_thumbnail claims only.
+      ondisk: cache_key -> the extracted file path whose name is that cache_key.
+
+    The media key is the trailing token of the claim's external key, which is also what the
+    message protobuf carries, so the two join on that token. The on-disk file is named after
+    the cache_key under files/native_content_manager/com.snap.file_manager_*_SCContent_*/.
+    '''
+    claims = {}
+    cache_db = _find(files_found, 'cache_controller.db')
+    sizes = {row[0]: row[1] for row in _rows(
+        cache_db, 'SELECT CACHE_KEY, FILE_SIZE_BYTES FROM CACHE_FILE_METADATA')}
+    for cache_key, external_key, created, deleted in _rows(cache_db, '''
+            SELECT CACHE_KEY, EXTERNAL_KEY, CREATION_TIMESTAMP_MILLIS, DELETED_TIMESTAMP_MILLIS
+            FROM CACHE_FILE_CLAIM WHERE EXTERNAL_KEY IS NOT NULL'''):
+        if not external_key.startswith(_CHAT_MEDIA_PREFIXES):
+            continue
+        media_key = external_key.rsplit('-', 1)[-1]
+        claims[media_key] = {
+            'cache_key': cache_key,
+            'media_type': external_key.split('.', 1)[0],
+            'external_key': external_key,
+            'created': created,
+            'deleted': deleted,
+            'size': sizes.get(cache_key),
+        }
+    ondisk = {}
+    for file_found in files_found:
+        file_found = str(file_found)
+        if 'native_content_manager' in file_found and os.path.isfile(file_found):
+            ondisk.setdefault(os.path.basename(file_found), file_found)
+    return claims, ondisk
+
+
+def _message_media_keys(decoded, claims):
+    '''The claim media keys referenced by a decoded message, de-duplicated in order.'''
+    if not decoded:
+        return []
+    seen, keys = set(), []
+    for leaf in _blob_string_leaves(decoded):
+        if leaf in claims and leaf not in seen:
+            seen.add(leaf)
+            keys.append(leaf)
+    return keys
+
+
+def _message_media_cell(media_keys, claims, ondisk):
+    '''check_in_media each on-disk file for the message's media keys; return the LAVA cell.'''
+    refs = []
+    for media_key in media_keys:
+        cache_key = claims[media_key]['cache_key']
+        path = ondisk.get(cache_key)
+        if not path:
+            continue
+        ref = check_in_media(path, cache_key)
+        if ref:
+            refs.append(ref)
+    if len(refs) == 1:
+        return refs[0]
+    return refs if refs else ''
+
+
 _MESSAGE_COLUMNS = ('creation_timestamp', 'read_timestamp', 'sender_id', 'content_type',
                     'message_content', 'message_state_type', 'is_saved', 'is_viewed_by_user',
                     'created_on_device', 'remote_media_count', 'replies_count',
@@ -595,7 +838,8 @@ _MESSAGE_KEY = (12, 13)
 _MESSAGE_HEADERS = (('Creation Timestamp', 'datetime'), ('Read Timestamp', 'datetime'),
                     'Record Origin',
                     'Sender Username', 'Sender Display Name', 'Sender ID', 'Message Direction',
-                    'Conversation Participants', 'Message Text', 'Content Type (as stored)',
+                    'Conversation Participants', 'Message Text', ('Media', 'media'),
+                    'Content Type (as stored)',
                     'Message State Type', 'Is Saved', 'Is Viewed By User', 'Created On Device',
                     'Remote Media Count', 'Replies Count', 'Quoted Server Message ID',
                     'Conversation ID', 'Client Message ID', 'Server Message ID',
@@ -677,13 +921,16 @@ def _by_creation(row):
     return (row[0] == '', row[0])
 
 
-def _message_rows(rows, friends, participants, local_user_id, provenance):
+def _message_rows(rows, friends, participants, local_user_id, provenance, media_index):
     origin, method, location = provenance
+    claims, ondisk = media_index
     data_list = []
     for row in rows:
         (created, read, sender_id, content_type, blob, state, saved, viewed, on_device,
          media_count, replies, quoted_id, conversation_id, client_message_id, server_message_id) = row
-        text = _pb_text(_decode(blob), '4', '4', '2', '1') if content_type == 1 else ''
+        decoded = _decode(blob)
+        text = _pb_text(decoded, '4', '4', '2', '1') if content_type == 1 else ''
+        media_cell = _message_media_cell(_message_media_keys(decoded, claims), claims, ondisk)
         if not local_user_id or not sender_id:
             direction = ''
         else:
@@ -691,7 +938,8 @@ def _message_rows(rows, friends, participants, local_user_id, provenance):
         data_list.append((
             _ms_to_utc(created), _ms_to_utc(read), origin,
             _friend_name(friends, sender_id), _friend_name(friends, sender_id, 1), sender_id,
-            direction, participants.get(conversation_id, ('', ''))[1], text, content_type, state,
+            direction, participants.get(conversation_id, ('', ''))[1], text, media_cell,
+            content_type, state,
             _yes_no(saved), _yes_no(viewed), _yes_no(on_device), media_count, replies, quoted_id,
             conversation_id, client_message_id, server_message_id, method, location))
     return data_list
@@ -756,16 +1004,17 @@ def get_snapchat_arroyo_messages(context):
     source_path = _find(files_found, 'arroyo.db')
     friends = _friends(_find(files_found, 'main.db'))
     local_user_id = _local_user_id(files_found, source_path, friends)
+    media_index = _chat_media_index(files_found)
     _log_wal_extent(files_found)
 
     data_list = _message_rows(
         _rows(source_path, _message_sql(source_path)), friends,
         _participants(source_path, friends),
-        local_user_id, _provenance(source_path, _ORIGIN_LIVE))
+        local_user_id, _provenance(source_path, _ORIGIN_LIVE), media_index)
     data_list += _message_rows(
         _superseded(source_path, _message_sql(source_path), _MESSAGE_KEY), friends,
         _participants(source_path, friends, _rows_pre_wal), local_user_id,
-        _provenance(source_path, _ORIGIN_RECOVERED))
+        _provenance(source_path, _ORIGIN_RECOVERED), media_index)
     data_list.sort(key=_by_creation)
     return _MESSAGE_HEADERS, data_list, source_path
 
@@ -784,6 +1033,42 @@ def get_snapchat_arroyo_conversations(context):
                                     _superseded_conversation_ids(source_path))
     data_list.sort(key=_by_creation)
     return _CONVERSATION_HEADERS, data_list, source_path
+
+
+def _media_key_to_message(arroyo_path, claims):
+    '''Map each claim media key to the (conversation_id, message_id) that references it.'''
+    mapping = {}
+    for blob, conversation_id, message_id in _rows(arroyo_path, '''
+            SELECT message_content, client_conversation_id, client_message_id
+            FROM conversation_message'''):
+        for media_key in _message_media_keys(_decode(blob), claims):
+            mapping.setdefault(media_key, (conversation_id, message_id))
+    return mapping
+
+
+@artifact_processor
+def get_snapchat_chat_media(context):
+    '''Cached conversation media from cache_controller.db, rendered and joined to messages.'''
+    files_found = context.get_files_found()
+    claims, ondisk = _chat_media_index(files_found)
+    cache_db = _find(files_found, 'cache_controller.db')
+    key_to_message = _media_key_to_message(_find(files_found, 'arroyo.db'), claims)
+
+    data_list = []
+    for media_key, info in claims.items():
+        cache_key = info['cache_key']
+        path = ondisk.get(cache_key)
+        media_cell = check_in_media(path, cache_key) if path else ''
+        conversation_id, message_id = key_to_message.get(media_key, ('', ''))
+        data_list.append((
+            _ms_to_utc(info['created']), media_cell, info['media_type'],
+            conversation_id, message_id, info['size'], _yes_no(path),
+            _ms_to_utc(info['deleted']) if info['deleted'] else '',
+            cache_key, info['external_key']))
+    data_headers = (('Creation Timestamp', 'datetime'), ('Media', 'media'), 'Media Type',
+                    'Conversation ID', 'Client Message ID', 'File Size (bytes)', 'On Disk',
+                    ('Deleted Timestamp', 'datetime'), 'Cache Key', 'External Key')
+    return data_headers, data_list, cache_db
 
 
 @artifact_processor
@@ -866,3 +1151,69 @@ def get_snapchat_login_signup(context):
     files_found = context.get_files_found()
     source_path = _find(files_found, 'LoginSignupStore.xml')
     return ('Key', 'Value'), _parse_xml_rows(source_path), source_path
+
+
+_SESSION_SECONDS_SUFFIX = '_TIMESTAMP_SEC'
+
+
+@artifact_processor
+def get_snapchat_user_session(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'user_session_shared_pref.xml')
+    data_list = []
+    for key, value in _parse_xml_rows(source_path):
+        if key.endswith(_SESSION_SECONDS_SUFFIX) and value:
+            try:
+                value = datetime.datetime.fromtimestamp(
+                    int(value), datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+            except (ValueError, TypeError, OverflowError, OSError):
+                pass
+        data_list.append((key, value))
+    return ('Key', 'Value'), data_list, source_path
+
+
+@artifact_processor
+def get_snapchat_core_preferences(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'core.db')
+    data_list = []
+    value_columns = ('booleanValue', 'intValue', 'longValue', 'floatValue',
+                     'doubleValue', 'stringValue')
+    for row in _rows(source_path, f'''
+            SELECT key, {', '.join(value_columns)} FROM Preferences ORDER BY key'''):
+        key = row[0]
+        value = value_type = ''
+        for name, column_value in zip(value_columns, row[1:]):
+            if column_value is not None:
+                value, value_type = column_value, name
+                break
+        data_list.append((key, value, value_type))
+    data_headers = ('Key', 'Value', 'Value Column')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_snapchat_core_user_store(context):
+    files_found = context.get_files_found()
+    source_path = _find(files_found, 'core.db')
+    data_list = []
+    for rowid, item_key, int_value, real_value, boolean_value, text_value, blob_value in _rows(
+            source_path, '''
+            SELECT _id, itemKey, intVal, realVal, booleanVal, textVal, blobVal
+            FROM SnapUserStore ORDER BY _id'''):
+        decoded_key = _decode(item_key)
+        group = _pb_text(decoded_key, '1', '1')
+        user_id = _pb_text(decoded_key, '1', '2')
+        store = _pb_text(decoded_key, '3', '2')
+        value = value_type = ''
+        for name, column_value in (('intVal', int_value), ('realVal', real_value),
+                                   ('booleanVal', boolean_value), ('textVal', text_value)):
+            if column_value is not None:
+                value, value_type = column_value, name
+                break
+        if not value_type and blob_value is not None:
+            value, value_type = f'{len(blob_value)} byte blob', 'blobVal'
+        data_list.append((group, user_id, store, value, value_type, rowid))
+    data_headers = ('Group', 'User ID', 'Store', 'Value (as stored)', 'Value Column',
+                    'Row ID')
+    return data_headers, data_list, source_path
