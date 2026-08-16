@@ -204,6 +204,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | groupMe |
 | hikvision |
 | imo |
+| instagram |
 | installedappsGass |
 | installedappsLibrary |
 | installedappsVending |
