@@ -28,9 +28,15 @@ __artifacts_v2__ = {
                  "were exercised by a real row in the tested images, so the Card Creation Source "
                  "decode is source-verified and not corpus-verified. Rows are driven from "
                  "masked_credit_cards, so a metadata row whose card has been removed is not "
-                 "reported. A Web Data file left with a hot rollback journal cannot be recovered "
-                 "through a read-only handle; such a file is logged and skipped so it does not end "
-                 "the run before the other browsers on the device are read. "
+                 "reported. An extraction can hold the same Web Data file under more than one path "
+                 "(/data/data, /data/user/0, data_mirror); each file is read once, from the "
+                 "/data/data copy where present. A Web Data file left with a hot rollback journal "
+                 "cannot be recovered through a read-only handle; such a file is logged and skipped "
+                 "so it does not end the run before the other browsers on the device are read. One "
+                 "such file was found across the tested images, and it sits at a duplicate path "
+                 "that deduplication drops, so no tested image reaches that guard. It was exercised "
+                 "instead by staging that same file at an ordinary /data/data path, which logged "
+                 "the skip and still reported the card another browser held in the same run. "
                  "Hu and Karabiyik report finding cardholder name, card type, last four "
                  "digits, expiration, use frequency and dates of use in these two tables at "
                  "data/data/com.android.chrome/app_chrome/Default/Web Data after TikTok Shop "
@@ -171,8 +177,8 @@ def get_chromeCreditCards(context):
 
         # One unreadable database must not end the artifact. A Web Data file
         # left with a hot rollback journal cannot be recovered through a
-        # read-only handle, and an embedded WebView copy in that state was
-        # aborting the whole run before any other browser was reached.
+        # read-only handle, and a device carries one of these files per app
+        # that embeds a WebView.
         cards = []
         metadata = {}
         try:
