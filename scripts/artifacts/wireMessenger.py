@@ -4,17 +4,26 @@ __artifacts_v2__ = {
         "description": "Parses details about the user profile for Wire Messenger",
         "author": "@cf-eglendye",
         "creation_date": "2024-04-24",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35. Only the first registered client (clients[0]) "
-                 "is reported; any further clients registered to the account are not listed.",
+                 "is reported; any further clients registered to the account are not listed.\n"
+                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
+                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
+                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
+                 "(the app's own log records a database keying operation, and the app's published "
+                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+                 "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows",
-            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows",
+            "pixel3_a11": "Android 11 | com.wire | 1 row",
+            "pixel3_a12": "Android 12 | com.wire | 1 row",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 0 rows, user database not plain SQLite",
         },
     },
     "get_wire_contacts": {
@@ -22,16 +31,25 @@ __artifacts_v2__ = {
         "description": "Parses user contacts for Wire Messenger",
         "author": "@cf-eglendye",
         "creation_date": "2024-04-24",
-        "last_update_date": "2024-04-24",
+        "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35",
+        "notes": "Tested on: Android 13 Wire v.3.81.35.\n"
+                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
+                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
+                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
+                 "(the app's own log records a database keying operation, and the app's published "
+                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+                 "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows",
-            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows",
+            "pixel3_a11": "Android 11 | com.wire | 2 rows",
+            "pixel3_a12": "Android 12 | com.wire | 2 rows",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 0 rows, user database not plain SQLite",
         },
     },
     "get_wire_messages": {
@@ -39,19 +57,101 @@ __artifacts_v2__ = {
         "description": "Parses messages and call history for Wire Messenger",
         "author": "@cf-eglendye",
         "creation_date": "2024-04-24",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "Tested on: Android 13 Wire v.3.81.35. Rows taken from the MsgDeletion table carry "
                  "their timestamp in the Date / Time Deleted column and have no sent time. The call "
                  "duration column is rendered by dividing the stored duration by 1000, which assumes "
-                 "the value is milliseconds; that unit has not been independently verified.",
+                 "the value is milliseconds; that unit has not been independently verified.\n"
+                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
+                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
+                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
+                 "(the app's own log records a database keying operation, and the app's published "
+                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+                 "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows",
-            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows",
+            "pixel3_a11": "Android 11 | com.wire | 15 rows",
+            "pixel3_a12": "Android 12 | com.wire | 30 rows",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 0 rows, user database not plain SQLite",
+        },
+    },
+    "get_wire_cached_files": {
+        "name": "Wire Cached Files",
+        "description": "Files the Wire app stores on disk per account, shown as media where the "
+                       "content is an image",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-15",
+        "last_update_date": "2026-08-15",
+        "requirements": "None",
+        "category": "Wire Messenger",
+        "notes": "One row per file under files/wire.com/<account id>/ and cache/wire.com/"
+                 "<account id>/ inside the app sandbox. On tested images these directories hold "
+                 "PNG and JPEG content, some of it in files without an extension; the type is "
+                 "read from the file content (PNG, JPEG and MP4 observed). These files sit "
+                 "outside the databases newer app versions encrypt, so they remain readable "
+                 "when the message store is not. What each file was used for by the app is not "
+                 "asserted.",
+        "paths": ('*/com.wire/files/wire.com/*/*',
+                  '*/com.wire/cache/wire.com/*/*'),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+        "sample_data": {
+            "pixel3_a11": "Android 11 | com.wire | 0 rows, no wire.com file directories",
+            "pixel3_a12": "Android 12 | com.wire | 0 rows, no wire.com file directories",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 14 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 11 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 20 rows",
+        },
+    },
+    "get_wire_proteus_sessions": {
+        "name": "Wire Proteus Sessions",
+        "description": "Proteus end-to-end encryption sessions stored by the Wire app, with the "
+                       "other party's user id, domain and client id taken from the session file "
+                       "name",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-15",
+        "last_update_date": "2026-08-15",
+        "requirements": "None",
+        "category": "Wire Messenger",
+        "notes": "One row per file under app_accounts/<domain>/<account id>/proteus/sessions/ in "
+                 "current app versions, or files/otr/<account id>/sessions/ in the legacy "
+                 "generation. The file name is the Proteus session id, which the app's published "
+                 "core builds as <user id>_<client id> with the user id rendered as "
+                 "<value>@<domain> (CryptoSessionId in core/cryptography/src/commonMain/kotlin/"
+                 "com/wire/kalium/cryptography/ProteusClient.kt and CryptoQualifiedID in the "
+                 "IDs.kt beside it, wireapp/kalium commit e9ac68451ad88f9e67dd41216df926ba47b3a581). "
+                 "Legacy session names predate qualified user ids and carry no domain, which is "
+                 "reported empty rather than assumed.\n"
+                 "These files sit outside the databases current app versions encrypt, so they "
+                 "remain readable when the message store is not. A session file records that a "
+                 "cryptographic session exists with that client. It does not establish that a "
+                 "message was sent, received or read, it carries no message content, and the "
+                 "session contents are not decoded here.\n"
+                 "An extraction containing both /data/data and /data/user/0 holds the same store "
+                 "twice, so each session is listed once per path; the Source Path column "
+                 "distinguishes them.",
+        "paths": ('*/com.wire/app_accounts/*/*/proteus/sessions/*',
+                  '*/com.wire/files/otr/*/sessions/*'),
+        "output_types": "standard",
+        "artifact_icon": "key",
+        "sample_data": {
+            "pixel3_a11": "Android 11 | com.wire | 14 rows, legacy otr store, 7 distinct "
+                          "sessions each listed under /data/data and /data/user/0, no domain "
+                          "in the stored names",
+            "pixel3_a12": "Android 12 | com.wire | 18 rows, legacy otr store, 9 distinct "
+                          "sessions each listed under /data/data and /data/user/0, no domain "
+                          "in the stored names",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 5 rows, qualified ids with domain",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows, proteus store "
+                                "present with no session files",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 0 rows, proteus store present with no "
+                                "session files",
         },
     }
 }
@@ -243,3 +343,98 @@ def get_wire_messages(context):
                     'Message Content', 'Reaction', ('Date / Time Reacted', 'datetime'), 'Reacted By',
                     'Call Duration (assumes ms)', 'Asset Name', ('Date / Time Deleted', 'datetime'))
     return data_headers, data_list, source_path
+
+
+_WIRE_ACCOUNT_DIR_RE = re.compile(r'[/\\]wire\.com[/\\]([^/\\]+)[/\\]')
+
+
+@artifact_processor
+def get_wire_cached_files(context):
+    data_list = []
+
+    for file_found in context.get_files_found():
+        file_found = str(file_found)
+        match = _WIRE_ACCOUNT_DIR_RE.search(file_found)
+        if not match or isdir(file_found):
+            continue
+        account_id = match.group(1)
+
+        extension = None
+        try:
+            with open(file_found, 'rb') as handle:
+                magic = handle.read(8)
+        except OSError:
+            magic = b''
+        if magic.startswith(b'\x89PNG'):
+            extension = 'png'
+        elif magic.startswith(b'\xff\xd8'):
+            extension = 'jpg'
+        elif magic[4:8] == b'ftyp':
+            extension = 'mp4'
+        media_ref = ''
+        if extension:
+            media_ref = check_in_media(file_found, basename(file_found),
+                                       force_extension=extension) or ''
+
+        data_list.append((
+            basename(file_found),
+            media_ref,
+            account_id,
+            context.get_relative_path(file_found),
+        ))
+
+    data_headers = (
+        'File Name',
+        ('File', 'media'),
+        'Account ID',
+        'Source Path',
+    )
+    return data_headers, data_list, 'See Source Path column'
+
+
+_PROTEUS_SESSION_RE = re.compile(
+    r'[/\\]com\.wire[/\\]app_accounts[/\\][^/\\]+[/\\]([^/\\]+)[/\\]proteus[/\\]sessions[/\\]([^/\\]+)$')
+_OTR_SESSION_RE = re.compile(
+    r'[/\\]com\.wire[/\\]files[/\\]otr[/\\]([^/\\]+)[/\\]sessions[/\\]([^/\\]+)$')
+
+
+@artifact_processor
+def get_wire_proteus_sessions(context):
+    data_list = []
+
+    for file_found in context.get_files_found():
+        file_found = str(file_found)
+        if isdir(file_found):
+            continue
+        match = _PROTEUS_SESSION_RE.search(file_found) or _OTR_SESSION_RE.search(file_found)
+        if not match:
+            continue
+        account_id = match.group(1)
+        session_id = match.group(2)
+
+        # The session id is "<user id>_<client id>", and the user id is
+        # "<value>@<domain>" once the app started qualifying ids. Legacy names
+        # carry no domain, so it stays empty rather than being assumed.
+        remote_user, _, remote_client = session_id.rpartition('_')
+        if not remote_user:
+            remote_user, remote_client = session_id, ''
+        user_value, _, domain = remote_user.partition('@')
+
+        data_list.append((
+            user_value,
+            domain,
+            remote_client,
+            account_id,
+            session_id,
+            context.get_relative_path(file_found),
+        ))
+
+    data_headers = (
+        'Other Party User ID',
+        'Other Party Domain',
+        'Other Party Client ID',
+        'Local Account ID',
+        'Session ID (as stored)',
+        'Source Path',
+    )
+    return data_headers, data_list, 'See Source Path column'
