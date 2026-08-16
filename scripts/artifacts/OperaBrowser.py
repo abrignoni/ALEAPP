@@ -42,14 +42,16 @@ __artifacts_v2__ = {
                  "session store may exist under databases-off-the-record on a device "
                  "where a private session was not fully torn down before extraction, "
                  "but that folder was empty on the device this was validated against, "
-                 "so no parser for it is included here.",
+                 "so no parser for it is included here. If an extraction contains more "
+                 "than one Opera profile, only the first session_db/History pair found "
+                 "is used; a device with multiple profiles is a known, untested edge "
+                 "case rather than one confirmed to work.",
         "paths": ('*/app_opera/session_db*', '*/app_opera/History*'),
-        "output_types": "standard",
+        "output_types": ["html", "tsv", "timeline", "lava"],
         "artifact_icon": "layout",
-       "sample_data": {
-            "pixel7a_a14": "3 row",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.opera.browser vc 1908324306 | 3 rows",
         },
-
     },
     "opera_tab_navigation": {
         "name": "Opera Browser - Tab Navigation History",
@@ -84,14 +86,18 @@ __artifacts_v2__ = {
                  "whose visit did not leave a matching literal URL in History either. "
                  "Because it is the URL's *last* visit rather than necessarily the "
                  "visit this entry represents, a URL revisited later than this "
-                 "navigation would show that later time instead.",
+                 "navigation would show that later time instead. If an extraction "
+                 "contains more than one Opera profile, only the first "
+                 "session_db/History pair found is used; a device with multiple "
+                 "profiles is a known, untested edge case rather than one confirmed "
+                 "to work.",
         "paths": ('*/app_opera/session_db*', '*/app_opera/History*'),
-           "output_types": "standard",
+        "output_types": ["html", "tsv", "timeline", "lava"],
         "artifact_icon": "compass",
-       "sample_data": {
-            "pixel7a_a14": "8 row"
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.opera.browser vc 1908324306 | 8 rows",
         },
-    }
+    },
 }
 
 from datetime import datetime, timedelta, timezone
