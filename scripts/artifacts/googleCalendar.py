@@ -77,6 +77,7 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import re
 import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, \
@@ -158,16 +159,21 @@ def get_calendar_calendars(context):
 def _unique_db_files(context, name_suffix):
     '''Database files matching the suffix, without -wal/-shm sidecars and without the
     duplicates extractions carry for the same file (data_mirror, and /data/data next
-    to /data/user/0).'''
+    to /data/user/0).
+
+    The dedupe key is the evidence-relative path, not the extracted path: the report's own
+    data folder ends in /data, so a raw-path replace can rewrite the harness boundary
+    instead of the evidence path on archives whose members start with data/.'''
     seen = set()
     result = []
     for file_found in context.get_files_found():
         file_found = str(file_found)
         if not file_found.endswith(name_suffix):
             continue
-        if 'data_mirror' in file_found:
+        relative = str(context.get_relative_path(file_found)).replace('\\', '/')
+        if 'data_mirror' in relative:
             continue
-        normalized = file_found.replace('\\', '/').replace('/data/data/', '/data/user/0/')
+        normalized = re.sub(r'(^|/)data/data/', r'\1data/user/0/', relative)
         if normalized in seen:
             continue
         seen.add(normalized)
