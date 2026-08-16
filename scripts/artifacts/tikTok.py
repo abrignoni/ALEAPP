@@ -236,6 +236,7 @@ import sqlite3
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 _ACCOUNT_DB_RE = re.compile(r'(\d+)_im\.db$')
 
@@ -265,34 +266,16 @@ def _rows(source_path, sql):
     return rows
 
 
-def _unique_files(context, suffix=None):
-    '''The context's files matching suffix, without the duplicate paths extractions carry
-    for the same file (data_mirror, and /data/data next to /data/user/0), preserving order.
-
-    The dedupe key is the evidence-relative path, not the extracted path: the report's own
-    data folder ends in /data, so a raw-path regex can rewrite the harness boundary instead
-    of the evidence path on archives whose members start with data/.'''
-    seen = set()
-    result = []
-    for file_found in context.get_files_found():
-        file_found = str(file_found)
-        if suffix is not None and not file_found.endswith(suffix):
-            continue
-        relative = str(context.get_relative_path(file_found)).replace('\\', '/')
-        if 'data_mirror' in relative:
-            continue
-        normalized = re.sub(r'(^|/)data/data/', r'\1data/user/0/', relative)
-        if normalized in seen:
-            continue
-        seen.add(normalized)
-        result.append(file_found)
-    return result
+def _files_ending(context, suffix):
+    '''The context's files ending in suffix, one copy per duplicate storage view.'''
+    return unique_files(context, [f for f in context.get_files_found()
+                                  if str(f).endswith(suffix)])
 
 
 def _account_dbs(context):
     '''Every per-account <uid>_im.db, as [(account uid, path)].'''
     account_dbs = []
-    for file_found in _unique_files(context, suffix='_im.db'):
+    for file_found in _files_ending(context, '_im.db'):
         match = _ACCOUNT_DB_RE.search(os.path.basename(file_found))
         if match:
             account_dbs.append((match.group(1), file_found))
@@ -303,7 +286,7 @@ def _contact_sources(context):
     '''Contact stores as [(table, path)], IM_USER_BASE_INFO stores first.'''
     contact_dbs = []
     simple_dbs = []
-    for file_found in _unique_files(context):
+    for file_found in unique_files(context):
         name = os.path.basename(file_found)
         if name == 'db_im_xx':
             simple_dbs.append(('SIMPLE_USER', file_found))
@@ -433,7 +416,7 @@ def get_tikTok_account(context):
     data_list = []
     source_path = ''
 
-    for file_found in _unique_files(context, suffix='aweme_user.xml'):
+    for file_found in _files_ending(context, 'aweme_user.xml'):
         source_path = source_path or file_found
         source_file = context.get_relative_path(file_found)
         try:
@@ -478,7 +461,7 @@ def _tolerant_select(source_path, table, columns, tail=''):
 def get_tikTok_app_open(context):
     data_list = []
     source_path = ''
-    for file_found in _unique_files(context, suffix='TIKTOK.db'):
+    for file_found in _files_ending(context, 'TIKTOK.db'):
         source_path = source_path or file_found
         source_file = context.get_relative_path(file_found)
         for (open_time,) in _rows(file_found,
@@ -492,7 +475,7 @@ def get_tikTok_app_open(context):
 def get_tikTok_downloads(context):
     data_list = []
     source_path = ''
-    for file_found in _unique_files(context, suffix='downloader.db'):
+    for file_found in _files_ending(context, 'downloader.db'):
         source_path = source_path or file_found
         source_file = context.get_relative_path(file_found)
         sql = _tolerant_select(
@@ -515,7 +498,7 @@ def get_tikTok_downloads(context):
 def get_tikTok_app_log_events(context):
     data_list = []
     source_path = ''
-    for file_found in _unique_files(context, suffix='ss_app_log.db'):
+    for file_found in _files_ending(context, 'ss_app_log.db'):
         source_path = source_path or file_found
         source_file = context.get_relative_path(file_found)
         for (timestamp, category, tag, label, ext_json, session_id,
