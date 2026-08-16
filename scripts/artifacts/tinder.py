@@ -20,9 +20,26 @@ __artifacts_v2__ = {
                  "are absent. Timestamps are stored as epoch milliseconds. The type and "
                  "delivery_status columns are reported as stored; in the tested images type was "
                  "'UNKNOWN' and delivery_status was 'SUCCESS' on every row, and nothing in the "
-                 "extraction documents their other values. A match whose messages were "
-                 "removed reports no rows here; an empty result is not evidence no messages were "
-                 "ever exchanged.",
+                 "extraction documents their other values.\n"
+                 "Each row also carries a raw_message_data JSON copy of the message. Its _id, "
+                 "match_id, from, to and message fields agreed with the SQL columns on every "
+                 "tested row, and its ISO sent_date agreed with the sent_date column on every "
+                 "tested row, so Content Type and GIF Description are read from it with that "
+                 "cross-check behind them. Its numeric timestamp field was 0 on some rows and is "
+                 "not used. Content Type is the JSON type field as stored: 'gif' was the only "
+                 "value observed, on rows whose Message column holds the media.tenor.com URL of "
+                 "the GIF (the JSON fixed_height field holds a smaller rendition of the same "
+                 "GIF). A blank Content Type means the JSON carried no type field, which on "
+                 "every tested row accompanied plain message text; it is not a statement that "
+                 "other content types do not exist.\n"
+                 "GIF content is reported as its URL, not rendered: the tested extractions "
+                 "record no reproducible link from these URLs to cached bytes. The Glide cache "
+                 "file names in cache/image_manager_disk_cache are not derivable from the URL, "
+                 "and the ExoPlayer cache index in databases/exoplayer_internal.db held only "
+                 "profile loop and marketing video URLs, none from media.tenor.com. The URLs "
+                 "are not fetched. No message row with empty text was observed in the tested "
+                 "images. A match whose messages were removed reports no rows here; an empty "
+                 "result is not evidence no messages were ever exchanged.",
         "paths": ('*/com.tinder/databases/tinder-3.db*',
                   '*/com.tinder/files/datastore/id',
                   '*/com.tinder/files/datastore/user'),
@@ -154,6 +171,7 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import json
 import os
 import sqlite3
 
@@ -310,6 +328,20 @@ def _code_and_label(node):
     return '; '.join(parts)
 
 
+def _raw_message_fields(raw):
+    '''(content type, GIF description) from a message row's raw_message_data JSON,
+    both as stored; blanks when the JSON is absent, unparseable or carries neither.'''
+    if not raw:
+        return '', ''
+    try:
+        parsed = json.loads(raw)
+    except (ValueError, TypeError):
+        return '', ''
+    if not isinstance(parsed, dict):
+        return '', ''
+    return str(parsed.get('type', '') or ''), str(parsed.get('gif_description', '') or '')
+
+
 def _sniffed_extension(path):
     try:
         with open(path, 'rb') as f:
@@ -344,7 +376,7 @@ def tinderMessages(context):
             SELECT message.sent_date, match.person_id, match_person.name,
                    message.from_id, message.to_id, message.text, message.type,
                    message.delivery_status, message.is_liked, message.is_seen,
-                   message.id, message.match_id
+                   message.id, message.match_id, message.raw_message_data
             FROM message
             LEFT JOIN `match` ON message.match_id = `match`.id
             LEFT JOIN match_person ON `match`.person_id = match_person.id
@@ -353,7 +385,7 @@ def tinderMessages(context):
         if rows:
             sources.append(source_path)
         for (sent_date, person_id, person_name, from_id, to_id, text, msg_type,
-             delivery_status, is_liked, is_seen, message_id, match_id) in rows:
+             delivery_status, is_liked, is_seen, message_id, match_id, raw) in rows:
             if person_id and from_id == person_id:
                 direction = 'Incoming'
                 sender_name = person_name or ''
@@ -363,12 +395,15 @@ def tinderMessages(context):
             else:
                 direction = ''
                 sender_name = ''
+            content_type, gif_description = _raw_message_fields(raw)
             data_list.append((
                 _ms_to_utc(sent_date),
                 direction,
                 person_name or '',
                 sender_name,
                 text,
+                content_type,
+                gif_description,
                 msg_type,
                 delivery_status,
                 is_liked,
@@ -386,6 +421,8 @@ def tinderMessages(context):
         'Matched Person',
         'Sender Name',
         'Message',
+        'Content Type (as stored)',
+        'GIF Description (as stored)',
         'Type (as stored)',
         'Delivery Status (as stored)',
         'Is Liked (as stored)',
