@@ -34,6 +34,7 @@ from pathlib import Path
 
 from scripts.html_safe import safe_local_link
 from scripts.ilapfuncs import artifact_processor
+from scripts.artifacts.storagePathViews import unique_files
 
 control_chars = ''.join(map(chr, range(0, 32))) + ''.join(map(chr, range(127, 160)))
 not_control_char_re = re.compile(f'[^{control_chars}]' + '{4,}')
@@ -44,7 +45,7 @@ ascii_chars_re = re.compile(f'[{printable_chars_for_re}]' + '{4,}')
 
 @artifact_processor
 def get_walStrings(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     report_folder = context.get_report_folder()
     x = 1
     data_list = []

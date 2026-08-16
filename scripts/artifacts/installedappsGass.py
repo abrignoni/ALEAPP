@@ -29,11 +29,12 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, is_platform_windows, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_installedappsGass(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     slash = '\\' if is_platform_windows() else '/'
     data_list = []

@@ -30,6 +30,7 @@ __artifacts_v2__ = {
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 CALL_TYPE_ICONS = {
     'Incoming': ' <i data-feather="phone-incoming" stroke="green"></i>',
@@ -44,7 +45,7 @@ CALL_TYPE_ICONS = {
 
 @artifact_processor
 def get_calllog(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

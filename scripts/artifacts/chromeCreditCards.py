@@ -75,6 +75,7 @@ import sqlite3
 
 from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 # Integer codes decoded through Chromium's own enum definitions. The file states
 # the numbering is persistent in the database and kept in sync with the sync
@@ -143,7 +144,7 @@ def _rows_as_dicts(cursor, table):
 
 @artifact_processor
 def get_chromeCreditCards(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = [
         ('Date Last Used', 'datetime'), 'Name on Card', 'Card Network (as stored)',

@@ -31,10 +31,11 @@ import os
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, does_column_exist_in_db
+from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
 def contacts(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     seeker = context.get_seeker()
 
     source_file = ''

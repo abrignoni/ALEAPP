@@ -30,11 +30,12 @@ import os
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_chromeOfflinePages(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
 
     data_headers = ['Creation Time', 'Last Access Time', 'Online URL', 'File Path', 'Title', 'Access Count', 'File Size']

@@ -82,6 +82,7 @@ import sqlite3
 
 from scripts.ilapfuncs import (artifact_processor, open_sqlite_db_readonly, does_table_exist_in_db,
                                does_column_exist_in_db, check_in_media)
+from scripts.artifacts.storagePathViews import unique_files
 
 _SMS_QUERY = '''
     SELECT _id as msg_id, thread_id, address, person, date, date_sent, read,
@@ -154,7 +155,7 @@ def _mmssms_dbs(files_found):
 
 @artifact_processor
 def get_sms_mms(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _mmssms_dbs(files_found):
@@ -176,7 +177,7 @@ def get_sms_mms(context):
 
 @artifact_processor
 def get_sms_mms_mms(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _mmssms_dbs(files_found):

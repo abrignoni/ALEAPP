@@ -31,11 +31,12 @@ import email
 import os
 
 from scripts.ilapfuncs import artifact_processor, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_offlinePages(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_paths = []
     for file_found in files_found:

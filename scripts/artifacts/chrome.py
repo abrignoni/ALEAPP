@@ -142,6 +142,7 @@ import re
 import urllib.parse
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, does_column_exist_in_db, artifact_processor
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def get_browser_name(file_name):
@@ -187,7 +188,7 @@ def _history_files(files_found):
 
 @artifact_processor
 def get_chrome(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Last Visit Time', 'URL', 'Title', 'Visit Count', 'Typed Count', 'ID', 'Hidden']
     lava_data_headers = data_headers.copy()
@@ -218,7 +219,7 @@ def get_chrome(context):
 
 @artifact_processor
 def get_chromeWebVisits(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Visit Timestamp', 'URL', 'Title', 'Duration', 'Transition Type', 'Qualifier(s)', 'From Visit URL']
     lava_data_headers = data_headers.copy()
@@ -282,7 +283,7 @@ def get_chromeWebVisits(context):
 
 @artifact_processor
 def get_chromeSearchTerms(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Last Visit Time', 'Search Term', 'URL', 'Title', 'Visit Count']
     lava_data_headers = data_headers.copy()
@@ -318,7 +319,7 @@ def get_chromeSearchTerms(context):
 
 @artifact_processor
 def get_chromeDownloads(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State',
                     'Danger Type', 'Interrupt Reason', 'Opened?', 'Received Bytes', 'Total Bytes']
@@ -431,7 +432,7 @@ def get_chromeDownloads(context):
 
 @artifact_processor
 def get_chromeKeywordSearchTerms(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Last Visit Time', 'Term', 'URL']
     lava_data_headers = data_headers.copy()

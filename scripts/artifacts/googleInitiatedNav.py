@@ -25,6 +25,7 @@ import datetime
 from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _us_to_utc(value):
@@ -38,7 +39,7 @@ def _us_to_utc(value):
 
 @artifact_processor
 def get_googleInitiatedNav(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

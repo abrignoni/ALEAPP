@@ -116,7 +116,7 @@ __artifacts_v2__ = {
                        "name",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-15",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-08-16",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "One row per file under app_accounts/<domain>/<account id>/proteus/sessions/ in "
@@ -133,20 +133,18 @@ __artifacts_v2__ = {
                  "cryptographic session exists with that client. It does not establish that a "
                  "message was sent, received or read, it carries no message content, and the "
                  "session contents are not decoded here.\n"
-                 "An extraction containing both /data/data and /data/user/0 holds the same store "
-                 "twice, so each session is listed once per path; the Source Path column "
-                 "distinguishes them.",
+                 "An extraction can hold the same store under more than one path (/data/data, "
+                 "/data/user/0, data_mirror); each session file is reported once, from the "
+                 "/data/data copy where present.",
         "paths": ('*/com.wire/app_accounts/*/*/proteus/sessions/*',
                   '*/com.wire/files/otr/*/sessions/*'),
         "output_types": "standard",
         "artifact_icon": "key",
         "sample_data": {
-            "pixel3_a11": "Android 11 | com.wire | 14 rows, legacy otr store, 7 distinct "
-                          "sessions each listed under /data/data and /data/user/0, no domain "
-                          "in the stored names",
-            "pixel3_a12": "Android 12 | com.wire | 18 rows, legacy otr store, 9 distinct "
-                          "sessions each listed under /data/data and /data/user/0, no domain "
-                          "in the stored names",
+            "pixel3_a11": "Android 11 | com.wire | 7 rows, legacy otr store, no domain in the "
+                          "stored names",
+            "pixel3_a12": "Android 12 | com.wire | 9 rows, legacy otr store, no domain in the "
+                          "stored names",
             "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 5 rows, qualified ids with domain",
             "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows, proteus store "
                                 "present with no session files",
@@ -163,6 +161,7 @@ import xml.etree.ElementTree as ET
 from os.path import basename, isdir
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 UUID_RE = re.compile(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
 
@@ -280,7 +279,7 @@ def _run(source_path, sql):
 
 @artifact_processor
 def get_wire_profile(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = _user_db(files_found)
     rows = _run(source_path, '''
         SELECT Users._id, Users.name, Users.email, Users.phone,
@@ -311,7 +310,7 @@ def get_wire_profile(context):
 
 @artifact_processor
 def get_wire_contacts(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = _user_db(files_found)
     rows = _run(source_path, '''
         SELECT Users._id, Users.name, Users.handle, Users.connection,
@@ -326,7 +325,7 @@ def get_wire_contacts(context):
 
 @artifact_processor
 def get_wire_messages(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = _user_db(files_found)
     data_list = []
     asset_name, asset_join = _asset_source(source_path) if source_path else ("''", '')
@@ -352,7 +351,7 @@ _WIRE_ACCOUNT_DIR_RE = re.compile(r'[/\\]wire\.com[/\\]([^/\\]+)[/\\]')
 def get_wire_cached_files(context):
     data_list = []
 
-    for file_found in context.get_files_found():
+    for file_found in unique_files(context):
         file_found = str(file_found)
         match = _WIRE_ACCOUNT_DIR_RE.search(file_found)
         if not match or isdir(file_found):
@@ -402,7 +401,7 @@ _OTR_SESSION_RE = re.compile(
 def get_wire_proteus_sessions(context):
     data_list = []
 
-    for file_found in context.get_files_found():
+    for file_found in unique_files(context):
         file_found = str(file_found)
         if isdir(file_found):
             continue

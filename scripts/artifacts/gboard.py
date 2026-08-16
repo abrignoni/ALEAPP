@@ -70,6 +70,7 @@ from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, \
     does_table_exist_in_db, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 
 class keyboard_event:
@@ -204,7 +205,7 @@ def _events_trainingcachev2(file_found):
 
 @artifact_processor
 def get_gboardCache(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -244,7 +245,7 @@ def get_gboardCache(context):
 
 @artifact_processor
 def get_gboardCache_keystrokes(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -269,7 +270,7 @@ def get_gboardCache_keystrokes(context):
 
 @artifact_processor
 def get_gboardCache_sessions(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:

@@ -56,6 +56,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, get_sqlite_db_records, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
@@ -77,7 +78,7 @@ def _parse_xml(file_found):
 
 @artifact_processor
 def torbrowser_thumbnails(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
 
     for file_found in files_found:
@@ -106,7 +107,7 @@ def torbrowser_thumbnails(context):
 
 @artifact_processor
 def torbrowser_bookmarks(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in files_found:
@@ -144,7 +145,7 @@ def torbrowser_bookmarks(context):
 
 @artifact_processor
 def torbrowser_usageinfo(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     usage_keys = {
         "pref_key_last_browse_activity_time",

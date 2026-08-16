@@ -130,6 +130,7 @@ from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 from scripts.context import Context
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _us_to_utc(value):
@@ -195,7 +196,7 @@ def _parse_annotation(blob):
 
 @artifact_processor
 def get_googleChat(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):
@@ -232,7 +233,7 @@ def get_googleChat(context):
 
 @artifact_processor
 def get_googleChat_groups(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):
@@ -252,7 +253,7 @@ def get_googleChat_groups(context):
 
 @artifact_processor
 def get_googleChat_drafts(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):
@@ -270,7 +271,7 @@ def get_googleChat_drafts(context):
 
 @artifact_processor
 def get_googleChat_users(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):

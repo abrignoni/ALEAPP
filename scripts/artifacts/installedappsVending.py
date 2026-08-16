@@ -32,6 +32,7 @@ import datetime
 from pathlib import Path
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, does_column_exist_in_db
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _ms_to_utc(value):
@@ -42,7 +43,7 @@ def _ms_to_utc(value):
 
 @artifact_processor
 def get_installedappsVending(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

@@ -66,6 +66,7 @@ import struct
 from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, logfunc, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _ms_to_utc(value):
@@ -93,7 +94,7 @@ def _run(source_path, sql):
 
 @artifact_processor
 def get_googleMapsGmm(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -135,7 +136,7 @@ def get_googleMapsGmm(context):
 
 @artifact_processor
 def get_googleMapsGmm_places(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:
