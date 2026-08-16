@@ -259,6 +259,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | teleguard |
 | textnow |
 | tikTok |
+| tinder |
 | tusky |
 | usageapps |
 | userDict |
