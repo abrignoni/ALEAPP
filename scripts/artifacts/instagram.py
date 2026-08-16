@@ -246,6 +246,7 @@ import sqlite3
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
 
@@ -300,32 +301,13 @@ def _loads(raw):
     return parsed if isinstance(parsed, dict) else {}
 
 
-# /data/user/<n>/ and /data_mirror/data_ce/null/<n>/ are bind mounts of /data/data;
-# extractions that keep more than one view carry the same app directory two or
-# three times.
-_MIRROR_PREFIXES = re.compile(r'/data/user/\d+/|/data_mirror/data_[a-z]+/null/\d+/')
+def _files_ending(context, *suffixes):
+    return [f for f in unique_files(context)
+            if f.replace('\\', '/').endswith(suffixes)]
 
 
-def _dedupe_mirrored(paths):
-    '''Report each app file once when an extraction holds several mirror views of
-    it, preferring the /data/data/ copy.'''
-    normalized_seen = {}
-    for path in sorted(paths):
-        forward = path.replace('\\', '/')
-        normalized = _MIRROR_PREFIXES.sub('/data/data/', forward)
-        preferred = normalized_seen.get(normalized)
-        if preferred is None or _MIRROR_PREFIXES.search(preferred.replace('\\', '/')):
-            normalized_seen[normalized] = path
-    return sorted(normalized_seen.values())
-
-
-def _files_ending(files_found, *suffixes):
-    return _dedupe_mirrored(str(f) for f in files_found
-                            if str(f).replace('\\', '/').endswith(suffixes))
-
-
-def _direct_dbs(files_found):
-    return _files_ending(files_found, '/direct.db')
+def _direct_dbs(context):
+    return _files_ending(context, '/direct.db')
 
 
 def _account_entries(file_found):
@@ -353,10 +335,10 @@ def _account_entries(file_found):
     return [(key, user) for key, user in entries if isinstance(user, dict)]
 
 
-def _account_username_map(files_found):
+def _account_username_map(context):
     '''user id -> username for every signed-in account found in the preferences.'''
     usernames = {}
-    for file_found in _files_ending(files_found,
+    for file_found in _files_ending(context,
                                     'com.instagram.android_preferences.xml'):
         for _key, user in _account_entries(file_found):
             user_id = str(user.get('id') or user.get('instagram_pk')
@@ -432,12 +414,11 @@ def _media_fields(message):
 
 @artifact_processor
 def instagramDirectMessages(context):
-    files_found = context.get_files_found()
     data_list = []
     sources = []
 
-    account_usernames = _account_username_map(files_found)
-    for source_path in _direct_dbs(files_found):
+    account_usernames = _account_username_map(context)
+    for source_path in _direct_dbs(context):
         own_id = _session_user_id(source_path)
         titles, users = _thread_maps(source_path)
         rows = _rows(source_path, '''
@@ -492,12 +473,11 @@ def instagramDirectMessages(context):
 
 @artifact_processor
 def instagramDirectCalls(context):
-    files_found = context.get_files_found()
     data_list = []
     sources = []
 
-    account_usernames = _account_username_map(files_found)
-    for source_path in _direct_dbs(files_found):
+    account_usernames = _account_username_map(context)
+    for source_path in _direct_dbs(context):
         own_id = _session_user_id(source_path)
         titles, users = _thread_maps(source_path)
         rows = _rows(source_path, '''
@@ -547,11 +527,10 @@ def instagramDirectCalls(context):
 
 @artifact_processor
 def instagramDirectThreads(context):
-    files_found = context.get_files_found()
     data_list = []
     sources = []
 
-    for source_path in _direct_dbs(files_found):
+    for source_path in _direct_dbs(context):
         rows = _rows(source_path, '''
             SELECT last_activity_time, thread_id, thread_info FROM threads
             ORDER BY last_activity_time
@@ -596,11 +575,10 @@ def instagramDirectThreads(context):
 
 @artifact_processor
 def instagramAccounts(context):
-    files_found = context.get_files_found()
     data_list = []
     sources = []
 
-    for file_found in _files_ending(files_found,
+    for file_found in _files_ending(context,
                                     'com.instagram.android_preferences.xml'):
         entries = _account_entries(file_found)
         if entries:
@@ -640,13 +618,12 @@ def instagramAccounts(context):
 
 @artifact_processor
 def instagramContacts(context):
-    files_found = context.get_files_found()
     data_list = []
     sources = []
 
-    for source_path in _dedupe_mirrored(
-            str(f) for f in files_found
-            if not str(f).endswith(('-wal', '-shm', '-journal'))):
+    for source_path in unique_files(context):
+        if source_path.endswith(('-wal', '-shm', '-journal')):
+            continue
         rows = _rows(source_path, '''
             SELECT id, name, first_name, last_name, username, phone_number,
                    email_address, is_messenger_user, contact_type,
@@ -697,11 +674,10 @@ def instagramContacts(context):
 
 @artifact_processor
 def instagramTimeInApp(context):
-    files_found = context.get_files_found()
     data_list = []
     sources = []
 
-    for source_path in _dedupe_mirrored(str(f) for f in files_found):
+    for source_path in unique_files(context):
         base = os.path.basename(source_path)
         match = re.fullmatch(r'time_in_app_(\d+)\.db', base)
         if not match:
