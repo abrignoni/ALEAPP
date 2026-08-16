@@ -86,6 +86,13 @@ __artifacts_v2__ = {
                  "LAST_LOGGED_IN_USERNAME in identity_persistent_store.xml resolved through "
                  "Friend.userId, else the single distinct sender of rows where created_on_device "
                  "is set. Both agreed on the tested image. Blank when neither resolves.\n"
+                 "Older Snapchat builds carry a strict subset of the current columns (the "
+                 "tested vc 147872 build lacks created_on_device and replies_count); absent "
+                 "columns are substituted with NULL under the same name so the remaining "
+                 "columns still report, and the affected fields are blank on those rows. On "
+                 "such builds the direction fallback uses local_message_content_id, which "
+                 "that generation's schema comments describe as nullable if the message was "
+                 "not created on this device.\n"
                  "Limits. WAL frames are not parsed, so a message absent here is not evidence it "
                  "did not exist: a development-only frame parser read a further 29 rows across 10 "
                  "conversations on this image, 9 of them absent from the conversation table. This "
@@ -103,6 +110,24 @@ __artifacts_v2__ = {
         "sample_data": {
             "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 16 rows "
                                 "(8 Live, 8 Recovered)",
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 27 rows "
+                                "(9 Live, 18 Recovered)",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 21 rows (all Live)",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 31 rows (all Live)",
+            "russell_a14": "Android 14 | 7 rows (all Live)",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 41 rows "
+                                   "(28 Live, 13 Recovered)",
+            "pixel3_a12": "Android 12 | 13 rows (all Live)",
+            "pixel3_a11": "Android 11 | 0 rows (conversation_message table empty)",
+            "kevin_pocox7_a15": "Android 15 | no Snapchat arroyo.db found",
+            "samsungs20_a13": "Android 13 | no Snapchat arroyo.db found",
+            "sharon_a13": "Android 13 | no Snapchat arroyo.db found",
+            "cookbook_a11": "Android 11 | no Snapchat arroyo.db found",
+            "galaxys10_a10": "Android 10 | no Snapchat data found",
+            "anne_a15": "Android 15 | no Snapchat data found",
+            "samsunga53_a14": "Android 14 | no Snapchat data found",
+            "s20fe_a13": "Android 13 | no Snapchat data found",
+            "userb2_a13": "Android 13 | no Snapchat data found",
         },
         "data_views": {
             "conversation": {
@@ -161,6 +186,15 @@ __artifacts_v2__ = {
         "sample_data": {
             "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 5 rows "
                                 "(4 Live, 1 Recovered)",
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 4 rows "
+                                "(3 Live, 1 Recovered)",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 3 rows (all Live)",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 6 rows (all Live)",
+            "russell_a14": "Android 14 | 4 rows (all Live)",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 3 rows "
+                                   "(all Live)",
+            "pixel3_a12": "Android 12 | 3 rows (all Live)",
+            "pixel3_a11": "Android 11 | 2 rows (all Live)",
         },
     },
     "get_snapchat_memories": {
@@ -432,6 +466,22 @@ def _friend_name(friends, user_id, index=0):
     return friends.get(user_id, ('', ''))[index]
 
 
+def _table_columns(source_path, table):
+    return {row[1] for row in _rows(source_path, f'PRAGMA table_info({table})')}
+
+
+def _tolerant_select(source_path, table, columns, tail=''):
+    '''A SELECT that names every requested column, substituting NULL AS <name> for columns
+    the file's schema generation does not have, so one absent column does not silently drop
+    every row. Older Snapchat builds carry strict subsets of the current columns; on the
+    tested images nothing was renamed, only absent.
+    '''
+    present = _table_columns(source_path, table)
+    select_list = ', '.join(
+        column if column in present else f'NULL AS {column}' for column in columns)
+    return f'SELECT {select_list} FROM {table} {tail}'
+
+
 def _rows_pre_wal(source_path, sql):
     '''Run sql against the database file as of its last checkpoint, ignoring the WAL.
 
@@ -507,9 +557,18 @@ def _local_user_id(files_found, arroyo_path, friends):
         for user_id, (friend_username, _display) in friends.items():
             if friend_username == username:
                 return user_id
+    message_columns = _table_columns(arroyo_path, 'conversation_message')
+    if 'created_on_device' in message_columns:
+        origin_filter = 'created_on_device = 1'
+    elif 'local_message_content_id' in message_columns:
+        # Older builds lack created_on_device; their schema comments describe
+        # local_message_content_id as nullable if the message wasn't created on this device.
+        origin_filter = 'local_message_content_id IS NOT NULL'
+    else:
+        return ''
     senders = {row[0] for row in _rows(
         arroyo_path,
-        'SELECT DISTINCT sender_id FROM conversation_message WHERE created_on_device = 1') if row[0]}
+        f'SELECT DISTINCT sender_id FROM conversation_message WHERE {origin_filter}') if row[0]}
     return senders.pop() if len(senders) == 1 else ''
 
 
@@ -517,15 +576,20 @@ def _yes_no(value):
     return 'YES' if value else 'NO'
 
 
-_MESSAGE_SQL = '''
-    SELECT creation_timestamp, read_timestamp, sender_id, content_type, message_content,
-           message_state_type, is_saved, is_viewed_by_user, created_on_device,
-           remote_media_count, replies_count, quoted_server_message_id,
-           client_conversation_id, client_message_id, server_message_id
-    FROM conversation_message ORDER BY creation_timestamp
-'''
+_MESSAGE_COLUMNS = ('creation_timestamp', 'read_timestamp', 'sender_id', 'content_type',
+                    'message_content', 'message_state_type', 'is_saved', 'is_viewed_by_user',
+                    'created_on_device', 'remote_media_count', 'replies_count',
+                    'quoted_server_message_id', 'client_conversation_id',
+                    'client_message_id', 'server_message_id')
+
+
+def _message_sql(source_path):
+    return _tolerant_select(source_path, 'conversation_message', _MESSAGE_COLUMNS,
+                            'ORDER BY creation_timestamp')
+
+
 # conversation_message primary key (client_conversation_id, client_message_id), as offsets
-# into the columns selected above.
+# into _MESSAGE_COLUMNS.
 _MESSAGE_KEY = (12, 13)
 
 _MESSAGE_HEADERS = (('Creation Timestamp', 'datetime'), ('Read Timestamp', 'datetime'),
@@ -695,10 +759,11 @@ def get_snapchat_arroyo_messages(context):
     _log_wal_extent(files_found)
 
     data_list = _message_rows(
-        _rows(source_path, _MESSAGE_SQL), friends, _participants(source_path, friends),
+        _rows(source_path, _message_sql(source_path)), friends,
+        _participants(source_path, friends),
         local_user_id, _provenance(source_path, _ORIGIN_LIVE))
     data_list += _message_rows(
-        _superseded(source_path, _MESSAGE_SQL, _MESSAGE_KEY), friends,
+        _superseded(source_path, _message_sql(source_path), _MESSAGE_KEY), friends,
         _participants(source_path, friends, _rows_pre_wal), local_user_id,
         _provenance(source_path, _ORIGIN_RECOVERED))
     data_list.sort(key=_by_creation)
