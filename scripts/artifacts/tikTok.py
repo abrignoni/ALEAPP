@@ -82,6 +82,43 @@ __artifacts_v2__ = {
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 1 row",
             "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
         },
+    },
+    "get_tikTok_account": {
+        "name": "TikTok - Account",
+        "description": "Account values from the aweme_user.xml preference file, reported "
+                       "as stored under the app's own key names.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-16",
+        "last_update_date": "2026-08-16",
+        "requirements": "none",
+        "category": "TikTok",
+        "notes": "aweme_user.xml keeps one entry per key; several entries hold JSON "
+                 "documents whose names carry the account uid as a prefix "
+                 "(<uid>_account_user_info, <uid>_aweme_user_info, "
+                 "<uid>_significant_user_info) alongside user_info_raw. String, number "
+                 "and boolean fields of those documents are reported one per row, empty "
+                 "values skipped, nested objects not descended beyond the top level and "
+                 "the data sub-document. Plain entries (current_foreground_uid, "
+                 "logged_in_uid_list, mandatory_2sv) are reported as rows too. On the "
+                 "tested image the documents carried the account uid, sec_uid, name, "
+                 "avatar URLs, country code and registration values.",
+        "paths": ('*/com.zhiliaoapp.musically/shared_prefs/aweme_user.xml',),
+        "output_types": "standard",
+        "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 223 rows",
+            "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 224 rows",
+            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 209 rows",
+            "russell_a14": "Android 14 | 208 rows",
+            "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 209 rows",
+            "sharon_a13": "Android 13 | 195 rows",
+            "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 225 rows",
+            "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 191 rows",
+            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 428 rows",
+            "pixel3_a12": "Android 12 | 501 rows",
+            "pixel3_a11": "Android 11 | 296 rows",
+            "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 157 rows",
+        },
     }
 }
 
@@ -90,6 +127,7 @@ import json
 import os
 import re
 import sqlite3
+import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
@@ -245,3 +283,51 @@ def get_tikTok_contacts(context):
                     'Initial Letter', 'Avatar URL', 'Follow Status', 'Blocked (as stored)',
                     'Deleted (as stored)', 'Source File')
     return data_headers, data_list, source_path or 'see Source File column'
+
+
+def _account_json_rows(entry_name, text, source_file):
+    try:
+        document = json.loads(text)
+    except (ValueError, TypeError):
+        return [(entry_name, '', text, source_file)]
+    if not isinstance(document, dict):
+        return [(entry_name, '', text, source_file)]
+    if isinstance(document.get('data'), dict):
+        document = document['data']
+    rows = []
+    for key in sorted(document):
+        value = document[key]
+        if isinstance(value, (str, int, float, bool)) and value != '':
+            rows.append((entry_name, key, str(value), source_file))
+    return rows
+
+
+@artifact_processor
+def get_tikTok_account(context):
+    files_found = context.get_files_found()
+    data_list = []
+    source_path = ''
+
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not file_found.endswith('aweme_user.xml'):
+            continue
+        source_path = source_path or file_found
+        source_file = context.get_relative_path(file_found)
+        try:
+            root = ET.parse(file_found).getroot()
+        except (ET.ParseError, OSError, ValueError):
+            continue
+        for node in root:
+            name = node.attrib.get('name', '')
+            value = node.attrib.get('value', node.text)
+            if value is None or value == '':
+                continue
+            value = str(value)
+            if value.lstrip().startswith('{'):
+                data_list.extend(_account_json_rows(name, value, source_file))
+            else:
+                data_list.append((name, '', value, source_file))
+
+    data_headers = ('Entry', 'Key', 'Value', 'Source File')
+    return data_headers, data_list, source_path
