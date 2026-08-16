@@ -25,12 +25,12 @@ __artifacts_v2__ = {
         "sample_data": {
             "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 31 rows",
             "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 88 rows",
-            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 11 rows",
             "russell_a14": "Android 14 | 20 rows",
+            "pixel3_a11": "Android 11 | 14 rows",
+            "pixel3_a12": "Android 12 | 12 rows",
+            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 11 rows",
             "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 6 rows",
             "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 4 rows",
-            "pixel3_a12": "Android 12 | 36 rows",
-            "pixel3_a11": "Android 11 | 28 rows",
             "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 0 rows",
             "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 0 rows",
             "sharon_a13": "Android 13 | 0 rows",
@@ -68,19 +68,125 @@ __artifacts_v2__ = {
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
         "sample_data": {
-            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 48 rows",
             "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 188 rows",
-            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 2 rows",
+            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 48 rows",
             "russell_a14": "Android 14 | 13 rows",
             "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 8 rows",
             "sharon_a13": "Android 13 | 5 rows",
-            "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 4 rows",
             "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 5 rows",
-            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 2 rows",
+            "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 4 rows",
             "pixel3_a12": "Android 12 | 4 rows",
             "pixel3_a11": "Android 11 | 4 rows",
+            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 2 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 1 row",
             "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
+        },
+    },
+    "get_tikTok_app_open": {
+        "name": "TikTok - App Open Records",
+        "description": "Rows from the app_open table in TIKTOK.db, one timestamp per row, "
+                       "reported as stored.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-16",
+        "last_update_date": "2026-08-16",
+        "requirements": "none",
+        "category": "TikTok",
+        "notes": "Hu and Karabiyik describe TIKTOK.db as keeping track of the timestamps "
+                 "for each instance the app is opened. On the tested image every open_time "
+                 "value fell exactly on a local midnight, so that build appears to record "
+                 "at day rather than moment granularity; the value is reported as stored. "
+                 "Reference: Xiao Hu and Umit Karabiyik, 'Shopping while Watching: An "
+                 "Updated Forensic Analysis of TikTok on Android and iOS', ISNCC 2024, "
+                 "https://doi.org/10.1109/ISNCC62547.2024.10759027",
+        "paths": ('*/com.zhiliaoapp.musically/databases/TIKTOK.db*',),
+        "output_types": "standard",
+        "artifact_icon": "calendar",
+        "sample_data": {
+            "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 145 rows",
+            "russell_a14": "Android 14 | 68 rows",
+            "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 24 rows",
+            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 14 rows",
+            "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 5 rows",
+            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 4 rows",
+            "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 3 rows",
+            "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 3 rows",
+            "pixel3_a12": "Android 12 | 3 rows",
+            "pixel3_a11": "Android 11 | 2 rows",
+            "sharon_a13": "Android 13 | 2 rows",
+            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 1 row",
+        },
+    },
+    "get_tikTok_downloads": {
+        "name": "TikTok - Downloads",
+        "description": "Rows from the downloader table in downloader.db: URL, save path, "
+                       "name, sizes, status and timestamps as stored.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-16",
+        "last_update_date": "2026-08-16",
+        "requirements": "none",
+        "category": "TikTok",
+        "notes": "On the tested image the rows were the app's own resource downloads "
+                 "(models, assets, images), not user-saved videos; what a given row "
+                 "represents is read from its URL and save path, not asserted here. "
+                 "Status and the md5 column are reported as stored. Older builds lack the "
+                 "download timestamp columns (observed on an Android 11 era image); absent "
+                 "columns report as blank rather than dropping the rows. "
+                 "Reference: Xiao Hu and Umit Karabiyik, 'Shopping while Watching: An "
+                 "Updated Forensic Analysis of TikTok on Android and iOS', ISNCC 2024, "
+                 "https://doi.org/10.1109/ISNCC62547.2024.10759027",
+        "paths": ('*/com.zhiliaoapp.musically/databases/downloader.db*',),
+        "output_types": "standard",
+        "artifact_icon": "download",
+        "sample_data": {
+            "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 518 rows",
+            "russell_a14": "Android 14 | 411 rows",
+            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 187 rows",
+            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 102 rows",
+            "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 94 rows",
+            "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 78 rows",
+            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 77 rows",
+            "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 75 rows",
+            "sharon_a13": "Android 13 | 60 rows",
+            "pixel3_a12": "Android 12 | 49 rows",
+            "pixel3_a11": "Android 11 | 48 rows (schema lacks the timestamp columns)",
+            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 12 rows",
+            "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 5 rows",
+        },
+    },
+    "get_tikTok_app_log_events": {
+        "name": "TikTok - App Log Events",
+        "description": "Rows from the event and session tables in ss_app_log.db: event "
+                       "tag, JSON payload, session and user ids with millisecond "
+                       "timestamps, reported as stored.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-16",
+        "last_update_date": "2026-08-16",
+        "requirements": "none",
+        "category": "TikTok",
+        "notes": "Event rows carry the app's own tag strings and an ext_json payload "
+                 "reported as stored; what an individual event means is not established "
+                 "here. Session rows carry a session UUID, app version and duration. The "
+                 "user_id column joins events to the logged-in account uid. "
+                 "Reference: Xiao Hu and Umit Karabiyik, 'Shopping while Watching: An "
+                 "Updated Forensic Analysis of TikTok on Android and iOS', ISNCC 2024, "
+                 "https://doi.org/10.1109/ISNCC62547.2024.10759027",
+        "paths": ('*/com.zhiliaoapp.musically/databases/ss_app_log.db*',),
+        "output_types": "standard",
+        "artifact_icon": "activity",
+        "sample_data": {
+            "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 107 rows",
+            "pixel3_a11": "Android 11 | 24 rows",
+            "russell_a14": "Android 14 | 15 rows",
+            "sharon_a13": "Android 13 | 7 rows",
+            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 6 rows",
+            "pixel3_a12": "Android 12 | 2 rows",
+            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 2 rows",
+            "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 2 rows",
+            "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 1 row",
+            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 1 row",
+            "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 0 rows",
         },
     },
     "get_tikTok_account": {
@@ -106,18 +212,18 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "user",
         "sample_data": {
-            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 223 rows",
-            "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 224 rows",
-            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 209 rows",
-            "russell_a14": "Android 14 | 208 rows",
-            "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 209 rows",
-            "sharon_a13": "Android 13 | 195 rows",
             "samsungs20_a13": "Android 13 | com.zhiliaoapp.musically vc 2024301040 | 225 rows",
+            "kevin_pocox7_a15": "Android 15 | com.zhiliaoapp.musically vc 2024109030 | 224 rows",
+            "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 223 rows",
+            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 214 rows",
+            "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 209 rows",
+            "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 209 rows",
+            "russell_a14": "Android 14 | 208 rows",
+            "sharon_a13": "Android 13 | 195 rows",
             "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 191 rows",
-            "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 428 rows",
-            "pixel3_a12": "Android 12 | 501 rows",
-            "pixel3_a11": "Android 11 | 296 rows",
+            "pixel3_a12": "Android 12 | 167 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 157 rows",
+            "pixel3_a11": "Android 11 | 148 rows",
         },
     }
 }
@@ -159,23 +265,45 @@ def _rows(source_path, sql):
     return rows
 
 
-def _account_dbs(files_found):
+def _unique_files(context, suffix=None):
+    '''The context's files matching suffix, without the duplicate paths extractions carry
+    for the same file (data_mirror, and /data/data next to /data/user/0), preserving order.
+
+    The dedupe key is the evidence-relative path, not the extracted path: the report's own
+    data folder ends in /data, so a raw-path regex can rewrite the harness boundary instead
+    of the evidence path on archives whose members start with data/.'''
+    seen = set()
+    result = []
+    for file_found in context.get_files_found():
+        file_found = str(file_found)
+        if suffix is not None and not file_found.endswith(suffix):
+            continue
+        relative = str(context.get_relative_path(file_found)).replace('\\', '/')
+        if 'data_mirror' in relative:
+            continue
+        normalized = re.sub(r'(^|/)data/data/', r'\1data/user/0/', relative)
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        result.append(file_found)
+    return result
+
+
+def _account_dbs(context):
     '''Every per-account <uid>_im.db, as [(account uid, path)].'''
     account_dbs = []
-    for file_found in files_found:
-        file_found = str(file_found)
+    for file_found in _unique_files(context, suffix='_im.db'):
         match = _ACCOUNT_DB_RE.search(os.path.basename(file_found))
-        if match and file_found.endswith('_im.db'):
+        if match:
             account_dbs.append((match.group(1), file_found))
     return sorted(account_dbs, key=lambda item: item[1])
 
 
-def _contact_sources(files_found):
+def _contact_sources(context):
     '''Contact stores as [(table, path)], IM_USER_BASE_INFO stores first.'''
     contact_dbs = []
     simple_dbs = []
-    for file_found in files_found:
-        file_found = str(file_found)
+    for file_found in _unique_files(context):
         name = os.path.basename(file_found)
         if name == 'db_im_xx':
             simple_dbs.append(('SIMPLE_USER', file_found))
@@ -199,10 +327,10 @@ def _json_field(content, *path):
     return node if isinstance(node, (str, int, float)) else None
 
 
-def _name_map(files_found):
+def _name_map(context):
     '''UID to (unique id, nickname) from every contact store found.'''
     names = {}
-    for table, path in _contact_sources(files_found):
+    for table, path in _contact_sources(context):
         for uid, unique_id, nickname in _rows(
                 path, f'SELECT UID, UNIQUE_ID, NICK_NAME FROM {table}'):
             if uid is not None and uid not in names:
@@ -212,12 +340,11 @@ def _name_map(files_found):
 
 @artifact_processor
 def get_tikTok(context):
-    files_found = context.get_files_found()
     data_list = []
     source_path = ''
-    names = _name_map(files_found)
+    names = _name_map(context)
 
-    for account_uid, maindb in _account_dbs(files_found):
+    for account_uid, maindb in _account_dbs(context):
         source_path = source_path or maindb
         source_file = context.get_relative_path(maindb)
         for (created, sender, content, message_type, deleted, read_status,
@@ -253,12 +380,11 @@ def get_tikTok(context):
 
 @artifact_processor
 def get_tikTok_contacts(context):
-    files_found = context.get_files_found()
     data_list = []
     source_path = ''
     seen = set()
 
-    for table, path in _contact_sources(files_found):
+    for table, path in _contact_sources(context):
         source_path = source_path or path
         source_file = context.get_relative_path(path)
         if table == 'IM_USER_BASE_INFO':
@@ -304,14 +430,10 @@ def _account_json_rows(entry_name, text, source_file):
 
 @artifact_processor
 def get_tikTok_account(context):
-    files_found = context.get_files_found()
     data_list = []
     source_path = ''
 
-    for file_found in files_found:
-        file_found = str(file_found)
-        if not file_found.endswith('aweme_user.xml'):
-            continue
+    for file_found in _unique_files(context, suffix='aweme_user.xml'):
         source_path = source_path or file_found
         source_file = context.get_relative_path(file_found)
         try:
@@ -330,4 +452,87 @@ def get_tikTok_account(context):
                 data_list.append((name, '', value, source_file))
 
     data_headers = ('Entry', 'Key', 'Value', 'Source File')
+    return data_headers, data_list, source_path
+
+
+def _tolerant_select(source_path, table, columns, tail=''):
+    """A SELECT naming every requested column, substituting NULL AS <name> for columns the
+    file's schema generation does not have, so one absent column does not silently drop
+    every row. Older TikTok builds carry strict subsets; nothing observed was renamed."""
+    db = open_sqlite_db_readonly(source_path)
+    if db is None:
+        return ''
+    try:
+        present = {row[1] for row in db.execute(f'PRAGMA table_info({table})')}
+    except sqlite3.Error:
+        present = set()
+    db.close()
+    if not present:
+        return ''
+    select_list = ', '.join(
+        column if column in present else f'NULL AS {column}' for column in columns)
+    return f'SELECT {select_list} FROM {table} {tail}'
+
+
+@artifact_processor
+def get_tikTok_app_open(context):
+    data_list = []
+    source_path = ''
+    for file_found in _unique_files(context, suffix='TIKTOK.db'):
+        source_path = source_path or file_found
+        source_file = context.get_relative_path(file_found)
+        for (open_time,) in _rows(file_found,
+                                  'SELECT open_time FROM app_open ORDER BY open_time'):
+            data_list.append((_ms_to_utc(open_time), open_time, source_file))
+    data_headers = (('Open Time', 'datetime'), 'open_time (as stored)', 'Source File')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_tikTok_downloads(context):
+    data_list = []
+    source_path = ''
+    for file_found in _unique_files(context, suffix='downloader.db'):
+        source_path = source_path or file_found
+        source_file = context.get_relative_path(file_found)
+        sql = _tolerant_select(
+            file_found, 'downloader',
+            ('downloadStartTimeStamp', 'downloadFinishTimeStamp', 'url', 'savePath',
+             'name', 'mimeType', 'status', 'curBytes', 'totalBytes', 'md5'),
+            'ORDER BY downloadStartTimeStamp')
+        for (start, finish, url, save_path, name, mime, status, cur_bytes,
+             total_bytes, md5) in (_rows(file_found, sql) if sql else []):
+            data_list.append((
+                _ms_to_utc(start), _ms_to_utc(finish), url, save_path, name, mime,
+                status, cur_bytes, total_bytes, md5, source_file))
+    data_headers = (('Download Start', 'datetime'), ('Download Finish', 'datetime'),
+                    'URL', 'Save Path', 'Name', 'MIME Type', 'Status (as stored)',
+                    'Current Bytes', 'Total Bytes', 'MD5 (as stored)', 'Source File')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_tikTok_app_log_events(context):
+    data_list = []
+    source_path = ''
+    for file_found in _unique_files(context, suffix='ss_app_log.db'):
+        source_path = source_path or file_found
+        source_file = context.get_relative_path(file_found)
+        for (timestamp, category, tag, label, ext_json, session_id,
+             user_id) in _rows(file_found, """
+                SELECT timestamp, category, tag, label, ext_json, session_id, user_id
+                FROM event ORDER BY timestamp"""):
+            data_list.append((
+                _ms_to_utc(timestamp), 'event', category, tag, label, ext_json,
+                session_id, user_id, '', '', source_file))
+        for (timestamp, value, duration, app_version, session_row_id) in _rows(
+                file_found, """
+                SELECT timestamp, value, duration, app_version, _id
+                FROM session ORDER BY timestamp"""):
+            data_list.append((
+                _ms_to_utc(timestamp), 'session', '', '', '', '', session_row_id, '',
+                value, f'{app_version} (duration {duration})', source_file))
+    data_headers = (('Timestamp', 'datetime'), 'Row Type', 'Category', 'Tag', 'Label',
+                    'Payload (as stored)', 'Session ID', 'User ID', 'Session UUID',
+                    'Session Info', 'Source File')
     return data_headers, data_list, source_path
