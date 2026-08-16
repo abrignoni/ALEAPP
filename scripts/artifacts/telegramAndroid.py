@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-08-04",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Telegram",
         "notes": "The data column holds a TL-serialised TLRPC message object. The message "
@@ -43,14 +43,15 @@ __artifacts_v2__ = {
                  "present in the extraction, since Telegram evicts cached media. Reference: "
                  "Telegram-Android, "
                  "'TL_legacy_message.java (TL_message layer constructors)', "
-                 "https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/src/main/java/"
+                 "https://github.com/DrKLO/Telegram/blob/"
+                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/"
                  "org/telegram/tgnet/tl/legacy/TL_legacy_message.java. Reference: "
                  "Telegram-Android, 'generated TlGen_MessageReplyHeader.kt, "
                  "TlGen_MessageFwdHeader.kt, TlGen_Message.kt and TlGen_MessageAction.kt "
                  "(header field order, flag bits, service constructors and action "
                  "constructors)', https://github.com/DrKLO/Telegram/tree/"
-                 "master/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/"
-                 "model/generated",
+                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/"
+                 "src/androidTest/kotlin/org/telegram/tgnet/model/generated",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',
                   '*/org.telegram.messenger*/cache/**',
                   '*/org.telegram.messenger*/files/Telegram/**'),
@@ -166,7 +167,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-08-04",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Telegram",
         "notes": "Telegram supports several accounts on one device; slot 0 is stored in "
@@ -177,7 +178,8 @@ __artifacts_v2__ = {
                  "value; passcodeType 0 is a PIN and 1 is a password. The stored hash and "
                  "salt are not reported, only whether they are present. Reference: "
                  "Telegram-Android, 'SharedConfig.java (passcodeHash1, passcodeType, "
-                 "autoLockIn)', https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/"
+                 "autoLockIn)', https://github.com/DrKLO/Telegram/blob/"
+                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/"
                  "src/main/java/org/telegram/messenger/SharedConfig.java",
         "paths": ('*/org.telegram.messenger*/shared_prefs/userconf*.xml',),
         "output_types": "standard",
@@ -202,7 +204,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-08-04",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Telegram",
         "notes": "The info column holds a TL user full record. Across the record versions "
@@ -212,7 +214,8 @@ __artifacts_v2__ = {
                  "such as the common chat count, are not read because those objects are not "
                  "implemented. Names are resolved from the users table. Reference: "
                  "Telegram-Android, 'generated TlGen_UserFull.kt (record layout and flag "
-                 "bits)', https://github.com/DrKLO/Telegram/tree/master/TMessagesProj_AppTests"
+                 "bits)', https://github.com/DrKLO/Telegram/tree/"
+                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests"
                  "/src/androidTest/kotlin/org/telegram/tgnet/model/generated",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
@@ -238,7 +241,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-08-04",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Telegram",
         "notes": "The info column holds a TL chat full or channel full record. The "
@@ -248,7 +251,8 @@ __artifacts_v2__ = {
                  "those objects are not implemented. Basic group records carry a description "
                  "but no counts. Names are resolved from the chats table. Reference: "
                  "Telegram-Android, 'generated TlGen_ChatFull.kt (record layouts and flag "
-                 "bits)', https://github.com/DrKLO/Telegram/tree/master/TMessagesProj_AppTests"
+                 "bits)', https://github.com/DrKLO/Telegram/tree/"
+                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests"
                  "/src/androidTest/kotlin/org/telegram/tgnet/model/generated",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
@@ -269,7 +273,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-08-04",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Telegram",
         "notes": "Keys are <prefix>_save_gallery_photo, <prefix>_save_gallery_video and "
@@ -278,7 +282,8 @@ __artifacts_v2__ = {
                  "means the category was left at the app default. The older single "
                  "save_gallery key is reported when present. Reference: Telegram-Android, "
                  "'SaveToGallerySettingsHelper.java (preference key names and defaults)', "
-                 "https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/src/main/java/"
+                 "https://github.com/DrKLO/Telegram/blob/"
+                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/"
                  "org/telegram/messenger/SaveToGallerySettingsHelper.java",
         "paths": ('*/org.telegram.messenger*/shared_prefs/mainconfig.xml',),
         "output_types": "standard",
@@ -389,7 +394,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-08-03",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Telegram",
         "notes": "Each preset is an underscore-separated string. The first four values are "
@@ -399,7 +404,8 @@ __artifacts_v2__ = {
                  "audio size limits in bytes, followed by preload video, preload music and "
                  "the enabled flag. Reference: Telegram-Android, 'DownloadController.java "
                  "(Preset string layout and AUTODOWNLOAD_TYPE masks)', "
-                 "https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/src/main/java/"
+                 "https://github.com/DrKLO/Telegram/blob/"
+                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/"
                  "org/telegram/messenger/DownloadController.java",
         "paths": ('*/org.telegram.messenger*/shared_prefs/mainconfig.xml',),
         "output_types": "standard",
