@@ -167,6 +167,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chromeMediaHistory |
 | chromeNetworkActionPredictor |
 | chromeOfflinePages |
+| chromePaymentsCustomerData |
 | chromeTopSites |
 | citymapper |
 | cmh |
