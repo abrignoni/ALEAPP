@@ -629,11 +629,34 @@ def get_bumble_messages(context):
             sender_name, recipient_name = local, r[10]
         else:
             sender_name, recipient_name = r[10], local
-        data_list.append((_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], sender_name, r[3], recipient_name,
-                          r[4], r[5], r[6], r[7], r[8], r[9]))
-    data_headers = (('Created Timestamp', 'datetime'), ('Modified Timestamp', 'datetime'), 'Sender ID',
-                    'Sender Name', 'Recipient ID', 'Recipient Name', 'Message Text', 'Message URL',
-                    'Message Type', 'Message Direction', 'Conversation ID', 'Message ID')
+        data_list.append((
+            _ms_to_utc(r[0]),
+            _ms_to_utc(r[1]),
+            r[7],
+            sender_name,
+            r[4],
+            r[2],
+            r[3],
+            recipient_name,
+            r[5],
+            r[6],
+            r[8],
+            r[9],
+        ))
+    data_headers = (
+        ('Created Timestamp', 'datetime'),
+        ('Modified Timestamp', 'datetime'),
+        'Message Direction',
+        'Sender Name',
+        'Message Text',
+        'Sender ID',
+        'Recipient ID',
+        'Recipient Name',
+        'Message URL',
+        'Message Type',
+        'Conversation ID',
+        'Message ID',
+    )
     return data_headers, data_list, source_path
 
 

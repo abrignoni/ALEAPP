@@ -169,12 +169,35 @@ def get_teleguard(context):
             direction = 'Outgoing' if row[3] == owner_id else 'Incoming'
         else:
             direction = ''
-        data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3], row[4], row[5],
-                          media_cell, row[6], row[7], row[8], direction, row[9]))
+        data_list.append((
+            _str_to_utc(row[0]),
+            _str_to_utc(row[1]),
+            direction,
+            row[3],
+            row[5],
+            media_cell,
+            row[2],
+            row[4],
+            row[6],
+            row[7],
+            row[8],
+            row[9],
+        ))
 
-    data_headers = (('Timestamp', 'datetime'), ('User Time', 'datetime'), 'Type', 'Sender', 'Receiver',
-                    'Content', ('Media', 'media'), 'Metadata', 'Status', 'Is Edited?', 'Direction',
-                    'Chat ID')
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        ('User Time', 'datetime'),
+        'Direction',
+        'Sender',
+        'Content',
+        ('Media', 'media'),
+        'Type',
+        'Receiver',
+        'Metadata',
+        'Status',
+        'Is Edited?',
+        'Chat ID',
+    )
     return data_headers, data_list, source_path
 
 

@@ -129,17 +129,17 @@ def get_imo_messages(context):
                         attachmentPath = attachmentLocalPath
 
                 timestamp = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc)
-                data_list.append((timestamp, from_id, to_id, row[2],  row[4], row[5], attachmentPath, row[0]))
+                data_list.append((timestamp, row[4], row[0], row[2], from_id, to_id, row[5], attachmentPath))
             db.close()
 
     data_headers = (
         ('Timestamp', 'datetime'),
+        'Direction',
+        'Chat Partner',
+        'Last Message',
         'From ID',
         'To ID',
-        'Last Message',
-        'Direction',
         'Message Read',
         'Attachment',
-        'Chat Partner',
     )
     return data_headers, data_list, source_path

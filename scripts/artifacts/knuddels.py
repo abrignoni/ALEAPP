@@ -254,22 +254,33 @@ def knuddels_chats(context):
             from_me = '' if owner_nick is None else (1 if nickname == owner_nick else 0)
 
             data_list.append((
-                timestamp, nickname, message, msg_type, media_cell, gif_cell,
-                snap_expired, participants,
-                conversation_key, from_me, Context.get_relative_path(file_found), message_id, sender, user_id,
+                timestamp,
+                from_me,
+                nickname,
+                participants,
+                message,
+                media_cell,
+                msg_type,
+                gif_cell,
+                snap_expired,
+                conversation_key,
+                Context.get_relative_path(file_found),
+                message_id,
+                sender,
+                user_id,
             ))
 
     data_headers = (
         ('Timestamp', 'datetime'),
+        'From Me',
         'User Name',
+        'Participants',
         'Message',
-        'Message Type',
         ('Media', 'media'),
+        'Message Type',
         'GIF URL(s) (reconstructed by parser)',
         'Snap Expired',
-        'Participants',
         'Conversation Key',
-        'From Me',  # 1 = sent by owner, 0 = received, blank = owner not established
         'Source File',
         'Message ID',
         'Thread Table UID',

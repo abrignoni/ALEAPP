@@ -166,12 +166,33 @@ def get_sms_mms(context):
         for table in tables:
             ext = extended if table == 'sms' else ''
             for r in _rows(source_path, _SMS_QUERY.format(smsTableName=table, extendedType=ext)):
-                data_list.append((_ms_to_utc(r['date']), r['msg_id'], r['thread_id'], r['address'],
-                                  r['person'], _ms_to_utc(r['date_sent']), r['read'], r['type'],
-                                  r['body'], r['service_center'], r['error_code']))
+                data_list.append((
+                    _ms_to_utc(r['date']),
+                    _ms_to_utc(r['date_sent']),
+                    r['type'],
+                    r['address'],
+                    r['body'],
+                    r['msg_id'],
+                    r['thread_id'],
+                    r['person'],
+                    r['read'],
+                    r['service_center'],
+                    r['error_code'],
+                ))
 
-    data_headers = (('Date', 'datetime'), 'MSG ID', 'Thread ID', 'Address', 'Contact ID',
-                    ('Date Sent', 'datetime'), 'Read', 'Type', 'Body', 'Service Center', 'Error Code')
+    data_headers = (
+        ('Date', 'datetime'),
+        ('Date Sent', 'datetime'),
+        'Type',
+        'Address',
+        'Body',
+        'MSG ID',
+        'Thread ID',
+        'Contact ID',
+        'Read',
+        'Service Center',
+        'Error Code',
+    )
     return data_headers, data_list, source_path
 
 
@@ -197,10 +218,33 @@ def get_sms_mms_mms(context):
             else:
                 body = r['text'] or ''
             direction = _MMS_BOX_DIRECTION.get(r['msg_box'], r['msg_box'])
-            data_list.append((_sec_to_utc(r['date']), r['mms_id'], r['thread_id'],
-                              _sec_to_utc(r['date_sent']), r['read'], r['FROM'], r['TO'], r['CC'],
-                              r['BCC'], body, media_ref, direction))
+            data_list.append((
+                _sec_to_utc(r['date']),
+                _sec_to_utc(r['date_sent']),
+                direction,
+                r['FROM'],
+                body,
+                media_ref,
+                r['mms_id'],
+                r['thread_id'],
+                r['read'],
+                r['TO'],
+                r['CC'],
+                r['BCC'],
+            ))
 
-    data_headers = (('Date', 'datetime'), 'MSG ID', 'Thread ID', ('Date Sent', 'datetime'), 'Read',
-                    'From Address', 'To Address', 'Cc', 'Bcc', 'Body', ('Media', 'media'), 'Direction')
+    data_headers = (
+        ('Date', 'datetime'),
+        ('Date Sent', 'datetime'),
+        'Direction',
+        'From Address',
+        'Body',
+        ('Media', 'media'),
+        'MSG ID',
+        'Thread ID',
+        'Read',
+        'To Address',
+        'Cc',
+        'Bcc',
+    )
     return data_headers, data_list, source_path

@@ -170,9 +170,9 @@ def get_line_messages(context):
             if attachment is None or 'content' in attachment:
                 attachment = None
             created_time = _sec_to_utc(row[4])
-            data_list.append((created_time, row[2], to_id, row[7], thread_id, row[3], attachment))
+            data_list.append((created_time, row[7], row[2], row[3], to_id, thread_id, attachment))
 
-    data_headers = (('Start Time', 'datetime'), 'From ID', 'To ID', 'Direction', 'Thread ID', 'Message', 'Attachments')
+    data_headers = (('Start Time', 'datetime'), 'Direction', 'From ID', 'Message', 'To ID', 'Thread ID', 'Attachments')
     return data_headers, data_list, msg_db
 
 

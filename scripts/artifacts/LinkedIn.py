@@ -205,30 +205,33 @@ def linkedin_messages(context):
         sent = row[9]
         conversation_label = row[10]
 
-        data_list.append(   (delivery_date,
-                            delivery_status,
-                            sender_name,
-                            sender_headline,
-                            sender_profile_url,
-                            sender_distance,
-                            subject,
-                            message,
-                            conversationurn,
-                            sent,
-                            conversation_label)
+        data_list.append(   (
+            delivery_date,
+            sent,
+            sender_name,
+            conversation_label,
+            message,
+            delivery_status,
+            sender_headline,
+            sender_profile_url,
+            sender_distance,
+            subject,
+            conversationurn,
+        )
                         )
 
-    data_headers = (    ('Delivery Date', 'datetime'),
-                        'Delivery Status',
-                        'Sender Name',
-                        'Sender Headline',
-                        'Sender Profile Url',
-                        'Sender Distance',
-                        'Subject',
-                        'Message',
-                        'Conversation Urn',
-                        'Sent',
-                        'Conversation Label'
+    data_headers = (
+        ('Delivery Date', 'datetime'),
+        'Sent',
+        'Sender Name',
+        'Conversation Label',
+        'Message',
+        'Delivery Status',
+        'Sender Headline',
+        'Sender Profile Url',
+        'Sender Distance',
+        'Subject',
+        'Conversation Urn',
                     )
 
     return data_headers, data_list, files_found[0]

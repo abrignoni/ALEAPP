@@ -223,11 +223,11 @@ def get_googleChat(context):
                 direction = 'Outgoing' if str(r[6]) == owner_id else 'Incoming'
             else:
                 direction = ''
-            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3]) + ann + (Context.get_relative_path(source_path), r[5], direction))
+            data_list.append((_us_to_utc(r[0]), direction, r[2], r[1], r[3]) + ann + (Context.get_relative_path(source_path), r[5]))
 
-    data_headers = (('Message Timestamp', 'datetime'), 'Group Name', 'Sender', 'Message',
+    data_headers = (('Message Timestamp', 'datetime'), 'Direction', 'Sender', 'Group Name', 'Message',
                     'Meeting Code', 'Meeting URL', 'Meeting Sender', 'Meeting Sender Profile Pic URL',
-                    'Filename', 'File Type', 'Width', 'Height', 'Source File', 'Group ID', 'Direction')
+                    'Filename', 'File Type', 'Width', 'Height', 'Source File', 'Group ID')
     return data_headers, data_list, source_path
 
 

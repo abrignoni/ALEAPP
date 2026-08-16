@@ -196,7 +196,7 @@ from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, ope
 _LOCATION_HEADERS = ('Shared Latitude/Starting Latitude (Live Location)',
                      'Shared Longitude/Starting Longitude (Live Location)',
                      'Duration Live Location Shared (Seconds)', 'Final Live Latitude',
-                     'Final Live Longitude', ('Final Location Timestamp', 'datetime'))
+                     'Final Live Longitude')
 
 _MESSAGE_TYPE_CASE = '''CASE
         WHEN message.message_type=0 THEN "Text"
@@ -393,14 +393,16 @@ def get_whatsapp_one_to_one_messages(context):
         ORDER BY message.timestamp ASC
         ''')
         for row in rows:
-            data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3], row[4],
-                              row[5], row[6], _media(row[7]), row[7], row[8], row[9], row[10], row[11],
-                              row[12], row[13], _str_to_utc(row[14])))
+            data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), _str_to_utc(row[14]),
+                              row[4], row[2], row[6], _media(row[7]), row[3],
+                              row[5], row[7], row[8], row[9], row[10], row[11],
+                              row[12], row[13]))
         db.close()
 
     data_headers = (('Message Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
-                    'Other Participant WA User Name', 'Sending Party JID', 'Message Direction',
-                    'Message Type', 'Message', ('Media', 'media'), 'Local Path To Media',
+                    ('Final Location Timestamp', 'datetime'), 'Message Direction',
+                    'Other Participant WA User Name', 'Message', ('Media', 'media'),
+                    'Sending Party JID', 'Message Type', 'Local Path To Media',
                     'Media File Size') + _LOCATION_HEADERS
     return data_headers, data_list, source
 
@@ -440,14 +442,16 @@ def get_whatsapp_group_messages(context):
         ORDER BY message.timestamp ASC
         ''')
         for row in rows:
-            data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3], row[4],
-                              row[5], row[6], row[7], _media(row[8]), row[8], row[9], row[10], row[11],
-                              row[12], row[13], row[14], _str_to_utc(row[15])))
+            data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), _str_to_utc(row[15]),
+                              row[5], row[3], row[7], _media(row[8]), row[2], row[4],
+                              row[6], row[8], row[9], row[10], row[11],
+                              row[12], row[13], row[14]))
         db.close()
 
     data_headers = (('Message Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
-                    'Conversation Name', 'Sending Party', 'Sending Party JID', 'Message Direction',
-                    'Message Type', 'Message', ('Media', 'media'), 'Local Path To Media',
+                    ('Final Location Timestamp', 'datetime'), 'Message Direction',
+                    'Sending Party', 'Message', ('Media', 'media'), 'Conversation Name',
+                    'Sending Party JID', 'Message Type', 'Local Path To Media',
                     'Media File Size') + _LOCATION_HEADERS
     return data_headers, data_list, source
 

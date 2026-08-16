@@ -438,15 +438,15 @@ def instagramDirectMessages(context):
             media_url, media_taken_at, media_owner = _media_fields(message)
             data_list.append((
                 _us_to_utc(timestamp),
+                media_taken_at,
                 direction,
-                titles.get(thread_id, ''),
                 users.get(thread_id, {}).get(sender_id)
                 or account_usernames.get(sender_id, ''),
                 text or '',
+                titles.get(thread_id, ''),
                 message_type,
                 message.get('content_type', ''),
                 media_url,
-                media_taken_at,
                 media_owner,
                 sender_id,
                 thread_id,
@@ -455,14 +455,14 @@ def instagramDirectMessages(context):
 
     data_headers = (
         ('Timestamp', 'datetime'),
+        ('Media Taken At', 'datetime'),
         'Direction',
-        'Thread',
         'Sender Username',
         'Message',
+        'Thread',
         'Item Type (as stored)',
         'Content Type (as stored)',
         'Media URL',
-        ('Media Taken At', 'datetime'),
         'Media Owner Username',
         'Sender ID',
         'Thread ID',

@@ -173,10 +173,10 @@ def get_skype_messages(context):
                     to_id = row[0]
             sendtime = datetime.datetime.fromtimestamp(int(row[2]), datetime.timezone.utc)
 
-            data_list.append((sendtime, thread_id,  row[3], row[5], row[6], to_id, row[4]))
+            data_list.append((sendtime, row[5], row[6], row[3], thread_id, to_id, row[4]))
         db.close()
 
-    data_headers = (('Send Time', 'datetime'), 'Thread ID', 'Content', 'Direction', 'From ID', 'To ID', 'Attachment')
+    data_headers = (('Send Time', 'datetime'), 'Direction', 'From ID', 'Content', 'Thread ID', 'To ID', 'Attachment')
     return data_headers, data_list, source_path
 
 
