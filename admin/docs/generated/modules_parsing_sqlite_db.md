@@ -233,6 +233,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | pkgPredictions |
 | protonVPN |
 | protonmail |
+| reddit |
 | sChats |
 | samsungSmartThings |
 | samsungWeatherClock |
