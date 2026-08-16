@@ -35,10 +35,11 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
 def fbg_master(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list_master = []
 
     for file_found in files_found:
@@ -94,7 +95,7 @@ def fbg_master(context):
             
 @artifact_processor
 def fbg_searchhistory(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list_search = []
     
     for file_found in files_found:

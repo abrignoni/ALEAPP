@@ -49,10 +49,11 @@ __artifacts_v2__ = {
 import os
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
 def Turbo_Battery(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_file_turbo = ''
     turbo_db = ''
     data_list = []
@@ -106,7 +107,7 @@ def Turbo_Battery(context):
             
 @artifact_processor
 def Turbo_Bluetooth(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_file_bluetooth = ''
     data_list = []
 

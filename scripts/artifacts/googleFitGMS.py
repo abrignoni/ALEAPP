@@ -23,10 +23,11 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
+from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
 def googleFitGMS(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     
     for file_found in files_found:

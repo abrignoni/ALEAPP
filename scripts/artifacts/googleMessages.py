@@ -47,11 +47,12 @@ __artifacts_v2__ = {
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_googleMessages(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

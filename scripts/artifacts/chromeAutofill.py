@@ -59,6 +59,7 @@ import os
 
 from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _seconds_to_utc(value):
@@ -76,7 +77,7 @@ def _browser_for(file_found):
 
 @artifact_processor
 def get_chromeAutofill(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Date Created', 'Field', 'Value', 'Date Last Used', 'Count']
     lava_data_headers = data_headers.copy()
@@ -176,7 +177,7 @@ def _modern_autofill_profiles(cursor):
 
 @artifact_processor
 def get_chromeAutofillProfiles(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Date Modified', 'GUID', 'First Name', 'Middle Name', 'Last Name', 'Email',
                     'Phone Number', 'Company Name', 'Address', 'City', 'State', 'Zip Code',

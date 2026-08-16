@@ -324,6 +324,7 @@ from scripts.ilapfuncs import (
     get_sqlite_db_records,
     logfunc,
 )
+from scripts.artifacts.storagePathViews import unique_files
 
 # Preference keys that carry an authentication token, a key store or a push token. They are
 # read from the same file as everything else and are deliberately not reported.
@@ -520,7 +521,7 @@ def _json_timestamp(raw, *keys):
 
 @artifact_processor
 def netflix_playback(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     titles = _title_lookup(files_found)
     artwork = _artwork_index(files_found)
     data_list = []
@@ -566,7 +567,7 @@ def netflix_playback(context):
 
 @artifact_processor
 def netflix_streaming_sessions(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     titles = _title_lookup(files_found)
     data_list = []
     source_path = ''
@@ -608,7 +609,7 @@ def netflix_streaming_sessions(context):
 
 @artifact_processor
 def netflix_bookmarks(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     titles = _title_lookup(files_found)
     artwork = _artwork_index(files_found)
     data_list = []
@@ -646,7 +647,7 @@ def netflix_bookmarks(context):
 
 @artifact_processor
 def netflix_offline_titles(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     artwork = _artwork_index(files_found)
     data_list = []
     source_path = ''
@@ -715,7 +716,7 @@ def netflix_offline_titles(context):
 
 @artifact_processor
 def netflix_profiles(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     artwork = _artwork_index(files_found)
     data_list = []
     source_path = ''
@@ -771,7 +772,7 @@ def netflix_profiles(context):
 
 @artifact_processor
 def netflix_browse_cache(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
 
@@ -837,7 +838,7 @@ def netflix_browse_cache(context):
 
 @artifact_processor
 def netflix_artwork(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     titles = _title_lookup(files_found)
     data_list = []
     source_path = ''
@@ -884,7 +885,7 @@ def netflix_artwork(context):
 
 @artifact_processor
 def netflix_account(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
 
@@ -953,7 +954,7 @@ def netflix_account(context):
 
 @artifact_processor
 def netflix_preferences(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
 
@@ -971,7 +972,7 @@ def netflix_preferences(context):
 
 @artifact_processor
 def netflix_logblobs(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
 

@@ -21,6 +21,7 @@ import os
 import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
+from scripts.artifacts.storagePathViews import unique_files
 
 # Cookies schema 16 (Firefox 142) rewrote expiry from seconds to milliseconds
 EXPIRY_IN_MS_SCHEMA = 16
@@ -49,7 +50,7 @@ def _expiry_in_seconds(schema_version):
 
 @artifact_processor
 def get_firefoxCookies(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

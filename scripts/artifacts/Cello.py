@@ -31,6 +31,7 @@ import datetime
 import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _ms_to_utc(value):
@@ -44,7 +45,7 @@ def _ms_to_utc(value):
 
 @artifact_processor
 def get_Cello(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

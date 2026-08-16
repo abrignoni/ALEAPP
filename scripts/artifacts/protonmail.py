@@ -28,11 +28,12 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_protonmail_messages(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -119,7 +120,7 @@ def get_protonmail_messages(context):
 
 @artifact_processor
 def get_protonmail_contacts(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

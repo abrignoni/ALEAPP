@@ -22,6 +22,7 @@ import json
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 _ATTRIBUTES = ("com.facebook.AccessTokenManager.CachedAccessToken",
                "com.facebook.ProfileManager.CachedProfile",
@@ -52,7 +53,7 @@ def _s(value):
 
 @artifact_processor
 def get_garminFB(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

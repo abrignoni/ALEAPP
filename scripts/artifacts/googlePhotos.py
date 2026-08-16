@@ -171,6 +171,7 @@ import os
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media, \
     does_column_exist_in_db, does_table_exist_in_db
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _str_to_utc(value):
@@ -207,7 +208,7 @@ def _find_media(files_found, key):
 
 @artifact_processor
 def get_googlePhotos(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -245,7 +246,7 @@ def get_googlePhotos(context):
 
 @artifact_processor
 def get_googlePhotos_remote(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -281,7 +282,7 @@ def get_googlePhotos_remote(context):
 
 @artifact_processor
 def get_googlePhotos_shared(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -311,7 +312,7 @@ def get_googlePhotos_shared(context):
 
 @artifact_processor
 def get_googlePhotos_folders(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -341,7 +342,7 @@ def get_googlePhotos_folders(context):
 
 @artifact_processor
 def get_googlePhotos_cache(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -370,7 +371,7 @@ def get_googlePhotos_cache(context):
 
 @artifact_processor
 def get_googlePhotos_trash(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:
