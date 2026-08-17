@@ -99,7 +99,7 @@ def get_googleMessages(context):
 
         for row in all_rows:
             timestamp = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
-            data_list.append((timestamp, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
+            data_list.append((timestamp, row[8], row[3], row[2], row[4], row[1], row[5], row[6], row[7]))
 
-    data_headers = (('Message Timestamp', 'datetime'), 'Message Type', 'Other Participant/Conversation Name', ('Message Sender', 'phonenumber'), 'Message', 'Attachment Byte Size', 'Attachment Location', 'Conversation ID', 'Direction')
+    data_headers = (('Message Timestamp', 'datetime'), 'Direction', ('Message Sender', 'phonenumber'), 'Other Participant/Conversation Name', 'Message', 'Message Type', 'Attachment Byte Size', 'Attachment Location', 'Conversation ID')
     return data_headers, data_list, source_path

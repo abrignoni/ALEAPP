@@ -347,17 +347,40 @@ def get_tikTok(context):
             else:
                 direction = ''
             data_list.append((
-                _ms_to_utc(created), sender, unique_id, nickname,
+                _ms_to_utc(created),
+                direction,
+                nickname,
                 _json_field(content, 'text'),
+                sender,
+                unique_id,
                 _json_field(content, 'display_name'),
                 _json_field(content, 'url', 'url_list', 0),
-                message_type, deleted, read_status, local_info,
-                conversation_id, account_uid, direction, source_file))
+                message_type,
+                deleted,
+                read_status,
+                local_info,
+                conversation_id,
+                account_uid,
+                source_file,
+            ))
 
-    data_headers = (('Timestamp', 'datetime'), 'UID', 'Unique ID', 'Nickname', 'Message',
-                    'Link GIF Name', 'Link GIF URL', 'Message Type (as stored)',
-                    'Deleted (as stored)', 'Read?', 'Local Info', 'Conversation ID',
-                    'Account ID', 'Direction', 'Source File')
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'Direction',
+        'Nickname',
+        'Message',
+        'UID',
+        'Unique ID',
+        'Link GIF Name',
+        'Link GIF URL',
+        'Message Type (as stored)',
+        'Deleted (as stored)',
+        'Read?',
+        'Local Info',
+        'Conversation ID',
+        'Account ID',
+        'Source File',
+    )
     return data_headers, data_list, source_path or 'see Source File column'
 
 

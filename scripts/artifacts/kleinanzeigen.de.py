@@ -250,8 +250,15 @@ def get_kleinanzeigenmessages(context):
                 # stored and a missing sender key leaves the column blank.
                 sender = message.get('sender')
                 direction = 'Outgoing' if sender == 'ME' else (sender if sender else '')
-                data_list.append((_iso_to_utc(message.get('sortByDate')), r[0], r[1], r[2],
-                                  message.get('text', ''), direction, str(message.get('state', '')).lower()))
+                data_list.append((
+                    _iso_to_utc(message.get('sortByDate')),
+                    direction,
+                    r[0],
+                    message.get('text', ''),
+                    r[1],
+                    r[2],
+                    str(message.get('state', '')).lower(),
+                ))
 
-    data_headers = (('Timestamp', 'datetime'), 'Counterparty', 'Ad Title', 'Ad Number', 'Message Text', 'Direction', 'Message State')
+    data_headers = (('Timestamp', 'datetime'), 'Direction', 'Counterparty', 'Message Text', 'Ad Title', 'Ad Number', 'Message State')
     return data_headers, data_list, source_path

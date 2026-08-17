@@ -836,9 +836,10 @@ def _message_sql(source_path):
 _MESSAGE_KEY = (12, 13)
 
 _MESSAGE_HEADERS = (('Creation Timestamp', 'datetime'), ('Read Timestamp', 'datetime'),
+                    'Message Direction', 'Sender Username', 'Message Text', ('Media', 'media'),
                     'Record Origin',
-                    'Sender Username', 'Sender Display Name', 'Sender ID', 'Message Direction',
-                    'Conversation Participants', 'Message Text', ('Media', 'media'),
+                    'Sender Display Name', 'Sender ID',
+                    'Conversation Participants',
                     'Content Type (as stored)',
                     'Message State Type', 'Is Saved', 'Is Viewed By User', 'Created On Device',
                     'Remote Media Count', 'Replies Count', 'Quoted Server Message ID',
@@ -936,9 +937,11 @@ def _message_rows(rows, friends, participants, local_user_id, provenance, media_
         else:
             direction = 'Outgoing' if sender_id == local_user_id else 'Incoming'
         data_list.append((
-            _ms_to_utc(created), _ms_to_utc(read), origin,
-            _friend_name(friends, sender_id), _friend_name(friends, sender_id, 1), sender_id,
-            direction, participants.get(conversation_id, ('', ''))[1], text, media_cell,
+            _ms_to_utc(created), _ms_to_utc(read),
+            direction, _friend_name(friends, sender_id), text, media_cell,
+            origin,
+            _friend_name(friends, sender_id, 1), sender_id,
+            participants.get(conversation_id, ('', ''))[1],
             content_type, state,
             _yes_no(saved), _yes_no(viewed), _yes_no(on_device), media_count, replies, quoted_id,
             conversation_id, client_message_id, server_message_id, method, location))

@@ -399,9 +399,9 @@ def tinderMessages(context):
             data_list.append((
                 _ms_to_utc(sent_date),
                 direction,
-                person_name or '',
                 sender_name,
                 text,
+                person_name or '',
                 content_type,
                 gif_description,
                 msg_type,
@@ -418,9 +418,9 @@ def tinderMessages(context):
     data_headers = (
         ('Sent Timestamp', 'datetime'),
         'Direction',
-        'Matched Person',
         'Sender Name',
         'Message',
+        'Matched Person',
         'Content Type (as stored)',
         'GIF Description (as stored)',
         'Type (as stored)',

@@ -331,14 +331,14 @@ def _build_chat_query(db_path):
     return f'''
     SELECT
         CHAT_MESSAGE.createdAt,
-        CHAT_MESSAGE.threadId,
+        {_flag_case(currentUserMessage, 'Sent', 'Received')},
+        {ownerName},
         {threadName},
+        {textPlain},
+        CHAT_MESSAGE.threadId,
         {groupId},
         {chatType},
         {ownerId},
-        {ownerName},
-        {textPlain},
-        {_flag_case(currentUserMessage, 'Sent', 'Received')},
         CASE {attachmentType} WHEN 'UNSUPPORTED' THEN '' ELSE {attachmentType} END,
         {attachmentName},
         {_flag_case(deleted, 'YES', 'NO')}
@@ -402,9 +402,9 @@ def get_mewe_chat(context):
             data_list.append((timestamp,) + values)
 
     source_path = ', '.join(sources)
-    data_headers = (('Timestamp', 'datetime'), 'Thread Id', 'Thread Name', 'Group Id', 'Chat Type',
-                    'User Id', 'User Name', 'Message Text', 'Message Direction', 'Message Type',
-                    'Attachment Name', 'Deleted')
+    data_headers = (('Timestamp', 'datetime'), 'Message Direction', 'User Name', 'Thread Name',
+                    'Message Text', 'Thread Id', 'Group Id', 'Chat Type', 'User Id',
+                    'Message Type', 'Attachment Name', 'Deleted')
     return data_headers, data_list, source_path
 
 

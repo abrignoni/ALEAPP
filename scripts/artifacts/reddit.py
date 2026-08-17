@@ -392,15 +392,36 @@ def get_reddit_chat_messages(context):
                 direction = ''
             dimensions = f'{width}x{height}' if width and height else ''
             data_list.append((
-                _ms_to_utc(timestamp), display_name, sender, direction, body, msgtype,
-                media_url, blurred_url, dimensions, mimetype, room_id, event_id,
-                source_file))
+                _ms_to_utc(timestamp),
+                direction,
+                display_name,
+                body,
+                sender,
+                msgtype,
+                media_url,
+                blurred_url,
+                dimensions,
+                mimetype,
+                room_id,
+                event_id,
+                source_file,
+            ))
 
-    data_headers = (('Timestamp', 'datetime'), 'Sender Display Name', 'Sender ID',
-                    'Message Direction', 'Message', 'Message Type (as stored)',
-                    'Media URL (as stored)', 'Blurred Media URL (as stored)',
-                    'Media Dimensions', 'Media MIME Type', 'Room ID', 'Event ID',
-                    'Source File')
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'Message Direction',
+        'Sender Display Name',
+        'Message',
+        'Sender ID',
+        'Message Type (as stored)',
+        'Media URL (as stored)',
+        'Blurred Media URL (as stored)',
+        'Media Dimensions',
+        'Media MIME Type',
+        'Room ID',
+        'Event ID',
+        'Source File',
+    )
     return data_headers, data_list, source_path
 
 

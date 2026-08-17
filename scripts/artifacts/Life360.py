@@ -183,15 +183,42 @@ def get_Life360_chat_messages(context):
         LEFT JOIN thread_participant ON message.sender_id = thread_participant.participant_id
         ''')
         for row in rows:
-            data_list.append((_sec_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5], row[6],
-                              row[7], row[8], row[9], row[10], row[11], row[12], _sec_to_utc(row[13]),
-                              Context.get_relative_path(source)))
+            data_list.append((
+                _sec_to_utc(row[0]),
+                _sec_to_utc(row[13]),
+                row[5],
+                row[3],
+                row[4],
+                row[1],
+                row[2],
+                row[6],
+                row[7],
+                row[8],
+                row[9],
+                row[10],
+                row[11],
+                row[12],
+                Context.get_relative_path(source),
+            ))
         db.close()
 
-    data_headers = (('Timestamp', 'datetime'), 'Thread ID', 'Sender ID', 'Sender Name', 'Message',
-                    'Message Sent', 'Message Read', 'Message Dismissed', 'Message Deleted',
-                    'Has Location', 'Latitude', 'Longitude', 'Location Name',
-                    ('Location Timestamp', 'datetime'), 'Source File')
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        ('Location Timestamp', 'datetime'),
+        'Message Sent',
+        'Sender Name',
+        'Message',
+        'Thread ID',
+        'Sender ID',
+        'Message Read',
+        'Message Dismissed',
+        'Message Deleted',
+        'Has Location',
+        'Latitude',
+        'Longitude',
+        'Location Name',
+        'Source File',
+    )
     return data_headers, data_list, source
 
 

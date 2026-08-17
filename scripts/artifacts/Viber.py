@@ -209,9 +209,9 @@ def get_Viber_messages(context):
             all_rows = []
         db.close()
         for r in all_rows:
-            data_list.append((_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7]))
+            data_list.append((_ms_to_utc(r[0]), r[5], r[1], r[4], r[2], r[3], r[6], r[7]))
 
-    data_headers = (('Message Date', 'datetime'), ('From Phone Number', 'phonenumber'), 'Recipients', 'Thread ID', 'Message', 'Direction', 'Unread', 'File Attachment')
+    data_headers = (('Message Date', 'datetime'), 'Direction', ('From Phone Number', 'phonenumber'), 'Message', 'Recipients', 'Thread ID', 'Unread', 'File Attachment')
     return data_headers, data_list, messages_db
 
 

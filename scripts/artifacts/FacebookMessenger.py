@@ -268,16 +268,46 @@ def get_fb_msys_chats(context):
                 direction = 'Outgoing' if str(row[2]) == fb_uid else 'Incoming'
             else:
                 direction = ''
-            data_list.append((_str_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5], row[6],
-                              row[7], row[8], row[9], row[10], row[11], _str_to_utc(row[12]), row[13],
-                              row[14], rel, direction))
+            data_list.append((
+                _str_to_utc(row[0]),
+                _str_to_utc(row[12]),
+                direction,
+                row[1],
+                row[4],
+                row[2],
+                row[3],
+                row[5],
+                row[6],
+                row[7],
+                row[8],
+                row[9],
+                row[10],
+                row[11],
+                row[13],
+                row[14],
+                rel,
+            ))
         db.close()
 
-    data_headers = (('Message Timestamp', 'datetime'), 'Sender', 'Sender ID', 'Thread Key', 'Message',
-                    'Snippet', 'Call/Location Information', 'Attachment Name', 'Attachment Type',
-                    'Attachment URL', 'Location Lat/Long', 'Reaction',
-                    ('Reaction Timestamp', 'datetime'), 'Is Admin Message', 'Message ID',
-                    'Source File', 'Direction')
+    data_headers = (
+        ('Message Timestamp', 'datetime'),
+        ('Reaction Timestamp', 'datetime'),
+        'Direction',
+        'Sender',
+        'Message',
+        'Sender ID',
+        'Thread Key',
+        'Snippet',
+        'Call/Location Information',
+        'Attachment Name',
+        'Attachment Type',
+        'Attachment URL',
+        'Location Lat/Long',
+        'Reaction',
+        'Is Admin Message',
+        'Message ID',
+        'Source File',
+    )
     return data_headers, data_list, source
 
 
