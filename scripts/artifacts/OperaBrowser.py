@@ -1,13 +1,13 @@
 __artifacts_v2__ = {
     "opera_tabs": {
         "name": "Opera Browser - Tabs",
-        "description": "Every browser tab tracked in Opera's session store, open or "
-                       "closed, with its position in the tab bar and the page it was "
-                       "showing. Opera keeps this session state independently of the "
-                       "shared Chromium History database, so it survives even for a "
-                       "tab that was closed before any of its pages could sync into "
-                       "History's own tracking.",
-        "author": "@Gear-I",
+        "description": "Browser tabs recorded in Opera's session_db tab-state store, "
+                       "open or closed, with each tab's position in the tab bar and "
+                       "the page it was showing. Opera keeps this session state "
+                       "independently of the shared Chromium History database, so a "
+                       "tab can appear here even if it was closed before any of its "
+                       "pages could sync into History's own tracking.",
+        "author": "@Gear-I, Claude", 
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
                  "and not already collected there: its own session/tab-state store. "
                  "'Restored' is Yes when a closed tab's own flag shows it was later "
                  "reopened. session_db itself carries no timestamp of any kind - "
-                 "confirmed against every column of every table, including the "
+                 "confirmed against  column of table, including the "
                  "binary page_state and JSON user_data blobs, neither of which embeds "
                  "one. 'Current Page Last Visit Time' is therefore not native to this "
                  "store: it is recovered by matching the current page's URL, exactly, "
@@ -47,20 +47,21 @@ __artifacts_v2__ = {
                  "is used; a device with multiple profiles is a known, untested edge "
                  "case rather than one confirmed to work.",
         "paths": ('*/app_opera/session_db*', '*/app_opera/History*'),
-        "output_types": ["html", "tsv", "timeline", "lava"],
+        "output_types": "standard",
         "artifact_icon": "layout",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | com.opera.browser vc 1908324306 | 3 rows",
+            "pixel7a_a14": "Android 14 |  8 rows",
         },
     },
     "opera_tab_navigation": {
         "name": "Opera Browser - Tab Navigation History",
-        "description": "The full back/forward navigation stack recorded inside each "
-                       "Opera tab: every page the tab moved to, in order, with the "
-                       "page actually on screen flagged. Address-bar searches are "
-                       "decoded from Opera's own internal search-tracking URL scheme "
-                       "back into the text that was actually typed.",
-        "author": "@Gear-I",
+        "description": "The back/forward navigation stack recorded inside each Opera "
+                       "tab, from session_db's navigation_entry table: the pages the "
+                       "tab moved to, in order, with the page currently on screen "
+                       "flagged. Address-bar searches are decoded from Opera's own "
+                       "internal search-tracking URL scheme back into the text that "
+                       "was typed.",
+        "author": "@Gear-I, Claude", 
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -70,18 +71,18 @@ __artifacts_v2__ = {
                  "following a different link overwrites the forward entry that link "
                  "replaced, so a page visited and then navigated away from by going "
                  "back can be absent here even though it really was viewed. The "
-                 "Chromium History artifact (chrome.py) logs every visit "
+                 "Chromium History artifact (chrome.py) logs  visit "
                  "independently of the tab stack and does not have this gap, so the "
                  "two should be read together. Search Query is decoded from the "
                  "'opera-internal://search' virtual URL Opera assigns to an "
                  "address-bar search; entries without that scheme are direct page "
                  "loads and the column is left blank rather than guessed at. "
                  "navigation_entry itself carries no timestamp - confirmed against "
-                 "every column, including the binary page_state and JSON user_data "
+                 "column, including the binary page_state and JSON user_data "
                  "blobs. 'Last Visit Time' is recovered by matching this entry's URL, "
                  "exactly, against Opera's own History database's urls.last_visit_time, "
                  "and is left blank when no exact match exists, which happens for the "
-                 "internal 'operaui://startpage' entry every tab starts from and, on "
+                 "internal 'operaui://startpage' entry tab starts from and, on "
                  "the device this was validated against, for two address-bar searches "
                  "whose visit did not leave a matching literal URL in History either. "
                  "Because it is the URL's *last* visit rather than necessarily the "
@@ -92,12 +93,14 @@ __artifacts_v2__ = {
                  "profiles is a known, untested edge case rather than one confirmed "
                  "to work.",
         "paths": ('*/app_opera/session_db*', '*/app_opera/History*'),
-        "output_types": ["html", "tsv", "timeline", "lava"],
+          "output_types": "standard",
         "artifact_icon": "compass",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | com.opera.browser vc 1908324306 | 8 rows",
+            "pixel7a_a14": "Android 14 | 3 rows",
         },
-    },
+
+    }
+
 }
 
 from datetime import datetime, timedelta, timezone
