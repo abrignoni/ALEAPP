@@ -4,18 +4,21 @@ __artifacts_v2__ = {
         "description": "GroupMe group information",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-01",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-18",
         "requirements": "None",
         "category": "GroupMe",
         "notes": "Message Count (stored) and Attachment Count (stored) are the counter values held in "
                  "the groups table; they are not counts of the messages and attachments recovered by "
-                 "this artifact.",
+                 "this artifact. Group Creator and Creator Role are read from the creator's own "
+                 "membership row for that group; the members table holds one row per group and user.",
         "paths": ('*/com.groupme.android/databases/groupme.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.groupme.android vc 240460204 | 1 row",
+            "pixel3_a12": "Android 12 | com.groupme.android vc 213010104 | 2 rows",
             "russell_pixel6a_a13": "Android 13 | com.groupme.android vc 231500204 | 1 row",
+            "russell_a14": "Android 14 | com.groupme.android vc 242190204 | 0 rows",
         },
     },
     "get_groupMe_chat": {
@@ -84,6 +87,7 @@ def get_groupMe(context):
         groups.updated_at
         FROM groups
         JOIN members ON members.user_id=groups.creator_user_id
+        AND members.group_id=groups.group_id
         ORDER BY groups.created_at ASC
     ''')
     all_rows = cursor.fetchall()
