@@ -160,7 +160,9 @@ def healthmate_accounts(context):
         shortname = row[3]
         gender = row[4]
         pronoun = row[5]
-        if row[6] > 0:
+        # Tested against the value, not against zero: a birth date before 1970 is stored
+        # negative, and comparing it away reported the field as 0 rather than as a date.
+        if row[6]:
             birthdate = convert_unix_ts_to_utc(row[6]/1000)
         else:
             birthdate = 0

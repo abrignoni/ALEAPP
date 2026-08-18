@@ -32,3 +32,9 @@ jobs:
 
       - name: Open SQLite on a path longer than 260 characters
         run: python admin/test/scripts/test_sqlite_longpath_uri.py
+
+      # Pre-1970 timestamps are converted by adding a timedelta to the epoch rather than
+      # through datetime.fromtimestamp, which can raise OSError where the platform C
+      # gmtime() cannot represent the value. Running here proves that on Windows.
+      - name: Convert pre-1970 Unix timestamps
+        run: python admin/test/scripts/test_unix_timestamp_conversion.py
