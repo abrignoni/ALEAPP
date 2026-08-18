@@ -235,6 +235,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | protonVPN |
 | protonmail |
 | reddit |
+| ryanair |
 | sChats |
 | samsungSmartThings |
 | samsungWeatherClock |
