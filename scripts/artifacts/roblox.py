@@ -23,7 +23,14 @@ __artifacts_v2__ = {
                  "from both stores it appears in so a disagreement stays visible. Field mapping was done "
                  "against a single private sample; no sample data is recorded for it. A blank contact "
                  "importer opted in list is reported rather than dropped, because an empty list beside a "
-                 "populated sync timestamp is itself the finding.",
+                 "populated sync timestamp is itself the finding. An extraction can carry the app's data "
+                 "for more than one Android user, and each holds a different account, so every container "
+                 "is reported rather than the first one found, and each store is paired with the "
+                 "prefs.xml from its own container. That was exercised against a constructed tree "
+                 "holding the same container under /data/data and /data/user/0, a second user under "
+                 "/data/user/10, and a decoy package with the same internal layout: the duplicate "
+                 "spellings collapsed to one, the second user produced its own row, and the decoy "
+                 "produced none.",
         "paths": ('*/com.roblox.client/files/appData/LocalStorage/appStorage.json',
                   '*/com.roblox.client/shared_prefs/prefs.xml'),
         "output_types": "standard",
@@ -37,15 +44,15 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Roblox",
-        "notes": "Read from the PreviousAccountsList value of appStorage.json, which the "
-                 "app keys by user id. signOutTimestamp is Unix seconds, unlike the "
-                 "millisecond account creation value in the same file. An entry records an "
-                 "account the client held credentials for and does not by itself establish "
-                 "who used it. The display name stored in this list is the one held when the "
-                 "entry was written, so it can differ from the current display name: on the "
-                 "one device tested the two differed, which is what a display name change "
-                 "looks like here. Field mapping was done against a single private sample; "
-                 "no sample data is recorded for it.",
+        "notes": "Read from the PreviousAccountsList value of appStorage.json, which the app keys by "
+                 "user id. signOutTimestamp is Unix seconds, unlike the millisecond account creation "
+                 "value in the same file. An entry records an account the client held credentials for "
+                 "and does not by itself establish who used it. The display name stored in this list is "
+                 "the one held when the entry was written, so it can differ from the current display "
+                 "name: on the one device tested the two differed, which is what a display name change "
+                 "looks like here. Field mapping was done against a single private sample; no sample "
+                 "data is recorded for it. Every container in the extraction is read, so a second "
+                 "Android user's list is reported alongside the first rather than being replaced by it.",
         "paths": ('*/com.roblox.client/files/appData/LocalStorage/appStorage.json',),
         "output_types": "standard",
         "artifact_icon": "users"
@@ -150,15 +157,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Roblox",
-        "notes": "Read from the AXMarketplaceRecentSearches value of appStorage.json, which "
-                 "holds a user id and a list of terms. The value carries no timestamp, so no "
-                 "date is reported and the order of the list is preserved as stored rather "
-                 "than being described as most recent first. The store holds terms the client "
-                 "recorded as recent searches and is not a download of server suggestions: it "
-                 "carries no ranking or score column and no cache version or fetch time "
-                 "preference names it, unlike the app settings and experiment values in the "
-                 "same file. Field mapping was done against a single private sample; no "
-                 "sample data is recorded for it.",
+        "notes": "Read from the AXMarketplaceRecentSearches value of appStorage.json, which holds a user "
+                 "id and a list of terms. The value carries no timestamp, so no date is reported and the "
+                 "order of the list is preserved as stored rather than being described as most recent "
+                 "first. The store holds terms the client recorded as recent searches and is not a "
+                 "download of server suggestions: it carries no ranking or score column and no cache "
+                 "version or fetch time preference names it, unlike the app settings and experiment "
+                 "values in the same file. Field mapping was done against a single private sample; no "
+                 "sample data is recorded for it. Every container in the extraction is read, so a second "
+                 "Android user's terms are reported alongside the first rather than being replaced by "
+                 "it.",
         "paths": ('*/com.roblox.client/files/appData/LocalStorage/appStorage.json',),
         "output_types": "standard",
         "artifact_icon": "search"
@@ -197,12 +205,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Roblox",
-        "notes": "Read from the PolicyServiceHttpResponse value of appStorage.json. This is a "
-                 "server response the client cached, so it records the policy the service "
-                 "returned for the account rather than a choice the user made. The value "
-                 "carries no timestamp of its own, so no date is reported. Setting names and "
-                 "values are reported as stored. Field mapping was done against a single "
-                 "private sample; no sample data is recorded for it.",
+        "notes": "Read from the PolicyServiceHttpResponse value of appStorage.json. This is a server "
+                 "response the client cached, so it records the policy the service returned for the "
+                 "account rather than a choice the user made. The value carries no timestamp of its own, "
+                 "so no date is reported. Setting names and values are reported as stored. Field mapping "
+                 "was done against a single private sample; no sample data is recorded for it. The user "
+                 "id the store recorded is carried on each row, because an extraction can hold a second "
+                 "Android user with a different account and a different policy.",
         "paths": ('*/com.roblox.client/files/appData/LocalStorage/appStorage.json',),
         "output_types": "standard",
         "artifact_icon": "shield"
@@ -247,7 +256,8 @@ from urllib.parse import parse_qsl
 from scripts.ilapfuncs import artifact_processor, logfunc, get_sqlite_db_path
 from scripts.artifacts.storagePathViews import unique_files
 
-APP_STORAGE = 'appData/LocalStorage/appStorage.json'
+APP_STORAGE = 'files/appData/LocalStorage/appStorage.json'
+PREFS_FILE = 'shared_prefs/prefs.xml'
 ROBLOX_DB = 'roblox-database-default'
 
 # 2.702.0.632_20260112T133051Z_Player_0a72b_last.log
@@ -301,8 +311,14 @@ def _iso_utc(text):
         return ''
 
 
-def _app_storage(files_found):
-    """(parsed appStorage.json, its path) for the first one that reads, else ({}, '')."""
+def _app_stores(files_found):
+    """[(container root, parsed appStorage.json, its path)] for every store that reads.
+
+    An extraction can carry more than one container: a second Android user has their own
+    copy under /data/user/<n>/, holding a different account. Every one is returned so a
+    second user's account is not dropped.
+    """
+    stores = []
     for file_found in files_found:
         file_found = str(file_found).replace('\\', '/')
         if not file_found.endswith(APP_STORAGE):
@@ -314,8 +330,8 @@ def _app_storage(files_found):
             logfunc(f'Roblox: could not read {file_found}: {error}')
             continue
         if isinstance(loaded, dict):
-            return loaded, file_found
-    return {}, ''
+            stores.append((file_found[:-len(APP_STORAGE)], loaded, file_found))
+    return stores
 
 
 def _nested(store, key):
@@ -352,16 +368,24 @@ def _prefs(path):
 @artifact_processor
 def roblox_account(context):
     files_found = unique_files(context)
-    store, source_path = _app_storage(files_found)
+    stores = _app_stores(files_found)
+    source_path = stores[0][2] if stores else ''
 
-    prefs = {}
+    prefs_by_root = {}
     for file_found in files_found:
-        if str(file_found).replace('\\', '/').endswith('shared_prefs/prefs.xml'):
-            prefs = _prefs(str(file_found))
-            break
+        file_found = str(file_found).replace('\\', '/')
+        if file_found.endswith(PREFS_FILE):
+            prefs_by_root[file_found[:-len(PREFS_FILE)]] = _prefs(file_found)
+
+    # A container holding only one of the two files still describes an account.
+    roots = list(dict.fromkeys([root for root, _, _ in stores] + list(prefs_by_root)))
+    by_root = {root: store for root, store, _ in stores}
 
     data_list = []
-    if store or prefs:
+    for root in roots:
+        store = by_root.get(root, {})
+        prefs = prefs_by_root.get(root, {})
+        source_path = source_path or root
         hydration = _nested(store, 'PlayerHydrationBlob') or {}
         contact_sync = str(store.get('ContactImporterSyncTimestamp', ''))
         # Stored as a colon followed by Unix milliseconds on the sample tested.
@@ -415,11 +439,14 @@ def roblox_account(context):
 @artifact_processor
 def roblox_previous_accounts(context):
     files_found = unique_files(context)
-    store, source_path = _app_storage(files_found)
-    accounts = _nested(store, 'PreviousAccountsList') or {}
-
     data_list = []
-    if isinstance(accounts, dict):
+    source_path = ''
+
+    for _, store, store_path in _app_stores(files_found):
+        source_path = source_path or store_path
+        accounts = _nested(store, 'PreviousAccountsList') or {}
+        if not isinstance(accounts, dict):
+            continue
         for key, entry in accounts.items():
             if not isinstance(entry, dict):
                 logfunc('Roblox: a PreviousAccountsList entry was not an object, skipped')
@@ -695,11 +722,14 @@ def roblox_push_notifications(context):
 @artifact_processor
 def roblox_marketplace_searches(context):
     files_found = unique_files(context)
-    store, source_path = _app_storage(files_found)
-    searches = _nested(store, 'AXMarketplaceRecentSearches') or {}
-
     data_list = []
-    if isinstance(searches, dict):
+    source_path = ''
+
+    for _, store, store_path in _app_stores(files_found):
+        source_path = source_path or store_path
+        searches = _nested(store, 'AXMarketplaceRecentSearches') or {}
+        if not isinstance(searches, dict):
+            continue
         terms = searches.get('terms')
         if isinstance(terms, list):
             for position, term in enumerate(terms, start=1):
@@ -747,19 +777,24 @@ def roblox_user_game_settings(context):
 @artifact_processor
 def roblox_account_policy(context):
     files_found = unique_files(context)
-    store, source_path = _app_storage(files_found)
-    policy = _nested(store, 'PolicyServiceHttpResponse') or {}
-
     data_list = []
-    if isinstance(policy, dict):
+    source_path = ''
+
+    for _, store, store_path in _app_stores(files_found):
+        source_path = source_path or store_path
+        policy = _nested(store, 'PolicyServiceHttpResponse') or {}
+        if not isinstance(policy, dict):
+            continue
+        user_id = store.get('UserId', '')
         for name in sorted(policy):
             value = policy[name]
             if isinstance(value, list):
-                data_list.append((name, ', '.join(str(item) for item in value), f'list of {len(value)}'))
+                data_list.append((name, ', '.join(str(item) for item in value),
+                                  f'list of {len(value)}', user_id))
             else:
-                data_list.append((name, str(value), type(value).__name__))
+                data_list.append((name, str(value), type(value).__name__, user_id))
 
-    data_headers = ('Policy Setting', 'Value (as stored)', 'Stored Type')
+    data_headers = ('Policy Setting', 'Value (as stored)', 'Stored Type', 'User ID')
     return data_headers, data_list, source_path
 
 
