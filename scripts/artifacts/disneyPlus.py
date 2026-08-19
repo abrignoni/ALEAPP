@@ -18,10 +18,13 @@ __artifacts_v2__ = {
                  "producing call site. ccDefault and ccMedia are undocumented and are "
                  "reported as stored; nothing in the container defines them. A row's title is "
                  "filled in only where the app's own cached content responses name the same "
-                 "content id, and is left empty otherwise. The database carries no "
-                 "write-ahead log and its rollback journal is zero length, so the committed "
-                 "state is the only state. Field mapping was done against one private sample "
-                 "from a single device; no sample data is recorded for it.",
+                 "content id, and is left empty otherwise; on the one tested sample that "
+                 "resolved one row of fifteen, so an empty title means the cache did not "
+                 "carry that content id rather than that the title is unknown to the service. "
+                 "The database carries no write-ahead log and its rollback journal is zero "
+                 "length, so the committed state is the only state. Field mapping was done "
+                 "against one private sample from a single device; no sample data is recorded "
+                 "for it.",
         "paths": ('*/com.disney.disneyplus/databases/db_offline_bookmarks*',
                   '*/com.disney.disneyplus/cache/sdk-cache/*'),
         "output_types": ["html", "tsv", "lava"],
@@ -42,9 +45,10 @@ __artifacts_v2__ = {
                  "key is written per series, with the series identifier carried in the key "
                  "name itself. On the one tested sample the content id of the overall key was "
                  "also present in the resume points table, which is a recorded link rather "
-                 "than a correlation. contentIdentifierType is reported as stored. Field "
-                 "mapping was done against one private sample from a single device; no sample "
-                 "data is recorded for it.",
+                 "than a correlation, and the two keys held identical values because the last "
+                 "item played overall was the one from that series. contentIdentifierType is "
+                 "reported as stored. Field mapping was done against one private sample from "
+                 "a single device; no sample data is recorded for it.",
         "paths": ('*/com.disney.disneyplus/shared_prefs/default.xml',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "player-track-next"
@@ -85,11 +89,13 @@ __artifacts_v2__ = {
                  "The access and refresh tokens in the same object are five part JWE, so "
                  "their claims are encrypted and are not recoverable from the container; the "
                  "tokens themselves are present in the source file and are not reproduced "
-                 "here. The offline fallback value names a profile id, which on the one "
-                 "tested sample was the same profile id the resume points table and the "
-                 "recent search store carry. The device grant records only its grant type and "
-                 "an assertion. Field mapping was done against one private sample from a "
-                 "single device; no sample data is recorded for it.",
+                 "here, so only their form is reported. The app's own preference files were "
+                 "searched for key material that would open them and none was found. The "
+                 "offline fallback value names a profile id, which on the one tested sample "
+                 "was the same profile id the resume points table and the recent search store "
+                 "carry. The device grant records only its grant type. Field mapping was done "
+                 "against one private sample from a single device; no sample data is recorded "
+                 "for it.",
         "paths": ('*/com.disney.disneyplus/shared_prefs/BAM_SDK_STORAGE.xml',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "key"
@@ -103,16 +109,18 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Disney+",
         "notes": "Key and value pairs from the app's own shared preferences files: the "
-                 "default file, BAMPLAYER, AnalyticsSharedPrefs and Conviva. Values are "
-                 "reported as stored. A value is additionally rendered as a UTC timestamp "
-                 "only where the key names a time and the value is a thirteen digit integer; "
-                 "on the one tested sample the app backgrounded key resolved to within a "
-                 "second of the most recent resume point write, which is what supports "
-                 "reading it as milliseconds. The bookmarksHandshake keys of the same file "
-                 "are reported by the Last Played Item artifact instead of here. Third party "
-                 "software development kit preference files that sit in the same directory "
-                 "are not read by this artifact. Field mapping was done against one private "
-                 "sample from a single device; no sample data is recorded for it.",
+                 "default file, BAMPLAYER, AnalyticsSharedPrefs and Conviva. These carry the "
+                 "playback preferences, the install referrer, the first run flag and the time "
+                 "the app was last backgrounded. Values are reported as stored. A value is "
+                 "additionally rendered as a UTC timestamp only where the key names a time "
+                 "and the value is a thirteen digit integer; on the one tested sample the app "
+                 "backgrounded key resolved to within a second of the most recent resume "
+                 "point write, which is what supports reading it as milliseconds. The "
+                 "bookmarksHandshake keys of the same file are reported by the Last Played "
+                 "Item artifact instead of here. Third party software development kit "
+                 "preference files that sit in the same directory are not read by this "
+                 "artifact. Field mapping was done against one private sample from a single "
+                 "device; no sample data is recorded for it.",
         "paths": ('*/com.disney.disneyplus/shared_prefs/default.xml',
                   '*/com.disney.disneyplus/shared_prefs/BAMPLAYER.xml',
                   '*/com.disney.disneyplus/shared_prefs/AnalyticsSharedPrefs.xml',
@@ -120,149 +128,119 @@ __artifacts_v2__ = {
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "settings"
     },
-    "disneyplus_home_sets": {
-        "name": "Disney+ - Home Page Sets",
-        "description": "Parses the home page set availability cached by the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
-        "requirements": "none",
-        "category": "Disney+",
-        "notes": "Read from contentSetAvailability, whose keys carry a set type and a set id "
-                 "and whose values record availability. The observed values are HAS_CONTENT "
-                 "and UNKNOWN, taken from the file rather than from any external list. These "
-                 "rows record the rails the service composed for the profile, including "
-                 "recommendation, trending, because you watched and continue watching sets. "
-                 "They are a property of the page the service returned and do not establish "
-                 "that the user opened or interacted with any of them. The store records no "
-                 "time. Field mapping was done against one private sample from a single "
-                 "device; no sample data is recorded for it.",
-        "paths": ('*/com.disney.disneyplus/shared_prefs/contentSetAvailability.xml',),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "layout-grid"
-    },
-    "disneyplus_avatars": {
-        "name": "Disney+ - Avatars",
-        "description": "Parses the profile avatars cached by the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
-        "requirements": "none",
-        "category": "Disney+",
-        "notes": "Read from the AvatarImpl table of the app's profiles database. That "
-                 "database holds this table only and carries no profile record, so it names "
-                 "avatars rather than the profiles on the account. Each row carries an avatar "
-                 "id, a title, a master id and an image URL; on the one tested sample the "
-                 "master id appeared inside the image URL on every row, which is a recorded "
-                 "link between the two. The table does not record which avatar a profile "
-                 "selected. The database carries no write-ahead log and its rollback journal "
-                 "is zero length. Field mapping was done against one private sample from a "
-                 "single device; no sample data is recorded for it.",
-        "paths": ('*/com.disney.disneyplus/databases/profiles*',),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "user-circle"
-    },
-    "disneyplus_cached_titles": {
-        "name": "Disney+ - Cached Titles",
-        "description": "Parses the title metadata cached by the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
-        "requirements": "none",
-        "category": "Disney+",
-        "notes": "Titles read from the content service responses held in the app's sdk-cache, "
-                 "which is a DiskLruCache whose entry records the request URL alongside the "
-                 "response body. Bodies are gzip encoded and are decompressed before reading. "
-                 "Each title carries the content id, content type, program type, encoded "
-                 "series id, family id and the availability region the response was served "
-                 "for. These rows are the catalogue the service returned for the profile, "
-                 "covering curated, trending, recommendation, because you watched and up next "
-                 "sets. A row records what the response contained and does not establish that "
-                 "the user viewed, selected or watched that title. The endpoint each title "
-                 "came from is reported so the two can be told apart. Field mapping was done "
-                 "against one private sample from a single device; no sample data is recorded "
-                 "for it.",
-        "paths": ('*/com.disney.disneyplus/cache/sdk-cache/*',),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "movie"
-    },
     "disneyplus_playback_requests": {
         "name": "Disney+ - Playback Requests",
-        "description": "Parses the cached streaming requests of the Disney+ Android app.",
+        "description": "Summarises the cached streaming requests of the Disney+ Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Disney+",
-        "notes": "Read from the request URLs recorded in the app's sdk-cache entries for the "
-                 "media delivery hosts. The URL path carries a media identifier, a device "
-                 "identifier, an account identifier, a key id and an expiry, each reported as "
-                 "the URL stores it. The expiry is a Unix second value naming when the "
-                 "delivery token ceases to be valid; it is not the time the request was made "
-                 "and is reported as an expiry rather than as an event time. The cached "
-                 "bodies are HLS playlists and a trickplay index, which is what the entry's "
-                 "content type declares. A cached request records that the app asked for the "
-                 "manifest, not how much of the media was played. Field mapping was done "
-                 "against one private sample from a single device; no sample data is recorded "
-                 "for it.",
+        "notes": "One row per media identifier, summarising the request URLs recorded in the "
+                 "app's sdk-cache entries for the media delivery hosts. The individual "
+                 "manifest fetches are counted rather than listed, because they repeat for a "
+                 "single playback and an examiner cannot act on each one; the URL path of "
+                 "every one of them carries the same media, device and account identifiers, "
+                 "which are reported here, and the cache directory still holds each entry. "
+                 "The expiry values are Unix seconds naming when a delivery token ceases to "
+                 "be valid, so the earliest and latest are reported as a bound on when the "
+                 "requests were made rather than as event times. A cached request records "
+                 "that the app asked for the manifest, not how much of the media was played. "
+                 "Field mapping was done against one private sample from a single device; no "
+                 "sample data is recorded for it.",
         "paths": ('*/com.disney.disneyplus/cache/sdk-cache/*',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "cloud-download"
     },
     "disneyplus_trickplay": {
-        "name": "Disney+ - Trickplay Frames",
-        "description": "Checks in the trickplay preview frames cached by the Disney+ Android app.",
+        "name": "Disney+ - Trickplay Preview",
+        "description": "Checks in a preview frame from each trickplay index cached by the Disney+ Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Disney+",
-        "notes": "The sdk-cache entries whose content type is application/bif hold a Base "
-                 "Index Frames file: an eight byte signature, a declared image count, a "
-                 "declared timestamp multiplier and an index of frame number and byte offset "
-                 "pairs, each pointing at a JPEG, closed by a terminator entry giving the end "
-                 "of the last one. Every declared offset is checked against the bytes "
-                 "actually present. A frame is reported only where the bytes present start "
-                 "with a start of image marker and end with an end of image marker, and the "
-                 "walk stops at the first entry that does not, so a truncated entry yields "
-                 "the frames it really holds rather than a count taken from the header. On "
-                 "the one tested sample both files declared 185 images and the terminator "
-                 "declared an end one byte past the cached body; the last frame was complete "
-                 "within the bytes present, so it is reported and flagged in the Declared End "
-                 "Overran Cached Bytes column rather than dropped. The frames are checked in "
-                 "as embedded media and rendered. The media identifier "
-                 "is taken from the request URL the cache entry records. The app fetches the "
-                 "whole index for a title, so the presence of a frame does not establish that "
-                 "the offset it sits at was played. Frame numbers are reported as the index "
-                 "stores them. Field mapping was done against one private sample from a "
-                 "single device; no sample data is recorded for it.",
+        "notes": "One row per cached trickplay index, which is the only stored content that "
+                 "shows what a cached title looks like. The sdk-cache entries whose content "
+                 "type is application/bif hold a Base Index Frames file: an eight byte "
+                 "signature, a declared image count, a declared timestamp multiplier and an "
+                 "index of frame number and byte offset pairs, each pointing at a JPEG, "
+                 "closed by a terminator entry giving the end of the last one. Every declared "
+                 "offset is checked against the bytes actually present and a frame is counted "
+                 "only where those bytes start with a start of image marker and end with an "
+                 "end of image marker, so a truncated entry yields the frames it really holds "
+                 "rather than the count its header declares. On the one tested sample both "
+                 "files declared 185 images and the terminator declared an end one byte past "
+                 "the cached body; the last frame was complete within the bytes present, so "
+                 "it is counted and the disagreement is reported in its own column rather "
+                 "than the frame being dropped. A single frame from about a quarter of the "
+                 "way through each index is checked in and rendered, because the opening "
+                 "frames of a title are commonly blank; every frame remains in the cached "
+                 "file for an examiner who needs them. The app fetches the whole index for a "
+                 "title, so the presence of a frame does not establish that the offset it "
+                 "sits at was played. Field mapping was done against one private sample from "
+                 "a single device; no sample data is recorded for it.",
         "paths": ('*/com.disney.disneyplus/cache/sdk-cache/*',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "photo-video"
     },
-    "disneyplus_cached_images": {
-        "name": "Disney+ - Cached Images",
-        "description": "Checks in the images cached by the Disney+ Android app.",
+    "disneyplus_cached_content": {
+        "name": "Disney+ - Cached Content Responses",
+        "description": "Summarises the content service responses cached by the Disney+ Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Disney+",
-        "notes": "Images from three stores are checked in and rendered. An http-cache entry "
-                 "records its own request URL, so those rows carry the URL the image came "
-                 "from. The files under files/offline_images are named with a numeric "
-                 "identifier that does not appear anywhere else in the container; a URL is "
-                 "reported for one of them only where its bytes are identical to a cached "
-                 "response body, which is a content hash match and is stated as such in the "
-                 "Link Basis column. A glide-cache-v2 file name is not derived from the URL: it "
-                 "was tested against the MD5, SHA-1 and SHA-256 of the URLs of images holding "
-                 "identical bytes and matched none of them, so no link is asserted from the name; "
-                 "those entries carry a URL only where the same content hash match applies. A "
-                 "cached body may be stored gzip encoded, so images are read from the decoded "
-                 "bytes and the encoding is reported. File type comes from the leading bytes "
-                 "rather than the file name. "
-                 "The same image may appear in more than one store and is reported once per "
-                 "store. Field mapping was done against one private sample from a single "
+        "notes": "One row per cached content service response, giving the endpoint, the "
+                 "availability region the response was served for and the number of titles it "
+                 "carries. The titles themselves are deliberately not enumerated: these "
+                 "responses are the catalogue the service composed for the profile, covering "
+                 "curated, trending, recommendation, because you watched and up next sets, so "
+                 "listing them beside an account reads as things the user chose when the "
+                 "container does not establish that. The title text is still used internally "
+                 "to name a content id in the Playback Resume Points artifact, which does "
+                 "record user activity. The response bodies remain in the sdk-cache directory "
+                 "named in the Source File column and carry the full title list for an "
+                 "examiner who needs it. Bodies are gzip encoded and are decompressed before "
+                 "reading. Two further stores in the same container are server supplied and "
+                 "are summarised here rather than given artifacts of their own: "
+                 "contentSetAvailability records the home page rails and their availability "
+                 "with no time and no user action attached, and the AvatarImpl table of the "
+                 "profiles database is a catalogue of selectable avatars that holds no "
+                 "profile record and does not record which avatar a profile chose. Field "
+                 "mapping was done against one private sample from a single device; no sample "
+                 "data is recorded for it.",
+        "paths": ('*/com.disney.disneyplus/cache/sdk-cache/*',
+                  '*/com.disney.disneyplus/shared_prefs/contentSetAvailability.xml',
+                  '*/com.disney.disneyplus/databases/profiles*'),
+        "output_types": ["html", "tsv", "lava"],
+        "artifact_icon": "movie"
+    },
+    "disneyplus_cached_images": {
+        "name": "Disney+ - Cached Image Stores",
+        "description": "Summarises the image caches of the Disney+ Android app.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-19",
+        "last_update_date": "2026-08-19",
+        "requirements": "none",
+        "category": "Disney+",
+        "notes": "One row per image store rather than one per file. The images are service "
+                 "supplied artwork for catalogue titles and avatars; the app stores no user "
+                 "created images, so enumerating each file would fill the report with rows an "
+                 "examiner cannot act on. Each row gives the file count, how many are "
+                 "distinct by content hash, how many can be tied to a source URL and on what "
+                 "basis, and the directory holding them. An http-cache entry records its own "
+                 "request URL. A file under files/offline_images is named with a numeric "
+                 "identifier that appears nowhere else in the container, and a glide-cache-v2 "
+                 "file name is not derived from the URL either: both were tested against the "
+                 "MD5, SHA-1 and SHA-256 of the URLs of images holding identical bytes and "
+                 "matched none, so a URL is attributed to those stores only where the bytes "
+                 "are identical to a cached response body, which is a content hash match. A "
+                 "cached body may be stored gzip encoded, so images are counted from the "
+                 "decoded bytes; reading the files as they sit on disk misses every "
+                 "compressed one. File type comes from the leading bytes rather than the file "
+                 "name. Field mapping was done against one private sample from a single "
                  "device; no sample data is recorded for it.",
         "paths": ('*/com.disney.disneyplus/cache/http-cache/*',
                   '*/com.disney.disneyplus/cache/glide-cache-v2/*',
@@ -280,16 +258,18 @@ __artifacts_v2__ = {
         "category": "Disney+",
         "notes": "Each file under files/dustv2 is one queued telemetry event in CloudEvents "
                  "form. The event time and the invocation start time are ISO 8601 strings "
-                 "carrying their own offset and are reported with that offset preserved. The "
-                 "event records the service operation invoked, the host, path and method "
-                 "requested, the response status where one was received, the round trip time, "
-                 "the serving region and the session id the event was raised under. Error "
-                 "codes are reported as stored; the values observed on the tested sample were "
-                 "network-error and authenticationExpired, read from the files rather than "
-                 "from any external list. These events record calls the app's SDK made and "
-                 "the file name carries the queue time, so they evidence the app running "
-                 "rather than anything the user chose. Field mapping was done against one "
-                 "private sample from a single device; no sample data is recorded for it.",
+                 "carrying their own offset and are reported with that offset preserved, so "
+                 "the queue places the app in time. The event records the service operation "
+                 "invoked, the host, path and method requested, the response status where one "
+                 "was received, the serving region and the session id the event was raised "
+                 "under. Transport detail that identifies nothing, such as the edge node and "
+                 "request identifiers, is not reported. Error codes are reported as stored; "
+                 "the values observed on the tested sample were network-error and "
+                 "authenticationExpired, read from the files rather than from any external "
+                 "list. These events record calls the app's SDK made, so they evidence the "
+                 "app running rather than anything the user chose. Field mapping was done "
+                 "against one private sample from a single device; no sample data is recorded "
+                 "for it.",
         "paths": ('*/com.disney.disneyplus/files/dustv2/*',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "activity"
@@ -321,6 +301,26 @@ _PACKAGE = 'com.disney.disneyplus'
 
 # Media delivery hosts seen in the app's own cached request URLs.
 _MEDIA_HOST_RE = re.compile(r'\.media\.dssott\.com$')
+
+# The delivery URL carries the media identifier in two places that agree: the scope of the
+# signed token (~url=/ps01/disney[/thumbnails]/<id>/) and the asset path that follows it.
+# An unsigned request carries no token and names the media directly under /int/ps01/disney/.
+# Matched by position rather than by taking the first identifier in the string, because the
+# same URL also carries per rendition asset identifiers that are not the media.
+_MEDIA_ID_RES = (
+    re.compile(r'~url=/ps01/disney/(?:thumbnails/)?([0-9a-fA-F-]{36})/'),
+    re.compile(r'/int/ps01/disney/([0-9a-fA-F-]{36})/'),
+    re.compile(r'/ps01/disney/(?:thumbnails/)?([0-9a-fA-F-]{36})/'),
+)
+
+
+def _media_id(decoded_path):
+    '''The media identifier a delivery URL names, or '' when none of the forms match.'''
+    for pattern in _MEDIA_ID_RES:
+        found = pattern.search(decoded_path)
+        if found:
+            return found.group(1)
+    return ''
 
 # A preference key is rendered as a time only when it names one. Value must still be a
 # 13 digit integer, so a key that names a duration rather than an instant is not converted.
@@ -736,120 +736,12 @@ def disneyplus_app_settings(context):
     return data_headers, data_list, source_path
 
 
-@artifact_processor
-def disneyplus_home_sets(context):
-    data_list = []
-    source_path = ''
-    pattern = re.compile(r'^type_(?P<type>.+?)_id_(?P<id>.+)$')
-    for file_found in _named(context, 'contentSetAvailability.xml'):
-        source_path = source_path or file_found
-        source_file = _relative(context, file_found)
-        for key, (_tag, value) in _prefs(file_found).items():
-            match = pattern.match(key)
-            set_type = match.group('type') if match else ''
-            set_id = match.group('id') if match else key
-            data_list.append((set_type, set_id, value, source_file))
-
-    data_headers = ('Set Type', 'Set ID', 'Availability (as stored)', 'Source File')
-    return data_headers, data_list, source_path
 
 
-@artifact_processor
-def disneyplus_avatars(context):
-    data_list = []
-    source_path = ''
-    sql = ('SELECT `avatarId`, `avatarTitle`, `masterId`, `masterWidth`, `imageUrl` '
-           'FROM `AvatarImpl` ORDER BY `avatarTitle`')
-    for file_found in _named(context, 'profiles'):
-        source_path = source_path or file_found
-        source_file = _relative(context, file_found)
-        for row in _rows(file_found, sql):
-            avatar_id, title, master_id, master_width, image_url = row
-            in_url = 'Yes' if master_id and master_id in (image_url or '') else 'No'
-            data_list.append((
-                title, avatar_id, master_id or '',
-                '' if master_width is None else master_width, image_url or '', in_url,
-                source_file))
-
-    data_headers = ('Avatar Title', 'Avatar ID', 'Master ID', 'Master Width', 'Image URL',
-                    'Master ID In Image URL', 'Source File')
-    return data_headers, data_list, source_path
 
 
-@artifact_processor
-def disneyplus_cached_titles(context):
-    data_list = []
-    source_path = ''
-    for url, headers, body in _cache_entries(_matching(context, '/cache/sdk-cache/')):
-        if 'json' not in headers.get('content-type', ''):
-            continue
-        parsed = _json_or_none(_body_bytes(body))
-        if parsed is None:
-            continue
-        source_path = source_path or body
-        source_file = _relative(context, body)
-        endpoint = '/'.join(urlparse(url).path.strip('/').split('/')[:3])
-        seen = set()
-        for item in _walk_titles(parsed):
-            content_id = item.get('contentId')
-            title = _title_text(item.get('text'))
-            if not title or content_id in seen:
-                continue
-            seen.add(content_id)
-            family = item.get('family') or {}
-            availability = item.get('currentAvailability') or {}
-            data_list.append((
-                title, content_id, item.get('contentType') or '',
-                item.get('programType') or '', item.get('encodedSeriesId') or '',
-                family.get('familyId') or '',
-                '' if item.get('episodeSequenceNumber') is None
-                else item.get('episodeSequenceNumber'),
-                availability.get('region') or '',
-                '' if availability.get('kidsMode') is None
-                else ('Yes' if availability.get('kidsMode') else 'No'),
-                item.get('badging') or '', endpoint, source_file))
-
-    data_headers = (
-        'Title', 'Content ID', 'Content Type (as stored)', 'Program Type (as stored)',
-        'Encoded Series ID', 'Family ID', 'Episode Sequence Number',
-        'Availability Region', 'Kids Mode', 'Badging (as stored)', 'Endpoint',
-        'Source File')
-    return data_headers, data_list, source_path
 
 
-@artifact_processor
-def disneyplus_playback_requests(context):
-    data_list = []
-    source_path = ''
-    for url, headers, body in _cache_entries(_matching(context, '/cache/sdk-cache/')):
-        parsed = urlparse(url)
-        if not _MEDIA_HOST_RE.search(parsed.netloc):
-            continue
-        source_path = source_path or body
-        source_file = _relative(context, body)
-        decoded = unquote(parsed.path)
-        media = re.search(r'url=/[^/]+/[^/]+/([0-9a-fA-F-]{36})', decoded)
-        if not media:
-            media = re.search(r'/([0-9a-fA-F-]{36})/', decoded)
-        device = re.search(r'~did=([^~/]+)', decoded)
-        account = re.search(r'~aid=([^~/]+)', decoded)
-        key_id = re.search(r'~kid=([^~/]+)', decoded)
-        expiry = re.search(r'exp=(\d+)', decoded)
-        data_list.append((
-            _seconds(expiry.group(1)) if expiry else '',
-            media.group(1) if media else '',
-            os.path.basename(parsed.path),
-            headers.get('content-type', ''),
-            device.group(1) if device else '',
-            account.group(1) if account else '',
-            key_id.group(1) if key_id else '',
-            parsed.netloc, os.path.getsize(body), source_file))
-
-    data_headers = (
-        ('Delivery Token Expiry', 'datetime'), 'Media ID', 'Requested File',
-        'Content Type', 'Device ID', 'Account ID', 'Key ID', 'Host', 'Cached Body Size',
-        'Source File')
-    return data_headers, data_list, source_path
 
 
 def _image_payload(path):
@@ -920,6 +812,63 @@ def _bif_frames(data):
     return frames, declared, multiplier
 
 
+
+
+
+
+@artifact_processor
+def disneyplus_playback_requests(context):
+    data_list = []
+    source_path = ''
+    per_media = {}
+    for url, headers, body in _cache_entries(_matching(context, '/cache/sdk-cache/')):
+        parsed = urlparse(url)
+        if not _MEDIA_HOST_RE.search(parsed.netloc):
+            continue
+        source_path = source_path or body
+        decoded = unquote(parsed.path)
+        media_id = _media_id(decoded)
+        record = per_media.setdefault(media_id, {
+            'expiries': [], 'manifests': 0, 'indexes': 0, 'other': 0, 'hosts': set(),
+            'device': '', 'account': '', 'key': '', 'forms': set(),
+            'source': _relative(context, body)})
+        record['forms'].add('Signed delivery token' if '~url=' in decoded
+                            else 'Unsigned path')
+        expiry = re.search(r'exp=(\d+)', decoded)
+        if expiry:
+            record['expiries'].append(int(expiry.group(1)))
+        for field, group in (('device', 'did'), ('account', 'aid'), ('key', 'kid')):
+            found = re.search(rf'~{group}=([^~/]+)', decoded)
+            if found and not record[field]:
+                record[field] = found.group(1)
+        record['hosts'].add(parsed.netloc)
+        name = os.path.basename(parsed.path).lower()
+        content_type = headers.get('content-type', '').lower()
+        if name.endswith('.m3u8') or 'mpegurl' in content_type:
+            record['manifests'] += 1
+        elif name.endswith('.bif') or 'bif' in content_type:
+            record['indexes'] += 1
+        else:
+            record['other'] += 1
+
+    for media_id, record in per_media.items():
+        expiries = sorted(record['expiries'])
+        data_list.append((
+            _seconds(expiries[0]) if expiries else '',
+            _seconds(expiries[-1]) if expiries else '',
+            media_id, record['manifests'], record['indexes'], record['other'],
+            record['device'], record['account'], record['key'],
+            ', '.join(sorted(record['forms'])), ', '.join(sorted(record['hosts'])),
+            record['source']))
+
+    data_headers = (
+        ('Earliest Token Expiry', 'datetime'), ('Latest Token Expiry', 'datetime'),
+        'Media ID', 'Manifest Requests', 'Trickplay Index Requests', 'Other Requests',
+        'Device ID', 'Account ID', 'Key ID', 'Request Form', 'Delivery Hosts',
+        'Source File')
+    return data_headers, data_list, source_path
+
+
 @artifact_processor
 def disneyplus_trickplay(context):
     data_list = []
@@ -929,24 +878,82 @@ def disneyplus_trickplay(context):
         if not raw.startswith(_BIF_MAGIC):
             continue
         source_path = source_path or body
-        source_file = _relative(context, body)
         decoded = unquote(urlparse(url).path)
-        media = re.search(r'/([0-9a-fA-F-]{36})/', decoded)
-        media_id = media.group(1) if media else ''
+        media_id = _media_id(decoded)
         frames, declared, multiplier = _bif_frames(raw)
-        for frame, chunk, overran in frames:
-            media_ref = check_in_embedded_media(
-                body, chunk, name=f'{media_id or "trickplay"}_{frame}.jpg',
-                force_type='image/jpeg', force_extension='jpg')
-            data_list.append((
-                media_ref, media_id, frame, multiplier, declared, len(frames),
-                'Yes' if overran else 'No', len(chunk), os.path.basename(decoded),
-                source_file))
+        if not frames:
+            continue
+        overran = sum(1 for _frame, _chunk, flag in frames if flag)
+        # The opening frames of a title are commonly blank, so the frame rendered is taken
+        # from about a quarter of the way in rather than from the start.
+        pick = frames[len(frames) // 4]
+        media_ref = check_in_embedded_media(
+            body, pick[1], name=f'{media_id or "trickplay"}_{pick[0]}.jpg',
+            force_type='image/jpeg', force_extension='jpg')
+        spacing = frames[1][0] - frames[0][0] if len(frames) > 1 else ''
+        data_list.append((
+            media_ref, media_id, declared, len(frames), pick[0], spacing,
+            frames[-1][0], multiplier, 'Yes' if overran else 'No',
+            os.path.basename(decoded), _relative(context, body)))
 
     data_headers = (
-        ('Frame', 'media'), 'Media ID', 'Frame Index Value', 'Declared Multiplier',
-        'Declared Frame Count', 'Frames Recovered', 'Declared End Overran Cached Bytes',
-        'Frame Size', 'Index File', 'Source File')
+        ('Preview Frame', 'media'), 'Media ID', 'Declared Frame Count', 'Frames Recovered',
+        'Rendered Frame Index', 'Frame Index Spacing', 'Last Frame Index',
+        'Declared Multiplier', 'Declared End Overran Cached Bytes', 'Index File',
+        'Source File')
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def disneyplus_cached_content(context):
+    data_list = []
+    source_path = ''
+    for url, headers, body in _cache_entries(_matching(context, '/cache/sdk-cache/')):
+        if 'json' not in headers.get('content-type', ''):
+            continue
+        parsed = _json_or_none(_body_bytes(body))
+        if parsed is None:
+            continue
+        source_path = source_path or body
+        segments = urlparse(url).path.strip('/').split('/')
+        titles = set()
+        regions = set()
+        for item in _walk_titles(parsed):
+            if _title_text(item.get('text')):
+                titles.add(item.get('contentId'))
+            availability = item.get('currentAvailability') or {}
+            if availability.get('region'):
+                regions.add(availability['region'])
+        if not titles:
+            continue
+        data_list.append((
+            '/'.join(segments[:3]), segments[2] if len(segments) > 2 else '',
+            len(titles), ', '.join(sorted(regions)), urlparse(url).netloc,
+            os.path.getsize(body), _relative(context, body)))
+
+    # Two further server supplied stores are summarised rather than enumerated. Neither
+    # records a time or a user action, so a row each stating what they hold is enough.
+    for file_found in _named(context, 'contentSetAvailability.xml'):
+        prefs = _prefs(file_found)
+        if not prefs:
+            continue
+        source_path = source_path or file_found
+        data_list.append((
+            'contentSetAvailability', 'home page sets', len(prefs), '', '',
+            os.path.getsize(file_found), _relative(context, file_found)))
+
+    for file_found in _named(context, 'profiles'):
+        rows = _rows(file_found, 'SELECT count(*) FROM `AvatarImpl`')
+        if not rows:
+            continue
+        source_path = source_path or file_found
+        data_list.append((
+            'profiles/AvatarImpl', 'avatar catalogue', rows[0][0], '', '',
+            os.path.getsize(file_found), _relative(context, file_found)))
+
+    data_headers = (
+        'Store Or Endpoint', 'Kind', 'Items Held', 'Availability Regions', 'Host',
+        'Stored Size', 'Source File')
     return data_headers, data_list, source_path
 
 
@@ -959,24 +966,32 @@ def disneyplus_cached_images(context):
     # be given that URL. That is a content hash match and is reported as such, never as a
     # link the container itself records.
     by_hash = {}
-    cached = []
+    stores = {}
+
+    def record(store, path, data, url, basis):
+        entry = stores.setdefault(store, {
+            'files': 0, 'hashes': set(), 'linked': 0, 'basis': set(), 'bytes': 0,
+            'kinds': set(), 'gzip': 0, 'dir': ''})
+        entry['files'] += 1
+        entry['hashes'].add(hashlib.sha256(data).hexdigest())
+        entry['bytes'] += len(data)
+        if url:
+            entry['linked'] += 1
+            entry['basis'].add(basis)
+        if not entry['dir']:
+            entry['dir'] = os.path.dirname(_relative(context, path))
+
     for url, _headers, body in _cache_entries(_matching(context, '/cache/http-cache/')):
         data, encoding = _image_payload(body)
-        label, extension, mime = _image_kind(data)
+        label, _extension, _mime = _image_kind(data)
         if not label:
             continue
-        by_hash.setdefault(hashlib.sha256(data).hexdigest(), url)
-        cached.append((body, url, data, encoding, label, extension, mime))
-
-    for body, url, data, encoding, label, extension, mime in cached:
         source_path = source_path or body
-        media_ref = _check_in_image(body, data, encoding,
-                                    os.path.basename(urlparse(url).path) or 'image',
-                                    mime, extension)
-        data_list.append((
-            media_ref, 'http-cache', os.path.basename(str(body).replace('\\', '/')), url,
-            'URL recorded in cache entry', label, encoding or 'identity', len(data),
-            _relative(context, body)))
+        by_hash.setdefault(hashlib.sha256(data).hexdigest(), url)
+        record('http-cache', body, data, url, 'URL recorded in cache entry')
+        stores['http-cache']['kinds'].add(label)
+        if encoding:
+            stores['http-cache']['gzip'] += 1
 
     for store, fragment in (('offline_images', '/files/offline_images/'),
                             ('glide-cache-v2', '/cache/glide-cache-v2/')):
@@ -984,21 +999,27 @@ def disneyplus_cached_images(context):
             if os.path.isdir(str(file_found)):
                 continue
             data, encoding = _image_payload(file_found)
-            label, extension, mime = _image_kind(data)
+            label, _extension, _mime = _image_kind(data)
             if not label:
                 continue
             source_path = source_path or file_found
-            name = os.path.basename(str(file_found).replace('\\', '/'))
             url = by_hash.get(hashlib.sha256(data).hexdigest(), '')
-            basis = 'Content hash match to a cached response' if url else ''
-            media_ref = _check_in_image(file_found, data, encoding, name, mime, extension)
-            data_list.append((
-                media_ref, store, name, url, basis, label, encoding or 'identity',
-                len(data), _relative(context, file_found)))
+            record(store, file_found, data, url,
+                   'Content hash match to a cached response')
+            stores[store]['kinds'].add(label)
+            if encoding:
+                stores[store]['gzip'] += 1
+
+    for store, entry in stores.items():
+        data_list.append((
+            store, entry['files'], len(entry['hashes']), entry['linked'],
+            ', '.join(sorted(entry['basis'])) or 'No link established',
+            ', '.join(sorted(entry['kinds'])), entry['gzip'], entry['bytes'],
+            entry['dir']))
 
     data_headers = (
-        ('Image', 'media'), 'Store', 'File Name', 'Source URL', 'Link Basis', 'Type',
-        'Stored Encoding', 'Decoded Size', 'Source File')
+        'Store', 'Image Files', 'Distinct By Content Hash', 'With A Source URL',
+        'Link Basis', 'Types', 'Stored Gzip Encoded', 'Decoded Bytes', 'Directory')
     return data_headers, data_list, source_path
 
 
