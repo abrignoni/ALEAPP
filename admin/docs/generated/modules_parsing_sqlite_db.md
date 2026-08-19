@@ -49,6 +49,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | kikMessenger |
 | knuddels |
 | netflix |
+| pinterest |
 | protonmailDbMail |
 | protonmailInbox |
 | rema_1000 |
