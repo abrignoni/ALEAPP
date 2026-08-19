@@ -259,6 +259,8 @@ SESSION_LINE = re.compile(r'AnalyticsSessionId is (?P<sid>[0-9a-fA-F-]+)')
 UDMUX_LINE = re.compile(r'UDMUX Address = (?P<udmux>[^,]+), Port = (?P<udmux_port>\d+)'
                         r' \| RCC Server Address = (?P<rcc>[^,]+), Port = (?P<rcc_port>\d+)')
 LOADTIME_LINE = re.compile(r'Report game_join_loadtime: (?P<body>.+)$')
+ISO_FRACTION = re.compile(
+    r'(?P<head>\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2})\.(?P<fraction>\d+)(?P<tail>.*)$')
 
 
 def _utc(seconds):
@@ -280,11 +282,21 @@ def _utc_ms(value):
 
 
 def _iso_utc(text):
-    """A UTC datetime from the ISO 8601 stamp the client writes, or '' when it does not parse."""
+    """A UTC datetime from the ISO 8601 stamp the client writes, or '' when it does not parse.
+
+    The fraction is padded to six digits first. Before Python 3.11 fromisoformat accepts
+    only three or six fractional digits, so a client writing any other precision would
+    parse here and be dropped on the oldest supported runtime.
+    """
     if not text:
         return ''
+    text = text.replace('Z', '+00:00')
+    match = ISO_FRACTION.match(text)
+    if match:
+        fraction = match.group('fraction')[:6].ljust(6, '0')
+        text = f"{match.group('head')}.{fraction}{match.group('tail')}"
     try:
-        return datetime.datetime.fromisoformat(text.replace('Z', '+00:00'))
+        return datetime.datetime.fromisoformat(text)
     except ValueError:
         return ''
 
