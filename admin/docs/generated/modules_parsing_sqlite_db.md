@@ -232,6 +232,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | pikpakDownloads |
 | pikpakPlay |
 | pkgPredictions |
+| primeVideo |
 | protonVPN |
 | protonmail |
 | reddit |
