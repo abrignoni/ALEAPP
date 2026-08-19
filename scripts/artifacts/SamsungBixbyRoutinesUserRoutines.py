@@ -107,6 +107,7 @@ __artifacts_v2__ = {
         "sample_data": {
         "samsung_s21ultra_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 15 rows",
         },
+     },
 }
 
 from scripts.ilapfuncs import (
