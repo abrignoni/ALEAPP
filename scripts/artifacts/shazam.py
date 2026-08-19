@@ -22,18 +22,25 @@ __artifacts_v2__ = {
                  "asserted. On the one device tested they were populated on 3 of 111 rows and "
                  "each of those three stored 0.0 in both columns, every place name column was "
                  "empty on every row, and the app's own preferences carry a key recording that "
-                 "the coarse location permission had been permanently denied. The KML export "
-                 "skips a row whose coordinates are zero, so it produced no points here and that "
-                 "path is code present and unexercised. Cover art is shown when the artwork URL "
-                 "the track row stores hashes to a file present in the app's image cache; on the "
-                 "device tested that resolved 102 of the 109 rows carrying a URL, and a row whose "
-                 "artwork is no longer cached is still reported with the cell left empty. The "
-                 "database uses WAL and the sidecars are matched with it: the tested device held "
-                 "2 recognitions that are only present once the WAL is applied. Artwork is only "
-                 "taken from the image cache inside the same app data directory as the database "
-                 "the row came from, so a second Android user's cached file is never shown "
-                 "against another user's row. The one device tested carried a single copy of the "
-                 "app data directory, so the storage view handling and that scoping were "
+                 "the coarse location permission had been permanently denied. Those columns are "
+                 "carried despite being uniformly empty here because they are the only record of "
+                 "where a recognition happened. The KML export skips a row whose coordinates are "
+                 "zero, so it produced no points here and that path is code present and "
+                 "unexercised. status was SUCCESSFUL on every row tested, so no failed or "
+                 "pending recognition was seen and the column is unexercised beyond that value. "
+                 "The table's retry count, audio offset and locale columns are not reported: "
+                 "they were constant or empty across the device tested and carry no fact an "
+                 "examiner can act on. The release date sits in Shazam Tracks rather than being "
+                 "repeated per recognition. Cover art is shown when the artwork URL the track "
+                 "row stores hashes to a file present in the app's image cache; on the device "
+                 "tested that resolved 102 of the 109 rows carrying a URL, and a row whose "
+                 "artwork is no longer cached is still reported with the cell left empty. "
+                 "Artwork is only taken from the image cache inside the same app data directory "
+                 "as the database the row came from, so a second Android user's cached file is "
+                 "never shown against another user's row. The database uses WAL and the sidecars "
+                 "are matched with it: the tested device held 2 recognitions that are only "
+                 "present once the WAL is applied. The one device tested carried a single copy "
+                 "of the app data directory, so the storage view handling and that scoping were "
                  "exercised against a constructed tree holding the directory at data/data, at "
                  "data/user/0 and at data/user/10 rather than against a real extraction: the two "
                  "user 0 spellings were read once and the second user was reported separately.",
@@ -45,8 +52,8 @@ __artifacts_v2__ = {
     "shazam_tracks": {
         "name": "Shazam Tracks",
         "description": "Rows of the track table in the Shazam library database, with the artists, "
-                       "genres and moods the app stored against each track and the time it last "
-                       "attempted to refresh that track's metadata",
+                       "genres and moods the app stored against each track, how many times it "
+                       "was recognised and when it was last recognised",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
@@ -57,57 +64,50 @@ __artifacts_v2__ = {
                  "activity. Artists are joined through the apple_artist_track table on the "
                  "artist_adam_id and artist_id columns, which agreed on 109 of the 110 join rows "
                  "on the device tested; the one row without a match is reported with the artist "
-                 "left empty. genre_type is reported as stored. release_date is stored as text "
-                 "and is passed through as stored rather than parsed, because the values seen "
-                 "were years rather than full dates. last_attempt_timestamp comes from the "
-                 "metadata_update_status table and is Unix milliseconds on the same basis as the "
-                 "recognition timestamp. Cover art is shown when the stored artwork URL hashes to "
-                 "a file present in the app's image cache.",
+                 "left empty. The artist table is reported through this join rather than as its "
+                 "own artifact: it carries no time of its own and nothing beyond the names and "
+                 "identifiers shown here. genre_type is reported as stored. release_date is "
+                 "stored as text and is passed through as stored rather than parsed, because the "
+                 "values seen were years rather than full dates. last_attempt_timestamp comes "
+                 "from the metadata_update_status table and is Unix milliseconds on the same "
+                 "basis as the recognition timestamp; that table's status column read success on "
+                 "every row tested and is not reported. Cover art is shown when the stored "
+                 "artwork URL hashes to a file present in the app's image cache in the same app "
+                 "data directory, which resolved 91 of the 98 stored URLs on the device tested.",
         "paths": ('*/com.shazam.android/databases/library.db*',
                   '*/com.shazam.android/cache/image_cache/*'),
         "output_types": "standard",
         "artifact_icon": "disc",
     },
-    "shazam_artists": {
-        "name": "Shazam Artists",
-        "description": "Rows of the artist table in the Shazam library database, with the artist "
-                       "identifier, name and stored image URL",
+    "shazam_http_cache": {
+        "name": "Shazam HTTP Cache",
+        "description": "Entries of the app's HTTP response cache, each holding the URL the app "
+                       "requested, the times the request was sent and the response received, and "
+                       "the track the URL refers to where the library database records it",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Shazam",
-        "notes": "bg_color is reported as stored. The artist image URL is reported as text: "
-                 "unlike the track artwork URL it did not hash to any file in the app's image "
-                 "cache on the device tested, none of the 80 stored URLs resolved, and the cache "
-                 "entry does not record the key it was stored under, so no link to bytes on disk "
-                 "is asserted for it.",
-        "paths": ('*/com.shazam.android/databases/library.db*',),
+        "notes": "Each entry dates a fetch the app made, which is why the entries are reported "
+                 "individually rather than summarised. The cache is a DiskLruCache holding a "
+                 "metadata file and a body file per entry. The metadata file records the URL on "
+                 "its first line, and the entry file name is the MD5 of that URL, which held for "
+                 "all 417 entries on the device tested, so the URL to file link is read from the "
+                 "cache rather than inferred. Where a URL contains a track key or an artist "
+                 "identifier the library database also holds, the track title is filled in from "
+                 "that database so the row names what was fetched; on the device tested 196 of "
+                 "417 URLs carried a known track key and 153 carried a known artist identifier, "
+                 "and a URL matching neither is reported with those columns empty. The two times "
+                 "are read from response headers the cache itself writes and which name their "
+                 "own units in milliseconds; they describe the app's own fetch and not anything "
+                 "a server recorded. Every entry on the device tested was a GET that returned "
+                 "200, so the method and status columns were dropped as uniformly constant. The "
+                 "response body is reported by size only and is not decoded here.",
+        "paths": ('*/com.shazam.android/cache/OK_HTTP_CACHE/*',
+                  '*/com.shazam.android/databases/library.db*'),
         "output_types": "standard",
-        "artifact_icon": "user",
-    },
-    "shazam_home_screen_announcements": {
-        "name": "Shazam Home Screen Announcements",
-        "description": "Rows of the home_screen_announcement table in the Shazam library "
-                       "database, holding announcement cards the app stored for display on its "
-                       "home screen",
-        "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
-        "requirements": "none",
-        "category": "Shazam",
-        "notes": "These rows are content the app held for display and are not a record of "
-                 "anything the user did. On the device tested the app's own preferences carried "
-                 "an impression counter and a dismissal flag for cards whose names are prefixed "
-                 "server_, and the same preference file records the configuration endpoint the "
-                 "app fetches from, which is the app's own vocabulary for content delivered to "
-                 "it. The serialised payload is JSON whose field names are single letters, so no "
-                 "meaning is assigned to them here and the payload is reported as stored. "
-                 "available_offline and is_resolved_on_server are reported as stored.",
-        "paths": ('*/com.shazam.android/databases/library.db*',
-                  '*/com.shazam.android/shared_prefs/com.shazam.android_preferences.xml'),
-        "output_types": "standard",
-        "artifact_icon": "speakerphone",
+        "artifact_icon": "api",
     },
     "shazam_offline_request_queue": {
         "name": "Shazam Offline Request Queue",
@@ -118,117 +118,90 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Shazam",
-        "notes": "The stored request is JSON carrying an HTTP method and a URL. The table has no "
-                 "timestamp column, so when a request was queued cannot be read from it. The "
-                 "database carries a trigger that deletes a row once its retry count reaches ten, "
-                 "so a queue that failed repeatedly leaves nothing behind. On the device tested "
-                 "the table held one row.",
+        "notes": "The stored request is JSON carrying an HTTP method and a URL, and the URL "
+                 "carries app and device identifying values, which is why the row is reported "
+                 "rather than summarised. The table has no timestamp column, so when a request "
+                 "was queued cannot be read from it. The database carries a trigger that deletes "
+                 "a row once its retry count reaches ten, so a queue that failed repeatedly "
+                 "leaves nothing behind. On the device tested the table held one row.",
         "paths": ('*/com.shazam.android/databases/guaranteed_requests.db*',),
         "output_types": "standard",
         "artifact_icon": "clock",
     },
-    "shazam_http_cache": {
-        "name": "Shazam HTTP Cache",
-        "description": "Entries of the app's HTTP response cache, each holding the requested URL, "
-                       "the request method, the response status and the times the request was "
-                       "sent and the response received",
-        "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
-        "requirements": "none",
-        "category": "Shazam",
-        "notes": "The cache is a DiskLruCache holding a metadata file and a body file per entry. "
-                 "The metadata file records the URL on its first line, and the entry file name is "
-                 "the MD5 of that URL, which held for all 417 entries on the device tested, so "
-                 "the URL to file link is read from the cache rather than inferred. The two times "
-                 "are read from response headers the cache itself writes and which name their own "
-                 "units in milliseconds; they describe the app's own fetch and not anything a "
-                 "server recorded. The response body is reported by size only and is not decoded "
-                 "here.",
-        "paths": ('*/com.shazam.android/cache/OK_HTTP_CACHE/*',),
-        "output_types": "standard",
-        "artifact_icon": "api",
-    },
-    "shazam_cached_images": {
-        "name": "Shazam Cached Images",
-        "description": "Image files held in the app's image cache, rendered from the extraction, "
-                       "with the source URL where the library database records one that resolves "
-                       "to the cached file",
-        "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
-        "requirements": "none",
-        "category": "Shazam",
-        "notes": "The cache is a DiskLruCache whose entry name is a hash of the key the image was "
-                 "stored under, and the entry does not record that key. A URL is shown only where "
-                 "a track artwork URL in the library database has a SHA-256 equal to the entry "
-                 "name, which resolved 91 of the 98 stored artwork URLs on the device tested; no "
-                 "artist image URL resolved. Every cached file is reported whether or not a URL "
-                 "resolved, so the images the database does not point at are not dropped. The two "
-                 "times come from the first and second lines of the entry's metadata file, read "
-                 "as Unix milliseconds; the first was never later than the second across all 463 "
-                 "metadata files on the device tested, and the file format does not name either "
-                 "of them, so no role is assigned to them here. The media type is taken from the "
-                 "cached response's content type header where the metadata records one. Entries "
-                 "are kept separate per app data directory, so a second Android user's cache is "
-                 "reported as its own rows rather than merged into user 0's.",
-        "paths": ('*/com.shazam.android/cache/image_cache/*',
-                  '*/com.shazam.android/databases/library.db*'),
-        "output_types": "standard",
-        "artifact_icon": "photo",
-    },
-    "shazam_cached_video": {
-        "name": "Shazam Cached Video",
-        "description": "Entries of the app's video cache index with the media URL each holds and "
-                       "the cached fragments present on disk for it",
-        "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
-        "requirements": "none",
-        "category": "Shazam",
-        "notes": "The index is read with every declared length checked against the bytes actually "
-                 "remaining, so a truncated index stops rather than reporting a structure that is "
-                 "not there. On the device tested it declared 50 entries and all 50 parsed, "
-                 "leaving four trailing bytes unread. Each fragment file is named with the "
-                 "content identifier its index entry carries, which is how a fragment is joined "
-                 "to a URL here; all 20 fragments on the tested device matched an index entry. "
-                 "The time comes from the third field of the fragment file name and reads as Unix "
-                 "milliseconds; the file name format does not label it, so no role is assigned to "
-                 "it. Bytes on disk are reported next to the length the index declares, because a "
-                 "cached fragment set is usually partial: no entry on the device tested held its "
-                 "full declared length. The fragments are not checked in as media for that "
-                 "reason.",
-        "paths": ('*/com.shazam.android/cache/video_cache/*',),
-        "output_types": "standard",
-        "artifact_icon": "player-play",
-    },
     "shazam_app_state": {
         "name": "Shazam App State",
         "description": "Entries of the Shazam application preferences file, holding the install "
-                       "identifier, counters and flags the app kept about its own state, and the "
-                       "times it recorded for its last recognition and last foreground",
+                       "identifier, the times the app recorded for its last recognition and last "
+                       "foreground, and the flags it kept about its own state",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Shazam",
-        "notes": "Every entry in the file is reported with its stored type and value. A UTC "
-                 "reading is filled in only where the value is a thirteen digit integer, which is "
-                 "the width every value that behaved as a time had on the device tested; the one "
-                 "shorter integer in the file is left unconverted rather than read as a time it "
-                 "is not. The key names are the app's own and several are abbreviated; no meaning "
-                 "is assigned to a key beyond what its name states. A value longer than 512 "
-                 "characters is reported by length instead of content, because the long values on "
-                 "the device tested were a configuration blob and a category mapping table the "
-                 "app fetches from its own endpoint rather than anything the user entered. The "
-                 "app also keeps a com.shazam.ams.xml preferences file whose keys and values are "
-                 "encrypted: it carries the two androidx security keyset entries that name the "
-                 "scheme, and the master key for it lives in the device keystore rather than in "
-                 "app storage, so it is not recoverable from an extraction of this directory and "
-                 "is not reported here.",
+        "notes": "Every entry in the file is reported with its stored type and value. The file is "
+                 "small and holds the install identifier, the last recognition and last "
+                 "foreground times and the app's record of which permissions were refused, so it "
+                 "is reported whole rather than filtered: dropping keys would misstate what the "
+                 "file contains, and the counters it also holds are few. A UTC reading is filled "
+                 "in only where the value is a thirteen digit integer, which is the width every "
+                 "value that behaved as a time had on the device tested; the one shorter integer "
+                 "in the file is left unconverted rather than read as a time it is not. The key "
+                 "names are the app's own and several are abbreviated; no meaning is assigned to "
+                 "a key beyond what its name states. A value longer than 512 characters is "
+                 "reported by length instead of content, because the long values on the device "
+                 "tested were a configuration blob and a category mapping table the app fetches "
+                 "from its own endpoint rather than anything the user entered. The app also keeps "
+                 "a com.shazam.ams.xml preferences file whose keys and values are encrypted: it "
+                 "carries the two androidx security keyset entries that name the scheme, and the "
+                 "master key for it lives in the device keystore rather than in app storage, so "
+                 "it is not recoverable from an extraction of this directory and is not reported "
+                 "here.",
         "paths": ('*/com.shazam.android/shared_prefs/com.shazam.android_preferences.xml',),
         "output_types": "standard",
         "artifact_icon": "settings",
+    },
+    "shazam_cached_content": {
+        "name": "Shazam Cached Content",
+        "description": "One row per store of content the app downloaded and held, giving what "
+                       "each store contains, how much of it is on disk and the period the store "
+                       "itself records",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-19",
+        "last_update_date": "2026-08-19",
+        "requirements": "none",
+        "category": "Shazam",
+        "notes": "These stores hold content the app fetched, not anything the user produced, and "
+                 "their individual items are not enumerated here because a single cached image, "
+                 "video fragment or announcement carries no fact an examiner can act on. The "
+                 "artwork that is tied to a recognition is rendered on the Shazam Recognitions "
+                 "and Shazam Tracks rows instead, which is where it answers a question. The "
+                 "underlying files remain in the extraction at the paths this artifact names, so "
+                 "the detail is still reachable. Image cache: a DiskLruCache whose entry name is "
+                 "a hash of the key the image was stored under; the entry does not record that "
+                 "key, so an item is counted as linked only where a track artwork URL in the "
+                 "library database has a SHA-256 equal to the entry name. The two times come "
+                 "from the first and second lines of an entry's metadata file, read as Unix "
+                 "milliseconds; the first was never later than the second across all 463 "
+                 "metadata files on the device tested, and the file format does not name either "
+                 "of them, so no role is assigned to them. Video cache: the index is read with "
+                 "every declared length checked against the bytes actually remaining, so a "
+                 "truncated index stops rather than reporting a structure that is not there; on "
+                 "the device tested it declared 50 entries and all 50 parsed, leaving four "
+                 "trailing bytes unread. Its URLs pointed at Apple video preview hosts and none "
+                 "of the 50 carried a track key or artist identifier the library database also "
+                 "held, so no entry could be tied to a recognition. The times come from the "
+                 "third field of the fragment file names, read as Unix milliseconds. No entry "
+                 "held its full declared length, so the fragments are partial and are not "
+                 "checked in as media. Home screen announcements: rows the app stored for "
+                 "display, whose payload field names are single letters, and whose count is "
+                 "reported without the payloads because nothing in them names a user action. "
+                 "Stores are counted per app data directory, so a second Android user's caches "
+                 "are reported as their own rows.",
+        "paths": ('*/com.shazam.android/cache/image_cache/*',
+                  '*/com.shazam.android/cache/video_cache/*',
+                  '*/com.shazam.android/databases/library.db*'),
+        "output_types": "standard",
+        "artifact_icon": "cloud-download",
     },
 }
 
@@ -297,6 +270,7 @@ _OKHTTP_CACHE = re.compile(r'/cache/OK_HTTP_CACHE/([0-9a-f]{32})\.0$')
 _VIDEO_INDEX = re.compile(r'/cache/video_cache/cached_content_index\.exi$')
 _VIDEO_FRAGMENT = re.compile(r'/cache/video_cache/.*/(\d+)\.(\d+)\.(\d+)\.v\d+\.exo$')
 _APP_PREFS = re.compile(r'/shared_prefs/com\.shazam\.android_preferences\.xml$')
+_DIGIT_RUN = re.compile(r'\d+')
 
 
 def _artwork_index(context, files_found):
@@ -373,42 +347,33 @@ def shazam_recognitions(context):
                           FROM apple_artist_track
                           JOIN artist ON artist.artist_id = apple_artist_track.artist_adam_id
                          WHERE apple_artist_track.track_key = tag.track_key),
-                       track.release_date,
                        tag.status,
-                       tag."offset",
                        tag.lat,
                        tag.lon,
                        tag.location_name,
                        tag.location_city,
                        tag.location_country,
-                       tag.locationLocale,
                        tag.unread,
-                       tag.retry_count,
                        tag.track_key,
                        tag.request_id,
                        track.cover_art
                   FROM tag
                   LEFT JOIN track ON track.track_key = tag.track_key
                  ORDER BY tag.timestamp'''):
-            (timestamp, title, artists, release_date, status, offset, lat, lon, location_name,
-             location_city, location_country, location_locale, unread, retry_count, track_key,
-             request_id, cover_art) = row
+            (timestamp, title, artists, status, lat, lon, location_name, location_city,
+             location_country, unread, track_key, request_id, cover_art) = row
             data_list.append((
                 _ms_to_utc(timestamp),
                 title or '',
                 artists or '',
                 _artwork_media(artwork, container, cover_art, title or track_key or ''),
-                release_date or '',
                 status,
-                offset,
                 lat,
                 lon,
                 location_name or '',
                 location_city or '',
                 location_country or '',
-                location_locale or '',
                 unread,
-                retry_count,
                 track_key or '',
                 request_id,
                 cover_art or '',
@@ -420,17 +385,13 @@ def shazam_recognitions(context):
         'Track Title',
         'Artist',
         ('Cover Art', 'media'),
-        'Release Date (as stored)',
         'Status (as stored)',
-        'Track Offset (as stored)',
         'Latitude',
         'Longitude',
         'Location Name',
         'Location City',
         'Location Country',
-        'Location Locale',
         'Unread (as stored)',
-        'Retry Count',
         'Track Key',
         'Request ID',
         'Cover Art URL',
@@ -465,13 +426,11 @@ def shazam_tracks(context):
                        (SELECT max(timestamp) FROM tag WHERE tag.track_key = track.track_key),
                        (SELECT last_attempt_timestamp FROM metadata_update_status
                          WHERE metadata_update_status.track_key = track.track_key),
-                       (SELECT status FROM metadata_update_status
-                         WHERE metadata_update_status.track_key = track.track_key),
                        track.cover_art
                   FROM track
                  ORDER BY track.track_title'''):
             (track_key, title, artists, release_date, genres, moods, tag_count, last_tag,
-             last_attempt, update_status, cover_art) = row
+             last_attempt, cover_art) = row
             data_list.append((
                 _ms_to_utc(last_tag),
                 _ms_to_utc(last_attempt),
@@ -482,7 +441,6 @@ def shazam_tracks(context):
                 genres or '',
                 moods or '',
                 tag_count,
-                update_status or '',
                 track_key,
                 cover_art or '',
                 _relative(context, path),
@@ -498,88 +456,8 @@ def shazam_tracks(context):
         'Genres (as stored)',
         'Moods (as stored)',
         'Recognition Count',
-        'Metadata Update Status (as stored)',
         'Track Key',
         'Cover Art URL',
-        'Source File',
-    )
-    return data_headers, data_list, source_path
-
-
-@artifact_processor
-def shazam_artists(context):
-    files_found = unique_files(context)
-    data_list = []
-    source_path = ''
-
-    for path in _matching(context, files_found, _LIBRARY_DB):
-        source_path = path
-        for row in get_sqlite_db_records(path, '''
-                SELECT artist.artist_id,
-                       artist.artist_name,
-                       (SELECT count(*) FROM apple_artist_track
-                         WHERE apple_artist_track.artist_adam_id = artist.artist_id),
-                       artist.bg_color,
-                       artist.artist_img
-                  FROM artist
-                 ORDER BY artist.artist_name'''):
-            artist_id, name, track_count, bg_color, image = row
-            data_list.append((
-                name or '',
-                artist_id,
-                track_count,
-                bg_color,
-                image or '',
-                _relative(context, path),
-            ))
-
-    data_headers = (
-        'Artist Name',
-        'Artist ID',
-        'Track Count',
-        'Background Colour (as stored)',
-        'Artist Image URL',
-        'Source File',
-    )
-    return data_headers, data_list, source_path
-
-
-@artifact_processor
-def shazam_home_screen_announcements(context):
-    files_found = unique_files(context)
-    data_list = []
-    source_path = ''
-
-    for path in _matching(context, files_found, _LIBRARY_DB):
-        source_path = path
-        for row in get_sqlite_db_records(path, '''
-                SELECT id, available_offline, is_resolved_on_server, serialised_hsa
-                  FROM home_screen_announcement ORDER BY id'''):
-            row_id, available_offline, resolved, payload = row
-            fields = ''
-            try:
-                parsed = json.loads(payload)
-                if isinstance(parsed, dict):
-                    fields = ', '.join(sorted(parsed.keys()))
-            except (TypeError, ValueError):
-                fields = ''
-            data_list.append((
-                row_id,
-                available_offline,
-                resolved,
-                fields,
-                len(payload) if payload else 0,
-                payload or '',
-                _relative(context, path),
-            ))
-
-    data_headers = (
-        'Row ID',
-        'Available Offline (as stored)',
-        'Resolved On Server (as stored)',
-        'Payload Fields',
-        'Payload Length',
-        'Payload (as stored)',
         'Source File',
     )
     return data_headers, data_list, source_path
@@ -629,7 +507,6 @@ def shazam_offline_request_queue(context):
                 url,
                 retries,
                 row_id,
-                request or '',
                 _relative(context, path),
             ))
 
@@ -638,15 +515,35 @@ def shazam_offline_request_queue(context):
         'URL',
         'Retries',
         'Row ID',
-        'Stored Request (as stored)',
         'Source File',
     )
     return data_headers, data_list, source_path
 
 
+def _track_lookup(context, files_found):
+    """{container: {identifier: label}} for the track and artist ids the library records.
+
+    A cached URL carries these ids in its path, so the identifier is what names the row.
+    Keys are matched as whole runs of digits rather than as substrings, so a short id
+    cannot match part of a longer number that happens to contain it.
+    """
+    lookup = {}
+    for path in _matching(context, files_found, _LIBRARY_DB):
+        container = _container(_relative(context, path))
+        names = lookup.setdefault(container, {})
+        for row in get_sqlite_db_records(path, 'SELECT track_key, track_title FROM track'):
+            if row[0]:
+                names[str(row[0])] = (str(row[0]), row[1] or '')
+        for row in get_sqlite_db_records(path, 'SELECT artist_id, artist_name FROM artist'):
+            if row[0] and str(row[0]) not in names:
+                names[str(row[0])] = ('', row[1] or '')
+    return lookup
+
+
 @artifact_processor
 def shazam_http_cache(context):
     files_found = unique_files(context)
+    lookup = _track_lookup(context, files_found)
     bodies = {}
     for path in files_found:
         relative = _relative(context, path)
@@ -664,16 +561,22 @@ def shazam_http_cache(context):
         entry = _okhttp_entry(path)
         if entry is None:
             continue
-        url, method, status, headers = entry
-        body = bodies.get((_container(relative), match.group(1)))
+        url, _method, _status, headers = entry
+        container = _container(relative)
+        body = bodies.get((container, match.group(1)))
+        track_key, title = '', ''
+        names = lookup.get(container, {})
+        for token in _DIGIT_RUN.findall(url):
+            if token in names:
+                track_key, title = names[token]
+                break
         data_list.append((
             _ms_to_utc(headers.get('okhttp-sent-millis')),
             _ms_to_utc(headers.get('okhttp-received-millis')),
-            method,
+            title,
             url,
-            status,
+            track_key,
             headers.get('content-type', ''),
-            headers.get('date', ''),
             os.path.getsize(body) if body and os.path.exists(body) else '',
             match.group(1),
             _relative(context, path),
@@ -683,11 +586,10 @@ def shazam_http_cache(context):
     data_headers = (
         ('Request Sent', 'datetime'),
         ('Response Received', 'datetime'),
-        'Method',
+        'Track or Artist Named In URL',
         'URL',
-        'Status Line',
+        'Track Key',
         'Content Type',
-        'Response Date Header',
         'Body Size (bytes)',
         'Cache Entry Name',
         'Source File',
@@ -731,57 +633,6 @@ def _okhttp_entry(path):
     return url, method, status, headers
 
 
-@artifact_processor
-def shazam_cached_images(context):
-    files_found = unique_files(context)
-    urls = _artwork_url_index(context, files_found)
-    metadata = {}
-    payloads = {}
-    for path in files_found:
-        relative = _relative(context, path)
-        match = _IMAGE_CACHE.search(relative)
-        if not match:
-            continue
-        key = (_container(relative), match.group(1))
-        (metadata if match.group(2) == '0' else payloads)[key] = path
-
-    data_list = []
-    source_path = ''
-    for key in sorted(payloads):
-        path = payloads[key]
-        source_path = path
-        name = key[1]
-        first, second, headers = _image_cache_metadata(metadata[key]) if key in metadata \
-            else (None, None, {})
-        url = urls.get(key, '')
-        content_type = headers.get('content-type', '')
-        data_list.append((
-            _ms_to_utc(first),
-            _ms_to_utc(second),
-            check_in_media(path, url or name, force_type=content_type or None) or '',
-            url,
-            content_type,
-            headers.get('last-modified', ''),
-            os.path.getsize(path) if os.path.exists(path) else '',
-            name,
-            _relative(context, path),
-        ))
-
-    data_list.sort(key=lambda row: (row[0] == '', row[0]))
-    data_headers = (
-        ('Cache Metadata Time 1', 'datetime'),
-        ('Cache Metadata Time 2', 'datetime'),
-        ('Image', 'media'),
-        'Source URL (where recorded)',
-        'Content Type',
-        'Last Modified Header',
-        'Size (bytes)',
-        'Cache Entry Name',
-        'Source File',
-    )
-    return data_headers, data_list, source_path
-
-
 def _artwork_url_index(context, files_found):
     """{(container, cache entry name): URL} for artwork URLs the library database records.
 
@@ -797,45 +648,6 @@ def _artwork_url_index(context, files_found):
             for (url,) in get_sqlite_db_records(path, query):
                 index[(container, hashlib.sha256(str(url).encode()).hexdigest())] = url
     return index
-
-
-@artifact_processor
-def shazam_cached_video(context):
-    files_found = unique_files(context)
-    fragments = {}
-    for path in files_found:
-        match = _VIDEO_FRAGMENT.search(_relative(context, path))
-        if match:
-            fragments.setdefault(int(match.group(1)), []).append(
-                (int(match.group(3)), os.path.getsize(path) if os.path.exists(path) else 0))
-
-    data_list = []
-    source_path = ''
-    for path in _matching(context, files_found, _VIDEO_INDEX):
-        source_path = path
-        for content_id, url, declared in _video_index_entries(path):
-            held = fragments.get(content_id, [])
-            data_list.append((
-                _ms_to_utc(max(item[0] for item in held)) if held else '',
-                url,
-                content_id,
-                declared if declared is not None else '',
-                len(held),
-                sum(item[1] for item in held),
-                _relative(context, path),
-            ))
-
-    data_list.sort(key=lambda row: (row[0] == '', row[0]))
-    data_headers = (
-        ('Latest Fragment File Time', 'datetime'),
-        'URL',
-        'Content ID',
-        'Declared Content Length (bytes)',
-        'Fragments On Disk',
-        'Bytes On Disk',
-        'Source File',
-    )
-    return data_headers, data_list, source_path
 
 
 def _video_index_entries(path):
@@ -897,6 +709,84 @@ def _video_index_entries(path):
             if name == 'exo_len' and length == 8:
                 declared = struct.unpack('>q', value)[0]
         yield content_id, key, declared
+
+
+@artifact_processor
+def shazam_cached_content(context):
+    """One row per store of downloaded content, counted rather than enumerated."""
+    files_found = unique_files(context)
+    urls = _artwork_url_index(context, files_found)
+    stores = {}
+
+    def store(container, name):
+        return stores.setdefault((container, name), {
+            'items': 0, 'linked': 0, 'bytes': 0, 'times': [], 'path': '', 'source': ''})
+
+    for path in files_found:
+        relative = _relative(context, path)
+        container = _container(relative)
+        match = _IMAGE_CACHE.search(relative)
+        if match:
+            entry = store(container, 'Image cache')
+            entry['path'] = f'{container}/cache/image_cache'
+            entry['source'] = entry['source'] or relative
+            if match.group(2) == '1':
+                entry['items'] += 1
+                entry['bytes'] += os.path.getsize(path) if os.path.exists(path) else 0
+                if (container, match.group(1)) in urls:
+                    entry['linked'] += 1
+            else:
+                first, second, _headers = _image_cache_metadata(path)
+                entry['times'] += [value for value in (first, second) if value]
+            continue
+        match = _VIDEO_FRAGMENT.search(relative)
+        if match:
+            entry = store(container, 'Video cache')
+            entry['path'] = f'{container}/cache/video_cache'
+            entry['bytes'] += os.path.getsize(path) if os.path.exists(path) else 0
+            entry['times'].append(int(match.group(3)))
+            continue
+        if _VIDEO_INDEX.search(relative):
+            entry = store(container, 'Video cache')
+            entry['path'] = f'{container}/cache/video_cache'
+            entry['source'] = relative
+            entry['items'] += sum(1 for _ in _video_index_entries(path))
+
+    for path in _matching(context, files_found, _LIBRARY_DB):
+        relative = _relative(context, path)
+        entry = store(_container(relative), 'Home screen announcements')
+        entry['path'] = relative
+        entry['source'] = relative
+        for row in get_sqlite_db_records(
+                path, 'SELECT count(*) FROM home_screen_announcement'):
+            entry['items'] += row[0]
+
+    data_list = []
+    source_path = ''
+    for (_container_key, name), entry in sorted(stores.items(), key=lambda item: item[0][1]):
+        source_path = source_path or entry['source']
+        data_list.append((
+            _ms_to_utc(min(entry['times'])) if entry['times'] else '',
+            _ms_to_utc(max(entry['times'])) if entry['times'] else '',
+            name,
+            entry['items'],
+            entry['linked'] if name == 'Image cache' else '',
+            entry['bytes'] or '',
+            entry['path'],
+            entry['source'],
+        ))
+
+    data_headers = (
+        ('Earliest Time Recorded In Store', 'datetime'),
+        ('Latest Time Recorded In Store', 'datetime'),
+        'Store',
+        'Items',
+        'Items Linked To A Library Record',
+        'Bytes On Disk',
+        'Store Path',
+        'Source File',
+    )
+    return data_headers, data_list, source_path
 
 
 @artifact_processor
