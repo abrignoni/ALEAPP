@@ -497,6 +497,26 @@ def roblox_app_launches(context):
     return data_headers, data_list, source_path
 
 
+def _activity_row(stamp, report, place_id, job_id, server, context_fields):
+    """One Game Activity row from a join line, its report line, and the log's own fields."""
+    return (
+        stamp,
+        _utc(report['clienttime']) if report.get('clienttime') else '',
+        place_id,
+        report.get('universeid', ''),
+        job_id,
+        report.get('sid', '') or context_fields['session_id'],
+        context_fields['session_id'],
+        report.get('userid', ''),
+        report.get('referral_page', ''),
+        report.get('join_time', ''),
+        server,
+        context_fields['udmux'],
+        context_fields['rcc'],
+        context_fields['log_name'],
+    )
+
+
 @artifact_processor
 def roblox_game_activity(context):
     files_found = unique_files(context)
@@ -557,28 +577,15 @@ def roblox_game_activity(context):
                     # in order rather than letting a later report replace an earlier one.
                     reports.setdefault(fields['placeid'], []).append(fields)
 
-        def emit(stamp, report, place_id, job_id, server):
-            data_list.append((
-                stamp,
-                _utc(report['clienttime']) if report.get('clienttime') else '',
-                place_id,
-                report.get('universeid', ''),
-                job_id,
-                report.get('sid', '') or session_id,
-                session_id,
-                report.get('userid', ''),
-                report.get('referral_page', ''),
-                report.get('join_time', ''),
-                server,
-                f'{udmux}:{udmux_port}' if udmux else '',
-                f'{rcc}:{rcc_port}' if rcc else '',
-                name,
-            ))
+        servers = {'session_id': session_id, 'log_name': name,
+                   'udmux': f'{udmux}:{udmux_port}' if udmux else '',
+                   'rcc': f'{rcc}:{rcc_port}' if rcc else ''}
 
         for join in joins:
             pending = reports.get(join['placeid']) or []
             report = pending.pop(0) if pending else {}
-            emit(join['stamp'], report, join['placeid'], join['jobid'], join['server'])
+            data_list.append(_activity_row(join['stamp'], report, join['placeid'],
+                                           join['jobid'], join['server'], servers))
 
         # A report line no join line covered still evidences a join, so it gets its own
         # row, timed by the log line that carried it rather than by a repeated value.
@@ -586,7 +593,8 @@ def roblox_game_activity(context):
         for place_id, pending in reports.items():
             for report in pending:
                 leftover += 1
-                emit(report.get('stamp', ''), report, place_id, '', '')
+                data_list.append(_activity_row(report.get('stamp', ''), report,
+                                               place_id, '', '', servers))
         if leftover:
             logfunc(f'Roblox: {leftover} game join report line(s) in {name} had no matching '
                     f'join line and are reported on their own row')
