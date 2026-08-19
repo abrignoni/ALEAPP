@@ -149,6 +149,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | battery_usage_v9 |
 | blueskymessages |
 | blueskysearches |
+| booking |
 | browserlocation |
 | bumble |
 | burner |
