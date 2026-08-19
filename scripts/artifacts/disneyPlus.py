@@ -457,21 +457,28 @@ def _json_or_none(text):
 
 
 def _cache_entries(paths):
-    '''(url, headers, body_path) for each DiskLruCache entry whose body is present.
+    """(url, headers, body_path) for each DiskLruCache entry whose body was matched.
 
-    The .0 member of an OkHttp entry begins with the request URL on its own line and the
-    response headers follow. The body is the .1 member beside it.
-    '''
-    entries = []
+    The .0 member of an entry begins with the request URL on its own line and the response
+    headers follow; the body is the .1 member beside it. The body is resolved from the
+    matched file list rather than from the filesystem, because the framework hands artifacts
+    copies staged into a shared folder and a sibling probe against that folder answers a
+    question about what has been copied so far rather than about the evidence.
+    """
+    matched = {}
+    heads = []
     for path in paths:
         norm = str(path).replace('\\', '/')
-        if not norm.endswith('.0'):
-            continue
-        body = str(path)[:-2] + '.1'
-        if not os.path.exists(body):
+        matched[norm] = str(path)
+        if norm.endswith('.0'):
+            heads.append(norm)
+    entries = []
+    for norm in heads:
+        body = matched.get(norm[:-2] + '.1')
+        if not body:
             continue
         try:
-            with open(path, 'rb') as handle:
+            with open(matched[norm], 'rb') as handle:
                 head = handle.read(65536).decode('utf-8', 'replace')
         except OSError:
             continue
