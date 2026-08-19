@@ -142,6 +142,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | WordsWithFriends |
 | Xender |
 | Zapya |
+| adobeReader |
 | airGuard |
 | amazonShopping |
 | battery_usage_v4 |
