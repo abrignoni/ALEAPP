@@ -314,12 +314,14 @@ def _image_cache_metadata(path):
         logfunc(f'Could not read Shazam image cache metadata {path}: {error}')
         return None, None, {}
     if len(lines) < 4:
+        logfunc(f'Shazam image cache metadata is shorter than its header: {path}')
         return None, None, {}
     try:
         first = int(lines[0])
         second = int(lines[1])
         count = int(lines[3])
     except ValueError:
+        logfunc(f'Shazam image cache metadata header did not parse: {path}')
         return None, None, {}
     headers = {}
     for line in lines[4:4 + count]:
@@ -611,19 +613,23 @@ def _okhttp_entry(path):
         logfunc(f'Could not read Shazam HTTP cache entry {path}: {error}')
         return None
     if len(lines) < 5:
+        logfunc(f'Shazam HTTP cache entry is shorter than its header, skipped: {path}')
         return None
     url, method = lines[0], lines[1]
     try:
         request_headers = int(lines[2])
     except ValueError:
+        logfunc(f'Shazam HTTP cache entry request header count did not parse, skipped: {path}')
         return None
     offset = 3 + request_headers
     if offset + 1 >= len(lines):
+        logfunc(f'Shazam HTTP cache entry ended inside its request headers, skipped: {path}')
         return None
     status = lines[offset]
     try:
         count = int(lines[offset + 1])
     except ValueError:
+        logfunc(f'Shazam HTTP cache entry response header count did not parse, skipped: {path}')
         return None
     headers = {}
     for line in lines[offset + 2:offset + 2 + count]:
