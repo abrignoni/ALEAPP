@@ -93,7 +93,7 @@ def torbrowser_thumbnails(context):
         location = str(media_path.parent)
 
         modified_ts = os.path.getmtime(file_found)
-        modifiedtime = datetime.datetime.utcfromtimestamp(int(modified_ts)).strftime('%Y-%m-%d %H:%M:%S')
+        modifiedtime = datetime.datetime.fromtimestamp(int(modified_ts), datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
 
         media_item = check_in_media(filename)
 
@@ -179,7 +179,7 @@ def torbrowser_usageinfo(context):
             if key_name == "pref_key_last_browse_activity_time":
                 try:
                     ts = int(value_raw)
-                    dt = datetime.datetime.utcfromtimestamp(ts / 1000.0)
+                    dt = datetime.datetime.fromtimestamp(ts / 1000.0, datetime.timezone.utc)
                     value_out = dt.strftime("%Y-%m-%d %H:%M:%S")
                 except Exception:
                     pass

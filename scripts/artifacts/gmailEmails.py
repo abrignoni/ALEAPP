@@ -75,7 +75,7 @@ __artifacts_v2__ = {
 import zlib
 from scripts.ilapfuncs import decode_protobuf
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor, \
     logfunc
@@ -137,7 +137,7 @@ def gmailEmails(context):
                     decompressed_data = zlib.decompress(arreglo)
                     message, typedef = decode_protobuf(decompressed_data)
                    
-                    timestamp = (datetime.utcfromtimestamp(message['17'] / 1000))              
+                    timestamp = (datetime.fromtimestamp(message['17'] / 1000, timezone.utc))              
                 else:
                     continue
 

@@ -485,7 +485,7 @@ def ornetbrowser_thumbnails(context):
         filename = (media_path.name)
         utctime = int(media_path.stem)
 
-        timestamp = (datetime.datetime.utcfromtimestamp(utctime/1000).strftime('%Y-%m-%d %H:%M:%S'))
+        timestamp = (datetime.datetime.fromtimestamp(utctime/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))
         media_item = check_in_media(file_found, filename)
 
         if media_item:
@@ -612,7 +612,7 @@ def ornetbrowser_usageinfo(context):
             if key_name == "last_app_close_time":
                 try:
                     ts = int(value_raw)
-                    dt = datetime.datetime.utcfromtimestamp(ts / 1000.0)
+                    dt = datetime.datetime.fromtimestamp(ts / 1000.0, datetime.timezone.utc)
                     value_out = dt.strftime("%Y-%m-%d %H:%M:%S")
                 except Exception:
                     pass

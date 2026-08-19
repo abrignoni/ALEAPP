@@ -38,8 +38,14 @@ def _read_xml_with_fixed_first_line(xml_file):
     return "\n".join(lines)
 
 
+_EPOCH_UTC = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+
+
 def _ms_to_utc(value):
-    return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    # Added to the epoch rather than passed to fromtimestamp: this also converts the
+    # birthday attribute, which can predate 1970, where that function raises gmtime()
+    # errors on some platforms.
+    return (_EPOCH_UTC + datetime.timedelta(milliseconds=int(value))).strftime('%Y-%m-%d %H:%M:%S')
 
 
 def _s_to_utc(value):
