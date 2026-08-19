@@ -4,14 +4,13 @@ import csv
 import hashlib
 import inspect
 import json
-import math
 import os
 import re  # pylint: disable=unused-import
 import shutil
 import sqlite3
 import sys
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote
@@ -1212,17 +1211,40 @@ def device_info(category, label, value, source_file=""):
     identifiers[category] = values
 
 ### New timestamp conversion functions
+_UNIX_EPOCH_UTC = datetime(1970, 1, 1, tzinfo=timezone.utc)
+
 def convert_unix_ts_in_seconds(ts):
-    digits = int(math.log10(ts))+1
-    if digits > 10:
-        extra_digits = digits - 10
-        ts = ts // 10**extra_digits
-    return int(ts)
+    """A Unix timestamp normalised to whole seconds, whatever sub-second unit it is stored in.
+
+    The unit is taken from the value's magnitude and divided by the matching power of a
+    thousand, keeping this module's long-standing boundary that more than ten digits means
+    sub-second units. Sizing by digit count alone, as this did previously, assumed the value
+    in seconds was itself ten digits, which only holds from 2001-09-09 to 2286. Outside that
+    window a millisecond value was rescaled by the wrong factor, so a 1990 date read as 2170
+    and a 1952 birth date as 1795, and any negative value raised ValueError from math.log10.
+
+    Magnitude cannot separate the units close to the epoch: any value standing for an
+    instant within about four months either side of it is read as the next coarser unit,
+    whichever unit it was really in. A caller that knows the unit should convert it itself
+    rather than rely on this.
+    """
+    ts = int(ts)
+    magnitude = abs(ts)
+    if magnitude >= 10**16:
+        return ts // 1_000_000_000  # nanoseconds
+    if magnitude >= 10**13:
+        return ts // 1_000_000      # microseconds
+    if magnitude >= 10**10:
+        return ts // 1_000          # milliseconds
+    return ts
 
 def convert_unix_ts_to_utc(ts):
     if ts:
         ts = convert_unix_ts_in_seconds(ts)
-        return datetime.fromtimestamp(ts, tz=timezone.utc)
+        # Added to the epoch rather than passed to datetime.fromtimestamp, which the Python
+        # documentation notes may raise OSError for a timestamp the platform C gmtime()
+        # cannot represent. Values before 1970 are the case that reaches here.
+        return _UNIX_EPOCH_UTC + timedelta(seconds=ts)
     else:
         return ts
 

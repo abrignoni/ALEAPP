@@ -278,10 +278,10 @@ def _ms(value):
     '''A Unix millisecond value as a UTC datetime, or '' when absent or zero.
 
     Converted here rather than through convert_unix_ts_to_utc because this table stores
-    birth dates, and one tested profile holds a 1952 birth date as -550713600000. That
-    helper sizes its input with math.log10, which rejects a negative. Adding a timedelta
-    to the epoch also avoids datetime.fromtimestamp, which raises on Windows for any
-    value before 1970.
+    birth dates, and a tested profile holds one from before 1970, stored as a negative
+    millisecond value. The shared helper infers the unit from the value's magnitude, which
+    cannot separate milliseconds from seconds close to the epoch. This column is always
+    milliseconds, so converting it here keeps a birth date near 1970 correct.
     '''
     try:
         value = int(value)
