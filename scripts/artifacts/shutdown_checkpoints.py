@@ -44,7 +44,7 @@ def shutdown_checkpoints(context):
                     
                     entry_epoch = line.split("epoch=")
                     epoch = int(entry_epoch[1].replace(')',''))
-                    shutdown_timestamp = datetime.datetime.utcfromtimestamp(epoch/1000).strftime('%Y-%m-%d %H:%M:%S')
+                    shutdown_timestamp = datetime.datetime.fromtimestamp(epoch/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
                     
                     data_list.append((shutdown_timestamp, request, line, context.get_relative_path(file_found)))
                 else:

@@ -515,7 +515,7 @@ def duckduckgo_thumbnails(context):
         filename = (media_path.name)
         utctime = int(media_path.stem)
 
-        timestamp = (datetime.datetime.utcfromtimestamp(utctime/1000).strftime('%Y-%m-%d %H:%M:%S'))
+        timestamp = (datetime.datetime.fromtimestamp(utctime/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))
         media_item = check_in_media(file_found, filename)
 
         if media_item:
