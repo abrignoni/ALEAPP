@@ -289,7 +289,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from urllib.parse import unquote, urlparse
 
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_embedded_media,
@@ -336,6 +336,26 @@ _IMAGE_MAGIC = (
 )
 
 _BIF_MAGIC = b'\x89BIF\r\n\x1a\n'
+
+
+_PACKAGE = 'com.disney.disneyplus'
+
+
+def _container(context, path):
+    '''A key for the app data directory a matched file belongs to.
+
+    Matched on a path segment equal to the package name rather than on a substring, so a
+    directory that merely contains the name cannot be taken for the container. Every index
+    below is keyed on it together with its own key, because a cache entry name, a media id
+    and a store name all repeat across app data directories, and keying on those alone
+    merged a second Android user's rows into the first user's.
+    '''
+    relative = str(context.get_relative_path(path)).replace('\\', '/')
+    parts = relative.split('/')
+    for position, part in enumerate(parts):
+        if part == _PACKAGE:
+            return canonical_path('/'.join(parts[:position + 1]))[0]
+    return canonical_path(relative)[0]
 
 
 def _relative(context, path):
@@ -837,7 +857,7 @@ def disneyplus_playback_requests(context):
         source_path = source_path or body
         decoded = unquote(parsed.path)
         media_id = _media_id(decoded)
-        record = per_media.setdefault(media_id, {
+        record = per_media.setdefault((_container(context, body), media_id), {
             'expiries': [], 'manifests': 0, 'indexes': 0, 'other': 0, 'hosts': set(),
             'device': '', 'account': '', 'key': '', 'forms': set(),
             'source': _relative(context, body)})
@@ -860,7 +880,7 @@ def disneyplus_playback_requests(context):
         else:
             record['other'] += 1
 
-    for media_id, record in per_media.items():
+    for (_owner, media_id), record in per_media.items():
         expiries = sorted(record['expiries'])
         data_list.append((
             _seconds(expiries[0]) if expiries else '',
@@ -978,7 +998,7 @@ def disneyplus_cached_images(context):
     stores = {}
 
     def record(store, path, data, url, basis):
-        entry = stores.setdefault(store, {
+        entry = stores.setdefault((_container(context, path), store), {
             'files': 0, 'hashes': set(), 'linked': 0, 'basis': set(), 'bytes': 0,
             'kinds': set(), 'gzip': 0, 'dir': ''})
         entry['files'] += 1
@@ -996,11 +1016,12 @@ def disneyplus_cached_images(context):
         if not label:
             continue
         source_path = source_path or body
-        by_hash.setdefault(hashlib.sha256(data).hexdigest(), url)
+        by_hash.setdefault((_container(context, body), hashlib.sha256(data).hexdigest()), url)
+        owner = _container(context, body)
         record('http-cache', body, data, url, 'URL recorded in cache entry')
-        stores['http-cache']['kinds'].add(label)
+        stores[(owner, 'http-cache')]['kinds'].add(label)
         if encoding:
-            stores['http-cache']['gzip'] += 1
+            stores[(owner, 'http-cache')]['gzip'] += 1
 
     for store, fragment in (('offline_images', '/files/offline_images/'),
                             ('glide-cache-v2', '/cache/glide-cache-v2/')):
@@ -1012,14 +1033,16 @@ def disneyplus_cached_images(context):
             if not label:
                 continue
             source_path = source_path or file_found
-            url = by_hash.get(hashlib.sha256(data).hexdigest(), '')
+            url = by_hash.get(
+                (_container(context, file_found), hashlib.sha256(data).hexdigest()), '')
+            owner = _container(context, file_found)
             record(store, file_found, data, url,
                    'Content hash match to a cached response')
-            stores[store]['kinds'].add(label)
+            stores[(owner, store)]['kinds'].add(label)
             if encoding:
-                stores[store]['gzip'] += 1
+                stores[(owner, store)]['gzip'] += 1
 
-    for store, entry in stores.items():
+    for (_owner, store), entry in stores.items():
         data_list.append((
             store, entry['files'], len(entry['hashes']), entry['linked'],
             ', '.join(sorted(entry['basis'])) or 'No link established',

@@ -285,7 +285,7 @@ import re
 import struct
 from datetime import datetime, timedelta, timezone
 
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_embedded_media,
@@ -459,8 +459,29 @@ def _url_candidates(url):
             yield base + size + extension
 
 
+_PACKAGE = 'com.ebay.mobile'
+
+
+def _container(context, path):
+    '''A key for the app data directory a matched file belongs to.
+
+    Matched on a path segment equal to the package name rather than on a substring, so a
+    directory that merely contains the name cannot be taken for the container. The cache
+    and listing indexes below are keyed on it together with their own key, because a cache
+    entry name repeats across app data directories: keying on the name alone dropped a
+    second Android user's cache entries and could hand one directory's image to another
+    directory's listing.
+    '''
+    relative = str(context.get_relative_path(path)).replace('\\', '/')
+    parts = relative.split('/')
+    for position, part in enumerate(parts):
+        if part == _PACKAGE:
+            return canonical_path('/'.join(parts[:position + 1]))[0]
+    return canonical_path(relative)[0]
+
+
 def _image_cache_files(context):
-    '''Cache file name to path for every entry of the app's image cache.'''
+    '''(container, cache file name) to path for every entry of the app's image cache.'''
     files = {}
     for path in unique_files(context):
         parts = path.replace('\\', '/').split('/')
@@ -469,7 +490,7 @@ def _image_cache_files(context):
         name = os.path.basename(path)
         if not name.endswith('.dat'):
             continue
-        files.setdefault(name[:-4], path)
+        files.setdefault((_container(context, path), name[:-4]), path)
     return files
 
 
@@ -484,7 +505,7 @@ def _watch_rows(file_found):
 
 
 def _listing_by_cache_key(context):
-    '''Cache file name to (listing id, title) for every watched listing that resolves.
+    '''(container, cache file name) to (listing id, title) for each resolving listing.
 
     The listing's stored image URL and each rendition variant of it are hashed and looked
     up among the cache file names. Equality of a SHA-256 over the whole URL is what makes
@@ -492,12 +513,13 @@ def _listing_by_cache_key(context):
     '''
     resolved = {}
     for file_found in _databases(context, 'nautilus_db'):
+        owner = _container(context, file_found)
         for row in _watch_rows(file_found):
             url = _text(row[5])
             if not url:
                 continue
             for candidate in _url_candidates(url):
-                key = _cache_key(candidate)
+                key = (owner, _cache_key(candidate))
                 if key not in resolved:
                     resolved[key] = (_text(row[2]), _text(row[1]))
     return resolved
@@ -515,12 +537,13 @@ def ebay_watch_list(context):
             continue
         source_path = file_found
         relative = context.get_relative_path(file_found)
+        owner = _container(context, file_found)
         for row in rows:
             url = _text(row[5])
             media = ''
             if url and cache_files:
                 for candidate in _url_candidates(url):
-                    cache_path = cache_files.get(_cache_key(candidate))
+                    cache_path = cache_files.get((owner, _cache_key(candidate)))
                     if not cache_path:
                         continue
                     _, _, payload = _cache_entry(cache_path)
@@ -805,7 +828,7 @@ def ebay_cached_images(context):
     source_path = ''
     listings = _listing_by_cache_key(context)
 
-    for name, file_found in sorted(_image_cache_files(context).items()):
+    for (owner, name), file_found in sorted(_image_cache_files(context).items()):
         header, metadata, payload = _cache_entry(file_found)
         if header is None:
             logfunc(f'eBay cached images: could not read cache framing of {file_found}')
@@ -815,7 +838,7 @@ def ebay_cached_images(context):
             logfunc(f'eBay cached images: cached value is not an image in {file_found}')
             continue
         source_path = file_found
-        listing_id, title = listings.get(name, ('', ''))
+        listing_id, title = listings.get((owner, name), ('', ''))
         media = check_in_embedded_media(
             file_found, payload, f'{name}.{kind[2]}',
             force_type=kind[1], force_extension=kind[2])

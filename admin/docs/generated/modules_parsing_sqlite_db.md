@@ -161,6 +161,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | burnerUser |
 | calllog |
 | calllogs |
+| capCut |
 | cashApp |
 | chatgpt |
 | chatgpt2 |
@@ -185,6 +186,8 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | dmss |
 | downloads |
 | emulatedSmeta |
+| etsy |
+| facebookApp |
 | firefox |
 | firefoxCookies |
 | firefoxDownloads |
@@ -214,6 +217,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googlemaplocation |
 | groupMe |
 | hikvision |
+| hinge |
 | imo |
 | instagram |
 | installedappsGass |
@@ -233,7 +237,9 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | mega |
 | mega_transfers |
 | mewe |
+| nordVpn |
 | pSettings |
+| payPal |
 | pikpakCloudlist |
 | pikpakDownloads |
 | pikpakPlay |
@@ -242,6 +248,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | protonVPN |
 | protonmail |
 | reddit |
+| revolut |
 | ryanair |
 | sChats |
 | samsungSmartThings |
@@ -273,6 +280,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | teams |
 | teleguard |
 | textnow |
+| threads |
 | tikTok |
 | tinder |
 | truecaller |
@@ -280,11 +288,13 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | usageapps |
 | userDict |
 | vaulty_files |
+| vinted |
 | vlcMedia |
 | vlcThumbs |
 | waze |
 | wellbeing |
 | whatsAppExtended |
 | wireMessenger |
+| yahooMail |
 | zepplife |
 <!-- READONLY_END -->
