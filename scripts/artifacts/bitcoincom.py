@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "",
         "category": "Cryptocurrency",
         "notes": """This script dumps extended public keys from the Bitcoin.com wallet, these could be derived 
-                using the 'bip_utils' module, but i think its best not to add t0o many requirements and the associated
+                using the 'bip_utils' module, but i think its best not to add too many requirements and the associated
                 addresses can be derived at iancoleman.io/bip39/.""",
         "paths": ('*/com.bitcoin.mwallet/databases/com.bitcoin.mwallet.wallet-db*',),
         "output_types": "standard",
