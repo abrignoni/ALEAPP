@@ -17,7 +17,7 @@ __artifacts_v2__ = {
         "description": "Extract user associated cryptocurrency address contacts from the MetaMask wallet",
         "author": "CH-Clark",
         "creation_date": "2026-08-11",
-        "last_update_date": "2026-08-11",
+        "last_update_date": "2026-08-20",
         "requirements": "none",
         "category": "Cryptocurrency",
         "notes": "",
@@ -47,6 +47,7 @@ def get_metamask_addresses(context):
         json_obj = json.loads(read_data)
         internalAccounts = json_obj['internalAccounts']
         accounts = internalAccounts['accounts']
+
         for ids in accounts:
             account_data = accounts[ids]
             addresses = account_data.get('address')
@@ -83,7 +84,6 @@ def get_metamask_contacts(context):
                 name = details['name']
                 memo = details['memo']
 
-                print(name, address, memo)
                 data_list.append((address, name, memo))
 
     data_headers = ('User Contact Address', 'Name', 'Memo')
