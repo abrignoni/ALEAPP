@@ -8,19 +8,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Revolut",
-        "notes": "One row per recipient. Recipient Type is the value the row carries and was "
-                 "BANK, CONTACT_CODE or CRYPTO on the tested device, where a contact code "
-                 "row carries a readable handle and the others carry an identifier only; all "
-                 "are reported as stored. Item ID and Item Type name the record the row "
-                 "links to, which was a transaction on every row, but the transactions "
-                 "themselves are not in this store and the app's own transaction and chat "
-                 "databases are encrypted, so no amount, currency or date of a payment is "
-                 "available here. Unread Sync is Unix milliseconds and is the app's own sync "
-                 "marker for the unread counter beside it, not the time of a payment; it was "
-                 "zero on some rows. The row records that the app listed the recipient, "
-                 "which is not the same as a payment having been made. Field mapping was "
-                 "done against three private samples provided by Mattia; no sample data is "
-                 "recorded for them.",
+        "notes": "One row per recipient the app listed as recently paid. This is a lead sheet, not a transaction history: the payments themselves are not in this store and the app's transaction and chat databases are encrypted with no key recoverable from the extraction, so no amount, currency, direction or payment date is available. What each row does carry is a counterparty and a transaction identifier. Transaction ID is distinct on every row and is the reference an examiner would put to the service to obtain the payment itself. Recipient Type is reported as stored and was BANK, CONTACT_CODE or CRYPTO on the tested device: a contact code row carries a readable handle naming a counterparty, while the others carry an opaque identifier, so of the 17 rows there 3 named a counterparty and 14 did not, and 11 of the 17 were crypto. Unread Counter Last Synced is Unix milliseconds and is the app's sync marker for the counter beside it, not the time of a payment; it was zero on 14 of the 17 rows, and the rows are ordered by recipient rather than by it so that they are not presented as though ordered by when a payment happened. Unread Counter was zero on every row of the tested device, so it is carried but was never exercised there. A row records that the app listed the recipient, which is not the same as a payment having been made. Field mapping was done against three private samples provided by Mattia; only one of the three carried this store, and no sample data is recorded for them.",
         "paths": (
             '*/com.revolut.revolut/databases/payments_recent_db*',
         ),
@@ -177,24 +165,27 @@ def revolut_payment_recipients(context):
             stamp, recipient, recipient_type, item, item_type, unread = row
             source_files.append(relative)
             data_list.append((
-                _ms(stamp),
                 str(recipient or ''),
                 str(recipient_type or ''),
                 str(item_type or ''),
                 str(item or ''),
+                _ms(stamp),
                 str(unread if unread is not None else ''),
                 relative,
             ))
         database.close()
 
-    data_list.sort(key=lambda row: (str(row[0]), str(row[1])), reverse=True)
+    # Sorted on the recipient rather than on the sync marker, because the marker is not an
+    # event time and sorting by it would present these rows as though they were ordered by
+    # when a payment happened.
+    data_list.sort(key=lambda row: (str(row[1]), str(row[0])))
 
     data_headers = (
-        ('Unread Sync', 'datetime'),
         'Recipient',
         'Recipient Type (as stored)',
         'Item Type (as stored)',
-        'Item ID',
+        'Transaction ID',
+        ('Unread Counter Last Synced', 'datetime'),
         'Unread Counter',
         'Source File',
     )
