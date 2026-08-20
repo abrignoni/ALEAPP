@@ -185,6 +185,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | dmss |
 | downloads |
 | emulatedSmeta |
+| etsy |
 | firefox |
 | firefoxCookies |
 | firefoxDownloads |
