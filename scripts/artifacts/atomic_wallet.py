@@ -37,7 +37,6 @@ def get_atomic_wallet_addresses(context):
         # Create the LocalStoreDb object which is used to access the data
         with ccl_chromium_localstorage.LocalStoreDb(leveldb_dir) as local_storage:
             for storage_key in local_storage.iter_storage_keys():
-                print(f"Getting records for {storage_key}")
             
                 for record in local_storage.iter_records_for_storage_key(storage_key):
                     # we can attempt to associate this record with a batch, which may
@@ -46,14 +45,9 @@ def get_atomic_wallet_addresses(context):
                     batch = local_storage.find_batch(record.leveldb_seq_number)
                     timestamp = batch.timestamp if batch else None
 
-                    # print(record.leveldb_seq_number, record.script_key, record.value, sep="\t")
-
                     if 'addresses' in record.script_key:
                         json_obj = json.loads(record.value)
 
-
-                        
-                        # print(json_obj)
                         for item in json_obj:
                             ticker = item['id']
                             address = item['address']
