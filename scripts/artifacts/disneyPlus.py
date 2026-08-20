@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "disneyplus_resume_points": {
         "name": "Disney+ - Playback Resume Points",
         "description": "Parses the playback resume positions stored by the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
     "disneyplus_last_played": {
         "name": "Disney+ - Last Played Item",
         "description": "Parses the last played item recorded by the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
     "disneyplus_recent_searches": {
         "name": "Disney+ - Recent Searches",
         "description": "Parses the recent search terms stored by the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
     "disneyplus_session": {
         "name": "Disney+ - Session State",
         "description": "Parses the streaming SDK session state of the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -105,7 +105,7 @@ __artifacts_v2__ = {
     "disneyplus_app_settings": {
         "name": "Disney+ - App Settings and State",
         "description": "Parses the app state and playback preferences of the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -133,7 +133,7 @@ __artifacts_v2__ = {
     "disneyplus_playback_requests": {
         "name": "Disney+ - Playback Requests",
         "description": "Summarises the cached streaming requests of the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -157,7 +157,7 @@ __artifacts_v2__ = {
     "disneyplus_trickplay": {
         "name": "Disney+ - Trickplay Preview",
         "description": "Checks in a preview frame from each trickplay index cached by the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -189,7 +189,7 @@ __artifacts_v2__ = {
     "disneyplus_cached_content": {
         "name": "Disney+ - Cached Content Responses",
         "description": "Summarises the content service responses cached by the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -222,7 +222,7 @@ __artifacts_v2__ = {
     "disneyplus_cached_images": {
         "name": "Disney+ - Cached Image Stores",
         "description": "Summarises the image caches of the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -253,7 +253,7 @@ __artifacts_v2__ = {
     "disneyplus_sdk_events": {
         "name": "Disney+ - SDK Events",
         "description": "Parses the streaming SDK telemetry events of the Disney+ Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",

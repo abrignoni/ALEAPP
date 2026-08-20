@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "roblox_account": {
         "name": "Roblox - Account",
         "description": "Parses the signed in Roblox account recorded by the Roblox Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
     "roblox_previous_accounts": {
         "name": "Roblox - Previous Accounts",
         "description": "Parses the account picker list kept by the Roblox Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -60,7 +60,7 @@ __artifacts_v2__ = {
     "roblox_app_launches": {
         "name": "Roblox - App Launches",
         "description": "Parses the per launch client log files written by the Roblox Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -86,7 +86,7 @@ __artifacts_v2__ = {
     "roblox_game_activity": {
         "name": "Roblox - Game Activity",
         "description": "Parses experience joins and game server connections from the Roblox Android client logs.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -118,7 +118,7 @@ __artifacts_v2__ = {
     "roblox_push_notifications": {
         "name": "Roblox - Push Notifications Received",
         "description": "Parses the received push notification ids recorded by the Roblox Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -152,7 +152,7 @@ __artifacts_v2__ = {
     "roblox_marketplace_searches": {
         "name": "Roblox - Marketplace Searches",
         "description": "Parses the recent marketplace search terms kept by the Roblox Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -174,7 +174,7 @@ __artifacts_v2__ = {
     "roblox_user_game_settings": {
         "name": "Roblox - User Game Settings",
         "description": "Parses the in experience settings saved by the Roblox Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -200,7 +200,7 @@ __artifacts_v2__ = {
     "roblox_account_policy": {
         "name": "Roblox - Account Policy",
         "description": "Parses the cached account policy response held by the Roblox Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -219,7 +219,7 @@ __artifacts_v2__ = {
     "roblox_app_state": {
         "name": "Roblox - Application State",
         "description": "Parses install, launch count and notification state preferences of the Roblox Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",

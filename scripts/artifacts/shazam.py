@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Rows of the tag table in the Shazam library database, each holding the "
                        "time of a music recognition with the track it resolved to, the stored "
                        "coordinates and place names, and the recognition request identifier",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -54,7 +54,7 @@ __artifacts_v2__ = {
         "description": "Rows of the track table in the Shazam library database, with the artists, "
                        "genres and moods the app stored against each track, how many times it "
                        "was recognised and when it was last recognised",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -84,7 +84,7 @@ __artifacts_v2__ = {
         "description": "Entries of the app's HTTP response cache, each holding the URL the app "
                        "requested, the times the request was sent and the response received, and "
                        "the track the URL refers to where the library database records it",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -113,7 +113,7 @@ __artifacts_v2__ = {
         "name": "Shazam Offline Request Queue",
         "description": "Rows of the guaranteed_requests table in the Shazam guaranteed requests "
                        "database, holding HTTP requests the app queued for later delivery",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -133,7 +133,7 @@ __artifacts_v2__ = {
         "description": "Entries of the Shazam application preferences file, holding the install "
                        "identifier, the times the app recorded for its last recognition and last "
                        "foreground, and the flags it kept about its own state",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -165,7 +165,7 @@ __artifacts_v2__ = {
         "description": "One row per store of content the app downloaded and held, giving what "
                        "each store contains, how much of it is on disk and the period the store "
                        "itself records",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
