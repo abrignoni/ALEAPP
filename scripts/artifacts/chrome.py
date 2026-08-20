@@ -139,6 +139,7 @@ __artifacts_v2__ = {
 import datetime
 import os
 import re
+import sqlite3
 import urllib.parse
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, does_column_exist_in_db, artifact_processor
@@ -186,6 +187,28 @@ def _history_files(files_found):
         yield file_found, browser_name
 
 
+def _history_rows(file_found, browser_name, query):
+    '''Run one query against a History database.
+
+    Returns None when the database cannot be read, so the caller skips that
+    file instead of ending the whole artifact. A History file left with a
+    non-empty rollback journal is the case seen in practice: SQLite has to
+    write to replay and clear the journal, which a read-only handle cannot do.
+    '''
+    db = open_sqlite_db_readonly(file_found)
+    if db is None:
+        return None
+    try:
+        cursor = db.cursor()
+        cursor.execute(query)
+        return cursor.fetchall()
+    except sqlite3.Error as ex:
+        logfunc(f'Unable to read {browser_name} history in {file_found}: {ex}')
+        return None
+    finally:
+        db.close()
+
+
 @artifact_processor
 def get_chrome(context):
     files_found = unique_files(context)
@@ -197,16 +220,14 @@ def get_chrome(context):
     report_file = 'Unknown'
 
     for file_found, browser_name in _history_files(files_found):
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        rows = _history_rows(file_found, browser_name, '''
         SELECT last_visit_time, url, title, visit_count, typed_count, id,
         CASE hidden WHEN 0 THEN '' WHEN 1 THEN 'Yes' END as Hidden
         FROM urls
         ''')
-        rows = cursor.fetchall()
-        db.close()
+        if rows is None:
+            continue
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
         if data_list:
@@ -228,10 +249,7 @@ def get_chromeWebVisits(context):
     report_file = 'Unknown'
 
     for file_found, browser_name in _history_files(files_found):
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        rows = _history_rows(file_found, browser_name, '''
         SELECT
         visits.visit_time,
         urls.url,
@@ -269,8 +287,9 @@ def get_chromeWebVisits(context):
         LEFT JOIN urls ON visits.url = urls.id
         LEFT JOIN (SELECT urls.url,urls.title,visits.visit_time,visits.id FROM visits LEFT JOIN urls ON visits.url = urls.id) Query2 ON visits.from_visit = Query2.id
         ''')
-        rows = cursor.fetchall()
-        db.close()
+        if rows is None:
+            continue
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
         if data_list:
@@ -292,16 +311,14 @@ def get_chromeSearchTerms(context):
     report_file = 'Unknown'
 
     for file_found, browser_name in _history_files(files_found):
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        rows = _history_rows(file_found, browser_name, '''
         SELECT url, title, visit_count, last_visit_time
         FROM urls
         WHERE url like '%search?q=%'
         ''')
-        rows = cursor.fetchall()
-        db.close()
+        if rows is None:
+            continue
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         data_list = []
         for r in rows:
@@ -330,14 +347,11 @@ def get_chromeDownloads(context):
     report_file = 'Unknown'
 
     for file_found, browser_name in _history_files(files_found):
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
         # older chrome db (32) lacks last_access_time; pre-v65 lacks tab_url
         last_access_sel = 'last_access_time' if does_column_exist_in_db(file_found, 'downloads', 'last_access_time') else "'' as last_access_time"
         tab_url_sel = 'tab_url' if does_column_exist_in_db(file_found, 'downloads', 'tab_url') else "'' as tab_url"
 
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute(f'''
+        rows = _history_rows(file_found, browser_name, f'''
         SELECT
         start_time,
         end_time,
@@ -414,8 +428,9 @@ def get_chromeDownloads(context):
         total_bytes
         FROM downloads
         ''')
-        rows = cursor.fetchall()
-        db.close()
+        if rows is None:
+            continue
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         data_list = []
         for r in rows:
@@ -441,16 +456,14 @@ def get_chromeKeywordSearchTerms(context):
     report_file = 'Unknown'
 
     for file_found, browser_name in _history_files(files_found):
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        rows = _history_rows(file_found, browser_name, '''
         SELECT url_id, term, id, url, last_visit_time
         FROM keyword_search_terms, urls
         WHERE url_id = id
         ''')
-        rows = cursor.fetchall()
-        db.close()
+        if rows is None:
+            continue
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         data_list = [(_webkit_to_utc(r[4]), r[1], r[3]) for r in rows]
         if data_list:

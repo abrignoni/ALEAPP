@@ -19,6 +19,8 @@ __artifacts_v2__ = {
     }
 }
 
+import sqlite3
+
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor
 from scripts.artifacts.chrome import get_browser_name
 
@@ -46,16 +48,22 @@ def get_chromeNetworkActionPredictor(context):
             continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
 
         db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        columns = [i[1] for i in cursor.execute('PRAGMA table_info(network_action_predictor)')]
-
-        if not columns:
-            # Some browser variants keep only resource_prefetch_predictor tables here
-            logfunc(f'No network_action_predictor table available in {file_found}')
-            db.close()
+        if db is None:
             continue
 
-        cursor.execute('''
+        # One unreadable database must not end the artifact: a file left with a
+        # non-empty rollback journal cannot be read through a read-only handle,
+        # because SQLite has to write to replay and clear the journal.
+        try:
+            cursor = db.cursor()
+            columns = [i[1] for i in cursor.execute('PRAGMA table_info(network_action_predictor)')]
+
+            if not columns:
+                # Some browser variants keep only resource_prefetch_predictor tables here
+                logfunc(f'No network_action_predictor table available in {file_found}')
+                continue
+
+            cursor.execute('''
         select
         user_text,
         url,
@@ -63,8 +71,13 @@ def get_chromeNetworkActionPredictor(context):
         number_of_misses
         from network_action_predictor
         ''')
+            all_rows = cursor.fetchall()
+        except sqlite3.Error as ex:
+            logfunc(f'Unable to read {browser_name} network action predictor in {file_found}: {ex}')
+            continue
+        finally:
+            db.close()
 
-        all_rows = cursor.fetchall()
         if len(all_rows) > 0:
             report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
@@ -76,7 +89,5 @@ def get_chromeNetworkActionPredictor(context):
             all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Network Action Predictor data available')
-
-        db.close()
 
     return all_data_headers, all_data, report_file

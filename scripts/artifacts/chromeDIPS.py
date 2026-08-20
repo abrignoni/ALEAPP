@@ -28,6 +28,7 @@ __artifacts_v2__ = {
 # Thanks to Ryan Benson for awareness https://github.com/obsidianforensics/hindsight/pull/146/commits/015ee189c97c0a4e48deb59568dfe4f536ace8aa
 
 import datetime
+import sqlite3
 
 from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
@@ -82,23 +83,27 @@ def get_chromeDIPS(context):
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
 
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
-
         db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        columns = [i[1] for i in cursor.execute('PRAGMA table_info(bounces)')]
-
-        if not columns:
-            logfunc(f'No bounces table available in {file_found}')
-            db.close()
+        if db is None:
             continue
 
-        first_user_col = _first_column(columns, ('first_user_interaction_time', 'first_user_activation_time'))
-        last_user_col = _first_column(columns, ('last_user_interaction_time', 'last_user_activation_time'))
-        first_bounce_col = _first_column(columns, ('first_stateless_bounce_time', 'first_bounce_time'))
-        last_bounce_col = _first_column(columns, ('last_stateless_bounce_time', 'last_bounce_time'))
+        # One unreadable database must not end the artifact: a file left with a
+        # non-empty rollback journal cannot be read through a read-only handle,
+        # because SQLite has to write to replay and clear the journal.
+        try:
+            cursor = db.cursor()
+            columns = [i[1] for i in cursor.execute('PRAGMA table_info(bounces)')]
 
-        cursor.execute(f'''
+            if not columns:
+                logfunc(f'No bounces table available in {file_found}')
+                continue
+
+            first_user_col = _first_column(columns, ('first_user_interaction_time', 'first_user_activation_time'))
+            last_user_col = _first_column(columns, ('last_user_interaction_time', 'last_user_activation_time'))
+            first_bounce_col = _first_column(columns, ('first_stateless_bounce_time', 'first_bounce_time'))
+            last_bounce_col = _first_column(columns, ('last_stateless_bounce_time', 'last_bounce_time'))
+
+            cursor.execute(f'''
             select
             site,
             {_first_column(columns, ('first_site_storage_time',))},
@@ -111,8 +116,14 @@ def get_chromeDIPS(context):
             {last_bounce_col}
             from bounces
         ''')
-        all_rows = cursor.fetchall()
-        db.close()
+            all_rows = cursor.fetchall()
+        except sqlite3.Error as ex:
+            logfunc(f'Unable to read {browser_name} DIPS bounces in {file_found}: {ex}')
+            continue
+        finally:
+            db.close()
+
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         data_list = []
         for row in all_rows:

@@ -27,6 +27,7 @@ __artifacts_v2__ = {
 }
 
 import os
+import sqlite3
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
@@ -58,8 +59,15 @@ def get_chromeCookies(context):
             continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
 
         db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        if db is None:
+            continue
+
+        # One unreadable database must not end the artifact: a Cookies file left
+        # with a non-empty rollback journal cannot be read through a read-only
+        # handle, because SQLite has to write to replay and clear the journal.
+        try:
+            cursor = db.cursor()
+            cursor.execute('''
         SELECT
         CASE
             last_access_utc
@@ -95,8 +103,13 @@ def get_chromeCookies(context):
         FROM
         cookies
         ''')
+            all_rows = cursor.fetchall()
+        except sqlite3.Error as ex:
+            logfunc(f'Unable to read {browser_name} cookies in {file_found}: {ex}')
+            continue
+        finally:
+            db.close()
 
-        all_rows = cursor.fetchall()
         if len(all_rows) > 0:
             report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
@@ -108,7 +121,5 @@ def get_chromeCookies(context):
             all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Cookies data available')
-
-        db.close()
 
     return all_data_headers, all_data, report_file
