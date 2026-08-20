@@ -34,6 +34,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | calculatorLockVault |
 | claude |
 | dropbox |
+| ebay |
 | frosting |
 | galleryVault |
 | gmailEmails |
@@ -65,6 +66,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungWifiDatabases |
 | sbbmobile |
 | settingsSearch |
+| shazam |
 | shistorylog |
 | slack |
 | smartSidebarFileDock |
@@ -179,6 +181,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | contacts |
 | deviceHealthServices_Battery |
 | discordChats |
+| disneyPlus |
 | dmss |
 | downloads |
 | emulatedSmeta |
