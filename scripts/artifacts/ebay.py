@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "ebay_watch_list": {
         "name": "eBay - Watch List",
         "description": "Parses the watched listings stored by the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
     "ebay_recent_searches": {
         "name": "eBay - Recent Searches",
         "description": "Parses the recent search history stored by the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
     "ebay_search_suggestions": {
         "name": "eBay - Search Suggestions",
         "description": "Parses the saved search queries stored by the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -84,7 +84,7 @@ __artifacts_v2__ = {
     "ebay_followed_searches": {
         "name": "eBay - Followed Searches",
         "description": "Parses the followed searches and interests cached by the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -110,7 +110,7 @@ __artifacts_v2__ = {
     "ebay_followed_sellers": {
         "name": "eBay - Followed Sellers",
         "description": "Parses the followed seller records stored by the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -130,7 +130,7 @@ __artifacts_v2__ = {
     "ebay_app_sessions": {
         "name": "eBay - App Sessions",
         "description": "Parses the app session records stored by the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -156,7 +156,7 @@ __artifacts_v2__ = {
     "ebay_cached_images": {
         "name": "eBay - Cached Images",
         "description": "Parses the cached listing images stored by the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -189,7 +189,7 @@ __artifacts_v2__ = {
     "ebay_accounts": {
         "name": "eBay - Accounts",
         "description": "Parses the user identifiers the eBay Android app stored across its own tables.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -214,7 +214,7 @@ __artifacts_v2__ = {
     "ebay_app_configuration": {
         "name": "eBay - App Configuration",
         "description": "Parses the app and marketplace configuration record of the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -236,7 +236,7 @@ __artifacts_v2__ = {
     "ebay_app_state": {
         "name": "eBay - App State",
         "description": "Parses the timestamped application state entries of the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -258,7 +258,7 @@ __artifacts_v2__ = {
     "ebay_share_channels": {
         "name": "eBay - Share Channels",
         "description": "Parses the share channel records stored by the eBay Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
