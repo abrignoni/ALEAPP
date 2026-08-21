@@ -2,9 +2,9 @@
 
 # Android Logs Events And Protobuf Parser
 
-If you want to contribute hit me up on twitter: https://twitter.com/AlexisBrignoni
+If you want to contribute hit me up here: https://abrignoni.github.io
 
-Details in blog post here: https://abrignoni.blogspot.com/2020/02/aleapp-android-logs-events-and-protobuf.html
+Blog posts here: https://leapps.org/blog
 
 ## Requirements
 
