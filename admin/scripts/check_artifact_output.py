@@ -40,12 +40,26 @@ import ast
 import csv
 import glob
 import os
+import re
 import sys
 
 MIN_ROWS_FOR_CONSTANT = 3
 SPARSE_LEAD_FRACTION = 0.5
 # Columns that are bookkeeping rather than findings.
 IGNORED = {'source file', 'source files', 'source path', 'source paths'}
+# A header often carries a qualifier the prose does not repeat, so a note saying
+# "Disappearing TTL was empty" should silence a column headed "Disappearing TTL (as stored)".
+QUALIFIER = re.compile(r'\s*\((?:as stored|seconds|utc|local)[^)]*\)\s*$', re.I)
+
+
+def named_in(notes, *columns):
+    """Whether the notes name every one of these columns, qualifier or not."""
+    lowered = notes.lower()
+    for column in columns:
+        bare = QUALIFIER.sub('', column).strip().lower()
+        if not bare or bare not in lowered:
+            return False
+    return True
 
 
 def artifact_notes(repo_root):
@@ -104,7 +118,7 @@ def check_table(columns, rows, notes):
         values = series[column]
         filled = sum(1 for v in values if v != '')
         distinct = len(set(values))
-        if column.lower() in mentioned:
+        if named_in(mentioned, column):
             continue
         if filled == 0:
             findings.append(('empty-column', f'{column!r} has no value on any of {total} rows'))
@@ -120,6 +134,8 @@ def check_table(columns, rows, notes):
             if second.lower() in IGNORED:
                 continue
             left, right = series[first], series[second]
+            if named_in(mentioned, first, second):
+                continue
             if left == right and len(set(left)) > 1 and any(v != '' for v in left):
                 findings.append(('identical-columns',
                                  f'{first!r} and {second!r} are identical on all {total} rows'))
