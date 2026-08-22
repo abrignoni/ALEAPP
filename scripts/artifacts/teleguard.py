@@ -17,9 +17,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 2 rows",
             "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 42 rows",
-            "hc_pixel8pro_a17": "Android 17 | 2 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 2 rows",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 2 rows; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
         "data_views": {
             "conversation": {
@@ -46,9 +46,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "file-text",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
             "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | 0 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     },
     "get_teleguard_contacts": {
@@ -69,9 +69,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 2 rows",
             "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 5 rows",
-            "hc_pixel8pro_a17": "Android 17 | 2 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 2 rows",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 2 rows; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     },
     "get_teleguard_channels": {
@@ -89,9 +89,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "radio",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
             "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | 0 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     },
     "get_teleguard_calls": {
@@ -123,9 +123,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "phone",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | 4 rows",
-            "hc_pixel8pro_a16": "Android 16 | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | 0 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 4 rows",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     },
     "get_teleguard_chat_events": {
@@ -145,9 +145,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "users-plus",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | 2 rows",
-            "hc_pixel8pro_a16": "Android 16 | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | 0 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 2 rows",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     },
     "get_teleguard_account": {
@@ -176,9 +176,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "user-circle",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | 1 row",
-            "hc_pixel8pro_a16": "Android 16 | 1 row",
-            "hc_pixel8pro_a17": "Android 17 | 1 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 1 row; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     },
     "get_teleguard_drafts": {
@@ -203,9 +203,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "pencil",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | 2 rows",
-            "hc_pixel8pro_a16": "Android 16 | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | 0 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 2 rows",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     },
     "get_teleguard_media_downloads": {
@@ -233,9 +233,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "download",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | 3 rows",
-            "hc_pixel8pro_a16": "Android 16 | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | 0 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 3 rows",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     },
     "get_teleguard_saved_images": {
@@ -261,9 +261,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "photo",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | 2 rows",
-            "hc_pixel8pro_a16": "Android 16 | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | 0 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 2 rows",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 0 rows; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     },
     "get_teleguard_app_settings": {
@@ -284,9 +284,9 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "settings",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | 1 row",
-            "hc_pixel8pro_a16": "Android 16 | 1 row",
-            "hc_pixel8pro_a17": "Android 17 | 1 rows; the app's files are byte identical to hc_pixel8pro_a16, so this is the same TeleGuard dataset rather than a second one",
+            "pixel7a_a14": "Android 14 | ch.swisscows.messenger.teleguardapp vc 162 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | ch.swisscows.messenger.teleguardapp vc 176 | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | ch.swisscows.messenger.teleguardapp vc 176 | 1 row; same install as hc_pixel8pro_a16, whose app files, code path and update time are identical, so this is the same TeleGuard dataset rather than a second one",
         },
     }
 }
