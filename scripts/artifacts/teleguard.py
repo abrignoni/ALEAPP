@@ -4,10 +4,14 @@ __artifacts_v2__ = {
         "description": "Teleguard messenger messages",
         "author": "@abrignoni",
         "creation_date": "2024-01-09",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-08-21",
         "requirements": "none",
         "category": "Teleguard",
-        "notes": "",
+        "notes": "Is Edited? held 0 on every message row of every tested extraction, so no message "
+                 "in them had been edited. The column is reported so an edited message is visible "
+                 "on an extraction that has one. Call events and membership events are rows of this "
+                 "same table, of type CALL and SERVICE, and are also reported in full by "
+                 "Teleguard - Calls and Teleguard - Chat Events.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',
                   '*/ch.swisscows.messenger.teleguardapp/cache/**'),
         "output_types": "standard",
@@ -34,7 +38,7 @@ __artifacts_v2__ = {
         "description": "Teleguard channel posts",
         "author": "@abrignoni",
         "creation_date": "2024-01-09",
-        "last_update_date": "2024-01-09",
+        "last_update_date": "2026-08-21",
         "requirements": "none",
         "category": "Teleguard",
         "notes": "",
@@ -52,10 +56,15 @@ __artifacts_v2__ = {
         "description": "Teleguard contacts with avatars",
         "author": "@abrignoni",
         "creation_date": "2024-01-09",
-        "last_update_date": "2024-01-09",
+        "last_update_date": "2026-08-21",
         "requirements": "none",
         "category": "Teleguard",
-        "notes": "",
+        "notes": "Personal ID is an optional identifier separate from the Server ID the app issues. "
+                 "The app's own binary labels it 'Personal TeleGuard ID', carries a 'Change personal "
+                 "ID' action and a buyPersonalId endpoint, and adds the column to this table in a "
+                 "migration, so a contact has one only where that feature was used. It was null on "
+                 "every contact row of every tested extraction, meaning none of those contacts had "
+                 "one recorded.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -70,7 +79,7 @@ __artifacts_v2__ = {
         "description": "Teleguard channels",
         "author": "@abrignoni",
         "creation_date": "2024-01-09",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-21",
         "requirements": "none",
         "category": "Teleguard",
         "notes": "The channels table is read with 'SELECT *' and the first twelve columns are labelled "
