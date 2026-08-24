@@ -107,7 +107,7 @@ Multiple test cases (e.g., "case_ios12_basic", "case_ios14_advanced") can be inc
 
 ## Image Manifest
 
-The script uses an `image_manifest.json` file located in the `admin` directory. This manifest contains information about available test images, including their names, descriptions, and local paths.
+The script uses an `image_manifest.json` file located in the `admin` directory. This manifest carries the identity of each publicly available test image: its name, the corpus key artifacts cite in `sample_data`, the published filename and hash, and where to download it. Where the image lives on your own machine goes in the git-ignored `admin/image_manifest.local.json`. See [guide_adding_images.md](guide_adding_images.md).
 
 ## Known Issues and Limitations
 
