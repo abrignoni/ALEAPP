@@ -4,23 +4,34 @@ __artifacts_v2__ = {
         "description": "gmailActive: Get gmail account information",
         "author": "Joshua James {joshua@dfirscience.org}",
         "creation_date": "2021-11-08",
-        "last_update_date": "2021-11-08",
+        "last_update_date": "2026-08-24",
         "requirements": "none",
         "category": "Gmail",
-        "notes": "",
+        "notes": "One row per Gmail.xml, so a device with several Android users reports each "
+                 "user's active account. Duplicate storage spellings of the same file "
+                 "(data/data, data/user/<n>, data_mirror) are collapsed before reading, and "
+                 "files are read in sorted path order so the output does not depend on the "
+                 "host platform's directory listing order.",
         "paths": ('*/com.google.android.gm/shared_prefs/Gmail.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "mail",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 1 row",
+            "cookbook_a11": "Android 11 | com.google.android.gm vc 64291995 | 1 row",
             "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 1 row",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | com.google.android.gm vc 65854395 | 1 row",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 1 row",
+            "pixel3_a11": "Android 11 | com.google.android.gm vc 62324124 | 1 row",
+            "pixel3_a12": "Android 12 | com.google.android.gm vc 62900470 | 1 row",
             "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 1 row",
+            "s20fe_a13": "Android 13 | com.google.android.gm vc 65854395 | 1 row",
             "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 1 row",
             "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 1 row",
+            "sharon_a13": "Android 13 | com.google.android.gm vc 63927777 | 1 row",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 1 row",
-            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 1 row",
+            "russell_a14": "Android 14 | com.google.android.gm vc 64738650 | 2 rows across 2 Android users",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 2 rows across 2 Android users",
             "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 1 row",
         },
     }
@@ -29,6 +40,8 @@ __artifacts_v2__ = {
 import re
 import xml.etree.ElementTree as ET
 
+from scripts.artifacts.storagePathViews import unique_files
+from scripts.context import Context
 from scripts.ilapfuncs import artifact_processor, logfunc
 
 
@@ -52,15 +65,20 @@ def _parse_xml(file_found):
 
 @artifact_processor
 def get_gmailActive(context):
-    files_found = context.get_files_found()
-
     data_list = []
-    source_path = str(files_found[0])
-    root = _parse_xml(source_path)
-    for child in root:
-        if child.attrib['name'] == "active-account":
-            logfunc("Active gmail account found: " + child.text)
-            data_list.append((child.text,))
 
-    data_headers = ('Active Gmail Address',)
-    return data_headers, data_list, source_path
+    # Every Android user's Gmail.xml gets read, not just whichever file the
+    # seeker happened to list first; duplicate storage spellings of one file
+    # collapse to a single copy, and sorting keeps the order platform-independent.
+    files_found = sorted(unique_files(context),
+                         key=lambda p: Context.get_relative_path(str(p)).replace('\\', '/'))
+    for file_found in files_found:
+        file_found = str(file_found)
+        root = _parse_xml(file_found)
+        for child in root:
+            if child.attrib.get('name') == "active-account" and child.text:
+                logfunc("Active gmail account found: " + child.text)
+                data_list.append((child.text, Context.get_relative_path(file_found)))
+
+    data_headers = ('Active Gmail Address', 'Source File')
+    return data_headers, data_list, 'See source file(s) below:'
