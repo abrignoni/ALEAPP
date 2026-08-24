@@ -5,12 +5,11 @@ __artifacts_v2__ = {
         "author": "ogmini",
         "creation_date": "2025-08-20",
         "last_update_date": "2026-08-24",
-        "requirements": "none",
+        "requirements": "BeautifulSoup",
         "category": "Email",
-        "notes": "Every matched EmailProvider store is read, across every Android user of the device, with duplicate storage spellings collapsed first and stores read in sorted path order. The Account column is the emailAddress the store's own Account table records for the row. Body and attachment files are only paired with rows from the same app instance they belong to. No tested image held IMAP data (every EmailProvider.db carried empty Account and Message tables), so row-producing behavior is verified against constructed known data, not a real image.",
+        "notes": "Every matched EmailProvider store is read, across every Android user of the device, with duplicate storage spellings collapsed first and stores read in sorted path order. The Account column is the emailAddress the store's own Account table records for the row. Body and attachment files are only paired with rows from the same app instance they belong to. Body(HTML) is the readable text extracted from the message's stored HTML body file; Links lists the distinct link targets that body carries, in document order, as stored, and the unmodified body file stays in the report's data folder. No tested image held IMAP data (every EmailProvider.db carried empty Account and Message tables), so row-producing behavior is verified against constructed known data, not a real image.",
         "paths": ('*/com.google.android.gm/databases/EmailProvider.*','*/com.google.android.gm/files/body/0/*/*.*','*/com.google.android.gm/databases/*.db_att/*','*/com.google.android.gm/cache/*.attachment'),
         "output_types": "standard",
-        "html_columns": ["Body(HTML)"],
         "artifact_icon": "inbox",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
@@ -70,10 +69,10 @@ import os
 import sqlite3
 import urllib.parse
 
+from scripts.artifacts.gmailEmails import body_links, body_text
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import open_sqlite_db_readonly, artifact_processor, convert_unix_ts_to_utc, logfunc, check_in_media
 from scripts.context import Context
-from scripts.html_safe import safe_source
 
 
 def _sort_key(path):
@@ -223,7 +222,7 @@ def gmailIMAPEmails(context):
                     attachment_cell = AttachmentPaths
                 else:
                     attachment_cell = ''
-                data_list.append((row[0], row[12], row[10], row[1], row[2], tBody, safe_source(hBody), row[3], row[4], row[5], row[6], row[7], row[8], row[9], attachment_cell, row[11], Context.get_relative_path(emailProviderDB)))
+                data_list.append((row[0], row[12], row[10], row[1], row[2], tBody, body_text(hBody), body_links(hBody), row[3], row[4], row[5], row[6], row[7], row[8], row[9], attachment_cell, row[11], Context.get_relative_path(emailProviderDB)))
         except sqlite3.Error as ex:
             # One unreadable or drifted store must not cost the other accounts their rows
             logfunc(f'Unable to read Gmail EmailProvider store {Context.get_relative_path(emailProviderDB)}: {ex}')
@@ -231,7 +230,7 @@ def gmailIMAPEmails(context):
         finally:
             db.close()
 
-    data_headers = (('Timestamp','datetime'),'Account','Account ID','_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Recipient','Reply To','Subject Line','From','Display Name', 'Read', 'AttachmentFlag', ('Attachments', 'media'), 'Mailbox Folder', 'Source File')
+    data_headers = (('Timestamp','datetime'),'Account','Account ID','_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Links', 'Recipient','Reply To','Subject Line','From','Display Name', 'Read', 'AttachmentFlag', ('Attachments', 'media'), 'Mailbox Folder', 'Source File')
     return data_headers, data_list, 'See source file(s) below:'
 
 @artifact_processor
