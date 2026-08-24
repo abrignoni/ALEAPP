@@ -190,14 +190,14 @@ def blink_syncmodule_entitlements(context):
 
     records = get_sqlite_db_records(source_path, query)
     for record in records:
-            data_list.append((record[0], #Syncmodule ID (Unique, Primary Key)
-                                record[1], #Syncmodule Status
-                                record[2], #Syncmodule Serial Number
-                                record[3], #Syncmodule Local Storage Status
-                                record[4], #Entitlement name
-                                record[5], #Entitlement status
-                                record[6], #Subscription requirement
-                                  ))
+        data_list.append((record[0], #Syncmodule ID (Unique, Primary Key)
+                            record[1], #Syncmodule Status
+                            record[2], #Syncmodule Serial Number
+                            record[3], #Syncmodule Local Storage Status
+                            record[4], #Entitlement name
+                            record[5], #Entitlement status
+                            record[6], #Subscription requirement
+                            ))
 
     data_headers = (
           "Syncmodule ID",
