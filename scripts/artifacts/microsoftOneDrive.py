@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Cloud Storage",
-        "notes": "",
+        "notes": "Timestamps <= 0 are blanked. Storage path is resolved by recursively walking parent RID references. Cached streams are resolved via seeker.",
         "paths": (
             '*/com.microsoft.skydrive/files/QTMetadata.db*',
         ),
@@ -16,21 +16,35 @@ __artifacts_v2__ = {
     }
 }
 
-import os
 import mimetypes
+import os
+
 from scripts.ilapfuncs import (
     artifact_processor,
-    get_file_path,
-    open_sqlite_db_readonly,
-    convert_unix_ts_to_utc,
-    logfunc,
     check_in_embedded_media,
-    does_column_exist_in_db
+    convert_unix_ts_to_utc,
+    does_column_exist_in_db,
+    logfunc,
+    open_sqlite_db_readonly,
 )
+
+from scripts.artifacts.storagePathViews import unique_files
+
+def _safe_convert_ts(ts):
+    """Converts unix millisecond timestamps to UTC, blanking <= 0 or invalid values."""
+    if not ts:
+        return ''
+    try:
+        ts_val = int(ts)
+        if ts_val <= 0:
+            return ''
+        return convert_unix_ts_to_utc(ts_val)
+    except (ValueError, TypeError, OverflowError):
+        return ''
 
 
 def _find_cached_file(seeker, stream_path):
-    """Locate the cached stream file in the extraction by matching its path tail[cite: 2]."""
+    """Locate the cached stream file in the extraction by matching its path tail."""
     if not seeker or not stream_path:
         return None
     stream_path_norm = os.path.normpath(stream_path).lower().lstrip(os.sep)
@@ -47,7 +61,7 @@ def _find_cached_file(seeker, stream_path):
 
 
 def _build_preview(found_file, extension):
-    """Return (media_ref, info_text) for a cached stream file. Images are checked in as media[cite: 2]."""
+    """Return (media_ref, info_text) for a cached stream file. Images are checked in as media."""
     ext = (extension or '').lower().lstrip('.')
     guessed_mime = mimetypes.types_map.get(f'.{ext}') if ext else None
     try:
@@ -72,116 +86,134 @@ def _build_preview(found_file, extension):
     return '', f'Cached binary ({len(data)} bytes)'
 
 
+def _resolve_storage_path(resource_id, parent_map, name_map, visited=None):
+    """Recursively resolves the folder hierarchy using resourceId -> parentRid lookups."""
+    if visited is None:
+        visited = set()
+    if not resource_id or resource_id in visited:
+        return ""
+    visited.add(resource_id)
+
+    name = name_map.get(resource_id, str(resource_id))
+    parent_id = parent_map.get(resource_id)
+
+    if parent_id and parent_id in name_map:
+        parent_path = _resolve_storage_path(parent_id, parent_map, name_map, visited)
+        return f"{parent_path}\\{name}" if parent_path else name
+    return name
+
+
 @artifact_processor
 def microsoft_onedrive(context):
-    source_path = get_file_path(context.get_files_found(), "QTMetadata.db")
-    if not source_path:
-        logfunc("No QTMetadata.db found")
-        return
-
+    files_found = unique_files(context)
     seeker = context.get_seeker()
     data_list = []
-    id_to_path = {None: ""}
+    sources = []
 
-    hash_column = 'items.sha1Hash'
-    if not does_column_exist_in_db(source_path, 'items', 'sha1Hash'):
-        hash_column = 'NULL'
-        logfunc(f'No items.sha1Hash column in {source_path}; hash values unavailable[cite: 2]')
+    for file_found in files_found:
+        file_path = str(file_found)
+        if not file_path.endswith("QTMetadata.db"):
+            continue
 
-    query = f'''
-    SELECT
-        items.itemDate,
-        items.creationDate,
-        items.modifiedDateOnClient,
-        CASE items.itemType
-            WHEN '1' THEN 'Document'
-            WHEN '3' THEN 'Image'
-            WHEN '32' THEN 'Folder'
-            ELSE items.itemType
-        END AS "itemType",
-        COALESCE(items.name, '') || COALESCE(items.extension, ''),
-        items.extension,
-        items.ownerName,
-        items.size,
-        {hash_column},
-        items.resourceIdAlias,
-        items._id,
-        stream_cache.stream_location,
-        items.resourceId,
-        items.parentRid
-    FROM items
-    LEFT JOIN stream_cache ON items._id = stream_cache.parentId
-    WHERE items.resourceId NOT IN ('search', 'Mru', 'SharedBy', 'SharedWithMe')
-       OR items.resourceId IS NULL
-    ORDER BY items.itemDate ASC
-    '''
+        sources.append(file_path)
+        source_name = str(context.get_relative_path(file_found))
 
-    db = open_sqlite_db_readonly(source_path)
-    cursor = db.cursor()
-    cursor.execute(query)
-    db_records = cursor.fetchall()
+        hash_column = 'items.sha1Hash'
+        if not does_column_exist_in_db(file_path, 'items', 'sha1Hash'):
+            hash_column = 'NULL'
+            logfunc(f'No items.sha1Hash column in {file_path}; hash values unavailable')
 
-    if not db_records:
-        logfunc("No OneDrive records found in QTMetadata.db")
-        db.close()
-        return
+        query = f'''
+        SELECT
+            items.itemDate,
+            items.creationDate,
+            items.modifiedDateOnClient,
+            CASE items.itemType
+                WHEN 1 then 'File'
+                WHEN 3 then 'Image'
+                WHEN 32 then 'Folder'
+                ELSE items.itemType
+            end,
+            COALESCE(items.name, '') || COALESCE(items.extension, ''),
+            items.extension,
+            items.ownerName,
+            items.size,
+            {hash_column},
+            items.resourceIdAlias,
+            items._id,
+            stream_cache.stream_location,
+            items.resourceId,
+            items.parentRid
+        FROM items
+        LEFT JOIN stream_cache ON items._id = stream_cache.parentId
+        WHERE items.resourceId NOT IN ('search', 'Mru', 'SharedBy', 'SharedWithMe')
+           OR items.resourceId IS NULL
+        ORDER BY items.itemDate ASC
+        '''
 
-    # First pass: Build resourceId to display name mapping
-    for row in db_records:
-        name_to_use = row[4] if row[4] else (row[9] if row[9] else str(row[12]))
-        resource_id = row[12]
-        if resource_id:
-            id_to_path[resource_id] = name_to_use
+        db = open_sqlite_db_readonly(file_path)
+        cursor = db.cursor()
+        cursor.execute(query)
+        db_records = cursor.fetchall()
 
-    # Second pass: Build storage path strings and resolve cached stream media
-    for row in db_records:
-        name_to_use = row[4] if row[4] else (row[9] if row[9] else str(row[12]))
-        resource_id = row[12]
-        parent_rid = row[13]
-        extension = row[5] or ''
-        stream_path = row[11]
+        if not db_records:
+            logfunc(f"No OneDrive records found in {file_path}")
+            db.close()
+            continue
 
-        if parent_rid in id_to_path and id_to_path[parent_rid]:
-            parent_path = id_to_path[parent_rid]
-            folder_string = f"{parent_path}\\{name_to_use}"
+        name_map = {}
+        parent_map = {}
+
+        # Pass 1: Build comprehensive parent/name mappings independent of sort order
+        for row in db_records:
+            resource_id = row[12]
+            parent_rid = row[13]
+            display_name = row[4] if row[4] else (row[9] if row[9] else str(resource_id or ''))
+
             if resource_id:
-                id_to_path[resource_id] = folder_string
-        else:
-            folder_string = name_to_use
-            if resource_id:
-                id_to_path[resource_id] = name_to_use
+                name_map[resource_id] = display_name
+                parent_map[resource_id] = parent_rid
 
-        preview_ref = ''
-        preview_info = ''
-        if stream_path:
-            found_file = _find_cached_file(seeker, stream_path)
-            if found_file:
-                preview_ref, preview_info = _build_preview(found_file, extension)
+        # Pass 2: Resolve full path recursively and preview streams
+        for row in db_records:
+            resource_id = row[12]
+            extension = row[5] or ''
+            stream_path = row[11]
+
+            folder_string = _resolve_storage_path(resource_id, parent_map, name_map) if resource_id else (row[4] or '')
+
+            preview_ref = ''
+            preview_info = ''
+            if stream_path:
+                found_file = _find_cached_file(seeker, stream_path)
+                if found_file:
+                    preview_ref, preview_info = _build_preview(found_file, extension)
+                else:
+                    preview_info = 'File not found in extraction'
             else:
-                preview_info = 'File not found in extraction'
-        else:
-            preview_info = 'No stream path provided'
+                preview_info = 'No stream path provided'
 
-        data_list.append((
-            convert_unix_ts_to_utc(row[0]),
-            convert_unix_ts_to_utc(row[1]),
-            convert_unix_ts_to_utc(row[2]),
-            row[3],
-            row[4],
-            row[5],
-            row[6],
-            row[7],
-            row[8],
-            folder_string,
-            row[10],
-            stream_path,
-            preview_ref,
-            preview_info,
-            row[12],
-            row[13]
-        ))
+            data_list.append((
+                _safe_convert_ts(row[0]),
+                _safe_convert_ts(row[1]),
+                _safe_convert_ts(row[2]),
+                row[3],
+                row[4],
+                row[5],
+                row[6],
+                row[7],
+                row[8],
+                folder_string,
+                row[10],
+                stream_path,
+                preview_ref,
+                preview_info,
+                row[12],
+                row[13],
+                source_name
+            ))
 
-    db.close()
+        db.close()
 
     data_headers = (
         ('Item Date', 'datetime'),
@@ -199,7 +231,8 @@ def microsoft_onedrive(context):
         ('Preview', 'media'),
         'Preview Info',
         'Resource ID',
-        'Parent Resource ID'
+        'Parent Resource ID',
+        'Source File'
     )
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, ", ".join(sources) if sources else ""
