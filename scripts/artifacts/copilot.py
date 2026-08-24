@@ -8,7 +8,7 @@
 
 __artifacts_v2__ = {
     "copilot_account": {
-        "name": "Account",
+        "name": "Copilot - Account",
         "description": "Existing account in Microsoft Copilot App.",
         "author": "Dolly Aswin Harahap <dolly.aswin@gmail.com>",
         "version": "0.1",
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "artifact_icon": "user"
     },
     "copilot_sessions": {
-        "name": "Sessions",
+        "name": "Copilot - Sessions",
         "description": "List of conversation sessions in Microsoft Copilot App.",
         "author": "Dolly Aswin Harahap <dolly.aswin@gmail.com>",
         "version": "0.1",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "artifact_icon": "list"
     },
     "copilot_sessions_conversation": {
-        "name": "Sessions_-_Conversation",
+        "name": "Copilot - Conversations",
         "description": "Conversation messages from Microsoft Copilot App.",
         "author": "Dolly Aswin Harahap <dolly.aswin@gmail.com>",
         "version": "0.1",
@@ -176,7 +176,7 @@ def copilot_sessions(files_found, _report_folder, _seeker, _wrap_text):
         has_unread  = session.get('hasUnreadMessages', False)
 
         if session_id:
-            session_id_display = f'<a href="Sessions_-_Conversation.html?search={session_id}">{session_id}</a>'
+            session_id_display = f'<a href="Copilot_-_Conversations.html?search={session_id}">{session_id}</a>'
         else:
             session_id_display = session_id
 
