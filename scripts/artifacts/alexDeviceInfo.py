@@ -21,12 +21,13 @@ from scripts.ilapfuncs import artifact_processor, \
 
 
 @artifact_processor
-def alex_device_info(files_found, _report_folder, _seeker, _wrap_text):
+def alex_device_info(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "device_info_alex.json")
     data_list = []
     
     try:
-        with open(source_path) as info_file:
+        with open(source_path, encoding='utf-8') as info_file:
             info_data = json.load(info_file)
             info_data.pop(0)
             for pair in info_data:

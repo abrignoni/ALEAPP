@@ -1,37 +1,46 @@
+# pylint: disable=W0631
 __artifacts_v2__ = {
-    "sChats": {
+    "get_schats": {
         "name": "Sideline Chats and Calls",
         "description": "Parses Sideline's textfree database",
         "author": "Matt Beers",
-        "version": "0.0.1",
-        "date": "2024-02-08",
+        "creation_date": "2024-02-08",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Chats",
-        "notes": "",
+        "notes": (
+            "Timestamps are rendered in UTC. The Method names for the stored numeric "
+            "'method' field (1, 3 and 8) were established through testing; a value with no "
+            "matching name is shown as 'Unknown'. Rows come from conversation_item, and "
+            "contact_address is joined on the stored address, so an item whose address has "
+            "no matching contact record is still listed, with empty name columns."
+        ),
         "paths": ('*/data/com.sideline.phone.number/databases/textfree*'),
-        "function": "get_schats"
+        "output_types": "standard",
+        "artifact_icon": "message",
     }
 }
 
-import sqlite3
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, timeline, tsv, is_platform_windows, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
 
-def get_schats(files_found, report_folder, seeker, wrap_text):
-    
+@artifact_processor
+def get_schats(context):
+    files_found = context.get_files_found()
+
     data_list = []
-    
+    source_path = ''
+
     for file_found in files_found:
         file_found = str(file_found)
-        
+
         if file_found.endswith('textfree'):
+            source_path = file_found
             db = open_sqlite_db_readonly(file_found)
-            #SQL QUERY TIME!
             cursor = db.cursor()
             cursor.execute('''
             SELECT
-            datetime(conversation_item.timestamp / 1000, 'unixepoch', 'localtime') AS TIMESTAMP,
+            datetime(conversation_item.timestamp / 1000, 'unixepoch') AS TIMESTAMP,
             contact_address.native_first_name,
             contact_address.native_last_name,
             CASE conversation_item.method
@@ -44,9 +53,9 @@ def get_schats(files_found, report_folder, seeker, wrap_text):
             conversation_item.duration,
             conversation_item.address
             FROM
-            contact_address
-            JOIN
-            conversation_item ON contact_address.address_e164 = conversation_item.address
+            conversation_item
+            LEFT JOIN
+            contact_address ON contact_address.address_e164 = conversation_item.address
             ORDER BY
             conversation_item.timestamp DESC
             ''')
@@ -55,32 +64,19 @@ def get_schats(files_found, report_folder, seeker, wrap_text):
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
-                #    last_mod_date = row[0]
-                #   if last_mod_date is None:
-                #       pass
-                #   else:
-                #       last_mod_date = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_mod_date),time_offset)
-                
-                    data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+                    data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6]))
             db.close()
-                    
+
         else:
             continue
-        
-    if data_list:
-        description = 'Sideline Chats and Calls'
-        report = ArtifactHtmlReport('Sideline Chats')
-        report.start_artifact_report(report_folder, 'Sideline Chats', description)
-        report.add_script()
-        data_headers = ('Timestamp','First Name','Last Name','Method','Message Text','Duration','Phone Number')
-        report.write_artifact_data_table(data_headers, data_list, file_found,html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Sideline Chats'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'Sideline Chats'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-    
-    else:
-        logfunc('No Sideline data available')
+
+    data_headers = (
+        ('Timestamp (UTC)', 'datetime'),
+        'First Name',
+        'Last Name',
+        'Method',
+        'Message Text',
+        'Duration',
+        ('Phone Number', 'phonenumber'),
+    )
+    return data_headers, data_list, source_path

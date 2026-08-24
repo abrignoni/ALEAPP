@@ -1,3 +1,4 @@
+# pylint: disable=W0612
 __artifacts_v2__ = {
     "googlevoice_accounts": {
         "name": "Google Voice - User Accounts",
@@ -11,7 +12,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/AccountData.pb', '*/data/com.google.android.apps.googlevoice/files/accounts/*/SqliteKeyValueCache:VoiceAccountCache.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
-        "function": "googlevoice_accounts",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.google.android.apps.googlevoice vc 3579017 | 1 row",
+        },
     },
     "googlevoice_calls": {
         "name": "Google Voice - Calls",
@@ -25,7 +28,9 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "phone",
-        "function": "googlevoice_calls",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.google.android.apps.googlevoice vc 3579017 | 4 rows",
+        },
     },
     "googlevoice_voicemails": {
         "name": "Google Voice - Voicemails",
@@ -38,34 +43,64 @@ __artifacts_v2__ = {
         "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "voicemail",
-        "function": "googlevoice_voicemails",
+        "artifact_icon": "record-mail",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.google.android.apps.googlevoice vc 3579017 | 1 row",
+        },
     },
     "googlevoice_messages": {
         "name": "Google Voice - Messages",
         "description": "Parses Google Voice Messages",
         "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
         "creation_date": "2025-10-22",
-        "last_update_date": "2025-11-5",
+        "last_update_date": "2026-07-03",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
         "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/Photo MMS images/*', '*/data/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
-        "function": "googlevoice_messages",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.providers.contacts | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.providers.contacts | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.apps.googlevoice vc 3579017 | 14 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 0 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 0 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 0 rows",
+        },
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Conversation ID",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Timestamp",
+                "senderColumn": "Sender",
+                "mediaColumn": "Image"
+            }
+        },
     }
 }
 
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 import os
 import time
 import struct
 import inspect
 from scripts.ilapfuncs import artifact_processor, get_binary_file_content, open_sqlite_db_readonly, does_table_exist_in_db, check_in_media
 
+
+def _decode_text(value):
+    '''Message body (protobuf field 10) is normally bytes, but can be a nested message
+    (dict) for structured/MMS content. Decode bytes; otherwise stringify so the record
+    still parses instead of raising AttributeError on .decode.'''
+    if isinstance(value, bytes):
+        return value.decode('utf-8', 'replace')
+    return str(value)
+
 @artifact_processor
-def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
+def googlevoice_accounts(context):
+    files_found = context.get_files_found()
     data_headers = ('Account Number', 'Full Name', 'Email Address', 'Linked Phone Number', 'Current Google Voice Number')
     data_list = []
     source_path = ""
@@ -89,7 +124,7 @@ def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
                 source_path = file
                 pb = get_binary_file_content(file)
 
-                message = blackboxprotobuf.decode_message(pb)
+                message = decode_protobuf(pb)
 
                 # check for data in the account
                 if '2' in message[0]:
@@ -125,7 +160,7 @@ def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
                 if usageentries > 0:
                     for row in all_rows:
                         pb = row[0]
-                message = blackboxprotobuf.decode_message(pb)
+                message = decode_protobuf(pb)
 
                 # check account data exists
                 if '3' in message[0]:
@@ -144,7 +179,8 @@ def googlevoice_accounts(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
+def googlevoice_calls(context):
+    files_found = context.get_files_found()
     data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Direction', 'Caller', 'Recipient', 'Call Status', 'Voicemail Left', 'Duration', ('Call Recording', 'media'))
     data_list = []
     source_path = ""
@@ -188,7 +224,7 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
                 if usageentries > 0:
                     for row in all_rows:
                         pb = row[0]
-                        message = blackboxprotobuf.decode_message(pb)
+                        message = decode_protobuf(pb)
 
                         # check if the entry is a call (answered, missed, outgoing)
                         # 13 = 0 for a missed or declined call without a voicemail
@@ -251,7 +287,7 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
                                 # get the audio file
                                 for audio_file in files_found:
                                     if "audio" in audio_file and message_id in audio_file:
-                                        recording = check_in_media(artifact_info, report_folder, seeker, files_found, audio_file)
+                                        recording = check_in_media(audio_file)
                                         break
                                 
                                 data_list.append((timestamp,account_number,direction,from_num,to_num,call_status,voicemail,duration,recording))
@@ -262,7 +298,8 @@ def googlevoice_calls(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
+def googlevoice_voicemails(context):
+    files_found = context.get_files_found()
     data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Caller', 'Recipient', 'Duration', 'Read Status', 'Transcript', ('Audio File', 'media'))
     data_list = []
     source_path = ""
@@ -306,7 +343,7 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
                 if usageentries > 0:
                     for row in all_rows:
                         pb = row[0]
-                        message = blackboxprotobuf.decode_message(pb)
+                        message = decode_protobuf(pb)
 
                         # check if the entry is a voicemail
                         # 13 = 3 for a voicemail is received
@@ -364,7 +401,7 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
                             # get the voicemail audio file
                             for audio_file in files_found:
                                 if "audio" in audio_file and message_id in audio_file:
-                                    audio = check_in_media(artifact_info, report_folder, seeker, files_found, audio_file)
+                                    audio = check_in_media(audio_file)
                                     break
 
                             data_list.append((timestamp,account_number,from_num,to_num,duration,read_status,transcript,audio))
@@ -372,8 +409,9 @@ def googlevoice_voicemails(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, source_path
 
 @artifact_processor
-def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
-    data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Conversation ID', 'Direction', 'Sender', 'Recipient(s)', 'Read Status', 'Message', ('Image', 'media'))
+def googlevoice_messages(context):
+    files_found = context.get_files_found()
+    data_headers = (('Timestamp', 'datetime'), 'Direction', 'Sender', 'Message', ('Image', 'media'), 'Account Number', 'Conversation ID', 'Recipient(s)', 'Read Status')
     data_list = []
     source_path = ""
 
@@ -419,7 +457,7 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                         # conversation_id starts with "t" for individual messages
                         if row[1].startswith("t"):
                             pb = row[0]
-                            message = blackboxprotobuf.decode_message(pb)
+                            message = decode_protobuf(pb)
 
                             # Conversation ID
                             conversation_id = row[1]
@@ -456,7 +494,7 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                             # Message
                             message_content = ""
                             if '10' in message[0]:
-                                message_content = message[0]['10'].decode('utf-8')
+                                message_content = _decode_text(message[0]['10'])
 
                             # Image
                             if "MMS" in message_content:
@@ -469,21 +507,21 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                                     # image file resides in Photo MMS images folder
                                     # filename: message_id + "-14" + extension
                                     if "Photo MMS images" in image and message_id in image and "-14" in image:
-                                        thumb = check_in_media(artifact_info, report_folder, seeker, files_found, image)
-                                        data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_num,read_status,message_content,thumb))
+                                        thumb = check_in_media(image)
+                                        data_list.append((timestamp, direction, from_num, message_content, thumb, account_number, conversation_id, to_num, read_status))
                                         break
 
                                 # if no image file is cached for the message
                                 if thumb == "":
-                                    data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_num,read_status,message_content,""))
+                                    data_list.append((timestamp, direction, from_num, message_content, "", account_number, conversation_id, to_num, read_status))
 
                             else:
-                                data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_num,read_status,message_content,""))
+                                data_list.append((timestamp, direction, from_num, message_content, "", account_number, conversation_id, to_num, read_status))
 
                         # conversation_id starts with "g" for group chat messages
                         elif row[1].startswith("g"):
                             pb = row[0]
-                            message = blackboxprotobuf.decode_message(pb)
+                            message = decode_protobuf(pb)
 
                             # Conversation ID
                             conversation_id = row[1]
@@ -543,15 +581,15 @@ def googlevoice_messages(files_found, report_folder, seeker, wrap_text):
                                     # image file resides in Photo MMS images folder
                                     # filename: message_id + "-14" + extension
                                     if "Photo MMS images" in image and message_id in image and "-14" in image:
-                                        thumb = check_in_media(artifact_info, report_folder, seeker, files_found, image)
-                                        data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,thumb))
+                                        thumb = check_in_media(image)
+                                        data_list.append((timestamp, direction, from_num, message_content, thumb, account_number, conversation_id, to_nums, read_status))
                                         break
                                 
                                 # if no image file is cached for the message
                                 if thumb == "":
-                                    data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
+                                    data_list.append((timestamp, direction, from_num, message_content, "", account_number, conversation_id, to_nums, read_status))
 
                             else:
-                                data_list.append((timestamp,account_number,conversation_id,direction,from_num,to_nums,read_status,message_content,""))
+                                data_list.append((timestamp, direction, from_num, message_content, "", account_number, conversation_id, to_nums, read_status))
 
     return data_headers, data_list, source_path

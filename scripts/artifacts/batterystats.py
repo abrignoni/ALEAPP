@@ -4,7 +4,6 @@ __artifacts_v2__ = {
         "description": "Parses the Android System batterystats-daily.xml - \
                         Steps string is in format: [device_state]-[battery_level]-[time_in_ms]",
         "author": "Marco Neumann {kalinko@be-binary.de}",
-        "version": "0.0.1",
         "creation_date": "2026-03-12",
         "last_update_date": "2026-03-16",
         "requirements": "xmltodict, xml",
@@ -12,17 +11,29 @@ __artifacts_v2__ = {
         "notes": "",
         "output_types": ["standard"],
         "paths": (  '*/system/batterystats-daily.xml'),
-        "artifact_icon": "battery-charging"
+        "artifact_icon": "battery-charging",
+        "sample_data": {
+            "anne_a15": "Android 15 | 170 rows",
+            "galaxys10_a10": "Android 10 | 275 rows",
+            "hc_pixel8pro_a16": "Android 16 | 367 rows",
+            "kevin_pocox7_a15": "Android 15 | 586 rows",
+            "pixel7a_a14": "Android 14 | 727 rows",
+            "samsunga53_a14": "Android 14 | 335 rows",
+            "samsungs20_a13": "Android 13 | 148 rows",
+            "sharon_a14": "Android 14 | 230 rows",
+            "russell_pixel6a_a13": "Android 13 | 714 rows",
+            "userb2_a13": "Android 13 | 325 rows",
+        }
     }
 }
-
 
 import xmltodict
 import xml.etree.ElementTree as etree
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, abxread, checkabx
 
 @artifact_processor
-def battery_stats_daily(files_found, _report_folder, _seeker, _wrap_text):
+def battery_stats_daily(context):
+    files_found = context.get_files_found()
     
     abx_file = ''
 

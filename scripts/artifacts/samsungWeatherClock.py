@@ -1,17 +1,84 @@
-import sqlite3
-import textwrap
+__artifacts_v2__ = {
+    "get_samsungWeatherClockInfo": {
+        "name": "Samsung Weather Clock - Info",
+        "description": "Parses current conditions from the Samsung Weather Clock (timestamp, timezone, location, temperature, conditions, sunrise and sunset) from the WeatherClock database.",
+        "author": "@stark4n6",
+        "creation_date": "2021-10-13",
+        "last_update_date": "2021-10-13",
+        "requirements": "none",
+        "category": "Samsung Weather Clock",
+        "notes": "",
+        "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
+        "output_types": "standard",
+        "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.daemonapp | 5 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.daemonapp | 1 row",
+            "samsunga53_a14": "Android 14 | com.sec.android.daemonapp | 1 row",
+            "samsungs20_a13": "Android 13 | com.sec.android.daemonapp | 1 row",
+            "sharon_a14": "Android 14 | com.sec.android.daemonapp | 1 row",
+        },
+    },
+    "get_samsungWeatherClockDaily": {
+        "name": "Samsung Weather Clock - Daily",
+        "description": "Parses the Samsung Weather Clock daily forecast (timestamp, location, temperature, conditions and daily high and low) from the WeatherClock database.",
+        "author": "@stark4n6",
+        "creation_date": "2021-10-13",
+        "last_update_date": "2021-10-13",
+        "requirements": "none",
+        "category": "Samsung Weather Clock",
+        "notes": "",
+        "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
+        "output_types": "standard",
+        "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.daemonapp | 40 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.daemonapp | 8 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.daemonapp | 8 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.daemonapp | 8 rows",
+            "sharon_a14": "Android 14 | com.sec.android.daemonapp | 8 rows",
+        },
+    },
+    "get_samsungWeatherClockHourly": {
+        "name": "Samsung Weather Clock - Hourly",
+        "description": "Parses the Samsung Weather Clock hourly forecast (timestamp, location, temperature, conditions, rain probability and wind) from the WeatherClock database.",
+        "author": "@stark4n6",
+        "creation_date": "2021-10-13",
+        "last_update_date": "2021-10-13",
+        "requirements": "none",
+        "category": "Samsung Weather Clock",
+        "notes": "",
+        "paths": ('*/com.sec.android.daemonapp/databases/WeatherClock*',),
+        "output_types": "standard",
+        "artifact_icon": "cloud",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.sec.android.daemonapp | 120 rows",
+            "galaxys10_a10": "Android 10 | com.sec.android.daemonapp | 24 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.daemonapp | 24 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.daemonapp | 24 rows",
+            "sharon_a14": "Android 14 | com.sec.android.daemonapp | 24 rows",
+        },
+    }
+}
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
 
-def get_samsungWeatherClock(files_found, report_folder, seeker, wrap_text):
-    
+
+def _weatherclock_db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-        if not file_found.endswith('WeatherClock'):
-            continue # Skip all other files
-    
-        db = open_sqlite_db_readonly(file_found)
+        if file_found.endswith('WeatherClock'):
+            return file_found
+    return None
+
+
+@artifact_processor
+def get_samsungWeatherClockInfo(context):
+    files_found = context.get_files_found()
+    data_list = []
+    source_path = _weatherclock_db(files_found) or ''
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
         cursor = db.cursor()
         cursor.execute('''
         select
@@ -36,29 +103,27 @@ def get_samsungWeatherClock(files_found, report_folder, seeker, wrap_text):
         COL_WEATHER_URL
         from TABLE_WEATHER_INFO
         ''')
-
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Samsung Weather Clock - Info')
-            report.start_artifact_report(report_folder, 'Samsung Weather Clock - Info')
-            report.add_script()
-            data_headers = ('Timestamp','Timezone','Is Daylight Savings','Current Temp','Weather Text','City','State','Country','Update Timestamp','Sunrise Timestamp','Sunset Timestamp','Feels Like Temp','High Temp','Low Temp','Weather Provider','URL') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15]))
+        for row in all_rows:
+            data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],convert_human_ts_to_utc(row[8]),convert_human_ts_to_utc(row[9]),convert_human_ts_to_utc(row[10]),row[11],row[12],row[13],row[14],row[15]))
+        db.close()
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Samsung Weather Clock - Info'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Samsung Weather Clock - Info'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Samsung Weather Clock - Info data available')
-    
+    data_headers = (
+        ('Timestamp', 'datetime'), 'Timezone', 'Is Daylight Savings', 'Current Temp', 'Weather Text',
+        'City', 'State', 'Country', ('Update Timestamp', 'datetime'), ('Sunrise Timestamp', 'datetime'),
+        ('Sunset Timestamp', 'datetime'), 'Feels Like Temp', 'High Temp', 'Low Temp', 'Weather Provider', 'URL',
+    )
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_samsungWeatherClockDaily(context):
+    files_found = context.get_files_found()
+    data_list = []
+    source_path = _weatherclock_db(files_found) or ''
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
+        cursor = db.cursor()
         cursor.execute('''
         select
         datetime(TABLE_DAILY_INFO.COL_DAILY_TIME/1000,'unixepoch'),
@@ -73,29 +138,26 @@ def get_samsungWeatherClock(files_found, report_folder, seeker, wrap_text):
         from TABLE_DAILY_INFO
         join TABLE_WEATHER_INFO on TABLE_DAILY_INFO.COL_WEATHER_KEY = TABLE_WEATHER_INFO.COL_WEATHER_KEY
         ''')
-
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Samsung Weather Clock - Daily')
-            report.start_artifact_report(report_folder, 'Samsung Weather Clock - Daily')
-            report.add_script()
-            data_headers = ('Timestamp','City','State','Country','Current Temp','Weather Text','URL','Daily High Temp','Daily Low Temp') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
+        for row in all_rows:
+            data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
+        db.close()
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Samsung Weather Clock - Daily'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Samsung Weather Clock - Daily'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Samsung Weather Clock - Daily data available')
-    
+    data_headers = (
+        ('Timestamp', 'datetime'), 'City', 'State', 'Country', 'Current Temp',
+        'Weather Text', 'URL', 'Daily High Temp', 'Daily Low Temp',
+    )
+    return data_headers, data_list, source_path
+
+
+@artifact_processor
+def get_samsungWeatherClockHourly(context):
+    files_found = context.get_files_found()
+    data_list = []
+    source_path = _weatherclock_db(files_found) or ''
+    if source_path:
+        db = open_sqlite_db_readonly(source_path)
+        cursor = db.cursor()
         cursor.execute('''
         select
         datetime(TABLE_HOURLY_INFO.COL_HOURLY_TIME/1000,'unixepoch'),
@@ -111,35 +173,13 @@ def get_samsungWeatherClock(files_found, report_folder, seeker, wrap_text):
         from TABLE_HOURLY_INFO
         join TABLE_WEATHER_INFO on TABLE_HOURLY_INFO.COL_WEATHER_KEY = TABLE_WEATHER_INFO.COL_WEATHER_KEY
         ''')
-
         all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        if usageentries > 0:
-            report = ArtifactHtmlReport('Samsung Weather Clock - Hourly')
-            report.start_artifact_report(report_folder, 'Samsung Weather Clock - Hourly')
-            report.add_script()
-            data_headers = ('Timestamp','City','State','Country','Current Temp','Weather Text','Rain Probability','Wind Direction','Wind Speed','URL') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-            data_list = []
-            for row in all_rows:
-                data_list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]))
+        for row in all_rows:
+            data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9]))
+        db.close()
 
-            report.write_artifact_data_table(data_headers, data_list, file_found)
-            report.end_artifact_report()
-            
-            tsvname = f'Samsung Weather Clock - Hourly'
-            tsv(report_folder, data_headers, data_list, tsvname)
-            
-            tlactivity = f'Samsung Weather Clock - Hourly'
-            timeline(report_folder, tlactivity, data_list, data_headers)
-        else:
-            logfunc('No Samsung Weather Clock - Hourly data available')
-        
-    db.close()
-
-__artifacts__ = {
-        "samsungWeatherClock": (
-                "Samsung Weather Clock",
-                ('*/com.sec.android.daemonapp/databases/WeatherClock*'),
-                get_samsungWeatherClock)
-}
-
+    data_headers = (
+        ('Timestamp', 'datetime'), 'City', 'State', 'Country', 'Current Temp',
+        'Weather Text', 'Rain Probability', 'Wind Direction', 'Wind Speed', 'URL',
+    )
+    return data_headers, data_list, source_path

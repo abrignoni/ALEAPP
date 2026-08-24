@@ -3,8 +3,8 @@ __artifacts_v2__ = {
         "name": "SimpleStorage - App Launch",
         "description": "Parses SimpleStorage for application launch",
         "author": "@KevinPagano3",
-        "version": "0.0.1",
         "creation_date": "2022-12-13",
+        "last_update_date": "2022-12-13",
         "last_updated": "2025-09-12",
         "requirements": "none",
         "category": "Android System Intelligence",
@@ -12,13 +12,21 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.as/databases/SimpleStorage*'),
         "output_types": "standard",
         "artifact_icon": "loader",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.as vc 14926349 | 10 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.as vc 10790541 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.as vc 8828817 | 38 rows",
+            "userb2_a13": "Android 13 | com.google.android.as vc 8997612 | 0 rows",
+        },
     }
 }
 
 from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.context import Context
 
 @artifact_processor
-def SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text):
+def SimpleStorage_applaunch(context):
+    files_found = context.get_files_found()
     data_list = []
     
     source_path = get_file_path(files_found, "SimpleStorage")
@@ -48,7 +56,7 @@ def SimpleStorage_applaunch(files_found, report_folder, seeker, wrap_text):
             pass
         else:
             time_launched = convert_utc_human_to_timezone(convert_ts_human_to_utc(time_launched),'UTC')
-        data_list.append((time_launched,record[1],record[2], source_path))
+        data_list.append((time_launched,record[1],record[2], Context.get_relative_path(source_path)))
  
     data_headers = (('App Launched Timestamp','datetime'),'App Name','Launched From', 'Source File')
     return data_headers, data_list, 'See source file(s) below'

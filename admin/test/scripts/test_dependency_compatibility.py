@@ -8,7 +8,6 @@ from pathlib import Path
 
 import bcrypt
 import bencoding
-import blackboxprotobuf
 import fitdecode
 import folium
 import polyline
@@ -17,7 +16,6 @@ import simplekml
 import xlsxwriter
 import xmltodict
 from bs4 import BeautifulSoup
-from geopy.geocoders import Nominatim
 from packaging import version
 from PIL import Image
 from google.protobuf import descriptor
@@ -29,10 +27,8 @@ THIRD_PARTY_IMPORTS = (
     "bcrypt",
     "bs4",
     "bencoding",
-    "blackboxprotobuf",
     "fitdecode",
     "folium",
-    "geopy",
     "packaging",
     "PIL",
     "polyline",
@@ -51,6 +47,7 @@ CORE_MODULES = (
     "aleapp",
     "scripts.ilapfuncs",
     "scripts.plugin_loader",
+    "scripts.blackboxprotobuf",
     "scripts.artifacts.notification_history_pb.notificationhistory_pb2",
     "scripts.artifacts.usagestats_pb.usagestatsservice_pb2",
 )
@@ -78,7 +75,9 @@ class TestDependencyCompatibility(unittest.TestCase):
 
         self.assertEqual(bencoding.bdecode(bencoding.bencode({b"a": 1})), {b"a": 1})
 
-        message, types = blackboxprotobuf.decode_message(b"\x08\x96\x01")
+        from scripts.ilapfuncs import decode_protobuf
+
+        message, types = decode_protobuf(b"\x08\x96\x01")
         self.assertEqual(message["1"], 150)
         self.assertEqual(types["1"]["type"], "int")
 
@@ -91,7 +90,6 @@ class TestDependencyCompatibility(unittest.TestCase):
             finally:
                 os.unlink(html_file.name)
 
-        self.assertEqual(Nominatim(user_agent="aleapp-test").scheme, "https")
         self.assertLess(version.parse("1.2.3"), version.parse("2.0.0"))
 
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as image_file:

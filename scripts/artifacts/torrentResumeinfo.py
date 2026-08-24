@@ -1,61 +1,73 @@
+# pylint: disable=W0702
+__artifacts_v2__ = {
+    "get_torrentResumeinfo": {
+        "name": "torrentResumeinfo",
+        "description": "Parses torrent resume data (file, info hash and data) from .resume files.",
+        "author": "@abrignoni",
+        "creation_date": "2023-03-26",
+        "last_update_date": "2023-03-26",
+        "requirements": "none",
+        "category": "BitTorrent",
+        "notes": "",
+        "paths": ('*/*.resume',),
+        "output_types": ['html', 'tsv', 'lava'],
+        "artifact_icon": "download",
+        "html_columns": ['Data'],
+    }
+}
+
 import bencoding
 import hashlib
 import datetime
 import textwrap
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, is_platform_windows 
+from scripts.ilapfuncs import artifact_processor
+from scripts.html_safe import esc
+
 
 def timestampcalc(timevalue):
-    timestamp = (datetime.datetime.utcfromtimestamp(int(timevalue)).strftime('%Y-%m-%d %H:%M:%S'))
+    timestamp = (datetime.datetime.fromtimestamp(int(timevalue), datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))
     return timestamp
 
-def get_torrentResumeinfo(files_found, report_folder, seeker, wrap_text):
+
+@artifact_processor
+def get_torrentResumeinfo(context):
+    files_found = context.get_files_found()
 
     data_list = []
+    source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
+        source_path = file_found
 
         with open(file_found, 'rb') as f:
             decodedDict = bencoding.bdecode(f.read())
-        
+
         aggregate = ''
         try:
             infoh= hashlib.sha1(bencoding.bencode(decodedDict[b"info"])).hexdigest()
             infohash = infoh
         except:
             infohash = ''
-            
+
         for key, value in decodedDict.items():
             if key.decode() == 'info':
                 for x, y in value.items():
                     if x == b'pieces':
                         pass
                     else:
-                        aggregate = aggregate + f'{x.decode()}: {y} <br>'
+                        xs = x.decode()
+                        aggregate = aggregate + f'{esc(xs)}: {esc(y)} <br>'
             elif key.decode() == 'pieces':
                 pass
             elif key.decode() == 'creation date':
-                aggregate = aggregate + f'{key.decode()}: {timestampcalc(value)} <br>'
+                # The branch above pins the key to this literal, so say it outright
+                # rather than re-decoding it, and escape the formatted timestamp.
+                aggregate = aggregate + f'creation date: {esc(timestampcalc(value))} <br>'
             else:
-                aggregate = aggregate + f'{key.decode()}: {value} <br>' #add if value is binary decode
-        
+                aggregate = aggregate + f'{esc(key.decode())}: {esc(value)} <br>' #add if value is binary decode
+
         data_list.append((textwrap.fill(file_found, width=25),infohash,aggregate.strip()))
 
-    # Reporting
-    title = "Torrent Resume Info"
-    report = ArtifactHtmlReport(title)
-    report.start_artifact_report(report_folder, title)
-    report.add_script()
     data_headers = ('File', 'InfoHash', 'Data')
-    report.write_artifact_data_table(data_headers, data_list, file_found, html_no_escape=['Data'])
-    report.end_artifact_report()
-    
-    tsv(report_folder, data_headers, data_list, title)
-
-__artifacts__ = {
-    "torrentResumeinfo": (
-        "BitTorrent",
-        ('*/*.resume'),
-        get_torrentResumeinfo)
-}
+    return data_headers, data_list, source_path

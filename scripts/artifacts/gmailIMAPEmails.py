@@ -3,9 +3,8 @@ __artifacts_v2__ = {
         "name": "Gmail - IMAP Mailbox Emails",
         "description": "Parses emails from IMAP mailboxes in the Gmail App",
         "author": "ogmini",
-        "version": "0.1",
         "creation_date": "2025-08-20",
-        "last_update_date": "2025-10-11", 
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Email",
         "notes": "", 
@@ -13,12 +12,23 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "html_columns": ["Body(HTML)"],
         "artifact_icon": "inbox",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 0 rows",
+        },
     },
     "gmailIMAPAccounts": {
         "name": "Gmail - IMAP Accounts",
         "description": "Parses IMAP Accounts in the Gmail App",
         "author": "ogmini",
-        "version": "0.1",
         "creation_date": "2025-10-11", 
         "last_update_date": "2025-10-11", 
         "requirements": "none",
@@ -26,17 +36,32 @@ __artifacts_v2__ = {
         "notes": "", 
         "paths": ('*/data/com.google.android.gm/databases/EmailProvider.*'), 
         "output_types": "standard",
-        "artifact_icon": "user", 
+        "artifact_icon": "user",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 0 rows",
+        }, 
     }
 }
 
 import os
 import urllib.parse
 
-from scripts.ilapfuncs import open_sqlite_db_readonly, artifact_processor, convert_unix_ts_to_utc, logfunc, media_to_html
+from scripts.ilapfuncs import open_sqlite_db_readonly, artifact_processor, convert_unix_ts_to_utc, logfunc, check_in_media
+from scripts.context import Context
+from scripts.html_safe import safe_source
 
 @artifact_processor
-def gmailIMAPEmails(files_found, report_folder, _seeker, _wrap_text):
+def gmailIMAPEmails(context):
+    files_found = context.get_files_found()
     emailProviderDB = ''    
     emailProviderDB_found = []
 
@@ -123,8 +148,10 @@ def gmailIMAPEmails(files_found, report_folder, _seeker, _wrap_text):
                     if (row_a[4] is None):
                         # Received Attachment */data/com.google.android.gm/databases/*.db_att/*.*
                         for rAttach in attachRecv_list:
-                            if (((os.path.basename(rAttach)) == f'{attachmentID}') and ((os.path.basename(os.path.dirname(rAttach))) == f'{accountID}.db_att')):
-                                AttachmentPaths.append([row_a[2], media_to_html(rAttach, files_found, report_folder)])
+                            if (os.path.isfile(rAttach) and ((os.path.basename(rAttach)) == f'{attachmentID}') and ((os.path.basename(os.path.dirname(rAttach))) == f'{accountID}.db_att')):
+                                ref = check_in_media(rAttach, row_a[2])
+                                if ref:
+                                    AttachmentPaths.append(ref)
                     else:
                         # Sent Attachment /data/com.google.android.gm/cache/*.attachment
                         uri = row_a[4]
@@ -139,16 +166,29 @@ def gmailIMAPEmails(files_found, report_folder, _seeker, _wrap_text):
                             fileName = os.path.basename(filePath).replace(":", "_")
                             
                             for sAttach in attachSent_list:
-                                if ((os.path.basename(sAttach)) == fileName):
-                                    AttachmentPaths.append([row_a[2], media_to_html(sAttach, files_found, report_folder)])
+                                if (os.path.isfile(sAttach) and ((os.path.basename(sAttach)) == fileName)):
+                                    ref = check_in_media(sAttach, row_a[2])
+                                    if ref:
+                                        AttachmentPaths.append(ref)
                            
-            data_list.append((row[0], row[1], row[2], tBody, hBody, row[3], row[4], row[5], row[6], row[7], row[8], row[9], AttachmentPaths, row[11], emailProviderDB))
+            # Collapse to a bare ref for a single attachment, list for several, and
+            # '' when none resolved -- mirrors the other media artifacts. The None
+            # guards above keep any unresolved ref (which the LAVA viewer chokes on)
+            # out of the list.
+            if len(AttachmentPaths) == 1:
+                attachment_cell = AttachmentPaths[0]
+            elif AttachmentPaths:
+                attachment_cell = AttachmentPaths
+            else:
+                attachment_cell = ''
+            data_list.append((row[0], row[1], row[2], tBody, safe_source(hBody), row[3], row[4], row[5], row[6], row[7], row[8], row[9], attachment_cell, row[11], Context.get_relative_path(emailProviderDB)))
 
-    data_headers = (('Timestamp','datetime'),'_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Recipient','Reply To','Subject Line','Mailed By','Signed by', 'Read', 'AttachmentFlag', 'Attachments', 'Mailbox Folder', 'Source File')
+    data_headers = (('Timestamp','datetime'),'_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Recipient','Reply To','Subject Line','From','Display Name', 'Read', 'AttachmentFlag', ('Attachments', 'media'), 'Mailbox Folder', 'Source File')
     return data_headers, data_list, 'See source file(s) below:'
     
 @artifact_processor
-def gmailIMAPAccounts(files_found, _report_folder, _seeker, _wrap_text):
+def gmailIMAPAccounts(context):
+    files_found = context.get_files_found()
     emailProviderDB = '' 
     emailProviderDB_found = []
 
@@ -180,7 +220,7 @@ def gmailIMAPAccounts(files_found, _report_folder, _seeker, _wrap_text):
         for row in all_rows:
             row = list(row)
 
-            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], emailProviderDB))
+            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], Context.get_relative_path(emailProviderDB)))
 
     data_headers = ('_id', 'displayName', 'emailAddress', 'senderName', 'login','password','address','port', 'Source File')
     return data_headers, data_list, 'See source file(s) below:'

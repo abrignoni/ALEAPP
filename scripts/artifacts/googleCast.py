@@ -11,13 +11,27 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.gms/databases/cast.db*'),
         "output_types": "standard",
         "artifact_icon": "cast",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gms vc 210915037 | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 2 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 0 rows",
+        },
     }
 }
 
-from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
-def googleCast(files_found, report_folder, seeker, wrap_text):
+def googleCast(context):
+    files_found = unique_files(context)
     data_list = []
     
     for file_found in files_found:
@@ -78,7 +92,7 @@ def googleCast(files_found, report_folder, seeker, wrap_text):
                     else:
                         last_discovered_ble = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_discovered_ble),'UTC')
                 
-                    data_list.append((last_published,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],last_discovered,last_discovered_ble,file_found))
+                    data_list.append((last_published,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],last_discovered,last_discovered_ble,context.get_relative_path(file_found)))
             db.close()
         else:
             continue # Skip all other files

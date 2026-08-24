@@ -1,63 +1,98 @@
-import glob
-import json
-import os
-import shutil
+__artifacts_v2__ = {
+    "get_cmh": {
+        "name": "cmh",
+        "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address and path) from cmh.db.",
+        "author": "@abrignoni",
+        "creation_date": "2020-03-05",
+        "last_update_date": "2026-08-01",
+        "requirements": "none",
+        "category": "Samsung_CMH",
+        "notes": "Queries the files table directly (media_type 1 = images). In the samples examined, older CMH versions defined an images view over the files table with the same filter and newer CMH versions did not carry that view. Reference: AOSP, 'MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE; DATE_ADDED/DATE_MODIFIED in seconds, DATE_TAKEN in milliseconds', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
+        "paths": ('*/cmh.db*',),
+        "output_types": "all",
+        "artifact_icon": "file",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.samsung.cmh | 32 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.cmh | 2 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.cmh | 16 rows",
+            "sharon_a14": "Android 14 | com.samsung.cmh | 1410 rows",
+            "anne_a15": "Android 15 | com.samsung.cmh | 212 rows",
+        },
+    }
+}
+
+import datetime
+import hashlib
 import sqlite3
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, kmlgen, is_platform_windows, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, does_table_exist_in_db
 
-def get_cmh(files_found, report_folder, seeker, wrap_text):
 
-    file_found = str(files_found[0])
-    db = open_sqlite_db_readonly(file_found)
-    cursor = db.cursor()
-    cursor.execute('''
-    SELECT
-    datetime(images.datetaken /1000, "unixepoch") as datetaken,
-    datetime(images.date_added, "unixepoch") as dateadded,
-    datetime(images.date_modified, "unixepoch") as datemodified,
-    images.title,
-    images.bucket_display_name,
-    images.latitude,
-    images.longitude,
-    location_view.address_text,
-    location_view.uri,
-    images._data,
-    images.isprivate
-    FROM images
-    left join location_view
-    on location_view._id = images._id
-    ''')
-    all_rows = cursor.fetchall()
-    usageentries = len(all_rows)
-    if usageentries > 0:
-        report = ArtifactHtmlReport('Samsung CMH')
-        report.start_artifact_report(report_folder, f'Geodata')
-        report.add_script()
-        data_headers = ('Timestamp', 'Date Added', 'Date Modified', 'Title', 'Bucket Name', 'Latitude', 'Longitude','Address', 'URI', 'Data Location', 'Is Private')
-        data_list = []
-        for row in all_rows:
-            data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
-        report.write_artifact_data_table(data_headers, data_list, file_found)
-        report.end_artifact_report()
-        
-        tsvname = f'Samsung CMH Geodata'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = f'Samsung CMH Geodata'
-        timeline(report_folder, tlactivity, data_list, data_headers)
-        
-        kmlactivity = 'Samsung CMH Geodata'
-        kmlgen(report_folder, kmlactivity, data_list, data_headers)
-        
-    else:
-        logfunc(f'No Samsung_CMH_GeoData available')    
-    db.close()
+def _ms_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    return ''
 
-__artifacts__ = {
-        "cmh": (
-                "Samsung_CMH",
-                ('*/cmh.db'),
-                get_cmh)
-}
+
+def _sec_to_utc(value):
+    if value:
+        return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+    return ''
+
+
+@artifact_processor
+def get_cmh(context):
+    files_found = context.get_files_found()
+    # Extractions can hold several cmh.db copies (e.g. one per user profile);
+    # parse every distinct copy that carries the files table. The same
+    # database can appear under aliased paths (data/data vs data/user/0,
+    # tool mirror folders), so byte-identical copies are only parsed once.
+    data_list = []
+    sources = []
+    seen_hashes = set()
+    for file_found in files_found:
+        file_found = str(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')):
+            continue
+        if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
+            continue  # Skip mirror, it should be duplicate data
+
+        with open(file_found, 'rb') as db_file:
+            file_hash = hashlib.sha256(db_file.read()).hexdigest()
+        if file_hash in seen_hashes:
+            continue
+        seen_hashes.add(file_hash)
+
+        if not does_table_exist_in_db(file_found, 'files'):
+            logfunc(f'No files table in {file_found} (unsupported CMH schema version?)')
+            continue
+
+        db = open_sqlite_db_readonly(file_found)
+        cursor = db.cursor()
+        try:
+            # Older CMH versions defined an images view as exactly
+            # "SELECT ... FROM files WHERE media_type=1"; newer versions
+            # dropped the view, so query the files table directly.
+            cursor.execute('''
+                SELECT
+                files.datetaken, files.date_added, files.date_modified, files.title,
+                files.bucket_display_name, files.latitude, files.longitude,
+                location_view.address_text, location_view.uri, files._data, files.isprivate
+                FROM files
+                left join location_view on location_view._id = files._id
+                WHERE files.media_type = 1
+            ''')
+            all_rows = cursor.fetchall()
+        except sqlite3.OperationalError as ex:
+            logfunc(f'Unable to query {file_found} (unsupported CMH schema version?): {ex}')
+            all_rows = []
+        db.close()
+
+        if all_rows:
+            sources.append(file_found)
+        for r in all_rows:
+            data_list.append((_ms_to_utc(r[0]), _sec_to_utc(r[1]), _sec_to_utc(r[2]), r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10]))
+
+    source_path = ', '.join(sources) if sources else str(files_found[0])
+    data_headers = (('Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), 'Title', 'Bucket Name', 'Latitude', 'Longitude', 'Address', 'URI', 'Data Location', 'Is Private')
+    return data_headers, data_list, source_path

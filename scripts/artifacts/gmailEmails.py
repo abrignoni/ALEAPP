@@ -1,17 +1,30 @@
+# pylint: disable=W0631,W0612,W0622
 __artifacts_v2__ = {
     "gmailEmails": {
         "name": "Gmail - App Emails",
         "description": "Parses emails from Gmail",
         "author": "Alexis Brignoni, Patrick Dalla, @stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2025-07-30",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Email",
-        "notes": "",
+        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from numbered fields of the zipped message protobuf. Protobuf field positions were established through testing; Mailed By and Signed by reflect stored header values and are not verified against Authentication-Results.",
         "paths": ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*'),
         "output_types": "standard",
         "html_columns": ["Message"],
         "artifact_icon": "inbox",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 200 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 201 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 206 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 206 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 112 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 207 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 28 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 109 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 32 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 186 rows",
+        },
     },
     "gmailLabels": {
         "name": "Gmail - Label Details",
@@ -25,31 +38,53 @@ __artifacts_v2__ = {
         "paths": ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*'),
         "output_types": ["html","tsv","lava"],
         "artifact_icon": "mail",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 32 rows",
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 30 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 33 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 32 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 32 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 66 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 33 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 32 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 31 rows",
+            "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 32 rows",
+        },
     },
     "gmailDownloadRequests": {
         "name": "Gmail - Download Requests",
         "description": "Parses download requests from Gmail",
         "author": "@stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2025-07-30",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Email",
         "notes": "",
         "paths": ('*/data/com.google.android.gm/databases/downloader.db*'),
         "output_types": "standard",
         "artifact_icon": "download",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+        },
     }
 }
 
 import zlib
-import blackboxprotobuf
+from scripts.ilapfuncs import decode_protobuf
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
-from scripts.ilapfuncs import open_sqlite_db_readonly, media_to_html, get_sqlite_db_records, artifact_processor
+from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor, \
+    logfunc
+from scripts.html_safe import safe_source
 
 @artifact_processor
-def gmailEmails(files_found, report_folder, seeker, wrap_text):
+def gmailEmails(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     bigTopDataDB = ''
     source_bigTop = ''
     
@@ -100,9 +135,9 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                     arreglo = bytearray(data)
                     arreglo = arreglo[1:]
                     decompressed_data = zlib.decompress(arreglo)
-                    message, typedef = blackboxprotobuf.decode_message(decompressed_data)
+                    message, typedef = decode_protobuf(decompressed_data)
                    
-                    timestamp = (datetime.utcfromtimestamp(message['17'] / 1000))              
+                    timestamp = (datetime.fromtimestamp(message['17'] / 1000, timezone.utc))              
                 else:
                     continue
 
@@ -136,15 +171,20 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                     else:
                         subjectline = ''
                 
+                messagehtml = ''
                 messagetest = (message.get('6', '')) #HTML message
                 if messagetest != '':
                     messagetest = message['6'].get('2','')
                     if messagetest != '':
-                        if isinstance(message['6']['2'], list):
-                            for x in message['6']['2']:
-                                messagehtml = messagehtml + (x['3']['2'].decode())
-                        else:
-                            messagehtml = (message['6']['2']['3']['2'].decode()) 
+                        try:
+                            if isinstance(message['6']['2'], list):
+                                for x in message['6']['2']:
+                                    messagehtml = messagehtml + (x['3']['2'].decode())
+                            else:
+                                messagehtml = (message['6']['2']['3']['2'].decode())
+                        except (AttributeError, KeyError, TypeError, IndexError):
+                            # The body node nesting varies between app versions
+                            logfunc(f'Unrecognized Gmail message body structure for server id {serverid}; body omitted')
                
                 mailedby = (message.get('11', {}).get('8', b'')) #mailed by
                 if isinstance(message.get('11', {}).get('8', ''), bytes): 
@@ -168,15 +208,17 @@ def gmailEmails(files_found, report_folder, seeker, wrap_text):
                     for attachpath in files_found:
                         if attachhash in attachpath:
                             if attachpath.endswith(attachname):
-                                attachment = media_to_html(attachpath, files_found, report_folder)
-                    
-                data_list.append((timestamp,serverid,messagehtml,attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,bigTopDataDB))
+                                attachment = check_in_media(attachpath, name=attachname) or ''
 
-    data_headers = (('Timestamp','datetime'),'Email ID','Message','Attachment','Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
+                data_list.append((timestamp,serverid,safe_source(messagehtml),attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,bigTopDataDB))
+
+    data_headers = (('Timestamp','datetime'),'Email ID','Message',('Attachment','media'),'Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
     return data_headers, data_list, 'See source file(s) below:'
 
 @artifact_processor      
-def gmailLabels(files_found, report_folder, seeker, wrap_text):
+def gmailLabels(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     bigTopDataDB = ''
     source_bigTop = ''
     
@@ -220,7 +262,9 @@ def gmailLabels(files_found, report_folder, seeker, wrap_text):
     return data_headers, data_list, 'See source file(s) below:'
       
 @artifact_processor        
-def gmailDownloadRequests(files_found, report_folder, seeker, wrap_text):
+def gmailDownloadRequests(context):
+    files_found = context.get_files_found()
+    seeker = context.get_seeker()
     downloaderDB = ''
     source_downloader = ''
     data_list = []
@@ -256,5 +300,5 @@ def gmailDownloadRequests(files_found, report_folder, seeker, wrap_text):
         for record in db_records:
             data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7]))
     
-    data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Message ID','URL','Target File Path','Target File Size','Priority')
+    data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Caller ID','URL','Target File Path','Target File Size','Priority')
     return data_headers, data_list, downloaderDB

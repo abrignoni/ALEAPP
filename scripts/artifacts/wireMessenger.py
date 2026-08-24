@@ -1,340 +1,439 @@
 __artifacts_v2__ = {
-    "Wire User Profile": {
+    "get_wire_profile": {
         "name": "Wire User Profile",
         "description": "Parses details about the user profile for Wire Messenger",
         "author": "@cf-eglendye",
-        "version": "0.1",
-        "date": "2024-04-24",
+        "creation_date": "2024-04-24",
+        "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35",
-        "paths": ('*/com.wire/**'),
-        "function": "get_wire_profile"
+        "notes": "Tested on: Android 13 Wire v.3.81.35. Only the first registered client (clients[0]) "
+                 "is reported; any further clients registered to the account are not listed.\n"
+                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
+                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
+                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
+                 "(the app's own log records a database keying operation, and the app's published "
+                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+                 "shared preferences are encrypted, so nothing is reported for those versions.",
+        "paths": ('*/com.wire/**',),
+        "output_types": "standard",
+        "artifact_icon": "message",
+        "sample_data": {
+            "pixel3_a11": "Android 11 | com.wire | 1 row",
+            "pixel3_a12": "Android 12 | com.wire | 1 row",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 0 rows, user database not plain SQLite",
+        },
     },
-        "Wire Contacts": {
+    "get_wire_contacts": {
         "name": "Wire Contacts",
         "description": "Parses user contacts for Wire Messenger",
         "author": "@cf-eglendye",
-        "version": "0.1",
-        "date": "2024-04-24",
+        "creation_date": "2024-04-24",
+        "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35",
+        "notes": "Tested on: Android 13 Wire v.3.81.35.\n"
+                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
+                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
+                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
+                 "(the app's own log records a database keying operation, and the app's published "
+                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+                 "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
-        "function": "get_wire_contacts"
+        "output_types": "standard",
+        "artifact_icon": "message",
+        "sample_data": {
+            "pixel3_a11": "Android 11 | com.wire | 2 rows",
+            "pixel3_a12": "Android 12 | com.wire | 2 rows",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 0 rows, user database not plain SQLite",
+        },
     },
-    "Wire Messages": {
+    "get_wire_messages": {
         "name": "Wire Messages",
         "description": "Parses messages and call history for Wire Messenger",
         "author": "@cf-eglendye",
-        "version": "0.1",
-        "date": "2024-04-24",
+        "creation_date": "2024-04-24",
+        "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35",
-        "paths": ('*/com.wire/**'),
-        "function": "get_wire_messages"
+        "notes": "Tested on: Android 13 Wire v.3.81.35. Rows taken from the MsgDeletion table carry "
+                 "their timestamp in the Date / Time Deleted column and have no sent time. The call "
+                 "duration column is rendered by dividing the stored duration by 1000, which assumes "
+                 "the value is milliseconds; that unit has not been independently verified.\n"
+                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
+                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
+                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
+                 "(the app's own log records a database keying operation, and the app's published "
+                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+                 "shared preferences are encrypted, so nothing is reported for those versions.",
+        "paths": ('*/com.wire/**',),
+        "output_types": "standard",
+        "artifact_icon": "message",
+        "sample_data": {
+            "pixel3_a11": "Android 11 | com.wire | 15 rows",
+            "pixel3_a12": "Android 12 | com.wire | 30 rows",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows, user database not plain SQLite",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 0 rows, user database not plain SQLite",
+        },
+    },
+    "get_wire_cached_files": {
+        "name": "Wire Cached Files",
+        "description": "Files the Wire app stores on disk per account, shown as media where the "
+                       "content is an image",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-15",
+        "last_update_date": "2026-08-15",
+        "requirements": "None",
+        "category": "Wire Messenger",
+        "notes": "One row per file under files/wire.com/<account id>/ and cache/wire.com/"
+                 "<account id>/ inside the app sandbox. On tested images these directories hold "
+                 "PNG and JPEG content, some of it in files without an extension; the type is "
+                 "read from the file content (PNG, JPEG and MP4 observed). These files sit "
+                 "outside the databases newer app versions encrypt, so they remain readable "
+                 "when the message store is not. What each file was used for by the app is not "
+                 "asserted.",
+        "paths": ('*/com.wire/files/wire.com/*/*',
+                  '*/com.wire/cache/wire.com/*/*'),
+        "output_types": "standard",
+        "artifact_icon": "photo",
+        "sample_data": {
+            "pixel3_a11": "Android 11 | com.wire | 0 rows, no wire.com file directories",
+            "pixel3_a12": "Android 12 | com.wire | 0 rows, no wire.com file directories",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 14 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 11 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 20 rows",
+        },
+    },
+    "get_wire_proteus_sessions": {
+        "name": "Wire Proteus Sessions",
+        "description": "Proteus end-to-end encryption sessions stored by the Wire app, with the "
+                       "other party's user id, domain and client id taken from the session file "
+                       "name",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-08-15",
+        "last_update_date": "2026-08-16",
+        "requirements": "None",
+        "category": "Wire Messenger",
+        "notes": "One row per file under app_accounts/<domain>/<account id>/proteus/sessions/ in "
+                 "current app versions, or files/otr/<account id>/sessions/ in the legacy "
+                 "generation. The file name is the Proteus session id, which the app's published "
+                 "core builds as <user id>_<client id> with the user id rendered as "
+                 "<value>@<domain> (CryptoSessionId in core/cryptography/src/commonMain/kotlin/"
+                 "com/wire/kalium/cryptography/ProteusClient.kt and CryptoQualifiedID in the "
+                 "IDs.kt beside it, wireapp/kalium commit e9ac68451ad88f9e67dd41216df926ba47b3a581). "
+                 "Legacy session names predate qualified user ids and carry no domain, which is "
+                 "reported empty rather than assumed.\n"
+                 "These files sit outside the databases current app versions encrypt, so they "
+                 "remain readable when the message store is not. A session file records that a "
+                 "cryptographic session exists with that client. It does not establish that a "
+                 "message was sent, received or read, it carries no message content, and the "
+                 "session contents are not decoded here.\n"
+                 "An extraction can hold the same store under more than one path (/data/data, "
+                 "/data/user/0, data_mirror); each session file is reported once, from the "
+                 "/data/data copy where present.",
+        "paths": ('*/com.wire/app_accounts/*/*/proteus/sessions/*',
+                  '*/com.wire/files/otr/*/sessions/*'),
+        "output_types": "standard",
+        "artifact_icon": "key",
+        "sample_data": {
+            "pixel3_a11": "Android 11 | com.wire | 7 rows, legacy otr store, no domain in the "
+                          "stored names",
+            "pixel3_a12": "Android 12 | com.wire | 9 rows, legacy otr store, no domain in the "
+                          "stored names",
+            "pixel7a_a14": "Android 14 | com.wire vc 9369190 | 5 rows, qualified ids with domain",
+            "hc_pixel8pro_a16": "Android 16 | com.wire vc 100206242 | 0 rows, proteus store "
+                                "present with no session files",
+            "hc_pixel8pro_a17": "Android 17 | com.wire | 0 rows, proteus store present with no "
+                                "session files",
+        },
     }
 }
 
-#get the modules required
+import datetime
 import re
 import sqlite3
 import xml.etree.ElementTree as ET
-from os.path import isdir, basename
+from os.path import basename, isdir
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, open_sqlite_db_readonly, media_to_html
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
-#wire stores the user id as a uuid in an xml file
-#this function checks for the uuid within the preferences file
-#then returns it to a variable as a string
-def get_user_id(files_found):
+UUID_RE = re.compile(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
+
+MESSAGES_SQL = '''
+    SELECT datetime(Messages.time/1000,'unixepoch'), Messages._id, Users.name, Messages.msg_type,
+    json_extract(Messages.content, '$[0].content'),
+    CASE Likings."action" WHEN 1 THEN 'Liked' END,
+    datetime(Likings."timestamp"/1000,'unixepoch'), Users1.name,
+    time(Messages.duration/1000,'unixepoch'), {asset_name}
+    FROM Messages
+    LEFT JOIN Users ON Users._id = Messages.user_id
+    LEFT JOIN Likings ON Messages._id = Likings.message_id
+    LEFT JOIN Users Users1 ON Likings.user_id = Users1._id
+    {asset_join}
+    ORDER BY Messages.time
+'''
+
+
+def _asset_source(source_path):
+    """Resolve the asset table this Wire release uses.
+
+    Newer databases keep attachments in Assets2, older ones in Assets, and a
+    Messages table without asset_id has nothing to join. Returns the SELECT
+    expression and JOIN clause for MESSAGES_SQL. Only the Assets2 shape is
+    corpus-verified; the Assets fallback comes from a community-reported
+    older database (PR #633) and has not been exercised here.
+    """
+    db = open_sqlite_db_readonly(source_path)
+    try:
+        cursor = db.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = {row[0] for row in cursor.fetchall()}
+        cursor.execute('PRAGMA table_info(Messages)')
+        has_asset_id = 'asset_id' in {row[1] for row in cursor.fetchall()}
+    except sqlite3.Error:
+        tables, has_asset_id = set(), False
+    finally:
+        db.close()
+    for table in ('Assets2', 'Assets'):
+        if has_asset_id and table in tables:
+            db = open_sqlite_db_readonly(source_path)
+            try:
+                has_name = 'name' in {row[1] for row in db.execute(f'PRAGMA table_info({table})')}
+            except sqlite3.Error:
+                has_name = False
+            finally:
+                db.close()
+            name_expr = f'{table}.name' if has_name else "''"
+            return name_expr, f'LEFT JOIN {table} ON Messages.asset_id = {table}._id'
+    return "''", ''
+
+
+def _str_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S').replace(tzinfo=datetime.timezone.utc)
+    except (ValueError, TypeError):
+        return ''
+
+
+def _ms_to_utc(value):
+    if not value:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _user_id(files_found):
     for file_found in files_found:
         file_found = str(file_found)
         if file_found.endswith('com.wire.preferences.xml'):
-            tree = ET.parse(file_found)
-            root = tree.getroot()
+            try:
+                root = ET.parse(file_found).getroot()
+            except (ET.ParseError, OSError):
+                continue
             for elem in root:
                 if 'active_account' in str(elem.attrib):
-                    user_id = elem.text
-                    return user_id
-    else:
-        logfunc("Unable to locate files required to parse User ID")
-        pass
+                    return elem.text
+    return None
 
-#wire names the database from the user id
-#this function checks the files found for the database matching the user id
-#it also checks that the user id located is in a uuid format  
-def get_user_database(files_found, user_id):
-    #create a regular expression for uuids and compile it
-    re_uuid = r'[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-    uuid_match = re.compile(re_uuid)
-    
-    if re.match(uuid_match, user_id):
-        for file_found in files_found:
-            is_sqlite3 = lambda file_found: open(file_found, 'rb').read(16) == b'SQLite format 3\x00'
-            file_found = str(file_found)
-            user_id = str(user_id)
-            #check if the file found ends with the uuid user id
-            if file_found.endswith(user_id):
-                #check if the file found is also a sqlite database and is not a directory
-                if is_sqlite3 and not isdir(file_found):
-                    user_database = file_found
-                    #returns a string of the user database so it can then be queried using sqlite3
-                    return user_database
-                else:
-                    logfunc("Located a file ending with the User ID, but it is not an SQLite DB - I'll continue looking!")
-                    pass
-            else:
-                continue
-    else:
-        logfunc("User ID is not a UUID - decoding not supported!")
-        pass
 
-def get_wire_profile(files_found, report_folder, seeker, wrap_text):
-    #get the user id and the database of the user
-    user_id = get_user_id(files_found)
-    user_database = get_user_database(files_found, user_id)
-    #create an empty list for the profile data
-    profile_data = list()
-    
-    #connect to the db
-    db = open_sqlite_db_readonly(user_database)
+def _user_db(files_found):
+    user_id = _user_id(files_found)
+    if not user_id or not UUID_RE.match(user_id):
+        return ''
+    for file_found in files_found:
+        file_found = str(file_found)
+        if not file_found.endswith(user_id) or isdir(file_found):
+            continue
+        try:
+            with open(file_found, 'rb') as fh:
+                if fh.read(16) == b'SQLite format 3\x00':
+                    return file_found
+        except OSError:
+            continue
+    return ''
+
+
+def _run(source_path, sql):
+    if not source_path:
+        return []
+    db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
-    #sqlite query time                
-    cursor.execute('''
-    SELECT Users._id AS "User ID",
-        Users.name AS "Display Name",
-        Users.email AS"Email Address",
-        Users.phone AS "Phone Number",
-        json_extract(data, '$.clients[0].verification') AS "Verification Status",
-        json_extract(data, '$.clients[0].label') AS "Verification Device",
-        json_extract(data, '$.clients[0].model') AS "Device Model",
-        datetime(json_extract(data, '$.clients[0].regTime') / 1000, 'unixepoch') AS "Registration Date / Time",
-        Users.picture AS "Profile Picture"
-    FROM Users
-        LEFT JOIN Clients ON Users._id = Clients._id
-        WHERE Users."connection" = "self";
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except sqlite3.Error:
+        rows = []
+    db.close()
+    return rows
+
+
+@artifact_processor
+def get_wire_profile(context):
+    files_found = unique_files(context)
+    source_path = _user_db(files_found)
+    rows = _run(source_path, '''
+        SELECT Users._id, Users.name, Users.email, Users.phone,
+        json_extract(data, '$.clients[0].verification'),
+        json_extract(data, '$.clients[0].label'),
+        json_extract(data, '$.clients[0].model'),
+        datetime(json_extract(data, '$.clients[0].regTime') / 1000, 'unixepoch'),
+        Users.picture
+        FROM Users LEFT JOIN Clients ON Users._id = Clients._id
+        WHERE Users."connection" = "self"
     ''')
-    all_rows = cursor.fetchall()
-    db.close()
-    usage_entries = len(all_rows)
-    
-    #check if there were any entries in the database
-    if usage_entries > 0:
-        #iterate through all rows in the database
-        for row in all_rows:
-            profile_picture = str(row[8])
-            found_profile_picture = False
-            #iterate through all files located from the regex search
-            for file_found in files_found:
-                #check if the profile picture name from the sqlite db is in the files located
-                if profile_picture in file_found:
-                    filename = basename(file_found)
-                    thumb = media_to_html(filename,files_found,report_folder)
-                    #update the boolean value to ensure that the profile picture gets parsed
-                    found_profile_picture = True
+    data_list = []
+    for row in rows:
+        picture_id = str(row[8]) if row[8] is not None else ''
+        thumb = ''
+        if picture_id:
+            match = next((str(f) for f in files_found if picture_id in str(f) and not isdir(str(f))), None)
+            if match:
+                thumb = check_in_media(match, basename(match))
+        data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], _str_to_utc(row[7]),
+                          row[8], thumb))
 
-            #check if there was a profile picture located    
-            if found_profile_picture:
-                profile_data.append((row[0],row[1],row[2],row[3],row[4], row[5], row[6], row[7], row[8], thumb))
-            else:
-                profile_data.append((row[0],row[1],row[2],row[3],row[4], row[5], row[6], row[7], row[8], "No profile picture located"))
-                
-    else:
-        logfunc("No entries in the SQLite database!")
-    
-    #checks if the profile data variable is populated then writes the data to the report
-    if profile_data:
-        description = 'Parses details about the user profile for Wire Messenger'
-        report = ArtifactHtmlReport('Wire User Profile')
-        report.start_artifact_report(report_folder, 'Wire User Profile', description)
-        report.add_script()
-        data_headers = ('User ID','Display Name','Email Address','Phone Number','Verification Status',
-                        'Verification Device','Device Model','Date Registered','Profile Picture Name', 'Profile Picture')
-        report.write_artifact_data_table(data_headers, profile_data, user_database, html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Wire User Profile'
-        tsv(report_folder, data_headers, profile_data, tsvname)
-    else:
-        logfunc("No profile data located!")
+    data_headers = ('User ID', 'Display Name', 'Email Address', 'Phone Number', 'Verification Status',
+                    'First Client Label', 'Device Model', ('Date Registered', 'datetime'),
+                    'Profile Picture ID', ('Profile Picture', 'media'))
+    return data_headers, data_list, source_path
 
-def get_wire_contacts(files_found, report_folder, seeker, wrap_text):
-    #get the user id and the database of the user
-    user_id = get_user_id(files_found)
-    user_database = get_user_database(files_found, user_id)
-    #create an empty list for the contacts data
-    contacts_data = list()
-    
-    #connect to the db
-    db = open_sqlite_db_readonly(user_database)
-    cursor = db.cursor()
-    #sqlite query time                
-    cursor.execute('''
-    Select Users._id As "User ID",
-        Users.name As "Display Name",
-        Users.handle As "Handle",
-        Users.connection As "Connection Status",
-        DateTime(Users.conn_timestamp / 1000, 'unixepoch') As "Connection Date / Time",
-        Users.picture AS "Profile Picture ID"
-    From Users
-        Where Users.connection != 'self'
-    ''')           
-    
-    all_rows = cursor.fetchall()
-    db.close()
-    usage_entries = len(all_rows)
-    
-    #check if there were any entries in the database
-    if usage_entries > 0:
-        #iterate through all rows in the database
-        for row in all_rows:
-            
-            user_id = row[0]
-            display_name = row[1]
-            handle_id = row[2]
-            conn_status = row[3]
-            conn_time = row[4]
-            profile_picture = row[5]
-            
-            contacts_data.append((user_id, display_name, handle_id,
-                                  conn_status, conn_time, profile_picture))
-    else:
-        logfunc("No entries in the SQLite database!")
-        
-    #checks if the contacts data variable is populated then writes the data to the report
-    if contacts_data:
-        description = 'Parses details about the user contacts for Wire Messenger'
-        report = ArtifactHtmlReport('Wire User Contacts')
-        report.start_artifact_report(report_folder, 'Wire User Contacts', description)
-        report.add_script()
-        data_headers = ('User ID', 'Display Name', 'Handle ID', 'Connection Status', 'Connection Time', 'Profile Picture ID')
-        report.write_artifact_data_table(data_headers, contacts_data, user_database, html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Wire User Contacts'
-        tsv(report_folder, data_headers, contacts_data, tsvname)
-    else:
-        logfunc("No contacts data located!")
-        
-def get_wire_messages(files_found, report_folder, seeker, wrap_text):
-    #get the user id and the database of the user
-    user_id = get_user_id(files_found)
-    user_database = get_user_database(files_found, user_id)
-    #create an empty list for the messages data
-    messages_data = list()
-    
-    #connect to the db
-    db = open_sqlite_db_readonly(user_database)
-    cursor = db.cursor()
-    #sqlite query time
 
-    cursor.execute('''
-    SELECT message_id,
-    timestamp               
-    FROM MsgDeletion;
+@artifact_processor
+def get_wire_contacts(context):
+    files_found = unique_files(context)
+    source_path = _user_db(files_found)
+    rows = _run(source_path, '''
+        SELECT Users._id, Users.name, Users.handle, Users.connection,
+        datetime(Users.conn_timestamp/1000,'unixepoch'), Users.picture
+        FROM Users WHERE Users.connection != 'self'
     ''')
-    
-    deleted_rows = cursor.fetchall()
-    
-    if len(deleted_rows) == 0:
-        cursor.execute('''
-        Select
-            datetime(Messages.time / 1000, 'unixepoch'),
-            Messages._id AS "Message ID",
-            Users.name,
-            Messages.msg_type,
-            json_extract(Messages.content, '$[0].content') AS "Content",
-            CASE Likings."action" WHEN 1 THEN "Liked" END,
-            datetime(Likings."timestamp" / 1000, 'unixepoch'),
-            Users1.name As "Liked By",
-            time(Messages.duration / 1000, 'unixepoch'),
-            Assets2.name
-        From Messages
-            Left Join Users On Users._id = Messages.user_id
-            Left Join Likings On Messages._id = Likings.message_id
-            Left Join Users Users1 On Likings.user_id = Users1._id
-            LEFT JOIN Assets2 ON Messages.asset_id = Assets2._id           
-        Order By time;
-        ''')
-    
-    #closing read only db and opening write mode
-    #inserting the deleted messages into the Messages table    
-    else:
-        db.close()
-        db = sqlite3.connect(user_database)
-        cursor = db.cursor()
-        cursor.execute('''
-        INSERT INTO Messages (_id, time)
-        SELECT message_id, timestamp
-        FROM MsgDeletion;         
-        ''')
+    data_list = [(r[0], r[1], r[2], r[3], _str_to_utc(r[4]), r[5]) for r in rows]
+    data_headers = ('User ID', 'Display Name', 'Handle ID', 'Connection Status',
+                    ('Connection Time', 'datetime'), 'Profile Picture ID')
+    return data_headers, data_list, source_path
 
-        cursor.execute('''
-        UPDATE Messages
-        SET msg_type = 'Deleted' WHERE msg_type = '';
-        ''')
-        
-        cursor.execute('''
-        Select
-            datetime(Messages.time / 1000, 'unixepoch'),
-            Messages._id AS "Message ID",
-            Users.name,
-            Messages.msg_type,
-            json_extract(Messages.content, '$[0].content')AS "Content",
-            CASE Likings."action" WHEN 1 THEN "Liked" END,
-            datetime(Likings."timestamp" / 1000, 'unixepoch'),
-            Users1.name As "Liked By",
-            time(Messages.duration / 1000, 'unixepoch'),
-            Assets2.name
-        From Messages
-            Left Join Users On Users._id = Messages.user_id
-            Left Join Likings On Messages._id = Likings.message_id
-            Left Join Users Users1 On Likings.user_id = Users1._id
-            LEFT JOIN Assets2 ON Messages.asset_id = Assets2._id           
-        Order By time;
-        ''')
-        
-    all_rows = cursor.fetchall()
-    db.close()
-    usage_entries = len(all_rows)
-    
-    #check if there were any entries in the database
-    if usage_entries > 0:
-        #iterate through all rows in the database
-        for row in all_rows:
-            
-            date_time = row[0]
-            message_id = row[1]
-            user_id = row[2]
-            message_type = row[3]
-            message_content = row[4]
-            reaction = row[5]
-            reaction_dt = row[6]
-            reacted_by = row[7]
-            call_duration = row[8]
-            asset_id = row[9]
-                
-            
-            messages_data.append((date_time, message_id, user_id,message_type, message_content,
-                                  reaction, reaction_dt, reacted_by, call_duration, asset_id))
-    else:
-        logfunc("No entries in the SQLite database!")
-               
-    #checks if the messages data variable is populated then writes the data to the report
-    if messages_data:
-        description = 'Parses details about the messages for Wire Messenger'
-        report = ArtifactHtmlReport('Wire User Messages')
-        report.start_artifact_report(report_folder, 'Wire User Messages', description)
-        report.add_script()
-        data_headers = ('Date / Time Sent', 'Message ID', 'User Name', 'Message Type', 'Message Content', 'Reaction', 'Date / Time Reacted',
-                        'Reacted By','Call Duration','Asset ID - Check Path: /data/media/0/Pictures/Wire Images/')
-        report.write_artifact_data_table(data_headers, messages_data, user_database, html_escape=False)
-        report.end_artifact_report()
-        
-        tsvname = 'Wire User Contacts'
-        tsv(report_folder, data_headers, messages_data, tsvname)
-    else:
-        logfunc("No message data located!")
+
+@artifact_processor
+def get_wire_messages(context):
+    files_found = unique_files(context)
+    source_path = _user_db(files_found)
+    data_list = []
+    asset_name, asset_join = _asset_source(source_path) if source_path else ("''", '')
+    for r in _run(source_path, MESSAGES_SQL.format(asset_name=asset_name, asset_join=asset_join)):
+        data_list.append((_str_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], _str_to_utc(r[6]), r[7], r[8], r[9],
+                          ''))
+
+    # Surface deleted messages from MsgDeletion read-only (the original modified the source DB to do this).
+    # MsgDeletion.timestamp is a deletion time, not a sent time, so it gets its own column.
+    for d in _run(source_path, 'SELECT message_id, timestamp FROM MsgDeletion'):
+        data_list.append(('', d[0], '', 'Deleted', '', '', '', '', '', '', _ms_to_utc(d[1])))
+
+    data_headers = (('Date / Time Sent', 'datetime'), 'Message ID', 'User Name', 'Message Type',
+                    'Message Content', 'Reaction', ('Date / Time Reacted', 'datetime'), 'Reacted By',
+                    'Call Duration (assumes ms)', 'Asset Name', ('Date / Time Deleted', 'datetime'))
+    return data_headers, data_list, source_path
+
+
+_WIRE_ACCOUNT_DIR_RE = re.compile(r'[/\\]wire\.com[/\\]([^/\\]+)[/\\]')
+
+
+@artifact_processor
+def get_wire_cached_files(context):
+    data_list = []
+
+    for file_found in unique_files(context):
+        file_found = str(file_found)
+        match = _WIRE_ACCOUNT_DIR_RE.search(file_found)
+        if not match or isdir(file_found):
+            continue
+        account_id = match.group(1)
+
+        extension = None
+        try:
+            with open(file_found, 'rb') as handle:
+                magic = handle.read(8)
+        except OSError:
+            magic = b''
+        if magic.startswith(b'\x89PNG'):
+            extension = 'png'
+        elif magic.startswith(b'\xff\xd8'):
+            extension = 'jpg'
+        elif magic[4:8] == b'ftyp':
+            extension = 'mp4'
+        media_ref = ''
+        if extension:
+            media_ref = check_in_media(file_found, basename(file_found),
+                                       force_extension=extension) or ''
+
+        data_list.append((
+            basename(file_found),
+            media_ref,
+            account_id,
+            context.get_relative_path(file_found),
+        ))
+
+    data_headers = (
+        'File Name',
+        ('File', 'media'),
+        'Account ID',
+        'Source Path',
+    )
+    return data_headers, data_list, 'See Source Path column'
+
+
+_PROTEUS_SESSION_RE = re.compile(
+    r'[/\\]com\.wire[/\\]app_accounts[/\\][^/\\]+[/\\]([^/\\]+)[/\\]proteus[/\\]sessions[/\\]([^/\\]+)$')
+_OTR_SESSION_RE = re.compile(
+    r'[/\\]com\.wire[/\\]files[/\\]otr[/\\]([^/\\]+)[/\\]sessions[/\\]([^/\\]+)$')
+
+
+@artifact_processor
+def get_wire_proteus_sessions(context):
+    data_list = []
+
+    for file_found in unique_files(context):
+        file_found = str(file_found)
+        if isdir(file_found):
+            continue
+        match = _PROTEUS_SESSION_RE.search(file_found) or _OTR_SESSION_RE.search(file_found)
+        if not match:
+            continue
+        account_id = match.group(1)
+        session_id = match.group(2)
+
+        # The session id is "<user id>_<client id>", and the user id is
+        # "<value>@<domain>" once the app started qualifying ids. Legacy names
+        # carry no domain, so it stays empty rather than being assumed.
+        remote_user, _, remote_client = session_id.rpartition('_')
+        if not remote_user:
+            remote_user, remote_client = session_id, ''
+        user_value, _, domain = remote_user.partition('@')
+
+        data_list.append((
+            user_value,
+            domain,
+            remote_client,
+            account_id,
+            session_id,
+            context.get_relative_path(file_found),
+        ))
+
+    data_headers = (
+        'Other Party User ID',
+        'Other Party Domain',
+        'Other Party Client ID',
+        'Local Account ID',
+        'Session ID (as stored)',
+        'Source Path',
+    )
+    return data_headers, data_list, 'See Source Path column'

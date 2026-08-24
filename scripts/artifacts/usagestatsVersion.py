@@ -4,13 +4,29 @@ __artifacts_v2__ = {
         "description": "Extracts OS Version from Usagestats",
         "author": "@AlexisBrignoni",
         "creation_date": "2021-04-15",
-        "last_update_date": "2025-03-07",
+        "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Device Information",
-        "notes": "",
+        "notes": "Each line of the version file is split on ';' and the fields are named by position "
+                 "from the observed format: first the Android version, then the codename, then the "
+                 "build version, then the country specific code. The country specific code is only "
+                 "reported when a line holds exactly five fields, and a fifth field, where present, "
+                 "is not reported.",
         "paths": ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "bar-chart-2"
+        "artifact_icon": "chart-bar",
+        "sample_data": {
+            "anne_a15": "Android 15 | 4 rows",
+            "galaxys10_a10": "Android 10 | 4 rows",
+            "hc_pixel8pro_a16": "Android 16 | 3 rows",
+            "kevin_pocox7_a15": "Android 15 | 3 rows",
+            "pixel7a_a14": "Android 14 | 3 rows",
+            "samsunga53_a14": "Android 14 | 4 rows",
+            "samsungs20_a13": "Android 13 | 4 rows",
+            "sharon_a14": "Android 14 | 4 rows",
+            "russell_pixel6a_a13": "Android 13 | 3 rows",
+            "userb2_a13": "Android 13 | 3 rows",
+        }
     }
 }
 
@@ -22,7 +38,8 @@ from scripts.ilapfuncs import artifact_processor, \
 
 
 @artifact_processor
-def usagestatsVersion(files_found, report_folder, seeker, wrap_text):
+def usagestatsVersion(context):
+    files_found = context.get_files_found()
     source_path = get_file_path(files_found, "version")
     data_list = []
 

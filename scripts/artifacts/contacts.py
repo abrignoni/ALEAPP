@@ -1,16 +1,29 @@
+# pylint: disable=W0611,W0612,W0718
 __artifacts_v2__ = {
     "contacts": {
         "name": "Contacts",
         "description": "Contacts from the device",
         "author": "Mark McKinnon",
         "creation_date": "2021-03-11",
-        "last_updated_date": "2025-09-09",
+        "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Contacts",
         "notes": "",
         "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*', '*/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html","tsv","lava"],
         "artifact_icon": "users",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.samsung.android.providers.contacts | 9 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.providers.contacts | 3 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 2 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 19 rows",
+            "pixel7a_a14": "Android 14 | com.android.providers.contacts | 16 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 12 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 6 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 31 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.contacts | 4 rows",
+            "userb2_a13": "Android 13 | com.android.providers.contacts | 0 rows",
+        },
     }
 }
 
@@ -18,9 +31,12 @@ import os
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, does_column_exist_in_db
+from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
-def contacts(files_found, report_folder, seeker, wrap_text):
+def contacts(context):
+    files_found = unique_files(context)
+    seeker = context.get_seeker()
 
     source_file = ''
     data_list = []

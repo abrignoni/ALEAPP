@@ -1,62 +1,58 @@
-from datetime import *
+__artifacts_v2__ = {
+    "get_offlinePages": {
+        "name": "Offline Pages (MHTML)",
+        "description": "Saved offline web pages (MHTML/MHT archives) with source URL, subject and capture time",
+        "author": "@abrignoni",
+        "creation_date": "2023-01-25",
+        "last_update_date": "2023-01-25",
+        "requirements": "none",
+        "category": "Offline Pages",
+        "notes": "",
+        "paths": ('*/*.mhtml', '*/*.mht'),
+        "output_types": "standard",
+        "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533 | 7 rows",
+            "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 4 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204 | 2 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.android.chrome vc 616710133, com.brave.browser vc 426712324, com.microsoft.emmx vc 259210005 | 8 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 12 rows",
+            "samsungs20_a13": "Android 13 | com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 7 rows",
+            "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 37 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 9 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 8 rows",
+        },
+    }
+}
+
+import datetime
 import email
 import os
-import pytz
 
-from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import timeline, logfunc, tsv, is_platform_windows, media_to_html
+from scripts.ilapfuncs import artifact_processor, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
-def convert_utc_int_to_timezone(utc_time, time_offset): 
-    #fetch the timezone information
-    timezone = pytz.timezone(time_offset)
-    
-    #convert utc to timezone
-    timezone_time = utc_time.astimezone(timezone)
-    
-    #return the converted value
-    return timezone_time
 
-def get_offlinePages(files_found, report_folder, seeker, wrap_text):
-    
+@artifact_processor
+def get_offlinePages(context):
+    files_found = unique_files(context)
     data_list = []
-    
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
-        
-        modified_time = os.path.getmtime(file_found)
-        utc_modified_date = datetime.fromtimestamp(modified_time, tz=timezone.utc)
-        
-        timestamp = convert_utc_int_to_timezone(utc_modified_date, 'UTC')
-        
+        source_paths.append(file_found)
 
-        with open(file_found,'r', errors='replace') as fp:
+        timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(file_found), tz=datetime.timezone.utc)
+        with open(file_found, 'r', errors='replace', encoding='utf-8') as fp:
             message = email.message_from_file(fp)
-            sourced = (message['Snapshot-Content-Location'])
-            subjectd = (message['Subject'])
-            dated = (message['Date'])
-            media = media_to_html(file_found, files_found, report_folder)
+            web_source = message['Snapshot-Content-Location']
+            subject = message['Subject']
+            mime_date = message['Date']
 
-        data_list.append((timestamp, media, sourced, subjectd, dated, file_found))
-        
-    if len(data_list) > 0:
-        note = 'Source location in extraction found in the report for each item.'
-        report = ArtifactHtmlReport('Offline Pages')
-        report.start_artifact_report(report_folder, f'Offline Pages')
-        report.add_script()
-        data_headers = ('Timestamp', 'File', 'Web Source', 'Subject', 'MIME Date', 'Source in Extraction')
-        report.write_artifact_data_table(data_headers, data_list, note, html_no_escape=['File'])
-        report.end_artifact_report()
-        
-        tsvname = f'Offline Pages'
-        tsv(report_folder, data_headers, data_list, tsvname)
-        
-        tlactivity = 'Offline Pages'
-        timeline(report_folder, tlactivity, data_list, data_headers)
+        media = check_in_media(file_found, os.path.basename(file_found))
+        data_list.append((timestamp, media, web_source, subject, mime_date, context.get_relative_path(file_found)))
 
-__artifacts__ = {
-        "pages": (
-                "Offline Pages",
-                ('*/*.mhtml', '*/*.mht'),
-                get_offlinePages)
-}
-            
+    data_headers = (
+        ('Timestamp', 'datetime'), ('File', 'media'), 'Web Source', 'Subject', 'MIME Date', 'Source in Extraction')
+    return data_headers, data_list, ', '.join(context.get_relative_path(p) for p in source_paths)
