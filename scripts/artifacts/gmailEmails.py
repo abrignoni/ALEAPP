@@ -1,28 +1,34 @@
-# pylint: disable=W0631,W0612,W0622
 __artifacts_v2__ = {
     "gmailEmails": {
         "name": "Gmail - App Emails",
         "description": "Parses emails from Gmail",
         "author": "Alexis Brignoni, Patrick Dalla, @stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-24",
         "requirements": "none",
         "category": "Email",
-        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from numbered fields of the zipped message protobuf. Protobuf field positions were established through testing; Mailed By and Signed by reflect stored header values and are not verified against Authentication-Results.",
-        "paths": ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*'),
+        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from numbered fields of the zipped message protobuf. Protobuf field positions were established through testing; Mailed By and Signed by reflect stored header values and are not verified against Authentication-Results. The app keeps one bigTopDataDB.<id> store per signed-in account; every matched store is read, across every Android user of the device, with duplicate storage spellings (data/data, data/user/<n>, data_mirror) collapsed first and stores read in sorted path order. Account ID is the numeric store id as stored. The Account column is filled only when the Java String.hashCode of an address recorded in the same app instance's Gmail.xml equals the store id, which held for every store in the tested images; a store with no matching recorded address keeps a blank Account. A store that cannot be opened or queried is logged and skipped without dropping the other accounts' rows.",
+        "paths": ('*/com.google.android.gm/databases/bigTopDataDB.*','*/com.google.android.gm/files/downloads/*/attachments/*/*.*','*/com.google.android.gm/shared_prefs/Gmail.xml'),
         "output_types": "standard",
         "html_columns": ["Message"],
         "artifact_icon": "inbox",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 200 rows",
+            "cookbook_a11": "Android 11 | com.google.android.gm vc 64291995 | 201 rows",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 201 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.google.android.gm vc 65854395 | 202 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 206 rows",
+            "pixel3_a11": "Android 11 | com.google.android.gm vc 62324124 | 225 rows",
+            "pixel3_a12": "Android 12 | com.google.android.gm vc 62900470 | 152 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 206 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 112 rows",
+            "s20fe_a13": "Android 13 | com.google.android.gm vc 65854395 | 4 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 112 rows across 2 account stores",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 207 rows",
             "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 28 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 109 rows",
-            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 32 rows",
+            "sharon_a13": "Android 13 | com.google.android.gm vc 63927777 | 100 rows",
+            "russell_a14": "Android 14 | com.google.android.gm vc 64738650 | 267 rows across 2 Android users",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 40 rows across 2 Android users",
             "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 186 rows",
         },
     },
@@ -31,23 +37,30 @@ __artifacts_v2__ = {
         "description": "Parses email label metadata from Gmail",
         "author": "@stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2025-07-31",
+        "last_update_date": "2026-08-24",
         "requirements": "none",
         "category": "Email",
-        "notes": "",
-        "paths": ('*/data/com.google.android.gm/databases/bigTopDataDB.*','*/data/com.google.android.gm/files/downloads/*/attachments/*/*.*'),
+        "notes": "One row per label per account store. Every matched bigTopDataDB.<id> store is read, across every Android user of the device, with duplicate storage spellings collapsed first and stores read in sorted path order. Account ID is the numeric store id as stored; the Account column is resolved from the same app instance's Gmail.xml as described in Gmail - App Emails. Label values are reported as stored.",
+        "paths": ('*/com.google.android.gm/databases/bigTopDataDB.*','*/com.google.android.gm/shared_prefs/Gmail.xml'),
         "output_types": ["html","tsv","lava"],
         "artifact_icon": "mail",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 32 rows",
+            "cookbook_a11": "Android 11 | com.google.android.gm vc 64291995 | 31 rows",
             "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 30 rows",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 33 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.google.android.gm vc 65854395 | 33 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 32 rows",
+            "pixel3_a11": "Android 11 | com.google.android.gm vc 62324124 | 30 rows",
+            "pixel3_a12": "Android 12 | com.google.android.gm vc 62900470 | 30 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 32 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 66 rows",
+            "s20fe_a13": "Android 13 | com.google.android.gm vc 65854395 | 33 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 66 rows across 2 account stores",
             "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 33 rows",
+            "sharon_a13": "Android 13 | com.google.android.gm vc 63927777 | 31 rows",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 32 rows",
-            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 31 rows",
+            "russell_a14": "Android 14 | com.google.android.gm vc 64738650 | 64 rows across 2 Android users",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 62 rows across 2 Android users",
             "userb2_a13": "Android 13 | com.google.android.gm vc 64855928 | 32 rows",
         },
     },
@@ -56,193 +69,238 @@ __artifacts_v2__ = {
         "description": "Parses download requests from Gmail",
         "author": "@stark4n6",
         "creation_date": "2023-01-04",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-24",
         "requirements": "none",
         "category": "Email",
-        "notes": "",
-        "paths": ('*/data/com.google.android.gm/databases/downloader.db*'),
+        "notes": "Every matched downloader.db is read, across every Android user of the device, with duplicate storage spellings collapsed first and stores read in sorted path order.",
+        "paths": ('*/com.google.android.gm/databases/downloader.db*'),
         "output_types": "standard",
         "artifact_icon": "download",
         "sample_data": {
             "galaxys10_a10": "Android 10 | com.google.android.gm vc 62632206 | 0 rows",
+            "pixel3_a11": "Android 11 | com.google.android.gm vc 62324124 | 0 rows",
+            "pixel3_a12": "Android 12 | com.google.android.gm vc 62900470 | 0 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gm vc 64361093 | 0 rows",
             "samsunga53_a14": "Android 14 | com.google.android.gm vc 65429598 | 0 rows",
+            "sharon_a13": "Android 13 | com.google.android.gm vc 63927777 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
+            "russell_a14": "Android 14 | com.google.android.gm vc 64738650 | 2 rows",
         },
     }
 }
 
-import zlib
-from scripts.ilapfuncs import decode_protobuf
 import os
+import sqlite3
+import zlib
 from datetime import datetime, timezone
 
-from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor, \
-    logfunc
+from scripts.artifacts.gmail import _parse_xml
+from scripts.artifacts.storagePathViews import canonical_path, unique_files
+from scripts.context import Context
 from scripts.html_safe import safe_source
+from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor, \
+    decode_protobuf, logfunc
+
+
+def _sort_key(path):
+    """Evidence-relative path with one separator, so ordering is platform-independent."""
+    return Context.get_relative_path(str(path)).replace('\\', '/')
+
+
+def _container_of(path):
+    """Storage-view aware prefix above the app's own data directory, so files from one
+    Android user (or one storage volume) only pair with files from the same one."""
+    key, _rank = canonical_path(_sort_key(path))
+    return key.split('/com.google.android.gm/', 1)[0]
+
+
+def _java_string_hash(text):
+    """Java String.hashCode, the scheme the store filename suffixes follow on tested images."""
+    value = 0
+    for char in text:
+        value = (31 * value + ord(char)) & 0xFFFFFFFF
+    return value - 0x100000000 if value >= 0x80000000 else value
+
+
+def _accounts_by_store_id(files_found):
+    """{(container, store id): account address} from each container's Gmail.xml.
+
+    Gmail.xml records the signed-in account addresses (the active-account value and
+    the <address>-account-alias keys). A store is attributed to an address only when
+    the Java String.hashCode of a recorded address equals the store's own numeric
+    filename suffix; a store with no matching recorded address stays unresolved.
+    """
+    mapping = {}
+    for file_found in files_found:
+        file_found = str(file_found)
+        if os.path.basename(file_found) != 'Gmail.xml':
+            continue
+        addresses = set()
+        for child in _parse_xml(file_found):
+            name = child.attrib.get('name', '')
+            if name == 'active-account' and child.text:
+                addresses.add(child.text)
+            elif name.endswith('-account-alias') and '@' in name:
+                addresses.add(name[:-len('-account-alias')])
+        container = _container_of(file_found)
+        for address in addresses:
+            mapping[(container, str(_java_string_hash(address)))] = address
+    return mapping
+
+
+def _gmail_stores(files_found, basename_prefix):
+    """The matched database files, one per account store, in sorted path order."""
+    stores = []
+    for file_found in files_found:
+        file_found = str(file_found)
+        base = os.path.basename(file_found)
+        if file_found.endswith(('-wal', '-shm', '-journal')) or base.startswith('.'):
+            continue
+        if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
+            continue  # Skip mirror, it should be duplicate data
+        if base.startswith(basename_prefix):
+            stores.append(file_found)
+    stores.sort(key=_sort_key)
+    return stores
+
 
 @artifact_processor
 def gmailEmails(context):
-    files_found = context.get_files_found()
-    seeker = context.get_seeker()
-    bigTopDataDB = ''
-    source_bigTop = ''
-    
-    bigTopDataDB_found = []
-    source_bigTop_found = []
+    files_found = unique_files(context)
     data_list = []
-    
-    for file_found in files_found:
-        file_found = str(file_found)
-        
-        if file_found.endswith(('-wal','-shm')):
-            continue
-        elif os.path.basename(file_found).startswith('.'):
-            continue
-        if os.path.basename(file_found).startswith('bigTopDataDB'):
-            bigTopDataDB = str(file_found)
-            source_bigTop = file_found.replace(seeker.data_folder, '')
-            bigTopDataDB_found.append(bigTopDataDB)
-            source_bigTop_found.append(source_bigTop)
-        
-    for i in range(len(bigTopDataDB_found)):
-        bigTopDataDB = bigTopDataDB_found[i]
-        source_bigTop = source_bigTop_found[i]
-        db = open_sqlite_db_readonly(bigTopDataDB)
-        cursor = db.cursor()
-        cursor.execute('''
-        select *
-        from item_messages
-        left join item_message_attachments on item_messages.row_id = item_message_attachments.item_messages_row_id
-        ''')
+    accounts = _accounts_by_store_id(files_found)
 
-        all_rows = cursor.fetchall()
-        usageentries = len(all_rows)
-        filename = file_found
+    for bigTopDataDB in _gmail_stores(files_found, 'bigTopDataDB'):
+        store_name = os.path.basename(bigTopDataDB)
+        account_id = store_name.split('bigTopDataDB.', 1)[1] if '.' in store_name else ''
+        account = accounts.get((_container_of(bigTopDataDB), account_id), '')
+        source_file = Context.get_relative_path(bigTopDataDB)
+
+        db = open_sqlite_db_readonly(bigTopDataDB)
+        if db is None:
+            continue
+        try:
+            cursor = db.cursor()
+            cursor.execute('''
+            select *
+            from item_messages
+            left join item_message_attachments on item_messages.row_id = item_message_attachments.item_messages_row_id
+            ''')
+            all_rows = cursor.fetchall()
+
+            cursor.execute('''PRAGMA table_info(item_messages);''')
+            columns_info = cursor.fetchall()
+        except sqlite3.Error as ex:
+            # One unreadable or drifted store must not cost the other accounts their rows
+            logfunc(f'Unable to read Gmail store {source_file}: {ex}')
+            continue
+        finally:
+            db.close()
+
         proto_col = ''
-        
-        cursor.execute('''PRAGMA table_info(item_messages);''')
-        columns_info = cursor.fetchall()
         for col_info in columns_info:
             if col_info[1] == "zipped_message_proto":
                 proto_col = col_info[0]
-        
-        if usageentries > 0:
-            for row in all_rows:
-                id = row[proto_col]
-                if id is not None:
-                    data = id
-                    arreglo = bytearray(data)
-                    arreglo = arreglo[1:]
-                    decompressed_data = zlib.decompress(arreglo)
-                    message, typedef = decode_protobuf(decompressed_data)
-                   
-                    timestamp = (datetime.fromtimestamp(message['17'] / 1000, timezone.utc))              
+
+        for row in all_rows:
+            proto_blob = row[proto_col]
+            if proto_blob is not None:
+                arreglo = bytearray(proto_blob)
+                arreglo = arreglo[1:]
+                decompressed_data = zlib.decompress(arreglo)
+                message, _typedef = decode_protobuf(decompressed_data)
+
+                timestamp = (datetime.fromtimestamp(message['17'] / 1000, timezone.utc))
+            else:
+                continue
+
+            serverid = row[1]
+            attachname = row[15]
+            attachhash = row[16]
+            attachment = ''
+
+            to = (message.get('1', '')).get('2', '') if '1' in message and '2' in message['1'] else '' #receiver
+            if isinstance(to, bytes):
+                to = to.decode()
+
+            toname = (message.get('1', '')).get('3', '') if '1' in message and '3' in message['1'] else '' #receiver name
+            if isinstance(toname, bytes):
+                toname = toname.decode()
+
+            replyto = (message['11'].get('17', '')) if '11' in message and '17' in message['11'] else '' #reply email
+            if isinstance(replyto, bytes):
+                replyto = replyto.decode()
+
+            replytoname = (message['11'].get('15', b'')) #reply name
+            if '11' in message and '15' in message['11'] and isinstance(message['11'].get('15', b''), bytes):
+                replytoname = replytoname.decode()
+            else:
+                replytoname = (message['11'].get('15', ''))
+
+            subjectline = (message.get('5', '')) #Subject line
+            if subjectline != '':
+                if isinstance(subjectline, bytes):
+                    subjectline = subjectline.decode()
                 else:
-                    continue
+                    subjectline = ''
 
-                serverid = row[1]
-                attachname = row[15]
-                attachhash = row[16]
-                attachment = ''
-                
-                to = (message.get('1', '')).get('2', '') if '1' in message and '2' in message['1'] else '' #receiver
-                if isinstance(to, bytes):
-                    to = to.decode()
-
-                toname = (message.get('1', '')).get('3', '') if '1' in message and '3' in message['1'] else '' #receiver name
-                if isinstance(toname, bytes):
-                    toname = toname.decode()
-                        
-                replyto = (message['11'].get('17', '')) if '11' in message and '17' in message['11'] else '' #reply email
-                if isinstance(replyto, bytes):
-                    replyto = replyto.decode()
-                    
-                replytoname = (message['11'].get('15', b'')) #reply name
-                if '11' in message and '15' in message['11'] and isinstance(message['11'].get('15', b''), bytes): 
-                    replytoname = replytoname.decode() 
-                else: 
-                    replytoname = (message['11'].get('15', ''))
-
-                subjectline = (message.get('5', '')) #Subject line
-                if subjectline != '':
-                    if isinstance(subjectline, bytes):
-                        subjectline = subjectline.decode()
-                    else:
-                        subjectline = ''
-                
-                messagehtml = ''
-                messagetest = (message.get('6', '')) #HTML message
+            messagehtml = ''
+            messagetest = (message.get('6', '')) #HTML message
+            if messagetest != '':
+                messagetest = message['6'].get('2','')
                 if messagetest != '':
-                    messagetest = message['6'].get('2','')
-                    if messagetest != '':
-                        try:
-                            if isinstance(message['6']['2'], list):
-                                for x in message['6']['2']:
-                                    messagehtml = messagehtml + (x['3']['2'].decode())
-                            else:
-                                messagehtml = (message['6']['2']['3']['2'].decode())
-                        except (AttributeError, KeyError, TypeError, IndexError):
-                            # The body node nesting varies between app versions
-                            logfunc(f'Unrecognized Gmail message body structure for server id {serverid}; body omitted')
-               
-                mailedby = (message.get('11', {}).get('8', b'')) #mailed by
-                if isinstance(message.get('11', {}).get('8', ''), bytes): 
-                    mailedby = mailedby.decode() 
-                else: 
-                    mailedby = ''
+                    try:
+                        if isinstance(message['6']['2'], list):
+                            for x in message['6']['2']:
+                                messagehtml = messagehtml + (x['3']['2'].decode())
+                        else:
+                            messagehtml = (message['6']['2']['3']['2'].decode())
+                    except (AttributeError, KeyError, TypeError, IndexError):
+                        # The body node nesting varies between app versions
+                        logfunc(f'Unrecognized Gmail message body structure for server id {serverid}; body omitted')
 
-                signedby = (message.get('11', {}).get('9', b'')) #signed by
-                if isinstance(message.get('11', {}).get('9', ''), bytes): 
-                    signedby = signedby.decode() 
-                else: 
-                    signedby = ''
+            mailedby = (message.get('11', {}).get('8', b'')) #mailed by
+            if isinstance(message.get('11', {}).get('8', ''), bytes):
+                mailedby = mailedby.decode()
+            else:
+                mailedby = ''
 
-                if attachname == 'noname':
-                    attachname = ''
-                elif attachname is None:
-                    attachname = ''
-                elif attachhash is None:
-                    attachhash = ''
-                else:
-                    for attachpath in files_found:
-                        if attachhash in attachpath:
-                            if attachpath.endswith(attachname):
-                                attachment = check_in_media(attachpath, name=attachname) or ''
+            signedby = (message.get('11', {}).get('9', b'')) #signed by
+            if isinstance(message.get('11', {}).get('9', ''), bytes):
+                signedby = signedby.decode()
+            else:
+                signedby = ''
 
-                data_list.append((timestamp,serverid,safe_source(messagehtml),attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,bigTopDataDB))
+            if attachname == 'noname':
+                attachname = ''
+            elif attachname is None:
+                attachname = ''
+            elif attachhash is None:
+                attachhash = ''
+            else:
+                for attachpath in files_found:
+                    attachpath = str(attachpath)
+                    if attachhash in attachpath:
+                        if attachpath.endswith(attachname):
+                            attachment = check_in_media(attachpath, name=attachname) or ''
 
-    data_headers = (('Timestamp','datetime'),'Email ID','Message',('Attachment','media'),'Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
+            data_list.append((timestamp,account,account_id,serverid,safe_source(messagehtml),attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,source_file))
+
+    data_headers = (('Timestamp','datetime'),'Account','Account ID','Email ID','Message',('Attachment','media'),'Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
     return data_headers, data_list, 'See source file(s) below:'
 
-@artifact_processor      
+@artifact_processor
 def gmailLabels(context):
-    files_found = context.get_files_found()
-    seeker = context.get_seeker()
-    bigTopDataDB = ''
-    source_bigTop = ''
-    
-    bigTopDataDB_found = []
-    source_bigTop_found = []
+    files_found = unique_files(context)
     data_list = []
-    
-    for file_found in files_found:
-        file_found = str(file_found)
-        
-        if file_found.endswith(('-wal','-shm')):
-            continue
-        elif os.path.basename(file_found).startswith('.'):
-            continue
-        if os.path.basename(file_found).startswith('bigTopDataDB'):
-            bigTopDataDB = str(file_found)
-            source_bigTop = file_found.replace(seeker.data_folder, '')
-            bigTopDataDB_found.append(bigTopDataDB)
-            source_bigTop_found.append(source_bigTop)
-        
-    for i in range(len(bigTopDataDB_found)):
-        bigTopDataDB = bigTopDataDB_found[i]
-        source_bigTop = source_bigTop_found[i]
-        
+    accounts = _accounts_by_store_id(files_found)
+
+    for bigTopDataDB in _gmail_stores(files_found, 'bigTopDataDB'):
+        store_name = os.path.basename(bigTopDataDB)
+        account_id = store_name.split('bigTopDataDB.', 1)[1] if '.' in store_name else ''
+        account = accounts.get((_container_of(bigTopDataDB), account_id), '')
+        source_file = Context.get_relative_path(bigTopDataDB)
+
         query = '''
         select
         label_server_perm_id,
@@ -252,38 +310,26 @@ def gmailLabels(context):
         from label_counts
         order by label_server_perm_id
         '''
-        
+
         db_records = get_sqlite_db_records(bigTopDataDB, query)
-        
+
         for record in db_records:
-            data_list.append((record[0],record[1],record[2],record[3],bigTopDataDB))
-    
-    data_headers = ('Label','Unread Count','Total Count','Unseen Count','Source File')
+            data_list.append((account,account_id,record[0],record[1],record[2],record[3],source_file))
+
+    data_headers = ('Account','Account ID','Label','Unread Count','Total Count','Unseen Count','Source File')
     return data_headers, data_list, 'See source file(s) below:'
-      
-@artifact_processor        
+
+@artifact_processor
 def gmailDownloadRequests(context):
-    files_found = context.get_files_found()
-    seeker = context.get_seeker()
-    downloaderDB = ''
-    source_downloader = ''
+    files_found = unique_files(context)
     data_list = []
-    
-    for file_found in files_found:
-        file_found = str(file_found)
-        
-        if file_found.endswith(('-wal','-shm')):
-            continue
-        elif os.path.basename(file_found).startswith('.'):
-            continue
-        if os.path.basename(file_found).startswith('downloader.db'):
-            downloaderDB = str(file_found)
-            source_downloader = file_found.replace(seeker.data_folder, '')
-    
-    if downloaderDB != '':
+
+    for downloaderDB in _gmail_stores(files_found, 'downloader.db'):
+        source_file = Context.get_relative_path(downloaderDB)
+
         #Get Gmail download requests
         query = '''
-        select 
+        select
         datetime(request_time_ms/1000,'unixepoch'),
         account_name,
         type,
@@ -294,11 +340,11 @@ def gmailDownloadRequests(context):
         priority
         from download_requests
         '''
-        
+
         db_records = get_sqlite_db_records(downloaderDB, query)
-        
+
         for record in db_records:
-            data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7]))
-    
-    data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Caller ID','URL','Target File Path','Target File Size','Priority')
-    return data_headers, data_list, downloaderDB
+            data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7],source_file))
+
+    data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Caller ID','URL','Target File Path','Target File Size','Priority','Source File')
+    return data_headers, data_list, 'See source file(s) below:'
