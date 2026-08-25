@@ -36,7 +36,6 @@ from scripts.artifacts.storagePathViews import unique_files
 @artifact_processor
 def contacts(context):
     files_found = unique_files(context)
-    seeker = context.get_seeker()
 
     source_file = ''
     data_list = []
@@ -48,7 +47,7 @@ def contacts(context):
            not os.path.basename(file_name) == 'contacts.db': # skip -journal and other files
             continue
 
-        source_file = file_found.replace(seeker.data_folder, '')
+        source_file = context.get_relative_path(file_name)
 
         db = open_sqlite_db_readonly(file_name)
         cursor = db.cursor()
@@ -82,7 +81,7 @@ def contacts(context):
                     else:
                         emailAddr = row[1]
 
-                    data_list.append((row[0], row[1], row[2], phoneNumber, emailAddr, file_name))
+                    data_list.append((row[0], row[1], row[2], phoneNumber, emailAddr, source_file))
             
         except Exception as e:
             print (e)

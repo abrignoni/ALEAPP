@@ -1673,7 +1673,7 @@ def get_telegramVoipLogs(context):
             last.strftime('%Y-%m-%d %H:%M:%S') if last else '',
             size,
             'Yes' if call_id in stats else '',
-            path,
+            context.get_relative_path(path),
         ))
         sources.append(path)
 
