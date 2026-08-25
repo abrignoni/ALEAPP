@@ -131,7 +131,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | NikeActivities |
 | NikeNotifications |
 | NikePolyline |
-| OneDrive_Metadata |
 | Oruxmaps |
 | PodcastAddict |
 | PumaActivities |
@@ -240,6 +239,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | mega |
 | mega_transfers |
 | mewe |
+| microsoft_onedrive |
 | nordVpn |
 | pSettings |
 | payPal |
