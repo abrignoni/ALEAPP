@@ -453,7 +453,7 @@ def duckduckgo_downloads(context):
             break
 
     if not source_path:
-        return (), [], "c not found"
+        return (), [], ''
 
     query = '''
         SELECT
@@ -492,12 +492,15 @@ def duckduckgo_thumbnails(context):
     files_found = context.get_files_found()
     data_list = []
 
+    source_paths = set()
+
     for source_path in files_found:
         source_path = str(source_path)
         if source_path.endswith('.db'):
             break
     open_preview_files = set()
     if source_path:
+        source_paths.add(source_path)
         query = '''
             SELECT
                 tabs.tabPreviewFile
@@ -512,6 +515,7 @@ def duckduckgo_thumbnails(context):
         media_path = Path(file_found)
         if media_path.suffix.lower() not in ('.jpg'):
             continue
+        source_paths.add(str(file_found))
         filename = (media_path.name)
         utctime = int(media_path.stem)
 
@@ -529,13 +533,14 @@ def duckduckgo_thumbnails(context):
         'Referenced In Tabs Table', ('Timestamp (UTC)', 'datetime'), ('Thumbnail', 'media'),
         'File Name', 'Location')
 
-    return data_headers, data_list, 'See source path(s) below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
 def duckduckgo_duckai(context):
     files_found = context.get_files_found()
     data_list = []
+    source_paths = set()
 
     duckchats = "_https://duckduckgo.com savedAIChats"
 
@@ -612,6 +617,7 @@ def duckduckgo_duckai(context):
             except ValueError:
                 continue
 
+            source_paths.add(origin)
             chats = parsed.get("chats", [])
             parent_folder = pathlib.Path(origin).parent.name
             origin_filename = pathlib.Path(origin).name
@@ -658,7 +664,7 @@ def duckduckgo_duckai(context):
         "Sequence Number"
     )
 
-    return data_headers, data_list, 'See source path(s) below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
