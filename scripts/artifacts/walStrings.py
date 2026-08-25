@@ -49,6 +49,7 @@ def get_walStrings(context):
     report_folder = context.get_report_folder()
     x = 1
     data_list = []
+    source_paths = set()
     for file_found in files_found:
         # The seeker can list files it could not extract (e.g. zero-byte
         # archive members), so the path may not exist on disk.
@@ -78,6 +79,7 @@ def get_walStrings(context):
             # safe_local_link() escapes the label and refuses any target that would
             # leave the report folder.
             out = safe_local_link(final, journalName)
+            source_paths.add(str(file_found))
             data_list.append((out, context.get_relative_path(file_found)))
         else:
             try:
@@ -87,4 +89,4 @@ def get_walStrings(context):
         x = x + 1
 
     data_headers = ('Report', 'Location')
-    return data_headers, data_list, ''
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

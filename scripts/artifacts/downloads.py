@@ -32,11 +32,13 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 def downloads(context):
     files_found = context.get_files_found()
     data_list = []
-    
+    source_paths = set()
+
     for file_found in files_found:
         file_found = str(file_found)
-        
+
         if file_found.endswith('downloads.db'):
+            source_paths.add(file_found)
             db = open_sqlite_db_readonly(file_found)
             #Get file downloads
             cursor = db.cursor()
@@ -82,4 +84,4 @@ def downloads(context):
             continue
         
     data_headers = (('Last Modified Timestamp','datetime'),'Title','Description','Provider URI','Save Location','Mime Type','App Provider Package','Current Bytes','Total Bytes','Status','Error Message','ETAG','Visible in Downloads UI','Deleted','Source File')    
-    return data_headers, data_list, 'See source file(s) below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

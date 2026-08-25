@@ -55,8 +55,10 @@ def ail_dns_events(context):
 
     data_list = []
     source_path = ""
+    source_paths = set()
 
     for source_path in files_found:
+        source_paths.add(str(source_path))
 
         with open(source_path, 'r', encoding='utf-8') as f:
             for line in f:
@@ -81,7 +83,7 @@ def ail_dns_events(context):
                     continue
 
     data_headers = (('Timestamp', 'datetime'), 'Event ID', 'Package Name', 'Hostname', 'Resolved IPs', 'IP Count', 'Source File')
-    return data_headers, data_list, 'See source file below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
@@ -90,8 +92,10 @@ def ail_connect_events(context):
 
     data_list = []
     source_path = ""
+    source_paths = set()
 
     for source_path in files_found:
+        source_paths.add(str(source_path))
         with open(source_path, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
@@ -112,7 +116,7 @@ def ail_connect_events(context):
                     continue
 
     data_headers = (('Timestamp', 'datetime'), 'Event ID', 'Package Name', 'Destination IP', 'Port', 'Source File')
-    return data_headers, data_list, 'See source file below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
     
 @artifact_processor
 def ail_security_events(context):
@@ -120,9 +124,11 @@ def ail_security_events(context):
 
     data_list = []
     source_path = ""
+    source_paths = set()
     package_actions = ("package_installed", "package_updated", "package_uninstalled")
 
     for source_path in files_found:
+        source_paths.add(str(source_path))
         with open(source_path, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
@@ -169,4 +175,4 @@ def ail_security_events(context):
                     continue
 
     data_headers = (('Timestamp', 'datetime'), 'Event ID', 'Action Type', 'Process/Package/UID', 'Details', 'Source File')
-    return data_headers, data_list, 'See source file below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
