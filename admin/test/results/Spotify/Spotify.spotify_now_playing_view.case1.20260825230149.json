@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "module_name": "Spotify",
+    "artifact_name": "Spotify - Now Playing View",
+    "function_name": "spotify_now_playing_view",
+    "case_number": "case1",
+    "number_of_columns": 4,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 240,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\Spotify\\testdata.Spotify.spotify_now_playing_view.case1.zip",
+    "start_time": "2026-08-25T23:01:49.048209+00:00",
+    "end_time": "2026-08-25T23:01:49.278005+00:00",
+    "run_time_seconds": 0.008207559585571289,
+    "last_commit": {
+      "hash": "c872cb66bf976862cd02c0a31b493b61a314cd74",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T18:04:56-04:00",
+      "message": "Read cache timestamps from OkHttp-Received-Millis instead of file mtime"
+    }
+  },
+  "headers": [
+    "Track ID",
+    "First Lyric Line",
+    "Merch Shown For Track",
+    "Response Received Time"
+  ],
+  "data": [
+    [
+      "2albIR3fBkSoAj76RjqGw7",
+      "I'm not a cool guy anymore",
+      "Yes",
+      1722112269
+    ],
+    [
+      "0IkKz2J93C94Ei4BvDop7P",
+      "Party rock!",
+      "Yes",
+      1722112305
+    ],
+    [
+      "6ITuEsxEy2qPhqMowdDAeI",
+      "You say you stand by your man",
+      "Yes",
+      1722112580
+    ],
+    [
+      "1595LW73XBxkRk2ciQOHfr",
+      "Johanna drove slowly into the city",
+      "Yes",
+      1722113089
+    ]
+  ]
+}
