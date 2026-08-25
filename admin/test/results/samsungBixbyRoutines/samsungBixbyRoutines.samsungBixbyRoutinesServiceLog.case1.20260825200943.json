@@ -1,0 +1,434 @@
+{
+  "metadata": {
+    "module_name": "samsungBixbyRoutines",
+    "artifact_name": "Samsung Bixby Routines - Service Log",
+    "function_name": "samsungBixbyRoutinesServiceLog",
+    "case_number": "case1",
+    "number_of_columns": 6,
+    "number_of_rows": 50,
+    "total_data_size_bytes": 3022,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\samsungBixbyRoutines\\testdata.samsungBixbyRoutines.samsungBixbyRoutinesServiceLog.case1.zip",
+    "start_time": "2026-08-25T20:09:43.363110+00:00",
+    "end_time": "2026-08-25T20:09:43.519011+00:00",
+    "run_time_seconds": 0.012259244918823242,
+    "last_commit": {
+      "hash": "18c3a2de4c65d37376c07aebd98ac0f8cfda5874",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T15:01:57-04:00",
+      "message": "Renamed artifact parser file name"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Routine ID (raw)",
+    "Linked Routine Name",
+    "Is Running",
+    "Service Status",
+    "Log Message"
+  ],
+  "data": [
+    [
+      1723740337,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723740337689(8)"
+    ],
+    [
+      1723740337,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723740337720(2)"
+    ],
+    [
+      1723740703,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2D2 time=1723740703743(17)"
+    ],
+    [
+      1723740707,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2D2 time=1723740707681(4)"
+    ],
+    [
+      1723741333,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741333479(31)"
+    ],
+    [
+      1723741457,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741457681(11)"
+    ],
+    [
+      1723741563,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741563019(160)"
+    ],
+    [
+      1723741597,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741597822(5)"
+    ],
+    [
+      1723741603,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741603020(130)"
+    ],
+    [
+      1723741608,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741608634(211)"
+    ],
+    [
+      1723741613,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741613812(159)"
+    ],
+    [
+      1723741619,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741619011(185)"
+    ],
+    [
+      1723741624,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741624086(11)"
+    ],
+    [
+      1723741629,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741629358(171)"
+    ],
+    [
+      1723741634,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741634508(4)"
+    ],
+    [
+      1723741639,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741639803(182)"
+    ],
+    [
+      1723741649,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741649702(188)"
+    ],
+    [
+      1723741653,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741652969(74)"
+    ],
+    [
+      1723741653,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741653989(8)"
+    ],
+    [
+      1723741660,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741659973(142)"
+    ],
+    [
+      1723741720,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741720035(112)"
+    ],
+    [
+      1723741787,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741786786(258)"
+    ],
+    [
+      1723741873,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723741873211(6)"
+    ],
+    [
+      1723742027,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723742027671(19)"
+    ],
+    [
+      1723742509,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723742509838(8)"
+    ],
+    [
+      1723742587,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723742587178(40)"
+    ],
+    [
+      1723742602,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723742602547(24)"
+    ],
+    [
+      1723742602,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723742602547(24)D2 time=1723742602547(34)"
+    ],
+    [
+      1723755456,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723755456649(7)"
+    ],
+    [
+      1723760162,
+      -1,
+      "",
+      1,
+      null,
+      "JobSchedule request - true"
+    ],
+    [
+      1723760162,
+      -1,
+      "",
+      1,
+      null,
+      "[AppWidgetProvider]enableProvider-com.samsung.android.app.routines.appwidget.RoutineAppWidgetProvider, length:0"
+    ],
+    [
+      1723760162,
+      -1,
+      "",
+      1,
+      null,
+      "reGrantTrust: req=null, isCallingBefore, boot=false, true, curB=1723760026581, rouB=0"
+    ],
+    [
+      1723760163,
+      -1,
+      "",
+      1,
+      null,
+      "JobStarted"
+    ],
+    [
+      1723760163,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] F time=1723760163126(1)"
+    ],
+    [
+      1723760163,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService]  time=1723760163993(2)"
+    ],
+    [
+      1723760169,
+      -1,
+      "",
+      1,
+      null,
+      "Metaloader-notifyRoutineUpdate"
+    ],
+    [
+      1723760169,
+      -1,
+      "",
+      1,
+      null,
+      "MetaLoading done"
+    ],
+    [
+      1723760182,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1723760182187(29)"
+    ],
+    [
+      1725569740,
+      -1,
+      "",
+      1,
+      null,
+      "JobSchedule request - true"
+    ],
+    [
+      1725569740,
+      -1,
+      "",
+      1,
+      null,
+      "[AppWidgetProvider]enableProvider-com.samsung.android.app.routines.appwidget.RoutineAppWidgetProvider, length:0"
+    ],
+    [
+      1725569740,
+      -1,
+      "",
+      1,
+      null,
+      "reGrantTrust: req=null, isCallingBefore, boot=false, true, curB=1725087259573, rouB=0"
+    ],
+    [
+      1725569740,
+      -1,
+      "",
+      1,
+      null,
+      "JobStarted"
+    ],
+    [
+      1725569740,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] F time=1725569740706(1)"
+    ],
+    [
+      1725569741,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService]  time=1725569741640(1)"
+    ],
+    [
+      1725569745,
+      -1,
+      "",
+      1,
+      null,
+      "Metaloader-notifyRoutineUpdate"
+    ],
+    [
+      1725569745,
+      -1,
+      "",
+      1,
+      null,
+      "MetaLoading done"
+    ],
+    [
+      1725569753,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1725569753055(9)"
+    ],
+    [
+      1725569813,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1725569813564(14)"
+    ],
+    [
+      1725569818,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1725569818411(39)"
+    ],
+    [
+      1725570023,
+      -1,
+      "",
+      1,
+      null,
+      "[RoutineService] D2 time=1725570023417(26)"
+    ]
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "module_name": "samsungBixbyRoutines",
+    "artifact_name": "Samsung Bixby Routines - User Routines",
+    "function_name": "samsungBixbyRoutinesUserRoutines",
+    "case_number": "case1",
+    "number_of_columns": 10,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\samsungBixbyRoutines\\testdata.samsungBixbyRoutines.samsungBixbyRoutinesUserRoutines.case1.zip",
+    "start_time": "2026-08-25T20:09:43.125623+00:00",
+    "end_time": "2026-08-25T20:09:43.350962+00:00",
+    "run_time_seconds": 0.02239370346069336,
+    "last_commit": {
+      "hash": "18c3a2de4c65d37376c07aebd98ac0f8cfda5874",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T15:01:57-04:00",
+      "message": "Renamed artifact parser file name"
+    }
+  },
+  "headers": [
+    "Routine ID",
+    "Name",
+    "Is Running",
+    "Is Manual Routine",
+    "Is Favorite Routine",
+    "Is Show Notification",
+    "Toggle Time",
+    "Tag",
+    "Icon Resource ID",
+    "Color"
+  ],
+  "data": []
+}
