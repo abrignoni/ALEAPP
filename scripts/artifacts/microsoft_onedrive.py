@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses Microsoft OneDrive metadata and previews cached stream media",
         "author": "@stark4n6, Matt Beers, Anthony Reince",
         "creation_date": "2025-04-17",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Cloud Storage",
         "notes": "Timestamps <= 0 are blanked. Storage path is resolved by recursively walking parent RID references. Cached streams are resolved via seeker.",
