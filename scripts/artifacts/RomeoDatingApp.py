@@ -87,6 +87,18 @@ def romeo_dating_messages(context):
             LEFT JOIN ImageAttachmentEntity iae ON me.messageId = iae.parentMessageId
             '''
 
+    data_headers = (    ('Timestamp', 'datetime'),
+                        'Contact ID',
+                        'Contact Username',
+                        'Text', 
+                        'Status',
+                        'Saved?',
+                        'Unread?',
+                        'Message ID',
+                        'Image Contained?',
+                        'Source Database'
+                    )
+
     for file_found in files_found:
         main_db = str(file_found)
         source_db = context.get_relative_path(main_db)
@@ -120,17 +132,6 @@ def romeo_dating_messages(context):
                                 source_db
                             ))
         
-        data_headers = (    ('Timestamp', 'datetime'),
-                            'Contact ID',
-                            'Contact Username',
-                            'Text', 
-                            'Status',
-                            'Saved?',
-                            'Unread?',
-                            'Message ID',
-                            'Image Contained?',
-                            'Source Database'
-                        )
         # On android we only know if an Image was part of the message,
         # content isn't on the phone anymore- so just "image contained?"
 
