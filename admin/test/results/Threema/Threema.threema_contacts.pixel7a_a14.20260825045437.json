@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "module_name": "Threema",
+    "artifact_name": "Threema - Contacts",
+    "function_name": "threema_contacts",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 6,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 137,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_contacts.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:54:37.392906+00:00",
+    "end_time": "2026-08-25T04:54:37.451195+00:00",
+    "run_time_seconds": 0.0011031627655029297,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-08-25T04:54:37.447109",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Threema ID",
+    "Display Name",
+    "Verification Level",
+    "Date Added",
+    "Group-Only / Removed",
+    "Archived"
+  ],
+  "data": [
+    [
+      "ECHOECHO",
+      "Echo Test",
+      "Unverified",
+      1714662546,
+      "",
+      ""
+    ],
+    [
+      "83XD7K4F",
+      "ThisIs DFIR",
+      "Fully verified (e.g. QR/NFC scan)",
+      1714662779,
+      "",
+      ""
+    ],
+    [
+      "DX8X8X4S",
+      "Hubbs",
+      "Server-verified",
+      1718802775,
+      "",
+      ""
+    ]
+  ]
+}
