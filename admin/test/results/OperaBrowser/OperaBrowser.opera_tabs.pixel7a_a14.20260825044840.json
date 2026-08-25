@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "OperaBrowser",
+    "artifact_name": "Opera Browser - Tabs",
+    "function_name": "opera_tabs",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 8,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 394,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/OperaBrowser/testdata.OperaBrowser.opera_tabs.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:40.406512+00:00",
+    "end_time": "2026-08-25T04:48:40.466084+00:00",
+    "run_time_seconds": 0.0009839534759521484,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-08-25T04:48:40.460065",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Status",
+    "Tab Position",
+    "Current Page Title",
+    "Current Page URL",
+    "Current Page Last Visit Time (History Match)",
+    "Navigation Entry Count",
+    "Restored",
+    "Internal Tab ID"
+  ],
+  "data": [
+    [
+      "Open",
+      0,
+      "Ben Joyce throws 104.5 mph fastball",
+      "https://www.mlb.com/news/ben-joyce-throws-104-5-mph-fastball",
+      1720901726,
+      3,
+      "N/A",
+      -2147483647
+    ],
+    [
+      "Open",
+      1,
+      "shelley duvall - Google Search",
+      "https://www.google.com/m?q=shelley+duvall&client=ms-opera-mobile&channel=new&espv=1",
+      null,
+      2,
+      "N/A",
+      -2147483645
+    ],
+    [
+      "Closed",
+      "",
+      "Mobile Device Forensics - Cellebrite",
+      "https://cellebrite.com/en/digital-forensics/mobile-device-forensics/",
+      1720901899,
+      3,
+      "",
+      -2147483646
+    ]
+  ]
+}
