@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "module_name": "PrivatePhotoVault",
+    "artifact_name": "Private Photo Vault - Media",
+    "function_name": "private_photo_vault_media",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 12,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 945,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/PrivatePhotoVault/testdata.PrivatePhotoVault.private_photo_vault_media.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:39.147713+00:00",
+    "end_time": "2026-08-25T04:48:39.211825+00:00",
+    "run_time_seconds": 0.0008311271667480469,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-08-25T04:48:39.205290",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Created",
+    "Album Bucket ID",
+    "File Path",
+    "Thumbnail Path",
+    "MIME Type",
+    "Image Width",
+    "Image Height",
+    "Favourite",
+    "Deleted",
+    "View Count",
+    "Encryption Key (Wrapped)",
+    "IV"
+  ],
+  "data": [
+    [
+      1714253692,
+      "albums",
+      "/data/user/0/com.enchantedcloud.photovault/files/media/orig/36a23838-f3f3-4522-8a4a-6ed7529bd52a.jpg",
+      "/data/user/0/com.enchantedcloud.photovault/files/media/thumbs/8a04d61b-961b-44ae-afa6-80104d79c232.jpg",
+      "image/jpeg",
+      600,
+      779,
+      "",
+      "",
+      0,
+      "zVMJZA1VhpoHYtq0LqDJ98He4AgTF5RrpYAWYS8Pa9Dwgutfs6szoKgaolK5fkEf",
+      "OeavCbd8COUd/4yF"
+    ],
+    [
+      1714253692,
+      "albums",
+      "/data/user/0/com.enchantedcloud.photovault/files/media/orig/4e8792d1-f46c-4906-a81e-4b74cf7c29a9.jpg",
+      "/data/user/0/com.enchantedcloud.photovault/files/media/thumbs/4cf007a6-de50-451e-a1f8-755238a727e9.jpg",
+      "image/jpeg",
+      526,
+      534,
+      "",
+      "",
+      0,
+      "QrDjptlB6luYWr/p5EU4jI+PtzgbtWPGZAKzZ01xe8bD2t+C2UhF2ImW3ZIxDtVM",
+      "iXnNxAVsAsCiJqID"
+    ],
+    [
+      1714253692,
+      "albums",
+      "/data/user/0/com.enchantedcloud.photovault/files/media/orig/a7996ddd-ef3e-41e6-960f-7d34e607e9e0.jpg",
+      "/data/user/0/com.enchantedcloud.photovault/files/media/thumbs/053c0f73-06f7-4b9e-9dff-c86a60d600a3.jpg",
+      "image/jpeg",
+      960,
+      946,
+      "",
+      "",
+      0,
+      "ICqU/5xgv3R7kB9ttIZG7cNXLzLqMyZTNUvVVS225g0ZNlwZeI19STn1uqqZkKr2",
+      "V2k0oFaGj62auJjS"
+    ]
+  ]
+}
