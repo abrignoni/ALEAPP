@@ -6,19 +6,19 @@
     "case_number": "pixel7a_a14",
     "number_of_columns": 11,
     "number_of_rows": 2,
-    "total_data_size_bytes": 560,
+    "total_data_size_bytes": 414,
     "media_checkins": 0,
     "media_embedded_checkins": 2,
     "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_vault_files.pixel7a_a14.zip",
-    "start_time": "2026-08-25T04:48:38.629754+00:00",
-    "end_time": "2026-08-25T04:48:38.712875+00:00",
-    "run_time_seconds": 0.036834001541137695,
+    "start_time": "2026-08-25T15:51:39.646549+00:00",
+    "end_time": "2026-08-25T15:51:39.669649+00:00",
+    "run_time_seconds": 0.0030269622802734375,
     "last_commit": {
-      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
-      "author_name": "Brigs",
-      "author_email": "abrignoni@gmail.com",
-      "date": "2026-08-07T23:27:07-04:00",
-      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+      "hash": "f439713616bcfc348b6fb52341b18a8067b3df32",
+      "author_name": "segumarc",
+      "author_email": "segumarc@gmail.com",
+      "date": "2026-08-20T22:23:33-04:00",
+      "message": "Adding multiples artifacts to galleryVault"
     }
   },
   "headers": [
@@ -45,7 +45,7 @@
       58157,
       "",
       "5a58c5e3-55ad-4f4d-b891-d7feb7246339",
-      "admin/test/temp/extract_galleryVault_galleryvault_vault_files_1787633318/Dump/data/media/0/.galleryvault_DoNotDelete_1707411051/files/5a/5a58c5e3-55ad-4f4d-b891-d7feb7246339",
+      "Dump/data/media/0/.galleryvault_DoNotDelete_1707411051/files/5a/5a58c5e3-55ad-4f4d-b891-d7feb7246339",
       "0101"
     ],
     [
@@ -58,7 +58,7 @@
       53669,
       "",
       "42e219d1-79cb-422d-b13b-f2b8e4fb69d4",
-      "admin/test/temp/extract_galleryVault_galleryvault_vault_files_1787633318/Dump/data/media/0/.galleryvault_DoNotDelete_1707411051/files/42/42e219d1-79cb-422d-b13b-f2b8e4fb69d4",
+      "Dump/data/media/0/.galleryvault_DoNotDelete_1707411051/files/42/42e219d1-79cb-422d-b13b-f2b8e4fb69d4",
       "0101"
     ]
   ]
