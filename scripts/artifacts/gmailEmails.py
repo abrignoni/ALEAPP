@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-24",
         "requirements": "BeautifulSoup",
         "category": "Email",
-        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from numbered fields of the zipped message protobuf. Protobuf field positions were established through testing; Mailed By and Signed by reflect stored header values and are not verified against Authentication-Results. Message is the readable text extracted from the stored HTML body (tags, styling and repeated whitespace removed); Links lists the distinct link targets the same body carries, in document order, as stored. The unmodified body stays in the source database. The app keeps one bigTopDataDB.<id> store per signed-in account; every matched store is read, across every Android user of the device, with duplicate storage spellings (data/data, data/user/<n>, data_mirror) collapsed first and stores read in sorted path order. Account ID is the numeric store id as stored. The Account column is filled only when the Java String.hashCode of an address recorded in the same app instance's Gmail.xml equals the store id, which held for every store in the tested images; a store with no matching recorded address keeps a blank Account. A store that cannot be opened or queried is logged and skipped without dropping the other accounts' rows.",
+        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from numbered fields of the zipped message protobuf. Protobuf field positions were established through testing; Mailed By and Signed by reflect stored header values and are not verified against Authentication-Results. Message is the readable text extracted from the stored HTML body (tags, styling and repeated whitespace removed). Each link's place in the text is marked [n], and Links lists the link targets by those numbers, as stored; a repeated target keeps its first number, and a marker with no text beside it is a link that carried none, such as a linked image. The unmodified body stays in the source database. The app keeps one bigTopDataDB.<id> store per signed-in account; every matched store is read, across every Android user of the device, with duplicate storage spellings (data/data, data/user/<n>, data_mirror) collapsed first and stores read in sorted path order. Account ID is the numeric store id as stored. The Account column is filled only when the Java String.hashCode of an address recorded in the same app instance's Gmail.xml equals the store id, which held for every store in the tested images; a store with no matching recorded address keeps a blank Account. A store that cannot be opened or queried is logged and skipped without dropping the other accounts' rows.",
         "paths": ('*/com.google.android.gm/databases/bigTopDataDB.*','*/com.google.android.gm/files/downloads/*/attachments/*/*.*','*/com.google.android.gm/shared_prefs/Gmail.xml'),
         "output_types": "standard",
         "artifact_icon": "inbox",
@@ -94,7 +94,7 @@ import sqlite3
 import zlib
 from datetime import datetime, timezone
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 
 from scripts.artifacts.gmail import _parse_xml
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
@@ -106,21 +106,30 @@ from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlit
 _WHITESPACE_RUN = re.compile(r'[\s\u00ad\u034f\u200b\u200c\u200d\ufeff]+')
 
 
-def body_text(html_body):
-    """The readable text of an HTML body: tags dropped, whitespace runs (including the
-    zero-width padding marketing mail hides its preheader behind) collapsed to one space."""
-    if not html_body:
-        return ''
-    text = BeautifulSoup(html_body, 'html.parser').get_text(separator=' ')
-    return _WHITESPACE_RUN.sub(' ', text).strip()
+def body_text_and_links(html_body):
+    """The readable text of an HTML body plus the link targets it carries.
 
-
-def body_links(html_body):
-    """The distinct link targets an HTML body carries, in document order, as stored."""
+    Tags are dropped and whitespace runs (including the zero-width padding marketing
+    mail hides its preheader behind) collapse to one space. Each link's place in the
+    text is marked [n], and the second value lists the targets by those numbers, as
+    stored. A repeated target keeps its first number, and a marker with no text beside
+    it is a link that carried none, such as a linked image."""
     if not html_body:
-        return ''
-    hrefs = (a.get('href') for a in BeautifulSoup(html_body, 'html.parser').find_all('a', href=True))
-    return ' '.join(dict.fromkeys(h for h in hrefs if h))
+        return '', ''
+    soup = BeautifulSoup(html_body, 'html.parser')
+    targets = []
+    numbers = {}
+    for anchor in soup.find_all('a', href=True):
+        href = anchor.get('href')
+        if not href:
+            continue
+        if href not in numbers:
+            targets.append(href)
+            numbers[href] = len(targets)
+        anchor.append(NavigableString(f' [{numbers[href]}]'))
+    text = _WHITESPACE_RUN.sub(' ', soup.get_text(separator=' ')).strip()
+    links = ' '.join(f'[{number}] {target}' for number, target in enumerate(targets, 1))
+    return text, links
 
 
 def _sort_key(path):
@@ -305,7 +314,8 @@ def gmailEmails(context):
                         if attachpath.endswith(attachname):
                             attachment = check_in_media(attachpath, name=attachname) or ''
 
-            data_list.append((timestamp,account,account_id,serverid,body_text(messagehtml),body_links(messagehtml),attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,source_file))
+            message_text, message_links = body_text_and_links(messagehtml)
+            data_list.append((timestamp,account,account_id,serverid,message_text,message_links,attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,source_file))
 
     data_headers = (('Timestamp','datetime'),'Account','Account ID','Email ID','Message','Links',('Attachment','media'),'Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
     return data_headers, data_list, 'See source file(s) below:'
