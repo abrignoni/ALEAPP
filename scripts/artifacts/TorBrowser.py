@@ -90,7 +90,7 @@ def torbrowser_thumbnails(context):
             continue
 
         filename = media_path.name
-        location = str(media_path.parent)
+        location = context.get_relative_path(str(media_path.parent))
 
         modified_ts = os.path.getmtime(file_found)
         modifiedtime = datetime.datetime.fromtimestamp(int(modified_ts), datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
@@ -166,7 +166,7 @@ def torbrowser_usageinfo(context):
         root = _parse_xml(source_path)
 
         filename = Path(source_path).name
-        path = source_path
+        path = context.get_relative_path(source_path)
 
         for elem in root.iter():
             key_name = elem.get("name")

@@ -88,8 +88,7 @@ def romeo_dating_messages(context):
 
     for file_found in files_found:
         main_db = str(file_found)
-
-
+        source_db = context.get_relative_path(main_db)
 
         db_records = get_sqlite_db_records(main_db, query)
 
@@ -116,7 +115,7 @@ def romeo_dating_messages(context):
                                 unread,
                                 message_id,
                                 image_contained,
-                                main_db
+                                source_db
                             ))
         
         data_headers = (    ('Timestamp', 'datetime'),
@@ -179,6 +178,7 @@ def romeo_dating_contacts(context):
 
     for file_found in files_found:
         main_db = str(file_found)
+        source_db = context.get_relative_path(main_db)
 
         db_records = get_sqlite_db_records(main_db, query)
 
@@ -213,7 +213,7 @@ def romeo_dating_contacts(context):
                                 country,
                                 deactivated,
                                 blocked,
-                                main_db
+                                source_db
                             ))
     
     data_headers = (    ('Last Fetched', 'datetime'),
