@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "PrivatePhotoVault",
+    "artifact_name": "Private Photo Vault - Account Usage",
+    "function_name": "private_photo_vault_account",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 6,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 27,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/PrivatePhotoVault/testdata.PrivatePhotoVault.private_photo_vault_account.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:39.270571+00:00",
+    "end_time": "2026-08-25T04:48:39.328191+00:00",
+    "run_time_seconds": 0.0007379055023193359,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-08-25T04:48:39.324520",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Install Date",
+    "Imported Media Count",
+    "Minutes Spent In App",
+    "Key Event Count",
+    "Last Key Event",
+    "Uses Encrypted Preferences"
+  ],
+  "data": [
+    [
+      1714253608,
+      "3",
+      "3",
+      "1",
+      1714253692,
+      "true"
+    ]
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Recycle Bin",
+    "function_name": "galleryvault_recycle_bin",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 7,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_recycle_bin.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:38.763103+00:00",
+    "end_time": "2026-08-25T04:48:38.809068+00:00",
+    "run_time_seconds": 0.0007102489471435547,
+    "last_commit": {
+      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-07T23:27:07-04:00",
+      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+    }
+  },
+  "headers": [
+    "Delete Time",
+    "File Name",
+    "Original Path",
+    "MIME Type",
+    "File Size",
+    "UUID",
+    "File ID"
+  ],
+  "data": []
+}

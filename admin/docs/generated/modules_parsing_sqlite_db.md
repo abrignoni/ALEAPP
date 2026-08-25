@@ -15,7 +15,9 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | L360petprofile |
 | L360user |
 | LinkedIn |
+| OperaBrowser |
 | OrnetBrowser |
+| PrivatePhotoVault |
 | ProtonDrive |
 | RandoChat |
 | RomeoDatingApp |

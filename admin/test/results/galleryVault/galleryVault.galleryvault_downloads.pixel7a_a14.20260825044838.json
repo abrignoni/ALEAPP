@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Downloads",
+    "function_name": "galleryvault_downloads",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 13,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_downloads.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:38.809357+00:00",
+    "end_time": "2026-08-25T04:48:38.855834+00:00",
+    "run_time_seconds": 0.0007600784301757812,
+    "last_commit": {
+      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-07T23:27:07-04:00",
+      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+    }
+  },
+  "headers": [
+    "Begin Time",
+    "End Time",
+    "Name",
+    "Download URL",
+    "Page URL",
+    "Local Path",
+    "MIME Type",
+    "Total Size",
+    "Downloaded Size",
+    "Percentage",
+    "State",
+    "Error Code",
+    "Thumbnail URL"
+  ],
+  "data": []
+}

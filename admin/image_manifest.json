@@ -1,0 +1,267 @@
+{
+  "images": [
+    {
+      "image_name": "galaxys10_a10",
+      "sample_data_key": "galaxys10_a10",
+      "description": "Samsung Galaxy S10 SM-G973F, Android 10. DFRWS 2021 Challenge.",
+      "published_file": "3_Samsung GSM_SM-G973F_DS Galaxy S10.zip",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "DFRWS"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "10",
+        "device_model": "Samsung Galaxy S10 SM-G973F"
+      },
+      "file_info": {
+        "md5_hash": "a86049e46d1e19a961a3aecd97b78bd5"
+      },
+      "notes": "Published MD5 is of the published file and matches a held copy byte for byte. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "cookbook_a11",
+      "sample_data_key": "cookbook_a11",
+      "description": "Samsung Galaxy S21 SM-G991U, Android 11. Cody Bounds, Digital Forensics Cookbook Datasets.",
+      "published_file": "Android.7z",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "Cody Bounds"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "11",
+        "device_model": "Samsung Galaxy S21 SM-G991U"
+      },
+      "file_info": {
+        "md5_hash": "7188177acdc73a5edb8f6b969e9d6881"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md. Distributed as Android.7z; LEAPP reads the inner Samsung Galaxy.zip."
+    },
+    {
+      "image_name": "pixel3_a11",
+      "sample_data_key": "pixel3_a11",
+      "description": "Google Pixel 3, Android 11. Josh Hickman, public images.",
+      "published_file": "android_11.zip",
+      "download_url": "https://digitalcorpora.org/corpora/cell-phones/",
+      "author": {
+        "name": "Josh Hickman"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "11",
+        "device_model": "Google Pixel 3"
+      },
+      "file_info": {
+        "md5_hash": "9553729d10bc6cae84916a506cb74d98"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "pixel3_a12",
+      "sample_data_key": "pixel3_a12",
+      "description": "Google Pixel 3, Android 12. Josh Hickman, public images.",
+      "published_file": "android_12.zip",
+      "download_url": "https://digitalcorpora.org/corpora/cell-phones/",
+      "author": {
+        "name": "Josh Hickman"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "12",
+        "device_model": "Google Pixel 3"
+      },
+      "file_info": {
+        "md5_hash": "b9cb5e213b765d5d649a9634e119b3aa"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "russell_pixel6a_a13",
+      "sample_data_key": "russell_pixel6a_a13",
+      "description": "Google Pixel 6a, Android 13. Cellebrite CTF 2023 (\"Russell\").",
+      "published_file": "CellebriteCTF23_Russell.zip",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "Cellebrite"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "13",
+        "device_model": "Google Pixel 6a"
+      },
+      "file_info": {
+        "md5_hash": "dc5c077dbd2c2df6c644473447de092b"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "sharon_a13",
+      "sample_data_key": "sharon_a13",
+      "description": "Samsung Galaxy S21 5G SM-G991B, Android 13. Cellebrite CTF 2023 (\"Sharon\").",
+      "published_file": "CellebriteCTF23_Sharon.zip",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "Cellebrite"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "13",
+        "device_model": "Samsung Galaxy S21 5G SM-G991B"
+      },
+      "file_info": {
+        "md5_hash": "c94ab827d5af5ed22a394fd45d676de3"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "userb2_a13",
+      "sample_data_key": "userb2_a13",
+      "description": "Android 13, data partition only. Hexordia, Magnet Virtual Summit CTF 2025.",
+      "published_file": "UserB2.7z",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "Hexordia"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "13"
+      },
+      "file_info": {
+        "md5_hash": "76077dce06c68d8ec5505173180e0a5f"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md. Distributed as UserB2.7z; LEAPP reads the inner UserB2 - Data.tar."
+    },
+    {
+      "image_name": "pixel7a_a14",
+      "sample_data_key": "pixel7a_a14",
+      "description": "Google Pixel 7a, Android 14. Josh Hickman, public images.",
+      "published_file": "Android_14_Public_Image.tar.gz",
+      "download_url": "https://digitalcorpora.org/corpora/cell-phones/",
+      "author": {
+        "name": "Josh Hickman"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "14",
+        "device_model": "Google Pixel 7a"
+      },
+      "file_info": {
+        "md5_hash": "2f9578715a315c0897e51ef9c1007f2d"
+      },
+      "notes": "The link between this key and the published file is inferred from extraction metadata and release dates, not established, and the published MD5 has not been matched against a held copy. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "russell_a14",
+      "sample_data_key": "russell_a14",
+      "description": "Google Pixel 6a, Android 14. Cellebrite CTF 2024 (\"Russell\").",
+      "published_file": "CellebriteCTF24_Russell.zip",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "Cellebrite"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "14",
+        "device_model": "Google Pixel 6a"
+      },
+      "file_info": {
+        "md5_hash": "e182fc05a9b83fcacc9582db92cef6c8"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "samsunga53_a14",
+      "sample_data_key": "samsunga53_a14",
+      "description": "Samsung A53 SM-S536DL, Android 14. Hexordia, Magnet Virtual Summit CTF 2026.",
+      "published_file": "SamsungA53.zip",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "Hexordia"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "14",
+        "device_model": "Samsung A53 SM-S536DL"
+      },
+      "file_info": {
+        "md5_hash": "bee600ecc8086325211a4ab5cbf5ff47"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "sharon_a14",
+      "sample_data_key": "sharon_a14",
+      "description": "Samsung Galaxy S21 SM-G991B, Android 14. Cellebrite CTF 2024 (\"Sharon\").",
+      "published_file": "CellebriteCTF24_Sharon.zip",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "Cellebrite"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "14",
+        "device_model": "Samsung Galaxy S21 SM-G991B"
+      },
+      "file_info": {
+        "md5_hash": "514bf12c5862b20937f9f808932b1368"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "anne_a15",
+      "sample_data_key": "anne_a15",
+      "description": "Samsung SM-S911U1, Android 15. Cellebrite CTF 2025 (\"Anne Lockwood\").",
+      "published_file": "2025CellebriteCTF_AnneLockwood.zip",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "Cellebrite"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "15",
+        "device_model": "Samsung SM-S911U1"
+      },
+      "file_info": {
+        "md5_hash": "d2e42194b1b16e35fbb0f84eef924fb5"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "kevin_pocox7_a15",
+      "sample_data_key": "kevin_pocox7_a15",
+      "description": "Xiaomi Poco X7 Pro, Android 15. Cellebrite CTF 2025 (\"Kevin Mallory\").",
+      "published_file": "2025CellebriteCTF_KevinMallory.zip",
+      "download_url": "https://theevidencelocker.github.io/",
+      "author": {
+        "name": "Cellebrite"
+      },
+      "image_info": {
+        "os_name": "Android",
+        "os_version": "15",
+        "device_model": "Xiaomi Poco X7 Pro"
+      },
+      "file_info": {
+        "md5_hash": "3dbe94d72cb6c76f03e0995f1f20e55e"
+      },
+      "notes": "Published MD5 is of the publisher's wrapper archive; a working copy is usually the un-nested inner image whose hash cannot match it by construction. Correlate by extraction metadata. See admin/docs/public_corpus_images.md."
+    },
+    {
+      "image_name": "df020_mavic_pro_android",
+      "sample_data_key": "df020_mavic_pro_android",
+      "description": "Paired phone for a DJI Mavic Pro, Android logical. VTO Labs / NIST CFReDS Drone Forensics Program, ref DF020.",
+      "published_file": "Android_Logical.zip",
+      "download_url": "https://cfreds.nist.gov/all/VTO/DroneForensics",
+      "author": {
+        "name": "VTO Labs"
+      },
+      "image_info": {
+        "os_name": "Android"
+      },
+      "file_info": {
+        "md5_hash": "6bc5cdc147e813f8744c04814a89e18a"
+      },
+      "notes": "Published MD5 is the publisher's own data sheet value for this file. See admin/docs/public_corpus_images.md."
+    }
+  ]
+}
