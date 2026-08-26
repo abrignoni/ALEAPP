@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "module_name": "Samsungwallet",
+    "artifact_name": "Samsung Wallet - Enrolled Cards",
+    "function_name": "samsung_wallet_cards",
+    "case_number": "case1",
+    "number_of_columns": 14,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 199,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\Samsungwallet\\testdata.Samsungwallet.samsung_wallet_cards.case1.zip",
+    "start_time": "2026-08-26T23:25:48.934581+00:00",
+    "end_time": "2026-08-26T23:25:49.129506+00:00",
+    "run_time_seconds": 0.0214383602142334,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-08-26T19:25:49.063053",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Enrollment ID",
+    "Token ID",
+    "Card Reference ID",
+    "Issuer Name",
+    "Issuer Contact Number",
+    "Issuer URL",
+    "Card State Updated",
+    "Payment Ready",
+    "Card Locked",
+    "Transit Support",
+    "ID Verification Max Requests",
+    "ID Verification Request Count",
+    "ID Verification Max Retries",
+    "ID Verification Retry Count"
+  ],
+  "data": [
+    [
+      "lb44qc014qdqpcr214f6jltqbn",
+      "DSAPMC0000114223898d87b3ff3a4bdba6ec2209dcd699b4",
+      "FSAPMC0000114223a764fe5f02e64d1c9c3a50b807ebe26f",
+      "Green Dot Bank",
+      "(877)-937-4098",
+      "https://WalmartMoneyCard.com",
+      1723095238,
+      1,
+      0,
+      "true",
+      3,
+      1,
+      -1,
+      0
+    ]
+  ]
+}

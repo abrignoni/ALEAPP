@@ -1,0 +1,40 @@
+{
+  "case1": {
+    "description": "Samsung Galaxy S21 SM-G991U, Android 11 (Cody Bounds, Digital Forensics Cookbook Datasets -- cookbook_a11 in image_manifest.json). Exercises samsung_wallet_cards and samsung_wallet_receipts against spay.db: 1 enrolled card (Green Dot Bank / WalmartMoneyCard.com) and 1 linked receipt. Confirms the receipt.tokenID -> card.enrollmentID join and the encrypted-field list documented in samsungWallet.py's own notes",
+    "maker": "@Gear-I",
+    "make_data": {
+      "input_data_path": "Samsung Galaxy.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-08-26T19:09:18.361315",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-08-26T19:09:17.869741",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "samsung_wallet_cards": {
+        "search_patterns": [
+          "*/com.samsung.android.spay/databases/spay.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsung_wallet_receipts": {
+        "search_patterns": [
+          "*/com.samsung.android.spay/databases/spay.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
