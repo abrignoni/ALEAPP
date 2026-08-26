@@ -17,7 +17,10 @@ __artifacts_v2__ = {
                  "signup, exposed here as both 'crashlytics_user_id' and "
                  "'event-sender-event-owner', which agree) and that the sign-in method "
                  "was email/password rather than a linked Facebook/Google/Apple "
-                 "account. 'App First Launch Time' is when Spotify's preferences were "
+                 "account. Two of the twelve tested extractions carry this "
+                 "preferences file with none of those keys in it, which is what an "
+                 "installed but never signed in app looks like; those report no row "
+                 "rather than a row of blanks. 'App First Launch Time' is when Spotify's preferences were "
                  "first written on this device, which is a reasonable proxy for "
                  "install/first-run time but is not itself an install timestamp from "
                  "the OS or Play Store.",
@@ -25,7 +28,18 @@ __artifacts_v2__ = {
         "output_types": ["standard"],
         "artifact_icon": "user",
         "sample_data": {
+            "galaxys10_a10": "Android 10 | com.spotify.music | 1 row",
+            "cookbook_a11": "Android 11 | com.spotify.music | 1 row",
+            "pixel3_a11": "Android 11 | com.spotify.music | 1 row",
+            "pixel3_a12": "Android 12 | com.spotify.music | 1 row",
+            "samsungs20_a13": "Android 13 | com.spotify.music | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.spotify.music | 1 row",
+            "sharon_a13": "Android 13 | com.spotify.music | 0 rows, app installed and never signed in",
             "pixel7a_a14": "Android 14 | com.spotify.music | 1 row",
+            "russell_a14": "Android 14 | com.spotify.music | 1 row",
+            "sharon_a14": "Android 14 | com.spotify.music | 0 rows, app installed and never signed in",
+            "anne_a15": "Android 15 | com.spotify.music | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.spotify.music | 1 row",
         },
     },
     "spotify_playlist_library": {
@@ -68,7 +82,18 @@ __artifacts_v2__ = {
         "output_types": ["standard"],
         "artifact_icon": "playlist",
         "sample_data": {
+            "galaxys10_a10": "Android 10 | com.spotify.music | 7 rows",
+            "cookbook_a11": "Android 11 | com.spotify.music | 0 rows",
+            "pixel3_a11": "Android 11 | com.spotify.music | 2 rows",
+            "pixel3_a12": "Android 12 | com.spotify.music | 10 rows",
+            "samsungs20_a13": "Android 13 | com.spotify.music | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.spotify.music | 13 rows",
+            "sharon_a13": "Android 13 | com.spotify.music | 0 rows, app installed and never signed in",
             "pixel7a_a14": "Android 14 | com.spotify.music | 3 rows",
+            "russell_a14": "Android 14 | com.spotify.music | 14 rows",
+            "sharon_a14": "Android 14 | com.spotify.music | 0 rows, app installed and never signed in",
+            "anne_a15": "Android 15 | com.spotify.music | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.spotify.music | 21 rows",
         },
     },
     "spotify_playback_activity": {
@@ -106,7 +131,11 @@ __artifacts_v2__ = {
                  "decoded string fields verbatim (e.g. 'offlined file', 'android-auto', "
                  "'logout') without interpretation; some of what lands there is an "
                  "opaque identifier rather than readable status text, and those are "
-                 "reported as stored. Purely numeric fields (byte counts, bitrates, "
+                 "reported as stored. The short string an AudioFileSelection event "
+                 "carries for where the audio came from took the values 'offlined "
+                 "file', 'cached file' and 'best matching bitrate' across the tested "
+                 "extractions; 'offlined file' and 'cached file' are not the same "
+                 "thing, the first being a copy the user had downloaded. Purely numeric fields (byte counts, bitrates, "
                  "internal enum values) are not reported, since there is no public "
                  "schema to confirm what they mean. Where an extraction carries the "
                  "app's data directory more than once, the duplicate storage views of "
@@ -118,7 +147,18 @@ __artifacts_v2__ = {
         "output_types": ["standard"],
         "artifact_icon": "player-play",
         "sample_data": {
+            "galaxys10_a10": "Android 10 | com.spotify.music | 3 rows",
+            "cookbook_a11": "Android 11 | com.spotify.music | 0 rows",
+            "pixel3_a11": "Android 11 | com.spotify.music | 0 rows",
+            "pixel3_a12": "Android 12 | com.spotify.music | 3 rows",
+            "samsungs20_a13": "Android 13 | com.spotify.music | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.spotify.music | 3 rows",
+            "sharon_a13": "Android 13 | com.spotify.music | 0 rows, app installed and never signed in",
             "pixel7a_a14": "Android 14 | com.spotify.music | 28 rows",
+            "russell_a14": "Android 14 | com.spotify.music | 0 rows",
+            "sharon_a14": "Android 14 | com.spotify.music | 0 rows, app installed and never signed in",
+            "anne_a15": "Android 15 | com.spotify.music | 7 rows",
+            "kevin_pocox7_a15": "Android 15 | com.spotify.music | 2 rows",
         },
     },
     "spotify_recently_played": {
@@ -137,12 +177,24 @@ __artifacts_v2__ = {
                  "body is schema-less protobuf, decoded the same way this project "
                  "already decodes undocumented protobuf elsewhere. 'Played At' is a "
                  "millisecond timestamp embedded directly in that response by "
-                 "Spotify's own server, not derived from any local file time. This "
+                 "Spotify's own server, not derived from any local file time. It is a "
+                 "per-entry value rather than a property of the request: on one tested "
+                 "extraction a single cached response carried 50 entries with 50 "
+                 "distinct times in descending order, and on two others the same "
+                 "entries kept byte-identical times across responses fetched weeks "
+                 "apart, five separate fetches on one of them. On the Pixel 7a "
+                 "research image the one entry decodes to 12:54 local on 2024-07-27, "
+                 "inside the 12:38 to 12:56 playback session that image's own creation "
+                 "log documents. Worth knowing when reading a single-entry response: "
+                 "the response's mc-etag header carries the newest entry's value, so "
+                 "where only one entry is cached the two are necessarily the same "
+                 "number, which is not evidence that the value is a collection-level "
+                 "stamp. This "
                  "endpoint is requested with a limit of 50 entries, but the cached "
-                 "response on the device this was validated against held only one - "
-                 "the app's local HTTP cache only ever holds the most recent response "
-                 "to a given request URL, so this reflects whatever this list looked "
-                 "like the last time the app asked, not a full play history. It should "
+                 "response on the device this was first validated against held only "
+                 "one - the app's local HTTP cache only ever holds the most recent "
+                 "response to a given request URL, so this reflects whatever this list "
+                 "looked like the last time the app asked, not a full play history. It should "
                  "be read alongside Spotify - Playback Activity and Spotify - Now "
                  "Playing View, which recover different, independent evidence of "
                  "playback from other local sources.",
@@ -150,7 +202,18 @@ __artifacts_v2__ = {
         "output_types": ["standard"],
         "artifact_icon": "clock",
         "sample_data": {
+            "galaxys10_a10": "Android 10 | com.spotify.music | 0 rows",
+            "cookbook_a11": "Android 11 | com.spotify.music | 0 rows",
+            "pixel3_a11": "Android 11 | com.spotify.music | 0 rows",
+            "pixel3_a12": "Android 12 | com.spotify.music | 0 rows",
+            "samsungs20_a13": "Android 13 | com.spotify.music | 6 rows",
+            "russell_pixel6a_a13": "Android 13 | com.spotify.music | 15 rows",
+            "sharon_a13": "Android 13 | com.spotify.music | 0 rows, app installed and never signed in",
             "pixel7a_a14": "Android 14 | com.spotify.music | 1 row",
+            "russell_a14": "Android 14 | com.spotify.music | 10 rows",
+            "sharon_a14": "Android 14 | com.spotify.music | 0 rows, app installed and never signed in",
+            "anne_a15": "Android 15 | com.spotify.music | 2 rows",
+            "kevin_pocox7_a15": "Android 15 | com.spotify.music | 50 rows",
         },
     },
     "spotify_now_playing_view": {
@@ -191,7 +254,18 @@ __artifacts_v2__ = {
         "output_types": ["standard"],
         "artifact_icon": "microphone",
         "sample_data": {
+            "galaxys10_a10": "Android 10 | com.spotify.music | 0 rows",
+            "cookbook_a11": "Android 11 | com.spotify.music | 0 rows",
+            "pixel3_a11": "Android 11 | com.spotify.music | 0 rows",
+            "pixel3_a12": "Android 12 | com.spotify.music | 0 rows",
+            "samsungs20_a13": "Android 13 | com.spotify.music | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.spotify.music | 0 rows",
+            "sharon_a13": "Android 13 | com.spotify.music | 0 rows, app installed and never signed in",
             "pixel7a_a14": "Android 14 | com.spotify.music | 4 rows",
+            "russell_a14": "Android 14 | com.spotify.music | 1 row",
+            "sharon_a14": "Android 14 | com.spotify.music | 0 rows, app installed and never signed in",
+            "anne_a15": "Android 15 | com.spotify.music | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.spotify.music | 2 rows",
         },
     },
     "spotify_artist_profile_views": {
@@ -226,7 +300,18 @@ __artifacts_v2__ = {
         "output_types": ["standard"],
         "artifact_icon": "user-circle",
         "sample_data": {
+            "galaxys10_a10": "Android 10 | com.spotify.music | 0 rows",
+            "cookbook_a11": "Android 11 | com.spotify.music | 0 rows",
+            "pixel3_a11": "Android 11 | com.spotify.music | 0 rows",
+            "pixel3_a12": "Android 12 | com.spotify.music | 0 rows",
+            "samsungs20_a13": "Android 13 | com.spotify.music | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.spotify.music | 0 rows",
+            "sharon_a13": "Android 13 | com.spotify.music | 0 rows, app installed and never signed in",
             "pixel7a_a14": "Android 14 | com.spotify.music | 4 rows",
+            "russell_a14": "Android 14 | com.spotify.music | 1 row",
+            "sharon_a14": "Android 14 | com.spotify.music | 0 rows, app installed and never signed in",
+            "anne_a15": "Android 15 | com.spotify.music | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.spotify.music | 0 rows",
         },
     },
 }
