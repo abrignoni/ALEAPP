@@ -1,6 +1,6 @@
 {
   "case1": {
-    "description": "Google Pixel 7a, Android 14, Josh Hickman's public research image (created 2024-07-27/28). Validated against Hickman's documented creation log: the four Artist Profile Views / Now Playing View rows decode to timestamps landing within the documented 16:31-16:48 local playback session to the second. The two 'Response Received Time' columns come from OkHttp-Received-Millis baked into each cache entry's own metadata, not filesystem modification time, so the fixture stays accurate after re-staging",
+    "description": "Google Pixel 7a, Android 14, Josh Hickman's public research image (created 2024-07-27/28). Validated against Hickman's documented creation log: the four Artist Profile Views / Now Playing View rows decode to timestamps landing within the documented 16:31-16:48 local playback session to the second. The two 'Response Received Time' columns come from OkHttp-Received-Millis baked into each cache entry's own metadata, not filesystem modification time, so the fixture stays accurate after re-staging. The three cache/http-cache zips are trimmed to the request and response pairs the module's own patterns match; 374 files matched in the image, and file_count records what each zip actually holds",
     "maker": "@Gear-I & Claude",
     "make_data": {
       "input_data_path": "EXTRACTION_FFS.zip",
@@ -49,7 +49,7 @@
         "search_patterns": [
           "*/com.spotify.music/cache/http-cache/*"
         ],
-        "file_count": 374,
+        "file_count": 2,
         "expected_output": {
           "headers": [],
           "data": []
@@ -59,7 +59,7 @@
         "search_patterns": [
           "*/com.spotify.music/cache/http-cache/*"
         ],
-        "file_count": 374,
+        "file_count": 16,
         "expected_output": {
           "headers": [],
           "data": []
@@ -69,7 +69,7 @@
         "search_patterns": [
           "*/com.spotify.music/cache/http-cache/*"
         ],
-        "file_count": 374,
+        "file_count": 8,
         "expected_output": {
           "headers": [],
           "data": []

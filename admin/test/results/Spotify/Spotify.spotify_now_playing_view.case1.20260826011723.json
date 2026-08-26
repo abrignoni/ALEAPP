@@ -9,16 +9,16 @@
     "total_data_size_bytes": 240,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\Spotify\\testdata.Spotify.spotify_now_playing_view.case1.zip",
-    "start_time": "2026-08-25T23:01:49.048209+00:00",
-    "end_time": "2026-08-25T23:01:49.278005+00:00",
-    "run_time_seconds": 0.008207559585571289,
+    "input_zip_path": "admin/test/cases/data/Spotify/testdata.Spotify.spotify_now_playing_view.case1.zip",
+    "start_time": "2026-08-26T01:17:23.448083+00:00",
+    "end_time": "2026-08-26T01:17:23.464356+00:00",
+    "run_time_seconds": 0.0014472007751464844,
     "last_commit": {
-      "hash": "c872cb66bf976862cd02c0a31b493b61a314cd74",
+      "hash": "591933b74dcaa25828cfc79933a5231063092a98",
       "author_name": "Gear-I",
       "author_email": "dielleaiko@hotmail.com",
-      "date": "2026-08-25T18:04:56-04:00",
-      "message": "Read cache timestamps from OkHttp-Received-Millis instead of file mtime"
+      "date": "2026-08-25T19:12:55-04:00",
+      "message": "Add Spotify ALEAPP module with trimmed test fixtures"
     }
   },
   "headers": [

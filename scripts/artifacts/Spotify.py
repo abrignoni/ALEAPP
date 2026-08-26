@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "read from the app's main preferences file.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
         "notes": "Spotify does not store the account's email address or display name "
@@ -36,13 +36,19 @@ __artifacts_v2__ = {
                        "whenever that snapshot changed.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
         "notes": "Source is frecency.pb, a per-account file Spotify uses to rank "
                  "'frequent and recent' content; it is not a public format, so this was "
                  "reverse engineered directly against this device's real data rather "
-                 "than any documentation. Each playlist can appear more than once: "
+                 "than any documentation. A device with more than one Spotify account "
+                 "signed in holds one of these files per account and every one of them "
+                 "is read; 'Account Folder' is the name of the per-account directory a "
+                 "row's file sits in, reported as stored. On the device this was "
+                 "validated against that name is the account's canonical username "
+                 "followed by '-user', so it lines up with the Canonical Username "
+                 "column of Spotify - Account. Each playlist can appear more than once: "
                  "Spotify appends a new snapshot each time the two counters change, "
                  "so a playlist with several rows shows its usage growing over time, "
                  "and the earliest row's time is effectively when it was first added. "
@@ -73,7 +79,7 @@ __artifacts_v2__ = {
                        "downloaded local copy rather than streaming.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
         "notes": "Source is event-sender.db's Events table, an internal analytics log "
@@ -98,9 +104,16 @@ __artifacts_v2__ = {
                  "Download and the PlaybackSegments rows it fed) can be grouped, not "
                  "because its own meaning is known. 'Notes' surfaces other short "
                  "decoded string fields verbatim (e.g. 'offlined file', 'android-auto', "
-                 "'logout') without interpretation. Purely numeric fields (byte "
-                 "counts, bitrates, internal enum values) are not reported, since "
-                 "there is no public schema to confirm what they mean.",
+                 "'logout') without interpretation; some of what lands there is an "
+                 "opaque identifier rather than readable status text, and those are "
+                 "reported as stored. Purely numeric fields (byte counts, bitrates, "
+                 "internal enum values) are not reported, since there is no public "
+                 "schema to confirm what they mean. Where an extraction carries the "
+                 "app's data directory more than once, the duplicate storage views of "
+                 "one file are collapsed and each genuinely separate copy is read, so "
+                 "a second Android user's events are reported alongside the first "
+                 "user's with no column separating them; the source paths listed for "
+                 "the artifact name every database the rows came from.",
         "paths": ('*/com.spotify.music/databases/event-sender.db*',),
         "output_types": ["standard"],
         "artifact_icon": "player-play",
@@ -116,7 +129,7 @@ __artifacts_v2__ = {
                        "playlist it was played from.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache), specifically "
@@ -224,6 +237,7 @@ import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
+from scripts.artifacts.storagePathViews import unique_files
 from scripts.blackboxprotobuf import decode_message
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, logfunc
 
@@ -240,6 +254,7 @@ _RECENTLY_PLAYED_RE = re.compile(r'/recently-played/v3/')
 _LYRICS_TRACK_RE = re.compile(r'/color-lyrics/v2/track/([A-Za-z0-9]+)')
 _MERCH_TRACK_RE = re.compile(r'/merch-npv-service/v1/merch/track/([A-Za-z0-9]+)')
 _ARTIST_VIEW_RE = re.compile(r'/artist-identity-view/v2/profile/spotify:artist:')
+_ACCOUNT_DIR_RE = re.compile(r'/files/settings/Users/([^/]+)/frecency\.pb$')
 _OKHTTP_RECEIVED_MILLIS_RE = re.compile(
     r'^OkHttp-Received-Millis:\s*(\d+)\s*$', re.MULTILINE | re.IGNORECASE,
 )
@@ -361,17 +376,33 @@ def _summarize_message(message):
             uri = text
         elif _HEX_ID_RE.match(text) and not session_id:
             session_id = text
-        elif text.isprintable() and ' ' not in text and len(text) < 40:
+        elif text.isprintable() and len(text) < 40:
             notes.append(text)
     return uri, session_id, ', '.join(dict.fromkeys(notes))
 
 
-def _find_one(files_found, suffix):
-    for file_found in files_found:
-        file_found = str(file_found)
-        if file_found.endswith(suffix):
-            return file_found
-    return None
+def _find_all(files_found, suffix):
+    """Every matched file whose name ends with `suffix`, not just the first.
+
+    One extraction can hold genuinely separate copies of an app's data: a second
+    Android user under data/user/<n>, and, for the per-account settings folder,
+    one file per Spotify account signed in on the device. Duplicate spellings of
+    a single file are collapsed by unique_files() before this is called, so what
+    is left here is separate evidence and every one of them is read.
+    """
+    return [str(f) for f in files_found if str(f).endswith(suffix)]
+
+
+def _account_folder(context, path):
+    """The per-account directory name a settings file sits in, as stored.
+
+    Read from the evidence-relative path so the report's own extraction folder
+    cannot be mistaken for part of the evidence path. Returns '' when the file is
+    not under a Users/<account>/ directory.
+    """
+    relative = str(context.get_relative_path(str(path))).replace('\\', '/')
+    match = _ACCOUNT_DIR_RE.search(relative)
+    return match.group(1) if match else ''
 
 
 def _http_cache_pairs(files_found):
@@ -430,10 +461,12 @@ def _okhttp_received_time(request_path):
     return _epoch_ms_to_utc(match.group(1))
 
 
-def _lyrics_first_line(body):
+def _lyrics_first_line(body, response_path):
     try:
         values, _typedef = decode_message(body)
-    except Exception:  # pylint: disable=broad-exception-caught
+    except Exception as ex:  # pylint: disable=broad-exception-caught
+        logfunc(f"Spotify: could not decode the cached lyrics response "
+                f"{response_path}: {ex}")
         return ''
     container = values.get('1')
     if isinstance(container, list):
@@ -456,67 +489,68 @@ def spotify_account(context):
         ("App First Launch Time", "datetime"), "Installation ID",
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    prefs_path = _find_one(files_found, 'spotify_preferences.xml')
-    if not prefs_path:
-        return data_headers, [], ""
+    files_found = [str(f) for f in unique_files(context)]
 
-    root = _parse_xml(prefs_path)
-    username = _xml_value(root, 'crashlytics_user_id') or ''
-    event_owner = _xml_value(root, 'event-sender-event-owner') or ''
-    auth_source = _xml_value(root, 'ADAPTIVE_AUTH_METADATA_AUTH_SOURCE') or ''
-    language = _xml_value(root, 'user-selected-language') or ''
-    first_launch = _epoch_ms_to_utc(_xml_value(root, 'key_date_first_launch'))
-    installation_id = _xml_value(root, 'installation_id') or ''
+    data_list = []
+    source_paths = set()
+    for prefs_path in _find_all(files_found, 'spotify_preferences.xml'):
+        root = _parse_xml(prefs_path)
+        username = _xml_value(root, 'crashlytics_user_id') or ''
+        event_owner = _xml_value(root, 'event-sender-event-owner') or ''
+        if not username and not event_owner:
+            continue
+        source_paths.add(prefs_path)
+        data_list.append((
+            username,
+            event_owner,
+            _xml_value(root, 'ADAPTIVE_AUTH_METADATA_AUTH_SOURCE') or '',
+            _xml_value(root, 'user-selected-language') or '',
+            _epoch_ms_to_utc(_xml_value(root, 'key_date_first_launch')),
+            _xml_value(root, 'installation_id') or '',
+        ))
 
-    if not username and not event_owner:
-        return data_headers, [], prefs_path
-
-    data_list = [(
-        username, event_owner, auth_source, language, first_launch, installation_id,
-    )]
-    logfunc(f"Spotify Account: username {username or '(not found)'} "
-              f"recovered from spotify_preferences.xml")
-    return data_headers, data_list, prefs_path
+    logfunc(f"Spotify Account: {len(data_list)} account(s) recovered from "
+            f"{len(source_paths)} preferences file(s).")
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
 def spotify_playlist_library(context):
     data_headers = (
-        ("Snapshot Time", "datetime"), "Playlist URI", "Counter A (raw)", "Counter B (raw)",
+        ("Snapshot Time", "datetime"), "Account Folder", "Playlist URI",
+        "Counter A (raw)", "Counter B (raw)",
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    frecency_path = _find_one(files_found, 'frecency.pb')
-    if not frecency_path:
-        return data_headers, [], ""
-
-    with open(frecency_path, 'rb') as f:
-        raw = f.read()
-
-    try:
-        values, _typedef = decode_message(raw)
-    except Exception as ex:  # pylint: disable=broad-exception-caught
-        logfunc(f"Spotify: could not decode {frecency_path}: {ex}")
-        return data_headers, [], frecency_path
+    files_found = [str(f) for f in unique_files(context)]
 
     data_list = []
-    for entry in _as_list(values.get('1')):
-        if not isinstance(entry, dict):
+    source_paths = set()
+    for frecency_path in _find_all(files_found, 'frecency.pb'):
+        with open(frecency_path, 'rb') as f:
+            raw = f.read()
+        try:
+            values, _typedef = decode_message(raw)
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            logfunc(f"Spotify: could not decode {frecency_path}: {ex}")
             continue
-        playlist_uri = _decode_bytes(entry.get('1')) or ''
-        for snapshot in _as_list(entry.get('2')):
-            if not isinstance(snapshot, dict):
+        source_paths.add(frecency_path)
+        account = _account_folder(context, frecency_path)
+        for entry in _as_list(values.get('1')):
+            if not isinstance(entry, dict):
                 continue
-            snapshot_time = _epoch_s_to_utc(snapshot.get('4'))
-            data_list.append((
-                snapshot_time, playlist_uri, snapshot.get('2'), snapshot.get('3'),
-            ))
+            playlist_uri = _decode_bytes(entry.get('1')) or ''
+            for snapshot in _as_list(entry.get('2')):
+                if not isinstance(snapshot, dict):
+                    continue
+                data_list.append((
+                    _epoch_s_to_utc(snapshot.get('4')), account, playlist_uri,
+                    snapshot.get('2'), snapshot.get('3'),
+                ))
 
     data_list.sort(key=lambda row: (row[0] is None, row[0]))
     logfunc(f"Spotify Playlist Library Activity: {len(data_list)} snapshot(s) "
-            f"recovered from frecency.pb.")
-    return data_headers, data_list, frecency_path
+            f"recovered from {len(source_paths)} frecency.pb file(s).")
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
@@ -525,39 +559,39 @@ def spotify_playback_activity(context):
         ("Event Time", "datetime"), "Event Type", "Content URI", "Session ID", "Notes",
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    db_path = _find_one(files_found, 'event-sender.db')
-    if not db_path:
-        return data_headers, [], ""
+    files_found = [str(f) for f in unique_files(context)]
 
     # get_sqlite_db_records() takes a plain query string with no bound-parameter
     # support, so the whitelist is inlined directly; it is a fixed internal
     # tuple, never user input, so this is safe.
     name_list = ', '.join(f"'{name}'" for name in _PLAYBACK_EVENT_NAMES)
-    rows = get_sqlite_db_records(
-        db_path,
-        f"SELECT eventName, fragments FROM Events "
-        f"WHERE eventName IN ({name_list}) ORDER BY id",
-    )
 
     data_list = []
-    for event_name, fragments in rows:
-        try:
-            values, _typedef = decode_message(fragments)
-        except Exception as ex:  # pylint: disable=broad-exception-caught
-            logfunc(f"Spotify: could not decode a {event_name} event: {ex}")
-            continue
-        event_time = _event_context_time(values)
-        message = _event_message(values)
-        if message is None:
-            continue
-        uri, session_id, notes = _summarize_message(message)
-        data_list.append((event_time, event_name, uri, session_id, notes))
+    source_paths = set()
+    for db_path in _find_all(files_found, 'event-sender.db'):
+        rows = get_sqlite_db_records(
+            db_path,
+            f"SELECT eventName, fragments FROM Events "
+            f"WHERE eventName IN ({name_list}) ORDER BY id",
+        )
+        source_paths.add(db_path)
+        for event_name, fragments in rows:
+            try:
+                values, _typedef = decode_message(fragments)
+            except Exception as ex:  # pylint: disable=broad-exception-caught
+                logfunc(f"Spotify: could not decode a {event_name} event: {ex}")
+                continue
+            event_time = _event_context_time(values)
+            message = _event_message(values)
+            if message is None:
+                continue
+            uri, session_id, notes = _summarize_message(message)
+            data_list.append((event_time, event_name, uri, session_id, notes))
 
     data_list.sort(key=lambda row: (row[0] is None, row[0]))
     logfunc(f"Spotify Playback Activity: {len(data_list)} event(s) recovered "
-            f"from event-sender.db.")
-    return data_headers, data_list, db_path
+            f"from {len(source_paths)} event-sender.db file(s).")
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
@@ -566,11 +600,11 @@ def spotify_recently_played(context):
         ("Played At", "datetime"), "Track URI", "Playlist Context URI",
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
+    files_found = [str(f) for f in unique_files(context)]
     pairs = _http_cache_pairs(files_found)
 
     data_list = []
-    source_path = ""
+    source_paths = set()
     for paths in pairs.values():
         request_path = paths.get('request')
         response_path = paths.get('response')
@@ -578,7 +612,7 @@ def spotify_recently_played(context):
             continue
         if not _RECENTLY_PLAYED_RE.search(_read_text(request_path)):
             continue
-        source_path = request_path
+        source_paths.add(request_path)
         body = _gunzip_file(response_path)
         try:
             values, _typedef = decode_message(body)
@@ -598,7 +632,7 @@ def spotify_recently_played(context):
     data_list.sort(key=lambda row: (row[0] is None, row[0]))
     logfunc(f"Spotify Recently Played: {len(data_list)} "
             f"entr{'y' if len(data_list) == 1 else 'ies'} recovered.")
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
@@ -608,10 +642,10 @@ def spotify_now_playing_view(context):
         ("Response Received Time", "datetime"),
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
+    files_found = [str(f) for f in unique_files(context)]
     pairs = _http_cache_pairs(files_found)
 
-    merch_track_ids = set()
+    merch_requests = {}
     lyrics_entries = []
     for paths in pairs.values():
         request_path = paths.get('request')
@@ -621,28 +655,30 @@ def spotify_now_playing_view(context):
         url = _read_text(request_path)
         merch_match = _MERCH_TRACK_RE.search(url)
         if merch_match:
-            merch_track_ids.add(merch_match.group(1))
+            merch_requests[merch_match.group(1)] = request_path
             continue
         lyrics_match = _LYRICS_TRACK_RE.search(url)
         if lyrics_match:
             lyrics_entries.append((lyrics_match.group(1), response_path, request_path))
 
     data_list = []
-    source_path = ""
+    source_paths = set()
     for track_id, response_path, request_path in lyrics_entries:
-        source_path = request_path
-        first_line = _lyrics_first_line(_gunzip_file(response_path))
+        source_paths.add(request_path)
+        merch_request = merch_requests.get(track_id)
+        if merch_request:
+            source_paths.add(merch_request)
         data_list.append((
             track_id,
-            first_line,
-            "Yes" if track_id in merch_track_ids else "",
+            _lyrics_first_line(_gunzip_file(response_path), response_path),
+            "Yes" if merch_request else "",
             _okhttp_received_time(request_path),
         ))
 
     data_list.sort(key=lambda row: (row[3] is None, row[3]))
     logfunc(f"Spotify Now Playing View: {len(data_list)} track(s) recovered "
             f"from cached lyrics/merch responses.")
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
@@ -651,11 +687,11 @@ def spotify_artist_profile_views(context):
         "Artist Name", "Artist URI", ("Response Received Time", "datetime"),
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
+    files_found = [str(f) for f in unique_files(context)]
     pairs = _http_cache_pairs(files_found)
 
     data_list = []
-    source_path = ""
+    source_paths = set()
     for paths in pairs.values():
         request_path = paths.get('request')
         response_path = paths.get('response')
@@ -663,7 +699,6 @@ def spotify_artist_profile_views(context):
             continue
         if not _ARTIST_VIEW_RE.search(_read_text(request_path)):
             continue
-        source_path = request_path
         body = _gunzip_file(response_path)
         try:
             data = json.loads(body)
@@ -674,9 +709,10 @@ def spotify_artist_profile_views(context):
         artist_uri = data.get('artistUri', '') or ''
         if not name and not artist_uri:
             continue
+        source_paths.add(request_path)
         data_list.append((name, artist_uri, _okhttp_received_time(request_path)))
 
     data_list.sort(key=lambda row: (row[2] is None, row[2]))
     logfunc(f"Spotify Artist Profile Views: {len(data_list)} view(s) recovered "
             f"from cached artist-identity-view responses.")
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

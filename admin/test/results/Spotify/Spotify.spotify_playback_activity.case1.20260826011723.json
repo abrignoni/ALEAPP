@@ -6,19 +6,19 @@
     "case_number": "case1",
     "number_of_columns": 5,
     "number_of_rows": 28,
-    "total_data_size_bytes": 2402,
+    "total_data_size_bytes": 2507,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\Spotify\\testdata.Spotify.spotify_playback_activity.case1.zip",
-    "start_time": "2026-08-25T23:01:48.897712+00:00",
-    "end_time": "2026-08-25T23:01:49.037078+00:00",
-    "run_time_seconds": 0.034461259841918945,
+    "input_zip_path": "admin/test/cases/data/Spotify/testdata.Spotify.spotify_playback_activity.case1.zip",
+    "start_time": "2026-08-26T01:17:23.464787+00:00",
+    "end_time": "2026-08-26T01:17:23.485819+00:00",
+    "run_time_seconds": 0.0077860355377197266,
     "last_commit": {
-      "hash": "c872cb66bf976862cd02c0a31b493b61a314cd74",
+      "hash": "591933b74dcaa25828cfc79933a5231063092a98",
       "author_name": "Gear-I",
       "author_email": "dielleaiko@hotmail.com",
-      "date": "2026-08-25T18:04:56-04:00",
-      "message": "Read cache timestamps from OkHttp-Received-Millis instead of file mtime"
+      "date": "2026-08-25T19:12:55-04:00",
+      "message": "Add Spotify ALEAPP module with trimmed test fixtures"
     }
   },
   "headers": [
@@ -62,7 +62,7 @@
       "AudioFileSelection",
       "",
       "571b5533aaa17d174b7a2dad5a5635a2",
-      "audiophile"
+      "offlined file, audiophile"
     ],
     [
       1722130639,
@@ -83,7 +83,7 @@
       "AudioFileSelection",
       "",
       "3d5953543106212c9fa81c0b187f542f",
-      "audiophile"
+      "offlined file, audiophile"
     ],
     [
       1722136916,
@@ -104,7 +104,7 @@
       "AudioFileSelection",
       "",
       "e93b34e35831c224e40fbdb4777aea19",
-      "audiophile"
+      "offlined file, audiophile"
     ],
     [
       1722136957,
@@ -125,7 +125,7 @@
       "AudioFileSelection",
       "",
       "72131a1d87321ce97912a2c2501c629a",
-      "audiophile"
+      "offlined file, audiophile"
     ],
     [
       1722136986,
@@ -146,7 +146,7 @@
       "AudioFileSelection",
       "",
       "668a1032edcd940dfd2e5108da479c2a",
-      "audiophile"
+      "offlined file, audiophile"
     ],
     [
       1722137196,
@@ -167,7 +167,7 @@
       "AudioFileSelection",
       "",
       "21a844eae903780640b63e9d58f1619c",
-      "audiophile"
+      "offlined file, audiophile"
     ],
     [
       1722137441,
@@ -188,7 +188,7 @@
       "AudioFileSelection",
       "",
       "208a9d29816f3f97051762d8fe485a18",
-      "audiophile"
+      "offlined file, audiophile"
     ],
     [
       1722165367,
