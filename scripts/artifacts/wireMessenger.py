@@ -350,12 +350,14 @@ _WIRE_ACCOUNT_DIR_RE = re.compile(r'[/\\]wire\.com[/\\]([^/\\]+)[/\\]')
 @artifact_processor
 def get_wire_cached_files(context):
     data_list = []
+    source_paths = set()
 
     for file_found in unique_files(context):
         file_found = str(file_found)
         match = _WIRE_ACCOUNT_DIR_RE.search(file_found)
         if not match or isdir(file_found):
             continue
+        source_paths.add(file_found)
         account_id = match.group(1)
 
         extension = None
@@ -388,7 +390,7 @@ def get_wire_cached_files(context):
         'Account ID',
         'Source Path',
     )
-    return data_headers, data_list, 'See Source Path column'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 _PROTEUS_SESSION_RE = re.compile(
@@ -400,6 +402,7 @@ _OTR_SESSION_RE = re.compile(
 @artifact_processor
 def get_wire_proteus_sessions(context):
     data_list = []
+    source_paths = set()
 
     for file_found in unique_files(context):
         file_found = str(file_found)
@@ -408,6 +411,7 @@ def get_wire_proteus_sessions(context):
         match = _PROTEUS_SESSION_RE.search(file_found) or _OTR_SESSION_RE.search(file_found)
         if not match:
             continue
+        source_paths.add(file_found)
         account_id = match.group(1)
         session_id = match.group(2)
 
@@ -436,4 +440,4 @@ def get_wire_proteus_sessions(context):
         'Session ID (as stored)',
         'Source Path',
     )
-    return data_headers, data_list, 'See Source Path column'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

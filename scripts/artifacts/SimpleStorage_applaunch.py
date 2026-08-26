@@ -59,4 +59,4 @@ def SimpleStorage_applaunch(context):
         data_list.append((time_launched,record[1],record[2], Context.get_relative_path(source_path)))
  
     data_headers = (('App Launched Timestamp','datetime'),'App Name','Launched From', 'Source File')
-    return data_headers, data_list, 'See source file(s) below'
+    return data_headers, data_list, source_path

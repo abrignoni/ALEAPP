@@ -1,0 +1,96 @@
+{
+  "case1": {
+    "description": "Samsung Galaxy S21 Ultra (SM-G991U), Android 11, full filesystem extraction. routine.db shipped with a real -wal/-shm pair at acquisition time; all three files are included so the merged (post-WAL) state is what gets tested, not a stale checkpoint.",
+    "maker": "@Gear-I & Claude",
+    "make_data": {
+      "input_data_path": "Samsung Galaxy.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-08-25T15:40:10.221052",
+      "last_commit": {
+        "hash": "18c3a2de4c65d37376c07aebd98ac0f8cfda5874",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-08-25T15:01:57-04:00",
+        "message": "Renamed artifact parser file name"
+      }
+    },
+    "artifacts": {
+      "samsungBixbyRoutinesUserRoutines": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesRunHistory": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesConditions": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesActions": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesPlaces": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesServiceLog": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesPreferences": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_name": "samsung_s21ultra_a11",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "11",
+      "device_model": "Samsung Galaxy S21 Ultra (SM-G991U)"
+    }
+  }
+}

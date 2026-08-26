@@ -346,6 +346,10 @@ def split_dumpsys_log(dumpsys_file) -> dict:
                 dur_match.group(2).strip(),
                 "%Y-%m-%d %H:%M:%S"
             )
+            # strptime returns a naive datetime and timestamp() reads a naive
+            # value in the host timezone, so this shifted by the offset of
+            # whoever ran the tool. Pinned to match the other converters here.
+            end_time = end_time.replace(tzinfo=datetime.timezone.utc)
             current_start_ts = (
                 end_time - datetime.timedelta(seconds=duration_s)
             ).timestamp()

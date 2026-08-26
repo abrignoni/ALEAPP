@@ -189,6 +189,7 @@ def _gmail_stores(files_found, basename_prefix):
 def gmailEmails(context):
     files_found = unique_files(context)
     data_list = []
+    source_paths = set()
     accounts = _accounts_by_store_id(files_found)
 
     for bigTopDataDB in _gmail_stores(files_found, 'bigTopDataDB'):
@@ -218,6 +219,7 @@ def gmailEmails(context):
         finally:
             db.close()
 
+        source_paths.add(bigTopDataDB)
         proto_col = ''
         for col_info in columns_info:
             if col_info[1] == "zipped_message_proto":
@@ -308,12 +310,13 @@ def gmailEmails(context):
             data_list.append((timestamp,account,account_id,serverid,body_text(messagehtml),body_links(messagehtml),attachment,attachname,to,toname,replyto,replytoname,subjectline,mailedby,signedby,source_file))
 
     data_headers = (('Timestamp','datetime'),'Account','Account ID','Email ID','Message','Links',('Attachment','media'),'Attachment Name','Recipient','Recipient Name','Reply To','Reply To Name','Subject Line','Mailed By','Signed by','Source File')
-    return data_headers, data_list, 'See source file(s) below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 @artifact_processor
 def gmailLabels(context):
     files_found = unique_files(context)
     data_list = []
+    source_paths = set()
     accounts = _accounts_by_store_id(files_found)
 
     for bigTopDataDB in _gmail_stores(files_found, 'bigTopDataDB'):
@@ -321,6 +324,7 @@ def gmailLabels(context):
         account_id = store_name.split('bigTopDataDB.', 1)[1] if '.' in store_name else ''
         account = accounts.get((_container_of(bigTopDataDB), account_id), '')
         source_file = Context.get_relative_path(bigTopDataDB)
+        source_paths.add(bigTopDataDB)
 
         query = '''
         select
@@ -338,15 +342,17 @@ def gmailLabels(context):
             data_list.append((account,account_id,record[0],record[1],record[2],record[3],source_file))
 
     data_headers = ('Account','Account ID','Label','Unread Count','Total Count','Unseen Count','Source File')
-    return data_headers, data_list, 'See source file(s) below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 @artifact_processor
 def gmailDownloadRequests(context):
     files_found = unique_files(context)
     data_list = []
+    source_paths = set()
 
     for downloaderDB in _gmail_stores(files_found, 'downloader.db'):
         source_file = Context.get_relative_path(downloaderDB)
+        source_paths.add(downloaderDB)
 
         #Get Gmail download requests
         query = '''
@@ -368,4 +374,4 @@ def gmailDownloadRequests(context):
             data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7],source_file))
 
     data_headers = (('Timestamp Requested','datetime'),'Account Name','Download Type','Caller ID','URL','Target File Path','Target File Size','Priority','Source File')
-    return data_headers, data_list, 'See source file(s) below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
