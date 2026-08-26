@@ -924,6 +924,25 @@ def alex_live_shortcut(context):
     # App specific lists:
     discord_data = []
 
+    def shortcut_sub_artifact(sub_name, sub_desc, headers, data):
+        """Create a sub-artifact for single apps in shortcuts"""
+        artifacts_v2 = globals().get('__artifacts_v2__', {})
+        artifacts_v2['_dynamic_shortcut_sub'] = {
+            'name': sub_name,
+            'description': sub_desc, 
+            'category': 'ALEX Live Data',
+            'artifact_icon': 'link-plus'
+        }
+
+        report_folder = context.get_report_folder()
+        seeker = context.get_seeker()
+        wrap_text = True
+        @artifact_processor
+        def _dynamic_shortcut_sub(_files_found, _report_folder, _seeker, _wrap_text):
+            return headers, data, source_path
+
+        _dynamic_shortcut_sub(files_found, report_folder, seeker, wrap_text)
+
     split_dumpsys_log(source_path)
     acc_dump, acc_ts = _DUMPSYS_DICT.get("shortcut", (None, None))
 
@@ -936,25 +955,6 @@ def alex_live_shortcut(context):
             else f'Dumpsys does include a \"shortcut\" part with timestamp: {str(acc_ts)}'
         )
         logfunc(logtext)
-
-        def shortcut_sub_artifact(sub_name, sub_desc, headers, data):
-            """Create a sub-artifact for single apps in shortcuts"""
-            artifacts_v2 = globals().get('__artifacts_v2__', {})
-            artifacts_v2['_dynamic_shortcut_sub'] = {
-                'name': sub_name,
-                'description': sub_desc, 
-                'category': 'ALEX Live Data',
-                'artifact_icon': 'link-plus'
-            }
-
-            report_folder = context.get_report_folder()
-            seeker = context.get_seeker()
-            wrap_text = True
-            @artifact_processor
-            def _dynamic_shortcut_sub(ctx):
-                return headers, data, source_path
-
-            _dynamic_shortcut_sub(files_found, report_folder, seeker, wrap_text)
 
         shortcut_pattern = re.compile(r'ShortcutInfo\s*\{(.*?)(?=^\s*ShortcutInfo\s*\{|\Z)', re.MULTILINE | re.DOTALL)
         for match in shortcut_pattern.finditer(acc_dump):
