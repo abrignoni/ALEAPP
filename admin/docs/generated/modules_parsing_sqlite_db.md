@@ -25,6 +25,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | SamsungNotes |
 | SamsungTrash |
 | SimpleStorage_applaunch |
+| Spotify |
 | TorBrowser |
 | WithingsHealthMate |
 | ZangiChats |
