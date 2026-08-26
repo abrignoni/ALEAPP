@@ -138,7 +138,7 @@ __artifacts_v2__ = {
         "artifact_icon": "battery-charging"
     },
     "alex_live_shortcut": {
-        "name": "Dumpsys - Shortcuts (All)",
+        "name": "Dumpsys - Shortcuts",
         "description": "Outputs the Shortcuts \
             from the Dumpsys log of an \
                 ALEX PRFS backup.",
