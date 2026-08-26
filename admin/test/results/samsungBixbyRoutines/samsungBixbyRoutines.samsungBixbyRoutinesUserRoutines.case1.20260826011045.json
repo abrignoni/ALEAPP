@@ -9,16 +9,16 @@
     "total_data_size_bytes": 0,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\samsungBixbyRoutines\\testdata.samsungBixbyRoutines.samsungBixbyRoutinesUserRoutines.case1.zip",
-    "start_time": "2026-08-25T20:09:43.125623+00:00",
-    "end_time": "2026-08-25T20:09:43.350962+00:00",
-    "run_time_seconds": 0.02239370346069336,
+    "input_zip_path": "admin/test/cases/data/samsungBixbyRoutines/testdata.samsungBixbyRoutines.samsungBixbyRoutinesUserRoutines.case1.zip",
+    "start_time": "2026-08-26T01:10:45.955711+00:00",
+    "end_time": "2026-08-26T01:10:45.972072+00:00",
+    "run_time_seconds": 0.0011227130889892578,
     "last_commit": {
-      "hash": "18c3a2de4c65d37376c07aebd98ac0f8cfda5874",
+      "hash": "3d04d69be03aca78b71590a81a01e5fd284a34c1",
       "author_name": "Gear-I",
       "author_email": "dielleaiko@hotmail.com",
-      "date": "2026-08-25T15:01:57-04:00",
-      "message": "Renamed artifact parser file name"
+      "date": "2026-08-25T16:56:04-04:00",
+      "message": "Add samsungBixbyRoutines ALEAPP module with test fixtures"
     }
   },
   "headers": [
@@ -30,8 +30,8 @@
     "Is Show Notification",
     "Toggle Time",
     "Tag",
-    "Icon Resource ID",
-    "Color"
+    "Icon Resource ID (as stored)",
+    "Color (as stored)"
   ],
   "data": []
 }

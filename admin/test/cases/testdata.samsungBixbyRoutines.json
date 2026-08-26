@@ -2,8 +2,6 @@
   "case1": {
     "description": "Samsung Galaxy S21 Ultra (SM-G991U), Android 11, full filesystem extraction. routine.db shipped with a real -wal/-shm pair at acquisition time; all three files are included so the merged (post-WAL) state is what gets tested, not a stale checkpoint.",
     "maker": "@Gear-I & Claude",
-    "os_name": "Android",
-    "os_version": "11",
     "make_data": {
       "input_data_path": "Samsung Galaxy.zip",
       "os": "Windows-11-10.0.26200-SP0",
@@ -18,6 +16,46 @@
     },
     "artifacts": {
       "samsungBixbyRoutinesUserRoutines": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesRunHistory": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesConditions": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesActions": {
+        "search_patterns": [
+          "*/com.samsung.android.app.routines/databases/routine.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsungBixbyRoutinesPlaces": {
         "search_patterns": [
           "*/com.samsung.android.app.routines/databases/routine.db*"
         ],
@@ -47,6 +85,12 @@
           "data": []
         }
       }
+    },
+    "image_name": "samsung_s21ultra_a11",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "11",
+      "device_model": "Samsung Galaxy S21 Ultra (SM-G991U)"
     }
   }
 }
