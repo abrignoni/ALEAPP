@@ -49,6 +49,8 @@ __artifacts_v2__ = {
     }
 }
 
+import sqlite3
+
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
 
@@ -66,6 +68,28 @@ def _media_history_files(files_found):
         yield file_found, browser_name
 
 
+def _media_history_rows(file_found, browser_name, query):
+    '''Run one query against a Media History database.
+
+    Returns None when the database cannot be read, so the caller skips that
+    file instead of ending the whole artifact. A Media History file left with
+    a non-empty rollback journal is the case to expect: SQLite has to write to
+    replay and clear the journal, which a read-only handle cannot do.
+    '''
+    db = open_sqlite_db_readonly(file_found)
+    if db is None:
+        return None
+    try:
+        cursor = db.cursor()
+        cursor.execute(query)
+        return cursor.fetchall()
+    except sqlite3.Error as ex:
+        logfunc(f'Unable to read {browser_name} media history in {file_found}: {ex}')
+        return None
+    finally:
+        db.close()
+
+
 @artifact_processor
 def get_chromeMediaHistorySessions(context):
     files_found = context.get_files_found()
@@ -77,9 +101,7 @@ def get_chromeMediaHistorySessions(context):
     report_file = 'Unknown'
 
     for file_found, browser_name in _media_history_files(files_found):
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        all_rows = _media_history_rows(file_found, browser_name, '''
         select
         datetime(last_updated_time_s-11644473600, 'unixepoch') as last_updated_time_s,
             origin_id,
@@ -92,8 +114,9 @@ def get_chromeMediaHistorySessions(context):
             source_title
         from playbackSession
         ''')
+        if all_rows is None:
+            continue
 
-        all_rows = cursor.fetchall()
         if len(all_rows) > 0:
             report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
             data_list = []
@@ -104,7 +127,6 @@ def get_chromeMediaHistorySessions(context):
             all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Media History - Sessions data available')
-        db.close()
 
     return all_data_headers, all_data, report_file
 
@@ -120,9 +142,7 @@ def get_chromeMediaHistoryPlaybacks(context):
     report_file = 'Unknown'
 
     for file_found, browser_name in _media_history_files(files_found):
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        all_rows = _media_history_rows(file_found, browser_name, '''
         select
             datetime(last_updated_time_s-11644473600, 'unixepoch') as last_updated_time_s,
             id,
@@ -139,8 +159,9 @@ def get_chromeMediaHistoryPlaybacks(context):
             end as has_video
         from playback
         ''')
+        if all_rows is None:
+            continue
 
-        all_rows = cursor.fetchall()
         if len(all_rows) > 0:
             report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
             data_list = []
@@ -151,7 +172,6 @@ def get_chromeMediaHistoryPlaybacks(context):
             all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Media History - Playbacks data available')
-        db.close()
 
     return all_data_headers, all_data, report_file
 
@@ -167,9 +187,7 @@ def get_chromeMediaHistoryOrigins(context):
     report_file = 'Unknown'
 
     for file_found, browser_name in _media_history_files(files_found):
-        db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        all_rows = _media_history_rows(file_found, browser_name, '''
         select
             datetime(last_updated_time_s-11644473600, 'unixepoch') as last_updated_time_s,
             id,
@@ -177,8 +195,9 @@ def get_chromeMediaHistoryOrigins(context):
             cast(aggregate_watchtime_audio_video_s/86400 as integer) || ':' || strftime('%H:%M:%S', aggregate_watchtime_audio_video_s ,'unixepoch') as aggregate_watchtime_audio_video_s
         from origin
         ''')
+        if all_rows is None:
+            continue
 
-        all_rows = cursor.fetchall()
         if len(all_rows) > 0:
             report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
             data_list = []
@@ -189,6 +208,5 @@ def get_chromeMediaHistoryOrigins(context):
             all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Media History - Origins data available')
-        db.close()
 
     return all_data_headers, all_data, report_file

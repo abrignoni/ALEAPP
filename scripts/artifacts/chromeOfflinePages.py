@@ -27,6 +27,7 @@ __artifacts_v2__ = {
 }
 
 import os
+import sqlite3
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
@@ -56,11 +57,16 @@ def get_chromeOfflinePages(context):
         elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
             continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
 
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
-
         db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        if db is None:
+            continue
+
+        # One unreadable database must not end the artifact: a file left with a
+        # non-empty rollback journal cannot be read through a read-only handle,
+        # because SQLite has to write to replay and clear the journal.
+        try:
+            cursor = db.cursor()
+            cursor.execute('''
         SELECT
         datetime(creation_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch") as creation_time,
         datetime(last_access_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch") as last_access_time,
@@ -71,8 +77,15 @@ def get_chromeOfflinePages(context):
         file_size
         from offlinepages_v1
         ''')
+            all_rows = cursor.fetchall()
+        except sqlite3.Error as ex:
+            logfunc(f'Unable to read {browser_name} offline pages in {file_found}: {ex}')
+            continue
+        finally:
+            db.close()
 
-        all_rows = cursor.fetchall()
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+
         if len(all_rows) > 0:
             data_list = []
             for row in all_rows:
@@ -82,7 +95,5 @@ def get_chromeOfflinePages(context):
             all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Offline Pages data available')
-
-        db.close()
 
     return all_data_headers, all_data, report_file

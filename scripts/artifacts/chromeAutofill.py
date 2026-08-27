@@ -5,24 +5,31 @@ __artifacts_v2__ = {
         "description": "Parses Chrome autofill entries",
         "author": "@stark4n6",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-07-10",
+        "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "",
+        "notes": "A 'Web Data' database that cannot be read is logged and skipped, and the remaining browsers on the device are still reported. SQLite treats a non-empty '-journal' sidecar as a hot journal and begins a recovery that has to write, which a read-only handle cannot do. The pixel3_a12 image carries one file in that state, the Gmail WebView copy under data_mirror, whose sidecar holds 16 bytes of LevelDB text rather than a rollback journal. The storage-view dedupe selects the data/data spelling of that same database, so the unreadable copy is not opened during a normal run on this image; read with its journal ignored it holds no autofill rows.",
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
-            "galaxys10_a10": "Android 10 | 6 rows",
-            "pixel7a_a14": "Android 14 | 4 rows",
-            "sharon_a14": "Android 14 | 4 rows",
             "anne_a15": "Android 15 | 2 rows",
+            "cookbook_a11": "Android 11 | 10 rows",
+            "galaxys10_a10": "Android 10 | 6 rows",
             "hc_pixel8pro_a16": "Android 16 | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | 1 row",
             "kevin_pocox7_a15": "Android 15 | 1 row",
-            "samsunga53_a14": "Android 14 | 18 rows",
-            "samsungs20_a13": "Android 13 | 4 rows",
+            "pixel3_a11": "Android 11 | 2 rows",
+            "pixel3_a12": "Android 12 | 3 rows",
+            "pixel7a_a14": "Android 14 | 4 rows",
+            "russell_a14": "Android 14 | 8 rows",
             "russell_pixel6a_a13": "Android 13 | 8 rows",
-            "userb2_a13": "Android 13 | 12 rows",
+            "s20fe_a13": "Android 13 | 0 rows",
+            "samsunga53_a14": "Android 14 | 6 rows",
+            "samsungs20_a13": "Android 13 | 4 rows",
+            "sharon_a13": "Android 13 | 3 rows",
+            "sharon_a14": "Android 14 | 4 rows",
+            "userb2_a13": "Android 13 | 6 rows",
         },
     },
     "get_chromeAutofillProfiles": {
@@ -39,15 +46,20 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
         "sample_data": {
             "anne_a15": "Android 15 | 0 rows",
+            "cookbook_a11": "Android 11 | 0 rows",
             "galaxys10_a10": "Android 10 | 0 rows",
             "hc_pixel8pro_a16": "Android 16 | 2 rows",
             "hc_pixel8pro_a17": "Android 17 | 2 rows",
             "kevin_pocox7_a15": "Android 15 | 0 rows",
+            "pixel3_a11": "Android 11 | 2 rows",
+            "pixel3_a12": "Android 12 | 2 rows",
             "pixel7a_a14": "Android 14 | 0 rows",
+            "russell_a14": "Android 14 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | 0 rows",
             "s20fe_a13": "Android 13 | 0 rows",
             "samsunga53_a14": "Android 14 | 0 rows",
             "samsungs20_a13": "Android 13 | 3 rows",
+            "sharon_a13": "Android 13 | 2 rows",
             "sharon_a14": "Android 14 | 0 rows",
             "userb2_a13": "Android 13 | 0 rows",
         },
@@ -56,6 +68,7 @@ __artifacts_v2__ = {
 
 import datetime
 import os
+import sqlite3
 
 from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
@@ -97,28 +110,41 @@ def get_chromeAutofill(context):
         report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        columns = [i[1] for i in cursor.execute('PRAGMA table_info(autofill)')]
-
-        if not columns:
-            # Some Web Data databases (e.g. embedded WebViews) have no autofill table
-            logfunc(f'No {browser_name} autofill table available in {file_found}')
-            db.close()
+        if db is None:
             continue
 
-        if 'date_created' in columns:
-            cursor.execute('select date_created, name, value, date_last_used, count from autofill')
-            rows = cursor.fetchall()
-            data_list = [(_seconds_to_utc(r[0]), r[1], r[2], _seconds_to_utc(r[3]), r[4]) for r in rows]
-        else:
-            cursor.execute('''
-                select autofill_dates.date_created, autofill.name, autofill.value, autofill.count
-                from autofill
-                join autofill_dates on autofill_dates.pair_id = autofill.pair_id
-            ''')
-            rows = cursor.fetchall()
-            data_list = [(_seconds_to_utc(r[0]), r[1], r[2], '', r[3]) for r in rows]
-        db.close()
+        # One unreadable database must not end the artifact. A Web Data file left
+        # with a non-empty rollback journal cannot be read through a read-only
+        # handle, because SQLite has to write to replay and clear the journal.
+        # Without this guard such a file ends the loop and every browser already
+        # collected is dropped with it.
+        data_list = []
+        try:
+            cursor = db.cursor()
+            columns = [i[1] for i in cursor.execute('PRAGMA table_info(autofill)')]
+
+            if not columns:
+                # Some Web Data databases (e.g. embedded WebViews) have no autofill table
+                logfunc(f'No {browser_name} autofill table available in {file_found}')
+                continue
+
+            if 'date_created' in columns:
+                cursor.execute('select date_created, name, value, date_last_used, count from autofill')
+                rows = cursor.fetchall()
+                data_list = [(_seconds_to_utc(r[0]), r[1], r[2], _seconds_to_utc(r[3]), r[4]) for r in rows]
+            else:
+                cursor.execute('''
+                    select autofill_dates.date_created, autofill.name, autofill.value, autofill.count
+                    from autofill
+                    join autofill_dates on autofill_dates.pair_id = autofill.pair_id
+                ''')
+                rows = cursor.fetchall()
+                data_list = [(_seconds_to_utc(r[0]), r[1], r[2], '', r[3]) for r in rows]
+        except sqlite3.Error as ex:
+            logfunc(f'Unable to read {browser_name} autofill entries in {file_found}: {ex}')
+            continue
+        finally:
+            db.close()
 
         if len(data_list) > 0:
             all_data.extend([row + (browser_name,) for row in data_list])
