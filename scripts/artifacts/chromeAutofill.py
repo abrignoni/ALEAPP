@@ -22,7 +22,7 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | 6 rows",
             "samsungs20_a13": "Android 13 | 4 rows",
             "russell_pixel6a_a13": "Android 13 | 8 rows",
-            "userb2_a13": "Android 13 | 12 rows",
+            "userb2_a13": "Android 13 | 6 rows",
         },
     },
     "get_chromeAutofillProfiles": {

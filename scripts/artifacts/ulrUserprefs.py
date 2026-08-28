@@ -21,7 +21,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.gms | 28 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 15 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 25 rows",
-            "userb2_a13": "Android 13 | com.google.android.gms | 30 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 15 rows",
         },
     }
 }

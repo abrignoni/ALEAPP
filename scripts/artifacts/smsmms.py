@@ -21,7 +21,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.android.providers.telephony | 35 rows",
             "sharon_a14": "Android 14 | com.android.providers.telephony | 308 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.providers.telephony | 12 rows",
-            "userb2_a13": "Android 13 | com.android.providers.telephony | 38 rows",
+            "userb2_a13": "Android 13 | com.android.providers.telephony | 19 rows",
         },
         "data_views": {
             "conversation": {
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.android.providers.telephony | 6 rows",
             "sharon_a14": "Android 14 | com.android.providers.telephony | 20 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.providers.telephony | 6 rows",
-            "userb2_a13": "Android 13 | com.android.providers.telephony | 4 rows",
+            "userb2_a13": "Android 13 | com.android.providers.telephony | 2 rows",
         },
         "data_views": {
             "conversation": {
