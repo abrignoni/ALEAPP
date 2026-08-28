@@ -7,7 +7,7 @@ __artifacts_v2__ = {
     "ail_dns_events": {
         "name": "Android Intrusion Logging - DNS Events",
         "description": "Parses DNS lookup resolution logs including requested hostname and resolved IP addresses.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-08-05",
         "requirements": "none",
@@ -20,7 +20,7 @@ __artifacts_v2__ = {
     "ail_connect_events": {
         "name": "Android Intrusion Logging - Connection Events",
         "description": "Parses direct IP connection logs including package name, target IP addresses, and port.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-08-05",
         "requirements": "none",
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
     "ail_security_events": {
         "name": "Android Intrusion Logging - Security Events",
         "description": "Parses system security log events including process executions, package install/uninstall, ADB shell commands, keyguard and key actions and more.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-08-05",
         "requirements": "none",

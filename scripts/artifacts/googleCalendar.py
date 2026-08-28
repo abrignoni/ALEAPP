@@ -56,7 +56,7 @@ __artifacts_v2__ = {
                        "database: start and end, title, description, the calendar and "
                        "account they belong to and the event web link, decoded from each "
                        "event's protobuf record.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_firefox_history": {
         "name": "Firefox - Web History",
         "description": "Firefox places.sqlite web history",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-15",
         "requirements": "none",
@@ -18,7 +18,7 @@ __artifacts_v2__ = {
     "get_firefox_visits": {
         "name": "Firefox - Web Visits",
         "description": "Firefox places.sqlite individual page visits",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-15",
         "requirements": "none",
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
     "get_firefox_bookmarks": {
         "name": "Firefox - Bookmarks",
         "description": "Firefox places.sqlite bookmarks",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-15",
         "requirements": "none",
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
     "get_firefox_searches": {
         "name": "Firefox - Search Terms",
         "description": "Firefox places.sqlite search queries",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-10",
         "requirements": "none",

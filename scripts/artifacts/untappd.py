@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "untappd_notifications": {
         "name": "Untappd - Push Notifications",
         "description": "Parses Untappd FCM push notifications and venue menu updates from SharedPreferences",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
@@ -18,7 +18,7 @@ __artifacts_v2__ = {
     "untappd_profile": {
         "name": "Untappd - User Profile",
         "description": "Parses the Untappd user profile",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "name": "Untappd - Device Analytics",
         "description": "Logs information about the device running the Untappd app"
                        "such as model, OS version, radio type, approximate IP location, and more",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "name": "Untappd - App Events",
         "description": "Logs information about the app status"
                        "such as launch, open, close, install.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "name": "Untappd - Cached Checkins",
         "description": "Parses checkin events including user and beer info"
                        "as well as potentially location/venue information",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
@@ -82,7 +82,7 @@ __artifacts_v2__ = {
         "name": "Untappd - Discover Locations",
         "description": "When the Discover page loads, it fetches current locations for"
                        "feeding local events, badges, beers, etc.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
@@ -98,7 +98,7 @@ __artifacts_v2__ = {
         "name": "Untappd - Checkin Location Suggestions",
         "description": "When checking in a new beer it gives suggestions on locations"
                        "such as recent past checkin locations and nearby locations fed by Foursquare",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
