@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "activity",
     },
-    "untappd_cache_checkins": {
+    "untappd_cached_checkins": {
         "name": "Untappd - Cached Checkins",
         "description": "Parses checkin events including user and beer info"
                        "as well as potentially location/venue information",
@@ -78,7 +78,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "beer",
     },
-    "untappd_discover_location": {
+    "untappd_discover_locations": {
         "name": "Untappd - Discover Locations",
         "description": "When the Discover page loads, it fetches current locations for"
                        "feeding local events, badges, beers, etc.",
@@ -391,7 +391,7 @@ def untappd_app_events(context):
     return data_headers, data_list, source_path
     
 @artifact_processor
-def untappd_cache_checkins(context):
+def untappd_cached_checkins(context):
     data_list = []
     
     for file_found in context.get_files_found():
@@ -453,8 +453,13 @@ def untappd_cache_checkins(context):
             if media_items:
                 # Grabbing the high-res image URL if available
                 photo_url = media_items[0].get('photo', {}).get('photo_img_lg', '')
-                
-            container_name = checkin_data.get('container_name','')
+            
+            # Serving Types
+            serving_types = checkin_data.get('serving_types',{})
+            container_name = ''
+            
+            if isinstance(serving_types, dict):
+                container_name = serving_types.get('container_name','')
 
             data_list.append((
                 created_at, checkin_id, uid, username, full_name, 
@@ -467,7 +472,7 @@ def untappd_cache_checkins(context):
     return data_headers, data_list, 'See Source File column below:'
     
 @artifact_processor
-def untappd_discover_location(context):
+def untappd_discover_locations(context):
     data_list = []
     
     for file_found in context.get_files_found():
