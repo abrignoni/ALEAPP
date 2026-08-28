@@ -144,6 +144,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_path, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 try:
     from sqlcipher3 import dbapi2 as sqlcipher
@@ -215,18 +216,11 @@ def _xml_value(root, name):
     return node.get('value', node.text)
 
 
-def _find_one(files_found, suffix):
-    for file_found in files_found:
-        file_found = str(file_found)
-        # threema4.db's write-ahead log/shared-memory sidecar files are
-        # matched by the same glob (so ALEAPP extracts them alongside the
-        # main file, which SQLite needs in order to fold their content in),
-        # but they are never the file this function should return itself.
-        if file_found.endswith(('-wal', '-shm', '-journal')):
-            continue
-        if file_found.endswith(suffix):
-            return file_found
-    return None
+def _find_all(files_found, suffix):
+    """Every file ending in suffix, sorted: an extraction can carry a container
+    per Android user, and each user's Threema data is separate evidence. The
+    exact-suffix test never matches a -wal/-shm/-journal sidecar."""
+    return sorted(str(f) for f in files_found if str(f).endswith(suffix))
 
 
 def _epoch_ms_to_utc(value):
@@ -301,17 +295,30 @@ def _open_decrypted_db(db_path, key):
         return None
 
 
-def _decrypted_connection(files_found):
+def _decrypted_connections(files_found):
+    """[(connection or None, db path)] per app container, sorted by db path.
+
+    An extraction can carry a container per Android user, each with its own
+    key.dat and threema4.db. The pairing stays inside one container: a
+    database only opens with the key file next to it, never another user's.
+    A container whose key does not derive still reports its db path, so the
+    report cites the store that could not be opened.
+    """
     if not _SQLCIPHER_AVAILABLE:
-        return None, ""
-    key_dat_path = _find_one(files_found, 'key.dat')
-    db_path = _find_one(files_found, 'threema4.db')
-    if not key_dat_path or not db_path:
-        return None, ""
-    key = _derive_sqlcipher_key(key_dat_path)
-    if key is None:
-        return None, db_path
-    return _open_decrypted_db(db_path, key), db_path
+        return []
+    normalized = [str(f).replace('\\', '/') for f in files_found]
+    keys_by_root = {f[:-len('files/key.dat')]: f for f in normalized
+                    if f.endswith('files/key.dat')}
+    pairs = []
+    for db_path in sorted(f for f in normalized
+                          if f.endswith('databases/threema4.db')):
+        key_dat_path = keys_by_root.get(db_path[:-len('databases/threema4.db')])
+        if not key_dat_path:
+            continue
+        key = _derive_sqlcipher_key(key_dat_path)
+        con = _open_decrypted_db(db_path, key) if key is not None else None
+        pairs.append((con, db_path))
+    return pairs
 
 
 _VERIFICATION_LEVELS = {
@@ -325,21 +332,25 @@ _VERIFICATION_LEVELS = {
 def threema_account(context):
     data_headers = ("Threema ID", "Nickname", "Linked Mobile Number")
 
-    files_found = [str(f) for f in context.get_files_found()]
-    prefs_path = _find_one(files_found, 'ch.threema.app_preferences.xml')
-    if not prefs_path:
+    files_found = unique_files(context)
+    prefs_paths = _find_all(files_found, 'ch.threema.app_preferences.xml')
+    if not prefs_paths:
         return data_headers, [], ""
 
-    root = _parse_xml(prefs_path)
-    identity = _xml_value(root, 'identity') or ''
-    nickname = _xml_value(root, 'nickname') or ''
-    linked_mobile = _xml_value(root, 'linked_mobile') or ''
+    data_list = []
+    for prefs_path in prefs_paths:
+        root = _parse_xml(prefs_path)
+        identity = _xml_value(root, 'identity') or ''
+        nickname = _xml_value(root, 'nickname') or ''
+        linked_mobile = _xml_value(root, 'linked_mobile') or ''
 
-    if not identity:
-        return data_headers, [], prefs_path
+        if not identity:
+            continue
 
-    logfunc(f"Threema Account: ID {identity} recovered.")
-    return data_headers, [(identity, nickname, linked_mobile)], prefs_path
+        logfunc(f"Threema Account: ID {identity} recovered.")
+        data_list.append((identity, nickname, linked_mobile))
+
+    return data_headers, data_list, '\n'.join(prefs_paths)
 
 
 @artifact_processor
@@ -349,36 +360,39 @@ def threema_contacts(context):
         ("Date Added", "datetime"), "Group-Only / Removed", "Archived",
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    con, source_path = _decrypted_connection(files_found)
-    if con is None:
-        return data_headers, [], source_path
+    files_found = unique_files(context)
+    pairs = _decrypted_connections(files_found)
+    if not pairs:
+        return data_headers, [], ""
 
     data_list = []
-    try:
-        cur = con.cursor()
-        cur.execute(
-            "SELECT identity, firstName, lastName, publicNickName, "
-            "verificationLevel, dateCreated, acquaintanceLevel, isArchived "
-            "FROM contacts;")
-        for (identity, first, last, nick, level, created,
-             acquaintance_level, archived) in cur.fetchall():
-            display_name = " ".join(p for p in (first, last) if p) or nick or ''
-            data_list.append((
-                identity,
-                display_name,
-                _VERIFICATION_LEVELS.get(level, str(level)),
-                _epoch_ms_to_utc(created),
-                "Yes" if acquaintance_level else "",
-                "Yes" if archived else "",
-            ))
-    finally:
-        con.close()
+    for con, _db_path in pairs:
+        if con is None:
+            continue
+        try:
+            cur = con.cursor()
+            cur.execute(
+                "SELECT identity, firstName, lastName, publicNickName, "
+                "verificationLevel, dateCreated, acquaintanceLevel, isArchived "
+                "FROM contacts;")
+            for (identity, first, last, nick, level, created,
+                 acquaintance_level, archived) in cur.fetchall():
+                display_name = " ".join(p for p in (first, last) if p) or nick or ''
+                data_list.append((
+                    identity,
+                    display_name,
+                    _VERIFICATION_LEVELS.get(level, str(level)),
+                    _epoch_ms_to_utc(created),
+                    "Yes" if acquaintance_level else "",
+                    "Yes" if archived else "",
+                ))
+        finally:
+            con.close()
 
     data_list.sort(key=lambda row: (row[3] is None, row[3]))
     logfunc(f"Threema Contacts: {len(data_list)} contact(s) recovered from "
             f"the decrypted database.")
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(db for _, db in pairs)
 
 
 def _extract_media_info(body_json):
@@ -454,81 +468,84 @@ def threema_messages(context):
         "Quoted Message", ("Delivered", "datetime"), ("Read At", "datetime"),
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    con, source_path = _decrypted_connection(files_found)
-    if con is None:
-        return data_headers, [], source_path
+    files_found = unique_files(context)
+    pairs = _decrypted_connections(files_found)
+    if not pairs:
+        return data_headers, [], ""
 
     data_list = []
-    try:
-        cur = con.cursor()
-        contacts = {}
-        for identity, first, last, nick in cur.execute(
-                "SELECT identity, firstName, lastName, publicNickName FROM contacts;"):
-            contacts[identity] = " ".join(p for p in (first, last) if p) or nick or identity
+    for con, _db_path in pairs:
+        if con is None:
+            continue
+        try:
+            cur = con.cursor()
+            contacts = {}
+            for identity, first, last, nick in cur.execute(
+                    "SELECT identity, firstName, lastName, publicNickName FROM contacts;"):
+                contacts[identity] = " ".join(p for p in (first, last) if p) or nick or identity
 
-        cur.execute(
-            "SELECT identity, outbox, type, body, apiMessageId, quotedMessageId, "
-            "state, isRead, createdAtUtc, deliveredAtUtc, readAtUtc "
-            "FROM message ORDER BY createdAtUtc;")
-        rows = cur.fetchall()
+            cur.execute(
+                "SELECT identity, outbox, type, body, apiMessageId, quotedMessageId, "
+                "state, isRead, createdAtUtc, deliveredAtUtc, readAtUtc "
+                "FROM message ORDER BY createdAtUtc;")
+            rows = cur.fetchall()
 
-        api_id_to_text = {}
-        for (identity, outbox, mtype, body, api_id, quoted_id, state,
-             is_read, created, delivered, read_at) in rows:
-            if api_id and mtype == 0 and body:
-                api_id_to_text[api_id] = body
+            api_id_to_text = {}
+            for (identity, outbox, mtype, body, api_id, quoted_id, state,
+                 is_read, created, delivered, read_at) in rows:
+                if api_id and mtype == 0 and body:
+                    api_id_to_text[api_id] = body
 
-        for (identity, outbox, mtype, body, api_id, quoted_id, state,
-             is_read, created, delivered, read_at) in rows:
-            contact_name = contacts.get(identity, identity)
-            direction = "Sent" if outbox else "Received"
-            text = filename = mime_type = ''
-            size = call_status = call_id = duration = None
-            lat = lon = accuracy = None
-            content_type = "Text"
-
-            if mtype == 0:
+            for (identity, outbox, mtype, body, api_id, quoted_id, state,
+                 is_read, created, delivered, read_at) in rows:
+                contact_name = contacts.get(identity, identity)
+                direction = "Sent" if outbox else "Received"
+                text = filename = mime_type = ''
+                size = call_status = call_id = duration = None
+                lat = lon = accuracy = None
                 content_type = "Text"
-                text = body or ''
-            elif mtype == 8:
-                content_type = "Image"
-                filename, mime_type, size = _extract_media_info(body)
-            elif mtype == 4:
-                content_type = "Location"
-                lat, lon, accuracy, text = _extract_location_info(body)
-            elif mtype == 9:
-                content_type = "Call"
-                call_status, call_id, duration = _extract_call_info(body)
-            else:
-                content_type = f"Unrecognized (type={mtype})"
-                text = body or ''
 
-            quoted_text = api_id_to_text.get(quoted_id, '') if quoted_id else ''
+                if mtype == 0:
+                    content_type = "Text"
+                    text = body or ''
+                elif mtype == 8:
+                    content_type = "Image"
+                    filename, mime_type, size = _extract_media_info(body)
+                elif mtype == 4:
+                    content_type = "Location"
+                    lat, lon, accuracy, text = _extract_location_info(body)
+                elif mtype == 9:
+                    content_type = "Call"
+                    call_status, call_id, duration = _extract_call_info(body)
+                else:
+                    content_type = f"Unrecognized (type={mtype})"
+                    text = body or ''
 
-            data_list.append((
-                _epoch_ms_to_utc(created),
-                contact_name,
-                direction,
-                content_type,
-                text or filename,
-                mime_type,
-                size,
-                lat,
-                lon,
-                accuracy,
-                call_status,
-                call_id,
-                duration,
-                state or '',
-                "Yes" if is_read else "",
-                quoted_text,
-                _epoch_ms_to_utc(delivered),
-                _epoch_ms_to_utc(read_at),
-            ))
-    finally:
-        con.close()
+                quoted_text = api_id_to_text.get(quoted_id, '') if quoted_id else ''
+
+                data_list.append((
+                    _epoch_ms_to_utc(created),
+                    contact_name,
+                    direction,
+                    content_type,
+                    text or filename,
+                    mime_type,
+                    size,
+                    lat,
+                    lon,
+                    accuracy,
+                    call_status,
+                    call_id,
+                    duration,
+                    state or '',
+                    "Yes" if is_read else "",
+                    quoted_text,
+                    _epoch_ms_to_utc(delivered),
+                    _epoch_ms_to_utc(read_at),
+                ))
+        finally:
+            con.close()
 
     logfunc(f"Threema Messages: {len(data_list)} message(s) recovered from "
             f"the decrypted database.")
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(db for _, db in pairs)
