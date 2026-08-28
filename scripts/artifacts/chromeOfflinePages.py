@@ -17,7 +17,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204 | 2 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 2 rows",
             "pixel7a_a14": "Android 14 | com.android.chrome vc 616710133, com.brave.browser vc 426712324, com.microsoft.emmx vc 259210005 | 8 rows",
-            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 12 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 4 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 7 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 38 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 9 rows",

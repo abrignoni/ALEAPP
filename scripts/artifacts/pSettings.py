@@ -14,7 +14,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "galaxys10_a10": "Android 10 | com.google.android.gsf | 13 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gsf | 18 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gsf | 57 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gsf | 19 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gsf | 33 rows",
             "sharon_a14": "Android 14 | com.google.android.gsf | 18 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gsf | 30 rows",

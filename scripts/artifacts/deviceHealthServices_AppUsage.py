@@ -16,7 +16,7 @@ __artifacts_v2__ = {
             "galaxys10_a10": "Android 10 | com.google.android.apps.turbo vc 10235989 | 744 rows",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.turbo vc 10272287 | 794 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.turbo vc 10270262 | 1677 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.apps.turbo | 237 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.turbo | 79 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.turbo | 232 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.turbo vc 10261629 | 79 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.turbo vc 10261629 | 928 rows",
