@@ -469,7 +469,7 @@ def untappd_cached_checkins(context):
     data_headers = (('Checkin Date','datetime'),'Checkin ID','UID','Username','Full Name','Beer Name','Brewery Name','Rating','Comment','Venue Name','Venue Latitude','Venue Longitude','App Name','Photo URL','Serving Style','Source File')
     
     data_list.sort()
-    return data_headers, data_list, 'See Source File column below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
     
 @artifact_processor
 def untappd_discover_locations(context):
@@ -497,7 +497,7 @@ def untappd_discover_locations(context):
                 data_list.append((cache_date,item_type, lat, lng, source_name))
     
     data_headers = (('Cache Timestamp','datetime'),'Item Type', 'Latitude', 'Longitude', 'Source File')
-    return data_headers, data_list, 'See Source File column below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 @artifact_processor
 def untappd_recent_locations(context):
@@ -594,4 +594,4 @@ def untappd_recent_locations(context):
     )
     
     data_list.sort()
-    return data_headers, data_list, 'See Source File column below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
