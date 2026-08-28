@@ -17,7 +17,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 15 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 15 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 14 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gms | 81 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 27 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 28 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 15 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 25 rows",

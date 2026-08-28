@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
         "sample_data": {
             "galaxys10_a10": "Android 10 | 721 rows",
-            "samsunga53_a14": "Android 14 | 1916 rows",
+            "samsunga53_a14": "Android 14 | 660 rows",
             "anne_a15": "Android 15 | 870 rows",
             "hc_pixel8pro_a16": "Android 16 | 528 rows",
             "kevin_pocox7_a15": "Android 15 | 520 rows",
