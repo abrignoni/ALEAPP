@@ -121,8 +121,6 @@ from scripts.ilapfuncs import (
     artifact_processor,
     get_file_path,
     get_sqlite_db_records,
-    convert_unix_ts_to_utc,
-    logfunc,
     null_absent_columns
 )
 
@@ -142,7 +140,7 @@ def process_gzip(gzip_file):
         response_data = parsed_json.get('response', {})
         
         return response_data
-    except Exception as e:
+    except Exception:
         pass
         
 def get_cache_date(file_found_1):
@@ -204,7 +202,7 @@ def untappd_notifications(context):
                 # Convert to UTC and format it, truncating to milliseconds
                 dt_obj = datetime.datetime.fromtimestamp(time_sec, datetime.timezone.utc)
                 timestamp = dt_obj.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        except Exception as e:
+        except Exception:
             # Fallback if the key doesn't match the expected format
             timestamp = ''
 
@@ -235,16 +233,14 @@ def untappd_notifications(context):
         data_list.sort()
         return data_headers, data_list, source_path
     else:
-        logfunc('No Untappd Notifications found')
         return None
 
 @artifact_processor
 def untappd_profile(context):
     source_path = get_file_path(context.get_files_found(), "clevertap")
-    source_name = str(context.get_relative_path(source_path))
     data_list = []
 
-    query = f'''
+    query = '''
     select
     json_extract(data, '$.Email'),
     json_extract(data, '$.Name'),
@@ -292,7 +288,7 @@ def untappd_dev_events(context):
     source_path = get_file_path(context.get_files_found(), "superwall_database")
     data_list = []
 
-    query = f'''
+    query = '''
     select 
     datetime(createdAt/1000,'unixepoch') as "Timestamp",
     json_extract(parameters, '$.$appVersion'),
@@ -356,7 +352,7 @@ def untappd_app_events(context):
     source_path = get_file_path(context.get_files_found(), "superwall_database")
     data_list = []
 
-    query = f'''
+    query = '''
     select 
     datetime(ManagedEventData.createdAt/1000,'unixepoch') as "Timestamp",
     case ManagedEventData.name
@@ -393,12 +389,14 @@ def untappd_app_events(context):
 @artifact_processor
 def untappd_cached_checkins(context):
     data_list = []
+    source_paths = set()
     
     for file_found in context.get_files_found():
         source_name = str(context.get_relative_path(file_found))
-    
+        
         response_data = process_gzip(file_found)
         if response_data:
+            source_paths.add(file_found)
             checkin_data = response_data.get('checkin', {})
             if not checkin_data:
                 continue
@@ -463,10 +461,10 @@ def untappd_cached_checkins(context):
 
             data_list.append((
                 created_at, checkin_id, uid, username, full_name, 
-                beer_name, brewery_name, rating, comment, 
+                beer_name, beer_abv, brewery_name, rating, comment, 
                 venue_name, lat, lng, app_name, photo_url, container_name, source_name))
     
-    data_headers = (('Checkin Date','datetime'),'Checkin ID','UID','Username','Full Name','Beer Name','Brewery Name','Rating','Comment','Venue Name','Venue Latitude','Venue Longitude','App Name','Photo URL','Serving Style','Source File')
+    data_headers = (('Checkin Date','datetime'),'Checkin ID','UID','Username','Full Name','Beer Name','Beer ABV %','Brewery Name','Rating','Comment','Venue Name','Venue Latitude','Venue Longitude','App Name','Photo URL','Serving Style','Source File')
     
     data_list.sort()
     return data_headers, data_list, '\n'.join(sorted(source_paths))
@@ -474,16 +472,17 @@ def untappd_cached_checkins(context):
 @artifact_processor
 def untappd_discover_locations(context):
     data_list = []
+    source_paths = set()
     
     for file_found in context.get_files_found():
         source_name = str(context.get_relative_path(file_found))
         
         # Pass context and the current .1 file to search for the meta file
         cache_date = get_cache_date(file_found)
-    
         response_data = process_gzip(file_found)
         
         if response_data:
+            source_paths.add(file_found)
             discover_items = response_data.get('discover_items', {}).get('items', [])
 
             for item in discover_items:
@@ -502,6 +501,7 @@ def untappd_discover_locations(context):
 @artifact_processor
 def untappd_recent_locations(context):
     data_list = []
+    source_paths = set()
     
     for file_found in context.get_files_found():
         source_name = str(context.get_relative_path(file_found))
@@ -512,6 +512,7 @@ def untappd_recent_locations(context):
         response_data = process_gzip(file_found)
         
         if response_data:
+            source_paths.add(file_found)
             # 1. Extract Current Location
             current_location = response_data.get('location')
             if not current_location:
