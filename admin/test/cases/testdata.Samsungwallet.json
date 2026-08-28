@@ -1,17 +1,17 @@
 {
   "case1": {
-    "description": "Samsung Galaxy S21 SM-G991U, Android 11 (Cody Bounds, Digital Forensics Cookbook Datasets -- cookbook_a11 in image_manifest.json). Exercises samsung_wallet_cards and samsung_wallet_receipts against spay.db: 1 enrolled card (Green Dot Bank / WalmartMoneyCard.com) and 1 linked receipt. Confirms the receipt.tokenID -> card.enrollmentID join and the encrypted-field list documented in samsungWallet.py's own notes",
-    "maker": "@Gear-I",
+    "description": "Samsung Galaxy S21 SM-G991U, Android 11, from the Digital Forensics Cookbook datasets (cookbook_a11). Exercises samsung_wallet_cards, samsung_wallet_receipts and samsung_wallet_card_art against spay.db: 1 enrolled card, 1 linked receipt, and 4 card art images. The database file is 4 KB and its contents are in spay.db-wal, so the case also covers reading the store with its write-ahead log applied. The receipt to card join is declared in the receipt table's own schema as FOREIGN KEY(tokenID) REFERENCES card(enrollmentID). Card art is joined to the card by cardArt.enrollmentId and located by the file name in cardArt.cardArtUri.",
+    "maker": "@AlexisBrignoni",
     "make_data": {
       "input_data_path": "Samsung Galaxy.zip",
-      "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-08-26T19:09:18.361315",
+      "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-08-28T01:47:06.438640",
       "last_commit": {
-        "hash": "Uncommitted",
-        "author_name": "N/A",
-        "author_email": "N/A",
-        "date": "2026-08-26T19:09:17.869741",
-        "message": "File not yet committed to git"
+        "hash": "747bb6cb24d1e48398f977e1323dc4143c0f7373",
+        "author_name": "Gear-I",
+        "author_email": "dielleaiko@hotmail.com",
+        "date": "2026-08-26T19:29:18-04:00",
+        "message": "Add Samsung Wallet enrolled-cards and receipts artifacts"
       }
     },
     "artifacts": {
@@ -30,6 +30,17 @@
           "*/com.samsung.android.spay/databases/spay.db*"
         ],
         "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "samsung_wallet_card_art": {
+        "search_patterns": [
+          "*/com.samsung.android.spay/databases/spay.db*",
+          "*/com.samsung.android.spay/files/cardArt/*"
+        ],
+        "file_count": 8,
         "expected_output": {
           "headers": [],
           "data": []

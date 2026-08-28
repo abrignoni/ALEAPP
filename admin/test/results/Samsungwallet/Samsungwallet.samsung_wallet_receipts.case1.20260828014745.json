@@ -9,16 +9,16 @@
     "total_data_size_bytes": 29,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\Samsungwallet\\testdata.Samsungwallet.samsung_wallet_receipts.case1.zip",
-    "start_time": "2026-08-26T23:25:49.140068+00:00",
-    "end_time": "2026-08-26T23:25:49.297663+00:00",
-    "run_time_seconds": 0.004180192947387695,
+    "input_zip_path": "admin/test/cases/data/Samsungwallet/testdata.Samsungwallet.samsung_wallet_receipts.case1.zip",
+    "start_time": "2026-08-28T01:47:45.507544+00:00",
+    "end_time": "2026-08-28T01:47:45.528464+00:00",
+    "run_time_seconds": 0.0011458396911621094,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-08-26T19:25:49.249111",
-      "message": "File not yet committed to git"
+      "hash": "747bb6cb24d1e48398f977e1323dc4143c0f7373",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-26T19:29:18-04:00",
+      "message": "Add Samsung Wallet enrolled-cards and receipts artifacts"
     }
   },
   "headers": [
