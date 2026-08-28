@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "module_name": "GooglePlayMoviesAccounts",
+    "artifact_name": "Google Play Movies & TV - Signed-In Accounts",
+    "function_name": "google_play_movies_account",
+    "case_number": "case1",
+    "number_of_columns": 2,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 61,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\GooglePlayMoviesAccounts\\testdata.GooglePlayMoviesAccounts.google_play_movies_account.case1.zip",
+    "start_time": "2026-08-28T20:20:42.370655+00:00",
+    "end_time": "2026-08-28T20:20:42.770169+00:00",
+    "run_time_seconds": 0.03744840621948242,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-08-28T16:20:42.604381",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Google Account Email",
+    "Play Config Synced"
+  ],
+  "data": [
+    [
+      "danieljonesonline55@gmail.com",
+      "No"
+    ],
+    [
+      "djones.iss.secure@gmail.com",
+      "Yes"
+    ]
+  ]
+}
