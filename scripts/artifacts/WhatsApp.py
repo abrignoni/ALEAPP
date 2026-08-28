@@ -74,9 +74,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "",
-        "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*',
-                  '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*',
-                  '*/Android/media/com.whatsapp/WhatsApp/Media/*'),
+        "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
@@ -110,9 +108,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "",
-        "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*',
-                  '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*',
-                  '*/Android/media/com.whatsapp/WhatsApp/Media/*'),
+        "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {

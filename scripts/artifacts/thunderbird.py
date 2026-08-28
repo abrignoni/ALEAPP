@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "requirements": "re, json",
         "category": "Thunderbird App",
         "notes": "",
-        "paths": ('*data/net.thunderbird.android/databases/*', '*data/net.thunderbird.android/databases/*_att/*'),
+        "paths": ('*data/net.thunderbird.android/databases/*',),
         "output_types": ["standard"],
         "html_columns": ["Content"],
         "artifact_icon": "mail"

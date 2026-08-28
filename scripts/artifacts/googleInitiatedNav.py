@@ -9,8 +9,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GEO Location",
         "notes": "",
-        "paths": ('*/com.google.android.apps.maps/files/new_recent_history_cache_navigated.cs',
-                  '*/new_recent_history_cache_navigated.cs'),
+        "paths": ('*/new_recent_history_cache_navigated.cs',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
         "sample_data": {

@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "A row records an application known to the app_info table. Whether the application "
                  "was still installed at the time of extraction is not established by its presence "
                  "here.",
-        "paths": ('*/com.google.android.gms/databases/gass.db*', '*/user/*/com.google.android.gms/databases/gass.db*'),
+        "paths": ('*/com.google.android.gms/databases/gass.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",
         "sample_data": {

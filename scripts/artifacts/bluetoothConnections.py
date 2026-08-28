@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Bluetooth Connections",
         "notes": "",
-        "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
+        "paths": ('*/bt_config.conf',),
         "output_types": "standard",
         "artifact_icon": "bluetooth",
         "sample_data": {
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Bluetooth Connections",
         "notes": "",
-        "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
+        "paths": ('*/bt_config.conf',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "bluetooth",
         "sample_data": {
