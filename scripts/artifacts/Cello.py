@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_Cello": {
         "name": "Cello - Google Drive",
         "description": "Parses the Cello db for Google Drive metadata",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-12-21",
         "last_update_date": "2020-12-21",
         "requirements": "none",
