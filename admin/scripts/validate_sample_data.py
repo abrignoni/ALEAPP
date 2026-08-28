@@ -23,7 +23,10 @@ This script closes that gap in three escalating steps:
    with ``--verify-hashes`` that its SHA-256 still matches what was recorded.
 
 3. Counts. With ``--run KEY``, parses that corpus end to end and compares the
-   rows each artifact actually produced against the rows it declares.
+   rows each artifact actually produced against the rows it declares. The run must
+   reach its own completion marker before any count is read, and a run that caught a
+   database error or disabled a capability is reported, because a count taken from
+   one of those describes the tool rather than the evidence.
 
 Usage::
 
@@ -52,6 +55,23 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS_DIR = REPO_ROOT / "scripts" / "artifacts"
 ROW_COUNT_RE = re.compile(r"(\d[\d,]*)\s+rows?\b", re.I)
 HASH_CHUNK = 1 << 22
+
+# aleapp.py prints this once, last, when a run has finished its work. Exit status alone
+# does not distinguish a finished run from one that stopped early with a usable-looking
+# partial LAVA file, so the marker is asserted before any count is read.
+COMPLETION_MARKER = "Report generation Completed."
+
+# Artifacts catch their own database errors and log them in their own format, so the
+# framework's "artifact had errors!" banner stays clean while a table comes back short.
+# A count taken from such a run describes the failure, not the evidence.
+CAUGHT_ERROR_RE = re.compile(
+    r"no such column|no such table|malformed|file is not a database", re.I)
+
+# A capability disabled for a missing optional dependency makes its artifacts report
+# zero rows on a run that is otherwise healthy. Comparing against that produces a
+# mismatch that invites deleting a correct declared count.
+DEGRADED_RE = re.compile(
+    r"(?:artifacts? disabled|not available|No module named|ImportError)", re.I)
 
 
 class Report:
@@ -270,6 +290,31 @@ def run_corpus(registry, registry_path, corpus, report, keep=False):
         if not keep:
             shutil.rmtree(output_root, ignore_errors=True)
         return
+
+    # A run is only evidence about the corpus once it is shown to have finished, and to
+    # have finished without swallowing an error or silently dropping a capability.
+    transcript = f"{completed.stdout}\n{completed.stderr}"
+    if COMPLETION_MARKER not in transcript:
+        report.error(f"--run '{corpus}': aleapp.py exited 0 but never printed "
+                     f"{COMPLETION_MARKER!r}, so it did not finish; no count was read\n"
+                     f"{completed.stdout[-600:]}")
+        if not keep:
+            shutil.rmtree(output_root, ignore_errors=True)
+        return
+
+    caught = sorted({line.strip() for line in transcript.splitlines()
+                     if CAUGHT_ERROR_RE.search(line)})
+    for line in caught[:20]:
+        report.error(f"--run '{corpus}': an artifact caught a database error, so any "
+                     f"short table below may be the error and not the evidence: {line}")
+    if len(caught) > 20:
+        report.error(f"--run '{corpus}': {len(caught) - 20} further caught database error(s)")
+
+    degraded = sorted({line.strip() for line in transcript.splitlines()
+                       if DEGRADED_RE.search(line)})
+    for line in degraded[:20]:
+        report.error(f"--run '{corpus}': a capability was disabled for this run, so its "
+                     f"artifacts report zero rows here regardless of the evidence: {line}")
 
     lava_path = Path(output_root) / folder / "_lava_data.lava"
     try:
