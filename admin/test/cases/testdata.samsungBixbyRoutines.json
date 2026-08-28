@@ -1,6 +1,6 @@
 {
   "case1": {
-    "description": "Samsung Galaxy S21 Ultra (SM-G991U), Android 11, full filesystem extraction. routine.db shipped with a real -wal/-shm pair at acquisition time; all three files are included so the merged (post-WAL) state is what gets tested, not a stale checkpoint.",
+    "description": "Samsung SM-G991U, Android 11, full filesystem extraction; corpus key cookbook_a11. routine.db shipped with a real -wal/-shm pair at acquisition time; all three files are included so the merged (post-WAL) state is what gets tested, not a stale checkpoint.",
     "maker": "@Gear-I & Claude",
     "make_data": {
       "input_data_path": "Samsung Galaxy.zip",
@@ -86,11 +86,11 @@
         }
       }
     },
-    "image_name": "samsung_s21ultra_a11",
+    "image_name": "cookbook_a11",
     "image_info": {
       "os_name": "Android",
       "os_version": "11",
-      "device_model": "Samsung Galaxy S21 Ultra (SM-G991U)"
+      "device_model": "Samsung SM-G991U"
     }
   }
 }
