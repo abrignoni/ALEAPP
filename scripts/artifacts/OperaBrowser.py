@@ -107,6 +107,7 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import parse_qs, urlparse
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 _WEBKIT_EPOCH = datetime(1601, 1, 1, tzinfo=timezone.utc)
 
@@ -164,12 +165,20 @@ def _search_query(virtual_url):
     return values[0] if values else ""
 
 
-def _find_one(files_found, suffix):
-    for file_found in files_found:
-        file_found = str(file_found)
-        if file_found.endswith(suffix):
-            return file_found
-    return None
+def _stores_by_container(files_found):
+    """[(session_db path, History path or None)] per app container, sorted.
+
+    An extraction can carry a container per Android user, each with its own
+    tabs and history. The History join must stay inside one container: a
+    tab's URL is dated against the same user's History, never another's.
+    Both files sit directly under app_opera/, so the shared parent directory
+    is the container key. The exact-suffix test never matches a sidecar.
+    """
+    normalized = [str(f).replace('\\', '/') for f in files_found]
+    history_by_root = {f[:-len('History')]: f for f in normalized
+                       if f.endswith('History')}
+    return [(f, history_by_root.get(f[:-len('session_db')]))
+            for f in sorted(normalized) if f.endswith('session_db')]
 
 
 @artifact_processor
@@ -180,49 +189,48 @@ def opera_tabs(context):
         "Navigation Entry Count", "Restored", "Internal Tab ID",
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    db_path = _find_one(files_found, "session_db")
-    if not db_path:
+    stores = _stores_by_container(unique_files(context))
+    if not stores:
         return data_headers, [], ""
 
-    history_db_path = _find_one(files_found, "History")
-    history_times = _history_last_visit_times(history_db_path)
-
-    tab_order = {}
-    for tab_id, ix in get_sqlite_db_records(db_path, "SELECT tab, ix FROM tab_order"):
-        tab_order[tab_id] = ix
-
-    closed = {}
-    for tab_id, restored in get_sqlite_db_records(
-            db_path, "SELECT tab, restored FROM recently_closed_tab"):
-        closed[tab_id] = bool(restored)
-
-    entry_counts = {}
-    current_page = {}
-    for tab_id, ix, url, title in get_sqlite_db_records(
-            db_path, "SELECT tab, ix, url, title FROM navigation_entry"):
-        entry_counts[tab_id] = entry_counts.get(tab_id, 0) + 1
-        current_page[(tab_id, ix)] = (url, _decode_title(title))
-
     data_list = []
-    for tab_id, current_entry in get_sqlite_db_records(
-            db_path, "SELECT tab, current_entry FROM tab"):
-        is_closed = tab_id in closed
-        url, title = current_page.get((tab_id, current_entry), ("", ""))
-        data_list.append((
-            "Closed" if is_closed else "Open",
-            tab_order.get(tab_id, ""),
-            title,
-            url,
-            history_times.get(url),
-            entry_counts.get(tab_id, 0),
-            "Yes" if closed.get(tab_id) else ("" if is_closed else "N/A"),
-            tab_id,
-        ))
+    for db_path, history_db_path in stores:
+        history_times = _history_last_visit_times(history_db_path)
+
+        tab_order = {}
+        for tab_id, ix in get_sqlite_db_records(db_path, "SELECT tab, ix FROM tab_order"):
+            tab_order[tab_id] = ix
+
+        closed = {}
+        for tab_id, restored in get_sqlite_db_records(
+                db_path, "SELECT tab, restored FROM recently_closed_tab"):
+            closed[tab_id] = bool(restored)
+
+        entry_counts = {}
+        current_page = {}
+        for tab_id, ix, url, title in get_sqlite_db_records(
+                db_path, "SELECT tab, ix, url, title FROM navigation_entry"):
+            entry_counts[tab_id] = entry_counts.get(tab_id, 0) + 1
+            current_page[(tab_id, ix)] = (url, _decode_title(title))
+
+        for tab_id, current_entry in get_sqlite_db_records(
+                db_path, "SELECT tab, current_entry FROM tab"):
+            is_closed = tab_id in closed
+            url, title = current_page.get((tab_id, current_entry), ("", ""))
+            data_list.append((
+                "Closed" if is_closed else "Open",
+                tab_order.get(tab_id, ""),
+                title,
+                url,
+                history_times.get(url),
+                entry_counts.get(tab_id, 0),
+                "Yes" if closed.get(tab_id) else ("" if is_closed else "N/A"),
+                tab_id,
+            ))
 
     data_list.sort(key=lambda row: (row[0] != "Open", row[1] if row[1] != "" else 999))
     logfunc(f"Opera Browser Tabs: {len(data_list)} tab(s) recovered from session_db.")
-    return data_headers, data_list, db_path
+    return data_headers, data_list, '\n'.join(db for db, _ in stores)
 
 
 @artifact_processor
@@ -232,34 +240,33 @@ def opera_tab_navigation(context):
         "Search Query", ("Last Visit Time (History Match)", "datetime"),
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    db_path = _find_one(files_found, "session_db")
-    if not db_path:
+    stores = _stores_by_container(unique_files(context))
+    if not stores:
         return data_headers, [], ""
 
-    history_db_path = _find_one(files_found, "History")
-    history_times = _history_last_visit_times(history_db_path)
-
-    current_entry_by_tab = {}
-    for tab_id, current_entry in get_sqlite_db_records(
-            db_path, "SELECT tab, current_entry FROM tab"):
-        current_entry_by_tab[tab_id] = current_entry
-
     data_list = []
-    for tab_id, ix, url, virtual_url, title in get_sqlite_db_records(
-            db_path,
-            "SELECT tab, ix, url, virtual_url, title FROM navigation_entry "
-            "ORDER BY tab, ix"):
-        data_list.append((
-            tab_id,
-            ix,
-            "Yes" if current_entry_by_tab.get(tab_id) == ix else "",
-            _decode_title(title),
-            url,
-            _search_query(virtual_url),
-            history_times.get(url),
-        ))
+    for db_path, history_db_path in stores:
+        history_times = _history_last_visit_times(history_db_path)
+
+        current_entry_by_tab = {}
+        for tab_id, current_entry in get_sqlite_db_records(
+                db_path, "SELECT tab, current_entry FROM tab"):
+            current_entry_by_tab[tab_id] = current_entry
+
+        for tab_id, ix, url, virtual_url, title in get_sqlite_db_records(
+                db_path,
+                "SELECT tab, ix, url, virtual_url, title FROM navigation_entry "
+                "ORDER BY tab, ix"):
+            data_list.append((
+                tab_id,
+                ix,
+                "Yes" if current_entry_by_tab.get(tab_id) == ix else "",
+                _decode_title(title),
+                url,
+                _search_query(virtual_url),
+                history_times.get(url),
+            ))
 
     logfunc(f"Opera Browser Tab Navigation History: {len(data_list)} navigation "
             f"entr{'y' if len(data_list) == 1 else 'ies'} recovered.")
-    return data_headers, data_list, db_path
+    return data_headers, data_list, '\n'.join(db for db, _ in stores)
