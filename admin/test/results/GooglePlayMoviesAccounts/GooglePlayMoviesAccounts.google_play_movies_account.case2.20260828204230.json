@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "module_name": "GooglePlayMoviesAccounts",
+    "artifact_name": "Google Play Movies & TV - Signed-In Accounts",
+    "function_name": "google_play_movies_account",
+    "case_number": "case2",
+    "number_of_columns": 2,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 23,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/GooglePlayMoviesAccounts/testdata.GooglePlayMoviesAccounts.google_play_movies_account.case2.zip",
+    "start_time": "2026-08-28T20:42:30.528636+00:00",
+    "end_time": "2026-08-28T20:42:33.861404+00:00",
+    "run_time_seconds": 0.23071813583374023,
+    "last_commit": {
+      "hash": "d93ea0cd784ceab51ec4afa8a3d4cab71b38bb8e",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-28T16:27:30-04:00",
+      "message": "Added Google Play Movies Accounts Artifact Support along with test data and fixture"
+    }
+  },
+  "headers": [
+    "Google Account Email",
+    "Play Config Synced"
+  ],
+  "data": [
+    [
+      "ldehner505@gmail.com",
+      "Yes"
+    ]
+  ]
+}
