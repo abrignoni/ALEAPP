@@ -32,7 +32,7 @@ __artifacts_v2__ = {
     },
     "untappd_dev_events": {
         "name": "Untappd - Device Analytics",
-        "description": "Logs information about the device running the Untappd app"
+        "description": "Logs information about the device running the Untappd app "
                        "such as model, OS version, radio type, approximate IP location, and more",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
     },
     "untappd_app_events": {
         "name": "Untappd - App Events",
-        "description": "Logs information about the app status"
+        "description": "Logs information about the app status "
                        "such as launch, open, close, install.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
     },
     "untappd_cached_checkins": {
         "name": "Untappd - Cached Checkins",
-        "description": "Parses checkin events including user and beer info"
+        "description": "Parses checkin events including user and beer info "
                        "as well as potentially location/venue information",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
@@ -75,12 +75,12 @@ __artifacts_v2__ = {
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.1',
         ),
-        "output_types": "standard",
+        "output_types": "all",
         "artifact_icon": "beer",
     },
     "untappd_discover_locations": {
         "name": "Untappd - Discover Locations",
-        "description": "When the Discover page loads, it fetches current locations for"
+        "description": "When the Discover page loads, it fetches current locations for "
                        "feeding local events, badges, beers, etc.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
@@ -91,12 +91,12 @@ __artifacts_v2__ = {
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.*',
         ),
-        "output_types": "standard",
+        "output_types": "all",
         "artifact_icon": "location-pin",
     },
     "untappd_recent_locations": {
         "name": "Untappd - Checkin Location Suggestions",
-        "description": "When checking in a new beer it gives suggestions on locations"
+        "description": "When checking in a new beer it gives suggestions on locations "
                        "such as recent past checkin locations and nearby locations fed by Foursquare",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
@@ -107,7 +107,7 @@ __artifacts_v2__ = {
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.*',
         ),
-        "output_types": "standard",
+        "output_types": "all",
         "artifact_icon": "location-search",
     }
 }
@@ -233,7 +233,7 @@ def untappd_notifications(context):
         data_list.sort()
         return data_headers, data_list, source_path
     else:
-        return None
+        return data_headers, [], source_path
 
 @artifact_processor
 def untappd_profile(context):
@@ -304,7 +304,7 @@ def untappd_dev_events(context):
     json_extract(parameters, '$.$daysSinceInstall'),
     json_extract(parameters, '$.$app_session_id') as "Session ID"
     from ManagedEventData
-    where name IS "device_attributes"
+    where name IS 'device_attributes'
     group by "Session ID"
     order by "Timestamp" ASC
     '''
@@ -496,6 +496,7 @@ def untappd_discover_locations(context):
                 data_list.append((cache_date,item_type, lat, lng, source_name))
     
     data_headers = (('Cache Timestamp','datetime'),'Item Type', 'Latitude', 'Longitude', 'Source File')
+    data_list.sort()
     return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 @artifact_processor
