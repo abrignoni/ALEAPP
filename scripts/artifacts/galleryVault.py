@@ -402,6 +402,8 @@ import xml.etree.ElementTree as ET
 
 from Crypto.Cipher import DES
 
+from scripts.artifacts.storagePathViews import unique_files
+
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_embedded_media,
@@ -1041,7 +1043,9 @@ def galleryvault_file_actions(context):
 
 @artifact_processor
 def galleryvault_preferences(context):
-    files_found = context.get_files_found()
+    # Kidd.xml can appear under more than one storage view of the same app
+    # directory; read each preference file once, not once per spelling.
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''
