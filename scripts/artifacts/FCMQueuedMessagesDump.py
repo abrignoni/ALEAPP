@@ -22,7 +22,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.gms | 3914 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 36746 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 11408 rows",
-            "userb2_a13": "Android 13 | com.google.android.gms | 2016 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 1008 rows",
         },
     },
     "get_fcm_dump_verizon": {
@@ -72,7 +72,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.gms | 40 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 391 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 86 rows",
-            "userb2_a13": "Android 13 | com.google.android.gms | 142 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 71 rows",
         },
     },
     "get_fcm_dump_instagram": {

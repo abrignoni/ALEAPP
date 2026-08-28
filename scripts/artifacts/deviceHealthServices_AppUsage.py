@@ -20,7 +20,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.turbo | 232 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.turbo vc 10261629 | 79 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.turbo vc 10261629 | 928 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.turbo vc 10270697 | 2 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.turbo vc 10270697 | 1 row",
         },
     }
 }

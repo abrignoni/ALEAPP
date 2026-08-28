@@ -23,7 +23,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.photos vc 51079548 | 24 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.photos vc 48388495 | 336 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.photos vc 48388511 | 204 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 16 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 8 rows",
         },
     },
     "get_googlePhotos_remote": {
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.photos vc 51079548 | 7 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.photos vc 48388495 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.photos vc 48388511 | 98 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 6 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 3 rows",
         },
     },
     "get_googlePhotos_shared": {
@@ -133,7 +133,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.photos vc 51079548 | 43 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.photos vc 48388495 | 68 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.photos vc 48388511 | 704 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 10 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 5 rows",
         },
     },
     "get_googlePhotos_trash": {

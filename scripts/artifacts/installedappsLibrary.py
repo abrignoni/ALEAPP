@@ -21,7 +21,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.android.vending vc 84962330 | 162 rows",
             "sharon_a14": "Android 14 | com.android.vending vc 84222730 | 99 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.vending vc 83631220 | 160 rows",
-            "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 178 rows",
+            "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 89 rows",
         },
     }
 }

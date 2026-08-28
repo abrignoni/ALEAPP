@@ -21,7 +21,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.turbo | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.turbo vc 10261629 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.turbo vc 10261629 | 5604 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.turbo vc 10270697 | 1144 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.turbo vc 10270697 | 572 rows",
         }
     },
     "Turbo_Bluetooth": {

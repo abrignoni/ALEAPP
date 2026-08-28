@@ -21,7 +21,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | 792 rows",
             "sharon_a14": "Android 14 | 901 rows",
             "russell_pixel6a_a13": "Android 13 | 456 rows",
-            "userb2_a13": "Android 13 | 527 rows",
+            "userb2_a13": "Android 13 | 265 rows",
         },
         "html_columns": ['Report'],
     }

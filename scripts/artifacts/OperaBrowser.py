@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "layout",
         "sample_data": {
-            "pixel7a_a14": "Android 14 |  8 rows",
+            "pixel7a_a14": "Android 14 |  3 rows",
         },
     },
     "opera_tab_navigation": {
@@ -96,7 +96,7 @@ __artifacts_v2__ = {
           "output_types": "standard",
         "artifact_icon": "compass",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | 3 rows",
+            "pixel7a_a14": "Android 14 | 8 rows",
         },
 
     }
