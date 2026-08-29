@@ -84,8 +84,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | 2270 rows (all Live)",
-            "hc_pixel8pro_a17": "Android 17 | 674 rows (all Recovered)",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 262031035 | 2270 rows (all Live)",
+            "hc_pixel8pro_a17": "Android 17 | com.google.android.gms vc 262634035 | 674 rows (all Recovered)",
         },
     },
     "intrusion_store_connect_events": {
@@ -116,8 +116,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "wifi",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | 875 rows (all Live)",
-            "hc_pixel8pro_a17": "Android 17 | 308 rows (all Recovered)",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 262031035 | 875 rows (all Live)",
+            "hc_pixel8pro_a17": "Android 17 | com.google.android.gms vc 262634035 | 308 rows (all Recovered)",
         },
     },
     "intrusion_store_security_events": {
@@ -165,8 +165,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "shield",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | 774 rows (all Live)",
-            "hc_pixel8pro_a17": "Android 17 | 0 rows (no security events in either "
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 262031035 | 774 rows (all Live)",
+            "hc_pixel8pro_a17": "Android 17 | com.google.android.gms vc 262634035 | 0 rows (no security events in either "
                                 "database reading, confirmed by a direct decode of all 982 "
                                 "stored blobs)",
         },
@@ -195,8 +195,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "user",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | 1 row (Live)",
-            "hc_pixel8pro_a17": "Android 17 | 1 row (Live)",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 262031035 | 1 row (Live)",
+            "hc_pixel8pro_a17": "Android 17 | com.google.android.gms vc 262634035 | 1 row (Live)",
         },
     },
 }
