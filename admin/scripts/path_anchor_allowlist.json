@@ -38,10 +38,10 @@
  "*/.privacy_safe/picture/*": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
  "*/.privacy_safe/video/*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*/0/Pictures/Hik-Connect Album/*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
- "*/2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt": "over-broad: any date-prefixed .txt anywhere; staged 2688 files from com.zhiliaoapp.musically alone, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12; the pattern should be scoped to the log location it targets",
  "*/DJI/*/FlightRecord/MCDatFlightRecords/*.DAT": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*/Default/Web Data": "cross-app by design: rows attribute the owning app or browser; matched 60 package(s), measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
  "*/Download/.com_coloros_smartsidebar/transferdock/*/*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
+ "*/Intrusion Logging/*2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt": "Android Intrusion Logging: the device writes downloaded logs to Download/Intrusion Logging/ in shared media storage (androidqf DirOnDevice constant; folder observed on hc_pixel8pro_a17); no app package container exists for these files",
  "*/Secrets/secrets.json": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
  "*/SystemAndroid/Data/**": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*/Vault/*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
@@ -104,6 +104,7 @@
  "*/extra/logcat.txt": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*/files/personalsafety/shared/personalsafety_info.pb": "distinctive marker: matched only com.google.android.gms, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
  "*/files/personalsafety/shared/personalsafety_optin.pb": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
+ "*/intrusion_logs/*2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt": "Android Intrusion Logging: androidqf stages the pulled logs under intrusion_logs/ (mvt-project/androidqf modules/intrusion_logs.go), and mvt matches that same folder name; shared acquisition output, no app package container exists for these files",
  "*/libretorrent.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*/log/power_off_reset_reason.txt": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*/log/power_off_reset_reason_backup.txt": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
@@ -159,5 +160,6 @@
  "*com.mapmywalk.android2/databases/workout.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*com.pumapumatrac/databases/pumatrac-db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*com.runtastic.android/databases/user.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
- "*vlc_media.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished"
+ "*vlc_media.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
+ "root/2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt": "Android Intrusion Logging: a decrypted log export processed directly as the input carries date-named .txt at the archive root (observed on the hc_pixel8pro_a17 download); the root/ literal anchors it to the input root so it cannot reach files inside app containers"
 }
