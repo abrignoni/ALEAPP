@@ -87,9 +87,9 @@ import sys
 # "habitat", and the closed spelling already covers both inflections that occur in prose.
 CLAIM_PATTERN = re.compile(
     r"\ball\b|\bevery\b|\bcomplete|\bfull list\b|\bentire\b|"
-    r"\bthe user (searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
+    r"\bthe user (?:searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
     r"created|hid|chose)\b|"
-    r"\buser[- ](created|entered|typed|searched|selected|initiated)\b|"
+    r"\buser[- ](?:created|entered|typed|searched|selected|initiated)\b|"
     r"\bsearched by\b|\btyped by\b|\bviewed by\b|\bread by\b|\bmanually\b|"
     r"\bproves?\b|\bdefinitively\b|\balways\b|\breliable|\bvisited\b|\bhabits?\b",
     re.IGNORECASE,
@@ -111,9 +111,9 @@ CLAIM_PATTERN = re.compile(
 # What is left is attribution and certainty, which mean the same thing in a note as in a
 # description, and flag 52 artifacts across the five cores.
 NOTES_PATTERN = re.compile(
-    r"\bthe user (searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
+    r"\bthe user (?:searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
     r"created|hid|chose)\b|"
-    r"\buser[- ](created|entered|typed|searched|selected|initiated)\b|"
+    r"\buser[- ](?:created|entered|typed|searched|selected|initiated)\b|"
     r"\bsearched by\b|\btyped by\b|\bviewed by\b|\bmanually\b|"
     r"\bproves?\b|\bdefinitively\b|\balways\b|\breliable|\bvisited\b|\bhabits?\b",
     re.IGNORECASE,

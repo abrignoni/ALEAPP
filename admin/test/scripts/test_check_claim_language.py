@@ -1,4 +1,5 @@
-"""Prove the claim checker reads notes, and reads them with the right vocabulary.
+"""Prove the claim checker reads notes, reads them with the right vocabulary, and
+that the vocabulary is the same one every core enforces.
 
 Extending the check to `notes` is only worth having if three things hold at once, and
 each fails silently on its own:
@@ -9,8 +10,15 @@ each fails silently on its own:
 * a denial is not treated as a claim, or the same wording is taxed and the allowlist
   grows every time somebody writes a limitation down correctly.
 
-The expected values here are spelled out as literals rather than derived from the
-patterns under test. A fixture built from the constant it verifies moves with the bug.
+The vocabulary is pinned to a literal here. The five cores each carry their own copy of
+the checker, and they had already drifted: four spelled the habit stem open, so
+"habitat" matched, and only one had it closed. A checker that quietly enforces a
+different standard per repo is worse than a strict one, and nothing else compares them.
+This file is identical in all five, so a change made in one repo alone fails that
+repo's own CI.
+
+The expected values are spelled out rather than derived from the patterns under test.
+A fixture built from the constant it verifies moves with the bug.
 """
 import importlib.util
 import pathlib
@@ -26,6 +34,28 @@ ccl = importlib.util.module_from_spec(_spec)
 sys.modules['check_claim_language'] = ccl
 _spec.loader.exec_module(ccl)
 
+# The vocabulary every core is expected to enforce, written out rather than imported.
+EXPECTED_CLAIM = (
+    r'\ball\b|\bevery\b|\bcomplete|\bfull list\b|\bentire\b|'
+    r'\bthe user (?:searched|typed|viewed|visited|opened|selected|deleted|'
+    r'read|sent|created|hid|chose)\b|\buser[- ](?:created|entered|typed|'
+    r'searched|selected|initiated)\b|\bsearched by\b|\btyped by\b|'
+    r'\bviewed by\b|\bread by\b|\bmanually\b|\bproves?\b|\bdefinitively\b|'
+    r'\balways\b|\breliable|\bvisited\b|\bhabits?\b'
+)
+EXPECTED_NOTES = (
+    r'\bthe user (?:searched|typed|viewed|visited|opened|selected|deleted|'
+    r'read|sent|created|hid|chose)\b|\buser[- ](?:created|entered|typed|'
+    r'searched|selected|initiated)\b|\bsearched by\b|\btyped by\b|'
+    r'\bviewed by\b|\bmanually\b|\bproves?\b|\bdefinitively\b|\balways\b|'
+    r'\breliable|\bvisited\b|\bhabits?\b'
+)
+EXPECTED_NEGATION = (
+    r'\b(not|no|never|nor|neither|without|cannot|rather than|instead of|'
+    r"isn't|doesn't|don't|does not|do not)\b"
+)
+EXPECTED_FIELDS = ('description', 'name', 'notes')
+
 
 def fires(field, text):
     """True when the vocabulary for `field` reports a match in `text`, negation applied."""
@@ -34,6 +64,29 @@ def fires(field, text):
     if field == 'notes':
         hits = [hit for hit in hits if not ccl.negated(text, hit.start())]
     return bool(hits)
+
+
+class VocabularyParity(unittest.TestCase):
+    """The five cores must enforce one standard. Drift in any of them fails here."""
+
+    def test_claim_vocabulary_is_the_shared_one(self):
+        self.assertEqual(ccl.CLAIM_PATTERN.pattern, EXPECTED_CLAIM)
+
+    def test_notes_vocabulary_is_the_shared_one(self):
+        self.assertEqual(ccl.NOTES_PATTERN.pattern, EXPECTED_NOTES)
+
+    def test_negation_vocabulary_is_the_shared_one(self):
+        self.assertEqual(ccl.NEGATION_PATTERN.pattern, EXPECTED_NEGATION)
+        self.assertEqual(ccl.NEGATION_WINDOW, 60)
+
+    def test_the_same_three_fields_are_checked(self):
+        self.assertEqual(tuple(sorted(ccl.CHECKED_FIELDS)), EXPECTED_FIELDS)
+
+    def test_the_habit_stem_is_closed(self):
+        # The open stem also matches "habitat". Four cores carried that until 2026-08-29.
+        self.assertFalse(ccl.CLAIM_PATTERN.search('habitat'))
+        self.assertFalse(ccl.NOTES_PATTERN.search('habitat'))
+        self.assertTrue(ccl.CLAIM_PATTERN.search('habits'))
 
 
 class FieldCoverage(unittest.TestCase):
@@ -80,11 +133,7 @@ class NotesVocabulary(unittest.TestCase):
                 self.assertFalse(fires('notes', text))
 
     def test_notes_drops_exactly_the_two_documented_classes(self):
-        """The two vocabularies differ only where the module says they do.
-
-        Anything else diverging means one of them has been edited alone, which is how
-        the check for one field quietly stops matching the check for another.
-        """
+        """The two vocabularies differ only where the module says they do."""
         removed = ('all', 'every', 'complete', 'entire', 'full list', 'read by')
         for word in removed:
             with self.subTest(word=word, vocabulary='description'):
@@ -124,9 +173,6 @@ class Negation(unittest.TestCase):
         # Sixty characters is the window; padding past it must leave the claim visible.
         text = 'not' + ' x' * 45 + ' the term the user typed'
         self.assertTrue(fires('notes', text))
-
-    def test_the_window_is_bounded_and_short(self):
-        self.assertLessEqual(ccl.NEGATION_WINDOW, 80)
 
 
 if __name__ == '__main__':
