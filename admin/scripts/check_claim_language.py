@@ -154,29 +154,41 @@ CHECKED_FIELDS = {
     'notes': NOTES_PATTERN,
 }
 
-# Reviewed exceptions, as (filename, artifact_key, field). Each needs a reason.
+# Reviewed exceptions, as (filename, artifact_key, field, term). Each needs a
+# reason. The term is part of the key, so an entry silences the one word it was
+# granted for and never the next claim added to the same text.
 ALLOWLIST = {
     # "completed" names columns the artifact emits (completed time) and the Google Tasks
     # status value, not a claim that the task list is complete.
-    ('googleTasks.py', 'get_googleTasks', 'description'),
+    ('googleTasks.py', 'get_googleTasks', 'description', 'complete'),
     # "completedtransfers" is the literal name of the MEGA table being read. The
     # description no longer asserts the transfers themselves completed.
-    ('mega_transfers.py', 'get_mega_transfers', 'description'),
+    ('mega_transfers.py', 'get_mega_transfers', 'description', 'complete'),
     # "a page visited and then navigated away from ... can be absent here" is the gap the
     # note is warning about. The sentence states what the artifact misses, not what it proves.
-    ('OperaBrowser.py', 'opera_tab_navigation', 'notes'),
+    ('OperaBrowser.py', 'opera_tab_navigation', 'notes', 'visited'),
     # "manually" sits inside the app's own category label, quoted: 272 ('Activity Tracking
     # started manually'). It is Withings' string, not this parser's claim.
-    ('WithingsHealthMate.py', 'healthmate_trackings', 'notes'),
+    ('WithingsHealthMate.py', 'healthmate_trackings', 'notes', 'manually'),
     # "listing them beside an account reads as things the user chose when the container does
     # not establish that" is the reason the titles are deliberately not enumerated. The
     # denial follows the phrase instead of preceding it, so the negation lookback cannot see it.
-    ('disneyPlus.py', 'disneyplus_cached_content', 'notes'),
+    ('disneyPlus.py', 'disneyplus_cached_content', 'notes', 'the user chose'),
     # "Values are typed by the calling app, not on disk" is about the MMKV value's data type.
     # Nothing to do with a keyboard.
-    ('justalk.py', 'justalk_app_state', 'notes'),
-    ('justalk.py', 'justalk_kids_app_state', 'notes'),
+    ('justalk.py', 'justalk_app_state', 'notes', 'typed by'),
+    ('justalk.py', 'justalk_kids_app_state', 'notes', 'typed by'),
 }
+
+
+def unallowlisted(filename, artifact_key, field, terms):
+    """The terms no ALLOWLIST entry covers for this field.
+
+    An entry is keyed on the term it was granted for, so allowlisting one word does
+    not pre-approve the next claim somebody adds to the same text.
+    """
+    return [term for term in terms
+            if (filename, str(artifact_key), field, term) not in ALLOWLIST]
 
 
 def find_artifacts_dict(tree):
@@ -241,13 +253,15 @@ def scan_file(path):
             if suppressed:
                 negated_counts.append(suppressed)
             if found:
-                allowlisted = (filename, str(artifact_key), field) in ALLOWLIST
+                remaining = unallowlisted(filename, artifact_key, field, found)
+                allowlisted = not remaining
                 matches.append({
                     'filename': filename,
                     'artifact_key': str(artifact_key),
                     'field': field,
                     'text': value,
-                    'terms': found,
+                    'terms': remaining or found,
+                    'all_terms': found,
                     'allowlisted': allowlisted,
                 })
     return matches, None, sum(negated_counts)
@@ -286,7 +300,9 @@ def main():
             continue
         checked += 1
         for match in matches:
-            fired.add((match['filename'], match['artifact_key'], match['field']))
+            for term in match['all_terms']:
+                fired.add((match['filename'], match['artifact_key'],
+                           match['field'], term))
         all_matches.extend(matches)
 
     stale = sorted(ALLOWLIST - fired)
@@ -313,7 +329,7 @@ def main():
         print(f'Stale ALLOWLIST entr(ies) ({len(stale)}) -- these no longer match anything '
               f'and should be deleted:')
         for entry in stale:
-            print(f'  {entry[0]}:{entry[1]}:{entry[2]}')
+            print(f'  {entry[0]}:{entry[1]}:{entry[2]}  [{entry[3]}]')
         print()
 
     if args.list_all:
