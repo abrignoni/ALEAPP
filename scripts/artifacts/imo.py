@@ -28,7 +28,7 @@ __artifacts_v2__ = {
                   "Direction/status value mappings were established through testing; unrecognized "
                   "values are reported as stored, so rows the mapping does not cover are not "
                   "labelled as sent or received.\n"
-                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
                   "From ID and To ID are filled only when the direction is recognized; the other "
