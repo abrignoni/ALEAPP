@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "covering the per-account _im.db files found.",
         "author": "@abrignoni",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "TikTok",
         "notes": "One _im.db exists per logged-in account, named <account uid>_im.db, and "
@@ -18,8 +18,19 @@ __artifacts_v2__ = {
                  "as stored since no source for those integers was verified.\n"
                  "Sender names are resolved against SIMPLE_USER in db_im_xx and "
                  "IM_USER_BASE_INFO in the db_im_contact databases, where present. A sender "
-                 "in neither store shows a bare UID.",
-        "paths": ('*_im.db*', '*db_im_xx*', '*db_im_contact*'),
+                 "in neither store shows a bare UID.\n"
+                 "Path patterns are anchored to the TikTok package names, "
+                 "com.zhiliaoapp.musically and com.ss.android.ugc.trill; only the former "
+                 "appears in the registered corpora. Another app can keep IM databases "
+                 "whose names match the same file patterns (observed with Lemon8, "
+                 "com.bd.nproject, on one tested image); the package anchor keeps those "
+                 "files out of this artifact.",
+        "paths": ('*/com.zhiliaoapp.musically/*_im.db*',
+                  '*/com.zhiliaoapp.musically/*db_im_xx*',
+                  '*/com.zhiliaoapp.musically/*db_im_contact*',
+                  '*/com.ss.android.ugc.trill/*_im.db*',
+                  '*/com.ss.android.ugc.trill/*db_im_xx*',
+                  '*/com.ss.android.ugc.trill/*db_im_contact*'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
@@ -35,7 +46,9 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 0 rows",
             "sharon_a13": "Android 13 | 0 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 0 rows",
-            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.zhiliaoapp.musically present without IM "
+                              "databases; a Lemon8 (com.bd.nproject) _im.db is outside "
+                              "the anchored paths | 0 rows",
         },
         "data_views": {
             "conversation": {
@@ -54,7 +67,7 @@ __artifacts_v2__ = {
                        "status) from the TikTok IM databases.",
         "author": "@abrignoni",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "TikTok",
         "notes": "Contacts come from IM_USER_BASE_INFO in the db_im_contact databases and "
@@ -63,8 +76,15 @@ __artifacts_v2__ = {
                  "IM_USER_BASE_INFO preferred since it also records an update timestamp. "
                  "Update Time, Blocked and Deleted are only available from "
                  "IM_USER_BASE_INFO; Blocked and Deleted are reported as stored since no "
-                 "source for those integers was verified.",
-        "paths": ('*db_im_xx*', '*db_im_contact*'),
+                 "source for those integers was verified.\n"
+                 "Path patterns are anchored to the TikTok package names, "
+                 "com.zhiliaoapp.musically and com.ss.android.ugc.trill; only the former "
+                 "appears in the registered corpora, and files under any other package "
+                 "name are not read.",
+        "paths": ('*/com.zhiliaoapp.musically/*db_im_xx*',
+                  '*/com.zhiliaoapp.musically/*db_im_contact*',
+                  '*/com.ss.android.ugc.trill/*db_im_xx*',
+                  '*/com.ss.android.ugc.trill/*db_im_contact*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
         "sample_data": {
@@ -80,7 +100,8 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 2 rows",
             "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 2 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 1 row",
-            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.zhiliaoapp.musically present without IM "
+                              "contact stores | 0 rows",
         },
     },
     "get_tikTok_app_open": {
@@ -150,7 +171,7 @@ __artifacts_v2__ = {
             "sharon_a13": "Android 13 | 60 rows",
             "pixel3_a12": "Android 12 | 49 rows",
             "pixel3_a11": "Android 11 | 48 rows (schema lacks the timestamp columns)",
-            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 12 rows",
+            "samsunga53_a14": "Android 14 | com.zhiliaoapp.musically | 12 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 5 rows",
         },
     },
