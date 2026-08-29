@@ -228,6 +228,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | installedappsGass |
 | installedappsLibrary |
 | installedappsVending |
+| intrusionDetectionStore |
 | keepNotes |
 | kijijiConversations |
 | kijijiRecentSearches |
