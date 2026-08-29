@@ -4,15 +4,15 @@
     "artifact_name": "Google Play Movies & TV - Signed-In Accounts",
     "function_name": "google_play_movies_account",
     "case_number": "case2",
-    "number_of_columns": 2,
+    "number_of_columns": 3,
     "number_of_rows": 1,
-    "total_data_size_bytes": 23,
+    "total_data_size_bytes": 91,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/GooglePlayMoviesAccounts/testdata.GooglePlayMoviesAccounts.google_play_movies_account.case2.zip",
-    "start_time": "2026-08-28T20:42:30.528636+00:00",
-    "end_time": "2026-08-28T20:42:33.861404+00:00",
-    "run_time_seconds": 0.23071813583374023,
+    "start_time": "2026-08-29T19:38:30.992105+00:00",
+    "end_time": "2026-08-29T19:38:31.013187+00:00",
+    "run_time_seconds": 0.0013568401336669922,
     "last_commit": {
       "hash": "d93ea0cd784ceab51ec4afa8a3d4cab71b38bb8e",
       "author_name": "Gear-I",
@@ -23,12 +23,14 @@
   },
   "headers": [
     "Google Account Email",
-    "Play Config Synced"
+    "Has Configuration Record",
+    "Source File"
   ],
   "data": [
     [
       "ldehner505@gmail.com",
-      "Yes"
+      "Yes",
+      "Dump/data/data/com.google.android.videos/databases/purchase_store.db"
     ]
   ]
 }

@@ -1,46 +1,81 @@
 __artifacts_v2__ = {
     "google_play_movies_account": {
         "name": "Google Play Movies & TV - Signed-In Accounts",
-        "description": "The Google account(s) the Google Play Movies & TV app (package "
-                       "com.google.android.videos, also branded 'Google TV') knows about on "
-                       "this device, and whether each one has an active configuration synced "
-                       "from Google's Play backend.",
-        "author": "@Gear-I, Claude",
+        "description": "Google accounts recorded by the Google Play Movies & TV app "
+                       "(package com.google.android.videos, also branded 'Google TV') in "
+                       "the user_data table of purchase_store.db, with whether each "
+                       "account also has a row in the app's user_configuration table.",
+        "author": "@Gear-I, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-28",
-        "last_update_date": "2026-08-28",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Google Play Movies & TV",
-        "notes": "Source is purchase_store.db. user_data.user_account lists every Google "
-                 "account this app instance has ever been used with; a matching row in "
-                 "user_configuration.config_account means that account currently has an "
-                 "active, synced configuration from Google's Play backend, reported here as "
-                 "'Play Config Synced'. On the Samsung device this was validated against, two "
-                 "different Google accounts were both listed in user_data but only one had a "
-                 "config row -- evidence that a second account was added to the app without "
-                 "becoming (or after ceasing to be) the one actively used, a distinction this "
-                 "column exists to surface. This artifact reports identity only, not activity: "
-                 "purchased_assets, search_history, wishlist and watch_next_feed were all "
-                 "completely empty on both real devices this was validated against, so no "
-                 "purchase, rental, search or watch history survives in this database despite "
-                 "its file carrying substantial WAL activity -- that activity turned out to be "
-                 "the app re-syncing static reference data (content-rating systems, API "
-                 "endpoints), not user activity, confirmed by reading it directly. "
-                 "user_data.sync_snapshot_token and user_configuration.config_play_country "
-                 "were NULL for every account on both devices, and "
-                 "user_configuration.account_links was 0 for every account on both devices, so "
-                 "none of the three are reported -- what a populated value looks like is "
-                 "unconfirmed. user_data.wishlist_snapshot_token was populated but held the "
-                 "identical value on every account tested, across both devices, despite "
-                 "different accounts and different install histories, so it reads as a static "
-                 "default baked into the app rather than a real per-account sync cursor and is "
-                 "also not reported. A second Android user profile has its own copy of "
-                 "purchase_store.db, so every copy found is read, not only the first.",
+        "notes": "Source is purchase_store.db. On 9 of the 18 database copies tested the "
+                 "database file itself holds no tables at all and every row is in the write "
+                 "ahead log, so the path pattern collects the sidecars and they must be "
+                 "carried alongside the database. user_data holds one row per Google account "
+                 "keyed on user_account and carries no timestamp, so it records which "
+                 "accounts are present in the store and nothing about when or whether any of "
+                 "them was used. user_configuration holds one row per account carrying a "
+                 "configuration blob. 'Has Configuration Record' is Yes when a row for that "
+                 "account is present in user_configuration and No when it is not; the store "
+                 "does not record why a row is absent, and an absent row is not evidence "
+                 "about how the account was used. Across the 16 tested images 19 accounts "
+                 "are listed and 18 of them have a configuration record, the one exception "
+                 "being on samsunga53_a14. The value is left blank if "
+                 "user_configuration.config_account cannot be read, so a read failure is not "
+                 "reported as a No. The column was readable on all 18 copies tested, so no "
+                 "image exercised that branch; it was verified against a constructed copy "
+                 "with the table removed, which reported the account with a blank value and "
+                 "logged the reason. Source File carries the evidence relative path of the "
+                 "database each row came from rather than a derived profile number, so an "
+                 "account held under a second Android user is attributable without inferring "
+                 "anything from the path: russell_a14 and russell_pixel6a_a13 each carry a "
+                 "second copy under data/user/10 holding a different account from the copy "
+                 "under data/data. This artifact reports account identity only. Of the 23 "
+                 "tables in this database, 17 were empty on all 18 copies tested, including "
+                 "purchased_assets, search_history, wishlist, watch_next_feed, user_assets, "
+                 "user_sentiments, assets, bundles, cached_items, posters, screenshots, "
+                 "show_banners and show_posters, so no purchase, rental, search or watch "
+                 "history was recoverable from any tested image. The only other populated "
+                 "tables were android_metadata, video_formats (device decoder capabilities), "
+                 "guide_settings (a small per-account blob, 1 row on 7 copies) and "
+                 "ExoPlayerVersions, none of which carries user activity. Two schema "
+                 "generations were seen, 21 and 23 tables, differing only by "
+                 "ExoPlayerDownloads and ExoPlayerVersions; user_data and user_configuration "
+                 "are present in both. user_data.sync_snapshot_token and "
+                 "user_configuration.config_play_country were NULL and "
+                 "user_configuration.account_links was 0 for every account tested, so none "
+                 "is reported and what a populated value looks like is unconfirmed. "
+                 "user_data.wishlist_snapshot_token was populated and held the identical "
+                 "value on every account across every tested image, so it is not reported; "
+                 "where that value comes from is not established. "
+                 "user_configuration.config_proto is populated on every account tested "
+                 "(1,702 to 2,194 bytes) and decoding it shows Google reference "
+                 "configuration, meaning content rating systems, Play API endpoints and "
+                 "feature flags, rather than account activity; its first field carries the "
+                 "account storefront country, which is not decoded here.",
         "paths": ('*/com.google.android.videos/databases/purchase_store.db*',),
         "output_types": ["standard"],
         "artifact_icon": "film",
         "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.videos | 1 row",
+            "cookbook_a11": "Android 11 | com.google.android.videos | 1 row",
+            "galaxys10_a10": "Android 10 | com.google.android.videos | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.videos | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | com.google.android.videos | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.videos | 1 row",
+            "pixel3_a11": "Android 11 | com.google.android.videos | 1 row",
+            "pixel3_a12": "Android 12 | com.google.android.videos | 1 row",
             "pixel7a_a14": "Android 14 | com.google.android.videos | 1 row",
+            "russell_a14": "Android 14 | com.google.android.videos | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.videos | 2 rows",
+            "s20fe_a13": "Android 13 | com.google.android.videos not present | 0 rows",
             "samsunga53_a14": "Android 14 | com.google.android.videos | 2 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.videos | 1 row",
+            "sharon_a13": "Android 13 | com.google.android.videos | 1 row",
+            "sharon_a14": "Android 14 | com.google.android.videos | 1 row",
+            "userb2_a13": "Android 13 | com.google.android.videos | 1 row",
         },
     },
 }
@@ -48,7 +83,8 @@ __artifacts_v2__ = {
 import os
 
 from scripts.artifacts.storagePathViews import unique_files
-from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
+from scripts.ilapfuncs import (artifact_processor, does_column_exist_in_db,
+                               get_sqlite_db_records, logfunc)
 
 
 def _purchase_store_databases(files_found):
@@ -60,13 +96,14 @@ def _purchase_store_databases(files_found):
     match is read rather than only the first.
     """
     return [file_found for file_found in (str(f) for f in files_found)
-            if os.path.basename(file_found) == 'purchase_store.db' and not os.path.isdir(file_found)]
+            if os.path.basename(file_found) == 'purchase_store.db'
+            and not os.path.isdir(file_found)]
 
 
 @artifact_processor
 def google_play_movies_account(context):
     data_headers = (
-        "Google Account Email", "Play Config Synced",
+        "Google Account Email", "Has Configuration Record", "Source File",
     )
 
     db_paths = _purchase_store_databases(unique_files(context))
@@ -76,12 +113,22 @@ def google_play_movies_account(context):
     data_list = []
     source_paths = []
     for db_path in db_paths:
+        relative_path = context.get_relative_path(db_path)
         accounts = get_sqlite_db_records(db_path, "SELECT user_account FROM user_data")
-        configured = {row[0] for row in
-                      get_sqlite_db_records(db_path, "SELECT config_account FROM user_configuration")}
+        # An unreadable user_configuration would otherwise be indistinguishable from an
+        # account with no row in it, and would be published as a confident 'No'.
+        config_readable = does_column_exist_in_db(db_path, 'user_configuration', 'config_account')
+        if config_readable:
+            configured = {row[0] for row in get_sqlite_db_records(
+                db_path, "SELECT config_account FROM user_configuration")}
+        else:
+            configured = set()
+            logfunc(f'user_configuration.config_account not readable in {relative_path}; '
+                    'configuration state left blank for its accounts')
         rows_before = len(data_list)
         for (account,) in accounts:
-            data_list.append((account or '', 'Yes' if account in configured else 'No'))
+            has_config = ('Yes' if account in configured else 'No') if config_readable else ''
+            data_list.append((account or '', has_config, relative_path))
         if len(data_list) > rows_before:
             source_paths.append(db_path)
 
