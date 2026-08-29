@@ -10,6 +10,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 |----------------|
 | DuckDuckGo |
 | FairEmail |
+| GooglePlayMoviesAccounts |
 | L360circlesettings |
 | L360memberscircles |
 | L360petprofile |
