@@ -95,8 +95,64 @@ CLAIM_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
-# Fields that reach the examiner through the report and the LAVA manifest.
-CHECKED_FIELDS = ('name', 'description')
+# `notes` reaches the examiner too, in the report and in the artifact info modal, so the
+# same standard applies to it. It cannot use the same vocabulary, because notes do a job
+# name and description do not: they state what was tested. "empty on all 18 copies
+# tested" and "NULL for every account tested" are the coverage discipline this project
+# asks for, not claims about a person, and the completeness words would fire on every one
+# of them. Measured on 2026-08-29: the full vocabulary flags 368 of the 1,477 artifacts
+# carrying notes across the five cores, dominated by `every` (190) and `all` (72), almost
+# all of them describing a test set.
+#
+# `read by` comes out for the same reason. In notes it means read by the code, not by a
+# person: "columns are read by position", "not read by this artifact". Nineteen hits in
+# ALEAPP, all benign.
+#
+# What is left is attribution and certainty, which mean the same thing in a note as in a
+# description, and flag 52 artifacts across the five cores.
+NOTES_PATTERN = re.compile(
+    r"\bthe user (searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
+    r"created|hid|chose)\b|"
+    r"\buser[- ](created|entered|typed|searched|selected|initiated)\b|"
+    r"\bsearched by\b|\btyped by\b|\bviewed by\b|\bmanually\b|"
+    r"\bproves?\b|\bdefinitively\b|\balways\b|\breliable|\bvisited\b|\bhabits?\b",
+    re.IGNORECASE,
+)
+
+# A note that *denies* a claim uses the same words as one that makes it: "not terms the
+# user searched for", "does not establish that the user viewed them", "rather than
+# anything the user chose". That denial is the wording this project asks for, so matching
+# it and demanding an allowlist entry would tax the correct behaviour and grow the
+# allowlist without bound. A match in `notes` preceded by a negation inside the same
+# clause is therefore not reported.
+#
+# The window is deliberately short. A negation two sentences back says nothing about this
+# clause, and a long window would swallow real claims. Suppressed matches are counted and
+# printed by --list, because a check that narrows its own scope silently is worse than no
+# check: the count appears under --verbose whether it is zero or not.
+NEGATION_WINDOW = 60
+NEGATION_PATTERN = re.compile(
+    r"\b(not|no|never|nor|neither|without|cannot|rather than|instead of|"
+    r"isn't|doesn't|don't|does not|do not)\b",
+    re.IGNORECASE,
+)
+
+
+def negated(text, start):
+    """True when a negation appears close enough before `start` to govern it."""
+    window = text[max(0, start - NEGATION_WINDOW):start]
+    # A sentence boundary ends the clause, so a negation before it does not govern.
+    window = window.rsplit('. ', 1)[-1]
+    return bool(NEGATION_PATTERN.search(window))
+
+
+# Fields that reach the examiner through the report and the LAVA manifest, and the
+# vocabulary each is matched against.
+CHECKED_FIELDS = {
+    'name': CLAIM_PATTERN,
+    'description': CLAIM_PATTERN,
+    'notes': NOTES_PATTERN,
+}
 
 # Reviewed exceptions, as (filename, artifact_key, field). Each needs a reason.
 ALLOWLIST = {
@@ -106,6 +162,20 @@ ALLOWLIST = {
     # "completedtransfers" is the literal name of the MEGA table being read. The
     # description no longer asserts the transfers themselves completed.
     ('mega_transfers.py', 'get_mega_transfers', 'description'),
+    # "a page visited and then navigated away from ... can be absent here" is the gap the
+    # note is warning about. The sentence states what the artifact misses, not what it proves.
+    ('OperaBrowser.py', 'opera_tab_navigation', 'notes'),
+    # "manually" sits inside the app's own category label, quoted: 272 ('Activity Tracking
+    # started manually'). It is Withings' string, not this parser's claim.
+    ('WithingsHealthMate.py', 'healthmate_trackings', 'notes'),
+    # "listing them beside an account reads as things the user chose when the container does
+    # not establish that" is the reason the titles are deliberately not enumerated. The
+    # denial follows the phrase instead of preceding it, so the negation lookback cannot see it.
+    ('disneyPlus.py', 'disneyplus_cached_content', 'notes'),
+    # "Values are typed by the calling app, not on disk" is about the MMKV value's data type.
+    # Nothing to do with a keyboard.
+    ('justalk.py', 'justalk_app_state', 'notes'),
+    ('justalk.py', 'justalk_kids_app_state', 'notes'),
 }
 
 
@@ -146,21 +216,30 @@ def load_artifacts(path):
 
 
 def scan_file(path):
-    """Return (matches, skip_reason) for one artifact module."""
+    """Return (matches, skip_reason, negated_count) for one artifact module."""
     data, skip_reason = load_artifacts(path)
     if skip_reason is not None:
-        return [], skip_reason
+        return [], skip_reason, 0
 
     filename = os.path.basename(path)
     matches = []
+    negated_counts = []
     for artifact_key, entry in data.items():
         if not isinstance(entry, dict):
             continue
-        for field in CHECKED_FIELDS:
+        for field, pattern in CHECKED_FIELDS.items():
             value = entry.get(field)
             if not isinstance(value, str):
                 continue
-            found = sorted({match.group(0).lower() for match in CLAIM_PATTERN.finditer(value)})
+            hits = list(pattern.finditer(value))
+            suppressed = 0
+            if field == 'notes':
+                kept = [hit for hit in hits if not negated(value, hit.start())]
+                suppressed = len(hits) - len(kept)
+                hits = kept
+            found = sorted({hit.group(0).lower() for hit in hits})
+            if suppressed:
+                negated_counts.append(suppressed)
             if found:
                 allowlisted = (filename, str(artifact_key), field) in ALLOWLIST
                 matches.append({
@@ -171,7 +250,7 @@ def scan_file(path):
                     'terms': found,
                     'allowlisted': allowlisted,
                 })
-    return matches, None
+    return matches, None, sum(negated_counts)
 
 
 def artifact_paths(repo_root):
@@ -198,8 +277,10 @@ def main():
     # allowlisted or not. An ALLOWLIST entry missing from this set matches nothing.
     fired = set()
     checked = 0
+    negated_total = 0
     for path in artifact_paths(repo_root):
-        matches, skip_reason = scan_file(path)
+        matches, skip_reason, negated_here = scan_file(path)
+        negated_total += negated_here
         if skip_reason is not None:
             skipped.append((os.path.basename(path), skip_reason))
             continue
@@ -224,6 +305,7 @@ def main():
               f'{len(skipped)} not checked.')
         allowed_count = sum(1 for match in all_matches if match['allowlisted'])
         print(f'Allowlist holds {len(ALLOWLIST)} entr(ies); {allowed_count} fired this run.')
+        print(f'{negated_total} match(es) in notes were preceded by a negation and not reported.')
         print()
 
     # A stale entry shields nothing except the next claim that lands under that key.
