@@ -4,37 +4,40 @@
     "artifact_name": "Google Play Movies & TV - Signed-In Accounts",
     "function_name": "google_play_movies_account",
     "case_number": "case1",
-    "number_of_columns": 3,
+    "number_of_columns": 4,
     "number_of_rows": 2,
-    "total_data_size_bytes": 187,
+    "total_data_size_bytes": 189,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/GooglePlayMoviesAccounts/testdata.GooglePlayMoviesAccounts.google_play_movies_account.case1.zip",
-    "start_time": "2026-08-29T19:38:30.962942+00:00",
-    "end_time": "2026-08-29T19:38:30.991581+00:00",
-    "run_time_seconds": 0.0014350414276123047,
+    "start_time": "2026-08-29T19:57:28.205705+00:00",
+    "end_time": "2026-08-29T19:57:28.237523+00:00",
+    "run_time_seconds": 0.0019807815551757812,
     "last_commit": {
-      "hash": "d93ea0cd784ceab51ec4afa8a3d4cab71b38bb8e",
-      "author_name": "Gear-I",
-      "author_email": "dielleaiko@hotmail.com",
-      "date": "2026-08-28T16:27:30-04:00",
-      "message": "Added Google Play Movies Accounts Artifact Support along with test data and fixture"
+      "hash": "3d809e9fa3dc80a9b18a8ddfe67b1f9cb434586b",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-29T15:42:11-04:00",
+      "message": "Correct Google Play Movies & TV artifact claims and widen validation"
     }
   },
   "headers": [
     "Google Account Email",
     "Has Configuration Record",
+    "Country Code",
     "Source File"
   ],
   "data": [
     [
       "danieljonesonline55@gmail.com",
       "No",
+      "",
       "data/data/com.google.android.videos/databases/purchase_store.db"
     ],
     [
       "djones.iss.secure@gmail.com",
       "Yes",
+      "US",
       "data/data/com.google.android.videos/databases/purchase_store.db"
     ]
   ]
