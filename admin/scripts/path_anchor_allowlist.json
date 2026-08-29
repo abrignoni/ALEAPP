@@ -150,7 +150,6 @@
  "*/trips/*.json": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*/usage-history.xml": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*/vendor/build.prop": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
- "*_im.db*": "over-broad: also matches com.bd.nproject (Lemon8, sibling vendor app) on samsunga53_a14; the pattern should be scoped to the TikTok packages or the rows attributed to the owning app",
  "*com.badoo.mobile/databases/ChatComDatabase*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*com.badoo.mobile/databases/CombinedConnectionsDatabase*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*com.duckduckgo.mobile.android/app_webview/Default/Local Storage/leveldb/*": "distinctive marker: matched only com.duckduckgo.mobile.android, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
@@ -160,7 +159,5 @@
  "*com.mapmywalk.android2/databases/workout.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*com.pumapumatrac/databases/pumatrac-db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
  "*com.runtastic.android/databases/user.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
- "*db_im_contact*": "distinctive marker: matched only com.zhiliaoapp.musically, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
- "*db_im_xx*": "distinctive marker: matched only com.zhiliaoapp.musically, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
  "*vlc_media.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished"
 }
