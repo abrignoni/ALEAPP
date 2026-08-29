@@ -47,7 +47,7 @@ __artifacts_v2__ = {
                        "with the message and unread counts held for each.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Yahoo Mail",
         "notes": "One row per folder record. Total Messages and Unread Messages are the "
@@ -59,8 +59,8 @@ __artifacts_v2__ = {
                  "here, because a server side removal, a later re-sync and a local eviction "
                  "all leave the same result. Folder Name is reported as stored. Where the "
                  "stored name decodes from base64 to printable text the decode is offered in "
-                 "its own column, which on the tested device filled for one user created "
-                 "folder and stayed empty for the rest; no source establishes which names the "
+                 "its own column, which on the tested device filled for one folder and "
+                 "stayed empty for the rest; no source establishes which names the "
                  "app encodes, so the stored value is the one to rely on. Folder Types is "
                  "reported as stored. Field mapping was done against a private sample "
                  "provided by Mattia; no sample data is recorded for it.",
