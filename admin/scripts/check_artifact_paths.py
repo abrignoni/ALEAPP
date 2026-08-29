@@ -34,19 +34,44 @@ without either covering the other, is NOT reported: it is common and usually har
 `imagemngCache` is the known instance (`*/*.cnt` and
 `*/cache/image_manager_disk_cache/*.*` both match a `.cnt` file in that directory).
 
+A second audit guards the scoping of each pattern. A glob whose non-final
+segments carry no package id (`com.vendor.app`) is not anchored to its own app's
+container, so it can match the same-named file inside a different app and
+attribute one app's data to another. Measured on 2026-08-28 across three corpora:
+735 of 927 declared patterns carry a package anchor; of the rest, most are either
+distinctive markers (only one app writes an `app_opera/` directory), deliberate
+cross-app sweeps whose rows attribute the owning app (walStrings, the chromium
+family), or shared/system locations with no app container in the path. Each of
+those is recorded with its reason in path_anchor_allowlist.json, keyed by the
+pattern. A NEW pattern with no package anchor fails this check unless the glob is
+given an anchor or an allowlist entry states the reason it does not need one.
+A wildcarded package segment (`com.sec.android.app.sbrowser*`) counts as anchored:
+it still scopes the glob to a vendor prefix. An allowlist entry whose pattern is
+no longer declared anywhere is reported for removal without failing.
+
 Usage::
 
     python3 admin/scripts/check_artifact_paths.py
 
-Exit status is 1 when an artifact outside ALLOWED declares a subsumed pattern.
+Exit status is 1 when an artifact outside ALLOWED declares a subsumed pattern, or
+when a pattern with no package anchor is not in path_anchor_allowlist.json.
 """
 import ast
+import importlib.util
 import itertools
+import json
 import os
+import re
 import sys
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ARTIFACTS_DIR = os.path.join(REPO_ROOT, 'scripts', 'artifacts')
+ANCHOR_ALLOWLIST_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     'path_anchor_allowlist.json')
+
+# A literal path segment that reads as a package id, with or without wildcards:
+# at least one dot-separated component after the first.
+_PKG_SEG = re.compile(r'^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z0-9_*?]+)+$')
 
 # Known at the time this check was added. Each is a redundant pattern that should be
 # removed rather than kept; the entry exists so the check can fail on anything NEW.
@@ -59,6 +84,15 @@ STANDARD_NOTE = (
     'file it matches is appended to files_found twice. If the narrow pattern is meant to\n'
     'reach something the broad one misses, the broad one is wider than intended and it\n'
     'is the one to tighten.'
+)
+
+STANDARD_ANCHOR_NOTE = (
+    "Anchor the pattern to the app's own container by including the package name\n"
+    "('*/com.vendor.app/...'), so it cannot match the same-named file inside another\n"
+    "app. If the glob genuinely needs no package anchor (a directory or file name only\n"
+    "this app writes, a deliberate cross-app sweep whose rows attribute the owning app,\n"
+    "or a shared/system location outside any app container), add the pattern to\n"
+    "admin/scripts/path_anchor_allowlist.json with the reason."
 )
 
 
@@ -136,16 +170,53 @@ def read_artifacts():
             try:
                 block = ast.literal_eval(node.value)
             except ValueError:
-                continue
+                # The block is built through helpers (fitbit's shape). Import the
+                # module and read the finished dict, so its patterns are audited
+                # rather than silently skipped.
+                block = _import_block(path, name)
             if not isinstance(block, dict):
                 continue
             for key, info in block.items():
                 paths = (info or {}).get('paths')
                 if isinstance(paths, str):
                     paths = (paths,)
-                if paths and len(paths) > 1:
+                if paths:
                     out.append((name, key, list(paths), protected))
     return out
+
+
+def _import_block(path, name):
+    """__artifacts_v2__ read by importing the module, or None with a warning."""
+    if REPO_ROOT not in sys.path:
+        sys.path.insert(0, REPO_ROOT)
+    try:
+        spec = importlib.util.spec_from_file_location(f'_paths_check_{name[:-3]}', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return getattr(module, '__artifacts_v2__', None)
+    except Exception as ex:  # pylint: disable=broad-exception-caught
+        print(f'  WARNING  non-literal __artifacts_v2__ in {name} and import '
+              f'failed ({ex}); its patterns are NOT checked')
+        return None
+
+
+def is_anchored(pattern):
+    """True when a non-final segment reads as a (possibly wildcarded) package id."""
+    segments = str(pattern).replace('\\', '/').split('/')
+    return any('.' in seg and _PKG_SEG.match(seg) for seg in segments[:-1])
+
+
+def anchor_findings(artifacts, allowlist):
+    """([(module, key, pattern)] not anchored and not allowlisted, [stale entries])."""
+    declared = set()
+    findings = []
+    for module, key, paths, _protected in artifacts:
+        for pattern in paths:
+            declared.add(pattern)
+            if not is_anchored(pattern) and pattern not in allowlist:
+                findings.append((module, key, pattern))
+    stale = sorted(set(allowlist) - declared)
+    return findings, stale
 
 
 def main():
@@ -160,6 +231,7 @@ def main():
     new = [f for f in findings if (f[0], f[1]) not in ALLOWED]
     known = len(findings) - len(new)
 
+    status = 0
     if new:
         print(f'Artifacts declaring a path pattern a sibling already covers ({len(new)} new):')
         for module, key, broad, narrow, protected in new:
@@ -169,11 +241,32 @@ def main():
             print(f'      redundant   {narrow}')
         print()
         print(STANDARD_NOTE)
-        return 1
+        status = 1
 
-    print(f'Checked {len(artifacts)} artifact(s) declaring more than one path pattern: '
-          f'no new subsumed patterns. {known} known case(s) allowlisted.')
-    return 0
+    try:
+        with open(ANCHOR_ALLOWLIST_PATH, encoding='utf-8') as handle:
+            allowlist = json.load(handle)
+    except FileNotFoundError:
+        allowlist = {}
+    unanchored, stale = anchor_findings(artifacts, allowlist)
+    if unanchored:
+        print(f'Patterns with no package anchor and no allowlist entry ({len(unanchored)}):')
+        for module, key, pattern in unanchored:
+            print(f'  {module}:{key}  {pattern}')
+        print()
+        print(STANDARD_ANCHOR_NOTE)
+        status = 1
+    for pattern in stale:
+        print(f'  NOTE  allowlist entry no longer declared by any artifact, '
+              f'remove it: {pattern}')
+
+    if status == 0:
+        multi = sum(1 for _m, _k, paths, _p in artifacts if len(paths) > 1)
+        print(f'Checked {multi} artifact(s) declaring more than one path pattern: '
+              f'no new subsumed patterns. {known} known case(s) allowlisted.')
+        print(f'Checked {len(artifacts)} artifact(s) for package anchoring: '
+              f'{len(allowlist)} pattern(s) carry allowlisted reasons.')
+    return status
 
 
 if __name__ == '__main__':
