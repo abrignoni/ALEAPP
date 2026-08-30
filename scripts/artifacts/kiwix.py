@@ -22,7 +22,10 @@ __artifacts_v2__ = {
                  "-wal sidecar on the tested device, so the sidecar is in the paths and is required.",
         "paths": ('*/org.kiwix.kiwixmobile*/databases/KiwixRoom.db*',),
         "output_types": "standard",
-        "artifact_icon": "book"
+        "artifact_icon": "book",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | org.kiwix.kiwixmobile.standalone vc 6231767 | 1 rows",
+        },
     },
     "kiwix_searches": {
         "name": "Kiwix - Searches",
@@ -39,7 +42,10 @@ __artifacts_v2__ = {
                  "rows here. The data lives in the KiwixRoom.db WAL sidecar on the tested device.",
         "paths": ('*/org.kiwix.kiwixmobile*/databases/KiwixRoom.db*',),
         "output_types": "standard",
-        "artifact_icon": "search"
+        "artifact_icon": "search",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | org.kiwix.kiwixmobile.standalone vc 6231767 | 0 rows; in-content search table present and empty, confirmed by reading it",
+        },
     }
 }
 
