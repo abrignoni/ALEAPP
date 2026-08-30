@@ -36,6 +36,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.kunzisoft.keepass*/databases/com.kunzisoft.keepass.database*',),
         "output_types": "standard",
         "artifact_icon": "key",
+        "sample_data": {
+            "emu_a15_oss_v2": "Android 15 | com.kunzisoft.keepass.libre vc 45100 | 1 rows",
+        },
     }
 }
 
