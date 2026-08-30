@@ -27,10 +27,21 @@ __artifacts_v2__ = {
                  "party's WeChat id for a one to one conversation and the group id for a group. "
                  "Message Type (as stored) is the type column and is reported as stored, no "
                  "authoritative source for its full code list having been located; on the "
-                 "corpus below type 1 was text and the other values carried XML app messages, "
-                 "images, voice and system entries, and the Content column holds whatever the "
-                 "row stored, which for a non-text type is the XML or reference the application "
-                 "wrote rather than a plain message. Image Path names the thumbnail the row "
+                 "corpus below type 1 was text and the other values carried XML documents. "
+                 "Message is the readable form of the content column: for a plain text row it is "
+                 "that text unchanged, and for a row holding a document it is the document's own "
+                 "title and des elements, with Link taken from its url element. Those are the "
+                 "document's own element names, read from it rather than inferred. Content "
+                 "Element names the first element inside the root, so a document carrying no "
+                 "title still says what kind it is. Content (as stored) keeps the raw value in "
+                 "every case, so nothing the summary omits is lost. On the corpus below 587 of "
+                 "602 rows produced a readable Message and 461 carried a Link; the 15 that "
+                 "produced neither were the rows whose Content Element is img, which hold an "
+                 "image reference and no text, so Message is empty on those by design rather "
+                 "than through a failure to parse. A document that does not parse is logged and "
+                 "leaves Message, Content Element and Link empty, with the stored column as the "
+                 "only record for the row. "
+                 "Image Path names the thumbnail the row points to where it has one. "
                  "points to where it has one.",
         "paths": ('*/com.tencent.mm/MicroMsg/*/EnMicroMsg.db*',
                   '*/com.tencent.mm/shared_prefs/auth_info_key_prefs.xml',
@@ -40,7 +51,7 @@ __artifacts_v2__ = {
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Talker",
-                "textColumn": "Content",
+                "textColumn": "Message",
                 "directionColumn": "Direction",
                 "directionSentValue": "Outgoing",
                 "timeColumn": "Message Time",
@@ -259,6 +270,44 @@ def _query(context, sql):
     return data_rows, source_paths
 
 
+
+def _readable_content(content):
+    """(readable text, content element, link) for a message's content column.
+
+    A plain text message is returned unchanged. Where the column holds a document,
+    the values are read from that document's own element names rather than being
+    inferred: title and des for the readable text, url for the link, and the name
+    of the first element inside the root for the content element, so a document
+    with no title still says what kind of document it is. A document that does not
+    parse yields empty values and is logged, leaving the stored column as the only
+    record for that row.
+    """
+    if not content:
+        return '', '', ''
+    stripped = content.lstrip()
+    if not stripped.startswith('<'):
+        return content, '', ''
+    try:
+        root = ET.fromstring(stripped)
+    except ET.ParseError as error:
+        logfunc(f'WeChat: message content did not parse as XML: {error}')
+        return '', '', ''
+    first = next(iter(root), None)
+    element = first.tag if first is not None else root.tag
+
+    def value(tag):
+        node = root.find(f'./{element}/{tag}')
+        if node is None:
+            node = root.find(f'.//{tag}')
+        return (node.text or '').strip() if node is not None and node.text else ''
+
+    title, description, link = value('title'), value('des'), value('url')
+    if title and description:
+        readable = f'{title} - {description}'
+    else:
+        readable = title or description
+    return readable, element, link
+
 @artifact_processor
 def wechat_messages(context):
     data_list = []
@@ -268,27 +317,34 @@ def wechat_messages(context):
     ''')
     for row, _ in rows:
         created, is_send, talker, kind, content, img_path, status, msg_id = row
+        readable, element, link = _readable_content(content)
         data_list.append((
             convert_unix_ts_to_utc(created / 1000) if created else '',
             'Outgoing' if is_send == 1 else 'Incoming',
             talker or '',
-            content or '',
+            readable,
             is_send if is_send is not None else '',
             kind if kind is not None else '',
+            element,
+            link,
             img_path or '',
             status if status is not None else '',
             msg_id if msg_id is not None else '',
+            content or '',
         ))
     data_headers = (
         ('Message Time', 'datetime'),
         'Direction',
         'Talker',
-        'Content',
+        'Message',
         'Is Send',
         'Message Type (as stored)',
+        'Content Element',
+        'Link',
         'Image Path',
         'Status (as stored)',
         'Message ID',
+        'Content (as stored)',
     )
     return data_headers, data_list, '\n'.join(source_paths)
 
