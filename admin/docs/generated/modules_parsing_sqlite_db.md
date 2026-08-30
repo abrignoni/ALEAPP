@@ -35,6 +35,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | allTrails |
 | androidauto |
 | appicons |
+| bitwarden |
 | breadWallet |
 | calculatorLockVault |
 | claude |
@@ -42,6 +43,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | dropbox |
 | dust |
 | ebay |
+| elementX |
 | fossifyCalendar |
 | fossifyGallery |
 | fossifyNotes |
