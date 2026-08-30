@@ -24,13 +24,13 @@ __artifacts_v2__ = {
         "description": "Parses LINE messages (time, sender and recipient IDs, direction, thread, message and attachments) from the LINE databases.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Line",
         "notes": ("Direction is decoded from the chat_history 'status' column. Direction/status "
                   "value mappings were established through testing; unrecognized values are "
                   "reported as stored.\n"
-                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
                   "To ID is filled only for rows recognized as outgoing.\n"

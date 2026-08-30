@@ -90,7 +90,8 @@ CLAIM_PATTERN = re.compile(
     r"\bthe user (?:searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
     r"created|hid|chose)\b|"
     r"\buser[- ](?:created|entered|typed|searched|selected|initiated)\b|"
-    r"\bsearched by\b|\btyped by\b|\bviewed by\b|\bread by\b|\bmanually\b|"
+    r"\b(?:searched|typed|viewed|read|entered|created|sent|opened|selected|deleted|v"
+    r"isited|chosen|hidden|initiated) by (?:the |a |an )?(?:user|account holder|device owner|subject|owner)\b|\bmanually\b|"
     r"\bproves?\b|\bdefinitively\b|\balways\b|\breliable|\bvisited\b|\bhabits?\b",
     re.IGNORECASE,
 )
@@ -114,7 +115,8 @@ NOTES_PATTERN = re.compile(
     r"\bthe user (?:searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
     r"created|hid|chose)\b|"
     r"\buser[- ](?:created|entered|typed|searched|selected|initiated)\b|"
-    r"\bsearched by\b|\btyped by\b|\bviewed by\b|\bmanually\b|"
+    r"\b(?:searched|typed|viewed|read|entered|created|sent|opened|selected|deleted|v"
+    r"isited|chosen|hidden|initiated) by (?:the |a |an )?(?:user|account holder|device owner|subject|owner)\b|\bmanually\b|"
     r"\bproves?\b|\bdefinitively\b|\balways\b|\breliable|\bvisited\b|\bhabits?\b",
     re.IGNORECASE,
 )
@@ -174,10 +176,6 @@ ALLOWLIST = {
     # not establish that" is the reason the titles are deliberately not enumerated. The
     # denial follows the phrase instead of preceding it, so the negation lookback cannot see it.
     ('disneyPlus.py', 'disneyplus_cached_content', 'notes', 'the user chose'),
-    # "Values are typed by the calling app, not on disk" is about the MMKV value's data type.
-    # Nothing to do with a keyboard.
-    ('justalk.py', 'justalk_app_state', 'notes', 'typed by'),
-    ('justalk.py', 'justalk_kids_app_state', 'notes', 'typed by'),
 }
 
 
