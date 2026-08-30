@@ -4,14 +4,14 @@ __artifacts_v2__ = {
         "description": "Parses Zapya file transfer records (device, name, direction, timestamp, path and title) from the transfer20.db database.",
         "author": "@markmckinnon",
         "creation_date": "2020-03-21",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "File Transfer",
         "notes": ("direction is decoded from the transfer table 'direction' column. "
                   "Direction/status value mappings were established through testing; unrecognized "
                   "values are reported as stored.\n"
                   "fromid and toid are populated only when the direction value is recognized; the "
-                  "other device recorded on the row is always present in the Device column."),
+                  "other device recorded on the row is reported in the Device column regardless."),
         "paths": ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*',),
         "output_types": "standard",
         "artifact_icon": "download",

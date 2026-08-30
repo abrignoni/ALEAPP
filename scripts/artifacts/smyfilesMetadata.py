@@ -87,10 +87,11 @@ __artifacts_v2__ = {
         "description": "File search terms and timestamps from the Samsung My Files FileInfo.db search_history table",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "My Files",
-        "notes": "search_history records terms the user typed into the My Files search box. Empty on the "
+        "notes": "search_history holds the search terms the store records for the My Files "
+                 "search box. Empty on the "
                  "registered corpora; the layout was mapped against a private Android 16 sample.",
         "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db*',),
         "output_types": "standard",

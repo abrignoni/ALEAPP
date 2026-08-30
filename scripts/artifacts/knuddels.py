@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Extracts Knuddels chats (text, images/snaps and GIFs) from database files",
         "author": "@annkirpv",
         "creation_date": "2025-05-04",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Chats",
         "notes": ("From Me is derived from the database file name: the owner's nickname is taken to "
@@ -14,7 +14,7 @@ __artifacts_v2__ = {
                   "the file name does not follow that convention the owner cannot be established "
                   "and the column is left blank for every row of that database rather than "
                   "reporting the messages as received.\n"
-                  "In the conversation view only rows with From Me set to 1 are shown as sent by "
+                  "In the conversation view only rows with From Me set to 1 are attributed to "
                   "the device owner; a blank value is not attributed to the owner.\n"
                   "Message Type is derived from markers found in the message text. A message that "
                   "carries the app's marker prefix but no marker this parser recognises is reported "
