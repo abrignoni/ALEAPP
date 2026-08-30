@@ -19,7 +19,10 @@ __artifacts_v2__ = {
                  "many, as stored.",
         "paths": ('*/com.beemdevelopment.aegis/files/aegis.json',),
         "output_types": "standard",
-        "artifact_icon": "shield-lock"
+        "artifact_icon": "shield-lock",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | com.beemdevelopment.aegis vc 81 | 1 rows",
+        },
     },
     "aegis_entries": {
         "name": "Aegis - Entries",
@@ -44,7 +47,10 @@ __artifacts_v2__ = {
                  "encrypted. The UUID is the entry's own identifier in the vault.",
         "paths": ('*/com.beemdevelopment.aegis/files/aegis.json',),
         "output_types": "standard",
-        "artifact_icon": "shield-check"
+        "artifact_icon": "shield-check",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | com.beemdevelopment.aegis vc 81 | 2 rows",
+        },
     }
 }
 
