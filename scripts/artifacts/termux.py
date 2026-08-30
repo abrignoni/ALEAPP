@@ -26,7 +26,10 @@ __artifacts_v2__ = {
                  "the ones the user installed, is in the Installed Packages artifact.",
         "paths": ('*/com.termux/files/usr/var/log/apt/history.log*',),
         "output_types": "standard",
-        "artifact_icon": "package"
+        "artifact_icon": "package",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | com.termux vc 1002 | 1 rows",
+        },
     },
     "termux_installed_packages": {
         "name": "Termux - Installed Packages",
@@ -47,7 +50,10 @@ __artifacts_v2__ = {
                  "whose Status line reports the package as installed are included.",
         "paths": ('*/com.termux/files/usr/var/lib/dpkg/status',),
         "output_types": "standard",
-        "artifact_icon": "box"
+        "artifact_icon": "box",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | com.termux vc 1002 | 76 rows",
+        },
     },
     "termux_configuration": {
         "name": "Termux - Configuration",
@@ -71,7 +77,10 @@ __artifacts_v2__ = {
         "paths": ('*/com.termux/shared_prefs/com.termux_preferences.xml',
                   '*/com.termux/files/home/.termux/termux.properties'),
         "output_types": "standard",
-        "artifact_icon": "settings"
+        "artifact_icon": "settings",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | com.termux vc 1002 | 2 rows",
+        },
     }
 }
 
