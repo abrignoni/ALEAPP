@@ -42,6 +42,9 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | dropbox |
 | dust |
 | ebay |
+| fossifyCalendar |
+| fossifyGallery |
+| fossifyNotes |
 | frosting |
 | galleryVault |
 | gettr |
@@ -55,7 +58,9 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleOdlh |
 | googlePlaySearches |
 | honorMediaLibrary |
+| jitsiMeet |
 | joplin |
+| keepassDX |
 | kikMessenger |
 | kiwix |
 | knuddels |
@@ -63,6 +68,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | magisk |
 | miBrowser |
 | netflix |
+| osmand |
 | phoneLink |
 | pinterest |
 | protonmailDbMail |
