@@ -22,7 +22,10 @@ __artifacts_v2__ = {
                  "took place.",
         "paths": ('*/com.nutomic.syncthingandroid/files/config.xml',),
         "output_types": "standard",
-        "artifact_icon": "devices"
+        "artifact_icon": "devices",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | com.nutomic.syncthingandroid vc 4395 | 2 rows",
+        },
     },
     "syncthing_folders": {
         "name": "Syncthing - Folders",
@@ -42,7 +45,10 @@ __artifacts_v2__ = {
                  "folder for the DCIM directory.",
         "paths": ('*/com.nutomic.syncthingandroid/files/config.xml',),
         "output_types": "standard",
-        "artifact_icon": "folder-share"
+        "artifact_icon": "folder-share",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | com.nutomic.syncthingandroid vc 4395 | 1 rows",
+        },
     }
 }
 
