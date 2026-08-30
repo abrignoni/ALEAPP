@@ -40,9 +40,11 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | claude |
 | dhl |
 | dropbox |
+| dust |
 | ebay |
 | frosting |
 | galleryVault |
+| gettr |
 | gmailEmails |
 | googleAccountHistory |
 | googleCalendar |
@@ -55,6 +57,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | honorMediaLibrary |
 | kikMessenger |
 | knuddels |
+| magisk |
 | netflix |
 | pinterest |
 | protonmailDbMail |
