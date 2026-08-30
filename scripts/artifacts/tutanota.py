@@ -7,14 +7,22 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "ccl_chromium_reader",
         "category": "Tutanota",
-        "notes": "The client keeps its account list in two different places depending on release, and "
-                 "both are read. Newer releases store it in the PersistedCredentials table of the Room "
+        "notes": "The client keeps its account list in three different shapes depending on release, and "
+                 "all three are read. Newer releases store it in the PersistedCredentials table of the Room "
                  "database databases/tuta-db. Older releases store it in the web app's own configuration "
                  "under the tutanotaConfig key of the WebView Local Storage, where _credentials is keyed "
-                 "by user id and each entry carries a credentialInfo holding login, userId and type. On "
-                 "the two tested images the store used differed: the Android 12 image carried no "
-                 "PersistedCredentials table at all and its account was readable only from the WebView "
-                 "configuration, while the Android 14 image had migrated to the table and left "
+                 "by user id and each entry carries a credentialInfo holding login, userId and type. Older "
+                 "still, at configuration version 2, _credentials is a list rather than a mapping and "
+                 "its entries carry mailAddress, accessToken, encryptedPassword and userId with no "
+                 "credentialInfo and no type. Those are decoded the way the app converts them itself in "
+                 "migrateConfigV2to3 (src/applications/common/misc/DeviceConfig.ts at tutao/tutanota "
+                 "80c8e4cb): the login is the mailAddress where it contains an @ and the type is "
+                 "internal, and otherwise the login is the user id and the type is external, because at "
+                 "that version an external user's address was their user id. On "
+                 "the three tested images all three shapes appear: the Android 11 image holds the version 2 "
+                 "list, the Android 12 image holds the version 3 mapping, and both carried no "
+                 "PersistedCredentials table at all so their accounts were readable only from the "
+                 "WebView configuration, while the Android 14 image had migrated to the table and left "
                  "_credentials empty. The Stored In column records which of the two a row came from. The "
                  "client records that migration itself in the isCredentialsMigratedToNative and "
                  "hasParticipatedInCredentialsMigration flags, reported by the App Configuration "
@@ -58,6 +66,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "pixel7a_a14": "Android 14 | de.tutao.tutanota vc 396351 | 1 rows",
             "pixel3_a12": "Android 12 | 1 rows",
+            "pixel3_a11": "Android 11 | de.tutao.tutanota vc 376070 | 1 rows",
         }
     },
     "tutanota_configuration": {
@@ -80,7 +89,9 @@ __artifacts_v2__ = {
                  "on the two tested images it held the vendor's own hosts, which differed between them "
                  "as the product was renamed. Connect Timeout, Extended Notification Mode and Config "
                  "Version are reported as stored because no mapping for their values was sourced. "
-                 "Credentials Migrated To Native Store and Setup Complete are the client's own booleans "
+                 "Theme is read from _themeId, or from _theme on configuration version 2 where that key "
+                 "carried the name instead. Credentials Migrated To Native Store and Setup Complete are "
+                 "the client's own booleans "
                  "and are what explains which store the Accounts artifact found a given account in. "
                  "A row draws on both stores, so each is cited in its own column: Source File is the "
                  "database the KeyValue settings came from and Configuration Source File is the WebView "
@@ -101,6 +112,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "pixel7a_a14": "Android 14 | de.tutao.tutanota vc 396351 | 1 rows",
             "pixel3_a12": "Android 12 | 1 rows",
+            "pixel3_a11": "Android 11 | de.tutao.tutanota vc 376070 | 1 rows",
         }
     },
     "tutanota_calendar_alarms": {
@@ -143,6 +155,8 @@ __artifacts_v2__ = {
             "pixel3_a12": "Android 12 | 0 rows; AlarmNotification table present and empty, "
                            "confirmed by reading the table directly both with and without its "
                            "write ahead log",
+            "pixel3_a11": "Android 11 | de.tutao.tutanota vc 376070 | 0 rows; AlarmNotification "
+                           "table present and empty, confirmed by reading the table directly",
         }
     }
 }
@@ -297,6 +311,41 @@ def _config_records(localstorage_dir):
     return records
 
 
+def _config_credentials(config):
+    """[(login, user_id, credential_type)] from a tutanotaConfig record.
+
+    Two shapes exist. From configuration version 3 onward _credentials is a mapping keyed
+    by user id whose entries carry a credentialInfo. At version 2 it is a list whose
+    entries carry mailAddress instead, and the app converts one to the other in
+    migrateConfigV2to3 (src/applications/common/misc/DeviceConfig.ts at tutao/tutanota
+    80c8e4cb): the login is the mailAddress when it contains an @, and otherwise the user
+    id, because at that version an external user's address was their user id. The same
+    rule is applied here rather than a guess at the field's meaning.
+    """
+    credentials = config.get('_credentials')
+    rows = []
+    if isinstance(credentials, dict):
+        for stored in credentials.values():
+            if not isinstance(stored, dict):
+                continue
+            info = stored.get('credentialInfo')
+            if not isinstance(info, dict):
+                continue
+            rows.append((info.get('login', '') or '', info.get('userId', '') or '',
+                         info.get('type', '') or ''))
+    elif isinstance(credentials, list):
+        for stored in credentials:
+            if not isinstance(stored, dict):
+                continue
+            user_id = stored.get('userId', '') or ''
+            mail_address = stored.get('mailAddress', '') or ''
+            if '@' in mail_address:
+                rows.append((mail_address, user_id, 'internal'))
+            else:
+                rows.append((user_id, user_id, 'external'))
+    return rows
+
+
 def _newest_config(records):
     return records[-1][1] if records else {}
 
@@ -334,18 +383,9 @@ def tutanota_accounts(context):
         # account can be present in one and absent from the newest.
         localstorage_dir = entry['localstorage']
         for _, config in _config_records(localstorage_dir):
-            credentials = config.get('_credentials')
-            if not isinstance(credentials, dict):
-                continue
             mode = config.get('_credentialEncryptionMode') or encryption_mode or ''
-            for stored in credentials.values():
-                if not isinstance(stored, dict):
-                    continue
-                info = stored.get('credentialInfo')
-                if not isinstance(info, dict):
-                    continue
-                rows.append((info.get('login', '') or '', info.get('userId', '') or '',
-                             info.get('type', '') or '', mode,
+            for login, user_id, credential_type in _config_credentials(config):
+                rows.append((login, user_id, credential_type, mode,
                              'WebView configuration', localstorage_dir))
 
         for login, user_id, credential_type, mode, stored_in, source in rows:
@@ -416,7 +456,7 @@ def tutanota_configuration(context):
             _flag(config.get('isCredentialsMigratedToNative')),
             _flag(config.get('hasParticipatedInCredentialsMigration')),
             _flag(config.get('isSetupComplete')),
-            config.get('_themeId', '') or '',
+            config.get('_themeId') or config.get('_theme') or '',
             len(records),
             context.get_relative_path(db_path) if db_path else '',
             context.get_relative_path(entry['localstorage']) if entry['localstorage'] else '',
