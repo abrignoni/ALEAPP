@@ -25,7 +25,10 @@ __artifacts_v2__ = {
                  "enable_watch_history preference is set, which it is by default.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
         "output_types": "standard",
-        "artifact_icon": "history"
+        "artifact_icon": "history",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | org.schabi.newpipe vc 1015 | 2 rows",
+        },
     },
     "newpipe_search_history": {
         "name": "NewPipe - Search History",
@@ -45,7 +48,10 @@ __artifacts_v2__ = {
                  "newpipe.db WAL sidecar on the tested device, which is why it is in the paths.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
         "output_types": "standard",
-        "artifact_icon": "search"
+        "artifact_icon": "search",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | org.schabi.newpipe vc 1015 | 1 rows",
+        },
     },
     "newpipe_subscriptions": {
         "name": "NewPipe - Subscriptions",
@@ -64,7 +70,10 @@ __artifacts_v2__ = {
                  "The row lives in the newpipe.db WAL sidecar on the tested device.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
         "output_types": "standard",
-        "artifact_icon": "users"
+        "artifact_icon": "users",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | org.schabi.newpipe vc 1015 | 1 rows",
+        },
     },
     "newpipe_playback_positions": {
         "name": "NewPipe - Playback Positions",
@@ -83,7 +92,10 @@ __artifacts_v2__ = {
                  "The row lives in the newpipe.db WAL sidecar on the tested device.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
         "output_types": "standard",
-        "artifact_icon": "player-play"
+        "artifact_icon": "player-play",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | org.schabi.newpipe vc 1015 | 1 rows",
+        },
     },
     "newpipe_playlists": {
         "name": "NewPipe - Playlists",
@@ -104,7 +116,10 @@ __artifacts_v2__ = {
                  "data lives in the newpipe.db WAL sidecar on the tested device.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
         "output_types": "standard",
-        "artifact_icon": "playlist"
+        "artifact_icon": "playlist",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | org.schabi.newpipe vc 1015 | 0 rows; local playlists table present and empty, confirmed by reading it",
+        },
     }
 }
 
