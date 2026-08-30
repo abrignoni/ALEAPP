@@ -41,11 +41,30 @@ __artifacts_v2__ = {
                  "than through a failure to parse. A document that does not parse is logged and "
                  "leaves Message, Content Element and Link empty, with the stored column as the "
                  "only record for the row. "
-                 "Image Path names the thumbnail the row points to where it has one. "
+                 "Media, Attachment File, Attachment Format and Attachment Size are resolved "
+                 "from names the database itself recorded for the row, never by matching a file "
+                 "on size or time. An image row points at its thumbnail through the imgPath "
+                 "column, a voice row is joined to voiceinfo on the message id to get its file "
+                 "name, and a sticker row names its file directly; each name is then looked for "
+                 "only inside that row's own account container, so two accounts holding a file "
+                 "of the same name cannot be confused. Media is checked in only where the "
+                 "resolved thumbnail is a real image by its leading bytes. On the corpus below "
+                 "all 15 image rows resolved to a thumbnail and every one was a plain JPEG, so "
+                 "15 rows carry a rendered image; 21 rows resolved an attachment. Attachment "
+                 "Format is read from the file's leading bytes, and the values seen were the "
+                 "reason the other files are not rendered: the full size images are a wxgf "
+                 "container, the voice files carry a SILK header despite their amr extension, "
+                 "and the two sticker files matched no known signature. Those three are reported "
+                 "by name, format and size so an examiner knows the file exists and where, "
+                 "without this artifact claiming to have decoded it. Image Path (as stored) "
+                 "keeps the raw imgPath token."
                  "points to where it has one.",
         "paths": ('*/com.tencent.mm/MicroMsg/*/EnMicroMsg.db*',
                   '*/com.tencent.mm/shared_prefs/auth_info_key_prefs.xml',
-                  '*/com.tencent.mm/shared_prefs/WLOGIN_DEVICE_INFO.xml'),
+                  '*/com.tencent.mm/shared_prefs/WLOGIN_DEVICE_INFO.xml',
+                  '*/com.tencent.mm/MicroMsg/*/image2/*',
+                  '*/com.tencent.mm/MicroMsg/*/voice2/*',
+                  '*/com.tencent.mm/MicroMsg/*/emoji/*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
         "data_views": {
@@ -57,6 +76,7 @@ __artifacts_v2__ = {
                 "timeColumn": "Message Time",
                 "senderColumn": "Talker",
                 "sentMessageStaticLabel": "Local User",
+                "mediaColumn": "Media",
             }
         },
         "sample_data": {
@@ -153,7 +173,12 @@ import os
 import xml.etree.ElementTree as ET
 
 from scripts.artifacts.storagePathViews import unique_files
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, logfunc
+from scripts.ilapfuncs import (
+    artifact_processor,
+    check_in_media,
+    convert_unix_ts_to_utc,
+    logfunc,
+)
 
 try:
     from sqlcipher3 import dbapi2 as sqlcipher
@@ -253,8 +278,21 @@ def _connections(context):
             yield connection, uin, db_path
 
 
-def _query(context, sql):
-    """(rows, source paths) from every account database, closing each after."""
+def _read_head(path, length=16):
+    try:
+        with open(path, 'rb') as handle:
+            return handle.read(length)
+    except OSError as error:
+        logfunc(f'WeChat: could not read {path}: {error}')
+        return b''
+
+
+def _query(context, sql, keep_path=False):
+    """(rows, source paths) from every account database, closing each after.
+
+    With keep_path the database each row came from is carried alongside it, so a
+    caller resolving media can look only inside that row's own account container.
+    """
     data_rows, source_paths = [], []
     for connection, uin, db_path in _connections(context):
         try:
@@ -266,10 +304,60 @@ def _query(context, sql):
             connection.close()
         source_paths.append(context.get_relative_path(db_path))
         for row in rows:
-            data_rows.append((row, uin))
+            data_rows.append((row, uin, db_path) if keep_path else (row, uin))
     return data_rows, source_paths
 
 
+
+# Leading-byte signatures, checked because the name a message points to does not
+# establish the format of the bytes behind it.
+_SIGNATURES = (
+    (b'\xff\xd8\xff', 'JPEG'),
+    (b'\x89PNG\r\n\x1a\n', 'PNG'),
+    (b'GIF87a', 'GIF'),
+    (b'GIF89a', 'GIF'),
+    (b'RIFF', 'RIFF container'),
+    (b'wxgf', 'wxgf (WeChat image container)'),
+    (b'\x02#!SILK_V3', 'SILK audio'),
+    (b'#!SILK_V3', 'SILK audio'),
+    (b'#!AMR', 'AMR audio'),
+)
+
+
+def _sniff(head):
+    """A format label read from a file's leading bytes, or '' if unrecognised."""
+    for magic, label in _SIGNATURES:
+        if head.startswith(magic):
+            return label
+    return ''
+
+
+def _media_index(files_found):
+    """{(container, basename): path} for the media the seeker returned.
+
+    Keyed on the account container as well as the name, so two accounts holding a
+    file of the same name are never confused for one another.
+    """
+    index = {}
+    for file_found in files_found:
+        if os.path.isdir(file_found):
+            continue
+        parts = file_found.replace('\\', '/').split('/')
+        container = ''
+        for position in range(len(parts) - 1, -1, -1):
+            if parts[position] == 'com.tencent.mm':
+                container = '/'.join(parts[:position + 1])
+                break
+        index.setdefault((container, os.path.basename(file_found)), file_found)
+    return index
+
+
+def _container_of(path):
+    parts = str(path).replace('\\', '/').split('/')
+    for position in range(len(parts) - 1, -1, -1):
+        if parts[position] == 'com.tencent.mm':
+            return '/'.join(parts[:position + 1])
+    return ''
 
 def _readable_content(content):
     """(readable text, content element, link) for a message's content column.
@@ -311,22 +399,72 @@ def _readable_content(content):
 @artifact_processor
 def wechat_messages(context):
     data_list = []
+    files_found = [str(f) for f in unique_files(context)]
+    index = _media_index(files_found)
+    voice_names = {}
+    for connection, _, db_path in _connections(context):
+        try:
+            for local_id, file_name in connection.cursor().execute(
+                    'SELECT MsgLocalId, FileName FROM voiceinfo'):
+                voice_names[(_container_of(db_path), local_id)] = file_name
+        except Exception as error:  # pylint: disable=broad-exception-caught
+            logfunc(f'WeChat: could not read voiceinfo from {db_path}: {error}')
+        finally:
+            connection.close()
+
     rows, source_paths = _query(context, '''
         SELECT createTime, isSend, talker, type, content, imgPath, status, msgId
         FROM message ORDER BY createTime
-    ''')
-    for row, _ in rows:
+    ''', keep_path=True)
+    for row, _, db_path in rows:
         created, is_send, talker, kind, content, img_path, status, msg_id = row
         readable, element, link = _readable_content(content)
+        container = _container_of(db_path)
+
+        # Every lookup below uses a name the database itself recorded for the row,
+        # never a match on size or time.
+        thumb = full = attachment = ''
+        token = (img_path or '').split('://')[-1]
+        if kind == 3 and token:
+            thumb = index.get((container, token), '')
+            full = index.get((container, f"{token.replace('th_', '', 1)}.jpg"), '')
+        elif kind == 47 and token:
+            attachment = index.get((container, token), '')
+        elif kind == 34:
+            name = voice_names.get((container, msg_id))
+            if name:
+                attachment = index.get((container, f'msg_{name}.amr'), '')
+        attachment = attachment or full
+
+        media = ''
+        if thumb:
+            head = _read_head(thumb)
+            if _sniff(head) in ('JPEG', 'PNG', 'GIF'):
+                media = check_in_media(thumb, os.path.basename(thumb))
+
+        if attachment:
+            attach_name = os.path.basename(attachment)
+            attach_format = _sniff(_read_head(attachment))
+            try:
+                attach_size = os.path.getsize(attachment)
+            except OSError:
+                attach_size = ''
+        else:
+            attach_name = attach_format = attach_size = ''
+
         data_list.append((
             convert_unix_ts_to_utc(created / 1000) if created else '',
             'Outgoing' if is_send == 1 else 'Incoming',
             talker or '',
             readable,
+            media,
             is_send if is_send is not None else '',
             kind if kind is not None else '',
             element,
             link,
+            attach_name,
+            attach_format,
+            attach_size,
             img_path or '',
             status if status is not None else '',
             msg_id if msg_id is not None else '',
@@ -337,11 +475,15 @@ def wechat_messages(context):
         'Direction',
         'Talker',
         'Message',
+        ('Media', 'media'),
         'Is Send',
         'Message Type (as stored)',
         'Content Element',
         'Link',
-        'Image Path',
+        'Attachment File',
+        'Attachment Format',
+        'Attachment Size',
+        'Image Path (as stored)',
         'Status (as stored)',
         'Message ID',
         'Content (as stored)',
