@@ -30,6 +30,9 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "file-text",
+        "sample_data": {
+            "emu_a15_oss_v2": "Android 15 | org.fossify.notes vc 13 | 1 rows",
+        },
     }
 }
 

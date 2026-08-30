@@ -39,6 +39,9 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "calendar",
+        "sample_data": {
+            "emu_a15_oss_v2": "Android 15 | org.fossify.calendar vc 20 | 1 rows",
+        },
     }
 }
 

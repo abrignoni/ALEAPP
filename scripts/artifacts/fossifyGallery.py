@@ -36,6 +36,9 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "image",
+        "sample_data": {
+            "emu_a15_oss_v2": "Android 15 | org.fossify.gallery vc 28 | 3 rows; one favourited, one recycle-bin deletion, one ordinary file",
+        },
     }
 }
 
