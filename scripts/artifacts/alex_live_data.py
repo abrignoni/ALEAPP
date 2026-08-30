@@ -374,7 +374,7 @@ def split_dumpsys_log(dumpsys_file) -> dict:
     _PARSED_DUMPSYS = True
 
 # Helper for Dumpsys Shortcut Output
-def shortcut_data(shortcut_part, type="default"):
+def shortcut_data(shortcut_part, s_type="default"):
     data_list = []
     shortcut_pattern = re.compile(r'ShortcutInfo\s*\{(.*?)(?=^\s*ShortcutInfo\s*\{|\Z)', re.MULTILINE | re.DOTALL)
     for match in shortcut_pattern.finditer(shortcut_part):
@@ -399,9 +399,9 @@ def shortcut_data(shortcut_part, type="default"):
             out_time = datetime.datetime.fromtimestamp(int(timestamp)/1000, tz=datetime.timezone.utc)
         else:
             out_time = None
-        if type == "default":
+        if s_type == "default":
             data_list.append((package_name, shortcut_id, out_time, short_label, long_label, persons, rank, intents))
-        elif type == "discord":
+        elif s_type == "discord":
             if package_name == "com.discord" and intents:
                 cid_pattern  = re.search(r'channel_id,\s*(\d+),', intents)
                 mid_pattern  = re.search(r'message_id,\s*(\d+),', intents)
