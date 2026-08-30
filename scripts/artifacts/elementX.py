@@ -29,6 +29,9 @@ __artifacts_v2__ = {
         "paths": ('*/io.element.android.x/cache/logs/*.log',),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "emu_a15_oss_v3": "Android 15 | io.element.android.x vc 202608042 | 4 rows; one user, one device and two room identifiers",
+        },
     },
     "elementx_sessions": {
         "name": "Element X - Sessions and Stores",
@@ -68,6 +71,9 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "database",
+        "sample_data": {
+            "emu_a15_oss_v3": "Android 15 | io.element.android.x vc 202608042 | 17 rows; table row counts for one signed-in session",
+        },
     }
 }
 
