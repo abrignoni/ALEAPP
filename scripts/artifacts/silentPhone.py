@@ -9,8 +9,20 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Silent Phone",
-        "notes": "com.silentcircle.silentphone keeps its messages in SQLCipher databases that "
-                 "this artifact does not open, but files/zids_sqlite.db is plain SQLite. ZRTP is "
+        "notes": "com.silentcircle.silentphone keeps its messages in encrypted "
+                 "databases that this artifact does not open. Those are repo_store_enc.db, a "
+                 "per-account file ending _axo_store_enc.db, message_indexes.db and "
+                 "sc_keystore.db, all in the package databases directory, and none carries a "
+                 "readable SQLite header. The scheme is SQLCipher, which the application's own "
+                 "dialer preference file records in an entry named sqlcipher_db_version. The "
+                 "passphrase is not present in any readable store in the package: every entry "
+                 "of all six preference files the application writes was read and none holds "
+                 "key material, and there is no fixed key to try. The contents of those four "
+                 "files were therefore not recovered, which is a boundary of this artifact "
+                 "rather than a property of the data; closing it would need an extraction "
+                 "carrying the key material. files/zids_sqlite.db, which this artifact does "
+                 "read, is plain SQLite. "
+                 "ZRTP is "
                  "the key agreement used for the app's media sessions, and each party is "
                  "identified by a ZID. zrtpIdOwn holds this device's ZID, zrtpIdRemote holds one "
                  "row per remote ZID it has cached retained secrets for, and zrtpNames maps a "
