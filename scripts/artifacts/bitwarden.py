@@ -28,7 +28,22 @@ __artifacts_v2__ = {
                  "supports more than one signed-in account at a time and keeps a separate profile for "
                  "each, so rows are keyed by User ID and the Active Account column marks the one the app "
                  "was last using; with a single account signed in that column is uniformly Yes, as it "
-                 "was on the tested device.",
+                 "was on the tested device. For an examiner with lawful authority to attempt offline "
+                 "recovery of the vault: the vault key is derived from the master password with "
+                 "PBKDF2-SHA256, using the account email as the salt and the KDF Iterations reported "
+                 "here (default 600,000), and the stored master password hash is a further PBKDF2-SHA256 "
+                 "pass over that derived key (Bitwarden Security Whitepaper, "
+                 "https://bitwarden.com/help/bitwarden-security-white-paper/). The key therefore comes "
+                 "from the master password rather than from an Android Keystore key, so the material an "
+                 "offline attempt uses can be recovered from the extraction. This artifact does not "
+                 "output that material, but it can be read directly from the same preferences file: the "
+                 "master password hash is the keyHash_<user id> entry, the unlock salt is under "
+                 "masterPasswordUnlock.salt in the profile, and the encrypted user key is the "
+                 "localUserDataKey_<user id> entry, with the encrypted items in databases/vault_database "
+                 "and the account Email reported above serving as the KDF salt. Those values, assembled "
+                 "into the input format expected by password-recovery tooling such as John the Ripper "
+                 "(bitwarden2john), are what such a tool consumes; recovering plaintext still requires "
+                 "the master password or a successful attack against that material.",
         "paths": ('*/com.x8bit.bitwarden/shared_prefs/com.x8bit.bitwarden_preferences.xml',),
         "output_types": "standard",
         "artifact_icon": "user",
