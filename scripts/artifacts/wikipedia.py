@@ -27,7 +27,10 @@ __artifacts_v2__ = {
                  "device.",
         "paths": ('*/org.wikipedia*/databases/wikipedia.db*',),
         "output_types": "standard",
-        "artifact_icon": "book"
+        "artifact_icon": "book",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | org.wikipedia.alpha vc 50603 | 1 rows",
+        },
     },
     "wikipedia_search_history": {
         "name": "Wikipedia - Search History",
@@ -45,7 +48,10 @@ __artifacts_v2__ = {
                  "the wikipedia.db WAL sidecar on the tested device, which is why it is in the paths.",
         "paths": ('*/org.wikipedia*/databases/wikipedia.db*',),
         "output_types": "standard",
-        "artifact_icon": "search"
+        "artifact_icon": "search",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | org.wikipedia.alpha vc 50603 | 1 rows",
+        },
     }
 }
 
