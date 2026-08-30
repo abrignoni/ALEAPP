@@ -25,6 +25,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.jitsi.meet/databases/RKStorage*',),
         "output_types": "standard",
         "artifact_icon": "video",
+        "sample_data": {
+            "emu_a15_oss_v2": "Android 15 | org.jitsi.meet vc 26000002 | 1 rows",
+        },
     },
     "jitsi_meet_settings": {
         "name": "Jitsi Meet - Settings",
@@ -54,6 +57,9 @@ __artifacts_v2__ = {
         "paths": ('*/org.jitsi.meet/databases/RKStorage*',),
         "output_types": "standard",
         "artifact_icon": "settings",
+        "sample_data": {
+            "emu_a15_oss_v2": "Android 15 | org.jitsi.meet vc 26000002 | 4 rows",
+        },
     }
 }
 
