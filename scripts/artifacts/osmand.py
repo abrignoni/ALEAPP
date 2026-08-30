@@ -27,6 +27,9 @@ __artifacts_v2__ = {
         "paths": ('*/net.osmand*/databases/search_history*',),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "emu_a15_oss_v2": "Android 15 | net.osmand.plus vc 531003 | 1 rows",
+        },
     },
     "osmand_app_events": {
         "name": "OsmAnd - App Events",
@@ -49,6 +52,9 @@ __artifacts_v2__ = {
         "paths": ('*/net.osmand*/databases/analytics*',),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "emu_a15_oss_v2": "Android 15 | net.osmand.plus vc 531003 | 4 rows",
+        },
     }
 }
 
