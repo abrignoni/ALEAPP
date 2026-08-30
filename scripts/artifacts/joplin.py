@@ -27,7 +27,10 @@ __artifacts_v2__ = {
                  "parsed here.",
         "paths": ('*/net.cozic.joplin/databases/joplin.sqlite*',),
         "output_types": "standard",
-        "artifact_icon": "notes"
+        "artifact_icon": "notes",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | net.cozic.joplin vc 2097810 | 6 rows",
+        },
     },
     "joplin_notebooks": {
         "name": "Joplin - Notebooks",
@@ -45,7 +48,10 @@ __artifacts_v2__ = {
                  "notes whose parent is this notebook.",
         "paths": ('*/net.cozic.joplin/databases/joplin.sqlite*',),
         "output_types": "standard",
-        "artifact_icon": "folders"
+        "artifact_icon": "folders",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | net.cozic.joplin vc 2097810 | 1 rows",
+        },
     },
     "joplin_resources": {
         "name": "Joplin - Attachments",
@@ -65,7 +71,10 @@ __artifacts_v2__ = {
                  "resource whose Encryption Applied flag is set is end to end encrypted.",
         "paths": ('*/net.cozic.joplin/databases/joplin.sqlite*',),
         "output_types": "standard",
-        "artifact_icon": "paperclip"
+        "artifact_icon": "paperclip",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | net.cozic.joplin vc 2097810 | 3 rows",
+        },
     }
 }
 
