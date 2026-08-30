@@ -40,9 +40,11 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | claude |
 | dhl |
 | dropbox |
+| dust |
 | ebay |
 | frosting |
 | galleryVault |
+| gettr |
 | gmailEmails |
 | googleAccountHistory |
 | googleCalendar |
@@ -53,9 +55,15 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleOdlh |
 | googlePlaySearches |
 | honorMediaLibrary |
+| joplin |
 | kikMessenger |
+| kiwix |
 | knuddels |
+| linkbox |
+| magisk |
+| miBrowser |
 | netflix |
+| phoneLink |
 | pinterest |
 | protonmailDbMail |
 | protonmailInbox |
@@ -75,7 +83,9 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | settingsSearch |
 | shazam |
 | shistorylog |
+| silentPhone |
 | slack |
+| sleepAsAndroid |
 | smartSidebarFileDock |
 | swellbeing |
 | swissmeteo |
@@ -84,6 +94,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | uber |
 | waze |
 | weibo |
+| wikipedia |
 | xiaohongshu |
 <!-- GET_RECORDS_END -->
 
@@ -245,6 +256,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | mega_transfers |
 | mewe |
 | microsoft_onedrive |
+| newpipe |
 | nordVpn |
 | pSettings |
 | payPal |
@@ -293,6 +305,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | tinder |
 | truecaller |
 | tusky |
+| tutanota |
 | usageapps |
 | userDict |
 | vaulty_files |
