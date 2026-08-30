@@ -24,7 +24,10 @@ __artifacts_v2__ = {
                  "parsed.",
         "paths": ('*/app.organicmaps*/files/bookmarks/*.kml',),
         "output_types": "all",
-        "artifact_icon": "map-pin"
+        "artifact_icon": "map-pin",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | app.organicmaps.web vc 26082718 | 2 rows",
+        },
     },
     "organicmaps_tracks": {
         "name": "Organic Maps - Tracks",
@@ -47,7 +50,10 @@ __artifacts_v2__ = {
                  "the whole line.",
         "paths": ('*/app.organicmaps*/files/bookmarks/*.kml',),
         "output_types": "all",
-        "artifact_icon": "route"
+        "artifact_icon": "route",
+        "sample_data": {
+            "emu_a15_oss_v1": "Android 15 | app.organicmaps.web vc 26082718 | 0 rows; no recorded tracks in the bookmarks KML, confirmed by reading it",
+        },
     }
 }
 
