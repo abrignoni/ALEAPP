@@ -24,7 +24,7 @@ __artifacts_v2__ = {
                  "is reported as stored. Use Mobile Data held 0 on every row below, so none of "
                  "these transfers was recorded as having used the mobile network, and the column "
                  "is kept because another value would say one had. The table also carries "
-                 "per-upload access key"
+                 "per-upload access key, secret "
                  "key and session token columns, whose stored times equal the row's own create "
                  "time and so are scoped to that single upload; they are credential material "
                  "that adds nothing to what the other columns already show, and they are "
