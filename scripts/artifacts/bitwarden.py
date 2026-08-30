@@ -32,6 +32,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.x8bit.bitwarden/shared_prefs/com.x8bit.bitwarden_preferences.xml',),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "emu_a15_oss_v3": "Android 15 | com.x8bit.bitwarden vc 21819 | 14 rows; settings for one signed-in account",
+        },
     },
     "bitwarden_vault_items": {
         "name": "Bitwarden - Vault Items",
@@ -65,6 +68,9 @@ __artifacts_v2__ = {
         "paths": ('*/com.x8bit.bitwarden/databases/vault_database*',),
         "output_types": "standard",
         "artifact_icon": "lock",
+        "sample_data": {
+            "emu_a15_oss_v3": "Android 15 | com.x8bit.bitwarden vc 21819 | 1 rows",
+        },
     }
 }
 
