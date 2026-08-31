@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "factory_reset": {
         "name": "Factory Reset",
         "description": "Reports the factory_reset bootstat record; AOSP stores the event value in the file's modification time.",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-05",
         "last_update_date": "2026-08-01",
         "requirements": "none",

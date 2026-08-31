@@ -23,16 +23,19 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
+from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
 def googleFitGMS(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
-    
+    source_paths = set()
+
     for file_found in files_found:
         if str(file_found).endswith(('-wal','-shm')):
             continue
         else:
+            source_paths.add(str(file_found))
             query = '''
             SELECT
             datetime(Sessions.start_time/1000,'unixepoch') AS "Activity Start Time",
@@ -57,4 +60,4 @@ def googleFitGMS(context):
                 data_list.append((record[0],record[1],record[2],record[3],record[4],record[5],context.get_relative_path(file_found)))
 
     data_headers = (('Activity Start Time','datetime'),('Activity End Time','datetime'),'Contributing App','Activity Type','Activity Name','Activity Description','Source File') 
-    return data_headers, data_list, 'See source file(s) below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

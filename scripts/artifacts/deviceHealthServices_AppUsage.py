@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_Turbo_AppUsage": {
         "name": "Turbo_AppUsage",
         "description": "Parses application usage via Device Health Services",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-29",
         "last_update_date": "2021-06-29",
         "requirements": "none",
@@ -16,11 +16,11 @@ __artifacts_v2__ = {
             "galaxys10_a10": "Android 10 | com.google.android.apps.turbo vc 10235989 | 744 rows",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.turbo vc 10272287 | 794 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.turbo vc 10270262 | 1677 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.apps.turbo | 237 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.turbo | 79 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.turbo | 232 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.turbo vc 10261629 | 79 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.turbo vc 10261629 | 928 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.turbo vc 10270697 | 2 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.turbo vc 10270697 | 1 row",
         },
     }
 }
@@ -30,6 +30,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
@@ -52,7 +53,7 @@ def _parse_xml(file_found):
 
 @artifact_processor
 def get_Turbo_AppUsage(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_battery_usage_v4": {
         "name": "battery_usage_v4",
         "description": "Parses per-app battery usage (timestamp, application, power consumed, foreground and background usage, battery level and status) from the settings intelligence battery-usage-db-v4 database.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-12-21",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.settings.intelligence vc 1000282241 | 0 rows",
             "pixel7a_a14": "Android 14 | com.google.android.settings.intelligence vc 1000230247 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.settings.intelligence vc 1000217934 | 98857 rows",
-            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 216 rows",
+            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 108 rows",
         },
     }
 }
@@ -23,6 +23,7 @@ __artifacts_v2__ = {
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _ms_to_utc(value):
@@ -33,7 +34,7 @@ def _ms_to_utc(value):
 
 @artifact_processor
 def get_battery_usage_v4(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

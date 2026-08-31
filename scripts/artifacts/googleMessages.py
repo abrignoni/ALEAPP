@@ -24,11 +24,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.messaging vc 311755063 | 81 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.apps.messaging vc 289151063 | 243 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.messaging vc 238308063 | 1123 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.apps.messaging vc 292971900 | 135 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.messaging vc 292971900 | 45 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.messaging vc 293261063 | 40 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.messaging vc 161637900 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.messaging vc 186597063 | 36 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.messaging vc 259818063 | 42 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.messaging vc 259818063 | 21 rows",
         },
         "data_views": {
             "conversation": {
@@ -47,11 +47,12 @@ __artifacts_v2__ = {
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_googleMessages(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''
@@ -98,7 +99,7 @@ def get_googleMessages(context):
 
         for row in all_rows:
             timestamp = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
-            data_list.append((timestamp, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
+            data_list.append((timestamp, row[8], row[3], row[2], row[4], row[1], row[5], row[6], row[7]))
 
-    data_headers = (('Message Timestamp', 'datetime'), 'Message Type', 'Other Participant/Conversation Name', ('Message Sender', 'phonenumber'), 'Message', 'Attachment Byte Size', 'Attachment Location', 'Conversation ID', 'Direction')
+    data_headers = (('Message Timestamp', 'datetime'), 'Direction', ('Message Sender', 'phonenumber'), 'Other Participant/Conversation Name', 'Message', 'Message Type', 'Attachment Byte Size', 'Attachment Location', 'Conversation ID')
     return data_headers, data_list, source_path

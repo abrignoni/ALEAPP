@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_Todoist": {
         "name": "Todoist - Items",
         "description": "Todoist - Parses task items",
-        "author": "Kevin Pagano (https://startme.stark4n6.com)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "None",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     "get_Todoist_notes": {
         "name": "Todoist - Notes",
         "description": "Todoist - Parses notes and attachments",
-        "author": "Kevin Pagano (https://startme.stark4n6.com)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "None",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
     "get_Todoist_projects": {
         "name": "Todoist - Projects",
         "description": "Todoist - Parses projects",
-        "author": "Kevin Pagano (https://startme.stark4n6.com)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "None",

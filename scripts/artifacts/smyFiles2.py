@@ -70,6 +70,8 @@ def _rows(db_path, sql):
     if not db_path:
         return []
     db = open_sqlite_db_readonly(db_path)
+    if db is None:
+        return []
     cursor = db.cursor()
     try:
         cursor.execute(sql)

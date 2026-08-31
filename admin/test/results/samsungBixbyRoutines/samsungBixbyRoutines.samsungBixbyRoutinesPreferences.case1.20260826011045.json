@@ -1,0 +1,106 @@
+{
+  "metadata": {
+    "module_name": "samsungBixbyRoutines",
+    "artifact_name": "Samsung Bixby Routines - App Preferences",
+    "function_name": "samsungBixbyRoutinesPreferences",
+    "case_number": "case1",
+    "number_of_columns": 3,
+    "number_of_rows": 15,
+    "total_data_size_bytes": 811,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/samsungBixbyRoutines/testdata.samsungBixbyRoutines.samsungBixbyRoutinesPreferences.case1.zip",
+    "start_time": "2026-08-26T01:10:45.972495+00:00",
+    "end_time": "2026-08-26T01:10:45.987515+00:00",
+    "run_time_seconds": 0.0010459423065185547,
+    "last_commit": {
+      "hash": "3d04d69be03aca78b71590a81a01e5fd284a34c1",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T16:56:04-04:00",
+      "message": "Add samsungBixbyRoutines ALEAPP module with test fixtures"
+    }
+  },
+  "headers": [
+    "Key",
+    "Value",
+    "Converted Timestamp"
+  ],
+  "data": [
+    [
+      "SHOW_BADGE",
+      "recommend_before_bed;preset_save_battery_at_night",
+      null
+    ],
+    [
+      "debug_mode_features",
+      "{\"featureMap\":{\"FakeConditionTrigger\":false,\"NewEditor\":false,\"EnableAccessibilityUser\":false,\"FakeContextManager\":false}}",
+      null
+    ],
+    [
+      "init_time",
+      "1702403645338",
+      1702403645
+    ],
+    [
+      "is_preadded_item",
+      "true",
+      null
+    ],
+    [
+      "latest_time",
+      "1705466477069",
+      1705466477
+    ],
+    [
+      "pref_metaloader_finished",
+      "3.1.21.8",
+      null
+    ],
+    [
+      "recommend_count_preset_WORK",
+      "1",
+      null
+    ],
+    [
+      "recommend_count_recommend_PROBABLY_ASLEEP",
+      "1",
+      null
+    ],
+    [
+      "recommend_count_recommend_WORK",
+      "1",
+      null
+    ],
+    [
+      "recommend_discover_category_order",
+      "recommend_before_bed;recommend_morning;recommend_work_school;recommend_more_accessibile;recommend_move;recommend_home;recommend_exercise",
+      null
+    ],
+    [
+      "routine_meta_data_loading_statue",
+      "complete",
+      null
+    ],
+    [
+      "routine_trust_agent_service_key",
+      "0",
+      null
+    ],
+    [
+      "running_face_widget_ids",
+      null,
+      null
+    ],
+    [
+      "sleep_expired_time",
+      "1703392505097",
+      1703392505
+    ],
+    [
+      "update_noti_time",
+      "1725570023803",
+      1725570023
+    ]
+  ]
+}

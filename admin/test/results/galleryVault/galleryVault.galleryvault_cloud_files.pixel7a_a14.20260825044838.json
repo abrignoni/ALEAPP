@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Cloud Files",
+    "function_name": "galleryvault_cloud_files",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 15,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_cloud_files.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:38.536158+00:00",
+    "end_time": "2026-08-25T04:48:38.583820+00:00",
+    "run_time_seconds": 0.0010077953338623047,
+    "last_commit": {
+      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-07T23:27:07-04:00",
+      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+    }
+  },
+  "headers": [
+    "Cloud Add Time",
+    "Original Create Time",
+    "File Name",
+    "Cloud Folder Path",
+    "File UUID",
+    "MIME Type",
+    "Size (bytes)",
+    "Dimensions",
+    "Upload Complete",
+    "Has Thumbnail",
+    "Moved to Recycle Bin",
+    "Cloud Storage Key",
+    "File Encryption Key (hex)",
+    "File Content Hash",
+    "Cloud Drive ID"
+  ],
+  "data": []
+}

@@ -47,13 +47,13 @@ __artifacts_v2__ = {
         "description": "Parses Viber messages (date, sender and recipients, thread, content, direction, unread flag and attachments) from the Viber databases.",
         "author": "@markmckinnon",
         "creation_date": "2020-12-24",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Viber",
         "notes": ("Direction is decoded from the messages table 'send_type' column. Direction/status "
                   "value mappings were established through testing; unrecognized values are reported "
                   "as stored.\n"
-                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
                   "Unread carries the messages table 'unread' column as stored; it is not a "
@@ -209,9 +209,9 @@ def get_Viber_messages(context):
             all_rows = []
         db.close()
         for r in all_rows:
-            data_list.append((_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7]))
+            data_list.append((_ms_to_utc(r[0]), r[5], r[1], r[4], r[2], r[3], r[6], r[7]))
 
-    data_headers = (('Message Date', 'datetime'), ('From Phone Number', 'phonenumber'), 'Recipients', 'Thread ID', 'Message', 'Direction', 'Unread', 'File Attachment')
+    data_headers = (('Message Date', 'datetime'), 'Direction', ('From Phone Number', 'phonenumber'), 'Message', 'Recipients', 'Thread ID', 'Unread', 'File Attachment')
     return data_headers, data_list, messages_db
 
 

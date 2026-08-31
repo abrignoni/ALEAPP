@@ -210,7 +210,7 @@ def ornetbrowser_bookmarks(context):
             break
 
     if not source_path:
-        return (), [], "appDatabase not found"
+        return (), [], ''
 
     query = '''
         SELECT
@@ -251,7 +251,7 @@ def ornetbrowser_suggestions(context):
             break
 
     if not source_path:
-        return (), [], "appDatabase not found"
+        return (), [], ''
 
     query = '''
         SELECT
@@ -290,7 +290,7 @@ def ornetbrowser_history(context):
             break
 
     if not source_path:
-        return (), [], "appDatabase not found"
+        return (), [], ''
 
     query = '''
         SELECT
@@ -331,7 +331,7 @@ def ornetbrowser_opentabs(context):
             break
 
     if not source_path:
-        return (), [], "appDatabase not found"
+        return (), [], ''
 
     thumb_lookup = {}
     for file_found in files_found:
@@ -413,7 +413,7 @@ def ornetbrowser_frequents(context):
             break
 
     if not source_path:
-        return (), [], "appDatabase not found"
+        return (), [], ''
 
     query = '''
         SELECT
@@ -477,15 +477,17 @@ def ornetbrowser_downloads(context):
 def ornetbrowser_thumbnails(context):
     files_found = context.get_files_found()
     data_list = []
+    source_paths = set()
 
     for file_found in files_found:
         media_path = Path(file_found)
         if media_path.suffix.lower() not in ('.jpg'):
             continue
+        source_paths.add(str(file_found))
         filename = (media_path.name)
         utctime = int(media_path.stem)
 
-        timestamp = (datetime.datetime.utcfromtimestamp(utctime/1000).strftime('%Y-%m-%d %H:%M:%S'))
+        timestamp = (datetime.datetime.fromtimestamp(utctime/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))
         media_item = check_in_media(file_found, filename)
 
         if media_item:
@@ -493,7 +495,7 @@ def ornetbrowser_thumbnails(context):
 
     data_headers = (('Timestamp', 'datetime'), ('Thumbnail', 'media'), ' File Name', 'Location')
 
-    return data_headers, data_list, 'See source path(s) below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
@@ -519,7 +521,7 @@ def ornetbrowser_searchhistory(context):
             break
 
     if not source_path:
-        return (), [], "appDatabase not found"
+        return (), [], ''
 
     query = '''
         SELECT
@@ -612,7 +614,7 @@ def ornetbrowser_usageinfo(context):
             if key_name == "last_app_close_time":
                 try:
                     ts = int(value_raw)
-                    dt = datetime.datetime.utcfromtimestamp(ts / 1000.0)
+                    dt = datetime.datetime.fromtimestamp(ts / 1000.0, datetime.timezone.utc)
                     value_out = dt.strftime("%Y-%m-%d %H:%M:%S")
                 except Exception:
                     pass

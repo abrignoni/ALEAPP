@@ -1,0 +1,54 @@
+{
+  "metadata": {
+    "module_name": "Spotify",
+    "artifact_name": "Spotify - Playlist Library Activity",
+    "function_name": "spotify_playlist_library",
+    "case_number": "case1",
+    "number_of_columns": 5,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 253,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Spotify/testdata.Spotify.spotify_playlist_library.case1.zip",
+    "start_time": "2026-08-26T01:17:23.414921+00:00",
+    "end_time": "2026-08-26T01:17:23.433299+00:00",
+    "run_time_seconds": 0.00019097328186035156,
+    "last_commit": {
+      "hash": "591933b74dcaa25828cfc79933a5231063092a98",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T19:12:55-04:00",
+      "message": "Add Spotify ALEAPP module with trimmed test fixtures"
+    }
+  },
+  "headers": [
+    "Snapshot Time",
+    "Account Folder",
+    "Playlist URI",
+    "Counter A (raw)",
+    "Counter B (raw)"
+  ],
+  "data": [
+    [
+      1706554603,
+      "31inn2ztcydtrsqh2bu6q33ta5hq-user",
+      "spotify:playlist:2F2Ci6vpJG6KW8OW74Z7F2",
+      1,
+      1
+    ],
+    [
+      1706554762,
+      "31inn2ztcydtrsqh2bu6q33ta5hq-user",
+      "spotify:playlist:6ggMoQIV3WD8yPraoM68AX",
+      1,
+      1
+    ],
+    [
+      1722113194,
+      "31inn2ztcydtrsqh2bu6q33ta5hq-user",
+      "spotify:playlist:2F2Ci6vpJG6KW8OW74Z7F2",
+      21,
+      4
+    ]
+  ]
+}

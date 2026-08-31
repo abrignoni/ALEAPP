@@ -102,16 +102,18 @@ def get_discordChats(context):
             direction = 'Outgoing' if sender_id == account_id else 'Incoming'
         else:
             direction = ''
-        data_list.append((datatimestamp,channelid,dataid,username,content,attachementfilename,attachementurl,attachmentproxyurl,mentions,mentionroles,pinned,avatar,editedtimestamp,sender_id,account_id,direction))
+        data_list.append((datatimestamp, editedtimestamp, direction, username, content, channelid, dataid, attachementfilename, attachementurl, attachmentproxyurl, mentions, mentionroles, pinned, avatar, sender_id, account_id))
 
     db.close()
 
     data_headers = (
         ('Timestamp', 'datetime'),
-        'Channel ID',
-        'ID',
+        ('Edited Timestamp', 'datetime'),
+        'Direction',
         'Username',
         'Content',
+        'Channel ID',
+        'ID',
         'Attachment Filename',
         'Attachment URL',
         'Attachment Proxy URL',
@@ -119,9 +121,7 @@ def get_discordChats(context):
         'Mention Roles',
         'Pinned',
         'Avatar',
-        ('Edited Timestamp', 'datetime'),
         'Sender ID',
         'Account ID',
-        'Direction',
     )
     return data_headers, data_list, source_path

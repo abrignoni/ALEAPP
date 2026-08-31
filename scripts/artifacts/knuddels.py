@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Extracts Knuddels chats (text, images/snaps and GIFs) from database files",
         "author": "@annkirpv",
         "creation_date": "2025-05-04",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Chats",
         "notes": ("From Me is derived from the database file name: the owner's nickname is taken to "
@@ -14,7 +14,7 @@ __artifacts_v2__ = {
                   "the file name does not follow that convention the owner cannot be established "
                   "and the column is left blank for every row of that database rather than "
                   "reporting the messages as received.\n"
-                  "In the conversation view only rows with From Me set to 1 are shown as sent by "
+                  "In the conversation view only rows with From Me set to 1 are attributed to "
                   "the device owner; a blank value is not attributed to the owner.\n"
                   "Message Type is derived from markers found in the message text. A message that "
                   "carries the app's marker prefix but no marker this parser recognises is reported "
@@ -254,22 +254,33 @@ def knuddels_chats(context):
             from_me = '' if owner_nick is None else (1 if nickname == owner_nick else 0)
 
             data_list.append((
-                timestamp, nickname, message, msg_type, media_cell, gif_cell,
-                snap_expired, participants,
-                conversation_key, from_me, Context.get_relative_path(file_found), message_id, sender, user_id,
+                timestamp,
+                from_me,
+                nickname,
+                participants,
+                message,
+                media_cell,
+                msg_type,
+                gif_cell,
+                snap_expired,
+                conversation_key,
+                Context.get_relative_path(file_found),
+                message_id,
+                sender,
+                user_id,
             ))
 
     data_headers = (
         ('Timestamp', 'datetime'),
+        'From Me',
         'User Name',
+        'Participants',
         'Message',
-        'Message Type',
         ('Media', 'media'),
+        'Message Type',
         'GIF URL(s) (reconstructed by parser)',
         'Snap Expired',
-        'Participants',
         'Conversation Key',
-        'From Me',  # 1 = sent by owner, 0 = received, blank = owner not established
         'Source File',
         'Message ID',
         'Thread Table UID',

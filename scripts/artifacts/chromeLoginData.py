@@ -30,6 +30,7 @@ from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def decrypt(ciphertxt, key=b"peanuts"):
@@ -69,7 +70,7 @@ def get_valid_date(d1, d2):
 
 @artifact_processor
 def get_chromeLoginData(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
 
     data_headers = ['Created Time', 'Username', 'Password', 'Origin URL', 'Blacklisted by User']

@@ -24,13 +24,13 @@ __artifacts_v2__ = {
         "description": "Parses Skype messages (send time, thread, content, direction, sender and recipient IDs and attachments) from the Skype live database.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Skype",
         "notes": ("Direction is decoded from the chatitem 'is_sender_me' flag. Direction/status "
                   "value mappings were established through testing; unrecognized values, including "
                   "NULL, are left blank rather than assigned a direction.\n"
-                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction is blank is not attributed to the owner.\n"
                   "To ID is filled only for rows recognized as outgoing."),
         "paths": ('*/com.skype.raider/databases/live*',),
@@ -173,10 +173,10 @@ def get_skype_messages(context):
                     to_id = row[0]
             sendtime = datetime.datetime.fromtimestamp(int(row[2]), datetime.timezone.utc)
 
-            data_list.append((sendtime, thread_id,  row[3], row[5], row[6], to_id, row[4]))
+            data_list.append((sendtime, row[5], row[6], row[3], thread_id, to_id, row[4]))
         db.close()
 
-    data_headers = (('Send Time', 'datetime'), 'Thread ID', 'Content', 'Direction', 'From ID', 'To ID', 'Attachment')
+    data_headers = (('Send Time', 'datetime'), 'Direction', 'From ID', 'Content', 'Thread ID', 'To ID', 'Attachment')
     return data_headers, data_list, source_path
 
 

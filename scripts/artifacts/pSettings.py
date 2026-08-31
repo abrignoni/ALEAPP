@@ -14,21 +14,22 @@ __artifacts_v2__ = {
         "sample_data": {
             "galaxys10_a10": "Android 10 | com.google.android.gsf | 13 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gsf | 18 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gsf | 57 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gsf | 19 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gsf | 33 rows",
             "sharon_a14": "Android 14 | com.google.android.gsf | 18 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gsf | 30 rows",
-            "userb2_a13": "Android 13 | com.google.android.gsf | 36 rows",
+            "userb2_a13": "Android 13 | com.google.android.gsf | 18 rows",
         },
     }
 }
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_pSettings(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

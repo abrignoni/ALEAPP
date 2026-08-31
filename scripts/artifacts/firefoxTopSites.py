@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_firefoxTopSites": {
         "name": "Firefox - Top Sites",
         "description": "Parses Firefox top sites (created timestamp, title, URL and default flag) from the top_sites database.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",
         "requirements": "none",
@@ -20,11 +20,12 @@ __artifacts_v2__ = {
 import os
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_firefoxTopSites(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

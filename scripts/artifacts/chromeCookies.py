@@ -17,11 +17,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | 474 rows",
             "kevin_pocox7_a15": "Android 15 | 4170 rows",
             "pixel7a_a14": "Android 14 | 1554 rows",
-            "samsunga53_a14": "Android 14 | 1491 rows",
+            "samsunga53_a14": "Android 14 | 497 rows",
             "samsungs20_a13": "Android 13 | 670 rows",
             "sharon_a14": "Android 14 | 1842 rows",
             "russell_pixel6a_a13": "Android 13 | 1420 rows",
-            "userb2_a13": "Android 13 | 632 rows",
+            "userb2_a13": "Android 13 | 316 rows",
         },
     }
 }
@@ -30,11 +30,12 @@ import os
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_chromeCookies(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
 
     data_headers = ['Last Access Date', 'Host', 'Name', 'Value', 'Created Date', 'Expiration Date', 'Path']

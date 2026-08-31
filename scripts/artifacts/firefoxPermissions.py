@@ -2,12 +2,12 @@ __artifacts_v2__ = {
     "get_firefoxPermissions": {
         "name": "Firefox - Permissions",
         "description": "Parses Firefox site permissions (origin, permission type, status, modification and expiration timestamps) from permissions.sqlite.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "Reference: Mozilla, 'nsIPermissionManager (ALLOW_ACTION=1, DENY_ACTION=2)', https://github.com/mozilla-firefox/firefox/blob/main/netwerk/base/nsIPermissionManager.idl",
+        "notes": "Reference: Mozilla, 'nsIPermissionManager (ALLOW_ACTION=1, DENY_ACTION=2)', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/netwerk/base/nsIPermissionManager.idl",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -20,11 +20,12 @@ __artifacts_v2__ = {
 import os
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_firefoxPermissions(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

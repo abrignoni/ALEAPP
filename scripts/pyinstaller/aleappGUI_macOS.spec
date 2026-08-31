@@ -27,6 +27,7 @@ a = Analysis(
         *collect_submodules('Crypto'),
         *collect_submodules('google.protobuf'),
         *collect_submodules('leapp_functions'),
+        *collect_submodules('PIL'),
         'bcrypt',
         'bencoding',
         'bs4',
@@ -35,7 +36,6 @@ a = Analysis(
         'fitdecode',
         'html.parser',
         'mister_skinnylegs',
-        'PIL.Image',
         'polyline',
         'uuid',
         'xmltodict',
@@ -80,5 +80,5 @@ app = BUNDLE(
     name='aleappGUI.app',
     icon='../../assets/icon.icns',
     bundle_identifier='4n6.brigs.ALEAPP',
-    version='2026.2.0',
+    version='2026.3.2-dev',
 )

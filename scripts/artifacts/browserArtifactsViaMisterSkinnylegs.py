@@ -344,6 +344,7 @@ import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, logfunc, check_in_embedded_media
 from scripts.context import Context
+from scripts.artifacts.storagePathViews import unique_files
 
 try:
     import mister_skinnylegs.util.profile_folder_protocols
@@ -613,7 +614,7 @@ def process(plugin_name: str, context: Context):
     data_rows = []
     source_files = []
     seeker = context.get_seeker()
-    for hit_path in context.get_files_found():
+    for hit_path in unique_files(context):
         profile_folder = pathlib.Path(hit_path).parent
 
         # force the seeker to get what we need for processing

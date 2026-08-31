@@ -21,18 +21,18 @@ __artifacts_v2__ = {
         "description": "Parses IMO messages (timestamp, sender and recipient IDs, message, direction, read status and attachments) from the IMO imofriends.db.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "IMO",
         "notes": ("Direction is decoded from the messages table 'message_type' column. "
                   "Direction/status value mappings were established through testing; unrecognized "
                   "values are reported as stored, so rows the mapping does not cover are not "
                   "labelled as sent or received.\n"
-                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
                   "From ID and To ID are filled only when the direction is recognized; the other "
-                  "party is always present in Chat Partner."),
+                  "party is reported in Chat Partner regardless."),
         "paths": ('*/com.imo.android.imous/databases/imofriends.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -57,11 +57,12 @@ import datetime
 import json
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_imo_account(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -88,7 +89,7 @@ def get_imo_account(context):
 
 @artifact_processor
 def get_imo_messages(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -128,17 +129,17 @@ def get_imo_messages(context):
                         attachmentPath = attachmentLocalPath
 
                 timestamp = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc)
-                data_list.append((timestamp, from_id, to_id, row[2],  row[4], row[5], attachmentPath, row[0]))
+                data_list.append((timestamp, row[4], row[0], row[2], from_id, to_id, row[5], attachmentPath))
             db.close()
 
     data_headers = (
         ('Timestamp', 'datetime'),
+        'Direction',
+        'Chat Partner',
+        'Last Message',
         'From ID',
         'To ID',
-        'Last Message',
-        'Direction',
         'Message Read',
         'Attachment',
-        'Chat Partner',
     )
     return data_headers, data_list, source_path

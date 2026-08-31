@@ -16,12 +16,14 @@ __artifacts_v2__ = {
         "sample_data": {
             "anne_a15": "Android 15 | com.sec.android.provider.badge | 18 rows",
             "galaxys10_a10": "Android 10 | com.sec.android.provider.badge | 11 rows",
-            "samsunga53_a14": "Android 14 | com.sec.android.provider.badge | 20 rows",
+            "samsunga53_a14": "Android 14 | com.sec.android.provider.badge | 10 rows",
             "samsungs20_a13": "Android 13 | com.sec.android.provider.badge | 19 rows",
             "sharon_a14": "Android 14 | com.sec.android.provider.badge | 24 rows",
         },
     },
 }
+
+import re
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
@@ -29,16 +31,21 @@ from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 def _unique_db_files(context, name_suffix):
     '''Database files matching the suffix, without -journal/-wal/-shm sidecars and
     without the duplicates extractions carry for the same file (data_mirror, and
-    /data/data next to /data/user/0).'''
+    /data/data next to /data/user/0).
+
+    The dedupe key is the evidence-relative path, not the extracted path: the report's own
+    data folder ends in /data, so a raw-path replace can rewrite the harness boundary
+    instead of the evidence path on archives whose members start with data/.'''
     seen = set()
     result = []
     for file_found in context.get_files_found():
         file_found = str(file_found)
         if not file_found.endswith(name_suffix):
             continue
-        if 'data_mirror' in file_found:
+        relative = str(context.get_relative_path(file_found)).replace('\\', '/')
+        if 'data_mirror' in relative:
             continue
-        normalized = file_found.replace('\\', '/').replace('/data/data/', '/data/user/0/')
+        normalized = re.sub(r'(^|/)data/data/', r'\1data/user/0/', relative)
         if normalized in seen:
             continue
         seen.add(normalized)

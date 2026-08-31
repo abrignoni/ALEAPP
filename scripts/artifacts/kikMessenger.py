@@ -146,6 +146,7 @@ from scripts.ilapfuncs import (
     convert_unix_ts_to_utc,
     get_sqlite_db_records,
 )
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _ms(value):
@@ -246,7 +247,7 @@ def _attachment_properties(db_path):
 
 @artifact_processor
 def kik_messages(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = _main_db(files_found)
     data_list = []
 
@@ -272,10 +273,10 @@ def kik_messages(context):
             _ms(record[0]),
             'Outgoing' if outgoing else 'Incoming',
             local_user if outgoing else partner,
-            record[2],
-            record[3],
             record[4],
             _check_in(media_by_content_id.get(record[7], [])) if record[7] else '',
+            record[2],
+            record[3],
             properties.get('file-name', ''),
             properties.get('file-size', ''),
             properties.get('file-url', ''),
@@ -294,10 +295,10 @@ def kik_messages(context):
         ('Timestamp', 'datetime'),
         'Direction',
         'Sender',
-        'Partner JID',
-        'Partner Display Name',
         'Body',
         ('Attachment', 'media'),
+        'Partner JID',
+        'Partner Display Name',
         'Attachment File Name',
         'Attachment File Size',
         'Attachment URL',
@@ -316,7 +317,7 @@ def kik_messages(context):
 
 @artifact_processor
 def kik_users(context):
-    source_path = _main_db(context.get_files_found())
+    source_path = _main_db(unique_files(context))
     data_list = []
     query = '''
     SELECT jid, display_name, user_name, local_name, is_group, group_size, group_hashtag,
@@ -362,7 +363,7 @@ def kik_users(context):
 
 @artifact_processor
 def kik_attachments(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = _main_db(files_found)
     data_list = []
     pivot = _attachment_properties(source_path)
@@ -423,7 +424,7 @@ def kik_attachments(context):
 
 @artifact_processor
 def kik_chat_metadata(context):
-    source_path = _main_db(context.get_files_found())
+    source_path = _main_db(unique_files(context))
     data_list = []
     query = '''
     SELECT chat_end_time, bin_id, retained, show_when_empty, is_anonymously_matched,
@@ -457,7 +458,7 @@ def kik_chat_metadata(context):
 
 @artifact_processor
 def kik_local_account(context):
-    source_path = _db_ending_with(context.get_files_found(), 'kikCoreDatabase.db')
+    source_path = _db_ending_with(unique_files(context), 'kikCoreDatabase.db')
     data_list = []
     for record in _query(source_path, 'CoreTable',
                          'SELECT username, core_id, is_active FROM CoreTable'):
@@ -469,7 +470,7 @@ def kik_local_account(context):
 
 @artifact_processor
 def kik_roster(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     sources = []
 

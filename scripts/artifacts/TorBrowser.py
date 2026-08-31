@@ -56,6 +56,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, get_sqlite_db_records, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
@@ -77,8 +78,9 @@ def _parse_xml(file_found):
 
 @artifact_processor
 def torbrowser_thumbnails(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
+    source_paths = set()
 
     for file_found in files_found:
         media_path = Path(file_found)
@@ -88,11 +90,12 @@ def torbrowser_thumbnails(context):
         if media_path.suffix.lower() != '.0':
             continue
 
+        source_paths.add(str(file_found))
         filename = media_path.name
-        location = str(media_path.parent)
+        location = context.get_relative_path(str(media_path.parent))
 
         modified_ts = os.path.getmtime(file_found)
-        modifiedtime = datetime.datetime.utcfromtimestamp(int(modified_ts)).strftime('%Y-%m-%d %H:%M:%S')
+        modifiedtime = datetime.datetime.fromtimestamp(int(modified_ts), datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
 
         media_item = check_in_media(filename)
 
@@ -101,12 +104,12 @@ def torbrowser_thumbnails(context):
 
     data_headers = (('ModifiedTime', 'datetime'), ('Thumbnail', 'media'), 'File Name', 'Location')
 
-    return data_headers, data_list, 'See source path(s) below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
 def torbrowser_bookmarks(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in files_found:
@@ -144,7 +147,7 @@ def torbrowser_bookmarks(context):
 
 @artifact_processor
 def torbrowser_usageinfo(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     usage_keys = {
         "pref_key_last_browse_activity_time",
@@ -165,7 +168,7 @@ def torbrowser_usageinfo(context):
         root = _parse_xml(source_path)
 
         filename = Path(source_path).name
-        path = source_path
+        path = context.get_relative_path(source_path)
 
         for elem in root.iter():
             key_name = elem.get("name")
@@ -178,7 +181,7 @@ def torbrowser_usageinfo(context):
             if key_name == "pref_key_last_browse_activity_time":
                 try:
                     ts = int(value_raw)
-                    dt = datetime.datetime.utcfromtimestamp(ts / 1000.0)
+                    dt = datetime.datetime.fromtimestamp(ts / 1000.0, datetime.timezone.utc)
                     value_out = dt.strftime("%Y-%m-%d %H:%M:%S")
                 except Exception:
                     pass

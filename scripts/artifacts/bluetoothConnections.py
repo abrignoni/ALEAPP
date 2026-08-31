@@ -2,13 +2,13 @@ __artifacts_v2__ = {
     "get_bluetoothConnections": {
         "name": "Bluetooth Connections",
         "description": "Parses previously connected Bluetooth devices (first connected timestamp, device name, MAC address and link key) from bt_config.conf.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-23",
         "last_update_date": "2021-06-23",
         "requirements": "none",
         "category": "Bluetooth Connections",
         "notes": "",
-        "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
+        "paths": ('*/bt_config.conf',),
         "output_types": "standard",
         "artifact_icon": "bluetooth",
         "sample_data": {
@@ -27,13 +27,13 @@ __artifacts_v2__ = {
     "get_bluetoothAdapter": {
         "name": "Bluetooth Adapter Information",
         "description": "Parses the local Bluetooth adapter information (key and value) from bt_config.conf.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-23",
         "last_update_date": "2021-06-23",
         "requirements": "none",
         "category": "Bluetooth Connections",
         "notes": "",
-        "paths": ('*/misc/bluedroid/bt_config.conf', '*/bt_config.conf'),
+        "paths": ('*/bt_config.conf',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "bluetooth",
         "sample_data": {

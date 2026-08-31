@@ -2,5 +2,7 @@
 # These modules are deselected by default in the GUI.
 
 modules_to_exclude = [
+    'c2paProvenance',
+    'imagemngCache',
     'walStrings'
 ]
