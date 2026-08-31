@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_Turbo_AppUsage": {
         "name": "Turbo_AppUsage",
         "description": "Parses application usage via Device Health Services",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-29",
         "last_update_date": "2021-06-29",
         "requirements": "none",

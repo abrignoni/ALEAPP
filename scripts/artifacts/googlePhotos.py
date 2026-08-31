@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_googlePhotos": {
         "name": "Google Photos - Local Media",
         "description": "Local media indexed by Google Photos (gphotos*.db local_media)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_remote": {
         "name": "Google Photos - Remote Media",
         "description": "Remote (cloud) media indexed by Google Photos (gphotos*.db remote_media)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_shared": {
         "name": "Google Photos - Shared Media",
         "description": "Shared media indexed by Google Photos (gphotos*.db shared_media)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_folders": {
         "name": "Google Photos - Backup Folders",
         "description": "Folders listed in the backup_folders table (gphotos*.db)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -113,7 +113,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_cache": {
         "name": "Google Photos - Cache",
         "description": "Google Photos disk/glide cache entries with cached images",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2021-04-14",
         "requirements": "none",
@@ -139,7 +139,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_trash": {
         "name": "Google Photos - Local Trash",
         "description": "Google Photos local trash entries and the trash files still present (local_trash.db)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",

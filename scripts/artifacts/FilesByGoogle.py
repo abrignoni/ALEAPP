@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "fbg_master": {
         "name": "Files By Google - Files Master",
         "description": "Parses the master files list from the Files by Google application",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-18",
         "last_update_date": "2025-09-09",
         "requirements": "none",
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
     "fbg_searchhistory": {
         "name": "Files By Google - Search History",
         "description": "Parses the Files by Google application search history",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-18",
         "last_update_date": "2025-09-09",
         "requirements": "none",

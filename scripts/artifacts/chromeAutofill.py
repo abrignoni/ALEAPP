@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_chromeAutofill": {
         "name": "Chrome Autofill - Entries",
         "description": "Parses Chrome autofill entries",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-07-10",
         "requirements": "none",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
     "get_chromeAutofillProfiles": {
         "name": "Chrome Autofill - Profiles",
         "description": "Parses Chrome autofill profiles",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-08-08",
         "requirements": "none",

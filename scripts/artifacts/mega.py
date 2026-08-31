@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_mega": {
         "name": "mega",
         "description": "MEGA",
-        "author": "Kevin Pagano (@KevinPagano3)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-31",
         "last_update_date": "2021-01-31",
         "requirements": "None",
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
 }
 
 # MEGA
-# Author:  Kevin Pagano (@KevinPagano3)
+# Author:  Kevin Pagano (@stark4n6)
 # Website: stark4n6.com
 # Date 2021-01-31
 # Version: 0.1

@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "Turbo_Battery": {
         "name": "Turbo - Phone Battery",
         "description": "Parses battery percentage for devices from Device Health Services",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-29",
         "last_update_date": "2025-03-08",
         "requirements": "none",
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
     "Turbo_Bluetooth": {
         "name": "Turbo - Bluetooth Device Info",
         "description": "Parses bluetooth connected devices from Device Health Services",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-29",
         "last_update_date": "2025-03-08",
         "requirements": "none",
