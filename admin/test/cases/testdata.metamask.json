@@ -1,0 +1,40 @@
+{
+  "caseandroid_metamask_1": {
+    "description": "Android device test data for the Metamask cryptocurrency wallet.",
+    "maker": "CH-Clark",
+    "make_data": {
+      "input_data_path": "Metamask_TestData.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-08-31T21:47:59.602057",
+      "last_commit": {
+        "hash": "969acd4dc2845633728d3e1b32dfbddafb557951",
+        "author_name": "CH-CLARK",
+        "author_email": "connor@henriclark.com",
+        "date": "2026-08-20T22:34:49+01:00",
+        "message": "Update metamask.py"
+      }
+    },
+    "artifacts": {
+      "get_metamask_addresses": {
+        "search_patterns": [
+          "*/io.metamask/files/persistStore/persist-AccountsController*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_metamask_contacts": {
+        "search_patterns": [
+          "*/io.metamask/files/persistStore/persist-AddressBookController*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
