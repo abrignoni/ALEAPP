@@ -10,10 +10,13 @@ __artifacts_v2__ = {
         "category": "Social",
         "notes": "",
         "paths": (
-            '*/com.untappdllc.app/shared_prefs/io.invertase.firebase.xml'
+            '*/com.untappdllc.app/shared_prefs/io.invertase.firebase.xml',
         ), 
         "output_types": "standard",
         "artifact_icon": "bell-ringing",
+        "sample_data": {
+            "kp_pixel8pro_a16": "Android 16 | com.untappdllc.app | 231 rows",
+        }
     },
     "untappd_profile": {
         "name": "Untappd - User Profile",
@@ -29,6 +32,9 @@ __artifacts_v2__ = {
         ),
         "output_types": ["html","tsv","lava"],
         "artifact_icon": "user",
+        "sample_data": {
+            "kp_pixel8pro_a16": "Android 16 | com.untappdllc.app | 1 rows",
+        }
     },
     "untappd_dev_events": {
         "name": "Untappd - Device Analytics",
@@ -45,6 +51,9 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "kp_pixel8pro_a16": "Android 16 | com.untappdllc.app | 43 rows",
+        }
     },
     "untappd_app_events": {
         "name": "Untappd - App Events",
@@ -61,6 +70,9 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "kp_pixel8pro_a16": "Android 16 | com.untappdllc.app | 238 rows",
+        }
     },
     "untappd_cached_checkins": {
         "name": "Untappd - Cached Checkins",
@@ -77,6 +89,9 @@ __artifacts_v2__ = {
         ),
         "output_types": "all",
         "artifact_icon": "beer",
+        "sample_data": {
+            "kp_pixel8pro_a16": "Android 16 | com.untappdllc.app | 19 rows",
+        }
     },
     "untappd_discover_locations": {
         "name": "Untappd - Discover Locations",
@@ -93,6 +108,9 @@ __artifacts_v2__ = {
         ),
         "output_types": "all",
         "artifact_icon": "location-pin",
+        "sample_data": {
+            "kp_pixel8pro_a16": "Android 16 | com.untappdllc.app | 172 rows",
+        }
     },
     "untappd_recent_locations": {
         "name": "Untappd - Checkin Location Suggestions",
@@ -109,6 +127,9 @@ __artifacts_v2__ = {
         ),
         "output_types": "all",
         "artifact_icon": "location-search",
+        "sample_data": {
+            "kp_pixel8pro_a16": "Android 16 | com.untappdllc.app | 1661 rows",
+        }
     }
 }
 
