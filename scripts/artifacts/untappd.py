@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "",
+        "notes": "Reads from the plain text preferences file io.invertase.firebase.xml. Iterates through saved strings to parse Untappd FCM push notifications and venue menu updates stored as JSON. Deliberately skips the all_notification_ids key to focus on message payloads. The timestamp is extracted directly from the XML key (by splitting the string and converting the first value from microseconds to a UTC datetime). Extracts the message ID, title, body, push type, and action ID.",
         "paths": (
             '*/com.untappdllc.app/shared_prefs/io.invertase.firebase.xml',
         ), 
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "",
+        "notes": "Parses the userProfiles table within the clevertap SQLite database. The user's information is stored as a JSON string within the data column. Extracts plain text profile details including Email, Name, Username, Gender, Last Checkin Beer, Last Checkin Category, Country ID, and Identity. The Date of Birth (DOB) is converted from a Unix epoch integer to a UTC datetime.",
         "paths": (
             '*/com.untappdllc.app/databases/clevertap*',
         ),
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "",
+        "notes": "Parses the ManagedEventData table in the superwall_database SQLite database, specifically filtering for device_attributes events. Extracts metadata from the parameters JSON column, capturing granular device state information such as App Version, approximate IP Geolocation (City, Region, Country, Continent, Timezone), Device Model, Platform/OS Version, Radio Type, Days Since Install, and the Session ID. Groups records by Session ID and reports timestamps in UTC, converted from milliseconds.",
         "paths": (
             '*/com.untappdllc.app/databases/superwall_database*',
         ),
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "",
+        "notes": "Parses the ManagedEventData table in the superwall_database SQLite database to track application usage history. Filters for specific app state changes: app_close, app_open, app_launch, app_install, and session_start, mapping them to human-readable strings. Extracts the associated Session ID from the JSON parameters and reports the event creation time in UTC, converted from milliseconds.",
         "paths": (
             '*/com.untappdllc.app/databases/superwall_database*',
         ),
@@ -83,7 +83,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "",
+        "notes": "Parses GZIP-compressed binary files (.1 extension) found in the cache/http-cache/ directory. Decodes the uncompressed raw bytes into UTF-8 JSON strings to extract comprehensive check-in data. Captures the Checkin ID, UTC creation date, rating, and user comments. Additionally pulls nested information for the user (UID, username, full name), beer (name, ABV), brewery, venue (name, latitude, longitude), app source name, attached media (grabbing the high-resolution photo_img_lg URL), and container/serving style.",
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.1',
         ),
@@ -102,7 +102,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "",
+        "notes": "Parses GZIP-compressed HTTP cache files from the Discover page loads. To determine the cache timestamp, the parser locates the companion .0 meta file on disk and extracts the HTTP Date header, converting it to a standard UTC datetime. It then opens the .1 gzip file, extracts the discover_items JSON payload, and reports the item type along with its latitude and longitude.",
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.*',
         ),
@@ -121,7 +121,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "",
+        "notes": "Parses location suggestions stored in GZIP-compressed HTTP cache files when a user drafts a new check-in. Like other cache parsers, it extracts the HTTP Date header from the companion .0 file for the query timestamp. Extracts the device's current location (latitude/longitude), along with two types of suggested venues: 'Recent' check-in locations (which include past check-in timestamps) and 'Foursquare' nearby suggestions (which lack timestamps). Reports the venue name, distance in miles, and coordinates for each suggested location.",
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.*',
         ),
