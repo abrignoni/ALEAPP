@@ -268,6 +268,7 @@ import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc, \
     does_column_exist_in_db, does_table_exist_in_db
+from scripts.artifacts.storagePathViews import unique_files
 
 # Module-level constants (kept for backwards-compatibility; snapchat.py imports APP_NAME)
 APP_NAME = 'MeWe'
@@ -330,14 +331,14 @@ def _build_chat_query(db_path):
     return f'''
     SELECT
         CHAT_MESSAGE.createdAt,
-        CHAT_MESSAGE.threadId,
+        {_flag_case(currentUserMessage, 'Sent', 'Received')},
+        {ownerName},
         {threadName},
+        {textPlain},
+        CHAT_MESSAGE.threadId,
         {groupId},
         {chatType},
         {ownerId},
-        {ownerName},
-        {textPlain},
-        {_flag_case(currentUserMessage, 'Sent', 'Received')},
         CASE {attachmentType} WHEN 'UNSUPPORTED' THEN '' ELSE {attachmentType} END,
         {attachmentName},
         {_flag_case(deleted, 'YES', 'NO')}
@@ -367,7 +368,7 @@ def _parse_xml(file_found):
 
 @artifact_processor
 def get_mewe_chat(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     sources = []
     for file_found in files_found:
@@ -401,15 +402,15 @@ def get_mewe_chat(context):
             data_list.append((timestamp,) + values)
 
     source_path = ', '.join(sources)
-    data_headers = (('Timestamp', 'datetime'), 'Thread Id', 'Thread Name', 'Group Id', 'Chat Type',
-                    'User Id', 'User Name', 'Message Text', 'Message Direction', 'Message Type',
-                    'Attachment Name', 'Deleted')
+    data_headers = (('Timestamp', 'datetime'), 'Message Direction', 'User Name', 'Thread Name',
+                    'Message Text', 'Thread Id', 'Group Id', 'Chat Type', 'User Id',
+                    'Message Type', 'Attachment Name', 'Deleted')
     return data_headers, data_list, source_path
 
 
 @artifact_processor
 def get_mewe_session(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -492,7 +493,7 @@ def _collect(context, table, query, build, headers):
     """Shared shape: run query against every MeWe database holding `table`."""
     data_list = []
     sources = []
-    for db_path in _chat_databases(context.get_files_found()):
+    for db_path in _chat_databases(unique_files(context)):
         if not does_table_exist_in_db(db_path, table):
             continue
         rows = _rows(db_path, query)
@@ -622,7 +623,7 @@ def get_mewe_reactions(context):
     data_list = []
     sources = []
 
-    for db_path in _chat_databases(context.get_files_found()):
+    for db_path in _chat_databases(unique_files(context)):
         found_any = False
         for table, label, query in REACTION_SOURCES:
             if not does_table_exist_in_db(db_path, table):
@@ -645,7 +646,7 @@ def get_mewe_groups(context):
     data_list = []
     sources = []
 
-    for db_path in _chat_databases(context.get_files_found()):
+    for db_path in _chat_databases(unique_files(context)):
         found_any = False
 
         if does_table_exist_in_db(db_path, 'GROUP_'):

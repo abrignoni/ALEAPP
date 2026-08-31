@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "requirements": "xml, json",
         "category": "LinkedIn",
         "notes": "",
-        "paths": ('*/com.linkedin.android/shared_prefs/linkedInPrefsName.xml'),
+        "paths": ('*/com.linkedin.android/shared_prefs/linkedInPrefsName.xml',),
         "output_types": "standard",
         "artifact_icon": "user",
         "sample_data": {
@@ -22,11 +22,15 @@ __artifacts_v2__ = {
         "description": "Messages sent and received from LinkedIn App",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         'creation_date': '2025-04-26',
-        'last_update_date': '2026-05-14',
+        'last_update_date': '2026-08-15',
         "requirements": "",
         "category": "LinkedIn",
-        "notes": "",
-        "paths": ('*/com.linkedin.android/databases/messenger-sdk*'),
+        "notes": "The query uses only SQL functions available across the SQLite versions bundled "
+                 "with supported Python builds; an earlier revision used concat(), which SQLite "
+                 "added in 3.44.0 (2023-11-01, sqlite.org/changes.html), so on older SQLite "
+                 "builds the query failed and the artifact reported no rows while the same "
+                 "statement succeeded in tools carrying a newer SQLite.",
+        "paths": ('*/com.linkedin.android/databases/messenger-sdk*',),
         "output_types": "standard",
         "data_views": {
             "conversation": {
@@ -144,7 +148,7 @@ def linkedin_messages(context):
                 THEN 'Delivered'
                 ELSE 'Unknown'
             END[Status],
-            concat(json_extract(pd.entityData, '$.participantType.member.firstName.text'), ' ',  json_extract(pd.entityData, '$.participantType.member.lastName.text')) [Sender Name],
+            TRIM(COALESCE(json_extract(pd.entityData, '$.participantType.member.firstName.text'), '') || ' ' || COALESCE(json_extract(pd.entityData, '$.participantType.member.lastName.text'), '')) [Sender Name],
             json_extract(pd.entityData, '$.participantType.member.headline.text') [Sender Headline],
             json_extract(pd.entityData, '$.participantType.member.profileUrl') [Sender Profile URL],
             json_extract(pd.entityData, '$.participantType.member.distance') [Sender Distance],
@@ -189,7 +193,7 @@ def linkedin_messages(context):
 
     data_list = []
     for row in db_records:
-        delivery_date = convert_unix_ts_to_utc(int(row[0])/1000)
+        delivery_date = convert_unix_ts_to_utc(int(row[0])/1000) if row[0] is not None else ''
         delivery_status = row[1]
         sender_name = row[2]
         sender_headline = row[3]
@@ -201,30 +205,33 @@ def linkedin_messages(context):
         sent = row[9]
         conversation_label = row[10]
 
-        data_list.append(   (delivery_date,
-                            delivery_status,
-                            sender_name,
-                            sender_headline,
-                            sender_profile_url,
-                            sender_distance,
-                            subject,
-                            message,
-                            conversationurn,
-                            sent,
-                            conversation_label)
+        data_list.append(   (
+            delivery_date,
+            sent,
+            sender_name,
+            conversation_label,
+            message,
+            delivery_status,
+            sender_headline,
+            sender_profile_url,
+            sender_distance,
+            subject,
+            conversationurn,
+        )
                         )
 
-    data_headers = (    ('Delivery Date', 'datetime'),
-                        'Delivery Status',
-                        'Sender Name',
-                        'Sender Headline',
-                        'Sender Profile Url',
-                        'Sender Distance',
-                        'Subject',
-                        'Message',
-                        'Conversation Urn',
-                        'Sent',
-                        'Conversation Label'
+    data_headers = (
+        ('Delivery Date', 'datetime'),
+        'Sent',
+        'Sender Name',
+        'Conversation Label',
+        'Message',
+        'Delivery Status',
+        'Sender Headline',
+        'Sender Profile Url',
+        'Sender Distance',
+        'Subject',
+        'Conversation Urn',
                     )
 
     return data_headers, data_list, files_found[0]

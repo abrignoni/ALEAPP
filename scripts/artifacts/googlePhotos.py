@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_googlePhotos": {
         "name": "Google Photos - Local Media",
         "description": "Local media indexed by Google Photos (gphotos*.db local_media)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -23,13 +23,13 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.photos vc 51079548 | 24 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.photos vc 48388495 | 336 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.photos vc 48388511 | 204 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 16 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 8 rows",
         },
     },
     "get_googlePhotos_remote": {
         "name": "Google Photos - Remote Media",
         "description": "Remote (cloud) media indexed by Google Photos (gphotos*.db remote_media)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -52,13 +52,13 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.photos vc 51079548 | 7 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.photos vc 48388495 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.photos vc 48388511 | 98 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 6 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 3 rows",
         },
     },
     "get_googlePhotos_shared": {
         "name": "Google Photos - Shared Media",
         "description": "Shared media indexed by Google Photos (gphotos*.db shared_media)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_folders": {
         "name": "Google Photos - Backup Folders",
         "description": "Folders listed in the backup_folders table (gphotos*.db)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -113,7 +113,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_cache": {
         "name": "Google Photos - Cache",
         "description": "Google Photos disk/glide cache entries with cached images",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2021-04-14",
         "requirements": "none",
@@ -133,13 +133,13 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.photos vc 51079548 | 43 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.photos vc 48388495 | 68 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.photos vc 48388511 | 704 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 10 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 5 rows",
         },
     },
     "get_googlePhotos_trash": {
         "name": "Google Photos - Local Trash",
         "description": "Google Photos local trash entries and the trash files still present (local_trash.db)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -171,6 +171,7 @@ import os
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media, \
     does_column_exist_in_db, does_table_exist_in_db
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _str_to_utc(value):
@@ -207,7 +208,7 @@ def _find_media(files_found, key):
 
 @artifact_processor
 def get_googlePhotos(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -245,7 +246,7 @@ def get_googlePhotos(context):
 
 @artifact_processor
 def get_googlePhotos_remote(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -281,7 +282,7 @@ def get_googlePhotos_remote(context):
 
 @artifact_processor
 def get_googlePhotos_shared(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -311,7 +312,7 @@ def get_googlePhotos_shared(context):
 
 @artifact_processor
 def get_googlePhotos_folders(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for db_path in _gphotos_dbs(files_found):
@@ -341,7 +342,7 @@ def get_googlePhotos_folders(context):
 
 @artifact_processor
 def get_googlePhotos_cache(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -370,7 +371,7 @@ def get_googlePhotos_cache(context):
 
 @artifact_processor
 def get_googlePhotos_trash(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

@@ -17,7 +17,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 4 rows",
             "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 4 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 4 rows",
-            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 8 rows",
+            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 4 rows",
         },
     },
     "get_gboardCache_keystrokes": {
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 359 rows",
             "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 230 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 357 rows",
-            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 140 rows",
+            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 70 rows",
         },
     }
 }
@@ -70,6 +70,7 @@ from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, \
     does_table_exist_in_db, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 
 class keyboard_event:
@@ -204,7 +205,7 @@ def _events_trainingcachev2(file_found):
 
 @artifact_processor
 def get_gboardCache(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -244,7 +245,7 @@ def get_gboardCache(context):
 
 @artifact_processor
 def get_gboardCache_keystrokes(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -269,7 +270,7 @@ def get_gboardCache_keystrokes(context):
 
 @artifact_processor
 def get_gboardCache_sessions(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:

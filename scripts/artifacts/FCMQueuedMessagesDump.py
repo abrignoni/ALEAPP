@@ -18,11 +18,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 31046 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 38204 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 35523 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gms | 5010 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 1670 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 3914 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 36746 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 11408 rows",
-            "userb2_a13": "Android 13 | com.google.android.gms | 2016 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 1008 rows",
         },
     },
     "get_fcm_dump_verizon": {
@@ -68,11 +68,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 0 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 475 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 433 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gms | 102 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 34 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 40 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 391 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 86 rows",
-            "userb2_a13": "Android 13 | com.google.android.gms | 142 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 71 rows",
         },
     },
     "get_fcm_dump_instagram": {
@@ -137,6 +137,7 @@ from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 GQSB_TYPEDEF = {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}, '2': {'type': 'int', 'name': ''}, '3': {'type': 'fixed64', 'name': ''}}, 'name': ''}, '2': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}, '3': {'type': 'int', 'name': ''}, '4': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}, '2': {'type': 'int', 'name': ''}, '3': {'type': 'fixed64', 'name': ''}}, 'name': ''}, '2': {'type': 'message', 'message_typedef': {}, 'name': ''}, '6': {'type': 'int', 'name': ''}}, 'name': ''}, '5': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'bytes', 'name': ''}}, 'name': ''}, '6': {'type': 'message', 'message_typedef': {'3': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}, '4': {'type': 'int', 'name': ''}}, 'name': ''}, '7': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '7': {'type': 'int', 'name': ''}, '8': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '7': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}, '2': {'type': 'message', 'message_typedef': {'1': {'type': 'double', 'name': ''}, '2': {'type': 'double', 'name': ''}, '3': {'type': 'bytes', 'name': ''}}, 'name': ''}, '3': {'type': 'bytes', 'name': ''}, '8': {'type': 'bytes', 'name': ''}, '11': {'type': 'bytes', 'name': ''}}, 'name': ''}}, 'name': ''}, '12': {'type': 'bytes', 'name': ''}, '15': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}, '16': {'type': 'int', 'name': ''}, '17': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}, '20': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '8': {'type': 'message', 'message_typedef': {'5': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '2': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '3': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}, '2': {'type': 'message', 'message_typedef': {'1': {'type': 'fixed64', 'name': ''}, '2': {'type': 'fixed64', 'name': ''}, '3': {'type': 'bytes', 'name': ''}}, 'name': ''}, '3': {'type': 'bytes', 'name': ''}, '8': {'type': 'bytes', 'name': ''}, '11': {'type': 'bytes', 'name': ''}}, 'name': ''}}, 'name': ''}, '3': {'type': 'int', 'name': ''}, '6': {'type': 'int', 'name': ''}, '10': {'type': 'message', 'message_typedef': {}, 'name': ''}, '11': {'type': 'message', 'message_typedef': {'5': {'type': 'message', 'message_typedef': {'2': {'type': 'int', 'name': ''}, '13': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}}, 'name': ''}, '15': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '14': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}, '3': {'type': 'message', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}, '2': {'type': 'bytes', 'name': ''}, '3': {'type': 'bytes', 'name': ''}, '4': {'type': 'message', 'message_typedef': {'5': {'type': 'message', 'message_typedef': {'2': {'type': 'int', 'name': ''}, '13': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}}, 'name': ''}, '15': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '5': {'type': 'message', 'message_typedef': {'5': {'type': 'message', 'message_typedef': {'2': {'type': 'int', 'name': ''}, '13': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}}, 'name': ''}, '15': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '6': {'type': 'message', 'message_typedef': {'5': {'type': 'message', 'message_typedef': {'2': {'type': 'int', 'name': ''}, '13': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}}, 'name': ''}, '15': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '7': {'type': 'message', 'message_typedef': {'5': {'type': 'message', 'message_typedef': {'2': {'type': 'int', 'name': ''}, '13': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}}, 'name': ''}, '15': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '8': {'type': 'message', 'message_typedef': {'5': {'type': 'message', 'message_typedef': {'2': {'type': 'int', 'name': ''}, '13': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}}, 'name': ''}, '15': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '9': {'type': 'message', 'message_typedef': {'5': {'type': 'message', 'message_typedef': {'2': {'type': 'int', 'name': ''}, '13': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}}, 'name': ''}, '15': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '10': {'type': 'message', 'message_typedef': {'5': {'type': 'message', 'message_typedef': {'2': {'type': 'int', 'name': ''}, '13': {'type': 'message', 'message_typedef': {'1': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'fixed32', 'name': ''}, '3': {'type': 'fixed32', 'name': ''}}, 'name': ''}}, 'name': ''}, '15': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}}, 'name': ''}, '18': {'type': 'message', 'message_typedef': {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}, 'name': ''}}
 
@@ -174,7 +175,7 @@ def _load_packages(files_found):
 
 @artifact_processor
 def get_fcm_dump(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     package_tables, source = _load_packages(files_found)
     data_list = []
     for package, rows in package_tables.items():
@@ -186,7 +187,7 @@ def get_fcm_dump(context):
 
 @artifact_processor
 def get_fcm_dump_verizon(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.verizon.messaging.vzmsgs', []):
@@ -203,7 +204,7 @@ def get_fcm_dump_verizon(context):
 
 @artifact_processor
 def get_fcm_dump_tiktok(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.zhiliaoapp.musically', []):
@@ -221,7 +222,7 @@ def get_fcm_dump_tiktok(context):
 
 @artifact_processor
 def get_fcm_dump_instagram(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.instagram.android', []):
@@ -246,7 +247,7 @@ def get_fcm_dump_instagram(context):
 
 @artifact_processor
 def get_fcm_dump_gqsb(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     package_tables, source = _load_packages(files_found)
     data_list = []
     for data in package_tables.get('com.google.android.googlequicksearchbox', []):

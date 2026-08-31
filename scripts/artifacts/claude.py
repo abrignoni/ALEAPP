@@ -232,20 +232,20 @@ def claudeMessages(context):
         
         data_list.append((
             created_at,
-            record[1],
-            record[2],
             record[3],
             record[4],
-            record[5]
+            record[1],
+            record[2],
+            record[5],
         ))
         
     data_headers = (
         ('Message Created Time', 'datetime'),
-        'Message',
-        'Image File Name',
         'Sender',
         'Conversation Name',
-        'Conversation ID'
+        'Message',
+        'Image File Name',
+        'Conversation ID',
     )
     
     return data_headers, data_list, source_path

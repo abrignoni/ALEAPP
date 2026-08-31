@@ -15,7 +15,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.settings.intelligence vc 1000282241 | 2 rows",
             "pixel7a_a14": "Android 14 | com.google.android.settings.intelligence vc 1000230247 | 3 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.settings.intelligence vc 1000217934 | 5 rows",
-            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 6 rows",
+            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 3 rows",
         },
     }
 }
@@ -25,6 +25,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 SETUP_TIME_KEYS = (
     'com.android.settings.suggested.category.DEFERRED_SETUP_setup_time',
@@ -53,7 +54,7 @@ def _parse_xml(file_found):
 
 @artifact_processor
 def get_suggestions(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

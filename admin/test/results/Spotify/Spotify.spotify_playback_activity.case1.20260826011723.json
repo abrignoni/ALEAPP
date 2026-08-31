@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "module_name": "Spotify",
+    "artifact_name": "Spotify - Playback Activity",
+    "function_name": "spotify_playback_activity",
+    "case_number": "case1",
+    "number_of_columns": 5,
+    "number_of_rows": 28,
+    "total_data_size_bytes": 2507,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Spotify/testdata.Spotify.spotify_playback_activity.case1.zip",
+    "start_time": "2026-08-26T01:17:23.464787+00:00",
+    "end_time": "2026-08-26T01:17:23.485819+00:00",
+    "run_time_seconds": 0.0077860355377197266,
+    "last_commit": {
+      "hash": "591933b74dcaa25828cfc79933a5231063092a98",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T19:12:55-04:00",
+      "message": "Add Spotify ALEAPP module with trimmed test fixtures"
+    }
+  },
+  "headers": [
+    "Event Time",
+    "Event Type",
+    "Content URI",
+    "Session ID",
+    "Notes"
+  ],
+  "data": [
+    [
+      1722115060,
+      "PlaybackSegments",
+      "spotify:track:1x5MjCffpcdHLf65eR9r3T",
+      "79e41f07d459c01122f1ddf637bcad7d",
+      "[[43,138702]]"
+    ],
+    [
+      1722115060,
+      "CorePlaybackFinished",
+      "",
+      "79e41f07d459c01122f1ddf637bcad7d",
+      "3YR69An1ndQtiaTxIF8a02"
+    ],
+    [
+      1722115060,
+      "BoomboxPlaybackSession",
+      "",
+      "79e41f07d459c01122f1ddf637bcad7d",
+      "default"
+    ],
+    [
+      1722115060,
+      "Download",
+      "",
+      "79e41f07d459c01122f1ddf637bcad7d",
+      "unknown, interactive, complete"
+    ],
+    [
+      1722129497,
+      "AudioFileSelection",
+      "",
+      "571b5533aaa17d174b7a2dad5a5635a2",
+      "offlined file, audiophile"
+    ],
+    [
+      1722130639,
+      "BoomboxPlaybackSession",
+      "",
+      "571b5533aaa17d174b7a2dad5a5635a2",
+      "default"
+    ],
+    [
+      1722130639,
+      "PlaybackSegments",
+      "spotify:track:1x5MjCffpcdHLf65eR9r3T",
+      "571b5533aaa17d174b7a2dad5a5635a2",
+      "[]"
+    ],
+    [
+      1722130640,
+      "AudioFileSelection",
+      "",
+      "3d5953543106212c9fa81c0b187f542f",
+      "offlined file, audiophile"
+    ],
+    [
+      1722136916,
+      "BoomboxPlaybackSession",
+      "",
+      "3d5953543106212c9fa81c0b187f542f",
+      "default"
+    ],
+    [
+      1722136916,
+      "PlaybackSegments",
+      "spotify:track:1x5MjCffpcdHLf65eR9r3T",
+      "3d5953543106212c9fa81c0b187f542f",
+      "[]"
+    ],
+    [
+      1722136920,
+      "AudioFileSelection",
+      "",
+      "e93b34e35831c224e40fbdb4777aea19",
+      "offlined file, audiophile"
+    ],
+    [
+      1722136957,
+      "BoomboxPlaybackSession",
+      "",
+      "e93b34e35831c224e40fbdb4777aea19",
+      "default"
+    ],
+    [
+      1722136957,
+      "PlaybackSegments",
+      "spotify:track:1x5MjCffpcdHLf65eR9r3T",
+      "e93b34e35831c224e40fbdb4777aea19",
+      "[]"
+    ],
+    [
+      1722136957,
+      "AudioFileSelection",
+      "",
+      "72131a1d87321ce97912a2c2501c629a",
+      "offlined file, audiophile"
+    ],
+    [
+      1722136986,
+      "BoomboxPlaybackSession",
+      "",
+      "72131a1d87321ce97912a2c2501c629a",
+      "default"
+    ],
+    [
+      1722136986,
+      "PlaybackSegments",
+      "spotify:track:1x5MjCffpcdHLf65eR9r3T",
+      "72131a1d87321ce97912a2c2501c629a",
+      "[]"
+    ],
+    [
+      1722136990,
+      "AudioFileSelection",
+      "",
+      "668a1032edcd940dfd2e5108da479c2a",
+      "offlined file, audiophile"
+    ],
+    [
+      1722137196,
+      "BoomboxPlaybackSession",
+      "",
+      "668a1032edcd940dfd2e5108da479c2a",
+      "default"
+    ],
+    [
+      1722137196,
+      "PlaybackSegments",
+      "spotify:track:1x5MjCffpcdHLf65eR9r3T",
+      "668a1032edcd940dfd2e5108da479c2a",
+      "[]"
+    ],
+    [
+      1722137198,
+      "AudioFileSelection",
+      "",
+      "21a844eae903780640b63e9d58f1619c",
+      "offlined file, audiophile"
+    ],
+    [
+      1722137441,
+      "BoomboxPlaybackSession",
+      "",
+      "21a844eae903780640b63e9d58f1619c",
+      "default"
+    ],
+    [
+      1722137441,
+      "PlaybackSegments",
+      "spotify:track:1x5MjCffpcdHLf65eR9r3T",
+      "21a844eae903780640b63e9d58f1619c",
+      "[]"
+    ],
+    [
+      1722137442,
+      "AudioFileSelection",
+      "",
+      "208a9d29816f3f97051762d8fe485a18",
+      "offlined file, audiophile"
+    ],
+    [
+      1722165367,
+      "TrackNotPlayed",
+      "spotify:playlist:2F2Ci6vpJG6KW8OW74Z7F2",
+      "208a9d29816f3f97051762d8fe485a18",
+      "android-auto, appload, unknown, logout, 32650342644a47c5812a1ea0e7a485e5, context, android_auto_your_library, com.spotify, local, not-unpaused"
+    ],
+    [
+      1722165367,
+      "PlaybackSegments",
+      "spotify:track:1x5MjCffpcdHLf65eR9r3T",
+      "208a9d29816f3f97051762d8fe485a18",
+      "[]"
+    ],
+    [
+      1722165367,
+      "CorePlaybackFinished",
+      "",
+      "208a9d29816f3f97051762d8fe485a18",
+      "3YR69An1ndQtiaTxIF8a02"
+    ],
+    [
+      1722165367,
+      "BoomboxPlaybackSession",
+      "",
+      "208a9d29816f3f97051762d8fe485a18",
+      "default"
+    ],
+    [
+      1722165368,
+      "Download",
+      "",
+      "208a9d29816f3f97051762d8fe485a18",
+      "unknown, interactive, complete"
+    ]
+  ]
+}

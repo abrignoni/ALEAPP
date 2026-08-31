@@ -110,8 +110,9 @@ def get_burner_communications(context):
         JOIN contacts ON contacts.phone_number=messages.contact_phone_number
         ORDER BY messages.date_created ASC
     ''')
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7]) for r in rows]
-    data_headers = (('Communication Time', 'datetime'), 'Other Party Number', 'Other Party Contact Name',
-                    'Communication Direction', 'Communication Type', 'Message',
-                    'Message Attachment (URL)', 'Approximate Call Duration (minutes)')
+    data_list = [(_ms_to_utc(r[0]), r[3], r[2], r[5], r[1], r[4], r[6], r[7]) for r in rows]
+    data_headers = (('Communication Time', 'datetime'), 'Communication Direction',
+                    'Other Party Contact Name', 'Message', 'Other Party Number',
+                    'Communication Type', 'Message Attachment (URL)',
+                    'Approximate Call Duration (minutes)')
     return data_headers, data_list, source_path

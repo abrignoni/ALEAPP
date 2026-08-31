@@ -22,7 +22,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.maps vc 1068347331 | 1 row",
             "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 6 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 6 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 3 rows",
         },
     },
     "get_googleMapsGmm_places": {
@@ -66,6 +66,7 @@ import struct
 from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, logfunc, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _ms_to_utc(value):
@@ -93,7 +94,7 @@ def _run(source_path, sql):
 
 @artifact_processor
 def get_googleMapsGmm(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:
@@ -135,7 +136,7 @@ def get_googleMapsGmm(context):
 
 @artifact_processor
 def get_googleMapsGmm_places(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     source_path = ''
     data_list = []
     for file_found in files_found:

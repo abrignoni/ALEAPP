@@ -65,6 +65,7 @@ def romeo_dating_messages(context):
 
     main_db = ''
     data_list = []
+    source_paths = set()
 
     query = '''
             SELECT me.date [Timestamp],
@@ -86,10 +87,22 @@ def romeo_dating_messages(context):
             LEFT JOIN ImageAttachmentEntity iae ON me.messageId = iae.parentMessageId
             '''
 
+    data_headers = (    ('Timestamp', 'datetime'),
+                        'Contact ID',
+                        'Contact Username',
+                        'Text', 
+                        'Status',
+                        'Saved?',
+                        'Unread?',
+                        'Message ID',
+                        'Image Contained?',
+                        'Source Database'
+                    )
+
     for file_found in files_found:
         main_db = str(file_found)
-
-
+        source_db = context.get_relative_path(main_db)
+        source_paths.add(main_db)
 
         db_records = get_sqlite_db_records(main_db, query)
 
@@ -116,24 +129,13 @@ def romeo_dating_messages(context):
                                 unread,
                                 message_id,
                                 image_contained,
-                                main_db
+                                source_db
                             ))
         
-        data_headers = (    ('Timestamp', 'datetime'),
-                            'Contact ID',
-                            'Contact Username',
-                            'Text', 
-                            'Status',
-                            'Saved?',
-                            'Unread?',
-                            'Message ID',
-                            'Image Contained?',
-                            'Source Database'
-                        )
         # On android we only know if an Image was part of the message,
         # content isn't on the phone anymore- so just "image contained?"
 
-    return data_headers, data_list, 'See Table for Source DB'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
@@ -145,6 +147,7 @@ def romeo_dating_contacts(context):
 
     main_db = ''
     data_list = []
+    source_paths = set()
 
     query = '''
             SELECT 
@@ -179,6 +182,8 @@ def romeo_dating_contacts(context):
 
     for file_found in files_found:
         main_db = str(file_found)
+        source_db = context.get_relative_path(main_db)
+        source_paths.add(main_db)
 
         db_records = get_sqlite_db_records(main_db, query)
 
@@ -213,7 +218,7 @@ def romeo_dating_contacts(context):
                                 country,
                                 deactivated,
                                 blocked,
-                                main_db
+                                source_db
                             ))
     
     data_headers = (    ('Last Fetched', 'datetime'),
@@ -233,7 +238,7 @@ def romeo_dating_contacts(context):
                         'Source Database'
                     )
 
-    return data_headers, data_list, 'See Table for Source DB'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor

@@ -1,0 +1,58 @@
+{
+  "case1": {
+    "description": "Samsung A53 SM-S536DL, Android 14. Hexordia, Magnet Virtual Summit CTF 2026. Validated against com.google.android.videos/purchase_store.db: two Google accounts appear in user_data (danieljonesonline55@gmail.com, djones.iss.secure@gmail.com) but only the second has a matching user_configuration row, confirmed by comparing both tables directly, so this fixture exercises both 'Has Configuration Record' states in one file. purchased_assets, search_history, wishlist and watch_next_feed were confirmed empty in the source extraction, so no purchase or watch history is lost by trimming. The database is mirrored at three real filesystem paths in this extraction (/data/data, /data/user/0, /data_mirror/data_ce/null/0); file_count reflects all three copies of the db/-wal/-shm set.",
+    "maker": "@Gear-I",
+    "make_data": {
+      "input_data_path": "R5CW32F0PQH_files_full.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-08-28T16:08:35.622545",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-08-28T16:08:35.292427",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "google_play_movies_account": {
+        "search_patterns": [
+          "*/com.google.android.videos/databases/purchase_store.db*"
+        ],
+        "file_count": 9,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "case2": {
+    "description": "Google Pixel 7a, Android 14. Josh Hickman, public images. Validated against com.google.android.videos/purchase_store.db: the single Google account in user_data (ldehner505@gmail.com) has a matching user_configuration row, giving this fixture's one row the 'Has Configuration Record: Yes' state that pairs against case1's Samsung A53 fixture. purchased_assets, search_history, wishlist and watch_next_feed were confirmed empty in the source extraction despite substantial WAL activity, which traced to the app re-syncing static reference data rather than user content. Unlike the A53 image, this extraction is not mirrored across multiple filesystem paths, so file_count is just the one db/-wal/-shm set.",
+    "maker": "@Gear-I",
+    "make_data": {
+      "input_data_path": "EXTRACTION_FFS.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-08-28T16:12:54.460666",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-08-28T16:12:53.880719",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "google_play_movies_account": {
+        "search_patterns": [
+          "*/com.google.android.videos/databases/purchase_store.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

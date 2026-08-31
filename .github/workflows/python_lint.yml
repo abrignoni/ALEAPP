@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - '**.py' # only trigger on python files
+
+permissions:
+  contents: read
+
 jobs:
   lint-changed-files:
     runs-on: ubuntu-latest
@@ -43,6 +47,13 @@ jobs:
         if: steps.changed-files-py.outputs.any_changed == 'true'
         run: python admin/scripts/check_claim_language.py
 
+      # A conversation artifact's columns are ordered from the roles it declares in
+      # data_views: timestamp, other dates, direction, sender, conversation label,
+      # message text, media, then the rest. See admin/docs/conversation_column_order.md.
+      - name: Check conversation artifact column order
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_conversation_column_order.py
+
       # html_columns cells are written to the report without html.escape, so evidence
       # placed there can inject markup, and any remote href/src makes opening a report
       # beacon to a third party. Pre-existing findings are carried in the script's
@@ -50,6 +61,39 @@ jobs:
       - name: Guard report output against injection and remote destinations
         if: steps.changed-files-py.outputs.any_changed == 'true'
         run: python admin/scripts/check_html_safety.py
+
+      # The seeker stages evidence under <report folder>/data, so every files_found entry
+      # is an absolute path on the examiner's machine. artifact_processor normalizes only
+      # the third element of the return tuple; a path put in a data row or handed to
+      # write_artifact_data_table is published verbatim. The column is never empty and the
+      # row count is always right, so nothing else catches it. See the script's docstring.
+      - name: Guard report output against local filesystem paths
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_report_local_paths.py
+
+      # aleapp.py searches `paths` one pattern at a time and extends files_found with
+      # each result, and fnmatch's `*` crosses `/`, so a broad pattern usually covers a
+      # narrower sibling and every file it names is read twice. The rows are real and the
+      # count is double, which is silent in a report and rides into sample_data.
+      - name: Guard against a path pattern a sibling already covers
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_artifact_paths.py
+
+      # The third element of an artifact's return tuple becomes the report's
+      # "located at" line and the LAVA manifest source_path, so it has to be real
+      # paths. Prose standing in for one points the examiner at a column that often
+      # holds a basename, and the location ends up nowhere in the report.
+      - name: Guard against prose returned as a source path
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_source_path.py
+
+      - name: Guard against artifact functions returning None
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_artifact_returns.py
+
+      - name: Guard against run-together implicit string concatenation
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_implicit_concat.py
 
       # Fails only on warnings this pull request introduces. Long-lived modules carry
       # deliberate pre-existing warnings, and failing on those pushed contributors toward

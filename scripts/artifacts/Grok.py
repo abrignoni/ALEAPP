@@ -156,7 +156,7 @@ def grok_generatedvideos(context):
             continue
 
         filename = media_path.name
-        location = str(media_path.parent)
+        location = context.get_relative_path(str(media_path.parent))
 
         # Extract cache ID from filename: "4.0.1763060403970.v3.exo" - first part - 4
         file_id = None
@@ -173,7 +173,7 @@ def grok_generatedvideos(context):
             ts_raw = parts[2]
             try:
                 ts = int(ts_raw)
-                dt = datetime.datetime.utcfromtimestamp(ts / 1000.0)
+                dt = datetime.datetime.fromtimestamp(ts / 1000.0, datetime.timezone.utc)
                 extracted_ts = dt.strftime('%Y-%m-%d %H:%M:%S')
             except Exception:
                 extracted_ts = ""
@@ -185,7 +185,7 @@ def grok_generatedvideos(context):
 
             try:
                 ts2 = int(last_touch_raw)
-                dt2 = datetime.datetime.utcfromtimestamp(ts2 / 1000.0)
+                dt2 = datetime.datetime.fromtimestamp(ts2 / 1000.0, datetime.timezone.utc)
                 db_last_touch_utc = dt2.strftime('%Y-%m-%d %H:%M:%S')
             except Exception:
                 db_last_touch_utc = ""
@@ -232,7 +232,7 @@ def grok_generatedvideos(context):
             ts_raw = parts[2]
             try:
                 ts = int(ts_raw)
-                dt = datetime.datetime.utcfromtimestamp(ts / 1000.0)
+                dt = datetime.datetime.fromtimestamp(ts / 1000.0, datetime.timezone.utc)
                 extracted_ts = dt.strftime('%Y-%m-%d %H:%M:%S')
             except Exception:
                 extracted_ts = ""
@@ -240,7 +240,7 @@ def grok_generatedvideos(context):
         db_last_touch_utc = ""
         try:
             ts2 = int(last_touch_raw)
-            dt2 = datetime.datetime.utcfromtimestamp(ts2 / 1000.0)
+            dt2 = datetime.datetime.fromtimestamp(ts2 / 1000.0, datetime.timezone.utc)
             db_last_touch_utc = dt2.strftime('%Y-%m-%d %H:%M:%S')
         except Exception:
             db_last_touch_utc = ""
@@ -310,7 +310,7 @@ def grok_useraccount(context):
         root = _parse_xml(source_path)
 
         filename = Path(source_path).name
-        path = source_path
+        path = context.get_relative_path(source_path)
 
         cached_json = None
         for elem in root.iter():

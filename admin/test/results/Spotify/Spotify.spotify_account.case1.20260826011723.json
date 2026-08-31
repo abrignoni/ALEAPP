@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "Spotify",
+    "artifact_name": "Spotify - Account",
+    "function_name": "spotify_account",
+    "case_number": "case1",
+    "number_of_columns": 6,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 102,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Spotify/testdata.Spotify.spotify_account.case1.zip",
+    "start_time": "2026-08-26T01:17:23.501175+00:00",
+    "end_time": "2026-08-26T01:17:23.515291+00:00",
+    "run_time_seconds": 0.00027680397033691406,
+    "last_commit": {
+      "hash": "591933b74dcaa25828cfc79933a5231063092a98",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T19:12:55-04:00",
+      "message": "Add Spotify ALEAPP module with trimmed test fixtures"
+    }
+  },
+  "headers": [
+    "Canonical Username",
+    "Event Owner ID",
+    "Auth Source",
+    "Language",
+    "App First Launch Time",
+    "Installation ID"
+  ],
+  "data": [
+    [
+      "31inn2ztcydtrsqh2bu6q33ta5hq",
+      "31inn2ztcydtrsqh2bu6q33ta5hq",
+      "EMAIL",
+      "en-US",
+      1706365952,
+      "hnam7vot1t3am4a87lodml1ilv"
+    ]
+  ]
+}

@@ -2,12 +2,12 @@ __artifacts_v2__ = {
     "get_firefoxCookies": {
         "name": "Firefox - Cookies",
         "description": "Parses Firefox cookies (host, name, value, path, created, last accessed and expiration timestamps) from cookies.sqlite.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "Mozilla converted moz_cookies.expiry from seconds to milliseconds in cookies schema 16, shipped with Firefox 142, so the expiry is divided by 1000 when the database reports schema version 16 or later in PRAGMA user_version. When that version cannot be read, the expiry falls back to a magnitude test: a value above 100000000000 is read as milliseconds, because an expiry expressed in seconds is around 1e9 to 2e9 while the same date in milliseconds is around 1e12 to 2e12. The lastAccessed and creationTime columns are microseconds in every schema and are decoded as such. Reference: Mozilla, 'CookiePersistentStorage.cpp schema 15->16 migration (expiry converted to milliseconds)', https://github.com/mozilla-firefox/firefox/blob/main/netwerk/cookie/CookiePersistentStorage.cpp",
+        "notes": "Mozilla converted moz_cookies.expiry from seconds to milliseconds in cookies schema 16, shipped with Firefox 142, so the expiry is divided by 1000 when the database reports schema version 16 or later in PRAGMA user_version. When that version cannot be read, the expiry falls back to a magnitude test: a value above 100000000000 is read as milliseconds, because an expiry expressed in seconds is around 1e9 to 2e9 while the same date in milliseconds is around 1e12 to 2e12. The lastAccessed and creationTime columns are microseconds in every schema and are decoded as such. Reference: Mozilla, 'CookiePersistentStorage.cpp schema 15->16 migration (expiry converted to milliseconds)', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/netwerk/cookie/CookiePersistentStorage.cpp",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/cookies.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -21,6 +21,7 @@ import os
 import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
+from scripts.artifacts.storagePathViews import unique_files
 
 # Cookies schema 16 (Firefox 142) rewrote expiry from seconds to milliseconds
 EXPIRY_IN_MS_SCHEMA = 16
@@ -49,7 +50,7 @@ def _expiry_in_seconds(schema_version):
 
 @artifact_processor
 def get_firefoxCookies(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

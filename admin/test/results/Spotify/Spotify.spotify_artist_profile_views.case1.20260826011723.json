@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "module_name": "Spotify",
+    "artifact_name": "Spotify - Artist Profile Views",
+    "function_name": "spotify_artist_profile_views",
+    "case_number": "case1",
+    "number_of_columns": 3,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 228,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Spotify/testdata.Spotify.spotify_artist_profile_views.case1.zip",
+    "start_time": "2026-08-26T01:17:23.486285+00:00",
+    "end_time": "2026-08-26T01:17:23.500749+00:00",
+    "run_time_seconds": 0.0005831718444824219,
+    "last_commit": {
+      "hash": "591933b74dcaa25828cfc79933a5231063092a98",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T19:12:55-04:00",
+      "message": "Add Spotify ALEAPP module with trimmed test fixtures"
+    }
+  },
+  "headers": [
+    "Artist Name",
+    "Artist URI",
+    "Response Received Time"
+  ],
+  "data": [
+    [
+      "Descendents",
+      "spotify:artist:1FGH4Bh7g9W6V4fUcKZWp5",
+      1722112269
+    ],
+    [
+      "LMFAO",
+      "spotify:artist:3sgFRtyBnxXD5ESfmbK4dl",
+      1722112305
+    ],
+    [
+      "The Clash",
+      "spotify:artist:3RGLhK1IP9jnYFH4BRFJBS",
+      1722112579
+    ],
+    [
+      "Vampire Weekend",
+      "spotify:artist:5BvJzeQpmsdsFp4HGUYUEx",
+      1722113089
+    ]
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Cloud Upload Tasks",
+    "function_name": "galleryvault_cloud_upload_tasks",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 14,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_cloud_upload_tasks.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:38.256490+00:00",
+    "end_time": "2026-08-25T04:48:38.303318+00:00",
+    "run_time_seconds": 0.0005869865417480469,
+    "last_commit": {
+      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-07T23:27:07-04:00",
+      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+    }
+  },
+  "headers": [
+    "Begin Time",
+    "File Name",
+    "File Bytes Uploaded",
+    "File Bytes Total",
+    "Task State",
+    "Task Error Code",
+    "Part Type",
+    "Part Bytes Uploaded",
+    "Part Bytes Total",
+    "Part Percent Complete",
+    "Part Error Code",
+    "Cloud Storage Key",
+    "File Encryption Key (hex)",
+    "Task ID"
+  ],
+  "data": []
+}

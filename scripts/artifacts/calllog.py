@@ -17,7 +17,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 705 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 12 rows",
             "pixel7a_a14": "Android 14 | com.android.providers.contacts | 2655 rows",
-            "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 69 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 23 rows",
             "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 12 rows",
             "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 397 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.providers.contacts | 42 rows",
@@ -30,6 +30,7 @@ __artifacts_v2__ = {
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 CALL_TYPE_ICONS = {
     'Incoming': ' <i data-feather="phone-incoming" stroke="green"></i>',
@@ -44,7 +45,7 @@ CALL_TYPE_ICONS = {
 
 @artifact_processor
 def get_calllog(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

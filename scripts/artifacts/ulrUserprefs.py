@@ -17,11 +17,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 15 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 15 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 14 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gms | 81 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 27 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 28 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 15 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 25 rows",
-            "userb2_a13": "Android 13 | com.google.android.gms | 30 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 15 rows",
         },
     }
 }
@@ -30,6 +30,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
@@ -52,7 +53,7 @@ def _parse_xml(file_found):
 
 @artifact_processor
 def get_urluser(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

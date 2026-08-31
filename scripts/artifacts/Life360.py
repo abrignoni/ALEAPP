@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_Life360_chat_messages": {
         "name": "Life360 - Chat Messages",
         "description": "Parses Life360 chat messages (messaging.db)",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2024-01-17",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
     "get_Life360_places": {
         "name": "Life360 - Places",
         "description": "Parses Life360 saved places (L360LocalStoreRoomDatabase)",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2024-01-17",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
     "get_Life360_locations": {
         "name": "Life360 - Locations",
         "description": "Parses Life360 device geolocation events (L360EventStore.db)",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2024-01-17",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -63,7 +63,7 @@ __artifacts_v2__ = {
     "get_Life360_device_battery": {
         "name": "Life360 - Device Battery",
         "description": "Parses Life360 device battery events (L360EventStore.db)",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2024-01-17",
         "last_update_date": "2024-01-17",
         "requirements": "none",
@@ -183,15 +183,42 @@ def get_Life360_chat_messages(context):
         LEFT JOIN thread_participant ON message.sender_id = thread_participant.participant_id
         ''')
         for row in rows:
-            data_list.append((_sec_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5], row[6],
-                              row[7], row[8], row[9], row[10], row[11], row[12], _sec_to_utc(row[13]),
-                              Context.get_relative_path(source)))
+            data_list.append((
+                _sec_to_utc(row[0]),
+                _sec_to_utc(row[13]),
+                row[5],
+                row[3],
+                row[4],
+                row[1],
+                row[2],
+                row[6],
+                row[7],
+                row[8],
+                row[9],
+                row[10],
+                row[11],
+                row[12],
+                Context.get_relative_path(source),
+            ))
         db.close()
 
-    data_headers = (('Timestamp', 'datetime'), 'Thread ID', 'Sender ID', 'Sender Name', 'Message',
-                    'Message Sent', 'Message Read', 'Message Dismissed', 'Message Deleted',
-                    'Has Location', 'Latitude', 'Longitude', 'Location Name',
-                    ('Location Timestamp', 'datetime'), 'Source File')
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        ('Location Timestamp', 'datetime'),
+        'Message Sent',
+        'Sender Name',
+        'Message',
+        'Thread ID',
+        'Sender ID',
+        'Message Read',
+        'Message Dismissed',
+        'Message Deleted',
+        'Has Location',
+        'Latitude',
+        'Longitude',
+        'Location Name',
+        'Source File',
+    )
     return data_headers, data_list, source
 
 

@@ -13,7 +13,10 @@ __artifacts_v2__ = {
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 0 rows",
+            "pixel3_a11": "Android 11 | jp.naver.line.android | 6 rows",
+            "pixel3_a12": "Android 12 | jp.naver.line.android | 5 rows",
+            "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 0 rows, "
+                           "contacts table empty while chat_history holds rows",
         },
     },
     "get_line_messages": {
@@ -21,21 +24,26 @@ __artifacts_v2__ = {
         "description": "Parses LINE messages (time, sender and recipient IDs, direction, thread, message and attachments) from the LINE databases.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Line",
         "notes": ("Direction is decoded from the chat_history 'status' column. Direction/status "
                   "value mappings were established through testing; unrecognized values are "
                   "reported as stored.\n"
-                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
-                  "To ID is filled only for rows recognized as outgoing."),
+                  "To ID is filled only for rows recognized as outgoing.\n"
+                  "Messages are reported even when the contacts and membership tables are "
+                  "empty; on a tested Android 14 image both were empty while chat_history "
+                  "held rows, and the previous inner join dropped every message."),
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 0 rows",
+            "pixel3_a11": "Android 11 | jp.naver.line.android | 12 rows",
+            "pixel3_a12": "Android 12 | jp.naver.line.android | 26 rows",
+            "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 26 rows",
         },
         "data_views": {
             "conversation": {
@@ -53,19 +61,24 @@ __artifacts_v2__ = {
         "description": "Parses LINE call logs (start and end time, participant IDs, direction and call type) from the LINE databases.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Line",
         "notes": ("Direction is decoded from the last character of the call_history 'call_type' "
                   "column and Call Type from the 'voip_type' letter. Direction/status value "
                   "mappings were established through testing; unrecognized values are reported as "
                   "stored.\n"
-                  "To ID is filled only for rows recognized as outgoing."),
+                  "To ID is filled only for rows recognized as outgoing.\n"
+                  "Calls are reported even when the contacts and membership tables are empty; "
+                  "on a tested Android 14 image both were empty while call_history held rows, "
+                  "and the previous inner join dropped every call."),
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 0 rows",
+            "pixel3_a11": "Android 11 | jp.naver.line.android | 4 rows",
+            "pixel3_a12": "Android 12 | jp.naver.line.android | 4 rows",
+            "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 4 rows",
         },
     }
 }
@@ -120,17 +133,24 @@ def get_line_messages(context):
         db = open_sqlite_db_readonly(msg_db)
         cursor = db.cursor()
         try:
+            # LEFT JOIN from chat_history: newer app versions leave the contacts
+            # and membership tables empty while chat_history still holds rows,
+            # and an inner join against that empty contact book dropped every
+            # message. COALESCE keeps the chat id for rows with no match, and
+            # guards the type filter against a NULL attachement_type.
             cursor.execute('''
-                SELECT contact_book_w_groups.id, contact_book_w_groups.members, messages.from_mid,
+                SELECT COALESCE(contact_book_w_groups.id, messages.chat_id),
+                       contact_book_w_groups.members, messages.from_mid,
                        messages.content, messages.created_time/1000, messages.attachement_type,
                        messages.attachement_local_uri,
                        case messages.status when 1 then "Incoming" when 2 then "Outgoing" else messages.status end status
-                FROM   (SELECT id, Group_concat(M.m_id) AS members
-                        FROM   membership AS M GROUP BY id
-                        UNION
-                        SELECT m_id, NULL FROM contacts) AS contact_book_w_groups
-                       JOIN chat_history AS messages ON messages.chat_id = contact_book_w_groups.id
-                WHERE  attachement_type != 6
+                FROM   chat_history AS messages
+                       LEFT JOIN (SELECT id, Group_concat(M.m_id) AS members
+                                  FROM   membership AS M GROUP BY id
+                                  UNION
+                                  SELECT m_id, NULL FROM contacts) AS contact_book_w_groups
+                              ON messages.chat_id = contact_book_w_groups.id
+                WHERE  COALESCE(messages.attachement_type, -1) != 6
             ''')
             all_rows = cursor.fetchall()
         except Exception as e:
@@ -150,9 +170,9 @@ def get_line_messages(context):
             if attachment is None or 'content' in attachment:
                 attachment = None
             created_time = _sec_to_utc(row[4])
-            data_list.append((created_time, row[2], to_id, row[7], thread_id, row[3], attachment))
+            data_list.append((created_time, row[7], row[2], row[3], to_id, thread_id, attachment))
 
-    data_headers = (('Start Time', 'datetime'), 'From ID', 'To ID', 'Direction', 'Thread ID', 'Message', 'Attachments')
+    data_headers = (('Start Time', 'datetime'), 'Direction', 'From ID', 'Message', 'To ID', 'Thread ID', 'Attachments')
     return data_headers, data_list, msg_db
 
 
@@ -172,11 +192,12 @@ def get_line_calls(context):
                        case when Substr(calls.call_type, -1) = "O" then contact_book_w_groups.members else null end AS group_members,
                        calls.caller_mid,
                        case calls.voip_type when "V" then "Video" when "A" then "Audio" when "G" then calls.voip_gc_media_type else calls.voip_type end AS call_type
-                FROM   (SELECT id, Group_concat(M.m_id) AS members
-                        FROM   membership AS M GROUP BY id
-                        UNION
-                        SELECT m_id, NULL FROM naver_line.contacts) AS contact_book_w_groups
-                       JOIN call_history AS calls ON calls.caller_mid = contact_book_w_groups.id
+                FROM   call_history AS calls
+                       LEFT JOIN (SELECT id, Group_concat(M.m_id) AS members
+                                  FROM   membership AS M GROUP BY id
+                                  UNION
+                                  SELECT m_id, NULL FROM naver_line.contacts) AS contact_book_w_groups
+                              ON calls.caller_mid = contact_book_w_groups.id
             ''')
             all_rows = cursor.fetchall()
         except Exception as e:

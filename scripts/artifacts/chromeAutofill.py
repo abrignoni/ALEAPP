@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_chromeAutofill": {
         "name": "Chrome Autofill - Entries",
         "description": "Parses Chrome autofill entries",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-07-10",
         "requirements": "none",
@@ -19,16 +19,16 @@ __artifacts_v2__ = {
             "anne_a15": "Android 15 | 2 rows",
             "hc_pixel8pro_a16": "Android 16 | 1 row",
             "kevin_pocox7_a15": "Android 15 | 1 row",
-            "samsunga53_a14": "Android 14 | 18 rows",
+            "samsunga53_a14": "Android 14 | 6 rows",
             "samsungs20_a13": "Android 13 | 4 rows",
             "russell_pixel6a_a13": "Android 13 | 8 rows",
-            "userb2_a13": "Android 13 | 12 rows",
+            "userb2_a13": "Android 13 | 6 rows",
         },
     },
     "get_chromeAutofillProfiles": {
         "name": "Chrome Autofill - Profiles",
         "description": "Parses Chrome autofill profiles",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-08-08",
         "requirements": "none",
@@ -59,6 +59,7 @@ import os
 
 from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _seconds_to_utc(value):
@@ -76,7 +77,7 @@ def _browser_for(file_found):
 
 @artifact_processor
 def get_chromeAutofill(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Date Created', 'Field', 'Value', 'Date Last Used', 'Count']
     lava_data_headers = data_headers.copy()
@@ -176,7 +177,7 @@ def _modern_autofill_profiles(cursor):
 
 @artifact_processor
 def get_chromeAutofillProfiles(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Date Modified', 'GUID', 'First Name', 'Middle Name', 'Last Name', 'Email',
                     'Phone Number', 'Company Name', 'Address', 'City', 'State', 'Zip Code',

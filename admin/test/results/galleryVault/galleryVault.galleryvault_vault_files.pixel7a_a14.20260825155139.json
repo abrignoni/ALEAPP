@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Vault Files",
+    "function_name": "galleryvault_vault_files",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 11,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 414,
+    "media_checkins": 0,
+    "media_embedded_checkins": 2,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_vault_files.pixel7a_a14.zip",
+    "start_time": "2026-08-25T15:51:39.646549+00:00",
+    "end_time": "2026-08-25T15:51:39.669649+00:00",
+    "run_time_seconds": 0.0030269622802734375,
+    "last_commit": {
+      "hash": "f439713616bcfc348b6fb52341b18a8067b3df32",
+      "author_name": "segumarc",
+      "author_email": "segumarc@gmail.com",
+      "date": "2026-08-20T22:23:33-04:00",
+      "message": "Adding multiples artifacts to galleryVault"
+    }
+  },
+  "headers": [
+    "Create Time",
+    "Original File Name",
+    "Recovered File",
+    "Recovery Status",
+    "Recovered Format",
+    "Object Role",
+    "Original Size (bytes)",
+    "Account Email",
+    "UUID",
+    "Vault Object Path",
+    "Trailer Version"
+  ],
+  "data": [
+    [
+      1707061466,
+      "Vod8pal.jpeg",
+      "mock_embedded_html_path",
+      "Recovered",
+      "JPEG",
+      "File",
+      58157,
+      "",
+      "5a58c5e3-55ad-4f4d-b891-d7feb7246339",
+      "Dump/data/media/0/.galleryvault_DoNotDelete_1707411051/files/5a/5a58c5e3-55ad-4f4d-b891-d7feb7246339",
+      "0101"
+    ],
+    [
+      1707061873,
+      "aKqaWwB.jpeg",
+      "mock_embedded_html_path",
+      "Recovered",
+      "JPEG",
+      "File",
+      53669,
+      "",
+      "42e219d1-79cb-422d-b13b-f2b8e4fb69d4",
+      "Dump/data/media/0/.galleryvault_DoNotDelete_1707411051/files/42/42e219d1-79cb-422d-b13b-f2b8e4fb69d4",
+      "0101"
+    ]
+  ]
+}

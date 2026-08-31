@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "artifact_icon": "file",
         "sample_data": {
             "galaxys10_a10": "Android 10 | 721 rows",
-            "samsunga53_a14": "Android 14 | 1916 rows",
+            "samsunga53_a14": "Android 14 | 660 rows",
             "anne_a15": "Android 15 | 870 rows",
             "hc_pixel8pro_a16": "Android 16 | 528 rows",
             "kevin_pocox7_a15": "Android 15 | 520 rows",
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | 792 rows",
             "sharon_a14": "Android 14 | 901 rows",
             "russell_pixel6a_a13": "Android 13 | 456 rows",
-            "userb2_a13": "Android 13 | 527 rows",
+            "userb2_a13": "Android 13 | 265 rows",
         },
         "html_columns": ['Report'],
     }
@@ -34,6 +34,7 @@ from pathlib import Path
 
 from scripts.html_safe import safe_local_link
 from scripts.ilapfuncs import artifact_processor
+from scripts.artifacts.storagePathViews import unique_files
 
 control_chars = ''.join(map(chr, range(0, 32))) + ''.join(map(chr, range(127, 160)))
 not_control_char_re = re.compile(f'[^{control_chars}]' + '{4,}')
@@ -44,10 +45,11 @@ ascii_chars_re = re.compile(f'[{printable_chars_for_re}]' + '{4,}')
 
 @artifact_processor
 def get_walStrings(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     report_folder = context.get_report_folder()
     x = 1
     data_list = []
+    source_paths = set()
     for file_found in files_found:
         # The seeker can list files it could not extract (e.g. zero-byte
         # archive members), so the path may not exist on disk.
@@ -77,6 +79,7 @@ def get_walStrings(context):
             # safe_local_link() escapes the label and refuses any target that would
             # leave the report folder.
             out = safe_local_link(final, journalName)
+            source_paths.add(str(file_found))
             data_list.append((out, context.get_relative_path(file_found)))
         else:
             try:
@@ -86,4 +89,4 @@ def get_walStrings(context):
         x = x + 1
 
     data_headers = ('Report', 'Location')
-    return data_headers, data_list, ''
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

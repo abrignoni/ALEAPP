@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_fb_user_id": {
         "name": "Facebook Messenger - User ID",
         "description": "Facebook/Messenger logged-in user id (threads_db2-uid)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -21,21 +21,21 @@ __artifacts_v2__ = {
     "get_fb_msys_chats": {
         "name": "Facebook Messenger - Chats (msys_database)",
         "description": "Facebook/Messenger chat messages (msys_database)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "",
+        "notes": "Rows that are the same record found in more than one place are merged, and the Source File column lists every location a row was found in. The Facebook app and Messenger keep the same MSYS mailbox, so an extraction holding both carries a copy in each sandbox; the join in this query can also emit the same row more than once from a single copy. Merging is keyed on row content, not on package name, so a record present in only one sandbox is kept: on one tested image the two copies held 11 and 13 contacts and the merged result is 13. Signed CDN links are excluded from the key because each app fetches its own for the same item, which means two genuinely different items would merge if they matched on every other reported column.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
-            "anne_a15": "Android 15 | com.facebook.katana vc 465218038, com.facebook.orca vc 335215725 | 4 rows",
+            "anne_a15": "Android 15 | com.facebook.katana vc 465218038, com.facebook.orca vc 335215725 | 2 rows",
             "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277, com.facebook.orca vc 343213368 | 0 rows",
-            "pixel7a_a14": "Android 14 | com.facebook.orca vc 323609457 | 30 rows",
+            "pixel7a_a14": "Android 14 | com.facebook.orca vc 323609457 | 26 rows",
             "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094, com.facebook.orca vc 337415659 | 0 rows",
-            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791, com.facebook.orca vc 324209509 | 23 rows",
+            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791, com.facebook.orca vc 324209509 | 14 rows",
         },
         "data_views": {
             "conversation": {
@@ -51,18 +51,18 @@ __artifacts_v2__ = {
     "get_fb_msys_calls": {
         "name": "Facebook Messenger - Calls (msys_database)",
         "description": "Facebook/Messenger call log (msys_database)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "",
+        "notes": "Rows that are the same record found in more than one place are merged, and the Source File column lists every location a row was found in. The Facebook app and Messenger keep the same MSYS mailbox, so an extraction holding both carries a copy in each sandbox; the join in this query can also emit the same row more than once from a single copy. Merging is keyed on row content, not on package name, so a record present in only one sandbox is kept: on one tested image the two copies held 11 and 13 contacts and the merged result is 13. Signed CDN links are excluded from the key because each app fetches its own for the same item, which means two genuinely different items would merge if they matched on every other reported column.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "phone",
         "sample_data": {
             "anne_a15": "Android 15 | com.facebook.katana vc 465218038, com.facebook.orca vc 335215725 | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277, com.facebook.orca vc 343213368 | 4 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277, com.facebook.orca vc 343213368 | 2 rows",
             "pixel7a_a14": "Android 14 | com.facebook.orca vc 323609457 | 8 rows",
             "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094, com.facebook.orca vc 337415659 | 0 rows",
             "sharon_a14": "Android 14 | com.facebook.katana vc 454415791, com.facebook.orca vc 324209509 | 0 rows",
@@ -71,27 +71,27 @@ __artifacts_v2__ = {
     "get_fb_msys_contacts": {
         "name": "Facebook Messenger - Contacts (msys_database)",
         "description": "Facebook/Messenger contacts (msys_database)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "",
+        "notes": "Rows that are the same record found in more than one place are merged, and the Source File column lists every location a row was found in. The Facebook app and Messenger keep the same MSYS mailbox, so an extraction holding both carries a copy in each sandbox; the join in this query can also emit the same row more than once from a single copy. Merging is keyed on row content, not on package name, so a record present in only one sandbox is kept: on one tested image the two copies held 11 and 13 contacts and the merged result is 13. Signed CDN links are excluded from the key because each app fetches its own for the same item, which means two genuinely different items would merge if they matched on every other reported column.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
-            "anne_a15": "Android 15 | com.facebook.katana vc 465218038, com.facebook.orca vc 335215725 | 38 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277, com.facebook.orca vc 343213368 | 6 rows",
+            "anne_a15": "Android 15 | com.facebook.katana vc 465218038, com.facebook.orca vc 335215725 | 22 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277, com.facebook.orca vc 343213368 | 3 rows",
             "pixel7a_a14": "Android 14 | com.facebook.orca vc 323609457 | 2 rows",
-            "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094, com.facebook.orca vc 337415659 | 2 rows",
-            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791, com.facebook.orca vc 324209509 | 65 rows",
+            "samsungs20_a13": "Android 13 | com.facebook.katana vc 467618094, com.facebook.orca vc 337415659 | 1 row",
+            "sharon_a14": "Android 14 | com.facebook.katana vc 454415791, com.facebook.orca vc 324209509 | 35 rows",
         },
     },
     "get_fb_threads_chats": {
         "name": "Facebook Messenger - Chats (threads_db2)",
         "description": "Facebook/Messenger chat messages (threads_db2)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-08-10",
         "requirements": "none",
@@ -110,7 +110,7 @@ __artifacts_v2__ = {
     "get_fb_threads_calls": {
         "name": "Facebook Messenger - Calls (threads_db2)",
         "description": "Facebook/Messenger call log (threads_db2)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -129,7 +129,7 @@ __artifacts_v2__ = {
     "get_fb_threads_contacts": {
         "name": "Facebook Messenger - Contacts (threads_db2)",
         "description": "Facebook/Messenger contacts (threads_db2)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-08-10",
         "requirements": "none",
@@ -182,6 +182,42 @@ def _q(cursor, sql):
         return cursor.fetchall()
     except sqlite3.Error:
         return []
+
+
+def _merge_by_source(data_list, volatile=()):
+    '''Collapse rows that are the same record found in more than one app sandbox.
+
+    The Facebook app and Messenger keep the same MSYS mailbox, and an extraction holding
+    both carries a copy in each app's own sandbox
+    (com.facebook.katana/app_mib_msys/v2/<uid>/ and com.facebook.orca/databases/). Without
+    this the same message is reported once per copy.
+
+    Rows are keyed on their content rather than filtered by package name, so a record
+    present in only one of the sandboxes is kept. The Source File column, which is last,
+    is excluded from the key and the paths of every copy are joined, so the row still
+    records each location the record was found in.
+
+    volatile holds the indexes of columns that legitimately differ between copies of the
+    same record and so must not take part in the key. Each app requests its own signed
+    CDN link for the same attachment or profile picture, and on the tested images those
+    links were the only difference: across the two copies of an eleven contact store the
+    profile picture URL differed on nine and every other column matched, and across eight
+    shared messages the attachment URL differed on one. The first copy's value is kept.
+    '''
+    skip = set(volatile)
+    merged = {}
+    order = []
+    for row in data_list:
+        key = tuple(value for index, value in enumerate(row[:-1]) if index not in skip)
+        if key not in merged:
+            merged[key] = list(row)
+            order.append(key)
+            continue
+        existing = str(merged[key][-1] or '')
+        addition = str(row[-1] or '')
+        if addition and addition not in existing.split('; '):
+            merged[key][-1] = f'{existing}; {addition}' if existing else addition
+    return [tuple(merged[key]) for key in order]
 
 
 @artifact_processor
@@ -268,17 +304,48 @@ def get_fb_msys_chats(context):
                 direction = 'Outgoing' if str(row[2]) == fb_uid else 'Incoming'
             else:
                 direction = ''
-            data_list.append((_str_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5], row[6],
-                              row[7], row[8], row[9], row[10], row[11], _str_to_utc(row[12]), row[13],
-                              row[14], rel, direction))
+            data_list.append((
+                _str_to_utc(row[0]),
+                _str_to_utc(row[12]),
+                direction,
+                row[1],
+                row[4],
+                row[2],
+                row[3],
+                row[5],
+                row[6],
+                row[7],
+                row[8],
+                row[9],
+                row[10],
+                row[11],
+                row[13],
+                row[14],
+                rel,
+            ))
         db.close()
 
-    data_headers = (('Message Timestamp', 'datetime'), 'Sender', 'Sender ID', 'Thread Key', 'Message',
-                    'Snippet', 'Call/Location Information', 'Attachment Name', 'Attachment Type',
-                    'Attachment URL', 'Location Lat/Long', 'Reaction',
-                    ('Reaction Timestamp', 'datetime'), 'Is Admin Message', 'Message ID',
-                    'Source File', 'Direction')
-    return data_headers, data_list, source
+    data_headers = (
+        ('Message Timestamp', 'datetime'),
+        ('Reaction Timestamp', 'datetime'),
+        'Direction',
+        'Sender',
+        'Message',
+        'Sender ID',
+        'Thread Key',
+        'Snippet',
+        'Call/Location Information',
+        'Attachment Name',
+        'Attachment Type',
+        'Attachment URL',
+        'Location Lat/Long',
+        'Reaction',
+        'Is Admin Message',
+        'Message ID',
+        'Source File',
+    )
+    # index 11 is Attachment URL, a per-app signed CDN link
+    return data_headers, _merge_by_source(data_list, volatile=(11,)), source
 
 
 @artifact_processor
@@ -316,7 +383,7 @@ def get_fb_msys_calls(context):
 
     data_headers = (('Call Timestamp', 'datetime'), 'Call Duration', 'Party Name', 'Call Direction',
                     'Video Call', 'Call Answered', 'Thread Key', 'Source File')
-    return data_headers, data_list, source
+    return data_headers, _merge_by_source(data_list), source
 
 
 @artifact_processor
@@ -356,7 +423,8 @@ def get_fb_msys_contacts(context):
     data_headers = ('Facebook ID', 'Name', 'Normalized Name', 'User Name', 'Profile Pic URL',
                     'Email Address', 'Phone Number', 'Is Messenger User', 'Friendship Status',
                     'Birthdate (MM-DD)', 'Source File')
-    return data_headers, data_list, source
+    # index 4 is Profile Pic URL, a per-app signed CDN link
+    return data_headers, _merge_by_source(data_list, volatile=(4,)), source
 
 
 _REACTION_TS_COLUMNS = ('reaction_timestamp', 'reaction_timestamp_ms',

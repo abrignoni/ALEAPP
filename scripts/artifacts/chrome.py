@@ -18,11 +18,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 20 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 46 rows",
             "pixel7a_a14": "Android 14 | 76 rows",
-            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 132 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 44 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 65 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 137 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 118 rows",
-            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 62 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 31 rows",
         },
     },
     "get_chromeWebVisits": {
@@ -48,11 +48,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 39 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 71 rows",
             "pixel7a_a14": "Android 14 | 89 rows",
-            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 174 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 58 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 86 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 198 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 207 rows",
-            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 76 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 38 rows",
         },
     },
     "get_chromeSearchTerms": {
@@ -73,11 +73,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 1 row",
             "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 3 rows",
             "pixel7a_a14": "Android 14 | 7 rows",
-            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 39 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 13 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 18 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 18 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 37 rows",
-            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 16 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 8 rows",
         },
     },
     "get_chromeDownloads": {
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 2 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 108 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 1 row",
-            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 2 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 1 row",
         },
     },
     "get_chromeKeywordSearchTerms": {
@@ -127,11 +127,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 4 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 3 rows",
             "pixel7a_a14": "Android 14 | 7 rows",
-            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 48 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133, com.sec.android.app.sbrowser vc 1290059502 | 16 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 18 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 23 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 44 rows",
-            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 16 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 8 rows",
         },
     }
 }
@@ -142,6 +142,7 @@ import re
 import urllib.parse
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, does_column_exist_in_db, artifact_processor
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def get_browser_name(file_name):
@@ -187,7 +188,7 @@ def _history_files(files_found):
 
 @artifact_processor
 def get_chrome(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Last Visit Time', 'URL', 'Title', 'Visit Count', 'Typed Count', 'ID', 'Hidden']
     lava_data_headers = data_headers.copy()
@@ -218,7 +219,7 @@ def get_chrome(context):
 
 @artifact_processor
 def get_chromeWebVisits(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Visit Timestamp', 'URL', 'Title', 'Duration', 'Transition Type', 'Qualifier(s)', 'From Visit URL']
     lava_data_headers = data_headers.copy()
@@ -282,7 +283,7 @@ def get_chromeWebVisits(context):
 
 @artifact_processor
 def get_chromeSearchTerms(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Last Visit Time', 'Search Term', 'URL', 'Title', 'Visit Count']
     lava_data_headers = data_headers.copy()
@@ -318,7 +319,7 @@ def get_chromeSearchTerms(context):
 
 @artifact_processor
 def get_chromeDownloads(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State',
                     'Danger Type', 'Interrupt Reason', 'Opened?', 'Received Bytes', 'Total Bytes']
@@ -431,7 +432,7 @@ def get_chromeDownloads(context):
 
 @artifact_processor
 def get_chromeKeywordSearchTerms(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
     data_headers = ['Last Visit Time', 'Term', 'URL']
     lava_data_headers = data_headers.copy()
