@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "Catima",
+        "sample_data": {
+            "emu_a15_oss_v4": "Catima 2.45.0 | 1 rows",
+        },
         "notes": "One row per entry in the cards table of databases/Catima.db. Catima is an open "
                  "source loyalty-card wallet that stores the card numbers and barcodes a person "
                  "adds, entered by scanning or by hand. Each row is a card, with the Store name, a "
