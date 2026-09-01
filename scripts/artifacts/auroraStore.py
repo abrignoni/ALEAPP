@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Aurora Store",
+        "sample_data": {
+            "emu_a15_oss_v6": "Aurora Store 4.8.4 | 1 rows",
+        },
         "notes": "One row per entry in the account table of databases/aurora_database. Aurora "
                  "Store is an open source client for Google Play. Each row is a session the app "
                  "holds, with the Email and Display Name it carries, the Account Type, and Added "
@@ -31,6 +34,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Aurora Store",
+        "sample_data": {
+            "emu_a15_oss_v6": "Aurora Store 4.8.4 | 0 rows, checked: the download table is present and empty",
+        },
         "notes": "One row per entry in the download table of databases/aurora_database. Each row "
                  "is an app Aurora Store was asked to download, with its Package, Display Name, "
                  "Version Code, Size in bytes, the Download Status as the app records it, how "
@@ -55,6 +61,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Aurora Store",
+        "sample_data": {
+            "emu_a15_oss_v6": "Aurora Store 4.8.4 | 1 rows",
+        },
         "notes": "One row per entry in the favourite table of databases/aurora_database. A "
                  "favourite is an app marked in Aurora Store's own list, which is a deliberate "
                  "action rather than something the app records on its own, so a row shows an app "
@@ -76,6 +85,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Aurora Store",
+        "sample_data": {
+            "emu_a15_oss_v6": "Aurora Store 4.8.4 | 0 rows, checked: the update and review tables are present and empty",
+        },
         "notes": "Rows from the update and review tables of databases/aurora_database, combined "
                  "because both key on a package and both were empty on the tested device. An "
                  "update row is an update Aurora found for an installed app, with its Package, "
