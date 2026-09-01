@@ -13,6 +13,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
+            "emu_a15_oss_v5": "Android 15 | com.android.chrome vc 733915533, com.brave.browser vc 429411704, org.cromite.cromite vc 777816802 | 14 rows",
             "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 94 rows",
             "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 191 rows",
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 20 rows",
@@ -43,6 +44,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
+            "emu_a15_oss_v5": "Android 15 | com.android.chrome vc 733915533, com.brave.browser vc 429411704, org.cromite.cromite vc 777816802 | 17 rows",
             "anne_a15": "Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 127 rows",
             "galaxys10_a10": "Android 10 | com.android.chrome vc 438910534 | 291 rows",
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 39 rows",
