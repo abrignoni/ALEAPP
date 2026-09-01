@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Seal",
+        "sample_data": {
+            "emu_a15_oss_v6": "Seal 1.13.1 | 1 rows",
+        },
         "notes": "One row per entry in the DownloadedVideoInfo table of databases/app_database. "
                  "Seal is an open source front end for yt-dlp that downloads audio and video from "
                  "a URL a person supplies. Each row records one completed download: the Title and "
@@ -38,6 +41,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Seal",
+        "sample_data": {
+            "emu_a15_oss_v6": "Seal 1.13.1 | 1 rows",
+        },
         "notes": "Rows from the CookieProfile and CommandTemplate tables of "
                  "databases/app_database, combined because both are the app's configuration and "
                  "both key on a small identifier. Kind names which table a row came from. A "
