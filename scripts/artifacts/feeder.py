@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Feeder",
+        "sample_data": {
+            "emu_a15_oss_v5": "Feeder 2.22.0 | 1 rows",
+        },
         "notes": "One row per entry in the feeds table of databases/rssDatabase. Feeder is an open "
                  "source RSS and Atom reader. Each row is a feed subscribed to in the app, with "
                  "its Title, the Custom Title where one was set in the app, the Feed URL, and the "
@@ -31,6 +34,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Feeder",
+        "sample_data": {
+            "emu_a15_oss_v5": "Feeder 2.22.0 | 16 rows",
+        },
         "notes": "One row per entry in the feed_items table of databases/rssDatabase, joined to "
                  "the feed it belongs to. Most rows are articles the app downloaded when it synced "
                  "a feed, so a row's existence records the fetch and not that anyone opened it; "
