@@ -34,10 +34,12 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | airtagAndroid |
 | allTrails |
 | androidauto |
+| antennaPod |
 | appicons |
 | bitwarden |
 | breadWallet |
 | calculatorLockVault |
+| catima |
 | claude |
 | dhl |
 | dropbox |
@@ -46,6 +48,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | elementX |
 | fossifyCalendar |
 | fossifyGallery |
+| fossifyKeyboard |
 | fossifyNotes |
 | frosting |
 | galleryVault |
@@ -97,8 +100,10 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | smartSidebarFileDock |
 | swellbeing |
 | swissmeteo |
+| tasksOrg |
 | telegramAndroid |
 | thunderbird |
+| trailSense |
 | uber |
 | untappd |
 | waze |
