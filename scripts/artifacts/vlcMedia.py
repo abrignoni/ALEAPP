@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "VLC",
+        "sample_data": {
+            "emu_a15_oss_v4": "VLC 3.7.1 | 2 rows",
+        },
         "notes": "One row per entry in the Media table of app_db/vlc_media.db, joined to Folder for the "
                  "containing folder path. Media is the VLC medialibrary's index of the files it has "
                  "scanned, so a row records that the file was present and scanned on the device, and the "

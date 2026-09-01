@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "VLC",
+        "sample_data": {
+            "emu_a15_oss_v4": "VLC 3.7.1 | 1 rows",
+        },
         "notes": "One row per thumbnail JPEG VLC generated for a media-library entry. On VLC 3.x "
                  "the thumbnails are stored in the app's external files directory at "
                  "Android/data/org.videolan.vlc/files/medialib and are named for the media id "
@@ -24,6 +27,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "VLC",
+        "sample_data": {
+            "emu_a15_oss_v4": "VLC 3.7.1 | 2 rows",
+        },
         "notes": "One row per entry in the Media table of app_db/vlc_media.db, with the thumbnail "
                  "image VLC generated for it shown inline. Each media the app has seen carries a "
                  "Filename, a Type (0 Unknown, 1 Video, 2 Audio, from IMedia.h in "
@@ -48,6 +54,7 @@ import datetime
 import os
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 # Media.type from videolan/medialibrary IMedia.h (Type enum): Unknown=0, Video=1, Audio=2.
 MEDIA_TYPES = {0: 'Unknown', 1: 'Video', 2: 'Audio'}
@@ -72,7 +79,7 @@ def _media_type(value):
 
 @artifact_processor
 def get_vlcThumbs(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -91,7 +98,7 @@ def get_vlcThumbs(context):
 
 @artifact_processor
 def get_vlcThumbs_data(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     jpg_by_name = {os.path.basename(str(f)): str(f) for f in files_found if str(f).endswith('.jpg')}
     data_list = []
     source_path = ''
