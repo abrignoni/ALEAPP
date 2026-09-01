@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "Trail Sense",
+        "sample_data": {
+            "emu_a15_oss_v4": "Trail Sense 8.1.1 | 2 rows",
+        },
         "notes": "One row per entry in the beacons table of databases/trail_sense. Trail Sense is an "
                  "offline hiking and navigation app; a beacon is a location it holds, with a Latitude "
                  "and Longitude, an Elevation in metres (a 50 ft entry on the tested device was stored "
@@ -34,6 +37,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "Trail Sense",
+        "sample_data": {
+            "emu_a15_oss_v4": "Trail Sense 8.1.1 | 1 rows",
+        },
         "notes": "One row per entry in the paths table of databases/trail_sense. A path is a track the "
                  "app recorded, most often through its Backtrack feature, which logs the device's "
                  "location on a timer. Each row summarises the track: the Name where a name was given to it "
@@ -57,6 +63,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "Trail Sense",
+        "sample_data": {
+            "emu_a15_oss_v4": "Trail Sense 8.1.1 | 1 rows",
+        },
         "notes": "One row per entry in the waypoints table of databases/trail_sense, which are the "
                  "individual points the app logged along a recorded path (see the Paths artifact). Each "
                  "row is a location the app recorded for the device, with a Latitude, Longitude and "
