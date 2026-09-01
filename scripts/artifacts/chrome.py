@@ -145,6 +145,17 @@ from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, does_column_exis
 from scripts.artifacts.storagePathViews import unique_files
 
 
+def _package_from_path(file_name):
+    """The app package directory an extraction path runs through, or '' if there is none.
+
+    Chromium forks all write to app_chrome, so the layout does not name the browser and
+    the package directory is the only thing in the path that does.
+    """
+    match = re.search(r'/([A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)+)/app_[^/]+/',
+                      str(file_name).replace('\\', '/'))
+    return match.group(1) if match else ''
+
+
 def get_browser_name(file_name):
 
     if 'brave' in file_name.lower():
@@ -162,7 +173,8 @@ def get_browser_name(file_name):
         except Exception:
             return 'Unknown'
     else:
-        return 'Unknown'
+        # Any other Chromium build: name it by its own package rather than 'Unknown'.
+        return _package_from_path(file_name) or 'Unknown'
 
 
 def _webkit_to_utc(value):
