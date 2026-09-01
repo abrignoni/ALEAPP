@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "RethinkDNS",
+        "sample_data": {
+            "emu_a15_oss_v6": "RethinkDNS 0.5.6 | 117 rows",
+        },
         "notes": "One row per entry in the DnsLogs table of databases/rethink_logs.db. RethinkDNS "
                  "runs as a local VPN and resolves DNS for the whole device, so while it is "
                  "running it records every name each app asked to resolve. Each row carries the "
@@ -39,6 +42,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "RethinkDNS",
+        "sample_data": {
+            "emu_a15_oss_v6": "RethinkDNS 0.5.6 | 214 rows",
+        },
         "notes": "One row per entry in the ConnectionTracker table of databases/rethink_logs.db. "
                  "While RethinkDNS is running every network connection the device makes passes "
                  "through it, so each row records one connection with the App and Package that "
@@ -73,6 +79,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "RethinkDNS",
+        "sample_data": {
+            "emu_a15_oss_v6": "RethinkDNS 0.5.6 | 25 rows",
+        },
         "notes": "One row per entry in the Events table of databases/rethink_logs.db, which is the "
                  "app's own record of its lifecycle. Each row has an Event Type, a Severity, a "
                  "Message, the Source component and a User Action flag. The event types seen on "
