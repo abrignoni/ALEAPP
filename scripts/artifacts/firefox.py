@@ -12,6 +12,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
+            "emu_a15_oss_v5": "Android 15 | org.mozilla.firefox vc 2016180578, org.mozilla.fennec_fdroid vc 1540020 | 8 rows",
             "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 7 rows",
         },
     },
@@ -28,6 +29,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
+            "emu_a15_oss_v5": "Android 15 | org.mozilla.firefox vc 2016180578, org.mozilla.fennec_fdroid vc 1540020 | 8 rows",
             "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 8 rows",
         },
     },
@@ -44,6 +46,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "bookmark",
         "sample_data": {
+            "emu_a15_oss_v5": "Android 15 | org.mozilla.firefox vc 2016180578, org.mozilla.fennec_fdroid vc 1540020, org.torproject.torbrowser vc 2016179194 | 15 rows",
             "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 5 rows",
         },
     },
@@ -60,6 +63,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "search",
         "sample_data": {
+            "emu_a15_oss_v5": "Android 15 | org.mozilla.firefox vc 2016180578, org.mozilla.fennec_fdroid vc 1540020 | 0 rows, checked: moz_places_metadata_search_queries is empty in both stores",
             "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 2 rows",
         },
     }
