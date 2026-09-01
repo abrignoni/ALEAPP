@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "Tasks.org",
+        "sample_data": {
+            "emu_a15_oss_v4": "Tasks.org 15.10 | 1 rows",
+        },
         "notes": "One row per entry in the tasks table of databases/database, the app's Room "
                  "database. Tasks.org is an open source to-do and task manager. Each row is a "
                  "task, with its Title, Description (the notes field), Priority, the List it "
@@ -43,6 +46,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "Tasks.org",
+        "sample_data": {
+            "emu_a15_oss_v4": "Tasks.org 15.10 | 1 rows",
+        },
         "notes": "One row per entry in the places table of databases/database, left joined to the "
                  "geofences table and, through it, to the task the place is attached to. A place "
                  "is a location added in the app, with a Place Name, Address, Latitude, Longitude, "
@@ -69,6 +75,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "Tasks.org",
+        "sample_data": {
+            "emu_a15_oss_v4": "Tasks.org 15.10 | 2 rows",
+        },
         "notes": "One row per entry in the alarms table of databases/database, left joined to its "
                  "task. Each row is a reminder configured for a task. Type is decoded from the "
                  "app's Alarm type constants, 0 Date/time, 1 Relative to start, 2 Relative to due, "
