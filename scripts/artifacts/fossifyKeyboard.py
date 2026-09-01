@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "Fossify Keyboard",
+        "sample_data": {
+            "emu_a15_oss_v4": "Fossify Keyboard 1.9.1 | 1 rows",
+        },
         "notes": "One row per entry in the clips table of databases/clips.db. Fossify Keyboard is a "
                  "keyboard app with a clipboard manager, and this table holds the clips saved into it, "
                  "which are the pinned entries kept for reuse rather than the transient recent "
