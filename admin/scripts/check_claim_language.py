@@ -160,6 +160,20 @@ CHECKED_FIELDS = {
 # reason. The term is part of the key, so an entry silences the one word it was
 # granted for and never the next claim added to the same text.
 ALLOWLIST = {
+    # "habit" and "habits" are Loop Habit Tracker's own product name and the literal name
+    # of the Habits table these artifacts read. The app exists to record habits the person
+    # defined in it, so naming them is describing the records, not inferring behaviour from
+    # unrelated data. The notes state what each column holds and say the check-in records
+    # the day a habit was marked, not the time of day the person marked it.
+    ('loopHabits.py', 'loop_habits', 'name', 'habit'),
+    ('loopHabits.py', 'loop_habits', 'name', 'habits'),
+    ('loopHabits.py', 'loop_habits', 'description', 'habit'),
+    ('loopHabits.py', 'loop_habits', 'description', 'habits'),
+    ('loopHabits.py', 'loop_habits', 'notes', 'habit'),
+    ('loopHabits.py', 'loop_habits', 'notes', 'habits'),
+    ('loopHabits.py', 'loop_habits_checkins', 'name', 'habit'),
+    ('loopHabits.py', 'loop_habits_checkins', 'description', 'habit'),
+    ('loopHabits.py', 'loop_habits_checkins', 'notes', 'habit'),
     # "completed" names columns the artifact emits (completed time) and the Google Tasks
     # status value, not a claim that the task list is complete.
     ('googleTasks.py', 'get_googleTasks', 'description', 'complete'),
