@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Loop Habit Tracker",
+        "sample_data": {
+            "emu_a15_oss_v5": "Loop Habit Tracker 2.3.1 | 1 rows",
+        },
         "notes": "One row per entry in the Habits table of databases/uhabits.db. Loop Habit Tracker "
                  "is an open source habit tracker. Each row is a habit set up in the app, with its "
                  "Name, the Question the app asks about it, an optional Description, and the "
@@ -34,6 +37,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "Loop Habit Tracker",
+        "sample_data": {
+            "emu_a15_oss_v5": "Loop Habit Tracker 2.3.1 | 2 rows",
+        },
         "notes": "One row per entry in the Repetitions table of databases/uhabits.db, joined to "
                  "its habit. Each row is a check-in recorded against a habit for one day. Value is "
                  "decoded from the app's Entry constants, -1 Unknown, 0 No, 1 Yes (automatic), 2 "
