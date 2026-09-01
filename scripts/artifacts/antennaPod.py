@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "AntennaPod",
+        "sample_data": {
+            "emu_a15_oss_v4": "AntennaPod 3.12.0 | 1 rows",
+        },
         "notes": "One row per entry in the Feeds table of databases/Antennapod.db. AntennaPod is "
                  "an open source podcast manager. Each row is a podcast the person subscribed to, "
                  "with the Title, an optional Custom Title the user set, the Author, the Feed URL "
@@ -29,6 +32,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-31",
         "requirements": "none",
         "category": "AntennaPod",
+        "sample_data": {
+            "emu_a15_oss_v4": "AntennaPod 3.12.0 | 1013 rows",
+        },
         "notes": "One row per entry in the FeedItems table of databases/Antennapod.db, joined to "
                  "its FeedMedia record and its Feed. Each row is an episode of a subscribed "
                  "podcast. Most rows are the episode catalogue the app downloaded when the feed "
