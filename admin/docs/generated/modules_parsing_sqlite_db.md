@@ -46,6 +46,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | dust |
 | ebay |
 | elementX |
+| feeder |
 | fossifyCalendar |
 | fossifyGallery |
 | fossifyKeyboard |
@@ -70,6 +71,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | kiwix |
 | knuddels |
 | linkbox |
+| loopHabits |
 | magisk |
 | miBrowser |
 | netflix |
