@@ -36,6 +36,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | androidauto |
 | antennaPod |
 | appicons |
+| auroraStore |
 | bitwarden |
 | breadWallet |
 | calculatorLockVault |
@@ -75,12 +76,14 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | magisk |
 | miBrowser |
 | netflix |
+| openTracks |
 | osmand |
 | phoneLink |
 | pinterest |
 | protonmailDbMail |
 | protonmailInbox |
 | rema_1000 |
+| rethinkDns |
 | samsungBadgeProvider |
 | samsungBatteryStats |
 | samsungBixbyRoutines |
@@ -93,6 +96,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungStoryService |
 | samsungWifiDatabases |
 | sbbmobile |
+| seal |
 | settingsSearch |
 | shazam |
 | shistorylog |
