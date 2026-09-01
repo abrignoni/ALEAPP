@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "OpenTracks",
+        "sample_data": {
+            "emu_a15_oss_v6": "OpenTracks 4.28.2 | 1 rows",
+        },
         "notes": "One row per entry in the tracks table of databases/database.db. OpenTracks is "
                  "an open source sport tracking app that records the device's position while a "
                  "recording is running. Each row summarises one recording: its Name (the app "
@@ -39,6 +42,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "OpenTracks",
+        "sample_data": {
+            "emu_a15_oss_v6": "OpenTracks 4.28.2 | 15 rows",
+        },
         "notes": "One row per entry in the trackpoints table of databases/database.db, joined to "
                  "the track it belongs to. Each row is a position the app logged while recording, "
                  "so the rows are a location history for the recording periods. Latitude and "
@@ -76,6 +82,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-01",
         "requirements": "none",
         "category": "OpenTracks",
+        "sample_data": {
+            "emu_a15_oss_v6": "OpenTracks 4.28.2 | 0 rows, checked: the markers table is present and empty",
+        },
         "notes": "One row per entry in the markers table of databases/database.db, joined to its "
                  "track. A marker is a point placed on a running recording through the app's "
                  "marker function, with a Name, Description, a Marker Type as the app localised "
