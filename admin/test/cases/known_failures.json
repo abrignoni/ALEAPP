@@ -1,1 +1,3 @@
-{}
+{
+  "smsmms.get_sms_mms_attachments.anne_a15[second-tenant]": "The artifact adds one row per attachment file no part row references. The second-tenant leg duplicates the database under data/user/10 but not the user_de attachment folder its part rows point at, so the copied rows resolve to user 0's files and the one unreferenced file is reported once, not twice: 21 rows against the expected 22. A real second user's database records data/user_de/10 paths, which the recorded-path join follows (checked 2026-09-02 on a constructed two-user tree, 18 distinct media items from two users)."
+}
