@@ -11,33 +11,37 @@ __artifacts_v2__ = {
         "category": "Realm",
         "notes": "This artifact reports nothing about the contents of any database. It exists so "
                  "that a store the bundled parser cannot read is visible as unread rather than "
-                 "indistinguishable from an empty one. The parser's row decoders need the Cluster "
-                 "table layout that Realm introduced in file format 10. On the tested corpora the "
-                 "stores it decoded reported Realm file formats 20, 23 and 24, and the one it "
-                 "returned no tables for reported file format 9, which predates that layout; the "
-                 "parser reads the class names of a format 9 store but returns no tables for it "
-                 "rather than raising, so an unsupported format and an empty store look the same "
-                 "in this output. Reported upstream as kalink0/crush-forensics issue 55, where "
-                 "the class name reading was fixed and row support remains open. A row is emitted "
-                 "only when the file holds more than 1024 non-zero bytes, which excludes "
-                 "uninitialised stores; the one store reported on the tested corpora held 257,842 "
-                 "non-zero bytes in a 2,359,296 byte file. Non-Zero Bytes is a count of bytes, "
-                 "not an interpretation of them. A row here means the file should be examined "
-                 "with other tooling; it is not evidence that the app held any particular data, "
-                 "and an absence of rows means every Realm store found was decoded, not that none "
-                 "exists. Header Read separates two different conditions. False means the file "
-                 "does not begin with the Realm mnemonic, so no header could be read and no file "
-                 "format is reported; Realm supports whole-file encryption, which presents this "
-                 "way, and the artifact does not assert which cause applies. True with a file "
-                 "format the parser does not decode is the unsupported-format case described "
-                 "above. The path pattern is a deliberate cross-app sweep: every row names the "
-                 "file it came from, so the owning app is identified by its source path.",
+                 "indistinguishable from an empty one. The parser reads the Cluster table layout "
+                 "Realm introduced in file format 10 and the pre-Cluster layout used before it, "
+                 "so a store in either layout is decoded and is not reported here. On the tested "
+                 "Android corpora every Realm store found decoded, so this artifact reports no "
+                 "rows on any of them. That is a checked absence rather than an unexercised path: "
+                 "seven of the registered corpora hold a Realm store and all seven decoded, "
+                 "including the format 9 store that this artifact used to report. A row is "
+                 "emitted only when the file holds more than 1024 non-zero bytes, which excludes "
+                 "uninitialised stores; an uninitialised store was measured at 204 non-zero "
+                 "bytes. Header Read separates two conditions. False means the file does not "
+                 "begin with the Realm mnemonic, so no header could be read and File Format "
+                 "Version (as stored) is empty; Realm supports whole-file encryption, which "
+                 "presents this way, and the artifact does not assert which cause applies. True "
+                 "with a file format the parser does not decode would be an unsupported format, "
+                 "which the tested extractions did not contain. Non-Zero Bytes is a count of "
+                 "bytes, not an interpretation of them. A row here means the file should be "
+                 "examined with other tooling; it is not evidence that the app held any "
+                 "particular data, and an absence of rows means every Realm store found was "
+                 "decoded, not that none exists. The path pattern is a deliberate cross-app "
+                 "sweep: every row names the file it came from, so the owning app is identified "
+                 "by its source path.",
         "paths": ('*.realm',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "database",
         "sample_data": {
-            "galaxys10_a10": "Android 10 | 1 row",
-        },
+                           "galaxys10_a10": "Android 10 | 0 rows",
+                           "sharon_a13": "Android 13 | 0 rows",
+                           "russell_pixel6a_a13": "Android 13 | 0 rows",
+                           "hc_pixel8pro_a16": "Android 16 | 0 rows",
+                           "hc_pixel8pro_a17": "Android 17 | 0 rows",
+                       },
     },
 }
 
