@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-03",
         "requirements": "none",
         "category": "Orgzly",
+        "sample_data": {
+            "emu_a15_oss_v7": "Orgzly Revived 1.23.0 | 35 rows, of which 34 are the notebook the app installs on first run",
+        },
         "notes": "One row per entry in the notes table of databases/orgzly.db, joined to its "
                  "notebook and to the scheduled and deadline timestamps the note carries. Orgzly "
                  "Revived is an outliner for Org-mode files, so a note is a heading a person "
@@ -44,6 +47,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-03",
         "requirements": "none",
         "category": "Orgzly",
+        "sample_data": {
+            "emu_a15_oss_v7": "Orgzly Revived 1.23.0 | 1 rows",
+        },
         "notes": "One row per entry in the books table of databases/orgzly.db. A notebook is one "
                  "Org file the app holds, and this artifact records where it came from. Last "
                  "Action Message is the useful column: the app writes a sentence describing the "
