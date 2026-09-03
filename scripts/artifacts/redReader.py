@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-03",
         "requirements": "none",
         "category": "RedReader",
+        "sample_data": {
+            "emu_a15_oss_v8": "RedReader 1.26 | 88 rows",
+        },
         "notes": "One row per entry in the web table of databases/cache.db. RedReader is an open "
                  "source Reddit client, and this table is the index of its HTTP cache: the "
                  "requests it made and still holds, with the URL, the account it was made for, and Timestamp as "
@@ -45,6 +48,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-03",
         "requirements": "none",
         "category": "RedReader",
+        "sample_data": {
+            "emu_a15_oss_v8": "RedReader 1.26 | 2 rows",
+        },
         "notes": "One row per entry in the objects table of the per-account subreddit database. "
                  "The database is named for the account: RedditSubredditManager.java line 100 at "
                  "QuantumBadger/RedReader tag v1.26 (c250817d4eba13f5ed2b26d33fbc9044095ff8aa) "
@@ -76,6 +82,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-03",
         "requirements": "none",
         "category": "RedReader",
+        "sample_data": {
+            "emu_a15_oss_v8": "RedReader 1.26 | 2 rows",
+        },
         "notes": "Rows from two stores. Kind Account rows come from the accounts_oauth2 table of "
                  "databases/accounts_oauth2.db, one per account the app holds, with the Username "
                  "(empty for the anonymous account, which is how the tested device was used) and "
