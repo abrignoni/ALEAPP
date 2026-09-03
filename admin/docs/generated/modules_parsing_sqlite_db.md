@@ -39,6 +39,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | auroraStore |
 | bitwarden |
 | breadWallet |
+| breezyWeather |
 | calculatorLockVault |
 | catima |
 | claude |
@@ -77,6 +78,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | miBrowser |
 | netflix |
 | openTracks |
+| orgzly |
 | osmand |
 | phoneLink |
 | pinterest |
