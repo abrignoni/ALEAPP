@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-03",
         "requirements": "none",
         "category": "Aves Gallery",
+        "sample_data": {
+            "emu_a15_oss_v9": "Aves Gallery Libre 1.14.9 | 6 rows",
+        },
         "notes": "One row per entry in the entry table of databases/metadata.db, joined to the "
                  "metadata, address, favourites and videoPlayback tables. Aves Gallery is an open "
                  "source gallery, and this table is its index of the media it found on the device, "
@@ -49,6 +52,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-03",
         "requirements": "none",
         "category": "Aves Gallery",
+        "sample_data": {
+            "emu_a15_oss_v9": "Aves Gallery Libre 1.14.9 | 0 rows, checked: the trash and vaults tables are present and empty",
+        },
         "notes": "Rows from the trash and vaults tables of databases/metadata.db, combined because "
                  "both describe media the app is deliberately keeping out of the main collection. "
                  "Kind names which table a row came from. "
