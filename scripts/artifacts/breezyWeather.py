@@ -7,6 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-03",
         "requirements": "none",
         "category": "Breezy Weather",
+        "sample_data": {
+            "emu_a15_oss_v7": "Breezy Weather 6.2.2 | 1 rows",
+        },
         "notes": "One row per entry in the locations table of databases/breezyweather.db, joined to "
                  "the weathers table for the times the app last fetched for that place. Breezy "
                  "Weather is an open source weather app, and a row here is a place someone added "
@@ -44,6 +47,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-03",
         "requirements": "none",
         "category": "Breezy Weather",
+        "sample_data": {
+            "emu_a15_oss_v7": "Breezy Weather 6.2.2 | 0 rows, checked: the alerts table is present and empty",
+        },
         "notes": "One row per entry in the alerts table of databases/breezyweather.db, joined to "
                  "the location the alert was issued for. An alert is a warning the weather "
                  "provider published for that place and the app stored, with a Headline, a "
