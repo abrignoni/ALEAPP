@@ -2,8 +2,8 @@ __artifacts_v2__ = {
     "android_users": {
         "name": "Android Users and Profiles",
         "description": "The Android users and profiles that exist on the device, with each "
-                       "one's name, type, creation time and the times it was last logged in "
-                       "and last brought to the foreground.",
+                       "one's name, type, creation time, the time it was last logged in and the time the "
+                       "device last switched to it.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
@@ -18,7 +18,14 @@ __artifacts_v2__ = {
                  "package-restrictions.xml and settings_ssaid.xml, is skipped. The pattern is not "
                  "anchored on a data/ prefix, because a raw userdata partition image carries the "
                  "same folder without one.\n"
-                 "Created, Last Logged In and Last Entered Foreground are Unix milliseconds. "
+                 "Created, Last Logged In and Last Entered Foreground are Unix milliseconds and are the "
+                 "created, lastLoggedIn and lastEnteredForeground attributes as stored. Last Entered "
+                 "Foreground records when the device switched to this user, not app usage: the "
+                 "platform sets it from setLastEnteredForegroundTimeToNow, called for the user being "
+                 "switched to in onUserSwitching and for the system user in onUserStarting. Reference: "
+                 "Android Open Source Project, UserManagerService.java, frameworks/base/services/core/"
+                 "java/com/android/server/pm. What sets Last Logged In was not established, so it is "
+                 "reported as stored. "
                  "The system user is created with the device and records a creation value of 0, "
                  "which is reported as blank rather than as 1970. User Type and Flags are "
                  "reported as stored; the type string is the platform's own, such as a full "
