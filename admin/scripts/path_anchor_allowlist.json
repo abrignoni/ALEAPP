@@ -120,6 +120,8 @@
   "*/misc/wifi/softap.conf": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
   "*/mmssms.db*": "distinctive marker: matched only com.android.providers.telephony, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/msys_database*": "distinctive marker: matched only com.facebook.orca, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
+  "*/nearby-discovery/nearby_discovery_item_cache.db/*": "a directory name only Play services writes: the LevelDB store is a directory and the pattern matches the files inside it; measured 2026-09-04 across 23 Android corpora",
+  "*/nearby-fast-pair/nearby_fast_pair_item_cache.db/*": "a directory name only Play services writes: the LevelDB store is a directory and the pattern matches the files inside it; measured 2026-09-04 across 23 Android corpora",
   "*/netstats/dev*": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/netstats/uid*": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/netstats/xt*": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
