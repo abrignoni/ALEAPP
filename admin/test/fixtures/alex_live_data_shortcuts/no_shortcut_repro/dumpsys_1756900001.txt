@@ -1,0 +1,15 @@
+# SYNTHETIC KNOWN DATA. Authored 2026-09-04 for ALEAPP PR #1217.
+# No part of this file came off a real device. Every id, name, label and
+# message string below is invented. Structure follows AOSP dumpsys.cpp and
+# ShortcutInfo.toDumpString().
+
+-------------------------------------------------------------------------------
+DUMP OF SERVICE package:
+Activity Resolver Table:
+  (elided)
+--------- 0.061s was the duration of dumpsys package, ending at: 2026-09-03 14:26:41
+-------------------------------------------------------------------------------
+DUMP OF SERVICE battery:
+Current Battery Service state:
+  AC powered: false
+--------- 0.061s was the duration of dumpsys battery, ending at: 2026-09-03 14:26:41

@@ -1,0 +1,139 @@
+# SYNTHETIC KNOWN DATA. Authored 2026-09-04 for ALEAPP PR #1217.
+# No part of this file came off a real device. Every id, name, label and
+# message string below is invented. Structure follows AOSP dumpsys.cpp and
+# ShortcutInfo.toDumpString().
+
+-------------------------------------------------------------------------------
+DUMP OF SERVICE package:
+Activity Resolver Table:
+  (elided)
+--------- 0.061s was the duration of dumpsys package, ending at: 2026-09-03 14:26:41
+-------------------------------------------------------------------------------
+DUMP OF SERVICE shortcut:
+Shortcut Manager State:
+  Time: 2026-09-03 14:26:41
+  Raw last reset: [0] 
+  Locale change sequence number: 3
+
+  Configuration:
+    resetInterval: 86400000
+    maxShortcutsPerActivity: 15
+
+  User: 0  Known locales: [en_US]  Last app scan: [1756900000000]
+
+  Package: com.discord  UID: 10245
+    Calls: 6
+    Last known FG: 0
+    Last reset: [1788393600000] 2026-09-03 00:00:00
+    PackageInfo: version=1, lastUpdateTime=1788393600000, shadow=false
+
+    Shortcuts:
+      ShortcutInfo {id=known-dm-alpha, flags=0x811 [ImPinKey]
+      packageName=com.discord
+      activity=ComponentInfo{com.discord/com.discord.chat.ChatActivity}
+      shortLabel=known_user_alpha, resId=0[null]
+      longLabel=known_user_alpha, resId=0[null]
+      disabledMessage=null, resId=0[null]
+      disabledReason=[not disabled]
+      categories=[]
+      persons=[Person{name=known_user_alpha, key=known-person-alpha}]
+      icon=null
+      rank=0, timestamp=1788443892000
+      intents=[Intent { act=android.intent.action.VIEW cmp=com.discord/com.discord.chat.ChatActivity (has extras) }/PersistableBundle[{channel_id, 100000000000000001, message_id, 200000000000000001, guild_id, 300000000000000001, message_content, SYNTHETIC KNOWN MESSAGE ONE, user_username, known_user_alpha, user_id, 400000000000000001, raw, {"id":"200000000000000001","timestamp":"2026-09-03T13:58:12.401","pinned":false},}]]
+      extras=PersistableBundle[{shortcut_type=dm}]
+      iconRes=0[null], bitmapPath=null, iconUri=null}
+      ShortcutInfo {id=known-dm-bravo, flags=0x811 [ImPinKey]
+      packageName=com.discord
+      activity=ComponentInfo{com.discord/com.discord.chat.ChatActivity}
+      shortLabel=known_user_bravo, resId=0[null]
+      longLabel=known_user_bravo, resId=0[null]
+      disabledMessage=null, resId=0[null]
+      disabledReason=[not disabled]
+      categories=[]
+      persons=[Person{name=known_user_bravo, key=known-person-bravo}]
+      icon=null
+      rank=1, timestamp=1788439205000
+      intents=[Intent { act=android.intent.action.VIEW cmp=com.discord/com.discord.chat.ChatActivity (has extras) }/PersistableBundle[{channel_id, 100000000000000002, message_id, 200000000000000002, guild_id, 300000000000000002, body, SYNTHETIC KNOWN MESSAGE TWO, icon, null, user_username, known_user_bravo, user_id, 400000000000000002, scheduled_at, 2026-09-03 12:40:05, receiving_user_id, 400000000000000002,}]]
+      extras=PersistableBundle[{shortcut_type=dm}]
+      iconRes=0[null], bitmapPath=null, iconUri=null}
+      ShortcutInfo {id=known-guild-charlie, flags=0x811 [ImPinKey]
+      packageName=com.discord
+      activity=ComponentInfo{com.discord/com.discord.chat.ChatActivity}
+      shortLabel=#known-channel, resId=0[null]
+      longLabel=known-guild / #known-channel, resId=0[null]
+      disabledMessage=null, resId=0[null]
+      disabledReason=[not disabled]
+      categories=[]
+      persons=[]
+      icon=null
+      rank=2, timestamp=1788383733000
+      intents=[Intent { act=android.intent.action.VIEW cmp=com.discord/com.discord.chat.ChatActivity (has extras) }/PersistableBundle[{channel_id, 100000000000000003, message_id, 200000000000000003, guild_id, 300000000000000003, message_content, SYNTHETIC KNOWN MESSAGE THREE, user_username, known_user_charlie, user_id, 400000000000000003, raw, {"id":"200000000000000003","timestamp":"2026-09-02T21:15:33.998","pinned":false},}]]
+      extras=PersistableBundle[{shortcut_type=guild}]
+      iconRes=0[null], bitmapPath=null, iconUri=null}
+      ShortcutInfo {id=known-dm-delta, flags=0x811 [ImPinKey]
+      packageName=com.discord
+      activity=ComponentInfo{com.discord/com.discord.chat.ChatActivity}
+      shortLabel=known_user_delta, resId=0[null]
+      longLabel=known_user_delta, resId=0[null]
+      disabledMessage=null, resId=0[null]
+      disabledReason=[not disabled]
+      categories=null
+      persons=null
+      icon=null
+      rank=3, timestamp=1788249764000
+      intents=null
+      extras=null
+      iconRes=0[null], bitmapPath=null, iconUri=null}
+    Total bitmap size: 0 (0 B)
+
+  Package: com.android.camera2  UID: 10102
+    Calls: 1
+    Last known FG: 0
+    Last reset: [1788048000000] 2026-08-30 00:00:00
+    PackageInfo: version=1, lastUpdateTime=1788048000000, shadow=false
+
+    Shortcuts:
+      ShortcutInfo {id=known-camera-selfie, flags=0x1 [Man]
+      packageName=com.android.camera2
+      activity=ComponentInfo{com.android.camera2/com.android.camera.CameraLauncher}
+      shortLabel=Selfie, resId=0[null]
+      longLabel=Take a selfie, resId=0[null]
+      disabledMessage=null, resId=0[null]
+      disabledReason=[not disabled]
+      categories=[]
+      persons=null
+      icon=null
+      rank=0, timestamp=1788081062000
+      intents=[Intent { act=android.media.action.IMAGE_CAPTURE cmp=com.android.camera2/com.android.camera.CameraLauncher }/PersistableBundle[{}]]
+      extras=null
+      iconRes=0[null], bitmapPath=null, iconUri=null}
+    Total bitmap size: 0 (0 B)
+
+  Package: com.android.dialer  UID: 10088
+    Calls: 2
+    Last known FG: 0
+    Last reset: [1787961600000] 2026-08-29 00:00:00
+    PackageInfo: version=1, lastUpdateTime=1787961600000, shadow=false
+
+    Shortcuts:
+      ShortcutInfo {id=known-dialer-echo, flags=0x821 [ImPinKey]
+      packageName=com.android.dialer
+      activity=ComponentInfo{com.android.dialer/.main.impl.MainActivity}
+      shortLabel=known_contact_echo, resId=0[null]
+      longLabel=Call known_contact_echo, resId=0[null]
+      disabledMessage=null, resId=0[null]
+      disabledReason=[not disabled]
+      categories=[]
+      persons=[Person{name=known_contact_echo, key=known-person-echo}]
+      icon=null
+      rank=0, timestamp=1788025459000
+      intents=[Intent { act=android.intent.action.CALL dat=tel:xxxxxxxxxxx cmp=com.android.dialer/.main.impl.MainActivity }/PersistableBundle[{}]]
+      extras=null
+      iconRes=0[null], bitmapPath=null, iconUri=null}
+    Total bitmap size: 0 (0 B)
+--------- 0.184s was the duration of dumpsys shortcut, ending at: 2026-09-03 14:26:41
+-------------------------------------------------------------------------------
+DUMP OF SERVICE battery:
+Current Battery Service state:
+  AC powered: false
+--------- 0.061s was the duration of dumpsys battery, ending at: 2026-09-03 14:26:41
