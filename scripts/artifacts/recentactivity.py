@@ -18,11 +18,7 @@ __artifacts_v2__ = {
             "https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/"
             "proto/src/windowmanager.proto"
         ),
-        "paths": ('*/system_ce/*',
-                  '*/system_ce/*/recent_tasks/*',
-                  '*/system_ce/*/snapshots/*',
-                  '*/system_ce/*/recent_images/*',
-                  '*/system_ce/*/recent_images/*/*'),
+        "paths": ('*/system_ce/*',),
         "output_types": "standard",
         "artifact_icon": "activity",
         "sample_data": {

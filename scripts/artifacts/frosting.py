@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "frosting": {
         "name": "App Updates (Frosting.db)",
         "description": "App updates via the frosting.db",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-07-28",
         "last_update_date": "2025-09-09",
         "requirements": "none",

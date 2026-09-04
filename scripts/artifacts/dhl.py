@@ -5,11 +5,11 @@ __artifacts_v2__ = {
                        "airway bill number and the time it was searched.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-20",
-        "last_update_date": "2026-08-20",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "DHL",
-        "notes": "One row per tracking search. Airway Bill is the shipment number the user "
-                 "entered or opened, and Search Date is when the app recorded the search. "
+        "notes": "One row per tracking search. Airway Bill is the shipment number the row "
+                 "records, and Search Date is when the app recorded the search. "
                  "The row carries the account identifier that made the search; a search made "
                  "before sign in carries a zero account, which is why one of the two rows on "
                  "the tested device did. Search Date is stored as local text with no zone, so "

@@ -12,31 +12,55 @@ __artifacts_v2__ = {
         ),
         "author": "@Gear-I, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-26",
+        "last_update_date": "2026-08-27",
         "requirements": "none",
         "category": "Samsung Bixby Routines",
         "notes": (
+            (
+            (
             "The `routine` table carries a unique per-row name and the "
             "presentation fields an automation is configured with; the "
             "sibling `condition` and `action` tables are the app-shipped "
-            "catalog of available trigger and action building blocks, carrying "
-            "resource ids and provider class names rather than user data, and "
-            "are not parsed here. Toggle Time is reported as stored and decoded "
-            "on the same magnitude basis as the other timestamps in this "
-            "database; the tested extraction held no rows, so the column is "
-            "code-present and unexercised and its meaning was not confirmed "
-            "against a known reference event. routine_extra is a TEXT column of "
-            "this table, not a separate table, and is not decoded here; it held "
-            "no rows to inspect in the tested extraction. A zero-row result "
-            "means no routine was present in this table at acquisition; it is "
-            "not a finding that Bixby Routines was never configured, since a "
-            "deleted routine would not appear here."
+            "catalog of available trigger and action building blocks, "
+            "carrying resource ids and provider class names rather than user "
+            "data, and are not parsed here. Toggle Time is stored in epoch "
+            "milliseconds: two of the eight tested extractions carried a "
+            "non-zero value, both 13 digits and out of representable range if "
+            "read as seconds, and the other six stored zero, which is "
+            "reported blank. is_favorite_routine is absent from the oldest "
+            "tested release, where it is reported empty rather than failing "
+            "the whole query and returning nothing. routine_extra is a TEXT "
+            "column of this table, not a separate table, and is not decoded "
+            "here. The store held fifteen tables across the tested "
+            "extractions and each is accounted for: routine, "
+            "routine_running_history, condition_instance, action_instance, "
+            "location_history, routine_history and preference are the seven "
+            "this module parses; condition and action are the app-shipped "
+            "catalog described above; recommend holds condition and action "
+            "pairings the app generated for itself, with an accuracy score "
+            "and a recommend_source, which is not a record of anything the "
+            "user did and is not reported; action_snap, condition_snap and "
+            "suggestion_routine_history were present on some releases and "
+            "empty in every extraction tested; android_metadata and "
+            "sqlite_sequence are SQLite and Android bookkeeping. A zero-row "
+            "result means no routine was present in this table at "
+            "acquisition; it is not a finding that Bixby Routines was never "
+            "configured, since a deleted routine would not appear here."
+        )
+        )
         ),
         "paths": ('*/com.samsung.android.app.routines/databases/routine.db*',),
         "output_types": "standard",
         "artifact_icon": "zap",
         "sample_data": {
-            "samsung_s21ultra_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "anne_a15": "Android 15 | com.samsung.android.app.routines vc 480221000 | 1 row",
+            "cookbook_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.app.routines vc 262506000 | 0 rows",
+            "s20fe_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 1 row",
+            "samsunga53_a14": "Android 14 | com.samsung.android.app.routines vc 460105000 | 1 row",
+            "samsungs20_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 1 row",
+            "sharon_a13": "Android 13 | com.samsung.android.app.routines vc 400071000 | 1 row",
+            "sharon_a14": "Android 14 | com.samsung.android.app.routines vc 450054000 | 1 row",
         },
     },
     "samsungBixbyRoutinesRunHistory": {
@@ -48,28 +72,38 @@ __artifacts_v2__ = {
         ),
         "author": "@Gear-I, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-26",
-        "last_update_date": "2026-08-26",
+        "last_update_date": "2026-08-27",
         "requirements": "none",
         "category": "Samsung Bixby Routines",
         "notes": (
+            (
+            (
             "This table carries routine_name alongside routine_id, so a row "
             "names the routine it refers to without depending on the routine "
             "still existing in the `routine` table. running_type and "
             "recover_type are undocumented integers and are reported as "
             "stored. Timestamp is decoded on the same magnitude basis as the "
-            "other timestamps in this database. The tested extraction held no "
-            "rows in this table, consistent with its `routine` table also "
-            "being empty, so this artifact is code-present and unexercised: "
-            "the column meanings were derived from the table definition and "
-            "not confirmed against decoded rows. A zero-row result is a "
+            "other timestamps in this database. Three of the eight tested "
+            "extractions held rows here, 12, 3 and 1 respectively; the table "
+            "is absent from the oldest tested release, where the artifact "
+            "reports nothing rather than failing. A zero-row result is a "
             "checked absence for that extraction, not a finding about whether "
             "any routine ran."
+        )
+        )
         ),
         "paths": ('*/com.samsung.android.app.routines/databases/routine.db*',),
         "output_types": "standard",
         "artifact_icon": "play-circle",
         "sample_data": {
-            "samsung_s21ultra_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "anne_a15": "Android 15 | com.samsung.android.app.routines vc 480221000 | 12 rows",
+            "cookbook_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.app.routines vc 262506000 | 0 rows (table not in this release)",
+            "s20fe_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.app.routines vc 460105000 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 0 rows",
+            "sharon_a13": "Android 13 | com.samsung.android.app.routines vc 400071000 | 1 row",
+            "sharon_a14": "Android 14 | com.samsung.android.app.routines vc 450054000 | 3 rows",
         },
     },
     "samsungBixbyRoutinesConditions": {
@@ -82,27 +116,36 @@ __artifacts_v2__ = {
         ),
         "author": "@Gear-I, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-26",
-        "last_update_date": "2026-08-26",
+        "last_update_date": "2026-08-27",
         "requirements": "none",
         "category": "Samsung Bixby Routines",
         "notes": (
-            "Rows are joined to the `routine` table on routine_id to carry the "
-            "routine name where one is present; Routine Name is blank when the "
-            "join finds nothing. intent_param, label_params and bundle_data "
-            "hold app-defined parameter text and are reported as stored rather "
-            "than decoded, since their structure varies by condition tag. "
-            "is_negative marks a condition the app stores in its inverted "
-            "form; valid_state is an undocumented integer reported as stored. "
-            "The tested extraction held no rows in this table, so this "
-            "artifact is code-present and unexercised and the column meanings "
-            "were derived from the table definition rather than from decoded "
-            "rows."
+            (
+            (
+            "Rows are joined to the `routine` table on routine_id to carry "
+            "the routine name where one is present; Routine Name is blank "
+            "when the join finds nothing. intent_param, label_params and "
+            "bundle_data hold app-defined parameter text and are reported as "
+            "stored rather than decoded, since their structure varies by "
+            "condition tag. is_negative marks a condition the app stores in "
+            "its inverted form; valid_state is an undocumented integer "
+            "reported as stored. Six of the eight tested extractions held "
+            "rows here, one or two each, and each row joined to a routine."
+        )
+        )
         ),
         "paths": ('*/com.samsung.android.app.routines/databases/routine.db*',),
         "output_types": "standard",
         "artifact_icon": "git-branch",
         "sample_data": {
-            "samsung_s21ultra_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "anne_a15": "Android 15 | com.samsung.android.app.routines vc 480221000 | 2 rows",
+            "cookbook_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.app.routines vc 262506000 | 0 rows",
+            "s20fe_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 1 row",
+            "samsunga53_a14": "Android 14 | com.samsung.android.app.routines vc 460105000 | 1 row",
+            "samsungs20_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 1 row",
+            "sharon_a13": "Android 13 | com.samsung.android.app.routines vc 400071000 | 1 row",
+            "sharon_a14": "Android 14 | com.samsung.android.app.routines vc 450054000 | 1 row",
         },
     },
     "samsungBixbyRoutinesActions": {
@@ -115,25 +158,35 @@ __artifacts_v2__ = {
         ),
         "author": "@Gear-I, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-26",
-        "last_update_date": "2026-08-26",
+        "last_update_date": "2026-08-27",
         "requirements": "none",
         "category": "Samsung Bixby Routines",
         "notes": (
-            "Rows are joined to the `routine` table on routine_id to carry the "
-            "routine name where one is present; Routine Name is blank when the "
-            "join finds nothing. intent_param and label_params hold app-defined "
-            "parameter text and are reported as stored rather than decoded, "
-            "since their structure varies by action tag. valid_state is an "
-            "undocumented integer reported as stored. The tested extraction "
-            "held no rows in this table, so this artifact is code-present and "
-            "unexercised and the column meanings were derived from the table "
-            "definition rather than from decoded rows."
+            (
+            (
+            "Rows are joined to the `routine` table on routine_id to carry "
+            "the routine name where one is present; Routine Name is blank "
+            "when the join finds nothing. intent_param and label_params hold "
+            "app-defined parameter text and are reported as stored rather "
+            "than decoded, since their structure varies by action tag. "
+            "valid_state is an undocumented integer reported as stored. Six "
+            "of the eight tested extractions held rows here, one or two each, "
+            "and each row joined to a routine."
+        )
+        )
         ),
         "paths": ('*/com.samsung.android.app.routines/databases/routine.db*',),
         "output_types": "standard",
         "artifact_icon": "zap-off",
         "sample_data": {
-            "samsung_s21ultra_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "anne_a15": "Android 15 | com.samsung.android.app.routines vc 480221000 | 2 rows",
+            "cookbook_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.app.routines vc 262506000 | 0 rows",
+            "s20fe_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 2 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.app.routines vc 460105000 | 1 row",
+            "samsungs20_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 2 rows",
+            "sharon_a13": "Android 13 | com.samsung.android.app.routines vc 400071000 | 2 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.app.routines vc 450054000 | 2 rows",
         },
     },
     "samsungBixbyRoutinesPlaces": {
@@ -145,26 +198,39 @@ __artifacts_v2__ = {
         ),
         "author": "@Gear-I, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-26",
-        "last_update_date": "2026-08-26",
+        "last_update_date": "2026-08-27",
         "requirements": "none",
         "category": "Samsung Bixby Routines",
         "notes": (
+            (
+            (
             "The table definition pairs latitude and longitude with an "
             "address, locality and keyword, and an update_time. `type` is an "
             "undocumented integer reported as stored. KML output is produced "
-            "for rows carrying both coordinates. A row records a place the app "
-            "held at acquisition; it is not a record that the device was at "
-            "that place, and the update_time is the row's own recorded time "
-            "rather than a visit time. The tested extraction held no rows in "
-            "this table, so this artifact is code-present and unexercised and "
-            "the column meanings were derived from the table definition rather "
+            "for rows carrying both coordinates. A row records a place the "
+            "app held at acquisition; it is not a record that the device was "
+            "at that place, and the update_time is the row's own recorded "
+            "time rather than a visit time. location_history was present in "
+            "four of the eight tested extractions and held no rows in any of "
+            "them, and the artifact reports nothing where the table is "
+            "absent, so this artifact is code-present and unexercised: the "
+            "column meanings were derived from the table definition rather "
             "than from decoded rows."
+        )
+        )
         ),
         "paths": ('*/com.samsung.android.app.routines/databases/routine.db*',),
         "output_types": ['html', 'tsv', 'timeline', 'lava', 'kml'],
         "artifact_icon": "map-pin",
         "sample_data": {
-            "samsung_s21ultra_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "anne_a15": "Android 15 | com.samsung.android.app.routines vc 480221000 | 0 rows (table not in this release)",
+            "cookbook_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.app.routines vc 262506000 | 0 rows",
+            "s20fe_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 0 rows (table not in this release)",
+            "samsunga53_a14": "Android 14 | com.samsung.android.app.routines vc 460105000 | 0 rows (table not in this release)",
+            "samsungs20_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 0 rows (table not in this release)",
+            "sharon_a13": "Android 13 | com.samsung.android.app.routines vc 400071000 | 0 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.app.routines vc 450054000 | 0 rows",
         },
     },
     "samsungBixbyRoutinesServiceLog": {
@@ -177,35 +243,48 @@ __artifacts_v2__ = {
         ),
         "author": "@Gear-I, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-26",
+        "last_update_date": "2026-08-27",
         "requirements": "none",
         "category": "Samsung Bixby Routines",
         "notes": (
+            (
+            (
             "This is service telemetry rather than a record of a specific "
-            "routine firing. In the tested extraction all 50 rows carried "
-            "routine_id = -1, is_running = 1 and a null service_status, with "
-            "Log Message text naming internal service events and no user "
-            "routine, so four of the six columns held one value throughout. "
-            "The routine_id join to the `routine` table is kept for a device "
-            "that does record a real id, and Linked Routine Name is blank "
-            "where the join finds nothing. Routine Run History is the table "
-            "that names a routine against a time; use that artifact for that "
-            "question. This table is a rolling buffer: in the tested "
-            "extraction 50 rows were live while the autoincrement counter had "
-            "reached 6252, so older rows are trimmed and the window the "
-            "artifact covers is set by how much the service has written since, "
-            "not by the acquisition period. It spanned 21 days there. The "
-            "module reads the database with its write-ahead log applied, which "
-            "is the state at acquisition; the main database file read without "
-            "its log held 6 rows since trimmed and lacked the 3 most recent, "
-            "so a copy of the .db alone is a different row set rather than a "
-            "smaller one."
+            "routine firing. No tested extraction carried a per-routine value "
+            "here: the two oldest stored routine_id = -1 and is_running = 1 "
+            "on every row, and the six newer ones left routine_id, is_running "
+            "and service_status null on every row, with Log Message text "
+            "naming internal service events and no user routine. The "
+            "routine_id join to the `routine` table is kept for a device that "
+            "does record a real id, and Linked Routine Name is blank where "
+            "the join finds nothing. Routine Run History is the table that "
+            "names a routine against a time; use that artifact for that "
+            "question. This table is a rolling buffer, holding 50 rows in the "
+            "two oldest tested releases and 300 in the six newer ones, with "
+            "the autoincrement counter ahead of the live row count in all "
+            "eight, so older rows are trimmed and the window the artifact "
+            "covers is set by how much the service has written since, not by "
+            "the acquisition period. That window ran from 0.9 to 21.2 days "
+            "across the eight. The module reads the database with its "
+            "write-ahead log applied, which is the state at acquisition; in "
+            "one extraction the main database file read without its log held "
+            "6 rows since trimmed and lacked the 3 most recent, so a copy of "
+            "the .db alone is a different row set rather than a smaller one."
+        )
+        )
         ),
         "paths": ('*/com.samsung.android.app.routines/databases/routine.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
         "sample_data": {
-            "samsung_s21ultra_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 50 rows",
+            "anne_a15": "Android 15 | com.samsung.android.app.routines vc 480221000 | 300 rows",
+            "cookbook_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 50 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.app.routines vc 262506000 | 50 rows",
+            "s20fe_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 300 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.app.routines vc 460105000 | 300 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 300 rows",
+            "sharon_a13": "Android 13 | com.samsung.android.app.routines vc 400071000 | 300 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.app.routines vc 450054000 | 300 rows",
         },
     },
     "samsungBixbyRoutinesPreferences": {
@@ -218,31 +297,47 @@ __artifacts_v2__ = {
         ),
         "author": "@Gear-I, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-26",
+        "last_update_date": "2026-08-27",
         "requirements": "none",
         "category": "Samsung Bixby Routines",
         "notes": (
+            (
+            (
             "Values are reported as stored (the column is TEXT, so "
-            "numeric-looking values are strings). Four keys observed in the "
-            "tested extraction to hold epoch-millisecond values (init_time, "
-            "latest_time, sleep_expired_time, update_noti_time) are decoded "
-            "into a Converted Timestamp column; no other key in that "
-            "extraction carried a value in the epoch range, and any other key "
-            "is left blank in that column rather than converted on a guess. "
-            "init_time is the earliest time recorded in this table and was not "
-            "cross-checked against a package-manager install record, so it is "
-            "indicative of install era rather than a confirmed install time. "
-            "In the tested extraction update_noti_time fell 359 ms after the "
+            "numeric-looking values are strings). Five keys observed across "
+            "the tested extractions to hold epoch-millisecond values "
+            "(app_active_device_send_time, init_time, latest_time, "
+            "sleep_expired_time, update_noti_time) are decoded into a "
+            "Converted Timestamp column; any other key is left blank in that "
+            "column rather than converted on a guess. Only init_time appeared "
+            "in all eight extractions, so which of the five a report shows "
+            "depends on the release. One further key, seen on one extraction "
+            "under a composite name ending tip_notify_mode_in_quick_panel, "
+            "carried a value in the epoch range and is left unconverted, "
+            "since one observation does not establish what it records. "
+            "init_time is the earliest time recorded in this table and was "
+            "not cross-checked against a package-manager install record, so "
+            "it is indicative of install era rather than a confirmed install "
+            "time. In one extraction update_noti_time fell 359 ms after the "
             "newest routine_history row, two values written by different code "
             "paths agreeing on when the service last ran. This table is app "
             "configuration rather than user content: it does not carry what "
             "routines existed."
+        )
+        )
         ),
         "paths": ('*/com.samsung.android.app.routines/databases/routine.db*',),
         "output_types": "standard",
         "artifact_icon": "settings",
         "sample_data": {
-            "samsung_s21ultra_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 15 rows",
+            "anne_a15": "Android 15 | com.samsung.android.app.routines vc 480221000 | 44 rows",
+            "cookbook_a11": "Android 11 | com.samsung.android.app.routines vc 312108000 | 15 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.app.routines vc 262506000 | 8 rows",
+            "s20fe_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 17 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.app.routines vc 460105000 | 19 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.app.routines vc 420052000 | 17 rows",
+            "sharon_a13": "Android 13 | com.samsung.android.app.routines vc 400071000 | 22 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.app.routines vc 450054000 | 41 rows",
         },
     },
 }
@@ -254,12 +349,14 @@ from scripts.ilapfuncs import (
     does_table_exist_in_db,
     get_sqlite_db_records,
     logfunc,
+    null_absent_columns,
 )
 
-# Keys in the `preference` table observed (in the one extraction tested against)
-# to hold epoch-millisecond timestamps. Any other key is reported with a blank
-# Converted Timestamp rather than a guessed conversion.
+# Keys in the `preference` table observed across the tested extractions to hold
+# epoch-millisecond timestamps. Any other key is reported with a blank Converted
+# Timestamp rather than a guessed conversion.
 _TIMESTAMP_PREFERENCE_KEYS = {
+    "app_active_device_send_time",
     "init_time",
     "latest_time",
     "sleep_expired_time",
@@ -303,7 +400,11 @@ def _collect(context, table, query, data_headers, row_builder):
     for file_found, rel_path in targets:
         sources.append(rel_path)
         count = 0
-        for row in get_sqlite_db_records(file_found, query):
+        # Columns come and go between app releases, so a query written against a
+        # newer store names columns an older one lacks and the whole statement
+        # fails with "no such column", which reports zero rows rather than an
+        # error. Resolved per container because the releases can differ.
+        for row in get_sqlite_db_records(file_found, null_absent_columns(file_found, query)):
             built = row_builder(row)
             data_list.append((built + (rel_path,)) if multiple else built)
             count += 1

@@ -9,13 +9,12 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GEO Location",
         "notes": "",
-        "paths": ('*/com.google.android.apps.maps/files/new_recent_history_cache_navigated.cs',
-                  '*/new_recent_history_cache_navigated.cs'),
+        "paths": ('*/new_recent_history_cache_navigated.cs',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
         "sample_data": {
-            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 4 rows",
-            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 14 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 7 rows",
         },
     }
 }

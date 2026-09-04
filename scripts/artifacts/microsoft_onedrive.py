@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "microsoft_onedrive": {
         "name": "Microsoft OneDrive",
         "description": "Parses Microsoft OneDrive metadata and previews cached stream media",
-        "author": "@stark4n6, Matt Beers, Anthony Reince",
+        "author": "Kevin Pagano (@stark4n6), Matt Beers, Anthony Reince",
         "creation_date": "2025-04-17",
         "last_update_date": "2026-08-25",
         "requirements": "none",

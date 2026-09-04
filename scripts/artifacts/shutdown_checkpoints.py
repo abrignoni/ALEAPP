@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "shutdown_checkpoints": {
         "name": "Shutdown Checkpoints",
         "description": "Parses powering off and reset events",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-22",
         "last_update_date": "2025-08-09",
         "requirements": "none",

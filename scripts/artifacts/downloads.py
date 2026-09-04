@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "downloads": {
         "name": "Native Downloads",
         "description": "Parses native downloads database",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-09",
         "last_update_date": "2026-08-01",
         "requirements": "none",

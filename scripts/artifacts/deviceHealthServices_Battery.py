@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "Turbo_Battery": {
         "name": "Turbo - Phone Battery",
         "description": "Parses battery percentage for devices from Device Health Services",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-29",
         "last_update_date": "2025-03-08",
         "requirements": "none",
@@ -21,13 +21,13 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.turbo | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.turbo vc 10261629 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.turbo vc 10261629 | 5604 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.turbo vc 10270697 | 1144 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.turbo vc 10270697 | 572 rows",
         }
     },
     "Turbo_Bluetooth": {
         "name": "Turbo - Bluetooth Device Info",
         "description": "Parses bluetooth connected devices from Device Health Services",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-29",
         "last_update_date": "2025-03-08",
         "requirements": "none",

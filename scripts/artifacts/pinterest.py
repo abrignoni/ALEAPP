@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the signed in account record stored by the Pinterest Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Pinterest",
         "notes": "Read from the PREF_MY_USER value of the app's own preferences file, which holds "
@@ -12,7 +12,8 @@ __artifacts_v2__ = {
                  "formatted text carrying no time zone, so they are reported as stored rather than "
                  "converted. Birthday is a Unix second value; on the tested sample it landed at "
                  "midday UTC, so only its date part is meaningful. A birth date before 1970 is stored "
-                 "as a negative value, and this column is always seconds, so it is converted in "
+                 "as a negative value, and this column is seconds rather than milliseconds, so "
+                 "it is converted in "
                  "this module rather than inferred from its magnitude. Gender, "
                  "email status and the account type are reported as stored. The counts are the "
                  "values the record carries, not a count of anything parsed from this extraction. "
