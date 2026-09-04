@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "that user and whether it is stopped, disabled or never launched.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "Read from the per-user package-restrictions.xml under the system users folder, "
@@ -14,11 +14,20 @@ __artifacts_v2__ = {
                  "element per user, and User ID is the folder the file sits in. The pattern is "
                  "not anchored on a data/ prefix, because a raw userdata partition image carries "
                  "the same folder without one.\n"
-                 "First Install Time is the first-install-time attribute, stored as hexadecimal "
-                 "Unix milliseconds, the same encoding packages.xml uses for its install times. "
-                 "This is the time the package was installed for this user, which differs from "
-                 "the device-wide install time reported from packages.xml, and it is 0 for a "
-                 "package the user never had installed separately, reported as blank.\n"
+                 "First Install Time is the first-install-time attribute, which the platform "
+                 "writes as hexadecimal Unix milliseconds, the same encoding packages.xml uses "
+                 "for its install times. It is the per-user install time the platform keeps, "
+                 "distinct from the device-wide install time reported from packages.xml. The "
+                 "attribute is written from Android 13: it is absent from the Android 12 release "
+                 "of the writer and from every row of the four tested Android 10 to 12 images, "
+                 "and present on the fifteen tested Android 13 and later images. A value of 0 is "
+                 "reported as blank; on the tested images it was 0 on up to 28 rows of the "
+                 "primary user and on most rows of a second user on two images, and this artifact "
+                 "does not assert what a zero means. Reference: Android Open Source Project, "
+                 "Settings.java, frameworks/base/services/core/java/com/android/server/pm, "
+                 "writePackageRestrictions, which writes ATTR_FIRST_INSTALL_TIME with "
+                 "attributeLongHex; the attribute is not in the android12-release branch of that "
+                 "file.\n"
                  "Stopped, Not Launched and Installed come from the stopped, nl and inst "
                  "attributes. Enabled and Install Reason are integers the platform defines and "
                  "are reported as stored, with an absent Enabled meaning the package is in its "
@@ -27,10 +36,9 @@ __artifacts_v2__ = {
                  "component names the user's state overrides, joined by a comma; they are blank "
                  "for most packages.\n"
                  "A per-user file that is neither ABX nor XML is logged and skipped; one tested "
-                 "image carried such a file for two of its users, so that image reports no "
-                 "rows for them. "
-                 "A row is the platform's stored state for that package and user. It does not "
-                 "establish that the user opened the app.",
+                 "image carried such a file for two of its users, so that image reports no rows "
+                 "for them. A row is the platform's stored state for that package and user. It "
+                 "does not establish that the user opened the app.",
         "paths": ('*/system/users/*/package-restrictions.xml',),
         "output_types": "standard",
         "artifact_icon": "apps",

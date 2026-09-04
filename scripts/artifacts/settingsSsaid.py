@@ -6,25 +6,28 @@ __artifacts_v2__ = {
                        "issued to.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "Read from the per-user settings_ssaid.xml under the system users folder. The "
-                 "file is ABX binary XML on modern releases and plain XML on older ones, and in either "
-                 "form it can hold more than one root element, so a single-root read is retried "
-                 "in the multiple-root mode. One row per setting element, and User ID is the folder the "
-                 "file sits in. The pattern is not anchored on a data/ prefix, because a raw "
-                 "userdata partition image carries the same folder without one.\n"
+                 "file is ABX binary XML on modern releases and plain XML on older ones, and in "
+                 "either form it can hold more than one root element, so a single-root read is "
+                 "retried in the multiple-root mode. One row per setting element, and User ID is "
+                 "the folder the file sits in. The pattern is not anchored on a data/ prefix, "
+                 "because a raw userdata partition image carries the same folder without one.\n"
                  "Package is the package the value was issued to and UID is the setting's name "
                  "attribute, which the platform uses to hold that package's uid. SSAID is the "
-                 "value, which is what the app reads back as its Android ID; the same package on "
-                 "a different user has a different value, so a value ties an app to one user on "
-                 "one device.\n"
+                 "value, which is what the app reads back as its Android ID. Android scopes that "
+                 "identifier per app signing key, per user and per device from Android 8.0, and "
+                 "on the tested images every package present under two users carried a different "
+                 "value under each. Reference: Android Developers, 'Android 8.0 Behavior "
+                 "Changes', Privacy, "
+                 "https://developer.android.com/about/versions/oreo/android-8.0-changes\n"
                  "One row per user is named userkey against the android package. That is the "
                  "per-user seed the platform keeps rather than an identifier issued to an app, "
-                 "and it is reported as stored. Setting ID and Default Set By System are "
-                 "reported as stored. There is no timestamp in this file, so a row does not date "
-                 "when the value was issued.",
+                 "and it is reported as stored. Setting ID and Default Set By System are reported "
+                 "as stored. There is no timestamp in this file, so a row does not date when the "
+                 "value was issued.",
         "paths": ('*/system/users/*/settings_ssaid.xml',),
         "output_types": "standard",
         "artifact_icon": "fingerprint",

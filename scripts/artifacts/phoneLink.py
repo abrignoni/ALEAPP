@@ -1,30 +1,33 @@
 __artifacts_v2__ = {
     "phonelink_accounts": {
         "name": "Phone Link - Linked Accounts",
-        "description": "The accounts Phone Link stored for the link between this phone and a "
-                       "Windows computer, with the account name and the account type.",
+        "description": "The accounts the Phone Link app stored on the phone, with the account "
+                       "name and the account type as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-04",
         "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Phone Link",
-        "notes": "Read from the app's ACCOUNT_NAME Preferences DataStore file, a protobuf "
-                 "key and value store. Each key is the account name joined to its type by a "
-                 "colon, and each value is a small JSON object holding the same type and a "
-                 "username, which is reported as Username.\n"
+        "notes": "Read from the app's ACCOUNT_NAME Preferences DataStore file, a protobuf key and "
+                 "value store. Each key is the account name joined to its type by a colon, and "
+                 "each value is a small JSON object holding the same type and a username, which "
+                 "is reported as Username.\n"
                  "The DataStore layout is Android's PreferencesProto: field 1 repeats an entry of "
                  "a key at 1 and a value at 2, and the value's field number gives its type, with "
                  "5 for a string. Reference: Android Jetpack, "
                  "datastore/datastore-preferences-core/src/main/proto/preferences.proto.\n"
                  "A sibling ACCOUNT_DATA_NAME file holds one or more opaque encoded blobs per "
-                 "account, keyed by the account key with an attribute name appended. The values are "
-                 "encoded envelopes rather than plain text, and some are credential material such as "
-                 "a private key or an identity token, so no value from that file is reported. The "
-                 "attribute names are reported as Stored Attributes, with their count, so an examiner "
-                 "knows what the app held for each account.\n"
-                 "Phone Link pairs the phone with a Windows computer signed in to the same "
-                 "account, so a row names an account used for that pairing. It does not "
-                 "establish that a computer is still linked, and the file carries no timestamp.",
+                 "account, keyed by the account key with an attribute name appended. The values "
+                 "are encoded envelopes rather than plain text, and some are credential material "
+                 "such as a private key or an identity token, so no value from that file is "
+                 "reported. The attribute names are reported as Stored Attributes, with their "
+                 "count, so an examiner knows what the app held for each account.\n"
+                 "Phone Link pairs the phone with a Windows computer through the Microsoft "
+                 "account signed in on both, so a row names an account the app held for that "
+                 "pairing; Account Type is the type string as stored. It does not establish that "
+                 "a computer is still linked, and the file carries no timestamp. Reference: "
+                 "Microsoft Support, 'Phone Link requirements and setup', "
+                 "https://support.microsoft.com/en-us/topic/phone-link-requirements-and-setup-cd2a1ee7-75a7-66a6-9d4e-bf22e735f9e3",
         "paths": ('*/com.microsoft.appmanager/files/datastore/ACCOUNT_NAME.preferences_pb',
                   '*/com.microsoft.appmanager/files/datastore/ACCOUNT_DATA_NAME.preferences_pb'),
         "output_types": "standard",

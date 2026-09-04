@@ -46,18 +46,21 @@ __artifacts_v2__ = {
                        "cached, including follower and following counts",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Xiaohongshu",
         "notes": "Read from the app's own MMKV stores with the vendored mmkv_parser: the profile "
                  "JSON in the com.xingin.xhs store (key_desc_userinfo) and the login record in "
                  "login_user_info_kv (login_account_info_key). One row. Both globs are scoped to "
-                 "the package. Register Time is the register_time field, a Unix seconds value. "
+                 "the package. Register Time is the register_time field, a Unix seconds value; on "
+                 "the tested image it fell 14 seconds after the first install time the platform "
+                 "recorded for the package, and this artifact does not assert whether it dates "
+                 "the creation of the account or the app's first registration on the device. "
                  "Gender and Account Role are reported as stored. The count and location fields "
                  "are what the app cached and are blank where the app stored nothing. The "
-                 "account's session id and token are in the same stores and are not reported. Birthday, "
-                 "IP Location and Last Login Type are profile fields the app leaves empty until the "
-                 "user sets them and were blank on the tested account.",
+                 "account's session id and token are in the same stores and are not reported. "
+                 "Birthday, IP Location and Last Login Type were blank on the tested account and "
+                 "are reported as stored.",
         "paths": ('*/com.xingin.xhs/files/mmkv/com.xingin.xhs',
                   '*/com.xingin.xhs/files/mmkv/login_user_info_kv'),
         "output_types": "standard",
@@ -69,17 +72,18 @@ __artifacts_v2__ = {
     "xiaohongshu_recent_chats": {
         "name": "Xiaohongshu (RED) - Recent Chats",
         "description": "The users the account recently had a direct chat with, as the app cached "
-                       "them for its recent-shares list",
+                       "them under its recent share-user keys",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Xiaohongshu",
-        "notes": "Read from the IMRecentChatsManager MMKV store. One row per recent chat entry. "
-                 "Peer User ID and Nickname identify the other party as the app cached them; "
-                 "Group Chat is true for a group. Source and Type are reported as stored. This "
-                 "is a cached recent-shares list, not the message history, which is in the "
-                 "encrypted msgDB and is not decoded here.",
+        "notes": "Read from the IMRecentChatsManager MMKV store, from the keys the app prefixes "
+                 "IMRecentChatsManager_Default_Share_User_. One row per key. Peer User ID and "
+                 "Nickname identify the other party as the app cached them; Group Chat is true "
+                 "for a group. Source and Type are reported as stored. This is a cached list of "
+                 "recent share targets, named that way by the app's own key prefix, not the "
+                 "message history, which is in the encrypted msgDB and is not decoded here.",
         "paths": ('*/com.xingin.xhs/files/mmkv/IMRecentChatsManager*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -92,13 +96,17 @@ __artifacts_v2__ = {
         "description": "Times the Xiaohongshu app recorded a successful launch",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Xiaohongshu",
         "notes": "Read from every write of the last_launch_success_time key in the "
-                 "app_cold_start_record MMKV store. The store is append-only, so each launch is "
-                 "a separate entry; one row per entry, in Unix milliseconds. The store holds a "
-                 "recent window of launches rather than the full history.",
+                 "app_cold_start_record MMKV store. The store is append-only, so each launch is a "
+                 "separate entry; one row per entry, in Unix milliseconds. MMKV appends each "
+                 "write and rewrites the file with duplicate keys removed when it fills, so older "
+                 "entries can be dropped; on the tested image the earliest entry fell two minutes "
+                 "after the first install time the platform recorded for the package, so the 21 "
+                 "entries there read as the full set. Reference: Tencent, MMKV design wiki, "
+                 "https://github.com/Tencent/MMKV/wiki/design",
         "paths": ('*/com.xingin.xhs/files/mmkv/app_cold_start_record',),
         "output_types": "standard",
         "artifact_icon": "rotate-clock",

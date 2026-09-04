@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "size staged and the times the session was created, updated and committed.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "Read from install_sessions.xml in the system folder, ABX binary XML on modern "
@@ -22,18 +22,21 @@ __artifacts_v2__ = {
                  "platform defines and are reported as stored. Two attributes are read under the "
                  "spellings the platform writes, installRason and updateOwnererPackageName, and "
                  "the corrected spellings are accepted as well so the artifact keeps working if "
-                 "they change.\n"
-                 "A session is a record of an install that was staged, not proof that the app "
-                 "was installed and run: Applied and Failed report the outcome the platform "
-                 "stored, and Error Message is blank unless the platform recorded a failure, which it "
-                 "had not on any tested image. On an image whose sessions all come from one store "
-                 "for one user, User ID, Installer UID and Update Owner Package each hold a single "
-                 "value, and Size Bytes is -1 where the platform stored no staged size; all four are "
-                 "kept as columns because they separate sessions on a device with more than one "
-                 "user or installer. "
-                 "A session can remain here after it finished. The file holds the "
-                 "sessions the installer had not yet cleaned up, so it is a recent window rather "
-                 "than a full install history.",
+                 "they change. Reference: Android Open Source Project, "
+                 "PackageInstallerSession.java, "
+                 "frameworks/base/services/core/java/com/android/server/pm, ATTR_INSTALL_REASON "
+                 "and ATTR_UPDATE_OWNER_PACKAGE_NAME.\n"
+                 "A session is a record of an install that was staged, not proof that the app was "
+                 "installed and run: Applied and Failed report the outcome the platform stored, "
+                 "and Error Message is blank unless the platform recorded a failure; one session "
+                 "on one tested image had Failed set and carries the platform's message. On an "
+                 "image whose sessions all come from one store for one user, User ID, Installer "
+                 "UID and Update Owner Package each hold a single value, and Size Bytes is -1 "
+                 "where the platform stored no staged size; all four are kept as columns because "
+                 "they separate sessions on a device with more than one user or installer. A "
+                 "session can remain here after it finished. The file holds the sessions the "
+                 "installer had not yet cleaned up, so it is a recent window rather than a full "
+                 "install history.",
         "paths": ('*/system/install_sessions.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
