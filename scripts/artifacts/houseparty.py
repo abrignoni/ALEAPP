@@ -6,17 +6,21 @@ __artifacts_v2__ = {
                        "addressed to and the message text.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-02",
-        "last_update_date": "2026-09-02",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Houseparty",
         "notes": "Read from class_RealmNote in the app's Realm store with the vendored "
-                 "realm_parser. Houseparty is a group video chat app that was withdrawn in "
-                 "October 2021, so a store found now is a residue of earlier use. Direction is "
-                 "derived by comparing each message's senderId against the account id in "
-                 "class_RealmUser, which is the identity the store itself records, and is left "
-                 "empty when no account row is present. Sender and Recipient are resolved to the "
-                 "user name class_RealmPublicUser records for that id, falling back to the id as "
-                 "stored when the store holds no row for it. Media reports what the row's "
+                 "realm_parser. Houseparty was a group video chat app; its publisher removed it "
+                 "from the app stores on 9 September 2021 and shut it down in October 2021, so a "
+                 "store found now is a residue of earlier use. Reference: Sarah Perez, 'Epic "
+                 "Games to shut down Houseparty in October, including the video chat Fortnite "
+                 "Mode feature', TechCrunch, "
+                 "https://techcrunch.com/2021/09/09/epic-games-to-shut-down-houseparty-in-october-including-the-video-chat-fortnite-mode-feature/ "
+                 "Direction is derived by comparing each message's senderId against the account "
+                 "id in class_RealmUser, which is the identity the store itself records, and is "
+                 "left empty when no account row is present. Sender and Recipient are resolved to "
+                 "the user name class_RealmPublicUser records for that id, falling back to the id "
+                 "as stored when the store holds no row for it. Media reports what the row's "
                  "facemail link resolves to; a facemail is the app's video message. On the tested "
                  "extraction the link was null on every message and class_RealmFacemail held no "
                  "rows, so Media is empty on all of them and no video message was recovered. Sent "
@@ -51,7 +55,7 @@ __artifacts_v2__ = {
                        "it was locked and the media server session it was carried on.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-02",
-        "last_update_date": "2026-09-02",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Houseparty",
         "notes": "Read from class_RealmRoom in the app's Realm store, with the session joined "
@@ -66,8 +70,8 @@ __artifacts_v2__ = {
                  "reported as stored; no room on the tested extraction was locked, so Locking "
                  "User is empty on all of them. The media server host is joined from the "
                  "session's own mediaServerEndpoint link and is the server the app was told to "
-                 "use, not an address the device is shown to have reached. Colour is the swatch "
-                 "the app assigned the room in its interface.",
+                 "use, not an address the device is shown to have reached. Colour is the color "
+                 "value the room row carries, a hex RGB string reported as stored.",
         "paths": ('*/com.herzick.houseparty/files/default.realm',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "video",
@@ -82,19 +86,19 @@ __artifacts_v2__ = {
                        "notification and privacy settings stored alongside it.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-02",
-        "last_update_date": "2026-09-02",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Houseparty",
         "notes": "Read from class_RealmUser in the app's Realm store, with the settings joined "
                  "from class_RealmUserSettings through the row's own realmUserSettings link and "
                  "the session dates from class_RealmToken matched on the account id. These are "
                  "values the account held in the app, which the app received from its service; "
-                 "they are not verified identifiers. Birthday is stored at midnight UTC and is "
-                 "reported as a date rather than a datetime for that reason. Session Created "
-                 "and Session Invalidated come from class_RealmToken; an invalidated value of "
-                 "the Unix epoch is the store's not-invalidated sentinel and is reported as "
-                 "empty. The token string itself is not reported. Relevance Reason and "
-                 "Notification Threshold are reported as stored.",
+                 "they are not verified identifiers. Birthday fell on midnight UTC on the tested "
+                 "extraction and is reported as a date rather than a datetime for that reason. "
+                 "Session Created and Session Invalidated come from class_RealmToken; an "
+                 "invalidated value of the Unix epoch is the store's not-invalidated sentinel and "
+                 "is reported as empty. The token string itself is not reported. Relevance Reason "
+                 "and Notification Threshold are reported as stored.",
         "paths": ('*/com.herzick.houseparty/files/default.realm',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",

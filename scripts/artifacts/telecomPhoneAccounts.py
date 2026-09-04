@@ -6,29 +6,28 @@ __artifacts_v2__ = {
                        "place or receive calls, with the number and carrier label stored for each.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Device Connections",
         "notes": "Read from phone-account-registrar-state.xml in the telecom service's own "
-                 "folder, ABX binary XML on modern releases and plain XML on older ones. One "
-                 "row per phone_account element.\n"
+                 "folder, ABX binary XML on modern releases and plain XML on older ones. One row "
+                 "per phone_account element.\n"
                  "Component is the account_handle's component name, which names the app that "
                  "registered the account: the platform telephony component for a SIM, or a "
                  "third-party package for a calling app. Account ID is that handle's id, which "
-                 "for a SIM is the subscription it belongs to. Handle and Subscription Number "
-                 "are stored as tel URIs and are percent-decoded for display, so a leading plus "
-                 "is shown rather than its escape; the value is otherwise as stored. Label and "
-                 "Short Description are the strings the registering app supplied, and for a SIM "
-                 "the description names the slot.\n"
+                 "for a SIM is the subscription it belongs to. Handle and Subscription Number are "
+                 "stored as tel URIs and are percent-decoded for display, so a leading plus is "
+                 "shown rather than its escape; the value is otherwise as stored. Label and Short "
+                 "Description are the strings the registering app supplied, and for a SIM the "
+                 "description names the slot.\n"
                  "Capabilities, Highlight Color and Supported Audio Routes are integers the "
                  "platform defines and are reported as stored. Is Default Outgoing is True for "
                  "the account the default_outgoing record names for that user. The account icon "
-                 "is stored here as well and is not reported. Enabled held the same value on every row "
-                 "of the tested images, so it is kept as a column rather than dropped.\n"
-                 "A zero length registrar file is reported as no rows and logged; it was present and "
-                 "empty on one tested image. A row records that an account was registered on the "
-                 "device. It does not "
-                 "establish that a call was placed or received on it.",
+                 "is stored here as well and is not reported. Enabled is the account's enabled "
+                 "flag as stored; it held both values on three of the tested images.\n"
+                 "A zero length registrar file is reported as no rows and logged; it was present "
+                 "and empty on one tested image. A row records that an account was registered on "
+                 "the device. It does not establish that a call was placed or received on it.",
         "paths": ('*/com.android.server.telecom/files/phone-account-registrar-state.xml',),
         "output_types": "standard",
         "artifact_icon": "phone",

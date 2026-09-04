@@ -81,19 +81,19 @@ __artifacts_v2__ = {
                  "components/sync/protocol/session_specifics.proto: SessionSpecifics.session_tag "
                  "1 and header 2; SessionHeader.window 2, client_name 3 and device_type 4; "
                  "SessionWindow.window_id 1, selected_tab_index 2, browser_type 3 and tab 4.\n"
-                 "Device Name is the client_name the device reported, which is a model name on "
-                 "the tested images. Session Tag is the identifier the sync store files that "
-                 "device under, and it is the value that joins these rows to the synced tabs. Browser is "
-                 "the package the store sits under. "
-                 "Tabs In Window is the count of tab ids the window listed. Device Type and "
-                 "Browser Type are integers reported as stored. The window record also carries a "
-                 "selected tab index, which held no value or -1 on every tested record, so it is not "
-                 "reported.\n"
+                 "Device Name is the client_name the device reported, which was a phone model "
+                 "name or a computer host name on the tested images. Session Tag is the "
+                 "identifier the sync store files that device under, and it is the value that "
+                 "joins these rows to the synced tabs. Browser is the package the store sits "
+                 "under. Tabs In Window is the count of tab ids the window listed. Device Type "
+                 "and Browser Type are integers reported as stored. The window record also "
+                 "carries a selected tab index, which held no value or -1 on every tested record, "
+                 "so it is not reported.\n"
                  "A device appears here because it synced a session to this account, not because "
-                 "it was used at the device this extraction came from. The store keeps superseded copies "
-                 "of each header, which are older snapshots of the same window, so only the newest "
-                 "copy of each is reported here; the synced tabs artifact reports the older "
-                 "copies that differ.",
+                 "it was used at the device this extraction came from. The store keeps superseded "
+                 "copies of each header, which are older snapshots of the same window, so only "
+                 "the newest copy of each is reported here; the synced tabs artifact reports the "
+                 "older copies that differ.",
         "paths": ('*/app_chrome/*/Sync Data/LevelDB/*',),
         "output_types": "standard",
         "artifact_icon": "devices",
