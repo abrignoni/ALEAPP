@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "module_name": "alex_live_data",
+    "artifact_name": "Dumpsys - Shortcuts",
+    "function_name": "alex_live_shortcut",
+    "case_number": "caseALEX_TEST_1",
+    "number_of_columns": 8,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 2115,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/alex_live_data/testdata.alex_live_data.alex_live_shortcut.caseALEX_TEST_1.zip",
+    "start_time": "2026-09-05T00:33:41.817642+00:00",
+    "end_time": "2026-09-05T00:33:41.824856+00:00",
+    "run_time_seconds": 0.0005865097045898438,
+    "last_commit": {
+      "hash": "207d7953b2f117c1085090a9087d10d1be2c0346",
+      "author_name": "prosch88",
+      "author_email": "prosch88@googlemail.com",
+      "date": "2026-09-05T02:21:21+02:00",
+      "message": "Added testdata and fixed indent"
+    }
+  },
+  "headers": [
+    "Package",
+    "ID",
+    "Timestamp",
+    "Short Label",
+    "Long Label",
+    "Persons",
+    "Rank",
+    "Intent"
+  ],
+  "data": [
+    [
+      "com.discord",
+      "known-dm-alpha",
+      1788443892,
+      "known_user_alpha",
+      "known_user_alpha",
+      "[Person{name=known_user_alpha, key=known-person-alpha}]",
+      "0",
+      "[Intent { act=android.intent.action.VIEW cmp=com.discord/com.discord.chat.ChatActivity (has extras) }/PersistableBundle[{channel_id, 100000000000000001, message_id, 200000000000000001, guild_id, 300000000000000001, message_content, SYNTHETIC KNOWN MESSAGE ONE, user_username, known_user_alpha, user_id, 400000000000000001, raw, {\"id\":\"200000000000000001\",\"timestamp\":\"2026-09-03T13:58:12.401\",\"pinned\":false},}]]"
+    ],
+    [
+      "com.discord",
+      "known-dm-bravo",
+      1788439205,
+      "known_user_bravo",
+      "known_user_bravo",
+      "[Person{name=known_user_bravo, key=known-person-bravo}]",
+      "1",
+      "[Intent { act=android.intent.action.VIEW cmp=com.discord/com.discord.chat.ChatActivity (has extras) }/PersistableBundle[{channel_id, 100000000000000002, message_id, 200000000000000002, guild_id, 300000000000000002, body, SYNTHETIC KNOWN MESSAGE TWO, icon, null, user_username, known_user_bravo, user_id, 400000000000000002, scheduled_at, 2026-09-03 12:40:05, receiving_user_id, 400000000000000002,}]]"
+    ],
+    [
+      "com.discord",
+      "known-guild-charlie",
+      1788383733,
+      "#known-channel",
+      "known-guild / #known-channel",
+      null,
+      "2",
+      "[Intent { act=android.intent.action.VIEW cmp=com.discord/com.discord.chat.ChatActivity (has extras) }/PersistableBundle[{channel_id, 100000000000000003, message_id, 200000000000000003, guild_id, 300000000000000003, message_content, SYNTHETIC KNOWN MESSAGE THREE, user_username, known_user_charlie, user_id, 400000000000000003, raw, {\"id\":\"200000000000000003\",\"timestamp\":\"2026-09-02T21:15:33.998\",\"pinned\":false},}]]"
+    ],
+    [
+      "com.discord",
+      "known-dm-delta",
+      1788249764,
+      "known_user_delta",
+      "known_user_delta",
+      null,
+      "3",
+      null
+    ],
+    [
+      "com.android.camera2",
+      "known-camera-selfie",
+      1788081062,
+      "Selfie",
+      "Take a selfie",
+      null,
+      "0",
+      "[Intent { act=android.media.action.IMAGE_CAPTURE cmp=com.android.camera2/com.android.camera.CameraLauncher }/PersistableBundle[{}]]"
+    ],
+    [
+      "com.android.dialer",
+      "known-dialer-echo",
+      1788025459,
+      "known_contact_echo",
+      "Call known_contact_echo",
+      "[Person{name=known_contact_echo, key=known-person-echo}]",
+      "0",
+      "[Intent { act=android.intent.action.CALL dat=tel:xxxxxxxxxxx cmp=com.android.dialer/.main.impl.MainActivity }/PersistableBundle[{}]]"
+    ]
+  ]
+}
