@@ -381,6 +381,7 @@ def discordCacheMessages(context):
     data_headers = (
         ('Timestamp', 'datetime'),
         ('Edited Timestamp', 'datetime'),
+        ('Call Ended', 'datetime'),
         'Direction',
         'Username',
         'Global Name',
@@ -394,7 +395,6 @@ def discordCacheMessages(context):
         'Sender ID',
         'Reply To Message ID',
         'Mentions',
-        ('Call Ended', 'datetime'),
         'Call Participants',
         'Pinned',
         'Also In kv-storage',
@@ -449,6 +449,7 @@ def discordCacheMessages(context):
             data_list.append((
                 _iso(message.get('timestamp')),
                 _iso(message.get('edited_timestamp')),
+                _iso(call.get('ended_timestamp')) if isinstance(call, dict) else '',
                 direction,
                 _text(author.get('username')),
                 _text(author.get('global_name')),
@@ -462,7 +463,6 @@ def discordCacheMessages(context):
                 sender,
                 _text(reference.get('message_id')),
                 '; '.join(_text(m.get('username')) for m in message.get('mentions') or [] if isinstance(m, dict)),
-                _iso(call.get('ended_timestamp')) if isinstance(call, dict) else '',
                 '; '.join(_text(p) for p in call.get('participants') or []) if isinstance(call, dict) else '',
                 'Yes' if message.get('pinned') else '',
                 'Yes' if message_id in kv_ids else '',
