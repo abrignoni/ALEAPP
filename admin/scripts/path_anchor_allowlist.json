@@ -172,5 +172,9 @@
   "*com.pumapumatrac/databases/pumatrac-db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
   "*com.runtastic.android/databases/user.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
   "*vlc_media.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
-  "root/2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt": "Android Intrusion Logging: a decrypted log export processed directly as the input carries date-named .txt at the archive root (observed on the hc_pixel8pro_a17 download); the root/ literal anchors it to the input root so it cannot reach files inside app containers"
+  "root/2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt": "Android Intrusion Logging: a decrypted log export processed directly as the input carries date-named .txt at the archive root (observed on the hc_pixel8pro_a17 download); the root/ literal anchors it to the input root so it cannot reach files inside app containers",
+  "*/system/dropbox/*": "shared or system location: no app data container in the path; the platform dropbox, tombstone and ANR records, measured 2026-09-05 across the registered Android corpora",
+  "*/tombstones/tombstone_*": "shared or system location: no app data container in the path; the platform dropbox, tombstone and ANR records, measured 2026-09-05 across the registered Android corpora",
+  "*/anr/anr_*": "shared or system location: no app data container in the path; the platform dropbox, tombstone and ANR records, measured 2026-09-05 across the registered Android corpora",
+  "*/anr/trace*": "shared or system location: no app data container in the path; the platform dropbox, tombstone and ANR records, measured 2026-09-05 across the registered Android corpora"
 }
