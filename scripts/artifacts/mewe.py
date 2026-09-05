@@ -138,13 +138,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("One row per poll option, so a poll spans several rows sharing a Post Id and "
-                  "Question.\n"
-                  "Option Votes and Total Votes are server-reported tallies across all voters. "
-                  "Nothing here records how the device owner voted, or whether they voted at all; "
-                  "the POST table's pollVoted flag carries that and was 0 for every cached poll in "
-                  "the test image.\n"
-                  "Counts are a snapshot from when the post was cached, not live values."),
+        "notes": ("One row per poll option, so a poll spans several rows sharing a Post Id and Question.\nOption Votes and Total Votes are server-reported tallies across all voters. Nothing here records how the account voted, or whether a vote was cast at all; the POST table's pollVoted flag carries that and was 0 for every cached poll in the test image.\nCounts are a snapshot from when the post was cached, not live values."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
@@ -155,7 +149,7 @@ __artifacts_v2__ = {
     },
     "get_mewe_reactions": {
         "name": "MeWe - Reactions",
-        "description": "Emoji reactions on posts, comments and chat messages, including whether the device owner reacted.",
+        "description": "Emoji reactions on posts, comments and chat messages, including whether a reaction was recorded for the account.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
         "last_update_date": "2026-07-26",

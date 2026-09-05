@@ -40,7 +40,7 @@ __artifacts_v2__ = {
     },
     "musicolet_playlists": {
         "name": "Musicolet Playlists and Favorites",
-        "description": "Songs the user grouped into Musicolet playlists or marked as favorites",
+        "description": "Songs grouped into Musicolet playlists or marked as favorites",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",

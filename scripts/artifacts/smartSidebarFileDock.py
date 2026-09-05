@@ -31,17 +31,14 @@ __artifacts_v2__ = {
     "get_smartSidebarFileDock": {
         "name": "Smart Sidebar File Dock",
         "description": (
-            "Items the user added to the OxygenOS/ColorOS Smart Sidebar File "
-            "Dock (OnePlus/Oppo/Realme) by drag and drop or via the share "
-            "sheet's Save to File Dock. Each item is a cached copy stored "
-            "under Download/.com_coloros_smartsidebar/transferdock/ in a "
-            "Base64-named folder encoding the time it was added to the dock. "
-            "Media dragged out of apps is saved as OPLUSDRAG_<source app>_"
-            "<view>_<local time> files; the cached copy persists independently "
-            "of the source app (observed with Snapchat content on the test "
-            "devices this artifact was built from). Text "
-            "selections and links are stored as transferdock_<ms>.txt and "
-            "link_file_<ms>.link files; other files keep their original names."
+            "Items in the OxygenOS/ColorOS Smart Sidebar File Dock (OnePlus/Oppo/Realme) by drag and drop "
+            "or via the share sheet's Save to File Dock. Each item is a cached copy stored under "
+            "Download/.com_coloros_smartsidebar/transferdock/ in a Base64-named folder encoding the time "
+            "it was added to the dock. Media dragged out of apps is saved as OPLUSDRAG_<source "
+            "app>_<view>_<local time> files; the cached copy persists independently of the source app "
+            "(observed with Snapchat content on the test devices this artifact was built from). Text "
+            "selections and links are stored as transferdock_<ms>.txt and link_file_<ms>.link files; "
+            "other files keep their original names."
         ),
         "author": "@akhil-dara",
         "creation_date": "2026-07-18",

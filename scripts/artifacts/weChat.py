@@ -92,17 +92,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "sqlcipher3",
         "category": "WeChat",
-        "notes": "rcontact holds every contact record the account keeps, which includes the "
-                 "people the user added and also the service and official accounts the "
-                 "application ships. Type (as stored) and Verify Flag (as stored) are the "
-                 "columns that separate those, and both are reported as stored so the "
-                 "distinction is preserved rather than asserted: no authoritative source for "
-                 "their full code lists was located, and on the corpus below most rows carried a "
-                 "type value that the service and official accounts share. WeChat ID is the "
-                 "username column, Alias is the id the user set for themselves where present, "
-                 "Nickname is the display name and Remark is the name this account gave the "
-                 "contact. conRemark being populated is a sign the user interacted with that "
-                 "contact deliberately. createTime is Unix milliseconds where present.",
+        "notes": "rcontact holds every contact record the account keeps, which includes the contacts added on "
+                 "the device and also the service and official accounts the application ships. Type (as "
+                 "stored) and Verify Flag (as stored) are the columns that separate those, and both are "
+                 "reported as stored so the distinction is preserved rather than asserted: no authoritative "
+                 "source for their full code lists was located, and on the corpus below most rows carried a "
+                 "type value that the service and official accounts share. WeChat ID is the username column, "
+                 "Alias is the id the user set for themselves where present, Nickname is the display name and "
+                 "Remark is the name this account gave the contact. conRemark being populated is a sign the "
+                 "user interacted with that contact deliberately. createTime is Unix milliseconds where "
+                 "present.",
         "paths": ('*/com.tencent.mm/MicroMsg/*/EnMicroMsg.db*',
                   '*/com.tencent.mm/shared_prefs/auth_info_key_prefs.xml',
                   '*/com.tencent.mm/shared_prefs/WLOGIN_DEVICE_INFO.xml'),

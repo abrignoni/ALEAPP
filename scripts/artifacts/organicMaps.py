@@ -7,20 +7,19 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Organic Maps",
-        "notes": "One row per point bookmark in the KML files under files/bookmarks. Organic Maps "
-                 "stores each bookmark category as its own KML document, so the Category column is the "
-                 "document name, which is also the file name without the extension. Each row carries "
-                 "the bookmark's name, its Latitude, Longitude and altitude taken from the KML Point "
-                 "(KML stores coordinates in longitude, latitude, altitude order, and they are split "
-                 "back out here), a Timestamp, and any description the user added. The Timestamp is the "
-                 "KML TimeStamp/when value, an ISO 8601 time ending in Z, so it is UTC and is reported "
-                 "as stored; on the tested device 14:42 UTC matched the device's 10:42 local clock. A "
-                 "bookmark records that the user saved that location on this device. The client can "
-                 "also keep a compiled binary copy of the same bookmarks with a .kmb extension; that is "
-                 "not parsed here because the .kml is the editable source the client writes. Recorded "
-                 "GPS tracks are in the same KML files as line geometry and are reported by the Tracks "
-                 "artifact, not here. The app's settings.ini in the same container holds the storage "
-                 "path, the last used bookmark category and an assisted GPS timestamp, and is not "
+        "notes": "One row per point bookmark in the KML files under files/bookmarks. Organic Maps stores each "
+                 "bookmark category as its own KML document, so the Category column is the document name, "
+                 "which is also the file name without the extension. Each row carries the bookmark's name, its "
+                 "Latitude, Longitude and altitude taken from the KML Point (KML stores coordinates in "
+                 "longitude, latitude, altitude order, and they are split back out here), a Timestamp, and any "
+                 "description stored with the bookmark. The Timestamp is the KML TimeStamp/when value, an ISO "
+                 "8601 time ending in Z, so it is UTC and is reported as stored; on the tested device 14:42 "
+                 "UTC matched the device's 10:42 local clock. A bookmark records that this location was saved "
+                 "on this device. The client can also keep a compiled binary copy of the same bookmarks with a "
+                 ".kmb extension; that is not parsed here because the .kml is the editable source the client "
+                 "writes. Recorded GPS tracks are in the same KML files as line geometry and are reported by "
+                 "the Tracks artifact, not here. The app's settings.ini in the same container holds the "
+                 "storage path, the last used bookmark category and an assisted GPS timestamp, and is not "
                  "parsed.",
         "paths": ('*/app.organicmaps*/files/bookmarks/*.kml',),
         "output_types": "all",

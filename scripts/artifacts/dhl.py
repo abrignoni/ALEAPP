@@ -1,8 +1,8 @@
 __artifacts_v2__ = {
     "dhl_tracked_shipments": {
         "name": "DHL - Tracked Shipments",
-        "description": "Parses the shipments a user tracked in the DHL Android app, with the "
-                       "airway bill number and the time it was searched.",
+        "description": "Parses the shipments recorded in the DHL Android app, with the airway bill number and the "
+                       "time it was searched.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-20",
         "last_update_date": "2026-08-29",

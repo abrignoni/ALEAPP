@@ -43,9 +43,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "ProtonMail",
-        "notes": "Attachment metadata from the db-mail Room store. Rows are metadata only: the files "
-                 "are not held in an app cache directory in this store. When the user saved an "
-                 "attachment, MessageAttachmentMetadataEntity records the destination content URI.",
+        "notes": "Attachment metadata from the db-mail Room store. Rows are metadata only: the files are not "
+                 "held in an app cache directory in this store. When an attachment was saved, "
+                 "MessageAttachmentMetadataEntity records the destination content URI.",
         "paths": ('*/ch.protonmail.android/databases/db-mail*',),
         "output_types": "standard",
         "artifact_icon": "paperclip",

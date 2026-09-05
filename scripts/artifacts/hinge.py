@@ -30,8 +30,8 @@ __artifacts_v2__ = {
     },
     "hinge_account_preferences": {
         "name": "Hinge - Account Preferences",
-        "description": "Parses the match preferences the Hinge account holder selected, "
-                       "including which of them are marked as deal breakers.",
+        "description": "Parses the match preferences recorded by the Hinge app, including which of them are marked "
+                       "as deal breakers.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
