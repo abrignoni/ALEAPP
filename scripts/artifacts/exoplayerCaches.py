@@ -12,19 +12,29 @@ __artifacts_v2__ = {
         "notes": "Read from cache/precache and cache/video_cache, each an ExoPlayer SimpleCache: "
                  "cached_content_index.exi maps an integer id to the cache key (here the segment URL on "
                  "video.twimg.com) and the span files <id>.<position>.<last touch ms>.v3.exo hold the bytes "
-                 "(androidx media3 1.11.0 CachedContentIndex.LegacyStorage and SimpleCacheSpan; the index "
-                 "layout is version 2 with per-entry metadata, written since ExoPlayer 2.9). Media Path is "
-                 "the host, folder and numeric id of the URL as stored, for example "
-                 "video.twimg.com/amplify_video/<id>; the numeric id is the media id in the URL and is not "
-                 "resolved to a tweet here. Segments counts the index entries (playlists, video and audio "
-                 "segments) under that media path, Span Files and Bytes Cached the span files and their "
-                 "sizes, Declared Length the sum of the exo_len metadata values. First and Last Touched are "
-                 "the earliest and latest last-touch timestamps in the span file names, which ExoPlayer "
-                 "updates when a span is read. Whether a prefetched video in precache was watched is not "
-                 "established by this cache.",
+                 "(androidx media3 1.11.0 CachedContentIndex.LegacyStorage and SimpleCacheSpan; the index layout "
+                 "is version 2 with per-entry metadata, written since ExoPlayer 2.9; an index whose flags mark it "
+                 "encrypted is skipped with a log line, and none was on the tested images). Media Path is the "
+                 "host, media folder and id of the URL as stored, for example video.twimg.com/amplify_video/<id>; "
+                 "a subtitles/<folder>/<id> URL joins its video's row. The id is the media id in the URL and is "
+                 "not resolved to a tweet here. Segments counts the index entries (playlists, video and audio "
+                 "segments) under that media path, Span Files and Bytes Cached the span files and their sizes, "
+                 "Declared Length the sum of the exo_len metadata values. First and Last Touched are the earliest "
+                 "and latest last-touch timestamps in the span file names, which ExoPlayer updates when a span is "
+                 "read; both were set on every row of the tested images. Whether a prefetched video in precache "
+                 "was watched is not established by this cache. On the 5 tested images holding the app, 61 rows: "
+                 "media folders amplify_video (32), ext_tw_video (24), tweet_video (3, whose id is an alphanumeric "
+                 "token) and dm_gif (2); one image held only precache, so Cache Folder was uniform there.",
         "paths": ('*/com.twitter.android/cache/precache/*', '*/com.twitter.android/cache/video_cache/*'),
         "output_types": "standard",
         "artifact_icon": "film",
+        "sample_data": {
+            "pixel3_a11": "Android 11 | com.twitter.android | 15 rows",
+            "pixel3_a12": "Android 12 | com.twitter.android | 6 rows",
+            "pixel7a_a14": "Android 14 | com.twitter.android | 12 rows",
+            "samsungs20_a13": "Android 13 | com.twitter.android | 13 rows",
+            "sharon_a14": "Android 14 | com.twitter.android | 15 rows",
+        },
     },
     "snapchatStreamedMedia": {
         "name": "Snapchat - Streamed Media (ExoPlayer)",
@@ -37,16 +47,33 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Snapchat",
         "notes": "Read from files/streaming/cached_content_index.exi (androidx media3 1.11.0 "
-                 "CachedContentIndex.LegacyStorage, version 2) and the <id>.<position>.<last touch ms>.v3.exo "
-                 "span files beside it. Snapchat stores its own metadata on each entry under custom_snap_* "
-                 "names; Content Type, Content ID and Content Object ID are those values as stored and are "
-                 "not documented by Snap. Last Touched is the latest last-touch timestamp among the entry's "
-                 "span files, which ExoPlayer updates when a span is read. Bytes Cached is the size of the "
-                 "span files; Declared Length the exo_len metadata value. Presence records that the app "
-                 "fetched the media into its cache.",
+                 "CachedContentIndex.LegacyStorage, version 2; an index marked encrypted is skipped with a log "
+                 "line, and none was on the tested images) and the <id>.<position>.<last touch ms>.v3.exo span "
+                 "files beside it. Snapchat stores its own metadata on each entry under custom_snap_* names; "
+                 "Content Type, Content ID and Content Object ID are those values as stored and are not documented "
+                 "by Snap. Last Touched is the latest last-touch timestamp among the entry's span files, which "
+                 "ExoPlayer updates when a span is read; 661 of the 801 entries on the tested images have a single "
+                 "span file and 138 have two or more (up to 14), and only the latest touch is reported. Bytes "
+                 "Cached is the size of the span files; Declared Length the exo_len metadata value. Presence "
+                 "records that the app fetched the media into its cache. On the 7 tested images holding entries, "
+                 "801 entries (an eighth image held an index with no entries): content types "
+                 "discover_story_streaming_snap.discover_story_streaming_snap (530), story_snap.story_snap (265), "
+                 "discover_publisher_shows_story_large.discover_publisher_shows_story_large (4) and "
+                 "ad_remote_asset.ad_remote_asset (2); 2 entries had no span file, so their Last Touched, Bytes "
+                 "Cached and Span Files are blank or zero.",
         "paths": ('*/com.snapchat.android/files/streaming/*',),
         "output_types": "standard",
         "artifact_icon": "film",
+        "sample_data": {
+            "cookbook_a11": "Android 11 | com.snapchat.android | 39 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android | 0 rows",
+            "pixel3_a12": "Android 12 | com.snapchat.android | 29 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android | 35 rows",
+            "russell_a14": "Android 14 | com.snapchat.android | 105 rows",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android | 244 rows",
+            "sharon_a14": "Android 14 | com.snapchat.android | 348 rows",
+        },
     },
     "instagramCachedVideos": {
         "name": "Instagram - Cached Videos (ExoPlayer)",
@@ -61,13 +88,25 @@ __artifacts_v2__ = {
         "notes": "This cache keeps no index file: each span file is named <key>.<position>.<last touch ms>.v2.exo "
                  "(androidx media3 1.11.0 SimpleCacheSpan CACHE_FILE_PATTERN_V2), so the key is read from the file "
                  "name. Keys start with two numbers joined by an underscore, sometimes followed by a third "
-                 "underscore-joined token; Media ID and Second ID are those two numbers as stored. Rows are "
-                 "grouped on that pair. First and Last Touched are the earliest and latest last-touch timestamps "
-                 "of the group's span files, which ExoPlayer updates when a span is read; Bytes Cached is the size "
-                 "of the span files.",
+                 "underscore-joined token (15 of the 330 groups on the tested images); Media ID and Second ID are "
+                 "those two numbers as stored. On pixel7a_a14 one Media ID equalled a medias.id in the app's "
+                 "flash_media database and one Second ID a user_feed_items.id, which is the extent of the "
+                 "cross-check. Rows are grouped on that pair (330 groups on the 7 tested images holding the "
+                 "cache). First and Last Touched are the earliest and latest last-touch timestamps of the group's "
+                 "span files, which ExoPlayer updates when a span is read; Bytes Cached is the size of the span "
+                 "files. Source Folder is the videocache folder, one per image.",
         "paths": ('*/com.instagram.android/cache/ExoPlayerCacheDir/videocache/*',),
         "output_types": "standard",
         "artifact_icon": "film",
+        "sample_data": {
+            "galaxys10_a10": "Android 10 | com.instagram.android | 53 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.instagram.android | 4 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.instagram.android | 4 rows",
+            "kevin_pocox7_a15": "Android 15 | com.instagram.android | 249 rows",
+            "pixel7a_a14": "Android 14 | com.instagram.android | 4 rows",
+            "samsunga53_a14": "Android 14 | com.instagram.android | 3 rows",
+            "samsungs20_a13": "Android 13 | com.instagram.android | 13 rows",
+        },
     },
     "redditCachedVideos": {
         "name": "Reddit - Cached Videos (ExoPlayer)",
@@ -83,14 +122,22 @@ __artifacts_v2__ = {
                  "CachedContentIndex.DatabaseStorage, available since ExoPlayer 2.11): the "
                  "ExoPlayerCacheIndex<uid> table maps an id to the cache key (the segment URL) and "
                  "ExoPlayerCacheFileMetadata<uid> records each span file's length and last touch in Unix "
-                 "milliseconds. Video ID is the path segment after v.redd.it in the URL, as stored. Segments "
-                 "counts the index entries under that video id, Span Files and Bytes Cached the span files "
-                 "found under cache/reddit-video. Whether a cached video was watched is not established by "
-                 "the cache.",
+                 "milliseconds. The span files sit in external storage "
+                 "(Android/data/com.reddit.frontpage/cache/reddit-video) while the database is in the app's data "
+                 "folder, so files are grouped by Android user. Video ID is the path segment after v.redd.it in "
+                 "the URL, as stored. Segments counts the index entries under that video id, Span Files and Bytes "
+                 "Cached the span files found. On the 3 tested images holding the cache, 77 rows, every one with "
+                 "span files. The ExoPlayerDownloads table in the same database was empty on the one public image "
+                 "and is not read. Whether a cached video was watched is not established by the cache.",
         "paths": ('*/com.reddit.frontpage/databases/exoplayer_internal.db*',
                   '*/com.reddit.frontpage/cache/reddit-video/*'),
         "output_types": "standard",
         "artifact_icon": "film",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.reddit.frontpage | 1 row",
+            "russell_a14": "Android 14 | com.reddit.frontpage | 42 rows",
+            "russell_pixel6a_a13": "Android 13 | com.reddit.frontpage | 34 rows",
+        },
     },
 }
 
@@ -109,7 +156,7 @@ _SPAN_V3 = re.compile(r'^(\d+)\.(\d+)\.(\d+)\.v3\.exo$')
 _SPAN_V2 = re.compile(r'^(.+)\.(\d+)\.(\d+)\.v2\.exo$', re.S)
 _FLAG_ENCRYPTED_INDEX = 1
 _VERSION_METADATA_INTRODUCED = 2
-_TWITTER_MEDIA = re.compile(r'^https?://([^/]+)/([^/]+)/(\d+)')
+_TWITTER_MEDIA = re.compile(r'^https?://([^/]+)/(?:[^/?]+/)*?(amplify_video|ext_tw_video|tweet_video|dm_gif|dm_video)/([^/?.]+)')
 _INSTAGRAM_KEY = re.compile(r'^(\d+)_(\d+)[._]')
 _REDDIT_VIDEO = re.compile(r'^https?://v\.redd\.it/([^/?]+)')
 
@@ -300,7 +347,6 @@ def twitterCachedVideos(context):
 def snapchatStreamedMedia(context):
     data_headers = (
         ('Last Touched', 'datetime'),
-        ('First Touched', 'datetime'),
         'Content Type (as stored)',
         'Content ID (as stored)',
         'Content Object ID (as stored)',
@@ -323,9 +369,9 @@ def snapchatStreamedMedia(context):
         by_id = _spans_by_id(group['spans'])
         for entry_id, key, metadata in entries:
             spans = by_id.get(entry_id, [])
-            first, last = _touch_range(spans)
+            _first, last = _touch_range(spans)
             data_list.append((
-                last, first,
+                last,
                 metadata.get('custom_snap_content_type', ''),
                 metadata.get('custom_snap_content_id', ''),
                 metadata.get('custom_snap_content_object_id', ''),
