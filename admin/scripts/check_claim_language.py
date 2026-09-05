@@ -86,13 +86,7 @@ import sys
 # purpose: the open stem `\bhabit` used by the sibling iLEAPP implementation also matches
 # "habitat", and the closed spelling already covers both inflections that occur in prose.
 CLAIM_PATTERN = re.compile(
-    r"\ball\b|\bevery\b|\bcomplete|\bfull list\b|\bentire\b|"
-    r"\bthe user (?:searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
-    r"created|hid|chose)\b|"
-    r"\buser[- ](?:created|entered|typed|searched|selected|initiated)\b|"
-    r"\b(?:searched|typed|viewed|read|entered|created|sent|opened|selected|deleted|v"
-    r"isited|chosen|hidden|initiated) by (?:the |a |an )?(?:user|account holder|device owner|subject|owner)\b|\bmanually\b|"
-    r"\bproves?\b|\bdefinitively\b|\balways\b|\breliable|\bvisited\b|\bhabits?\b",
+    r"\ball\b|\bevery\b|\bcomplete|\bfull list\b|\bentire\b|\b(?:the|a|an) (?:\w+ )?(?:user|account holder|device owner|subject|owner) (?:searched|typed|viewed|read|entered|created|sent|opened|selected|deleted|visited|chose|chosen|hid|hidden|initiated|follows|saved|added|grouped|submitted|marked|tracked|joined|reacted|installed|removed|configured|voted|opted)\b|\buser[- ](?:created|entered|typed|searched|selected|initiated)\b|\b(?:searched|typed|viewed|read|entered|created|sent|opened|selected|deleted|visited|chosen|hidden|initiated) by (?:the |a |an )?(?:user|account holder|device owner|subject|owner)\b|\bmanually\b|\bproves?\b|\bdefinitively\b|\balways\b|\breliable|\bvisited\b|\bhabits?\b",
     re.IGNORECASE,
 )
 
@@ -112,12 +106,7 @@ CLAIM_PATTERN = re.compile(
 # What is left is attribution and certainty, which mean the same thing in a note as in a
 # description, and flag 52 artifacts across the five cores.
 NOTES_PATTERN = re.compile(
-    r"\bthe user (?:searched|typed|viewed|visited|opened|selected|deleted|read|sent|"
-    r"created|hid|chose)\b|"
-    r"\buser[- ](?:created|entered|typed|searched|selected|initiated)\b|"
-    r"\b(?:searched|typed|viewed|read|entered|created|sent|opened|selected|deleted|v"
-    r"isited|chosen|hidden|initiated) by (?:the |a |an )?(?:user|account holder|device owner|subject|owner)\b|\bmanually\b|"
-    r"\bproves?\b|\bdefinitively\b|\balways\b|\breliable|\bvisited\b|\bhabits?\b",
+    r"\b(?:the|a|an) (?:\w+ )?(?:user|account holder|device owner|subject|owner) (?:searched|typed|viewed|read|entered|created|sent|opened|selected|deleted|visited|chose|chosen|hid|hidden|initiated|follows|saved|added|grouped|submitted|marked|tracked|joined|reacted|installed|removed|configured|voted|opted)\b|\buser[- ](?:created|entered|typed|searched|selected|initiated)\b|\b(?:searched|typed|viewed|read|entered|created|sent|opened|selected|deleted|visited|chosen|hidden|initiated) by (?:the |a |an )?(?:user|account holder|device owner|subject|owner)\b|\bmanually\b|\bproves?\b|\bdefinitively\b|\balways\b|\breliable|\bvisited\b|\bhabits?\b",
     re.IGNORECASE,
 )
 

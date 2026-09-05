@@ -7,23 +7,21 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Termux",
-        "notes": "One row per apt transaction from files/usr/var/log/apt/history.log, which the "
-                 "package manager writes only once the user installs or removes a package, so it "
-                 "records what the user added or removed rather than the shipped bootstrap. Each block "
-                 "carries a Start-Date, the exact Commandline the user ran, the Install, Upgrade or "
-                 "Remove line naming the packages and versions, and an End-Date. The Requested By "
-                 "column is populated only when apt records who requested the transaction, which it "
-                 "does not for a non-interactive install, so it is blank on the tested image. The "
-                 "timestamps are written by apt in the device's local "
-                 "time with no zone stored: on the tested emulator image the device time zone was "
-                 "America/New_York and a Start-Date of 09:25:54 matched the log file's own modification "
-                 "time of 09:25:55 at offset -0400, so the value is reported as stored and labelled "
-                 "local rather than converted to UTC, because converting a zone-less local time as "
-                 "though it were UTC would move every install by the local offset. history.log is "
-                 "rotated by apt, so older transactions can sit in history.log.1 and the numbered or "
-                 "gzipped rotations; those are read as well where present, and a gzipped rotation is "
-                 "decompressed in memory. The full set of packages present on the device, as opposed to "
-                 "the ones the user installed, is in the Installed Packages artifact.",
+        "notes": "One row per apt transaction from files/usr/var/log/apt/history.log, which the package "
+                 "manager writes only once a package is installed or removed, so it records what changed after "
+                 "setup rather than the shipped bootstrap. Each block carries a Start-Date, the exact "
+                 "Commandline that was run, the Install, Upgrade or Remove line naming the packages and "
+                 "versions, and an End-Date. The Requested By column is populated only when apt records who "
+                 "requested the transaction, which it does not for a non-interactive install, so it is blank "
+                 "on the tested image. The timestamps are written by apt in the device's local time with no "
+                 "zone stored: on the tested emulator image the device time zone was America/New_York and a "
+                 "Start-Date of 09:25:54 matched the log file's own modification time of 09:25:55 at offset "
+                 "-0400, so the value is reported as stored and labelled local rather than converted to UTC, "
+                 "because converting a zone-less local time as though it were UTC would move every install by "
+                 "the local offset. history.log is rotated by apt, so older transactions can sit in "
+                 "history.log.1 and the numbered or gzipped rotations; those are read as well where present, "
+                 "and a gzipped rotation is decompressed in memory. The full set of packages present on the "
+                 "device, as opposed to the ones installed later, is in the Installed Packages artifact.",
         "paths": ('*/com.termux/files/usr/var/log/apt/history.log*',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -39,15 +37,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Termux",
-        "notes": "One row per package from the dpkg status database at "
-                 "files/usr/var/lib/dpkg/status. This is the state of the environment at acquisition, "
-                 "the shipped bootstrap packages together with anything the user added, and the file "
-                 "carries no install date, so it cannot on its own separate the two. The Package "
-                 "Install History artifact is what records which packages the user installed and when. "
-                 "Package name, version, architecture, the install status, the maintainer and the "
-                 "homepage are reported as stored, along with the one line short description. The "
-                 "Essential flag is reported because the core bootstrap packages carry it. Only entries "
-                 "whose Status line reports the package as installed are included.",
+        "notes": "One row per package from the dpkg status database at files/usr/var/lib/dpkg/status. This is "
+                 "the state of the environment at acquisition, the shipped bootstrap packages together with "
+                 "anything installed later, and the file carries no install date, so it cannot on its own "
+                 "separate the two. The Package Install History artifact is what records which packages were "
+                 "installed and when. Package name, version, architecture, the install status, the maintainer "
+                 "and the homepage are reported as stored, along with the one line short description. The "
+                 "Essential flag is reported because the core bootstrap packages carry it. Only entries whose "
+                 "Status line reports the package as installed are included.",
         "paths": ('*/com.termux/files/usr/var/lib/dpkg/status',),
         "output_types": "standard",
         "artifact_icon": "box",

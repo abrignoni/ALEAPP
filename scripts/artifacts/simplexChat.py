@@ -135,8 +135,8 @@ __artifacts_v2__ = {
     },
     "simplex_reactions": {
         "name": "SimpleX Chat - Reactions",
-        "description": "Parses the reactions recorded against SimpleX Chat messages, with "
-                       "the reaction and whether the account holder sent it.",
+        "description": "Parses the reactions recorded against SimpleX Chat messages, with the reaction and its "
+                       "direction.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-20",
         "last_update_date": "2026-08-20",

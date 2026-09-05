@@ -9,11 +9,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-17",
         "requirements": "none",
         "category": "Threema",
-        "notes": "Threema does not use email/password sign-in; the account is the "
-                 "Threema ID itself (an 8-character code generated on first launch). "
-                 "'Linked Mobile Number' is only present if the user opted to link a "
-                 "phone number to their ID for discoverability; it is not required to "
-                 "use the account and is absent if never set.",
+        "notes": "Threema does not use email/password sign-in; the account is the Threema ID itself (an "
+                 "8-character code generated on first launch). 'Linked Mobile Number' is only present when a "
+                 "phone number has been linked to the ID for discoverability; it is not required to use the "
+                 "account and is absent if never set.",
         "paths": ('*/ch.threema.app/shared_prefs/ch.threema.app_preferences.xml',),
         "output_types": ["standard"],
         "artifact_icon": "user",

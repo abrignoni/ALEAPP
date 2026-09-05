@@ -38,14 +38,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "NewPipe",
-        "notes": "One row per search_history entry in databases/newpipe.db. Each row is a query the "
-                 "user submitted, with its Creation Date and the service it was run against. Creation "
-                 "Date is Unix milliseconds and was UTC on the tested device, so it is converted as "
-                 "UTC. Service is decoded from the service id per NewPipe Extractor's ServiceList (see "
-                 "the Watch History notes for the mapping and pinned source). NewPipe writes a row "
-                 "when a search is submitted and the enable_search_history preference is set, which it "
-                 "is by default; suggestions shown while typing are not stored. The data lives in the "
-                 "newpipe.db WAL sidecar on the tested device, which is why it is in the paths.",
+        "notes": "One row per search_history entry in databases/newpipe.db. Each row is a query recorded in "
+                 "the search history, with its Creation Date and the service it was run against. Creation Date "
+                 "is Unix milliseconds and was UTC on the tested device, so it is converted as UTC. Service is "
+                 "decoded from the service id per NewPipe Extractor's ServiceList (see the Watch History notes "
+                 "for the mapping and pinned source). NewPipe writes a row when a search is submitted and the "
+                 "enable_search_history preference is set, which it is by default; suggestions shown while "
+                 "typing are not stored. The data lives in the newpipe.db WAL sidecar on the tested device, "
+                 "which is why it is in the paths.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
         "output_types": "standard",
         "artifact_icon": "search",
