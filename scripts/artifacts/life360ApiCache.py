@@ -10,28 +10,43 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Life360",
-        "notes": "Read from the app's OkHttp response caches under cache/ (http_cache holds these "
-                 "responses on the tested images). Each cache entry is a pair of files named by the MD5 "
-                 "of the URL: <hash>.0 holds the URL, the status line and the response headers, <hash>.1 "
-                 "the body, gzip-compressed when the Content-Encoding header says so (OkHttp Cache.kt "
-                 "Entry.writeTo at release parent-5.5.0, the same layout since 2.x). The URL names the "
-                 "circle and the member; the body is a locations list whose timestamp, startTimestamp, "
-                 "endTimestamp and since values are Unix seconds and are rendered in UTC. Latitude, "
-                 "longitude, accuracy, speed, battery, and the charge, inTransit, isDriving, wifiState, "
-                 "userActivity, driveSDKStatus and algorithm values are reported as stored; Life360 is "
-                 "closed source and their meanings are not documented. Member Name is resolved from the "
+        "notes": "Read from the app's OkHttp response caches under cache/; the history responses sat in "
+                 "cache/http_cache on both tested images that held them (hc_pixel8pro_a16 and hc_pixel8pro_a17). "
+                 "Each cache entry is a pair of files named by the MD5 of the URL: <hash>.0 holds the URL, the "
+                 "status line and the response headers, <hash>.1 the body, gzip-compressed when the "
+                 "Content-Encoding header says so (OkHttp Cache.kt Entry.writeTo at release parent-5.5.0, the same "
+                 "layout since 2.x). The URL names the circle and the member; the body is a locations list whose "
+                 "timestamp, startTimestamp and endTimestamp values are Unix seconds and are rendered in UTC (a "
+                 "since value equalled startTimestamp on every record of both images and is not reported "
+                 "separately). Latitude, longitude, accuracy, speed, battery, and the charge, inTransit, "
+                 "isDriving, wifiState, userActivity, driveSDKStatus and algorithm values are reported as stored; "
+                 "Life360 is closed source and their meanings are not documented. On both images Is Driving was 0 "
+                 "and Wi-Fi State was 1 on every record, Address 1, Address 2 and Short Address were empty strings "
+                 "on every record, and every record belonged to one Circle ID. Member Name is resolved from the "
                  "circles/<id>/members and users/me responses in the same cache and is blank when no cached "
-                 "response names the member. The same record is returned by many cached history responses "
-                 "(the app fetches the history repeatedly with a moving time parameter), so rows are "
-                 "de-duplicated on member, timestamp, coordinates and the start and end timestamps; "
-                 "Cached Copies counts the responses holding the record and First Cached is the earliest "
-                 "OkHttp-Received-Millis among them. The device's own location events are reported by "
-                 "the Life360 Locations artifacts from L360EventStore.db; this artifact adds the history "
-                 "the app fetched for circle members.",
+                 "response names the member; every record on both images resolved. The app fetches the history "
+                 "repeatedly with a moving time parameter and the same record comes back in many responses (1,109 "
+                 "of the 1,559 cached history responses held no locations, and the 22,334 location entries in the "
+                 "rest are 2,148 distinct records), so rows are de-duplicated on member, timestamp, coordinates "
+                 "and the start and end timestamps. The values shown are those of the earliest cached response "
+                 "holding the record (First Cached is its OkHttp-Received-Millis); later copies differed in Trip "
+                 "ID on 13 records per image and in speed, battery or another value on one to three records, and "
+                 "Cached Copies counts them (1 to 35 on the tested images). Each image held history responses for "
+                 "4 members and records for 2 of them. The device's own location events are reported by the "
+                 "Life360 Locations artifacts from L360EventStore.db; this artifact adds the history the app "
+                 "fetched for circle members. The cached driverbehavior/trips and drives/<id> responses are not "
+                 "reported: on hc_pixel8pro_a16 all 9 distinct trips they held were already in DriveBladeDB, which "
+                 "the Life360 Drives artifacts read.",
         "paths": ('*/com.life360.android.safetymapd/cache/*/journal',
                   '*/com.life360.android.safetymapd/cache/*/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]'),
         "output_types": "all",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.life360.android.safetymapd vc 2897710 | 562 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.life360.android.safetymapd | 1586 rows",
+            "pixel7a_a14": "Android 14 | com.life360.android.safetymapd vc 294540 | 0 rows",
+            "sharon_a14": "Android 14 | com.life360.android.safetymapd vc 296030 | 0 rows",
+        },
     },
     "life360CacheEmergencyContacts": {
         "name": "Life360 - Emergency Contacts (API cache)",
@@ -42,15 +57,25 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Life360",
-        "notes": "Read from the same OkHttp response caches as the Member Location History artifact. One "
-                 "row per distinct contact id per circle; the Cached time is the OkHttp-Received-Millis "
-                 "header of the response that held it. Phone Numbers joins each phone with its type in "
-                 "parentheses where the type is stored. Accepted is reported as stored. No database the "
-                 "other Life360 artifacts read holds these contacts.",
+        "notes": "Read from the same OkHttp response caches as the Member Location History artifact. One row per "
+                 "distinct contact id per circle; the Cached time is the OkHttp-Received-Millis header of the "
+                 "response that held it. Phone Numbers joins each phone with its type in parentheses where the "
+                 "type is stored. Accepted is reported as stored. Two of the four tested images with the app held "
+                 "a contact, one contact on each (the same one, with a name and a phone number and with Emails and "
+                 "Avatar URL blank); pixel7a_a14 held contacts responses whose list was empty and sharon_a14 held "
+                 "no contacts response. The L360LocalStoreRoomDatabase emergency_contacts table has the same "
+                 "fields and is read by no artifact; it held no rows on hc_pixel8pro_a16 while that image's cache "
+                 "held this contact.",
         "paths": ('*/com.life360.android.safetymapd/cache/*/journal',
                   '*/com.life360.android.safetymapd/cache/*/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]'),
         "output_types": "standard",
         "artifact_icon": "phone-call",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.life360.android.safetymapd vc 2897710 | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | com.life360.android.safetymapd | 1 row",
+            "pixel7a_a14": "Android 14 | com.life360.android.safetymapd vc 294540 | 0 rows",
+            "sharon_a14": "Android 14 | com.life360.android.safetymapd vc 296030 | 0 rows",
+        },
     },
     "life360CacheEntries": {
         "name": "Life360 - API Cache Entries",
@@ -62,22 +87,33 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Life360",
-        "notes": "One row per <hash>.0 metadata file in each DiskLruCache directory under the app's cache/ "
-                 "folder whose entries start with a URL (http_cache, l360_http_cache, core_http_cache, "
-                 "picasso-cache, the LaunchDarkly and Statsig SDK caches on the tested images). Sent and "
-                 "Received are the OkHttp-Sent-Millis and OkHttp-Received-Millis headers OkHttp writes into "
-                 "the entry (Unix milliseconds; written since OkHttp 3.4.0, absent from entries of older "
-                 "releases). OkHttp caches GET responses only (Cache.kt put, release parent-5.5.0), so no "
-                 "method column is reported. The URLs themselves carry request parameters the app sent, "
-                 "such as a phone number passed to users/lookup, an invite code passed to code/<code>, and "
-                 "the coordinates passed to nearbyplaces/<lat>/<lon>. Journal State is the last CLEAN, "
-                 "DIRTY or REMOVE line for the entry's key in the directory's journal, blank when the key "
-                 "is not in the journal. Media renders the body when its bytes are a JPEG, PNG, GIF or WebP "
-                 "image and the response is not compressed; other bodies are not decoded here.",
+        "notes": "One row per <hash>.0 metadata file in each DiskLruCache directory under the app's cache/ folder "
+                 "whose entries start with a URL. Sent and Received are the OkHttp-Sent-Millis and "
+                 "OkHttp-Received-Millis headers OkHttp writes into the entry (Unix milliseconds; written since "
+                 "OkHttp 3.4.0 and absent from entries of older releases, though every entry on the tested images "
+                 "carried both). OkHttp caches GET responses only (Cache.kt put, release parent-5.5.0), so no "
+                 "method column is reported. The URLs themselves carry request parameters the app sent, such as a "
+                 "phone number passed to users/lookup, an invite code passed to code/<code>, and the coordinates "
+                 "passed to nearbyplaces/<lat>/<lon>. Journal State is the last CLEAN, DIRTY or REMOVE line for "
+                 "the entry's key in the directory's journal, blank when the key is not in the journal; it was "
+                 "CLEAN on all 1,960 entries of the tested images. Media renders the body when its bytes are a "
+                 "JPEG, PNG, GIF or WebP image and the response is not compressed (4 entries, the avatars and chat "
+                 "photos in picasso-cache on pixel7a_a14); other bodies are not decoded here. On the 4 of 31 "
+                 "tested images that held the app the entries came from six directories: http_cache 1,884, "
+                 "l360_http_cache 41, statsig_http_cache_com.life360.android.safetymapd 18 (DNS-over-HTTPS "
+                 "exchanges with cloudflare-dns.com, content type application/dns-message), "
+                 "com.launchdarkly.http-cache 8, picasso-cache 6 and core_http_cache 3; 1,936 of the 1,960 bodies "
+                 "are JSON.",
         "paths": ('*/com.life360.android.safetymapd/cache/*/journal',
                   '*/com.life360.android.safetymapd/cache/*/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]'),
         "output_types": "standard",
         "artifact_icon": "list",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.life360.android.safetymapd vc 2897710 | 765 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.life360.android.safetymapd | 1148 rows",
+            "pixel7a_a14": "Android 14 | com.life360.android.safetymapd vc 294540 | 41 rows",
+            "sharon_a14": "Android 14 | com.life360.android.safetymapd vc 296030 | 6 rows",
+        },
     },
 }
 
@@ -298,16 +334,15 @@ def life360CacheMemberHistory(context):
         ('Timestamp', 'datetime'),
         ('Start Timestamp', 'datetime'),
         ('End Timestamp', 'datetime'),
-        ('Since', 'datetime'),
         'Member Name',
         'Member ID',
         'Circle ID',
         'Latitude',
         'Longitude',
         'Accuracy (as stored)',
-        'Address 1',
-        'Address 2',
-        'Short Address',
+        'Address 1 (as stored)',
+        'Address 2 (as stored)',
+        'Short Address (as stored)',
         'Place Name',
         'Speed (as stored)',
         'User Activity (as stored)',
@@ -354,8 +389,7 @@ def life360CacheMemberHistory(context):
             else:
                 record['copies'] += 1
                 if received and (not record['received'] or int(received) < int(record['received'])):
-                    record['received'] = received
-                    record['source'] = exchange['files']['0']
+                    record.update(loc=loc, received=received, source=exchange['files']['0'])
     data_list = []
     for key in sorted(records, key=lambda k: (k[0], k[1])):
         record = records[key]
@@ -364,7 +398,6 @@ def life360CacheMemberHistory(context):
             _utc_seconds(loc.get('timestamp')),
             _utc_seconds(loc.get('startTimestamp')),
             _utc_seconds(loc.get('endTimestamp')),
-            _utc_seconds(loc.get('since')),
             names.get(record['member'], ''),
             record['member'],
             record['circle'],
