@@ -137,6 +137,36 @@ __artifacts_v2__ = {
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "battery-charging"
     },
+    "alex_live_shortcut": {
+        "name": "Dumpsys - Shortcuts",
+        "description": "Outputs the Shortcuts \
+            from the Dumpsys log of an \
+                ALEX PRFS backup.",
+        "author": "@C_Peter",
+        "creation_date": "2026-08-30",
+        "last_update_date": "2026-09-05",
+        "requirements": "none",
+        "category": "ALEX Live Data",
+        "notes": "",
+        "paths": ('*/extra/dumpsys_*.txt'),
+        "output_types": ["html", "lava", "tsv"],
+        "artifact_icon": "link"
+    },
+    "alex_live_discord_shortcut": {
+        "name": "Dumpsys - Shortcuts (Discord)",
+        "description": "Parses Discord-specific entries  \
+            from the ‘Shortcuts’ section of an \
+                ALEX PRFS backup.",
+        "author": "@C_Peter",
+        "creation_date": "2026-08-30",
+        "last_update_date": "2026-09-05",
+        "requirements": "none",
+        "category": "ALEX Live Data",
+        "notes": "",
+        "paths": ('*/extra/dumpsys_*.txt'),
+        "output_types": ["html", "lava", "tsv"],
+        "artifact_icon": "link-plus"
+    },
     "alex_live_logcat": {
         "name": "Logcat",
         "description": "Parses the Logcat \
@@ -267,6 +297,14 @@ def parse_relative_time(s):
     )
     return total_ms / 1000
 
+# Helper to clean "null" Values
+def clean(value):
+    """Helper to normalize `null` and `[]` to None"""
+    if value is None:
+        return None
+    value = value.strip()
+    return None if value == "null" or value == "[]" else value
+
 # Helper to split the Dumpsys Output
 def split_dumpsys_log(dumpsys_file) -> dict:
     """Function to split the dumpsys txt file in service parts"""
@@ -334,6 +372,68 @@ def split_dumpsys_log(dumpsys_file) -> dict:
     flush()
     _DUMPSYS_DICT = dumpdict
     _PARSED_DUMPSYS = True
+
+# Helper for Dumpsys Shortcut Output
+def shortcut_data(shortcut_part, s_type="default"):
+    data_list = []
+    shortcut_pattern = re.compile(r'ShortcutInfo\s*\{(.*?)(?=^\s*ShortcutInfo\s*\{|\Z)', re.MULTILINE | re.DOTALL)
+    for match in shortcut_pattern.finditer(shortcut_part):
+        shortcut = match.group(1)
+        shortcut_id_pattern     = re.search(r'^id=(.*?), flags=', shortcut, re.MULTILINE)
+        package_name_pattern    = re.search(r'^\s*packageName=(.*)$', shortcut, re.MULTILINE)
+        short_label_pattern     = re.search(r'^\s*shortLabel=(.*?), resId=', shortcut, re.MULTILINE)
+        long_label_pattern      = re.search(r'^\s*longLabel=(.*?), resId=', shortcut, re.MULTILINE)
+        persons_pattern         = re.search(r'^\s*persons=(.*)$', shortcut, re.MULTILINE)
+        rank_timestamp_pattern  = re.search(r'^\s*rank=(.*?), timestamp=(.*)$', shortcut, re.MULTILINE)
+        intents_pattern         = re.search(r'^\s*intents=(.*?)^\s*extras=', shortcut, re.MULTILINE | re.DOTALL)
+
+        shortcut_id     = clean(shortcut_id_pattern.group(1) if shortcut_id_pattern else None)
+        package_name    = clean(package_name_pattern.group(1) if package_name_pattern else None)
+        short_label     = clean(short_label_pattern.group(1) if short_label_pattern else None)
+        long_label      = clean(long_label_pattern.group(1) if long_label_pattern else None)
+        persons         = clean(persons_pattern.group(1) if persons_pattern else None)
+        rank            = clean(rank_timestamp_pattern.group(1) if rank_timestamp_pattern else None)
+        timestamp       = clean(rank_timestamp_pattern.group(2) if rank_timestamp_pattern else None)
+        intents         = clean(intents_pattern.group(1) if intents_pattern else None)
+        if timestamp:
+            out_time = datetime.datetime.fromtimestamp(int(timestamp)/1000, tz=datetime.timezone.utc)
+        else:
+            out_time = None
+        if s_type == "default":
+            data_list.append((package_name, shortcut_id, out_time, short_label, long_label, persons, rank, intents))
+        elif s_type == "discord":
+            if package_name == "com.discord" and intents:
+                cid_pattern  = re.search(r'channel_id,\s*(\d+),', intents)
+                mid_pattern  = re.search(r'message_id,\s*(\d+),', intents)
+                gid_pattern  = re.search(r'guild_id,\s*(\d+),', intents)
+                usr_pattern  = re.search(r'user_username,\s*(.*?),\s*user_id,', intents)
+                uid_pattern  = re.search(r'user_id,\s*(\d+),', intents)
+                msg_pattern  = re.search(r'message_content,\s*(.*?),\s*user_username,', intents, re.DOTALL)
+                bod_pattern  = re.search(r'body,\s*(.*?),\s*icon,', intents, re.DOTALL)
+                time_pattern = re.search(r'"timestamp":"([^"]+)","pinned"', intents)
+                schd_pattern = re.search(r'scheduled_at,\s*([^,]+),\s*receiving_user_id,', intents)
+
+                cid = clean(cid_pattern.group(1) if cid_pattern else None)
+                mid = clean(mid_pattern.group(1) if mid_pattern else None)
+                gid = clean(gid_pattern.group(1) if gid_pattern else None)
+                msg = clean(msg_pattern.group(1) if msg_pattern else None)
+                usr = clean(usr_pattern.group(1) if usr_pattern else None)
+                uid = clean(uid_pattern.group(1) if uid_pattern else None)
+                if msg is None:
+                    msg = clean(bod_pattern.group(1) if bod_pattern else None)
+                rawtime = clean(time_pattern.group(1) if time_pattern else None)
+                if rawtime is None:
+                    rawtime = clean(schd_pattern.group(1) if schd_pattern else None)
+                msg_time = None
+                if rawtime:
+                    u_time = parse_timestamp(rawtime, _DEVICE_TIME)
+                    if u_time:
+                        msg_time = datetime.datetime.fromtimestamp(u_time, tz=datetime.timezone.utc)
+                    else:
+                        msg_time = None
+
+                data_list.append((shortcut_id, out_time, msg_time, long_label, gid, cid, mid, msg, usr, uid))
+    return data_list
 
 # Dumpsys - Wifi - Configured Networks
 @artifact_processor
@@ -569,7 +669,7 @@ def alex_live_usagestats_yearly(context):
 
             data_list.append(tuple(row_values))
 
-        return tuple(data_headers), data_list, source_path
+    return tuple(data_headers), data_list, source_path
 
 # Dumpsys - Bluetooth Manager - Bonded Devices
 @artifact_processor
@@ -615,8 +715,7 @@ def alex_live_bt_bonded(context):
                         data_list.append((mac, name.strip()))
                 else:
                     continue
-        data_headers = ('MAC', "Name")
-
+    data_headers = ('MAC', "Name")
     return data_headers, data_list, source_path
 
 # Dumpsys - Companiondevice
@@ -634,8 +733,6 @@ def alex_live_companiondevice(context):
 
     if cmpd_dump is None:
         logfunc('Dumpsys does not include a "companiondevice" part.')
-        return data_headers, data_list, source_path
-    
     else:
         logtext = (
             'Dumpsys does include a \"companiondevice\" part without timestamp.'
@@ -672,7 +769,7 @@ def alex_live_companiondevice(context):
             row = tuple(assoc.get(key) for key in data_headers)
             data_list.append(row)
 
-        return data_headers, data_list, source_path
+    return data_headers, data_list, source_path
 
 # Dumpsys - Role (Default Apps)
 @artifact_processor
@@ -889,6 +986,64 @@ def alex_live_batterystats(context):
 
             data_list.append((out_time, battery, hex_mask, stat1, message))
     data_headers = (('Time', 'datetime'), 'Battery Level', 'Mask', 'States (from Mask)', 'Message')
+    return data_headers, data_list, source_path
+
+# Dumpsys - Shortcut (Discord)
+@artifact_processor
+def alex_live_shortcut(context):
+    """Parses the dumpsys shortcut dump for entires"""
+    files_found = context.get_files_found()
+    source_path = files_found[0]
+    data_list = []
+    split_dumpsys_log(source_path)
+    acc_dump, acc_ts = _DUMPSYS_DICT.get("shortcut", (None, None))
+
+    if acc_dump is None:
+        logfunc('Dumpsys does not include an "shortcut" part.')
+    else:
+        logtext = (
+            'Dumpsys does include a \"shortcut\" part without timestamp.'
+            if acc_ts is None
+            else f'Dumpsys does include a \"shortcut\" part with timestamp: {str(acc_ts)}'
+        )
+        logfunc(logtext)
+        data_list = shortcut_data(acc_dump)
+    
+    data_headers = ('Package', 'ID', ('Timestamp', 'datetime'), 'Short Label', 'Long Label', 'Persons', 'Rank', 'Intent')       
+    return data_headers, data_list, source_path
+
+
+    # App specific:
+
+@artifact_processor
+def alex_live_discord_shortcut(context):
+    """Parses Discord-specific entries from the ‘Shortcuts’ section of an ALEX PRFS backup."""
+    files_found = context.get_files_found()
+    source_path = files_found[0]
+    data_list = []
+    split_dumpsys_log(source_path)
+    acc_dump, acc_ts = _DUMPSYS_DICT.get("shortcut", (None, None))
+
+    if "packageName=com.discord" in acc_dump:
+        if acc_dump is None:
+            logfunc('Dumpsys does not include an "discord shortcut" part.')
+        else:
+            logtext = (
+                'Dumpsys does include a \"shortcut\" part for discord without timestamp.'
+                if acc_ts is None
+                else f'Dumpsys does include a \"shortcut\" part for discord with timestamp: {str(acc_ts)}'
+            )
+            logfunc(logtext)
+            data_list = shortcut_data(acc_dump, "discord")
+        
+    else:
+        logtext = (
+            'Dumpsys does include a \"shortcut\" part for discord without timestamp.'
+            if acc_ts is None
+            else f'Dumpsys does include a \"shortcut\" part for discord with timestamp: {str(acc_ts)}'
+        )
+
+    data_headers = ('Shortcut ID', ('Timestamp (Shortcut)', 'datetime'), ('Message Time', 'datetime'), 'Label', 'Guild ID', 'Channel ID', 'Message ID', 'Message', 'User', 'User ID')
     return data_headers, data_list, source_path
 
 # App Ops
