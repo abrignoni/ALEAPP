@@ -33,10 +33,12 @@ __artifacts_v2__ = {
                  "tested image, because the history was never reordered there, so the two agreeing "
                  "is a property of that sample and not one column derived from the other. It is "
                  "kept because a Sort Order that departs from Row ID is what shows the list was "
-                 "rearranged by hand. Scanning does not "
-                 "require the code to have been on the device: an image in the gallery, a printed "
-                 "code, or a screen can all produce a row, so a row is evidence the app decoded "
-                 "the payload and not evidence of where the code came from.",
+                 "rearranged by hand. A row does not say where the code came from. The app offers "
+                 "both a camera scan and a scan of an image already in the gallery, and only the "
+                 "gallery path was exercised here, so the nine rows on the tested image all came "
+                 "from image files on the device. Nothing in the table distinguishes the two, "
+                 "which is the point: a row is evidence the app decoded the payload, not evidence "
+                 "of where the code was.",
         "paths": ('*/com.gamma.scan/databases/barcode_scanner_history.db*',),
         "output_types": "standard",
         "artifact_icon": "maximize",
