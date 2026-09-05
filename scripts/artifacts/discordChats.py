@@ -7,20 +7,29 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Discord Chats",
-        "notes": "Reference: Discord Developer Documentation, 'Message Types (DEFAULT=0, CALL=3, USER_JOIN=7, REPLY=19)', "
-                 "https://discord.com/developers/docs/resources/message. Each account's kv-storage/@account.<id>/a "
-                 "database is read separately; Direction is Outgoing when the sender id equals the account id in that "
-                 "folder name. Attachment renders the first attachment whose URL path (scheme, host and path, ignoring "
-                 "the size parameters) equals the URL of an image entry in the same container's OkHttp response cache "
-                 "(cache/http-cache, <hash>.0 metadata beside the <hash>.1 body), taking the largest cached copy; "
-                 "Attachment Filename, Attachment URL and Attachment Proxy URL list every attachment as stored, joined "
-                 "with semicolons. The cache is the same store the Discord Cached Messages artifact reads.",
+        "notes": "Reference: Discord Developer Documentation, 'Message Types (DEFAULT=0, CALL=3, USER_JOIN=7, "
+                 "REPLY=19)', https://discord.com/developers/docs/resources/message. Each account's "
+                 "kv-storage/@account.<id>/a database is read separately (one account on each of the 6 tested "
+                 "images holding one); Direction is Outgoing when the sender id equals the account id in that "
+                 "folder name. Attachment renders the first attachment whose URL path (scheme, host and path, "
+                 "ignoring the signature and size parameters) equals the URL of an image entry in the same "
+                 "container's OkHttp response cache (cache/http-cache, <hash>.0 metadata beside the <hash>.1 "
+                 "body), taking the largest cached copy; of the 12 attachments on the tested images 7 rendered, 4 "
+                 "had no cached copy and 1 was cached as a short text/plain response. Attachment Filename, "
+                 "Attachment URL and Attachment Proxy URL list every attachment as stored, joined with semicolons. "
+                 "The cache is the same store the Discord Cached Messages artifact reads, and on the tested images "
+                 "it held every kv-storage message but 2. On the tested images Edited Timestamp was blank, Pinned "
+                 "was False and Mention Roles was an empty list on every message, Mentions was an empty list on "
+                 "all but one image, on three images every message carried the same Avatar value, and on four the "
+                 "messages sat in one Channel ID.",
         "paths": ('*/com.discord/files/kv-storage/*/a*',
                   '*/com.discord/cache/http-cache/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
+            "falken_a326u_a13": "Android 13 | com.discord | 27 rows",
             "hc_pixel8pro_a16": "Android 16 | com.discord vc 333012 | 7 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.discord | 7 rows",
             "pixel7a_a14": "Android 14 | com.discord vc 239015 | 47 rows",
             "samsungs20_a13": "Android 13 | com.discord vc 310011 | 1 row",
             "userb2_a13": "Android 13 | com.discord vc 255014 | 25 rows",

@@ -13,22 +13,38 @@ __artifacts_v2__ = {
                  "response headers, <hash>.1 the body, gzip-compressed when the Content-Encoding header says so "
                  "(OkHttp Cache.kt Entry.writeTo at release parent-5.5.0). Each channels/<id>/messages response is "
                  "a JSON list of message objects in the shape the Discord developer documentation describes "
-                 "(https://discord.com/developers/docs/resources/message); the same message id can appear in "
-                 "several cached pages and is reported once with the number of pages holding it. Direction is "
-                 "Outgoing when the author id equals an account id taken from the kv-storage/@account.<id> folder "
-                 "names in the same app container, Incoming for any other author, and blank when no account folder "
-                 "was found. Attachment renders the first attachment whose URL path (scheme, host and path, "
-                 "ignoring the size parameters) equals the URL of a cached image entry, taking the largest cached "
-                 "copy; Attachment Filenames and Attachment URLs list every attachment as stored. Message Type is "
-                 "the type value as stored (0 DEFAULT, 3 CALL, 7 USER_JOIN, 19 REPLY per the same documentation). "
-                 "Call Ended and Call Participants come from the call object of call messages. Also In kv-storage is "
+                 "(https://discord.com/developers/docs/resources/message); the same message id appears in up to 5 "
+                 "cached pages on the tested images and is reported once with the number of pages holding it. "
+                 "Direction is Outgoing when the author id equals an account id taken from the "
+                 "kv-storage/@account.<id> folder names in the same app container, Incoming for any other author, "
+                 "and blank when no account folder was found (every message on the tested images had one). "
+                 "Attachment renders the first attachment whose URL path (scheme, host and path, ignoring the "
+                 "signature and size parameters) equals the URL of a cached image entry, taking the largest cached "
+                 "copy; Attachment Filenames and Attachment URLs list every attachment as stored. Of the 21 "
+                 "attachments on the tested images 13 rendered, 7 had no cached copy and 1 was cached as a short "
+                 "text/plain response. Message Type is the type value as stored (0 DEFAULT, 3 CALL, 7 USER_JOIN, "
+                 "19 REPLY per the same documentation; 152, 8, 2 and 7 messages on the tested images). Call Ended "
+                 "and Call Participants come from the call object of the 8 call messages. Also In kv-storage is "
                  "Yes when the same message id is in the messages0 table of the container's kv-storage database, "
-                 "which the Discord Chats artifact reads.",
+                 "which the Discord Chats artifact reads: 169 cached messages on 5 of 31 tested images (92, 38, "
+                 "25, 7 and 7), of which 111 were also in kv-storage and 58 only in the cache; 2 kv-storage "
+                 "messages on one image were not in any cached page. Edited Timestamp and Pinned were blank on "
+                 "every cached message of the tested images (no edited or pinned message was cached), Mentions was "
+                 "filled only on one image and Reply To Message ID on two, and every image's messages came from "
+                 "one account (the value in Account IDs), on four of the five images in one Channel ID.",
         "paths": ('*/com.discord/cache/http-cache/journal',
                   '*/com.discord/cache/http-cache/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]',
                   '*/com.discord/files/kv-storage/@account.*/a*'),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "sample_data": {
+            "falken_a326u_a13": "Android 13 | com.discord | 25 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.discord vc 333012 | 7 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.discord | 7 rows",
+            "pixel7a_a14": "Android 14 | com.discord vc 239015 | 92 rows",
+            "samsungs20_a13": "Android 13 | com.discord vc 310011 | 0 rows",
+            "userb2_a13": "Android 13 | com.discord vc 255014 | 38 rows",
+        },
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Channel ID",
@@ -55,11 +71,21 @@ __artifacts_v2__ = {
                  "is looked at; the cache holds the response, so a row records that the profile was fetched, at "
                  "the Cached time, not who the account holder is. Values are reported as stored; Connected "
                  "Accounts joins each account's type and name. A user fetched more than once is reported once, "
-                 "from the earliest cached response, with the number of cached copies.",
+                 "from the earliest cached response, with the number of cached copies. On the 9 profiles of the 5 "
+                 "tested images that held one, Bio, Pronouns, Connected Accounts and Premium Since were blank, and "
+                 "Mutual Server IDs and Legacy Username were each filled on 1.",
         "paths": ('*/com.discord/cache/http-cache/journal',
                   '*/com.discord/cache/http-cache/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]'),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "falken_a326u_a13": "Android 13 | com.discord | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.discord vc 333012 | 2 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.discord | 2 rows",
+            "pixel7a_a14": "Android 14 | com.discord vc 239015 | 2 rows",
+            "samsungs20_a13": "Android 13 | com.discord vc 310011 | 2 rows",
+            "userb2_a13": "Android 13 | com.discord vc 255014 | 1 row",
+        },
     },
     "discordCacheEntries": {
         "name": "Discord - API Cache Entries",
@@ -73,16 +99,29 @@ __artifacts_v2__ = {
         "category": "Discord Chats",
         "notes": "One row per <hash>.0 metadata file in cache/http-cache whose first line is a URL. Sent and "
                  "Received are the OkHttp-Sent-Millis and OkHttp-Received-Millis headers OkHttp writes into the "
-                 "entry (Unix milliseconds; written since OkHttp 3.4.0). OkHttp caches GET responses only "
-                 "(Cache.kt put, release parent-5.5.0), so no method column is reported. Media renders the body "
-                 "when its bytes are a JPEG, PNG, GIF or WebP image and the response is not compressed: the "
-                 "attachment images, avatars, server icons and stickers the app displayed. Journal State is the "
-                 "last CLEAN, DIRTY or REMOVE line for the entry's key in the cache's journal, blank when the key "
-                 "is not in the journal. This is the Android counterpart of the iOS Discord Cache artifact.",
+                 "entry (Unix milliseconds; written since OkHttp 3.4.0, present on all 317 entries of the tested "
+                 "images). OkHttp caches GET responses only (Cache.kt put, release parent-5.5.0), so no method "
+                 "column is reported. Media renders the body when its bytes are a JPEG, PNG, GIF or WebP image and "
+                 "the response is not compressed: the attachment images, avatars, server icons and stickers the "
+                 "app displayed (55 of the 317 entries on the tested images; 255 bodies are JSON). Journal State "
+                 "is the last CLEAN, DIRTY or REMOVE line for the entry's key in the cache's journal, blank when "
+                 "the key is not in the journal; it was CLEAN on every entry of the tested images. 6 of the 31 "
+                 "tested images held the cache (86, 57, 53, 46, 46 and 29 entries). This is the Android "
+                 "counterpart of the iOS Discord Cache artifact. Status Line was HTTP/1.1 200 or HTTP/1.1 404 on "
+                 "every entry (200 only on one image), three images held JSON bodies only (Content Type "
+                 "application/json), and on one image every body was gzip-encoded (Content Encoding gzip).",
         "paths": ('*/com.discord/cache/http-cache/journal',
                   '*/com.discord/cache/http-cache/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]'),
         "output_types": "standard",
         "artifact_icon": "list",
+        "sample_data": {
+            "falken_a326u_a13": "Android 13 | com.discord | 29 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.discord vc 333012 | 46 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.discord | 46 rows",
+            "pixel7a_a14": "Android 14 | com.discord vc 239015 | 86 rows",
+            "samsungs20_a13": "Android 13 | com.discord vc 310011 | 53 rows",
+            "userb2_a13": "Android 13 | com.discord vc 255014 | 57 rows",
+        },
     },
 }
 
