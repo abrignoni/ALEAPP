@@ -104,6 +104,15 @@ jobs:
         if: steps.changed-files-py.outputs.any_changed == 'true'
         run: python admin/scripts/check_implicit_concat.py
 
+      # An artifact's description is the one line the report, the LAVA manifest and
+      # casework quote for it. One that is missing, runs to several lines, only repeats
+      # the name, or duplicates a sibling's in the same module says nothing about the
+      # rows it fronts. Whether a description claims past its own notes is a judgement
+      # the script cannot make; its --review mode lays the pair out for that pass.
+      - name: Guard against an artifact description that says nothing
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_artifact_descriptions.py
+
       # Fails only on warnings this pull request introduces. Long-lived modules carry
       # deliberate pre-existing warnings, and failing on those pushed contributors toward
       # unrelated refactors or blanket file-level disables. See the script's docstring.
