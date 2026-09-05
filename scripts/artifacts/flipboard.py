@@ -31,7 +31,7 @@ __artifacts_v2__ = {
     },
     "flipboard_sections": {
         "name": "Flipboard Followed Sections",
-        "description": "Topics and magazines the Flipboard user follows",
+        "description": "Sections Flipboard lists, the topics followed and the feeds the app adds itself",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
