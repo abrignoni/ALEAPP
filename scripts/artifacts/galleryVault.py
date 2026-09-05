@@ -402,6 +402,8 @@ import xml.etree.ElementTree as ET
 
 from Crypto.Cipher import DES
 
+from scripts.artifacts.storagePathViews import unique_files
+
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_embedded_media,
@@ -567,8 +569,18 @@ def _ms(value):
     return convert_unix_ts_to_utc(value)
 
 
-def _galleryvault_db(files_found):
-    return get_file_path(files_found, 'galleryvault.db')
+def _galleryvault_dbs(files_found):
+    """Every galleryvault.db in the extraction, sorted: a second Android user
+    has their own vault database, and each one is separate evidence. The
+    exact-suffix test never returns a -wal/-shm/-journal sidecar."""
+    return sorted(str(f) for f in files_found
+                  if str(f).endswith('galleryvault.db'))
+
+
+def _query_all(db_paths, table, query):
+    """Rows of the query from every database, in db path order."""
+    for db_path in db_paths:
+        yield from _query(db_path, table, query)
 
 
 def _cloud_cache_db(files_found):
@@ -714,28 +726,31 @@ def galleryvault_vault_files(context):
 
 @artifact_processor
 def galleryvault_hidden_files(context):
-    source_path = _galleryvault_db(context.get_files_found())
+    source_paths = _galleryvault_dbs(unique_files(context))
     data_list = []
-    columns = _columns(source_path, 'file_v1')
-    delete_state = 'file_v1.delete_state' if 'delete_state' in columns else "''"
+    # The query is built per database: each Android user's copy can carry a
+    # different schema generation, so delete_state is resolved per store.
+    for source_path in source_paths:
+        columns = _columns(source_path, 'file_v1')
+        delete_state = 'file_v1.delete_state' if 'delete_state' in columns else "''"
 
-    query = f'''
-    SELECT file_v1.added_time_utc, file_v1.file_last_modified_time_utc, file_v1.name,
-           folder_v1.name, file_v1.original_path, file_v1.mime_type, file_v1.file_size,
-           file_v1.image_width, file_v1.image_height, file_v1.video_duration,
-           file_v1.file_type, file_v1.encrypt_state, file_v1.storage_type,
-           file_v1.complete_state, {delete_state}, file_v1.uuid, file_v1.source
-    FROM file_v1
-    LEFT JOIN folder_v1 ON file_v1.folder_id = folder_v1._id
-    ORDER BY file_v1.added_time_utc
-    '''
-    for record in _query(source_path, 'file_v1', query):
-        dimensions = f'{record[7]} x {record[8]}' if record[7] or record[8] else ''
-        data_list.append((
-            _ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5],
-            record[6], dimensions, record[9], record[10], record[11], record[12],
-            record[13], record[14], record[15], record[16],
-        ))
+        query = f'''
+        SELECT file_v1.added_time_utc, file_v1.file_last_modified_time_utc, file_v1.name,
+               folder_v1.name, file_v1.original_path, file_v1.mime_type, file_v1.file_size,
+               file_v1.image_width, file_v1.image_height, file_v1.video_duration,
+               file_v1.file_type, file_v1.encrypt_state, file_v1.storage_type,
+               file_v1.complete_state, {delete_state}, file_v1.uuid, file_v1.source
+        FROM file_v1
+        LEFT JOIN folder_v1 ON file_v1.folder_id = folder_v1._id
+        ORDER BY file_v1.added_time_utc
+        '''
+        for record in _query(source_path, 'file_v1', query):
+            dimensions = f'{record[7]} x {record[8]}' if record[7] or record[8] else ''
+            data_list.append((
+                _ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5],
+                record[6], dimensions, record[9], record[10], record[11], record[12],
+                record[13], record[14], record[15], record[16],
+            ))
 
     data_headers = (
         ('Added Time', 'datetime'),
@@ -755,12 +770,12 @@ def galleryvault_hidden_files(context):
         'UUID',
         'Source',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_folders(context):
-    source_path = _galleryvault_db(context.get_files_found())
+    source_paths = _galleryvault_dbs(unique_files(context))
     data_list = []
     query = '''
     SELECT create_time_utc, name, folder_type, child_file_count, child_folder_count,
@@ -768,7 +783,7 @@ def galleryvault_folders(context):
     FROM folder_v1
     ORDER BY create_time_utc
     '''
-    for record in _query(source_path, 'folder_v1', query):
+    for record in _query_all(source_paths, 'folder_v1', query):
         data_list.append((
             _ms(record[0]), record[1], FOLDER_TYPES.get(record[2], record[2]), record[3],
             record[4], record[5], 'Yes' if record[6] else 'No', record[7], record[8],
@@ -785,12 +800,12 @@ def galleryvault_folders(context):
         'UUID',
         'Folder ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_break_in_reports(context):
-    source_path = _galleryvault_db(context.get_files_found())
+    source_paths = _galleryvault_dbs(unique_files(context))
     data_list = []
     query = '''
     SELECT timestamp, wrongly_attempt_code, locking_type, photo_path, location_latitude,
@@ -798,7 +813,7 @@ def galleryvault_break_in_reports(context):
     FROM break_in_report
     ORDER BY timestamp
     '''
-    for record in _query(source_path, 'break_in_report', query):
+    for record in _query_all(source_paths, 'break_in_report', query):
         media = check_in_media(record[3], os.path.basename(record[3] or '')) or '' if record[3] else ''
         data_list.append((
             _ms(record[0]), record[1], record[2], media, record[3], record[4], record[5],
@@ -816,7 +831,7 @@ def galleryvault_break_in_reports(context):
         'Address',
         'Unread',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -890,10 +905,10 @@ def galleryvault_applock_break_ins(context):
 
 @artifact_processor
 def galleryvault_browser_history(context):
-    source_path = _galleryvault_db(context.get_files_found())
+    source_paths = _galleryvault_dbs(unique_files(context))
     data_list = []
     query = 'SELECT last_visit_time_utc, title, url, host FROM browser_history ORDER BY last_visit_time_utc'
-    for record in _query(source_path, 'browser_history', query):
+    for record in _query_all(source_paths, 'browser_history', query):
         data_list.append((_ms(record[0]), record[1], record[2], record[3]))
 
     data_headers = (
@@ -902,19 +917,19 @@ def galleryvault_browser_history(context):
         'URL',
         'Host',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_browser_urls(context):
-    source_path = _galleryvault_db(context.get_files_found())
+    source_paths = _galleryvault_dbs(unique_files(context))
     data_list = []
     query = '''
     SELECT last_visit_time_utc, create_time_utc, title, url, visit_count, fav_icon_url
     FROM web_url
     ORDER BY _id
     '''
-    for record in _query(source_path, 'web_url', query):
+    for record in _query_all(source_paths, 'web_url', query):
         data_list.append((_ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5]))
 
     data_headers = (
@@ -925,12 +940,12 @@ def galleryvault_browser_urls(context):
         'Visit Count',
         'Favicon URL',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_downloads(context):
-    source_path = _galleryvault_db(context.get_files_found())
+    source_paths = _galleryvault_dbs(unique_files(context))
     data_list = []
     query = '''
     SELECT begin_time, end_time, name, url, web_url, local_path, mime_type, total_size,
@@ -938,7 +953,7 @@ def galleryvault_downloads(context):
     FROM download_task
     ORDER BY begin_time
     '''
-    for record in _query(source_path, 'download_task', query):
+    for record in _query_all(source_paths, 'download_task', query):
         data_list.append((
             _ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5],
             record[6], record[7], record[8], record[9], record[10], record[11], record[12],
@@ -959,12 +974,12 @@ def galleryvault_downloads(context):
         'Error Code',
         'Thumbnail URL',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_unhide_history(context):
-    source_path = _galleryvault_db(context.get_files_found())
+    source_paths = _galleryvault_dbs(unique_files(context))
     data_list = []
     query = '''
         SELECT action_time, create_time, name, action_type, file_type, target_path,
@@ -972,7 +987,7 @@ def galleryvault_unhide_history(context):
         FROM export_unhidden_history
         ORDER BY action_time
         '''
-    for record in _query(source_path, 'export_unhidden_history', query):
+    for record in _query_all(source_paths, 'export_unhidden_history', query):
         data_list.append((
             _ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5],
             record[6], record[7], record[8], record[9], record[10], record[11],
@@ -992,12 +1007,12 @@ def galleryvault_unhide_history(context):
         'UUID',
         'File ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_recycle_bin(context):
-    source_path = _galleryvault_db(context.get_files_found())
+    source_paths = _galleryvault_dbs(unique_files(context))
     data_list = []
     query = '''
     SELECT recycle_bin_v1.delete_time, file_v1.name, file_v1.original_path, file_v1.mime_type,
@@ -1006,7 +1021,7 @@ def galleryvault_recycle_bin(context):
     LEFT JOIN file_v1 ON recycle_bin_v1.file_id = file_v1._id
     ORDER BY recycle_bin_v1.delete_time
     '''
-    for record in _query(source_path, 'recycle_bin_v1', query):
+    for record in _query_all(source_paths, 'recycle_bin_v1', query):
         data_list.append((_ms(record[0]), record[1], record[2], record[3], record[4],
                           record[5], record[6]))
 
@@ -1019,7 +1034,7 @@ def galleryvault_recycle_bin(context):
         'UUID',
         'File ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -1041,7 +1056,9 @@ def galleryvault_file_actions(context):
 
 @artifact_processor
 def galleryvault_preferences(context):
-    files_found = context.get_files_found()
+    # Kidd.xml can appear under more than one storage view of the same app
+    # directory; read each preference file once, not once per spelling.
+    files_found = unique_files(context)
 
     data_list = []
     source_path = ''

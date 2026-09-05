@@ -1,0 +1,72 @@
+{
+  "anne_a15": {
+    "description": "Samsung SM-S911U1, Android 15, public Evidence Locker image (anne_a15). Both transports present: 25 sms rows and 67 MMS part rows across 66 pdu rows, 9 of them with an app_parts file in the image, so the media join is exercised. The fixture carries the credential encrypted mmssms.db with its -wal, -shm and -udr sidecars and the device encrypted copy, plus the 11 app_parts files, which include one zero-byte file no part row references and one zero-byte file whose part row has no message row. The combined artifact's expected rows are the union of the other two: 92 rows.",
+    "maker": "@AlexisBrignoni & Claude",
+    "make_data": {
+      "input_data_path": "EXTRACTION_FFS.zip",
+      "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-09-02T11:41:20.898395",
+      "last_commit": {
+        "hash": "e37a6f41d7f9248548a7b211ba395a8838e00650",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-09-02T11:10:28-04:00",
+        "message": "Add a combined SMS and MMS Messages artifact"
+      }
+    },
+    "artifacts": {
+      "get_sms_mms": {
+        "search_patterns": [
+          "*/com.android.providers.telephony/databases/mmssms*"
+        ],
+        "file_count": 8,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_sms_mms_mms": {
+        "search_patterns": [
+          "*/com.android.providers.telephony/databases/mmssms*",
+          "*/com.android.providers.telephony/app_parts/*",
+          "*/com.android.providers.telephony/parts/*"
+        ],
+        "file_count": 21,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_sms_mms_combined": {
+        "search_patterns": [
+          "*/com.android.providers.telephony/databases/mmssms*",
+          "*/com.android.providers.telephony/app_parts/*",
+          "*/com.android.providers.telephony/parts/*"
+        ],
+        "file_count": 21,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_sms_mms_attachments": {
+        "search_patterns": [
+          "*/com.android.providers.telephony/databases/mmssms*",
+          "*/com.android.providers.telephony/app_parts/*",
+          "*/com.android.providers.telephony/parts/*"
+        ],
+        "file_count": 21,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_name": "anne_a15",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "15",
+      "device_model": "Samsung SM-S911U1"
+    }
+  }
+}

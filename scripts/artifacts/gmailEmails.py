@@ -34,7 +34,7 @@ __artifacts_v2__ = {
     "gmailLabels": {
         "name": "Gmail - Label Details",
         "description": "Parses email label metadata from Gmail",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-04",
         "last_update_date": "2026-08-24",
         "requirements": "none",
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
     "gmailDownloadRequests": {
         "name": "Gmail - Download Requests",
         "description": "Parses download requests from Gmail",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-04",
         "last_update_date": "2026-08-24",
         "requirements": "none",

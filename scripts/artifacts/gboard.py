@@ -17,7 +17,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 4 rows",
             "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 4 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 4 rows",
-            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 8 rows",
+            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 4 rows",
         },
     },
     "get_gboardCache_keystrokes": {
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 359 rows",
             "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 230 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 357 rows",
-            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 140 rows",
+            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 70 rows",
         },
     }
 }

@@ -275,9 +275,18 @@ def _rows(source_path, sql, params=()):
         return []
 
 
+# The globs end in * so the seeker stages each database's sidecars alongside it, which is
+# what lets SQLite apply a write ahead log on open. The artifact itself must not treat one
+# as a database: opening it fails, and the failure is silent because the path still lands
+# in source_path, which is what the report prints as the row's location.
+_SIDECARS = ('-journal', '-wal', '-shm')
+
+
 def _matching(context, pattern):
-    """Files whose base name matches, with duplicate storage views removed."""
-    return [p for p in unique_files(context) if re.search(pattern, os.path.basename(str(p)))]
+    """Databases whose base name matches, with duplicate storage views and sidecars removed."""
+    return [p for p in unique_files(context)
+            if not str(p).endswith(_SIDECARS)
+            and re.search(pattern, os.path.basename(str(p)))]
 
 
 def _unix_seconds(value):
@@ -301,9 +310,9 @@ def _unix_millis(value):
 @artifact_processor
 def facebookAppContacts(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'android_facebook_contacts_db$'):
-        source_path = path
+        source_paths.append(str(path))
         for row in _rows(path, '''
                 SELECT contact_id, fbid, display_name, first_name, last_name,
                        small_picture_url, big_picture_url
@@ -312,15 +321,15 @@ def facebookAppContacts(context):
             data_list.append((row[1], row[2], row[3], row[4], row[0], row[5], row[6]))
     data_headers = ('Facebook ID', 'Display Name', 'First Name', 'Last Name', 'Contact ID',
                     'Small Picture URL', 'Big Picture URL')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppContactSync(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'android_facebook_contacts_db$'):
-        source_path = path
+        source_paths.append(str(path))
         for key, value in _rows(path, 'SELECT key, value FROM contacts_db_properties'):
             converted = ''
             if isinstance(key, str) and key.endswith('_time_ms'):
@@ -339,15 +348,15 @@ def facebookAppContactSync(context):
             data_list.append(('', 'Upload Snapshot', f'local_contact_id {local_id}',
                               f'{contact_hash} / {extra_hash}'))
     data_headers = (('Converted Value', 'datetime'), 'Record Type', 'Key', 'Stored Value')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppFeedCache(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'android_facebook_newsfeed_db$'):
-        source_path = path
+        source_paths.append(str(path))
         media = {}
         for dedup_key, count in _rows(path, '''
                 SELECT dedup_key, COUNT(*) FROM home_stories_media GROUP BY dedup_key'''):
@@ -362,15 +371,15 @@ def facebookAppFeedCache(context):
     data_headers = (('Fetched At', 'datetime'), 'Feed Type', 'Seen State (as stored)',
                     'Image Seen State (as stored)', 'Media Count', 'Dedup Key', 'Sort Key',
                     'Ranking Weight', 'Cursor')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppMentionEntities(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'search_bootstrap_db'):
-        source_path = path
+        source_paths.append(str(path))
         for row in _rows(path, '''
                 SELECT fbid, name, subtext, type, friendship_status, profile_picture_uri
                 FROM mentions_entities
@@ -378,15 +387,15 @@ def facebookAppMentionEntities(context):
             data_list.append((row[0], row[1], row[2], row[3], row[4], row[5]))
     data_headers = ('Facebook ID', 'Name', 'Subtext', 'Type (as stored)',
                     'Friendship Status (as stored)', 'Profile Picture URI')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppTimeInApp(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'^time_in_app_\d+\.db$'):
-        source_path = path
+        source_paths.append(str(path))
         match = re.fullmatch(r'time_in_app_(\d+)\.db', os.path.basename(str(path)))
         user_id = match.group(1) if match else ''
         for start_wall, end_wall, start_event, end_event, seq in _rows(path, '''
@@ -398,17 +407,17 @@ def facebookAppTimeInApp(context):
     data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'),
                     'Start Event (as stored)', 'End Event (as stored)', 'Sequence Number',
                     'User ID')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppPreferences(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'^prefs_db$'):
-        source_path = path
+        source_paths.append(str(path))
         for key, value, stored_type in _rows(path, '''
                 SELECT key, value, type FROM preferences ORDER BY key'''):
             data_list.append((key, value, stored_type))
     data_headers = ('Key', 'Value', 'Type (as stored)')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

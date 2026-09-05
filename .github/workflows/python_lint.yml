@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - '**.py' # only trigger on python files
+
+permissions:
+  contents: read
+
 jobs:
   lint-changed-files:
     runs-on: ubuntu-latest
@@ -67,6 +71,14 @@ jobs:
         if: steps.changed-files-py.outputs.any_changed == 'true'
         run: python admin/scripts/check_report_local_paths.py
 
+      # aleapp.py searches `paths` one pattern at a time and extends files_found with
+      # each result, and fnmatch's `*` crosses `/`, so a broad pattern usually covers a
+      # narrower sibling and every file it names is read twice. The rows are real and the
+      # count is double, which is silent in a report and rides into sample_data.
+      - name: Guard against a path pattern a sibling already covers
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_artifact_paths.py
+
       # The third element of an artifact's return tuple becomes the report's
       # "located at" line and the LAVA manifest source_path, so it has to be real
       # paths. Prose standing in for one points the examiner at a column that often
@@ -74,6 +86,23 @@ jobs:
       - name: Guard against prose returned as a source path
         if: steps.changed-files-py.outputs.any_changed == 'true'
         run: python admin/scripts/check_source_path.py
+
+      # scripts/mmkv_parser.py is copied verbatim from its own repository, so it drifts
+      # in two directions and both are silent: an edit here looks like a fix until the
+      # next re-vendor reverts it, and an upstream release leaves this copy quietly old.
+      # The file's banner names the upstream commit; this fetches that file and fails
+      # when anything below the banner differs. Unconditional rather than gated on
+      # changed Python files, because the banner and the body can go stale together.
+      - name: Check vendored files match the pinned upstream commit
+        run: python admin/scripts/check_vendored.py
+
+      - name: Guard against artifact functions returning None
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_artifact_returns.py
+
+      - name: Guard against run-together implicit string concatenation
+        if: steps.changed-files-py.outputs.any_changed == 'true'
+        run: python admin/scripts/check_implicit_concat.py
 
       # Fails only on warnings this pull request introduces. Long-lived modules carry
       # deliberate pre-existing warnings, and failing on those pushed contributors toward

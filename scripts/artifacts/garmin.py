@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_garmin_gcm_cache_activities": {
         "name": "Garmin - GCM Cache Activities",
         "description": "Parses parsed activity details from the Garmin Connect Mobile gcm_cache.db",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-18",
         "last_update_date": "2023-01-18",
         "requirements": "none",
@@ -18,7 +18,7 @@ __artifacts_v2__ = {
     "get_garmin_devices": {
         "name": "Garmin - Devices",
         "description": "Parses paired devices from the Garmin Connect Mobile gcm_cache.db",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-18",
         "last_update_date": "2023-01-18",
         "requirements": "none",
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
     "get_garmin_weather": {
         "name": "Garmin - Weather",
         "description": "Parses cached weather records from the Garmin Connect Mobile gcm_cache.db",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-18",
         "last_update_date": "2023-01-18",
         "requirements": "none",
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
         "name": "Garmin - Notification Details",
         "description": "Parses the full notification_info records (incl. phone number and actions) "
                        "from the Garmin Connect Mobile notification-database",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-18",
         "last_update_date": "2023-01-18",
         "requirements": "none",
@@ -68,7 +68,7 @@ __artifacts_v2__ = {
     "get_garmin_cache_db_activities": {
         "name": "Garmin - Cache DB Activities",
         "description": "Parses activity_summaries from the Garmin Connect Mobile cache-database",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-18",
         "last_update_date": "2023-01-18",
         "requirements": "none",
@@ -85,7 +85,7 @@ __artifacts_v2__ = {
         "name": "Garmin - Sleep Activities",
         "description": "Parses sleep_detail (incl. auto-sleep and respiration) from the Garmin "
                        "Connect Mobile cache-database",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-18",
         "last_update_date": "2023-01-18",
         "requirements": "none",

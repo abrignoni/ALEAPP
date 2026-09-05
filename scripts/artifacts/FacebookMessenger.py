@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_fb_user_id": {
         "name": "Facebook Messenger - User ID",
         "description": "Facebook/Messenger logged-in user id (threads_db2-uid)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
     "get_fb_msys_chats": {
         "name": "Facebook Messenger - Chats (msys_database)",
         "description": "Facebook/Messenger chat messages (msys_database)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-07-03",
         "requirements": "none",
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
     "get_fb_msys_calls": {
         "name": "Facebook Messenger - Calls (msys_database)",
         "description": "Facebook/Messenger call log (msys_database)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -71,7 +71,7 @@ __artifacts_v2__ = {
     "get_fb_msys_contacts": {
         "name": "Facebook Messenger - Contacts (msys_database)",
         "description": "Facebook/Messenger contacts (msys_database)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -91,7 +91,7 @@ __artifacts_v2__ = {
     "get_fb_threads_chats": {
         "name": "Facebook Messenger - Chats (threads_db2)",
         "description": "Facebook/Messenger chat messages (threads_db2)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-08-10",
         "requirements": "none",
@@ -110,7 +110,7 @@ __artifacts_v2__ = {
     "get_fb_threads_calls": {
         "name": "Facebook Messenger - Calls (threads_db2)",
         "description": "Facebook/Messenger call log (threads_db2)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -129,7 +129,7 @@ __artifacts_v2__ = {
     "get_fb_threads_contacts": {
         "name": "Facebook Messenger - Contacts (threads_db2)",
         "description": "Facebook/Messenger contacts (threads_db2)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-08-10",
         "requirements": "none",

@@ -104,20 +104,16 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 
-def _find_one(files_found, suffix):
-    for file_found in files_found:
-        file_found = str(file_found)
-        # ppv.db's write-ahead log/shared-memory sidecar files are matched by
-        # the same glob (so ALEAPP extracts them alongside the main file,
-        # which SQLite needs in order to fold their content in), but they are
-        # never the file this function should return itself.
-        if file_found.endswith(('-wal', '-shm', '-journal')):
-            continue
-        if file_found.endswith(suffix):
-            return file_found
-    return None
+def _find_all(files_found, suffix):
+    """Every file ending in suffix, sorted: an extraction can carry a copy per
+    Android user, and each user's vault is separate evidence. ppv.db's
+    write-ahead log/shared-memory sidecars are matched by the same glob (so
+    ALEAPP extracts them alongside the main file, which SQLite needs in order
+    to fold their content in), but the exact-suffix test never returns one."""
+    return sorted(str(f) for f in files_found if str(f).endswith(suffix))
 
 
 def _xml_pref(root, name):
@@ -151,29 +147,33 @@ def private_photo_vault_account(context):
         ("Last Key Event", "datetime"), "Uses Encrypted Preferences",
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    prefs_path = _find_one(files_found, 'APP_PREFERENCES.xml')
-    if not prefs_path:
+    files_found = unique_files(context)
+    prefs_paths = _find_all(files_found, 'APP_PREFERENCES.xml')
+    if not prefs_paths:
         return data_headers, [], ""
 
-    try:
-        root = ET.parse(prefs_path).getroot()
-    except ET.ParseError as ex:
-        logfunc(f"Private Photo Vault: could not parse {prefs_path}: {ex}")
-        return data_headers, [], prefs_path
+    data_list = []
+    for prefs_path in prefs_paths:
+        try:
+            root = ET.parse(prefs_path).getroot()
+        except ET.ParseError as ex:
+            logfunc(f"Private Photo Vault: could not parse {prefs_path}: {ex}")
+            continue
 
-    install_date = _epoch_ms_to_utc(_xml_pref(root, 'installDate'))
-    imported_media = _xml_pref(root, 'importedMedia') or ''
-    minutes_spent = _xml_pref(root, 'minutesSpentInApp') or ''
-    key_event_count = _xml_pref(root, 'keyEventCount') or ''
-    last_key_event = _epoch_ms_to_utc(_xml_pref(root, 'lastKeyEventDate'))
-    uses_encrypted_prefs = _xml_pref(root, 'usesEncryptedPreferencesV2') or ''
+        install_date = _epoch_ms_to_utc(_xml_pref(root, 'installDate'))
+        imported_media = _xml_pref(root, 'importedMedia') or ''
+        minutes_spent = _xml_pref(root, 'minutesSpentInApp') or ''
+        key_event_count = _xml_pref(root, 'keyEventCount') or ''
+        last_key_event = _epoch_ms_to_utc(_xml_pref(root, 'lastKeyEventDate'))
+        uses_encrypted_prefs = _xml_pref(root, 'usesEncryptedPreferencesV2') or ''
+
+        data_list.append((
+            install_date, imported_media, minutes_spent, key_event_count,
+            last_key_event, uses_encrypted_prefs,
+        ))
 
     logfunc("Private Photo Vault Account: usage counters recovered.")
-    return data_headers, [(
-        install_date, imported_media, minutes_spent, key_event_count,
-        last_key_event, uses_encrypted_prefs,
-    )], prefs_path
+    return data_headers, data_list, '\n'.join(prefs_paths)
 
 
 @artifact_processor
@@ -183,16 +183,18 @@ def private_photo_vault_albums(context):
         "Deleted",
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    source_path = _find_one(files_found, 'ppv.db')
-    if not source_path:
+    files_found = unique_files(context)
+    source_paths = _find_all(files_found, 'ppv.db')
+    if not source_paths:
         return data_headers, [], ""
 
     data_list = []
-    for name, bucket_id, created, order_number, is_deleted in get_sqlite_db_records(
-            source_path,
-            "SELECT name, bucket_id, creation_date, order_number, is_deleted "
-            "FROM Album;"):
+    for name, bucket_id, created, order_number, is_deleted in (
+            record for source_path in source_paths
+            for record in get_sqlite_db_records(
+                source_path,
+                "SELECT name, bucket_id, creation_date, order_number, is_deleted "
+                "FROM Album;")):
         data_list.append((
             name,
             bucket_id,
@@ -202,7 +204,7 @@ def private_photo_vault_albums(context):
         ))
 
     logfunc(f"Private Photo Vault Albums: {len(data_list)} album(s) recovered.")
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -213,20 +215,22 @@ def private_photo_vault_media(context):
         "Favourite", "Deleted", "View Count", "Encryption Key (Wrapped)", "IV",
     )
 
-    files_found = [str(f) for f in context.get_files_found()]
-    source_path = _find_one(files_found, 'ppv.db')
-    if not source_path:
+    files_found = unique_files(context)
+    source_paths = _find_all(files_found, 'ppv.db')
+    if not source_paths:
         return data_headers, [], ""
 
     data_list = []
     for (created, bucket_id, file_path, thumbnail_path, mime_type, width,
          height, is_favourite, is_deleted, view_count, encryption_key,
-         local_iv) in get_sqlite_db_records(
-            source_path,
-            "SELECT creation_date, bucket_id, file_path, thumbnail_path, "
-            "mime_type, image_width, image_height, is_favourite, is_deleted, "
-            "view_count, encryption_key, local_iv FROM MediaFile "
-            "ORDER BY creation_date;"):
+         local_iv) in (
+            record for source_path in source_paths
+            for record in get_sqlite_db_records(
+                source_path,
+                "SELECT creation_date, bucket_id, file_path, thumbnail_path, "
+                "mime_type, image_width, image_height, is_favourite, is_deleted, "
+                "view_count, encryption_key, local_iv FROM MediaFile "
+                "ORDER BY creation_date;")):
         data_list.append((
             _iso_to_utc(created),
             bucket_id,
@@ -244,4 +248,4 @@ def private_photo_vault_media(context):
 
     logfunc(f"Private Photo Vault Media: {len(data_list)} media record(s) "
             f"recovered.")
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

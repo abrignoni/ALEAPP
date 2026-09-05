@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "fbg_master": {
         "name": "Files By Google - Files Master",
         "description": "Parses the master files list from the Files by Google application",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-18",
         "last_update_date": "2025-09-09",
         "requirements": "none",
@@ -16,13 +16,13 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.google.android.apps.nbu.files vc 1508395 | 434 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.nbu.files vc 695143 | 228 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.nbu.files vc 492527 | 95 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.nbu.files vc 1107071 | 16 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.nbu.files vc 1107071 | 8 rows",
         }
     },
     "fbg_searchhistory": {
         "name": "Files By Google - Search History",
         "description": "Parses the Files by Google application search history",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-18",
         "last_update_date": "2025-09-09",
         "requirements": "none",

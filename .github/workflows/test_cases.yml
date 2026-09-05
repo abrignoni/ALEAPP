@@ -49,3 +49,6 @@ jobs:
 
       - name: Run test cases against recorded baselines
         run: python admin/test/scripts/run_test_cases.py
+
+      - name: Check storage-view arithmetic on the same cases
+        run: python admin/test/scripts/run_test_cases.py --storage-views
