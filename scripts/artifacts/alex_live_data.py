@@ -1,8 +1,7 @@
 __artifacts_v2__ = {
     "alex_live_appops": {
         "name": "App Ops",
-        "description": "Reads App Ops Data \
-            from a PRFS backup created by ALEX.",
+        "description": "Reads App Ops Data from a PRFS backup created by ALEX.",
         "author": "@C_Peter",
         "creation_date": "2026-01-30",
         "last_update_date": "2026-01-30",
@@ -15,9 +14,7 @@ __artifacts_v2__ = {
     },
     "alex_live_wifi_conf_net": {
         "name": "Dumpsys - Configured Networks",
-        "description": "Outputs the configured \
-            (known) networks from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the configured (known) networks from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-02",
         "last_update_date": "2026-02-02",
@@ -30,9 +27,7 @@ __artifacts_v2__ = {
     },
     "alex_live_usagestats_events": {
         "name": "Dumpsys - Usagestats Events",
-        "description": "Outputs the Usagestats \
-            Event entries from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the Usagestats Event entries from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-03",
         "last_update_date": "2026-02-03",
@@ -45,9 +40,7 @@ __artifacts_v2__ = {
     },
     "alex_live_usagestats_yearly": {
         "name": "Dumpsys - Usagestats (yearly)",
-        "description": "Outputs the Usagestats \
-            (yearly) entries from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the Usagestats (yearly) entries from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-04",
         "last_update_date": "2026-02-04",
@@ -60,12 +53,7 @@ __artifacts_v2__ = {
     },
     "alex_live_bt_bonded": {
         "name": "Dumpsys - BTM Bonded Devices",
-        "description": "Outputs the Bonded \
-            Bluetooth devices from the Dumpsys \
-                log of an ALEX PRFS backup. \
-                    Usually only included if \
-                        Bluetooth was active \
-                            during backup.",
+        "description": "Outputs the Bonded Bluetooth devices from the Dumpsys log of an ALEX PRFS backup. Usually only included if Bluetooth was active during backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-05",
         "last_update_date": "2026-02-05",
@@ -78,9 +66,7 @@ __artifacts_v2__ = {
     },
     "alex_live_companiondevice": {
         "name": "Dumpsys - Companiondevice",
-        "description": "Outputs the associated \
-            Companion devices from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the associated Companion devices from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-06",
         "last_update_date": "2026-02-06",
@@ -93,9 +79,7 @@ __artifacts_v2__ = {
     },
     "alex_live_role": {
         "name": "Dumpsys - Role (Default Apps)",
-        "description": "Outputs the Default \
-            Apps from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the Default Apps from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-06",
         "last_update_date": "2026-02-06",
@@ -108,9 +92,7 @@ __artifacts_v2__ = {
     },
     "alex_live_account": {
         "name": "Dumpsys - Accounts",
-        "description": "Outputs the Accounts \
-            from the Dumpsys log of an \
-                ALEX PRFS backup.",
+        "description": "Outputs the Accounts from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-06",
         "last_update_date": "2026-02-06",
@@ -123,9 +105,7 @@ __artifacts_v2__ = {
     },
     "alex_live_batterystats": {
         "name": "Dumpsys - Batterystats",
-        "description": "Outputs the Batterystats \
-            from the Dumpsys log of an \
-                ALEX PRFS backup.",
+        "description": "Outputs the Batterystats from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-03-19",
         "last_update_date": "2026-03-19",
@@ -179,9 +159,7 @@ __artifacts_v2__ = {
     },
     "alex_live_logcat": {
         "name": "Logcat",
-        "description": "Parses the Logcat \
-            logs of an \
-                ALEX PRFS backup.",
+        "description": "Parses the Logcat logs of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-03-03",
         "last_update_date": "2026-03-03",
