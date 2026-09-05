@@ -1,13 +1,11 @@
 __artifacts_v2__ = {
     "get_c2paProvenance": {
         "name": "C2PA Content Provenance (AI Provenance)",
-        "description": "Extracts content-provenance metadata from media files via two independent "
-                       "paths: (1) C2PA / Content Credentials manifests and (2) IPTC/XMP "
-                       "DigitalSourceType tags. Reports the claim generator, edit actions, digital "
-                       "source type, author/creator, credit/copyright, ingredients (prior assets), "
-                       "the stated signer certificate and signing time, and an AI-generated "
-                       "indicator. Useful for establishing whether an image was AI-generated or "
-                       "edited and by what tool.",
+        "description": "Extracts content-provenance metadata from media files via two independent paths: (1) C2PA / "
+                       "Content Credentials manifests and (2) IPTC/XMP DigitalSourceType tags. Reports the claim "
+                       "generator, edit actions, digital source type, author/creator, credit/copyright, ingredients "
+                       "(prior assets), the stated signer certificate and signing time, and an AI-generated indicator. "
+                       "Values are reported as the file carries them and are not cryptographically verified.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-07-12",
         "last_update_date": "2026-07-12",

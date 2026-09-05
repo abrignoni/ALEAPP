@@ -44,10 +44,9 @@ __artifacts_v2__ = {
     },
     "spotify_playlist_library": {
         "name": "Spotify - Playlist Library Activity",
-        "description": "Playlists Spotify's own local usage-tracking file has a "
-                       "record for, with the time each one was first interacted with "
-                       "and a snapshot of two internal usage counters recorded "
-                       "whenever that snapshot changed.",
+        "description": "Playlists Spotify's own local usage-tracking file has a record for, with the earliest time the "
+                       "tracker recorded for each one and a snapshot of two internal usage counters recorded whenever "
+                       "that snapshot changed.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-25",

@@ -1,9 +1,8 @@
 __artifacts_v2__ = {
     "linkbox_uploads": {
         "name": "Linkbox - Uploads",
-        "description": "Rows from the upload table of the app's per-account upload database, "
-                       "each a file sent from the device to the service, with the path it was "
-                       "read from, its size and its MD5",
+        "description": "Rows from the upload table of the app's per-account upload database, each an upload record for a "
+                       "file on the device, with the path it was read from, its size, its MD5 and its status as stored",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",

@@ -27,8 +27,8 @@ __artifacts_v2__ = {
     },
     "vinted_favorites": {
         "name": "Vinted - Favourited Listings",
-        "description": "Parses the listings the Vinted Android app recorded as favourited, "
-                       "with the listing title where the app also cached the listing.",
+        "description": "Parses the listings in the Vinted Android app's favourites store, with the favourited flag as "
+                       "stored and the listing title where the app also cached the listing.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",

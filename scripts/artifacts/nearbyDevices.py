@@ -1,9 +1,9 @@
 __artifacts_v2__ = {
     "nearby_fast_pair": {
         "name": "Nearby - Fast Pair Devices",
-        "description": "Bluetooth accessories the device holds a Fast Pair record for, with the "
-                       "accessory's address, its model name, the name shown for it and the times "
-                       "it was first and last observed.",
+        "description": "Bluetooth accessories the device holds a Fast Pair record for, with the accessory's address and, "
+                       "where the record carries them, its model name, the name shown for it and the times it was first "
+                       "and last observed.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-04",
         "last_update_date": "2026-09-04",
