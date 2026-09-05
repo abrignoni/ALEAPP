@@ -139,37 +139,40 @@ __artifacts_v2__ = {
     },
     "alex_live_shortcut": {
         "name": "Dumpsys - Shortcuts",
-        "description": "Outputs the Shortcuts \
-            from the Dumpsys log of an \
-                ALEX PRFS backup.",
+        "description": "Outputs the shortcuts from the dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "One row per ShortcutInfo entry in the shortcut section of the dumpsys, "
-                 "values as dumped. Intent is the raw intents field; a value of null or [] "
-                 "is reported blank.",
+        "notes": "One row per ShortcutInfo block in the shortcut section of the dumpsys. "
+                 "Timestamp is the shortcut's timestamp field, which AOSP ShortcutInfo sets "
+                 "to the last time one of the shortcut's fields changed, converted from "
+                 "milliseconds to UTC. Intent is the intents field as dumped: each intent "
+                 "followed by its persistable extras. A dumped value of null or [] is "
+                 "reported blank in whichever column it lands.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "link"
     },
     "alex_live_discord_shortcut": {
         "name": "Dumpsys - Shortcuts (Discord)",
-        "description": "Parses Discord-specific entries  \
-            from the ‘Shortcuts’ section of an \
-                ALEX PRFS backup.",
+        "description": "Parses the com.discord entries in the shortcut section of the dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "ALEX Live Data",
         "notes": "One row per shortcut whose package is com.discord and whose intents field "
-                 "is populated. Message is read from the message_content extra, or from body "
-                 "when message_content is absent. Message Time is the timestamp inside the "
-                 "raw extra, or scheduled_at when raw is absent, converted with the device "
-                 "time zone. Timestamp (Shortcut) is the shortcut's own timestamp. An extra "
-                 "that is absent leaves its column blank.",
+                 "is populated. Guild ID, Channel ID, Message ID and User ID are read from "
+                 "the guild_id, channel_id, message_id and user_id keys of the intent's "
+                 "persistable extras, and User from user_username. Message is read from "
+                 "message_content, or from body when message_content cannot be read. "
+                 "Message Time is the JSON timestamp value in the extras, or scheduled_at "
+                 "when there is none; the string is read as UTC and an offset it carries is "
+                 "not applied. Timestamp (Shortcut) is the shortcut's own timestamp field, "
+                 "the last time one of its fields changed, converted from milliseconds to "
+                 "UTC. A key that is absent leaves its column blank.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "link-plus"
