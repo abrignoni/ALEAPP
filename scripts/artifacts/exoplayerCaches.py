@@ -58,12 +58,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Instagram",
-        "notes": "This cache keeps no index file: each span file is named <key>.<position>.<last touch "
-                 "ms>.v2.exo (androidx media3 1.11.0 SimpleCacheSpan CACHE_FILE_PATTERN_V2), so the key is "
-                 "read from the file name. Keys start with two numbers joined by an underscore; Media ID and "
-                 "Second ID are those numbers as stored. Rows are grouped on that pair. First and Last "
-                 "Touched are the earliest and latest last-touch timestamps of the group's span files, which "
-                 "ExoPlayer updates when a span is read; Bytes Cached is the size of the span files.",
+        "notes": "This cache keeps no index file: each span file is named <key>.<position>.<last touch ms>.v2.exo "
+                 "(androidx media3 1.11.0 SimpleCacheSpan CACHE_FILE_PATTERN_V2), so the key is read from the file "
+                 "name. Keys start with two numbers joined by an underscore, sometimes followed by a third "
+                 "underscore-joined token; Media ID and Second ID are those two numbers as stored. Rows are "
+                 "grouped on that pair. First and Last Touched are the earliest and latest last-touch timestamps "
+                 "of the group's span files, which ExoPlayer updates when a span is read; Bytes Cached is the size "
+                 "of the span files.",
         "paths": ('*/com.instagram.android/cache/ExoPlayerCacheDir/videocache/*',),
         "output_types": "standard",
         "artifact_icon": "film",
@@ -109,7 +110,7 @@ _SPAN_V2 = re.compile(r'^(.+)\.(\d+)\.(\d+)\.v2\.exo$', re.S)
 _FLAG_ENCRYPTED_INDEX = 1
 _VERSION_METADATA_INTRODUCED = 2
 _TWITTER_MEDIA = re.compile(r'^https?://([^/]+)/([^/]+)/(\d+)')
-_INSTAGRAM_KEY = re.compile(r'^(\d+)_(\d+)\.')
+_INSTAGRAM_KEY = re.compile(r'^(\d+)_(\d+)[._]')
 _REDDIT_VIDEO = re.compile(r'^https?://v\.redd\.it/([^/?]+)')
 
 
