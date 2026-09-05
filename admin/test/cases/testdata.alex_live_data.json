@@ -1,7 +1,7 @@
 {
   "caseALEX_TEST_1": {
-    "description": "",
-    "maker": "",
+    "description": "Synthetic dumpsys with six shortcuts: three com.discord entries carrying message extras, one with intents=null, and two system shortcuts.",
+    "maker": "@C_Peter",
     "make_data": {
       "input_data_path": "alex_shortcut_synthetic_extraction.zip",
       "os": "Linux-7.1.9-1-MANJARO-x86_64-with-glibc2.44",
@@ -12,6 +12,40 @@
         "author_email": "prosch88@googlemail.com",
         "date": "2026-08-30T18:06:11+02:00",
         "message": "fix pylint \"type\" warning"
+      }
+    },
+    "artifacts": {
+      "alex_live_shortcut": {
+        "search_patterns": "*/extra/dumpsys_*.txt",
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "alex_live_discord_shortcut": {
+        "search_patterns": "*/extra/dumpsys_*.txt",
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "caseALEX_TEST_2": {
+    "description": "Synthetic dumpsys with no shortcut section, so both shortcut artifacts must return zero rows without error.",
+    "maker": "@AlexisBrignoni",
+    "make_data": {
+      "input_data_path": "noshort.zip",
+      "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-09-04T22:16:42.157191",
+      "last_commit": {
+        "hash": "207d7953b2f117c1085090a9087d10d1be2c0346",
+        "author_name": "prosch88",
+        "author_email": "prosch88@googlemail.com",
+        "date": "2026-09-05T02:21:21+02:00",
+        "message": "Added testdata and fixed indent"
       }
     },
     "artifacts": {

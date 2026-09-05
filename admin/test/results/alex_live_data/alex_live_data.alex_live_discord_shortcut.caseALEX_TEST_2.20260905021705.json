@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "module_name": "alex_live_data",
+    "artifact_name": "Dumpsys - Shortcuts (Discord)",
+    "function_name": "alex_live_discord_shortcut",
+    "case_number": "caseALEX_TEST_2",
+    "number_of_columns": 10,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/alex_live_data/testdata.alex_live_data.alex_live_discord_shortcut.caseALEX_TEST_2.zip",
+    "start_time": "2026-09-05T02:17:05.016732+00:00",
+    "end_time": "2026-09-05T02:17:05.040828+00:00",
+    "run_time_seconds": 0.0003299713134765625,
+    "last_commit": {
+      "hash": "207d7953b2f117c1085090a9087d10d1be2c0346",
+      "author_name": "prosch88",
+      "author_email": "prosch88@googlemail.com",
+      "date": "2026-09-05T02:21:21+02:00",
+      "message": "Added testdata and fixed indent"
+    }
+  },
+  "headers": [
+    "Shortcut ID",
+    "Timestamp (Shortcut)",
+    "Message Time",
+    "Label",
+    "Guild ID",
+    "Channel ID",
+    "Message ID",
+    "Message",
+    "User",
+    "User ID"
+  ],
+  "data": []
+}

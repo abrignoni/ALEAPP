@@ -147,7 +147,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per ShortcutInfo entry in the shortcut section of the dumpsys, "
+                 "values as dumped. Intent is the raw intents field; a value of null or [] "
+                 "is reported blank.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "link"
@@ -162,7 +164,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per shortcut whose package is com.discord and whose intents field "
+                 "is populated. Message is read from the message_content extra, or from body "
+                 "when message_content is absent. Message Time is the timestamp inside the "
+                 "raw extra, or scheduled_at when raw is absent, converted with the device "
+                 "time zone. Timestamp (Shortcut) is the shortcut's own timestamp. An extra "
+                 "that is absent leaves its column blank.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "link-plus"
@@ -191,7 +198,7 @@ import datetime
 from scripts.ilapfuncs import artifact_processor, \
     get_file_path, logfunc
 
-_PARSED_DUMPSYS = False
+_PARSED_DUMPSYS = None
 _DUMPSYS_DICT = {}
 _DEVICE_TIME = 0
 #Convert arabic numbers:
@@ -309,12 +316,13 @@ def clean(value):
 def split_dumpsys_log(dumpsys_file) -> dict:
     """Function to split the dumpsys txt file in service parts"""
     global _PARSED_DUMPSYS, _DUMPSYS_DICT, _DEVICE_TIME # pylint: disable=global-statement
-    if _PARSED_DUMPSYS:
-        return
     if not dumpsys_file:
+        return
+    if _PARSED_DUMPSYS == dumpsys_file:
         return
 
     ds_filename = os.path.basename(dumpsys_file)
+    _DEVICE_TIME = 0
     try:
         _DEVICE_TIME = int(ds_filename.split('_', 1)[1].split('.', 1)[0])
     except (ValueError, IndexError):
@@ -371,7 +379,7 @@ def split_dumpsys_log(dumpsys_file) -> dict:
 
     flush()
     _DUMPSYS_DICT = dumpdict
-    _PARSED_DUMPSYS = True
+    _PARSED_DUMPSYS = dumpsys_file
 
 # Helper for Dumpsys Shortcut Output
 def shortcut_data(shortcut_part, s_type="default"):
@@ -1024,24 +1032,18 @@ def alex_live_discord_shortcut(context):
     split_dumpsys_log(source_path)
     acc_dump, acc_ts = _DUMPSYS_DICT.get("shortcut", (None, None))
 
-    if "packageName=com.discord" in acc_dump:
-        if acc_dump is None:
-            logfunc('Dumpsys does not include an "discord shortcut" part.')
-        else:
-            logtext = (
-                'Dumpsys does include a \"shortcut\" part for discord without timestamp.'
-                if acc_ts is None
-                else f'Dumpsys does include a \"shortcut\" part for discord with timestamp: {str(acc_ts)}'
-            )
-            logfunc(logtext)
-            data_list = shortcut_data(acc_dump, "discord")
-        
+    if acc_dump is None:
+        logfunc('Dumpsys does not include a "shortcut" part.')
+    elif "packageName=com.discord" not in acc_dump:
+        logfunc('Dumpsys "shortcut" part holds no com.discord entries.')
     else:
         logtext = (
             'Dumpsys does include a \"shortcut\" part for discord without timestamp.'
             if acc_ts is None
             else f'Dumpsys does include a \"shortcut\" part for discord with timestamp: {str(acc_ts)}'
         )
+        logfunc(logtext)
+        data_list = shortcut_data(acc_dump, "discord")
 
     data_headers = ('Shortcut ID', ('Timestamp (Shortcut)', 'datetime'), ('Message Time', 'datetime'), 'Label', 'Guild ID', 'Channel ID', 'Message ID', 'Message', 'User', 'User ID')
     return data_headers, data_list, source_path
