@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "solid_explorer_recent_files": {
         "name": "Solid Explorer Recent Files",
-        "description": "Files opened through Solid Explorer, with the time each was opened",
+        "description": "Files Solid Explorer recorded as recently opened, with the time of each",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
     },
     "solid_explorer_bookmarks": {
         "name": "Solid Explorer Bookmarks",
-        "description": "Locations bookmarked in Solid Explorer, with how often each was opened",
+        "description": "Bookmarked locations in Solid Explorer, with how often each was opened",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -83,7 +83,7 @@ __artifacts_v2__ = {
     },
     "solid_explorer_connections": {
         "name": "Solid Explorer Connections",
-        "description": "Storage connections configured in Solid Explorer, local and remote",
+        "description": "Storage connections Solid Explorer holds, local and remote",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
