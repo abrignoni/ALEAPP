@@ -96,7 +96,7 @@ __artifacts_v2__ = {
                  "time, packed size) and the cache's last modified time. Reference: Chromium, "
                  "net/disk_cache/simple/simple_index_file.h and .cc at commit "
                  "5babd82a3403ae4c580afc34df4c677d70779b52. Cache Last Modified and the counts are those "
-                 "values; Write Reason is the stored integer, whose names are Chromium's own enum and are not "
+                 "values, Index Version is the version field (9 on every tested index); Write Reason is the stored integer, whose names are Chromium's own enum and are not "
                  "interpreted here. Entry Files Present counts the _0 files beside the index, so a difference "
                  "from Entries Listed shows entries added or removed since the index was written; on the tested "
                  "images 5 of 55 indexes differed, one listing 6,233 entries beside no entry "
