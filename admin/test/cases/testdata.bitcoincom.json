@@ -1,0 +1,40 @@
+{
+  "caseAndroid_Bitcoin.com_1": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "Bitcoin.com_TestData.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-08-31T22:50:12.841141",
+      "last_commit": {
+        "hash": "2cda1bfe5db13be407353af90868ecf58451b2f3",
+        "author_name": "CH-CLARK",
+        "author_email": "N/A",
+        "date": "2026-08-31T22:27:19+01:00",
+        "message": "Cryptocurrency Wallet Support"
+      }
+    },
+    "artifacts": {
+      "get_bitcoincom_addresses": {
+        "search_patterns": [
+          "*/com.bitcoin.mwallet/databases/com.bitcoin.mwallet.wallet-db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_bitcoincom_mnemonics": {
+        "search_patterns": [
+          "*/com.bitcoin.mwallet/databases/com.bitcoin.mwallet.wallet-db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
