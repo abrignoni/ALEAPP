@@ -7,7 +7,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-01-30",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per package and operation in app_ops.json, skipping operations "
+                 "whose value is ignore. Value is the operation's state string as "
+                 "stored. Access Timestamp and Reject Timestamp come from the time and "
+                 "rejectTime entries that follow the state, read as Unix seconds and "
+                 "reported as UTC; a row without them leaves those columns blank.",
         "paths": ('*/extra/app_ops.json'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "package"
@@ -20,7 +24,15 @@ __artifacts_v2__ = {
         "last_update_date": "2026-02-02",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the ID and DSBLE ID entries under Configured networks in the "
+                 "wifi section of the dumpsys; DSBLE is true for an entry listed as "
+                 "DSBLE ID. Creation Time is the creation millis value when present, "
+                 "otherwise the creation time string; Last Connected is the "
+                 "lastConnected string. Both strings are parsed as UTC without "
+                 "adjustment, and a string the parser does not recognise is reported as "
+                 "written. Random MAC is mRandomizedMacAddress, Autojoin is 1 or 0 from "
+                 "the autojoin or allowAutojoin field, and Hidden is the HIDDEN value as "
+                 "dumped.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "wifi"
@@ -33,7 +45,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-02-03",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per line in the usagestats section of the dumpsys that starts "
+                 "with time= and carries type= and package=. Event Type, Package and "
+                 "Reason are as dumped; Event holds the line's remaining key=value "
+                 "pairs. The formats the time parser accepts carry no zone, so the time "
+                 "is reported as UTC without adjustment; a string it cannot parse is "
+                 "reported as written.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "activity"
@@ -46,20 +63,28 @@ __artifacts_v2__ = {
         "last_update_date": "2026-02-04",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the package= lines carrying lastTime that follow the first "
+                 "In-memory yearly stats marker in the usagestats section of the "
+                 "dumpsys. Columns are the keys of the first such line, in dumped order. "
+                 "A value the time parser recognises is typed as a date and reported as "
+                 "UTC without adjustment; the rest are reported as dumped, with "
+                 "Arabic-Indic digits mapped to ASCII.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "chart-bar"
     },
     "alex_live_bt_bonded": {
         "name": "Dumpsys - BTM Bonded Devices",
-        "description": "Outputs the Bonded Bluetooth devices from the Dumpsys log of an ALEX PRFS backup. Usually only included if Bluetooth was active during backup.",
+        "description": "Outputs the bonded Bluetooth devices from the dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-05",
         "last_update_date": "2026-02-05",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the lines after Bonded devices: in the bluetooth_manager "
+                 "section of the dumpsys, up to the first blank line, that start with a "
+                 "MAC address; Name is the text after the address as dumped. Reports no "
+                 "rows when the dumpsys has no bluetooth_manager section.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "bluetooth"
@@ -72,7 +97,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-02-06",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per Association{...} line in the companiondevice section of "
+                 "the dumpsys. Columns are the field names of the first association, in "
+                 "dumped order. Values are reported as dumped with surrounding quotes "
+                 "removed and null or None reported blank; no field, including any "
+                 "timestamp, is converted.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "device-watch"
@@ -85,7 +114,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-02-06",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the roles listed inside each user_states block of the role "
+                 "section of the dumpsys. Name and Holders are as dumped; User is the "
+                 "block's user_id.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "circle-check"
@@ -98,7 +129,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-02-06",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the Account {name=..., type=...} strings in the account "
+                 "section of the dumpsys, reported as dumped. Only the name and type are "
+                 "read; nothing else in the section is carried into the rows.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "user"
@@ -111,7 +144,17 @@ __artifacts_v2__ = {
         "last_update_date": "2026-03-19",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the history lines of the batterystats section of the dumpsys. "
+                 "A line that begins with a month-day time is read as that date and "
+                 "time, with the year taken from the Unix timestamp in the dumpsys file "
+                 "name (1970 when the name carries none); a line that begins with a + "
+                 "offset or a bare 0 is read as that offset from the most recent "
+                 "RESET:TIME line. Both are reported as UTC without adjustment. Battery "
+                 "Level and Mask are as dumped. States (from Mask) decodes the mask "
+                 "against a bit table chosen by the Android major version in "
+                 "device_info_alex.json, using the highest of the tables keyed 4, 5, 6 "
+                 "and 9 that does not exceed the version; without that file the column "
+                 "is blank. Continuation lines are skipped.",
         "paths": ('*/extra/dumpsys_*.txt',
             '*/device_info_alex.json'),
         "output_types": ["html", "lava", "tsv"],
@@ -165,7 +208,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-03-03",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per logcat.txt line of the form epoch seconds, PID, TID, level "
+                 "letter, tag and message; a line of another shape, including a "
+                 "continuation line of a multi-line message, is skipped. Timestamp is "
+                 "the epoch value reported as UTC. Level expands the letter to Verbose, "
+                 "Debug, Info, Warn, Error or Fatal.",
         "paths": ('*/extra/logcat.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "terminal"
