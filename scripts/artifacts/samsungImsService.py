@@ -8,7 +8,7 @@ device's local wall clock, with no time zone recorded.
 __artifacts_v2__ = {
     "samsungImsSubscriber": {
         "name": "Samsung IMS Subscriber Identity",
-        "description": "Parses the IMS public user identity Samsung stores in com.sec.imsservice, mapping each SIM IMSI to its registered SIP URI.",
+        "description": "Parses the IMS public user identity Samsung stores in com.sec.imsservice, mapping each SIM's IMSI to the SIP or TEL identity it registered.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
     },
     "samsungImsRegistration": {
         "name": "Samsung IMS Registration Events",
-        "description": "Parses the IMS registration log Samsung writes in com.sec.imsservice, one row per RegiMgr line with SIM slot, carrier profile and registration state as stored.",
+        "description": "Parses the IMS registration log Samsung writes in com.sec.imsservice, one row per RegiMgr line, with the SIM slot, carrier profile and registration state where a line carries them, as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -80,7 +80,7 @@ __artifacts_v2__ = {
     },
     "samsungImsPdn": {
         "name": "Samsung IMS PDN Network Events",
-        "description": "Parses the IMS packet data network log Samsung writes in com.sec.imsservice, with interface, link addresses and P-CSCF addresses as stored.",
+        "description": "Parses the IMS packet data network log Samsung writes in com.sec.imsservice, with the interface, link addresses and P-CSCF addresses where a line carries them, as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -115,7 +115,7 @@ __artifacts_v2__ = {
     },
     "samsungImsSimCarrier": {
         "name": "Samsung IMS SIM and Carrier State",
-        "description": "Parses the IMS SIM manager log Samsung writes in com.sec.imsservice, with SIM slot, carrier MNO and MVNO names and IMSI as stored.",
+        "description": "Parses the IMS SIM manager log Samsung writes in com.sec.imsservice, with the SIM slot and the carrier MNO and MVNO names as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
