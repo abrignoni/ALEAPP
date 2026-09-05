@@ -20,7 +20,6 @@ __artifacts_v2__ = {
 }
 
 import sqlite3
-import textwrap
 import json
 from datetime import datetime, timezone
 from collections import defaultdict

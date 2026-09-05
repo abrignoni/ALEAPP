@@ -16,7 +16,6 @@ __artifacts_v2__ = {
 
 import bencoding
 import datetime
-import textwrap
 
 from scripts.ilapfuncs import artifact_processor
 
@@ -44,7 +43,7 @@ def get_bittorrentDlhist(context):
                     time = timestampcalc(x[b'a'])
                     filename = x[b'n'].decode()
                     filepath = x[b's'].decode()
-                data_list.append((time,filename,filepath,textwrap.fill(context.get_relative_path(file_found).strip(), width=25)))
+                data_list.append((time,filename,filepath,context.get_relative_path(file_found)))
 
     data_headers = (
         ('Record Timestamp', 'datetime'),
