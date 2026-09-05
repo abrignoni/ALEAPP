@@ -42,6 +42,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | breadWallet |
 | breezyWeather |
 | calculatorLockVault |
+| camScanner |
 | catima |
 | claude |
 | colorNote |
@@ -80,6 +81,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | loopHabits |
 | magisk |
 | miBrowser |
+| musicolet |
 | mxPlayer |
 | netflix |
 | novaLauncher |
