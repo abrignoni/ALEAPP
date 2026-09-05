@@ -1,8 +1,8 @@
 __artifacts_v2__ = {
     "revolut_payment_recipients": {
         "name": "Revolut - Recent Payment Recipients",
-        "description": "Parses the recipients the Revolut Android app recorded as recently "
-                       "paid, with the type of each recipient and the item it links to.",
+        "description": "Parses the recipients listed in the Revolut Android app's recent payment recipients store, with "
+                       "the type of each recipient and the item it links to.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",

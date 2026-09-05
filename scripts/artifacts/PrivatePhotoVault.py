@@ -1,9 +1,8 @@
 __artifacts_v2__ = {
     "private_photo_vault_account": {
         "name": "Private Photo Vault - Account Usage",
-        "description": "Install date and self-reported usage counters for the "
-                       "Private Photo Vault app, read from its main preferences "
-                       "file.",
+        "description": "Install date and the key event count and last key event date the Private Photo Vault app keeps "
+                       "in its main preferences file, reported as stored.",
         "author": "@Gear-I & Claude",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-08-17",

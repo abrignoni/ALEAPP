@@ -1,9 +1,8 @@
 __artifacts_v2__ = {
     "android_users": {
         "name": "Android Users and Profiles",
-        "description": "The Android users and profiles that exist on the device, with each "
-                       "one's name, type, creation time, the time it was last logged in and the time the "
-                       "device last switched to it.",
+        "description": "The Android users and profiles that exist on the device, with each one's name, type and creation "
+                       "time, and the lastLoggedIn and lastEnteredForeground times the platform stored, as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-04",

@@ -2,7 +2,8 @@
 __artifacts_v2__ = {
     "get_Xender": {
         "name": "Xender - Contacts",
-        "description": "Parses Xender contact profiles (device ID and nickname) from the Xender trans-history database.",
+        "description": "Parses the Xender profile rows recorded with connect_times = 0 (device ID and nickname) from the "
+                       "Xender trans-history database.",
         "author": "@markmckinnon",
         "creation_date": "2020-12-24",
         "last_update_date": "2026-08-01",
