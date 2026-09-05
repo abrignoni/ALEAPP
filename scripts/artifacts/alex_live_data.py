@@ -144,7 +144,7 @@ __artifacts_v2__ = {
                 ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "ALEX Live Data",
         "notes": "",
@@ -159,7 +159,7 @@ __artifacts_v2__ = {
                 ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "ALEX Live Data",
         "notes": "",
@@ -669,7 +669,7 @@ def alex_live_usagestats_yearly(context):
 
             data_list.append(tuple(row_values))
 
-        return tuple(data_headers), data_list, source_path
+    return tuple(data_headers), data_list, source_path
 
 # Dumpsys - Bluetooth Manager - Bonded Devices
 @artifact_processor
@@ -715,8 +715,7 @@ def alex_live_bt_bonded(context):
                         data_list.append((mac, name.strip()))
                 else:
                     continue
-        data_headers = ('MAC', "Name")
-
+    data_headers = ('MAC', "Name")
     return data_headers, data_list, source_path
 
 # Dumpsys - Companiondevice
@@ -734,8 +733,6 @@ def alex_live_companiondevice(context):
 
     if cmpd_dump is None:
         logfunc('Dumpsys does not include a "companiondevice" part.')
-        return data_headers, data_list, source_path
-    
     else:
         logtext = (
             'Dumpsys does include a \"companiondevice\" part without timestamp.'
@@ -772,7 +769,7 @@ def alex_live_companiondevice(context):
             row = tuple(assoc.get(key) for key in data_headers)
             data_list.append(row)
 
-        return data_headers, data_list, source_path
+    return data_headers, data_list, source_path
 
 # Dumpsys - Role (Default Apps)
 @artifact_processor
@@ -1011,9 +1008,9 @@ def alex_live_shortcut(context):
         )
         logfunc(logtext)
         data_list = shortcut_data(acc_dump)
-        data_headers = ('Package', 'ID', ('Timestamp', 'datetime'), 'Short Label', 'Long Label', 'Persons', 'Rank', 'Intent')
-           
-        return data_headers, data_list, source_path
+    
+    data_headers = ('Package', 'ID', ('Timestamp', 'datetime'), 'Short Label', 'Long Label', 'Persons', 'Rank', 'Intent')       
+    return data_headers, data_list, source_path
 
 
     # App specific:
@@ -1027,19 +1024,27 @@ def alex_live_discord_shortcut(context):
     split_dumpsys_log(source_path)
     acc_dump, acc_ts = _DUMPSYS_DICT.get("shortcut", (None, None))
 
-    if acc_dump is None and "packageName=com.discord" in acc_dump:
-        logfunc('Dumpsys does not include an "discord shortcut" part.')
+    if "packageName=com.discord" in acc_dump:
+        if acc_dump is None:
+            logfunc('Dumpsys does not include an "discord shortcut" part.')
+        else:
+            logtext = (
+                'Dumpsys does include a \"shortcut\" part for discord without timestamp.'
+                if acc_ts is None
+                else f'Dumpsys does include a \"shortcut\" part for discord with timestamp: {str(acc_ts)}'
+            )
+            logfunc(logtext)
+            data_list = shortcut_data(acc_dump, "discord")
+        
     else:
         logtext = (
             'Dumpsys does include a \"shortcut\" part for discord without timestamp.'
             if acc_ts is None
             else f'Dumpsys does include a \"shortcut\" part for discord with timestamp: {str(acc_ts)}'
         )
-        logfunc(logtext)
-        data_list = shortcut_data(acc_dump, "discord")
-        data_headers = ('Shortcut ID', ('Timestamp (Shortcut)', 'datetime'), ('Message Time', 'datetime'), 'Label', 'Guild ID', 'Channel ID', 'Message ID', 'Message', 'User', 'User ID')
 
-        return data_headers, data_list, source_path
+    data_headers = ('Shortcut ID', ('Timestamp (Shortcut)', 'datetime'), ('Message Time', 'datetime'), 'Label', 'Guild ID', 'Channel ID', 'Message ID', 'Message', 'User', 'User ID')
+    return data_headers, data_list, source_path
 
 # App Ops
 @artifact_processor

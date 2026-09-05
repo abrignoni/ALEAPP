@@ -1,0 +1,36 @@
+{
+  "caseALEX_TEST_1": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "alex_shortcut_synthetic_extraction.zip",
+      "os": "Linux-7.1.9-1-MANJARO-x86_64-with-glibc2.44",
+      "timestamp": "2026-09-05T02:07:00.877739",
+      "last_commit": {
+        "hash": "b23c62fc4795e98ce39a10291f37314c7866bcc4",
+        "author_name": "prosch88",
+        "author_email": "prosch88@googlemail.com",
+        "date": "2026-08-30T18:06:11+02:00",
+        "message": "fix pylint \"type\" warning"
+      }
+    },
+    "artifacts": {
+      "alex_live_shortcut": {
+        "search_patterns": "*/extra/dumpsys_*.txt",
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "alex_live_discord_shortcut": {
+        "search_patterns": "*/extra/dumpsys_*.txt",
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
