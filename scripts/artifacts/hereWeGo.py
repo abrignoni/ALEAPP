@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "here_wego_recent_searches": {
         "name": "HERE WeGo Recent Searches",
-        "description": "Searches made in HERE WeGo, with the time each was made",
+        "description": "Recent searches HERE WeGo kept, with the time of each",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -28,15 +28,17 @@ __artifacts_v2__ = {
                  "same reason: they are the fields the app fills when an entry names a resolved "
                  "place rather than a free text query, and they are reported because that is the "
                  "case worth having on a device where it occurs. "
-                 "The list is a recent-searches list, so it is capped and ordered by the app, and "
-                 "an absent term is not evidence it was never searched for.",
+                 "The list is a recent-searches list, so the app orders it and may drop older "
+                 "entries. Whether it is capped, and at what, was not established: the tested "
+                 "device held two entries, which cannot reach a cap. Either way an absent term "
+                 "is not evidence it was never searched for.",
         "paths": ('*/com.here.app.maps/shared_prefs/FlutterSharedPreferences.xml',),
         "output_types": "standard",
         "artifact_icon": "search",
     },
     "here_wego_saved_places": {
         "name": "HERE WeGo Saved Places",
-        "description": "Places saved into HERE WeGo collections, with their coordinates",
+        "description": "Place entries in HERE WeGo collections, with their coordinates",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
