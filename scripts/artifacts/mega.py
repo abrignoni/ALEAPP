@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_mega": {
         "name": "mega",
-        "description": "MEGA",
+        "description": "Chat messages from MEGA's karere database, with sender, message type and attachment name",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-31",
         "last_update_date": "2021-01-31",

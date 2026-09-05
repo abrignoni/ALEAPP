@@ -17,7 +17,7 @@ __artifacts_v2__ = {
     },
     "get_app_usage_events": {
         "name": "Settings Services - App Battery Usages v9 - App Battery Usage Events",
-        "description": "Getting Battery Usage data out of the database battery-usage-db-v9. Introduced with Android 14",
+        "description": 'App battery usage events from the Settings battery-usage-db-v9 AppUsageEventEntity table, Android 14',
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-05-12",
         "last_update_date": "2026-08-01",

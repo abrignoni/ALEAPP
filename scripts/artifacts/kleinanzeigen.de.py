@@ -30,7 +30,7 @@ __artifacts_v2__ = {
     },
     "get_kleinanzeigennonresettablerecentsearchescache": {
         "name": "kleinanzeigen.de - Non resettable Recent Searches Cache",
-        "description": "Extracts Recent Searches Cache",
+        "description": "Recent search terms from kleinanzeigen.de's NON_RESETTABLE_RECENT_SEARCHES_CACHE file, with category and time",
         "author": "@BrunoFischerGermany",
         "creation_date": "2024-04-08",
         "last_update_date": "2024-04-08",

@@ -38,7 +38,7 @@ __artifacts_v2__ = {
     },
     'romeo_dating_accounts': {
         'name': 'Romeo Dating App Accounts',
-        'description': 'Parses Romeo Dating App Contacts',
+        'description': 'Account records from the Romeo dating app accounts database, with location, headline, profile text and dates',
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-02-25',

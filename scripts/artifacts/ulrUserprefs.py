@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_urluser": {
         "name": "ULR User Prefs",
-        "description": "ULR User Prefs",
+        "description": "Name and value pairs from Google Play services' ULR_USER_PREFS.xml",
         "author": "Alexis 'Brigs' Brignoni",
         "creation_date": "2024-06-21",
         "last_update_date": "2024-06-21",

@@ -263,9 +263,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_messages": {
         "name": "JusTalk Kids - Messages",
-        "description": "Chat messages from the JusTalk Realm store, with the message body, the "
-                       "direction, the sender, the media type and the cached media file where it "
-                       "is present in the extraction",
+        "description": 'Chat messages from the JusTalk Kids Realm store, with the message body, the direction, the sender, the media type and the cached media file where it is present in the extraction',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -318,8 +316,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_calls": {
         "name": "JusTalk Kids - Call Logs",
-        "description": "Audio and video calls from the JusTalk Realm store, with the direction, "
-                       "the duration and the server call identifier",
+        "description": 'Audio and video calls from the JusTalk Kids Realm store, with the direction, the duration and the server call identifier',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -344,8 +341,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_media": {
         "name": "JusTalk Kids - Media",
-        "description": "File records from the JusTalk Realm store with the cached copies found in "
-                       "the extraction, plus any cached files the store does not account for",
+        "description": 'File records from the JusTalk Kids Realm store with the cached copies found in the extraction, plus any cached files the store does not account for',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -379,9 +375,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_contacts": {
         "name": "JusTalk Kids - Contacts",
-        "description": "Contacts from the JusTalk Realm store, with the JusTalk ID, the display "
-                       "and nickname, the client version reported for that account and the last "
-                       "online time",
+        "description": 'Contacts from the JusTalk Kids Realm store, with the JusTalk ID, the display and nickname, the client version reported for that account and the last online time',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -402,7 +396,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_members": {
         "name": "JusTalk Kids - Members",
-        "description": "Server members (contacts/groups) from the JusTalk Realm store",
+        "description": 'Server members (contacts/groups) from the JusTalk Kids Realm store',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
@@ -416,7 +410,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_moments": {
         "name": "JusTalk Kids - Moments",
-        "description": "Moments (timeline posts) from the JusTalk Realm store",
+        "description": 'Moments (timeline posts) from the JusTalk Kids Realm store',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
@@ -430,8 +424,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_account": {
         "name": "JusTalk Kids - Account",
-        "description": "The local JusTalk account identifiers taken from the Realm store file "
-                       "name, the app's provisioning file and the Realm schema version",
+        "description": "The local JusTalk Kids account identifiers taken from the Realm store file name, the app's provisioning file and the Realm schema version",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -492,9 +485,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_app_state": {
         "name": "JusTalk Kids - App State",
-        "description": "Key and value pairs from the app's default MMKV store, covering the "
-                       "device identifier, the signed-in account id, the push token and the "
-                       "install channel, including values that later writes superseded",
+        "description": "Key and value pairs from JusTalk Kids' default MMKV store, covering the device identifier, the signed-in account id, the push token and the install channel, including values that later writes superseded",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
