@@ -231,6 +231,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | cmhTags |
 | contacts |
 | deviceHealthServices_Battery |
+| discordApiCache |
 | discordChats |
 | disneyPlus |
 | dmss |
