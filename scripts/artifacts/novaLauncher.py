@@ -44,7 +44,7 @@ __artifacts_v2__ = {
     },
     "nova_drawer_groups": {
         "name": "Nova Launcher Drawer Groups",
-        "description": "App drawer tabs and folders, and the apps assigned to each",
+        "description": "Nova Launcher drawer folders and the drawer's whole app list, with the apps in each",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
