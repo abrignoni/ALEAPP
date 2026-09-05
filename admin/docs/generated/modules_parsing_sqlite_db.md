@@ -284,6 +284,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | lgRCS |
 | libretorrent |
 | libretorrentFR |
+| life360LocalStores |
 | likee |
 | line |
 | mastodon |
