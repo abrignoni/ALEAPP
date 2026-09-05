@@ -127,7 +127,7 @@ __artifacts_v2__ = {
                  "filed. For the tombstone tags Reported At is the crash time from the report "
                  "itself and BootReceiver files the entry afterwards: 12 of the 104 live "
                  "tombstone entries on the tested images were filed more than a minute after the "
-                 "crash, 10 of them more than an hour. On five of the 13 tested images holding "
+                 "crash, 10 of them more than an hour. On five of the 17 tested images holding "
                  "tombstone entries, every one was a /system/bin/sh or ueventd crash dated on the "
                  "day of the newest dropbox entry, so an entry timed inside the acquisition "
                  "window should be weighed against the acquisition itself. A row records that the "
@@ -340,9 +340,9 @@ __artifacts_v2__ = {
                  "A vendor variant seen on a Xiaomi image opens with ProcessName and Pid lines, "
                  "read when the file carries no Cmd line. Processes Dumped is the number of "
                  "distinct pids with a dump header, up to 34 on the tested files; two of the 95 "
-                 "tested files held a Subject and no dump at all. Build Fingerprint is blank "
-                 "where the file carries no Build fingerprint line, as on 45 of the 95 tested "
-                 "files across five images.",
+                 "tested files held no dump at all. Build Fingerprint is blank where the file "
+                 "carries no Build fingerprint line, as on 45 of the 95 tested files, on 12 of "
+                 "the 21 images with traces.",
         "paths": ('*/anr/anr_*', '*/anr/trace*'),
         "output_types": "standard",
         "artifact_icon": "clock",
