@@ -44,12 +44,15 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | calculatorLockVault |
 | catima |
 | claude |
+| colorNote |
 | dhl |
 | dropbox |
 | dust |
+| easyVoiceRecorder |
 | ebay |
 | elementX |
 | feeder |
+| flipboard |
 | fossifyCalendar |
 | fossifyGallery |
 | fossifyKeyboard |
@@ -77,7 +80,9 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | loopHabits |
 | magisk |
 | miBrowser |
+| mxPlayer |
 | netflix |
+| novaLauncher |
 | openTracks |
 | orgzly |
 | osmand |
