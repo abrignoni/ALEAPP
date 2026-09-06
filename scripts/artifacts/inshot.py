@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "inshot_projects": {
         "name": "InShot Projects",
-        "description": "Video and photo projects InShot saved, with when each was created and how often it was opened",
+        "description": "Editing projects InShot saved, with when each was created and how often it was opened",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
