@@ -143,12 +143,11 @@ __artifacts_v2__ = {
 
 import json
 import os
-import struct
 import xml.etree.ElementTree as ET
-import zlib
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, logfunc
 from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.hiveReader import hive_entries
 
 PREFS_SUFFIX = 'shared_prefs/FlutterSharedPreferences.xml'
 PLACE_BOX = 'app_flutter/collection.place.box.hive'
@@ -160,10 +159,6 @@ LIST_MARKER = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!'
 # Reported by the other artifacts in this module rather than in the settings table.
 SETTINGS_SKIP = ('recentSearchResults', 'last_location', 'last_map_view_center')
 
-# Hive value type ids, from the format's own writer.
-_NULL, _INT, _DOUBLE, _BOOL, _STRING, _BYTELIST = 0, 1, 2, 3, 4, 5
-_INTLIST, _DOUBLELIST, _BOOLLIST, _STRINGLIST, _LIST, _MAP = 6, 7, 8, 9, 10, 11
-_HIVELIST, _DATETIME = 12, 13
 
 # Field numbers of a saved place, named from data created for the purpose. Hive stores a
 # registered class as numbered fields and keeps the names in the app's compiled Dart.
@@ -215,103 +210,6 @@ def _ms(value):
         return ''
 
 
-def _read_value(buf, index):
-    """One Hive value at `index`, returning it and the index after it."""
-    kind = buf[index]
-    index += 1
-    if kind == _NULL:
-        return None, index
-    if kind in (_INT, _DOUBLE, _DATETIME):
-        number, = struct.unpack('<d', buf[index:index + 8])
-        return (number if kind == _DOUBLE else int(number)), index + 8
-    if kind == _BOOL:
-        return bool(buf[index]), index + 1
-    if kind in (_STRING, _BYTELIST):
-        length, = struct.unpack('<I', buf[index:index + 4])
-        index += 4
-        chunk = buf[index:index + length]
-        return (chunk.decode('utf-8', 'replace') if kind == _STRING else chunk), index + length
-    if kind in (_INTLIST, _DOUBLELIST, _BOOLLIST, _STRINGLIST, _LIST, _MAP, _HIVELIST):
-        count, = struct.unpack('<I', buf[index:index + 4])
-        index += 4
-        items = []
-        for _ in range(count):
-            if kind in (_INTLIST, _DOUBLELIST):
-                number, = struct.unpack('<d', buf[index:index + 8])
-                items.append(int(number) if kind == _INTLIST else number)
-                index += 8
-            elif kind == _BOOLLIST:
-                items.append(bool(buf[index]))
-                index += 1
-            elif kind == _STRINGLIST:
-                length, = struct.unpack('<I', buf[index:index + 4])
-                index += 4
-                items.append(buf[index:index + length].decode('utf-8', 'replace'))
-                index += length
-            else:
-                item, index = _read_value(buf, index)
-                items.append(item)
-        return items, index
-    # A registered class: a field count, then that many (field number, value) pairs.
-    count = buf[index]
-    index += 1
-    obj = {}
-    for _ in range(count):
-        field = buf[index]
-        index += 1
-        obj[field], index = _read_value(buf, index)
-    return obj, index
-
-
-def _hive_entries(path):
-    """The live entries of a Hive box, plus how many superseded frames each key has.
-
-    Every frame carries a CRC32 of itself, so a frame that does not match is not read and
-    the walk stops there rather than guessing at the rest of the file.
-    """
-    try:
-        with open(path, 'rb') as handle:
-            buf = handle.read()
-    except OSError as ex:
-        logfunc(f'HERE WeGo: could not read {os.path.basename(path)}: {ex}')
-        return {}, {}
-    live = {}
-    earlier = {}
-    offset = 0
-    try:
-        while offset + 4 <= len(buf):
-            length, = struct.unpack('<I', buf[offset:offset + 4])
-            if length < 8 or offset + length > len(buf):
-                break
-            frame = buf[offset:offset + length]
-            stored, = struct.unpack('<I', frame[-4:])
-            if (zlib.crc32(frame[:-4]) & 0xffffffff) != stored:
-                logfunc(f'HERE WeGo: frame at offset {offset} of '
-                        f'{os.path.basename(path)} failed its own CRC, stopping there')
-                break
-            index = 4
-            key_kind = frame[index]
-            index += 1
-            if key_kind == 0:
-                key, = struct.unpack('<I', frame[index:index + 4])
-                index += 4
-            else:
-                key_length = frame[index]
-                index += 1
-                key = frame[index:index + key_length].decode('utf-8', 'replace')
-                index += key_length
-            value = None
-            if index < length - 4:
-                value, index = _read_value(frame, index)
-            if key in live:
-                earlier[key] = earlier.get(key, 0) + 1
-            live[key] = value
-            offset += length
-    except (IndexError, struct.error, ValueError) as ex:
-        logfunc(f'HERE WeGo: stopped reading {os.path.basename(path)} at offset {offset}: {ex}')
-    return live, earlier
-
-
 def _collection_names(context):
     """{place entry id: collection name}, the link the store itself records.
 
@@ -320,7 +218,7 @@ def _collection_names(context):
     """
     names = {}
     for path in _box_files(context, COLLECTION_BOX):
-        live, _ = _hive_entries(path)
+        live, _ = hive_entries(path)
         for value in live.values():
             if not isinstance(value, dict):
                 continue
@@ -376,7 +274,7 @@ def here_wego_saved_places(context):
     data_list = []
     sources = []
     for path in _box_files(context, PLACE_BOX):
-        live, earlier = _hive_entries(path)
+        live, earlier = hive_entries(path)
         found = False
         for key, value in live.items():
             if not isinstance(value, dict):
