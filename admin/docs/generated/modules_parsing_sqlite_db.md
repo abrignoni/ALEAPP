@@ -81,6 +81,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | loopHabits |
 | magisk |
 | miBrowser |
+| moonReader |
 | musicolet |
 | mxPlayer |
 | netflix |
@@ -90,6 +91,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | osmand |
 | phoneLink |
 | pinterest |
+| poweramp |
 | protonmailDbMail |
 | protonmailInbox |
 | qrBarcodeScanner |
