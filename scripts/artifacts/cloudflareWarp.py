@@ -30,9 +30,18 @@ __artifacts_v2__ = {
                  "value is left there. The public key and the tunnel peer configuration are not "
                  "reported either, being long key material of no evidential use on their own. "
                  "What a row supports is bounded: these values show the device registered with "
-                 "WARP and how the tunnel was configured. They do not record connections made, "
-                 "traffic carried, or times the tunnel was up, none of which this app writes to "
-                 "disk.",
+                 "WARP and how the tunnel was configured at the moment of acquisition. They are "
+                 "current state, not history, so they do not say when the tunnel went up or "
+                 "down. "
+                 "**The app does write timestamped logs, and they are not parsed here.** Under "
+                 "cache/logs it keeps a console log and a native tunnel log; on the tested "
+                 "device those were 8.9 MB and 3.1 MB, the console log spanning about eight "
+                 "hours with ISO 8601 timestamps that carry their own offset, and holding "
+                 "13,301 NetworkChangeReceiver entries alongside WarpTunnel, registration and "
+                 "autostart lines. An examiner chasing when the device was on which network, or "
+                 "when the tunnel restarted, should read those files; this artifact does not, "
+                 "and saying so is the point, because their being in cache makes them easy to "
+                 "overlook.",
         "paths": ('*/com.cloudflare.onedotonedotonedotone/shared_prefs/'
                   'com.cloudflare.onedotonedotonedotone_preferences.xml',),
         "output_types": "standard",
