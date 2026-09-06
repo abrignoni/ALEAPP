@@ -85,8 +85,9 @@ __artifacts_v2__ = {
                  "the Records Skipped figure in the log says how many. "
                  "What a row means is bounded: the app wrote the folder into its scan index with "
                  "that time against it. It is not proof a person opened that folder, because the "
-                 "app indexes storage on its own, and the two files differ in depth, with "
-                 "scanfile.fast holding a shorter sweep than scanfile.full. Both are read and the "
+                 "app indexes storage on its own. The two scan files differ, but barely: counted "
+                 "on the tested image, scanfile.fast held 42 records and scanfile.full 43, in both "
+                 "apps, so the fast sweep is not a small subset of the full one. "
                  "Scan File column says which one a row came from. App is taken from the package "
                  "segment of the path for the same reason as the thumbnail artifact.",
         "paths": ('*/Android/data/com.cxinventor.file.explorer/files/scanfile.*',
