@@ -51,13 +51,13 @@ __artifacts_v2__ = {
         "notes": "One row per file under system/graphicsstats. The path carries three of the "
                  "columns on its own: the platform stores each record as "
                  "graphicsstats/<bucket>/<package>/<version code>/total, where the bucket folder "
-                 "is Unix milliseconds and was midnight UTC on every folder of the tested images. "
+                 "is Unix milliseconds naming a day. It was exactly midnight UTC on all 1,690 "
+                 "records across the 33 registered images that carry them. "
                  "Package and Version Code are read from inside the file and reported from there "
                  "rather than from the folder names, and the two agreed on every record checked: "
                  "600 of 600 across ten real device images spanning Android 10 to 17, and 90 of "
                  "90 on the emulator image. That agreement is what makes the folder layout safe "
-                 "to read as an index of what rendered on a given day. Every bucket folder tested "
-                 "was exactly midnight UTC.\n"
+                 "to read as an index of what rendered on a given day.\n"
                  "The file is the platform's own GraphicsStatsProto behind a four byte "
                  "little-endian header holding the file format version, which was 1 on every one "
                  "of those records. It is read with a reader that takes only the declared fields rather "
@@ -78,8 +78,10 @@ __artifacts_v2__ = {
                  "removed and its graphicsstats folder, naming the package and version, was still "
                  "present afterwards. A row is evidence the platform recorded rendering for that "
                  "package on that day. It does not establish that a person was looking at the "
-                 "screen, and an absent day is not evidence the app did not run, because the "
-                 "platform keeps only a limited number of day folders.",
+                 "screen, and an absent day is not evidence the app did not run: the platform "
+                 "does not keep a folder for every past day, and on the 33 registered images "
+                 "carrying these records the number of day folders "
+                 "ranged from 1 to 5. The rule that governs that limit was not sourced.",
         "paths": ('*/system/graphicsstats/*/*/*/total',),
         "output_types": "standard",
         "artifact_icon": "activity",
