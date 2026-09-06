@@ -136,6 +136,7 @@
   "*/system/batterystats-daily.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/build.prop": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/etc/hosts": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
+  "*/system/graphicsstats/*/*/*/total": "shared or system location: no app data container in the path; the platform per-day rendering records, whose package segment is a wildcard and is reported from inside each file, measured 2026-09-06 across 33 Android corpora",
   "*/system/install_sessions.xml": "shared or system location: no app data container in the path; the platform package installer session store, measured 2026-09-03 across 23 Android corpora",
   "*/system/packages.list": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/packages.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
