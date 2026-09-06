@@ -167,7 +167,29 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-02",
         "requirements": "none",
         "category": "SMS & MMS",
-        "notes": "One row per part row that records a file path (part._data), joined to its pdu row for Date, Direction and From Address, plus one row per file found under app_parts or parts that no part row references. Status says which case a row is: 'Referenced by message', 'Referenced by a part row with no message row' (the part's mid names a pdu row that is not in the table, so Date, Direction, MSG ID and Thread ID are blank), 'Referenced, file not in extraction', or 'Not referenced by any part row'. Files are matched to part rows on the recorded _data path (storage class, Android user, package and file name), never on the file name alone. Content Type is part.ct as stored and Detected Type is sniffed independently from the file's own bytes; an ISO base media file (MP4, M4A, 3GP, HEIC, AVIF) is reported by its ftyp brand, because the container does not say whether its tracks are audio or video. On the 25 tested images the two agreed on every file that had both. Media is blank for zero-byte files and for files not in the extraction; Size is the file's length in bytes. On 17 of the 25 tested images the database held one part row with no message row pointing at a zero-byte file, and three images carried between one and ten unreferenced files of real size (JPEG, PNG, GIF, HEIC and MP4-family). Date, Direction and From Address are blank on rows with no message row, so on an image with few referenced attachments the table can lead with blanks. Why a file is on disk without a part row is not recorded in the database and is not asserted here. Reference: AOSP, 'Telephony.Mms.Part' (_DATA, CONTENT_TYPE, MSG_ID), https://developer.android.com/reference/android/provider/Telephony.Mms.Part",
+        "notes": "One row per part row that records a file path (part._data), joined to its pdu "
+                 "row for Date, Direction and From Address, plus one row per file found under "
+                 "app_parts or parts that no part row references. Status says which case a row "
+                 "is: 'Referenced by message', 'Referenced by a part row with no message row' "
+                 "(the part's mid names a pdu row that is not in the table, so Date, Direction, "
+                 "MSG ID and Thread ID are blank), 'Referenced, file not in extraction', or 'Not "
+                 "referenced by any part row'. Files are matched to part rows on the recorded "
+                 "_data path (storage class, Android user, package and file name), never on the "
+                 "file name alone. Content Type is part.ct as stored and Detected Type is sniffed "
+                 "independently from the file's own bytes; an ISO base media file (MP4, M4A, 3GP, "
+                 "HEIC, AVIF) is reported by its ftyp brand, because the container does not say "
+                 "whether its tracks are audio or video. On the 26 tested images holding "
+                 "attachment rows the two agreed on every file that had both. Media is blank for "
+                 "zero-byte files and for files not in the extraction; Size is the file's length "
+                 "in bytes. On 17 of the 25 tested images the database held one part row with no "
+                 "message row pointing at a zero-byte file, and three images carried between one "
+                 "and ten unreferenced files of real size (JPEG, PNG, GIF, HEIC and MP4-family). "
+                 "Date, Direction and From Address are blank on rows with no message row, so on "
+                 "an image with few referenced attachments the table can lead with blanks. Why a "
+                 "file is on disk without a part row is not recorded in the database and is not "
+                 "asserted here. Reference: AOSP, 'Telephony.Mms.Part' (_DATA, CONTENT_TYPE, "
+                 "MSG_ID), "
+                 "https://developer.android.com/reference/android/provider/Telephony.Mms.Part",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',
                   '*/com.android.providers.telephony/app_parts/*',
                   '*/com.android.providers.telephony/parts/*'),

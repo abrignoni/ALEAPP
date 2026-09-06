@@ -111,17 +111,19 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("Image URL and Video URL Template are server-side paths on MeWe's CDN "
-                  "(for example /api/v2/photo/...), NOT files on the device. Do not expect to find "
-                  "a file at that path. Any locally cached copy lives under the app's Glide cache "
+        "notes": ("Image URL and Video URL Template are server-side paths on MeWe's CDN (for "
+                  "example /api/v2/photo/...), NOT files on the device. Do not expect to find a "
+                  "file at that path. Any locally cached copy lives under the app's Glide cache "
                   "(cache/image_manager_disk_cache) under a hashed filename that cannot be "
                   "correlated back to these URLs by name.\n"
-                  "Rows describe media attached to cached feed posts, so the same caveat as "
-                  "MeWe - Posts applies: this is what was delivered to the device, not what the "
-                  "owner posted or viewed.\n"
+                  "Rows describe media attached to cached feed posts, so the same caveat as MeWe "
+                  "- Posts applies: this is what was delivered to the device, not what the owner "
+                  "posted or viewed.\n"
                   "Post context is a LEFT JOIN; where the parent post is no longer cached the "
-                  "Post Created, Post Author and Group Name columns are blank and the media row is "
-                  "still reported (3 of 69 rows in the Android 14 test image)."),
+                  "Post Created, Post Author and Group Name columns are blank and the media row "
+                  "is still reported; on the Android 14 test image every one of the 69 media rows "
+                  "had its parent post cached, and 3 of them carried an empty Post Author with "
+                  "Post Created and Group Name filled."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",

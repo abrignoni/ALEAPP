@@ -8,24 +8,23 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Magisk",
-        "notes": "com.topjohnwu.magisk is a root management app; the presence of this database "
-                 "is itself a record that it was installed. Each row names the package and app "
-                 "label that asked for superuser rights, the command string recorded for the "
-                 "request, and the requesting and target user ids. On the corpus below every "
-                 "row carried the same App Name, Shell, and the same Package Name, "
-                 "com.android.shell, and the same From UID, 2000, and To UID, 0, so those "
-                 "four columns are uniform there; they are kept because a device where more "
-                 "than one app requested superuser rights is exactly what they separate. The "
-                 "commands recorded were shell commands. time is Unix milliseconds. Action (as "
-                 "stored) is an integer and the app's own SuLog entity declares it as a plain "
-                 "Int with no constant list beside it, so it is reported as stored and not "
-                 "expanded into allowed or denied; it held 1 on all 8 rows below, so the column "
-                 "is uniform there. The entity in current Magisk carries target, context and "
-                 "gids columns that the tested database does not have, so those are selected "
-                 "only where the table actually declares them and are blank otherwise; they "
-                 "were absent on the corpus below and those three columns are empty there. "
-                 "sulogs.db lives in device-encrypted storage, under data/user_de rather than "
-                 "data/data.",
+        "notes": "com.topjohnwu.magisk is a root management app; the presence of this database is "
+                 "itself a record that it was installed. Each row names the package and app label "
+                 "that asked for superuser rights, the command string recorded for the request, "
+                 "and the requesting and target user ids. On two of the three corpora below every "
+                 "row carried the same App Name, Shell, the same Package Name, com.android.shell, "
+                 "the same From UID, 2000, and To UID, 0, so those four columns are uniform "
+                 "there; the third corpus carried two requesting apps with two package names and "
+                 "two From UIDs, which is exactly what those columns separate. The commands "
+                 "recorded were shell commands. time is Unix milliseconds. Action (as stored) is "
+                 "an integer and the app's own SuLog entity declares it as a plain Int with no "
+                 "constant list beside it, so it is reported as stored and not expanded into "
+                 "allowed or denied; it held 1 on all 8 rows below, so the column is uniform "
+                 "there. The entity in current Magisk carries target, context and gids columns "
+                 "that the tested database does not have, so those are selected only where the "
+                 "table actually declares them and are blank otherwise; they were absent on the "
+                 "corpus below and those three columns are empty there. sulogs.db lives in "
+                 "device-encrypted storage, under data/user_de rather than data/data.",
         "paths": ('*/com.topjohnwu.magisk/databases/sulogs.db*',),
         "output_types": "standard",
         "artifact_icon": "terminal",
