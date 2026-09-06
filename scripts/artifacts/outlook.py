@@ -89,21 +89,20 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Outlook",
         "notes": "Each preference is reported as a row carrying its key, the type the file "
-                 "declares for it and its value as stored. The tested samples ranged from "
-                 "7 to 85 keys and the sets differ between them, so no key is required to "
-                 "be present. Two keys hold epoch values and they do not share a unit: "
-                 "officeConfigLastFetchedTime is thirteen digits and is Unix milliseconds, "
-                 "and wearUpsellLastCheck is ten digits and is Unix seconds. Both were "
-                 "established from the values themselves, each resolving inside the range "
-                 "covered by the app's own logs on the sample carrying it while the other "
-                 "unit did not, and the milliseconds reading agrees to within five minutes "
-                 "with a token claim read independently by the accounts artifact. A "
-                 "Resolved Timestamp is emitted for those two keys only; any other key is "
-                 "reported with its value as stored and no conversion. Keys under the "
-                 "NetworkOverrides and DynamicConfigSettings branches are configuration "
-                 "the app received rather than choices made on the device. Field mapping "
-                 "was done against private samples provided by Mattia; no sample data is "
-                 "recorded for them.",
+                 "declares for it and its value as stored. The tested samples ranged from 1 to "
+                 "164 keys and the sets differ between them, so no key is required to be present. "
+                 "Two keys hold epoch values and they do not share a unit: "
+                 "officeConfigLastFetchedTime is thirteen digits and is Unix milliseconds, and "
+                 "wearUpsellLastCheck is ten digits and is Unix seconds. Both were established "
+                 "from the values themselves, each resolving inside the range covered by the "
+                 "app's own logs on the sample carrying it while the other unit did not, and the "
+                 "milliseconds reading agrees to within five minutes with a token claim read "
+                 "independently by the accounts artifact. A Resolved Timestamp is emitted for "
+                 "those two keys only; any other key is reported with its value as stored and no "
+                 "conversion. Keys under the NetworkOverrides and DynamicConfigSettings branches "
+                 "are configuration the app received rather than choices made on the device. "
+                 "Field mapping was done against private samples provided by Mattia; no sample "
+                 "data is recorded for them.",
         "paths": ('*/com.microsoft.office.outlook/shared_prefs/com.microsoft.office.outlook_preferences.xml',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "settings"

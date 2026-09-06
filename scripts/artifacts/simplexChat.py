@@ -8,28 +8,26 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-20",
         "requirements": "none",
         "category": "SimpleX Chat",
-        "notes": "One row per chat item. The app keeps its database encrypted with "
-                 "SQLCipher, and this artifact reads it only when the extraction also "
-                 "carries the key: the passphrase is taken from the SimpleX entry of a "
-                 "Secrets/secrets.json produced during acquisition, and without that file "
-                 "nothing is reported. Decryption uses the SQLCipher 4 defaults, a 4096 byte "
-                 "page with 256,000 PBKDF2 iterations and HMAC-SHA512, and the reader "
-                 "verifies the HMAC of every page: on the tested sample all 531 pages "
-                 "verified, so the decryption is checked rather than assumed. Direction "
-                 "comes from the item's own sent flag, 1 for sent and 0 for received, which "
-                 "covered every row. Timestamps are stored as text with nanosecond "
-                 "precision and the fraction is trimmed to microseconds before parsing, "
-                 "because releases before 3.11 accept only three or six digits. Deleted and "
-                 "Edited are the flags the row carries, so a message the account holder "
-                 "Group ID, Disappearing TTL and Disappears At were empty on every row of the "
-                 "tested device, which says the account used no group chats and set no disappearing "
-                 "timers there rather than that the artifact cannot read them, and User Mention was "
-                 "uniformly zero. "
-                 "deleted is still reported and marked rather than dropped. Item Content is "
-                 "the record's own structured content, as stored, and is carried because a "
-                 "row with no text can still be a call, a file or a member event. Field "
-                 "mapping was done against two private samples provided by Mattia; no "
-                 "sample data is recorded for them.",
+        "notes": "One row per chat item. The app keeps its database encrypted with SQLCipher, and "
+                 "this artifact reads it only when the extraction also carries the key: the "
+                 "passphrase is taken from the SimpleX entry of a Secrets/secrets.json produced "
+                 "during acquisition, and without that file nothing is reported. Decryption uses "
+                 "the SQLCipher 4 defaults, a 4096 byte page with 256,000 PBKDF2 iterations and "
+                 "HMAC-SHA512, and the reader verifies the HMAC of every page: on the tested "
+                 "sample all 531 pages verified, so the decryption is checked rather than "
+                 "assumed. Direction comes from the item's own sent flag, 1 for sent and 0 for "
+                 "received, which covered every row. Timestamps are stored as text with "
+                 "nanosecond precision and the fraction is trimmed to microseconds before "
+                 "parsing, because releases before 3.11 accept only three or six digits. Deleted "
+                 "and Edited are the flags the row carries, so a message flagged as deleted is "
+                 "still reported and marked rather than dropped. Group ID, Disappearing TTL and "
+                 "Disappears At were empty on every row of the two tested devices, which says the "
+                 "accounts used no group chats and set no disappearing timers there rather than "
+                 "that the artifact cannot read them, and User Mention was uniformly zero. Item "
+                 "Content is the record's own structured content, as stored, and is carried "
+                 "because a row with no text can still be a call, a file or a member event. Field "
+                 "mapping was done against two private samples provided by Mattia; no sample data "
+                 "is recorded for them.",
         "paths": (
             '*/chat.simplex.app/files_chat.db',
             '*/Secrets/secrets.json',
@@ -84,23 +82,23 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-20",
         "requirements": "none",
         "category": "SimpleX Chat",
-        "notes": "One row per file record. File Present states whether a file of that name "
-                 "is in the extraction beside the database; on the tested sample 15 of the "
-                 "20 records had one. The stored files are themselves encrypted and this "
-                 "artifact does not decrypt them, so no media column is offered. What was "
-                 "established about that encryption is worth recording: each record carries "
-                 "a 32 byte key and a 24 byte nonce as raw values, and every stored file is "
-                 "exactly 16 bytes larger than the size the record states, which is "
-                 "consistent with a Poly1305 tag on an XSalsa20-Poly1305 box. Six "
-                 "combinations of keystream offset and tag position were tried against the "
-                 "sample and none produced a recognisable image or video header, so the "
-                 "On the tested device Stored Encrypted was Yes on every record, Key Length was 32 and "
-                 "Nonce Length 24 throughout, every record used the same transfer protocol and "
-                 "belonged to one contact, and Group ID was empty because no file arrived "
-                 "through a group. "
-                 "scheme is not established here and the key and nonce are reported as "
-                 "stored so the work can be picked up. Field mapping was done against two "
-                 "private samples provided by Mattia; no sample data is recorded for them.",
+        "notes": "One row per file record. File Present states whether a file of that name is in "
+                 "the extraction beside the database; on one tested device 15 of the 20 records "
+                 "had one and on the other all 21 did. The stored files are themselves encrypted "
+                 "and this artifact does not decrypt them, so no media column is offered. What "
+                 "was established about that encryption is worth recording: each record carries a "
+                 "32 byte key and a 24 byte nonce as raw values, and every stored file is exactly "
+                 "16 bytes larger than the size the record states, which is consistent with a "
+                 "Poly1305 tag on an XSalsa20-Poly1305 box. Six combinations of keystream offset "
+                 "and tag position were tried against the sample and none produced a recognisable "
+                 "image or video header, so the scheme is not established here and the key and "
+                 "nonce are reported as stored so the work can be picked up. On the two tested "
+                 "devices Stored Encrypted was Yes on every record, Key Length was 32 and Nonce "
+                 "Length 24 throughout, every record on a device used the same transfer protocol, "
+                 "and Group ID was empty because no file arrived through a group; the records "
+                 "belonged to one contact on one device and to two on the other. Field mapping "
+                 "was done against two private samples provided by Mattia; no sample data is "
+                 "recorded for them.",
         "paths": (
             '*/chat.simplex.app/files_chat.db',
             '*/chat.simplex.app/files/app_files/*',
@@ -143,12 +141,13 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "SimpleX Chat",
         "notes": "One row per reaction. Sent is the flag the record carries and separates a "
-                 "On the tested device every reaction belonged to one contact, Group ID was empty "
-                 "because none came through a group, and Created and Updated were identical. "
-                 "reaction the account holder made from one made to their message. Reaction "
-                 "is the stored value, as stored, which the app writes as a structured "
-                 "value rather than a bare character. Field mapping was done against two "
-                 "private samples provided by Mattia; no sample data is recorded for them.",
+                 "reaction the account holder made from one made to their message. On the two "
+                 "tested devices Group ID was empty because none came through a group and Created "
+                 "and Updated were identical; the reactions belonged to one contact on one device "
+                 "and to two on the other. Reaction is the stored value, as stored, which the app "
+                 "writes as a structured value rather than a bare character. Field mapping was "
+                 "done against two private samples provided by Mattia; no sample data is recorded "
+                 "for them.",
         "paths": (
             '*/chat.simplex.app/files_chat.db',
             '*/Secrets/secrets.json',

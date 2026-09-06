@@ -20,7 +20,7 @@ __artifacts_v2__ = {
                  "distinct from the device-wide install time reported from packages.xml. The "
                  "attribute is written from Android 13: it is absent from the Android 12 release "
                  "of the writer and from every row of the four tested Android 10 to 12 images, "
-                 "and present on the fifteen tested Android 13 and later images. A value of 0 is "
+                 "and present on the 23 tested Android 13 and later images. A value of 0 is "
                  "reported as blank; on the tested images it was 0 on up to 28 rows of the "
                  "primary user and on most rows of a second user on two images, and this artifact "
                  "does not assert what a zero means. Reference: Android Open Source Project, "

@@ -68,24 +68,23 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Phone Link",
-        "notes": "com.microsoft.appmanager is the phone side of Microsoft Phone Link, which "
-                 "pairs a phone with a Windows PC. content_access_event is the only table in "
-                 "this package holding a dated user-driven event on the corpora below. "
-                 "start_time is Unix milliseconds and duration is stored alongside it without a "
-                 "recorded unit, so Duration (as stored) is reported unconverted. Content Type "
-                 "(as stored) and Access Was Useful (as stored) are the schema's own integer "
-                 "columns; no source for their code lists was located, so they are not expanded "
-                 "into labels. Content Type was 22 on every row of four of the five corpora "
-                 "below and carried fifteen different values on the fifth. The table is a "
-                 "rolling buffer the app trims, so the database and its write-ahead log hold "
-                 "different row sets: this artifact reads both and reports their union, with "
-                 "Reading naming where each row was found. Rows marked as recovered from the "
-                 "pre-log database are ones the current state no longer carries, and on the "
-                 "corpora below that recovered 16 of 17 rows on one image and 5 of 14 on "
-                 "another, while on a third every row was in the current state and none was "
-                 "recovered. The same eventstore holds FcmNotificationEvent and "
-                 "agent_service_event, which held at most 1 and 3 rows on a single corpus and "
-                 "have no artifact here.",
+        "notes": "com.microsoft.appmanager is the phone side of Microsoft Phone Link, which pairs "
+                 "a phone with a Windows PC. content_access_event is the only table in this "
+                 "package holding a dated user-driven event on the corpora below. start_time is "
+                 "Unix milliseconds and duration is stored alongside it without a recorded unit, "
+                 "so Duration (as stored) is reported unconverted. Content Type (as stored) and "
+                 "Access Was Useful (as stored) are the schema's own integer columns; no source "
+                 "for their code lists was located, so they are not expanded into labels. Content "
+                 "Type was 22 on every row of seven of the eight corpora below and carried "
+                 "fifteen different values on the eighth. The table is a rolling buffer the app "
+                 "trims, so the database and its write-ahead log hold different row sets: this "
+                 "artifact reads both and reports their union, with Reading naming where each row "
+                 "was found. Rows marked as recovered from the pre-log database are ones the "
+                 "current state no longer carries, and on the corpora below the recovered share "
+                 "ranged from none of 28 rows on one image to all 9 on another, with 16 of 17, 17 "
+                 "of 27, 7 of 10, 7 of 26, 5 of 14 and 1 of 3 on the other six. The same "
+                 "eventstore holds FcmNotificationEvent and agent_service_event, which held at "
+                 "most 1 and 3 rows on a single corpus and have no artifact here.",
         "paths": ('*/com.microsoft.appmanager/databases/eventstore*',),
         "output_types": "standard",
         "artifact_icon": "link",
