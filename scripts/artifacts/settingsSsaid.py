@@ -1,12 +1,12 @@
 __artifacts_v2__ = {
     "settings_ssaid": {
         "name": "SSAID Per App",
-        "description": "The SSAID the platform issued to each app for an Android user, the "
-                       "value an app reads as its Android ID, with the package and uid it was "
-                       "issued to.",
+        "description": "Values from the platform per-user SSAID store, including the "
+                       "identifier each app reads back as its Android ID, with the package "
+                       "and uid each is stored against.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-09-06",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "Read from the per-user settings_ssaid.xml under the system users folder. The "
@@ -26,9 +26,38 @@ __artifacts_v2__ = {
                  "One row per user is named userkey against the android package. That is the "
                  "per-user seed the platform keeps rather than an identifier issued to an app, "
                  "and it is reported as stored. Setting ID and Default Set By System are reported "
-                 "as stored. There is no timestamp in this file, so a row does not date when the "
-                 "value was issued.",
-        "paths": ('*/system/users/*/settings_ssaid.xml',),
+                 "as stored. There is no timestamp in either file, so a row does not date when "
+                 "the value was issued.\n"
+                 "Both settings_ssaid.xml and settings_ssaid.xml.fallback are read, and Present "
+                 "In says which of the two held the row. The fallback is a copy the platform "
+                 "makes of the same file on a periodic job, scheduled once a day and only while "
+                 "the device is charging, so it lags the live file rather than mirroring it. "
+                 "Reference: Android Open Source Project, SettingsProvider.java in "
+                 "packages/SettingsProvider/src/com/android/providers/settings, methods "
+                 "scheduleWriteFallbackFilesJob, which builds the job with setPeriodic of one "
+                 "day and setRequiresCharging(true), and writeFallBackSettingsFiles, which "
+                 "copies the file to one named with the .fallback suffix; read from the main "
+                 "branch 2026-09-06.\n"
+                 "A row present only in the fallback copy was in the file when that copy was "
+                 "taken and is not in it now. That was produced deliberately on a test emulator "
+                 "by uninstalling an app: its entry left the live file while the fallback kept "
+                 "it, giving 26 entries in both copies, none in the live file alone and one in "
+                 "the fallback alone, and a second Android user on that device had no fallback "
+                 "file at all. On the 23 registered images this artifact records, reading the "
+                 "fallback added no rows at all, so a divergence between the two copies did not "
+                 "occur on any of them and should be treated as uncommon. What such a row means "
+                 "is not fixed: an uninstall produced it in the constructed case, and this "
+                 "artifact does not assert that every such row is an uninstalled app.\n"
+                 "Setting ID is reported but is deliberately not part of what makes a row "
+                 "distinct. The platform assigns it from a counter it advances whenever a "
+                 "setting is written, so the same package can carry a different id in the two "
+                 "copies while its package, uid and SSAID are identical. One registered image "
+                 "does exactly that, and keying on the id would have split that app into two "
+                 "rows and reported a change that had not happened. Reference: Android Open "
+                 "Source Project, SettingsState.java in the same folder, which writes the "
+                 "attribute from mNextId++ when a setting is initialised.",
+        "paths": ('*/system/users/*/settings_ssaid.xml',
+                  '*/system/users/*/settings_ssaid.xml.fallback'),
         "output_types": "standard",
         "artifact_icon": "fingerprint",
         "sample_data": {
@@ -83,6 +112,10 @@ def _root(path):
         return ET.fromstring(f'<root>{text}</root>')
 
 
+LIVE_NAME = 'settings_ssaid.xml'
+FALLBACK_NAME = 'settings_ssaid.xml.fallback'
+
+
 @artifact_processor
 def settings_ssaid(context):
     data_headers = (
@@ -92,38 +125,62 @@ def settings_ssaid(context):
         'User ID',
         'Setting ID',
         'Default Set By System',
+        'Present In',
         'Source File',
     )
     data_list = []
     sources = []
 
+    # Collect both copies per user first, so an entry held by both is one row rather than two.
+    per_user = {}
     for file_found in sorted(context.get_files_found()):
         file_found = str(file_found)
         if os.path.isdir(file_found):
             continue
-        if os.path.basename(file_found) != 'settings_ssaid.xml':
+        name = os.path.basename(file_found)
+        if name not in (LIVE_NAME, FALLBACK_NAME):
             continue
         user_id = os.path.basename(os.path.dirname(file_found))
         if not user_id.isdigit():
             continue
-        try:
-            root = _root(file_found)
-        except Exception as error:  # pylint: disable=broad-except
-            logfunc(f'SSAID Per App: could not read user {user_id}: {error}')
-            continue
-        rows = 0
-        for setting in root.iter('setting'):
+        per_user.setdefault(user_id, {})[name] = file_found
+
+    for user_id in sorted(per_user, key=int):
+        found = {}
+        for name in (LIVE_NAME, FALLBACK_NAME):
+            path = per_user[user_id].get(name)
+            if not path:
+                continue
+            try:
+                root = _root(path)
+            except Exception as error:  # pylint: disable=broad-except
+                logfunc(f'SSAID Per App: could not read {name} for user {user_id}: {error}')
+                continue
+            read_any = False
+            for setting in root.iter('setting'):
+                # The id attribute is a counter the platform reassigns whenever a setting is
+                # rewritten, so it is reported but deliberately not part of the identity.
+                key = (setting.get('package', ''), setting.get('name', ''),
+                       setting.get('value', ''), setting.get('defaultSysSet', ''))
+                entry = found.setdefault(
+                    key, {'names': [], 'paths': [], 'id': setting.get('id', '')})
+                if name not in entry['names']:
+                    entry['names'].append(name)
+                    entry['paths'].append(path)
+                read_any = True
+            if read_any and path not in sources:
+                sources.append(path)
+
+        for key, entry in found.items():
+            if len(entry['names']) > 1:
+                present = 'Live file and fallback copy'
+            elif entry['names'][0] == LIVE_NAME:
+                present = 'Live file only'
+            else:
+                present = 'Fallback copy only'
             data_list.append((
-                setting.get('package', ''),
-                setting.get('name', ''),
-                setting.get('value', ''),
-                user_id,
-                setting.get('id', ''),
-                setting.get('defaultSysSet', ''),
-                context.get_relative_path(file_found),
+                key[0], key[1], key[2], user_id, entry['id'], key[3], present,
+                '\n'.join(context.get_relative_path(x) for x in entry['paths']),
             ))
-            rows += 1
-        if rows:
-            sources.append(file_found)
 
     return data_headers, data_list, '\n'.join(sources)
