@@ -35,6 +35,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | allTrails |
 | androidauto |
 | antennaPod |
+| appLock |
 | appicons |
 | auroraStore |
 | avesGallery |
@@ -54,6 +55,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | ebay |
 | elementX |
 | feeder |
+| fileCommander |
 | flipboard |
 | fossifyCalendar |
 | fossifyGallery |
