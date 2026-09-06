@@ -44,6 +44,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | calculatorLockVault |
 | camScanner |
 | catima |
+| ccleaner |
 | claude |
 | colorNote |
 | dhl |
