@@ -9,12 +9,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-06",
         "requirements": "none",
         "category": "Installed Apps",
-        "notes": "Read from the per-user settings_ssaid.xml under the system users folder. The "
-                 "file is ABX binary XML on modern releases and plain XML on older ones, and in "
-                 "either form it can hold more than one root element, so a single-root read is "
-                 "retried in the multiple-root mode. One row per setting element, and User ID is "
-                 "the folder the file sits in. The pattern is not anchored on a data/ prefix, "
-                 "because a raw userdata partition image carries the same folder without one.\n"
+        "notes": "Read from the per-user settings_ssaid.xml and its fallback copy under the "
+                 "system users folder. The files are ABX binary XML on modern releases and "
+                 "plain XML on older ones, and in either form one can hold more than one root "
+                 "element, so a single-root read is retried in the multiple-root mode. One row "
+                 "per distinct setting rather than per setting element, because a setting held "
+                 "by both copies is one row and not two, and User ID is the folder the files sit "
+                 "in. The patterns are not anchored on a data/ prefix, because a raw userdata "
+                 "partition image carries the same folder without one.\n"
                  "Package is the package the value was issued to and UID is the setting's name "
                  "attribute, which the platform uses to hold that package's uid. SSAID is the "
                  "value, which is what the app reads back as its Android ID. Android scopes that "
