@@ -110,8 +110,9 @@ __artifacts_v2__ = {
                  "its tag and time; one tested image held only .lost entries. For the tombstone "
                  "tags the body is a native crash report: Process is the process named between "
                  ">>> and <<<, Signal is the signal line as stored, and Abort Message is the "
-                 "abort message as stored. The protobuf entries are decoded with the vendored "
-                 "blackboxprotobuf: SYSTEM_TOMBSTONE_PROTO, which Android 12 and 13 filed as the "
+                 "abort message as stored. The protobuf entries are read field by field off the wire "
+                 "format, taking only the fields named here and skipping the rest by length: "
+                 "SYSTEM_TOMBSTONE_PROTO, which Android 12 and 13 filed as the "
                  "bare Tombstone message (BootReceiver.addTombstoneToDropBox at "
                  "android-13.0.0_r1), and SYSTEM_TOMBSTONE_PROTO_WITH_HEADERS, which Android 14 "
                  "and later file wrapped in TombstoneWithHeadersProto (tombstone 1, dropped_count "
@@ -186,7 +187,8 @@ __artifacts_v2__ = {
                  "add an entry under a tag of its own, so the tags here vary by device: on the 16 "
                  "tested images that held any, they were storage_trim (13 images), "
                  "platform_stats_bookmark (5), event_log (4) and event_data (3) markers, dumpsys "
-                 "captures such as dumpsys:account (2 images, the account types registered per "
+                 "captures such as dumpsys%3Aaccount (dumpsys:account with the colon "
+                 "percent-encoded in the file name; 2 images, the account types registered per "
                  "Android user), and on Samsung images ams_boot_progress_log_unlocked (6) and "
                  "tags named after Samsung packages such as com.samsung.android.app.reminder (9) "
                  "and com.sec.android.app.clockpackage (4). Tag is reported as stored, with the "
@@ -249,31 +251,33 @@ __artifacts_v2__ = {
                  "(both absent from the two Android 11 images, so Command Line and Process Uptime "
                  "are blank there and Process comes from the name line alone), the pid/tid/name "
                  "line naming the crashing process between >>> and <<<, uid, the signal line and "
-                 "Abort message. The protobuf form is the Tombstone message, decoded with the "
-                 "vendored blackboxprotobuf using its field numbers: build_fingerprint 2, "
-                 "timestamp 4, pid 5, tid 6, uid 7, command_line 9, process_uptime 20, "
-                 "signal_info 10 (number 1, name 2, code 3, code_name 4) and abort_message 14. "
-                 "Reference: Android Open Source Project, debuggerd/proto/tombstone.proto in "
-                 "system/core. Timestamp is the report's own timestamp, which carries a UTC "
-                 "offset, rendered in UTC; Format says which form the row came from, and a crash "
-                 "present in both forms appears twice. Process Uptime is the Process uptime line "
-                 "in the text form and the process_uptime field in the protobuf form; proto3 "
-                 "leaves a zero off the wire and debuggerd's own text converter prints the field "
-                 "regardless (Reference: Android Open Source Project, "
-                 "debuggerd/libdebuggerd/tombstone_proto_to_text.cpp in system/core), so an "
-                 "absent field is rendered 0s, which is what the text twin of every such record "
-                 "read on the tested images. The platform keeps a rotating set of tombstones, so "
-                 "this is the most recent native crashes rather than a history. On five of the 24 "
-                 "tested images with tombstones, every tombstone in the set was a /system/bin/sh "
-                 "or ueventd crash dated on the day of the newest dropbox entry, so a tombstone "
-                 "whose time falls in the acquisition window should be weighed against the "
-                 "acquisition itself before it is read as activity on the device; the other "
-                 "images held daemon and application crashes spread over up to 22 days. Signal "
-                 "and Abort Message are reported as stored. Command Line is the command line with "
-                 "its arguments as stored, so one process can appear under several (12 command "
-                 "lines against 5 processes on one tested image); Process is the name between >>> "
-                 "and <<< in the text form and the first token of the command line in the "
-                 "protobuf form.",
+                 "Abort message. The protobuf form is the Tombstone message, read field by field "
+                 "off the wire format with only these fields taken and the thread, memory and log "
+                 "sections skipped by length: build_fingerprint 2, timestamp 4, pid 5, tid 6, uid "
+                 "7, command_line 9, process_uptime 20, signal_info 10 (number 1, name 2, code 3, "
+                 "code_name 4) and abort_message 14. Reference: Android Open Source Project, "
+                 "debuggerd/proto/tombstone.proto in system/core. Timestamp is the report's own "
+                 "timestamp, which carries a UTC offset, rendered in UTC; Format says which form "
+                 "the row came from, and a crash present in both forms appears twice; on the "
+                 "tested images every such pair (166 across 24 images) rendered the same signal, "
+                 "code and names in both forms, the text form adding the fault address. Process "
+                 "Uptime is the Process uptime line in the text form and the process_uptime field "
+                 "in the protobuf form; proto3 leaves a zero off the wire and debuggerd's own "
+                 "text converter prints the field regardless (Reference: Android Open Source "
+                 "Project, debuggerd/libdebuggerd/tombstone_proto_to_text.cpp in system/core), so "
+                 "an absent field is rendered 0s, which is what the text twin of every such "
+                 "record read on the tested images. The platform keeps a rotating set of "
+                 "tombstones, so this is the most recent native crashes rather than a history. On "
+                 "five of the 24 tested images with tombstones, every tombstone in the set was a "
+                 "/system/bin/sh or ueventd crash dated on the day of the newest dropbox entry, "
+                 "so a tombstone whose time falls in the acquisition window should be weighed "
+                 "against the acquisition itself before it is read as activity on the device; the "
+                 "other images held daemon and application crashes spread over up to 22 days. "
+                 "Signal and Abort Message are reported as stored. Command Line is the command "
+                 "line with its arguments as stored, so one process can appear under several (12 "
+                 "command lines against 5 processes on one tested image); Process is the name "
+                 "between >>> and <<< in the text form and the first token of the command line in "
+                 "the protobuf form.",
         "paths": ('*/tombstones/tombstone_*',),
         "output_types": "standard",
         "artifact_icon": "cpu",
@@ -336,13 +340,13 @@ __artifacts_v2__ = {
                  "parent and system_server (Reference: Android Open Source Project, "
                  "ProcessErrorStateRecord.java, "
                  "frameworks/base/services/core/java/com/android/server/am, appNotResponding); "
-                 "the Subject line named that process on 71 of the 87 tested files carrying both. "
-                 "A vendor variant seen on a Xiaomi image opens with ProcessName and Pid lines, "
-                 "read when the file carries no Cmd line. Processes Dumped is the number of "
-                 "distinct pids with a dump header, up to 34 on the tested files; two of the 95 "
-                 "tested files held no dump at all. Build Fingerprint is blank where the file "
-                 "carries no Build fingerprint line, as on 45 of the 95 tested files, on 12 of "
-                 "the 21 images with traces.",
+                 "the Subject line contained that process name on 67 of the 87 tested files "
+                 "carrying both. A vendor variant seen on a Xiaomi image opens with ProcessName "
+                 "and Pid lines, read when the file carries no Cmd line. Processes Dumped is the "
+                 "number of distinct pids with a dump header, up to 34 on the tested files; two "
+                 "of the 95 tested files held no dump at all. Build Fingerprint is blank where "
+                 "the file carries no Build fingerprint line, as on 45 of the 95 tested files, on "
+                 "12 of the 21 images with traces.",
         "paths": ('*/anr/anr_*', '*/anr/trace*'),
         "output_types": "standard",
         "artifact_icon": "clock",
@@ -387,7 +391,6 @@ import os
 import re
 from datetime import datetime, timedelta, timezone
 
-from scripts import blackboxprotobuf
 from scripts.artifacts.storagePathViews import unique_files
 from scripts.ilapfuncs import artifact_processor, logfunc
 
@@ -541,14 +544,76 @@ def _pb(value):
     return value
 
 
+def _varint(data, pos):
+    result = shift = 0
+    while True:
+        byte = data[pos]
+        pos += 1
+        result |= (byte & 0x7f) << shift
+        shift += 7
+        if not byte & 0x80:
+            return result, pos
+
+
+def _wire_fields(data, want, nested=None, signed=()):
+    """Top-level fields of one protobuf message: {str(field number): value}, a repeated field as a list.
+
+    Reads the wire format directly (protobuf encoding: varint 0, 64-bit 1, length-delimited 2, 32-bit 5)
+    and skips every field not in `want` by its length, so the thread maps and memory dumps a
+    tombstone carries are never decoded. `nested` maps a wanted field number to (field set, signed
+    set) of its sub-message; `signed` names the int32 fields, which the encoding carries as the
+    two's complement of a 64-bit value. A malformed message raises IndexError or ValueError."""
+    out = {}
+    pos, end = 0, len(data)
+    nested = nested or {}
+    while pos < end:
+        tag, pos = _varint(data, pos)
+        field, wire = tag >> 3, tag & 7
+        if wire == 0:
+            value, pos = _varint(data, pos)
+            if field in signed and value >= 1 << 63:
+                value -= 1 << 64
+        elif wire == 1:
+            value, pos = data[pos:pos + 8], pos + 8
+        elif wire == 2:
+            length, pos = _varint(data, pos)
+            value, pos = data[pos:pos + length], pos + length
+        elif wire == 5:
+            value, pos = data[pos:pos + 4], pos + 4
+        else:
+            raise ValueError(f'unsupported wire type {wire} at offset {pos}')
+        if field not in want:
+            continue
+        if field in nested:
+            value = _wire_fields(value, nested[field][0], signed=nested[field][1])
+        key = str(field)
+        if key in out:
+            out[key] = (out[key] if isinstance(out[key], list) else [out[key]]) + [value]
+        else:
+            out[key] = value
+    return out
+
+
+# Tombstone field numbers, debuggerd/proto/tombstone.proto (system/core): build_fingerprint 2, timestamp 4,
+# pid 5, tid 6, uid 7, command_line 9 (repeated), signal_info 10, abort_message 14, process_uptime 20;
+# Signal: number 1, name 2, code 3, code_name 4, with number and code declared int32 (a code of -1 is
+# SI_QUEUE). TombstoneWithHeadersProto: tombstone 1, dropped_count 2.
+_TOMBSTONE_FIELDS = {2, 4, 5, 6, 7, 9, 10, 14, 20}
+_SIGNAL_FIELDS = {1, 2, 3, 4}
+_SIGNAL_SIGNED = {1, 3}
+
+
 def _fields_from_message(message):
-    """Row fields from a decoded Tombstone message (a blackboxprotobuf dict keyed by field number)."""
+    """Row fields from a Tombstone message read by _wire_fields (keyed by field number as a string)."""
     signal = message.get('10') if isinstance(message.get('10'), dict) else {}
     cmd = message.get('9')
     cmdline = ' '.join(_pb(c) for c in cmd) if isinstance(cmd, list) else _pb(cmd)
     sig = ''
     if signal:
-        sig = f"signal {_pb(signal.get('1'))} ({_pb(signal.get('2'))}), code {_pb(signal.get('3'))} ({_pb(signal.get('4'))})"
+        # proto3 leaves a zero scalar off the wire; debuggerd's text converter prints the number and code
+        # unconditionally (libdebuggerd/tombstone_proto_to_text.cpp), so an absent number or code is 0
+        sig = (f"signal {_pb(signal.get('1', 0))} ({_pb(signal.get('2'))}), "
+               f"code {_pb(signal.get('3', 0))} ({_pb(signal.get('4'))})")
     # proto3 leaves a zero scalar off the wire, and debuggerd's own text rendering prints the field
     # unconditionally as 'Process uptime: %ds' (libdebuggerd/tombstone_proto_to_text.cpp), so an
     # absent field 20 is 0s; the text twin of every such record on the tested images read 0s
@@ -569,32 +634,24 @@ def _fields_from_message(message):
 
 
 def _tombstone_proto_fields(data):
-    """Fields of a debuggerd Tombstone message; field numbers from system/core debuggerd/proto/tombstone.proto."""
+    """Fields of a debuggerd Tombstone message, or None when the bytes are not one."""
     try:
-        message, _types = blackboxprotobuf.decode_message(data)
-    except Exception as error:  # pylint: disable=broad-exception-caught
+        message = _wire_fields(data, _TOMBSTONE_FIELDS, {10: (_SIGNAL_FIELDS, _SIGNAL_SIGNED)})
+    except (IndexError, ValueError) as error:
         logfunc(f'Android Dropbox: a tombstone protobuf did not decode: {error}')
         return None
     return _fields_from_message(message)
 
 
 def _unwrap_with_headers(data):
-    """TombstoneWithHeadersProto: tombstone bytes at 1, dropped_count at 2."""
+    """TombstoneWithHeadersProto: the Tombstone bytes at field 1 and dropped_count at field 2."""
     try:
-        message, _types = blackboxprotobuf.decode_message(data)
-    except Exception as error:  # pylint: disable=broad-exception-caught
+        message = _wire_fields(data, {1, 2})
+    except (IndexError, ValueError) as error:
         logfunc(f'Android Dropbox: a tombstone-with-headers protobuf did not decode: {error}')
         return None, ''
     inner = message.get('1')
-    if not isinstance(inner, (bytes, bytearray)):
-        # blackboxprotobuf may already have decoded the nested message
-        return (inner if isinstance(inner, dict) else None), _pb(message.get('2'))
-    return inner, _pb(message.get('2'))
-
-
-def _proto_fields_from_any(inner):
-    """Fields from the unwrapped tombstone, whether blackboxprotobuf left it as bytes or decoded it."""
-    return _fields_from_message(inner) if isinstance(inner, dict) else _tombstone_proto_fields(inner)
+    return (inner if isinstance(inner, (bytes, bytearray)) else None), _pb(message.get('2'))
 
 
 @artifact_processor
@@ -674,7 +731,7 @@ def dropbox_process_errors(context):
                 # Android 14 and later wrap the tombstone in TombstoneWithHeadersProto
                 # (BootReceiver.addTombstoneToDropBox at main)
                 inner, dropped = _unwrap_with_headers(data)
-                fields = _proto_fields_from_any(inner) if inner is not None else None
+                fields = _tombstone_proto_fields(inner) if inner is not None else None
             else:
                 # Android 12 and 13 filed the bare Tombstone message under SYSTEM_TOMBSTONE_PROTO
                 # (BootReceiver.addTombstoneToDropBox at android-13.0.0_r1)
