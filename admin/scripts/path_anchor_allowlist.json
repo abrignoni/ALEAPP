@@ -150,6 +150,7 @@
   "*/system/users/*/settings_global.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/users/*/settings_secure.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/users/*/settings_ssaid.xml": "shared or system location: no app data container in the path; the platform per-user SSAID store, measured 2026-09-03 across 23 Android corpora",
+  "*/system/users/*/settings_ssaid.xml.fallback": "shared or system location: no app data container in the path; the periodic copy the platform makes of the per-user SSAID store, measured 2026-09-06 across the same 23 Android corpora as the live file",
   "*/system/users/*/settings_system.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/users/service/data/eRR.p": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/users/service/eRR.p": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
