@@ -119,6 +119,8 @@
   "*/misc/bootstat/last_boot_time_utc": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/misc/wifi/WifiConfigStore.xml": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
   "*/misc/wifi/softap.conf": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
+  "*/mmkv/*": "deliberate cross-app sweep: MMKV names its own store directory, and every row carries the store's evidence-relative path, so the owning app is attributed per row; measured 2026-09-07 on kevin_pocox7_a15, sharon_a14, samsungs20_a13 and pixel7a_a14",
+  "*/mmkv_private/*": "deliberate cross-app sweep: MMKV names its own store directory, and every row carries the store's evidence-relative path, so the owning app is attributed per row; measured 2026-09-07 on kevin_pocox7_a15, sharon_a14, samsungs20_a13 and pixel7a_a14",
   "*/mmssms.db*": "distinctive marker: matched only com.android.providers.telephony, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/msys_database*": "distinctive marker: matched only com.facebook.orca, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/nearby-discovery/nearby_discovery_item_cache.db/*": "a directory name only Play services writes: the LevelDB store is a directory and the pattern matches the files inside it; measured 2026-09-04 across 23 Android corpora",
