@@ -131,6 +131,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | trailSense |
 | uber |
 | untappd |
+| vivaVideo |
 | waze |
 | weibo |
 | wikipedia |
