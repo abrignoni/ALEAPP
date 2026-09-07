@@ -150,6 +150,7 @@ __artifacts_v2__ = {
 import datetime
 import sqlite3
 
+from scripts.context import Context
 from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
 
 
@@ -169,11 +170,10 @@ def _candidate(file_found):
     return 'mirror' not in file_found and '/user/0/' not in file_found
 
 
-def _src(file_found, seeker):
-    try:
-        return file_found.replace(seeker.data_folder, '')
-    except AttributeError:
-        return file_found
+def _src(file_found, _seeker):
+    # The evidence relative path for a row. The framework's reducer, not a hand-rolled
+    # replace with a fallback that would publish the staged path.
+    return Context.get_relative_path(file_found)
 
 
 def _q(cursor, sql):
