@@ -755,7 +755,7 @@ def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
         data_headers_list = list(data_headers)
         data_headers_list.append('Source Path')
         data_headers = tuple(data_headers_list)
-        source_path = 'file path in the report below'
+        source_path = '\n'.join(path_list)
     elif path_list:
         source_path = path_list[0]
     for file in path_list:
@@ -763,7 +763,7 @@ def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
         for record in db_records:
             if multiple_source_files:
                 modifiable_record = list(record)
-                modifiable_record.append(file)
+                modifiable_record.append(Context.get_relative_path(file))
                 record = tuple(modifiable_record)
             data_list.append(record)
     return data_headers, data_list, source_path
