@@ -8,7 +8,13 @@ __artifacts_v2__ = {
         "last_update_date": "2021-03-15",
         "requirements": "none",
         "category": "Line",
-        "notes": "",
+        "notes": ("One row per row of the contacts table in the app's naver_line database. "
+                  "The table records contacts the app held, which is not the same set as the "
+                  "people the account exchanged messages with.\n"
+                  "It can be empty on a device that has messages: on the tested Android 14 "
+                  "image it held no rows while chat_history held 30, so zero rows here is not "
+                  "evidence that the account had no contacts. The tested images held 6, 5 and "
+                  "0 rows."),
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
@@ -22,8 +28,8 @@ __artifacts_v2__ = {
     "get_line_messages": {
         "name": "Line - Messages",
         "description": "LINE messages, with any picture the app kept shown on the message's own "
-                       "row, plus time, sender and recipient identifiers, direction and "
-                       "thread.",
+                       "row, plus time, sender, thread, and direction and recipient as the "
+                       "store records them.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-29",
@@ -35,7 +41,17 @@ __artifacts_v2__ = {
                   "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
-                  "To ID is filled only for rows recognized as outgoing.\n"
+                  "To ID is filled only for rows recognized as outgoing, and then only "
+                  "from the membership table, so it names the members of a group chat "
+                  "rather than the recipient of a one to one message.\n"
+                  "That decoding is code present and was not exercised by any tested "
+                  "image. On all three, chat_history.status held 3 on every one of the 64 "
+                  "reported rows, so no row was labelled Incoming or Outgoing, To ID was "
+                  "empty on every row, and the membership table was empty, which means the "
+                  "conversation view attributed no message to the device owner. What a "
+                  "status of 3 denotes was not established and it is reported as stored. "
+                  "from_mid was absent on 29 of those rows and present on 35, and whether "
+                  "that distinguishes direction was not established either.\n"
                   "Messages are reported even when the contacts and membership tables are "
                   "empty; on a tested Android 14 image both were empty while chat_history "
                   "held rows, and the previous inner join dropped every message.\n"
@@ -63,11 +79,21 @@ __artifacts_v2__ = {
                   "Because the two live in different places, a file is paired with a message "
                   "on the Android user both belong to, read from the path: data/data is user "
                   "0, and data/user/<n>, data_mirror, data/media/<n> and storage/emulated/<n> "
-                  "name their own. A second Android user's copy of the app therefore cannot "
-                  "supply a picture for this one's message. Where no user can be read from a "
-                  "path, nothing is paired with it and a line is logged, because a wrong "
-                  "picture on a message is worse than no picture. The duplicate storage views "
-                  "of one file are collapsed before anything is read.\n"
+                  "name their own. Where no user can be read from a path, nothing is paired "
+                  "with it and a line is logged, because a wrong picture on a message is "
+                  "worse than no picture.\n"
+                  "The app keeps a separate database per Android user and every one of them "
+                  "is read, with Android User carrying the one each row came from, rather "
+                  "than only the last database the extraction happened to offer. The "
+                  "duplicate storage views of one file are collapsed first, so a database is "
+                  "not read once per view. Every tested image held one Android user, so the "
+                  "two user case was checked on a tree built by hand from one of them, "
+                  "carrying a second user whose chat folder held files of the same names "
+                  "with different content: the rows doubled to twenty six under each user, "
+                  "a message altered in the added copy appeared only against that user, and "
+                  "each row resolved to the file in its own user's storage. Read the way it "
+                  "was before this change, the same tree returned one user's twenty six "
+                  "rows and none of the other's.\n"
                   "Attachment Type and Local URI are reported as stored. No source for the "
                   "type codes was found, so none is named here. The values seen on the "
                   "tested images were 0, 1, 2, 4, 15, 16 and 17; the four files that "
@@ -109,7 +135,12 @@ __artifacts_v2__ = {
                   "column and Call Type from the 'voip_type' letter. Direction/status value "
                   "mappings were established through testing; unrecognized values are reported as "
                   "stored.\n"
-                  "To ID is filled only for rows recognized as outgoing.\n"
+                  "To ID is filled only for rows recognized as outgoing, and it is read "
+                  "from the membership table, so it names the members of a group call and "
+                  "is empty for a one to one call. On the tested images direction did "
+                  "resolve, two Incoming and two Outgoing on each, and To ID was empty on "
+                  "all twelve rows because every tested call was one to one and the "
+                  "membership table was empty.\n"
                   "Calls are reported even when the contacts and membership tables are empty; "
                   "on a tested Android 14 image both were empty while call_history held rows, "
                   "and the previous inner join dropped every call."),
@@ -216,6 +247,20 @@ def _attachment(pair):
     return reference or '', name, kind.mime
 
 
+def _message_dbs(files_found):
+    """Every naver_line the extraction carries, one per Android user after the views collapse.
+
+    The app keeps a separate database per Android user, so taking one of them drops the
+    other user's messages with no error.
+    """
+    found = []
+    for file_found in files_found:
+        path = str(file_found)
+        if path.lower().endswith('naver_line') and path not in found:
+            found.append(path)
+    return found
+
+
 def _line_dbs(files_found):
     msg_db = call_db = ''
     for file_found in files_found:
@@ -249,11 +294,11 @@ def get_line(context):
 @artifact_processor
 def get_line_messages(context):
     # The duplicate storage views of one file are collapsed first, so a database is not read
-    # once per view and an attachment is paired with one app data directory rather than three.
+    # once per view. What survives is one database per Android user, and every one is read.
     files_found = unique_files(context)
-    msg_db, _ = _line_dbs(files_found)
     data_list = []
-    if msg_db:
+    read = []
+    for msg_db in _message_dbs(files_found):
         user = _android_user(msg_db)
         if not user:
             logfunc('Line: the Android user could not be read from the database path, '
@@ -287,6 +332,8 @@ def get_line_messages(context):
             logfunc(str(e))
             all_rows = []
         db.close()
+        if all_rows:
+            read.append(msg_db)
 
         for row in all_rows:
             thread_id = row[0] if row[1] is None else None
@@ -302,12 +349,13 @@ def get_line_messages(context):
                 attachments.get((str(row[9]), str(row[8])), {}))
             created_time = _sec_to_utc(row[4])
             data_list.append((created_time, row[7], row[2], row[3], media, media_name,
-                              media_format, row[5], row[6], to_id, thread_id))
+                              media_format, row[5], row[6], to_id, thread_id, user))
 
     data_headers = (('Start Time', 'datetime'), 'Direction', 'From ID', 'Message',
                     ('Attachment', 'media'), 'Attachment File', 'Attachment Format',
-                    'Attachment Type (as stored)', 'Local URI (as stored)', 'To ID', 'Thread ID')
-    return data_headers, data_list, msg_db
+                    'Attachment Type (as stored)', 'Local URI (as stored)', 'To ID', 'Thread ID',
+                    'Android User')
+    return data_headers, data_list, '\n'.join(read)
 
 
 @artifact_processor
