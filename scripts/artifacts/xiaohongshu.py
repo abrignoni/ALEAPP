@@ -272,7 +272,7 @@ def xiaohongshu_account(context):
             _text(profile.get('liked')),
             _text(profile.get('collected')),
             _text(login.get('isRealLogin')),
-            source,
+            context.get_relative_path(source),
         ))
     return data_headers, data_list, source
 
@@ -307,7 +307,7 @@ def xiaohongshu_recent_chats(context):
                     _text(entry.get('is_group_chat')),
                     _text(entry.get('source')),
                     _text(entry.get('type')),
-                    file_found,
+                    context.get_relative_path(file_found),
                 ))
                 rows += 1
         if rows:
@@ -339,7 +339,8 @@ def xiaohongshu_app_launches(context):
                 continue
             value = decode_value(raw)
             if isinstance(value, int):
-                data_list.append((convert_unix_ts_to_utc(value), index, file_found))
+                data_list.append((convert_unix_ts_to_utc(value), index,
+                                  context.get_relative_path(file_found)))
                 rows += 1
         if rows:
             source = file_found
