@@ -55,7 +55,8 @@ def get_torThumbs(context):
             continue
 
         media = check_in_embedded_media(file_found, buf.getvalue(), f'{filename}.png')
-        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename, location))
+        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename,
+                          context.get_relative_path(location)))
 
     data_headers = (('Modified Time', 'datetime'), ('Thumbnail', 'media'), 'Filename', 'Location')
     return data_headers, data_list, source_path
