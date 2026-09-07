@@ -95,8 +95,9 @@ __artifacts_v2__ = {
                  "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/core/java/android/os/UserHandle.java#47. "
                  "Package Name is blank on 0 of 5,807 rows.\n"
                  "The path pattern is tolerant, so every copy of the file in an extraction is read. A row is keyed "
-                 "on its content, so a copy that repeats a record costs no extra row and Source File names both "
-                 "paths, while two copies that disagree produce a row each. On the 22 images carrying the store, "
+                 "on its content, so a copy that repeats a record costs no extra row, while two "
+                 "copies that disagree produce a row each. The report's located at line names every "
+                 "file read, and no row carries a path of its own. On the 22 images carrying the store, "
                  "every Android 15 emulator carries a data_mirror copy of each user file, and all 36 of those 36 "
                  "pairs were byte-identical to the file they mirror. The reserve copy AtomicFile writes beside "
                  "each file, access.abx.reservecopy, "
@@ -104,11 +105,12 @@ __artifacts_v2__ = {
                  "is not read, and neither is the copy under apexrollback that one image carries: both are "
                  "snapshots from another point in time and reading them would mix two states into one table with "
                  "no column saying which. The pattern also matches the system copy of the store, the one AOSP "
-                 "writes with no Android user, which is present on 22 of those 22 images. It is read and named in "
-                 "Source File and produces no row for either artifact, because it carries the permission "
+                 "writes with no Android user, which is present on 22 of those 22 images. It is read "
+                 "and named in the located at line and produces no row for either artifact, because it "
+                 "carries the permission "
                  "declarations and none of the per-user sections. Narrowing the pattern to the per-user directory "
                  "would drop those citations, and would also drop the file if a later release moved one of these "
-                 "sections into it, so it is left broad deliberately. 3,890 of 5,807 rows cite more than one path.\n"
+                 "sections into it, so it is left broad deliberately.\n"
                  "What this artifact does not cover. It reads two of the sections in this file. app-id-permissions "
                  "is read by Permission Grants, the sibling artifact in this module. package-versions is not "
                  "reported: it is the permission state version the subsystem last wrote for each package, and it "
@@ -272,8 +274,9 @@ __artifacts_v2__ = {
                  "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/core/java/android/os/UserHandle.java#47. "
                  "Package Name is blank on 0 of 194,284 rows.\n"
                  "The path pattern is tolerant, so every copy of the file in an extraction is read. A row is keyed "
-                 "on its content, so a copy that repeats a record costs no extra row and Source File names both "
-                 "paths, while two copies that disagree produce a row each. On the 22 images carrying the store, "
+                 "on its content, so a copy that repeats a record costs no extra row, while two "
+                 "copies that disagree produce a row each. The report's located at line names every "
+                 "file read, and no row carries a path of its own. On the 22 images carrying the store, "
                  "every Android 15 emulator carries a data_mirror copy of each user file, and all 36 of those 36 "
                  "pairs were byte-identical to the file they mirror. The reserve copy AtomicFile writes beside "
                  "each file, access.abx.reservecopy, "
@@ -281,12 +284,12 @@ __artifacts_v2__ = {
                  "is not read, and neither is the copy under apexrollback that one image carries: both are "
                  "snapshots from another point in time and reading them would mix two states into one table with "
                  "no column saying which. The pattern also matches the system copy of the store, the one AOSP "
-                 "writes with no Android user, which is present on 22 of those 22 images. It is read and named in "
-                 "Source File and produces no row for either artifact, because it carries the permission "
+                 "writes with no Android user, which is present on 22 of those 22 images. It is read "
+                 "and named in the located at line and produces no row for either artifact, because it "
+                 "carries the permission "
                  "declarations and none of the per-user sections. Narrowing the pattern to the per-user directory "
                  "would drop those citations, and would also drop the file if a later release moved one of these "
-                 "sections into it, so it is left broad deliberately. 155,426 of 194,284 rows cite more than one "
-                 "path.\n"
+                 "sections into it, so it is left broad deliberately.\n"
                  "What this artifact does not cover. It reads one section of this file; the app op modes in "
                  "app-id-app-ops and package-app-ops are read by App Op Modes, the sibling artifact in this "
                  "module, and that artifact's notes say which of the remaining sections were excluded and why. "
@@ -625,7 +628,7 @@ def _is_granted(value):
 
 
 def _collect(context, section_reader):
-    """(rows keyed on their content to the paths carrying them, the files read).
+    """(rows keyed on their content, the files read).
 
     The platform writes one element per scope and key, so a key repeats only when an extraction
     holds more than one copy of the file, which every tested Android 15 emulator does through
@@ -644,12 +647,9 @@ def _collect(context, section_reader):
             continue
         # The file was read, so it is cited whether or not it held any of this artifact's sections.
         sources.append(file_found)
-        relative_path = context.get_relative_path(file_found)
         android_user = _android_user(file_found)
         for key in section_reader(root, names, android_user):
-            paths = rows.setdefault(key, [])
-            if relative_path not in paths:
-                paths.append(relative_path)
+            rows.setdefault(key, None)
     if sources:
         sources.extend(packages_read)
     return rows, sources
@@ -701,10 +701,9 @@ def permission_app_op_modes(context):
         'Op Code',
         'Mode',
         'Mode Stored Against',
-        'Source File',
     )
     rows, sources = _collect(context, _op_mode_rows)
-    data_list = [key + (', '.join(paths),) for key, paths in rows.items()]
+    data_list = list(rows)
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -717,8 +716,7 @@ def permission_grants(context):
         'Permission',
         'Granted',
         'Permission Flags',
-        'Source File',
     )
     rows, sources = _collect(context, _grant_rows)
-    data_list = [key + (', '.join(paths),) for key, paths in rows.items()]
+    data_list = list(rows)
     return data_headers, data_list, '\n'.join(sources)
