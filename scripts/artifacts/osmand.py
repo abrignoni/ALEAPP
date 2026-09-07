@@ -19,8 +19,8 @@ __artifacts_v2__ = {
                  "as stored. Types the app defines include favorite, poi, address, marker, destination, "
                  "gpx, wpt, route, location, my_location and world_region; the tested row was a "
                  "favorite. Source is the HistorySource value as stored, either SEARCH or NAVIGATION "
-                 "(HistorySource.java in the same tree). The freq_intervals and freq_values columns hold "
-                 "the app's own ranking weights used to order the recent list and are not reported. This "
+                 "(HistorySource.java in the same tree). The freq_intervals and freq_values "
+                 "columns are not reported. This "
                  "artifact covers the search history only; the app's favourites are kept as GPX files "
                  "under its files/favorites folder and are not parsed here. The database uses a rollback "
                  "journal rather than WAL, and the -journal sidecar is in the paths.",

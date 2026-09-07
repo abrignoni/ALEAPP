@@ -10,20 +10,18 @@ __artifacts_v2__ = {
         "notes": "One row per note in the notes table of databases/joplin.sqlite. Each row carries the "
                  "note's title and body, the notebook it lives in resolved from the parent folder, its "
                  "created and updated times, and its geolocation. The times are Unix milliseconds and "
-                 "were UTC on the tested device, so they are reported as UTC. Latitude and Longitude "
-                 "hold the position Joplin recorded for the note when the user enabled saving "
-                 "geolocation; they are 0 when it was not recorded. Altitude completes the recorded position and is 0 "
-                 "when no altitude was captured, as on the tested notes. A note can be a to-do, in which "
-                 "case Is To-Do is set and the To-Do Due and To-Do Completed times are populated when "
-                 "present. Deleted holds the time a note was moved to the trash, so a value there means "
-                 "the note was deleted and is recoverable from this table. Markup is decoded from the "
-                 "app's own MarkupLanguage values, 1 Markdown and 2 HTML "
-                 "(packages/renderer/types.ts at laurent22/joplin 3f23202e); any other value is "
-                 "reported as stored. Joplin can end to end encrypt notes when synchronisation "
-                 "encryption is enabled, and a note whose Encryption Applied flag is set has its body "
-                 "held in an encrypted field that is not readable here; the Body column reports that it "
-                 "is encrypted for those rows. Source URL and Author are reported where the note "
-                 "carries them. Older versions of a note are kept in the revisions table, which is not "
+                 "were UTC on the tested device, so they are reported as UTC. Latitude, "
+                 "Longitude and Altitude are the note's stored location columns, reported as "
+                 "stored; Altitude was 0 on the tested notes, and what a 0 value means was not "
+                 "sourced. A note can be a to-do, in which case Is To-Do is set and the To-Do "
+                 "Due and To-Do Completed times are populated when present. Deleted is the "
+                 "deleted_time column, Unix milliseconds; a row carrying a value there is still "
+                 "present in the table. Markup is decoded from the app's own MarkupLanguage "
+                 "values, 1 Markdown and 2 HTML (packages/renderer/types.ts at laurent22/joplin "
+                 "3f23202e); any other value is reported as stored. A note whose Encryption "
+                 "Applied flag is set has a body that is not readable here; the Body column "
+                 "reports that it is encrypted for those rows. Source URL and Author are "
+                 "reported where the note carries them. The revisions table is not "
                  "parsed here.",
         "paths": ('*/net.cozic.joplin/databases/joplin.sqlite*',),
         "output_types": "standard",
@@ -40,11 +38,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Joplin",
-        "notes": "One row per notebook in the folders table of databases/joplin.sqlite. Notebooks are "
-                 "the containers the user organises notes into, and can be nested, so the Parent "
-                 "Notebook column resolves the parent id to its title where the notebook sits inside "
-                 "another. Created and Updated are Unix milliseconds reported as UTC. Deleted holds the "
-                 "time a notebook was moved to the trash when set. The Note Count is the number of "
+        "notes": "One row per notebook in the folders table of databases/joplin.sqlite. "
+                 "Notebooks can be nested, so the Parent Notebook column resolves the parent id "
+                 "to its title where the notebook has a parent. Created and Updated are Unix "
+                 "milliseconds reported as UTC. Deleted is the deleted_time column, Unix "
+                 "milliseconds, reported where set. The Note Count is the number of "
                  "notes whose parent is this notebook.",
         "paths": ('*/net.cozic.joplin/databases/joplin.sqlite*',),
         "output_types": "standard",
@@ -62,13 +60,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Joplin",
         "notes": "One row per resource in the resources table of databases/joplin.sqlite. A resource is "
-                 "a file the user attached to a note, an image, a document or a recording. Each row "
-                 "gives the resource's title, original file name, mime type, file extension and size, "
-                 "and its created and updated times as UTC. OCR Text holds any text Joplin extracted "
-                 "from the attachment by optical character recognition, which can carry the readable "
-                 "text of an image; it is reported as stored. The attachment bytes are stored on disk "
-                 "under the app's files directory named by the resource id and are not surfaced here. A "
-                 "resource whose Encryption Applied flag is set is end to end encrypted.",
+                 "a file attached to a note. Each row gives the resource's title, original file "
+                 "name, mime type, file extension and size, and its created and updated times as "
+                 "UTC. OCR Text is the ocr_text column, reported as stored. The attachment bytes "
+                 "are not surfaced here. Encryption Applied is reported as stored.",
         "paths": ('*/net.cozic.joplin/databases/joplin.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "paperclip",

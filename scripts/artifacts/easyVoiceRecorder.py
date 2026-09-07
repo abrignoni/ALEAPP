@@ -19,8 +19,8 @@ __artifacts_v2__ = {
                  "primary%3ARecordings%2Fnote.m4a is reported as the Recordings folder and the "
                  "file note.m4a. Document URI keeps the value exactly as stored so the decoding "
                  "can be checked. Duration is the app's own length_in_seconds column. A duration "
-                 "of -1 is reported as blank and is what the app leaves when it could not read the "
-                 "length; one such row was present on the tested device, from a recording the app "
+                 "of -1 is reported as blank; one such row was present on the tested device, "
+                 "from a recording the app "
                  "started and did not finish. There is no timestamp in this table, so a row says "
                  "the file was in the library and not when it was recorded; the file's own times "
                  "carry that. The row survives the audio file being deleted: one recording was "
@@ -43,7 +43,8 @@ __artifacts_v2__ = {
     },
     "easyvoicerecorder_settings": {
         "name": "Easy Voice Recorder Settings",
-        "description": "Where Easy Voice Recorder saves audio, and how much it has recorded",
+        "description": "Easy Voice Recorder folder settings, recording counters and install "
+                       "times from its preferences file",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -56,14 +57,14 @@ __artifacts_v2__ = {
                  "com.coffeebeanventures.easyvoicerecorder/shared_prefs/"
                  "com.coffeebeanventures.easyvoicerecorder_preferences.xml. Only the keys an "
                  "examiner can act on are reported, and each is named in the Setting column as the "
-                 "app stores it. saved_recordings_folder_key is the folder the app writes "
-                 "recordings to, which matters because the user can point it anywhere and the "
-                 "default is not the only place to look; most_recent_saved_recordings_folder_key "
-                 "is the app's list of folders it has used, so a folder that appears there and is "
-                 "not the current one was a previous destination. total_num_recordings_key and "
-                 "num_recordings_key are the app's own counters and keep counting recordings that "
-                 "have since been deleted, so a count higher than the number of rows in the Easy "
-                 "Voice Recorder Library artifact is the gap worth following. install_info_key is "
+                 "app stores it. saved_recordings_folder_key and "
+                 "most_recent_saved_recordings_folder_key are reported as stored; what each "
+                 "records beyond its key name was not established, and a folder named in either "
+                 "is a place to look for recordings. total_num_recordings_key and "
+                 "num_recordings_key are reported as stored; whether they keep counting "
+                 "recordings that have since been deleted was not measured, so a count higher "
+                 "than the number of rows in the Easy Voice Recorder Library artifact is worth "
+                 "following rather than interpreted. install_info_key is "
                  "a JSON value holding the app's first install and last update times in Unix "
                  "milliseconds, and those two are reported as their own rows in UTC. Timestamp is "
                  "blank on every other row, because the rest of these settings carry no time. The "

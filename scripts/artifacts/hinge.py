@@ -42,9 +42,9 @@ __artifacts_v2__ = {
                  "are reported; on the tested device that was 22 of 89. Values are reported "
                  "as stored, because the table's display column repeats the numeric "
                  "identifier rather than naming the option and the extraction carries no app "
-                 "binary to source a mapping from. A value of -1 is the value the app stores "
-                 "for an attribute the account holder left open, which is why several rows "
-                 "carry it. Deal Breaker is the flag the row carries. Field mapping was done "
+                 "binary to source a mapping from. A value of -1 appeared on several rows; its "
+                 "meaning is not established. Deal Breaker is the flag the row carries. Field "
+                 "mapping was done "
                  "against a private sample provided by Mattia; no sample data is recorded "
                  "for it.",
         "paths": (
@@ -149,9 +149,9 @@ __artifacts_v2__ = {
                  "app's own labels, as stored. Subject is the profile identifier the event "
                  "names where it carries one, which lets an event be tied to a cached "
                  "profile. Event Data is the record's own document, as stored, because its "
-                 "fields vary by event name. These are events the app queued for its own "
-                 "reporting, so the set present is what had not yet been cleared rather than "
-                 "a complete history of app use. Field mapping was done against a private "
+                 "fields vary by event name. The set present is not a complete history of app "
+                 "use; how the app manages this table was not sourced. Field mapping was done "
+                 "against a private "
                  "sample provided by Mattia; no sample data is recorded for it.",
         "paths": (
             '*/co.hinge.app/databases/db*',

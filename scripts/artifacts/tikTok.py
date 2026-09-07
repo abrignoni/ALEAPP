@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "TikTok",
-        "notes": "One _im.db exists per logged-in account, named <account uid>_im.db, and "
+        "notes": "_im.db files are named <account uid>_im.db and "
                  "all of them are parsed; the Account ID column carries each file's uid and "
                  "messages whose sender equals it are marked Outgoing.\n"
                  "Every msg row is reported. The Message, link and sticker columns are "
@@ -115,8 +115,8 @@ __artifacts_v2__ = {
         "category": "TikTok",
         "notes": "Hu and Karabiyik describe TIKTOK.db as keeping track of the timestamps "
                  "for each instance the app is opened. On the tested image every open_time "
-                 "value fell exactly on a local midnight, so that build appears to record "
-                 "at day rather than moment granularity; the value is reported as stored. "
+                 "value fell exactly on a local midnight; the value is reported as stored and "
+                 "its granularity is not established. "
                  "Reference: Xiao Hu and Umit Karabiyik, 'Shopping while Watching: An "
                  "Updated Forensic Analysis of TikTok on Android and iOS', ISNCC 2024, "
                  "https://doi.org/10.1109/ISNCC62547.2024.10759027",

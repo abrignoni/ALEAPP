@@ -100,7 +100,8 @@ __artifacts_v2__ = {
                  "independently by the accounts artifact. A Resolved Timestamp is emitted for "
                  "those two keys only; any other key is reported with its value as stored and no "
                  "conversion. Keys under the NetworkOverrides and DynamicConfigSettings branches "
-                 "are configuration the app received rather than choices made on the device. "
+                 "are reported as stored; whether they were received by the app or set on the "
+                 "device was not established. "
                  "Field mapping was done against private samples provided by Mattia; no sample "
                  "data is recorded for them.",
         "paths": ('*/com.microsoft.office.outlook/shared_prefs/com.microsoft.office.outlook_preferences.xml',),

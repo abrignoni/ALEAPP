@@ -9,10 +9,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-17",
         "requirements": "none",
         "category": "Threema",
-        "notes": "Threema does not use email/password sign-in; the account is the Threema ID itself (an "
-                 "8-character code generated on first launch). 'Linked Mobile Number' is only present when a "
-                 "phone number has been linked to the ID for discoverability; it is not required to use the "
-                 "account and is absent if never set.",
+        "notes": "The account is reported by its Threema ID as stored in the preferences file. "
+                 "'Linked Mobile Number' is reported when the preferences file carries one and "
+                 "is blank otherwise; absence is not evidence that no number was ever linked.",
         "paths": ('*/ch.threema.app/shared_prefs/ch.threema.app_preferences.xml',),
         "output_types": ["standard"],
         "artifact_icon": "user",
@@ -50,9 +49,9 @@ __artifacts_v2__ = {
                  "the main file is still included - on the device this was validated "
                  "against, the main file alone was several weeks stale and missing "
                  "real, later content that only existed in the log. 'Verification "
-                 "Level' is Threema's own contact-verification indicator "
-                 "(0=Unverified, 1=Server-verified, 2=Fully verified, e.g. via QR "
-                 "code or NFC scan); on the device this was validated against, the "
+                 "Level' maps the stored verificationLevel value as 0=Unverified, "
+                 "1=Server-verified, 2=Fully verified; the source of that mapping is not named "
+                 "here; on the device this was validated against, the "
                  "one contact recorded at level 2 corresponds exactly to a 'via QR "
                  "scan' verification event documented for that same contact. "
                  "'Group-Only / Removed' reflects Threema's own AcquaintanceLevel "

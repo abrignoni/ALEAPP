@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Twitter - Cached Videos (ExoPlayer)",
         "description": "Videos held in the X (Twitter) app's two ExoPlayer media caches, one row per video "
                        "media id per cache folder, with the earliest and latest time a cached segment was "
-                       "touched. precache holds prefetched media and video_cache media played.",
+                       "touched. The precache and video_cache folders are reported separately.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",

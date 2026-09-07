@@ -7,7 +7,15 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-02",
         "requirements": "none",
         "category": "SMS & MMS",
-        "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds, per the AOSP telephony provider. LG extended type mappings were established through testing and are not vendor-documented.",
+        "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds; "
+                 "the provider's own union query multiplies pdu.date by 1000 to line the two up. "
+                 "Reference: AOSP, 'MmsSmsProvider.java, getConversations and "
+                 "buildConversationQuery', "
+                 "https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/bca387f553a4493c88e24455172225fd1049c91f/src/com/android/providers/telephony/MmsSmsProvider.java. "
+                 "The LG extended sms.type values 7, 8 and 19 are labelled Blocked Number, "
+                 "Scheduled Send and Broadcast Alert; that mapping is not vendor-documented and "
+                 "no source for it is cited, so the labels are unverified. Any other value is "
+                 "reported as stored.",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -58,7 +66,17 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-02",
         "requirements": "none",
         "category": "SMS & MMS",
-        "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds, per the AOSP telephony provider. Attachment files are matched to part rows on the recorded _data path (storage class, Android user, package and file name), never on the file name alone; a part whose file is not in the extraction shows its stored path in Body. Reference: AOSP, 'Telephony.BaseMmsColumns MESSAGE_BOX constants (ALL=0, INBOX=1, SENT=2, DRAFTS=3, OUTBOX=4, FAILED=5)', https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns",
+        "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds; "
+                 "the provider's own union query multiplies pdu.date by 1000 to line the two up. "
+                 "Reference: AOSP, 'MmsSmsProvider.java, getConversations and "
+                 "buildConversationQuery', "
+                 "https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/bca387f553a4493c88e24455172225fd1049c91f/src/com/android/providers/telephony/MmsSmsProvider.java. "
+                 "Attachment files are matched to part rows on the recorded _data path (storage "
+                 "class, Android user, package and file name), never on the file name alone; a "
+                 "part whose file is not in the extraction shows its stored path in Body. "
+                 "Reference: AOSP, 'Telephony.BaseMmsColumns MESSAGE_BOX constants (ALL=0, "
+                 "INBOX=1, SENT=2, DRAFTS=3, OUTBOX=4, FAILED=5)', "
+                 "https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',
                   '*/com.android.providers.telephony/app_parts/*',
                   '*/com.android.providers.telephony/parts/*'),

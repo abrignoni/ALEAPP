@@ -10,9 +10,9 @@ __artifacts_v2__ = {
         "category": "DHL",
         "notes": "One row per tracking search. Airway Bill is the shipment number the row "
                  "records, and Search Date is when the app recorded the search. "
-                 "The row carries the account identifier that made the search; a search made "
-                 "before sign in carries a zero account, which is why one of the two rows on "
-                 "the tested device did. Search Date is stored as local text with no zone, so "
+                 "The row carries an account identifier; one of the two rows on the tested "
+                 "device carried a zero value, whose meaning is not established. Search Date is "
+                 "stored as local text with no zone, so "
                  "it is reported as stored rather than converted. A row records that the "
                  "number was tracked, not that the account holder is the sender or recipient "
                  "of that shipment. Field mapping was done against a private sample provided "
@@ -32,10 +32,9 @@ __artifacts_v2__ = {
         "category": "DHL",
         "notes": "One row per stored user record. Account ID is the identifier the app keeps "
                  "for the signed in user. Language and the notification flags are the "
-                 "settings the record carries, reported as stored. The record also has "
-                 "the app stores a large catalogue of countries, currencies and "
-                 "shipping package types in the same database; those are reference data the "
-                 "app ships with rather than anything the user produced, and are not "
+                 "settings the record carries, reported as stored. The same database also holds "
+                 "a large catalogue of countries, currencies and shipping package types; those "
+                 "tables are not "
                  "reported. Field mapping was done against a private sample provided by "
                  "Mattia; no sample data is recorded for it.",
         "paths": ('*/com.dhl.exp.dhlmobile/databases/dhledb.db*',),

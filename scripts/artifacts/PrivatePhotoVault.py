@@ -8,24 +8,18 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-17",
         "requirements": "none",
         "category": "Private Photo Vault",
-        "notes": "Private Photo Vault has no email/password account; these are "
-                 "app-level counters the app itself maintains, not a user "
-                 "identity. 'Key Event Count' and 'Last Key Event' come from a "
-                 "preference the app calls lastKeyEventDate/keyEventCount; its "
-                 "exact meaning is not documented publicly, so this module "
-                 "reports the raw value rather than asserting what triggers it. "
-                 "On the device this was validated against, its one recorded "
-                 "event's timestamp lands within a second of every imported "
-                 "media file's own creation timestamp, consistent with (but not "
-                 "proof of) the single PIN-setup/import session documented for "
-                 "this app on this device. 'Uses Encrypted Preferences' reflects "
-                 "the app's own usesEncryptedPreferencesV2 flag; when true, it "
-                 "confirms the app is using Android's Keystore-backed "
-                 "EncryptedSharedPreferences for its sensitive settings, which "
-                 "explains why a PIN, if one was set, is not recoverable from "
-                 "this file even though the file itself is plaintext XML - the "
-                 "values inside it are encrypted with a hardware-backed key "
-                 "that does not leave the device.",
+        "notes": "No email or password account fields were found in this preferences file; these "
+                 "values are counters kept in the app's preferences, not a user identity. 'Key "
+                 "Event Count' and 'Last Key Event' come from a preference the app calls "
+                 "lastKeyEventDate/keyEventCount; its exact meaning is not documented publicly, "
+                 "so this module reports the raw value rather than asserting what triggers it. "
+                 "On the device this was validated against, its one recorded event's timestamp "
+                 "lands within a second of every imported media file's own creation timestamp, "
+                 "consistent with (but not proof of) the single PIN-setup/import session "
+                 "documented for this app on this device. 'Uses Encrypted Preferences' is the "
+                 "app's own usesEncryptedPreferencesV2 flag, reported as stored; what the app "
+                 "does when it is set is not established here, and no PIN value was recovered "
+                 "from this file.",
         "paths": ('*/com.enchantedcloud.photovault/shared_prefs/APP_PREFERENCES.xml',),
         "output_types": ["standard"],
         "artifact_icon": "info-circle",
@@ -48,12 +42,9 @@ __artifacts_v2__ = {
                  "file is still included. On the device this was validated "
                  "against, two albums exist: one with bucket_id 'albums' "
                  "holding the device's three imported pictures, and one, "
-                 "created one millisecond later at the same PIN-setup moment, "
-                 "with bucket_id 'albums_decoy' and no media in it. This "
-                 "module reports the bucket_id exactly as stored rather than "
-                 "asserting what feature it belongs to, but the literal string "
-                 "'decoy' in an otherwise-empty, simultaneously-created second "
-                 "album is worth an examiner's attention.",
+                 "created one millisecond later, with bucket_id 'albums_decoy' and no media in "
+                 "it. This module reports the bucket_id exactly as stored rather than asserting "
+                 "what feature it belongs to.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard"],
         "artifact_icon": "album",
@@ -73,23 +64,16 @@ __artifacts_v2__ = {
         "category": "Private Photo Vault",
         "notes": "Read the same way as Private Photo Vault - Albums, including "
                  "the write-ahead log. The image/video content behind each row "
-                 "is not recoverable from this extraction: the app encrypts "
-                 "every imported file on disk (confirmed - the files at File "
-                 "Path and Thumbnail Path do not begin with any recognizable "
-                 "image file signature), and while the database does store a "
-                 "per-file 'Encryption Key' and IV for each row, that stored "
-                 "key is itself an encrypted value (48 bytes once "
-                 "base64-decoded, not a bare 32-byte AES key) - consistent with "
-                 "Private Photo Vault - Account Usage's finding that this app "
-                 "uses Android Keystore-backed encrypted storage, whose "
-                 "unwrapping key is hardware-bound and does not leave the "
-                 "device. The wrapped key and IV are still reported here "
-                 "exactly as stored, in case a future extraction method "
-                 "recovers the missing unwrapping key, but this module makes "
-                 "no attempt to decrypt the media itself. 'View Count' and "
-                 "'Favourite'/'Deleted' reflect the app's own tracked state "
-                 "for each file, not necessarily anything documented in an "
-                 "action sheet.",
+                 "is not recoverable from this extraction: on the device this was validated "
+                 "against the files at File Path and Thumbnail Path do not begin with any "
+                 "recognizable image file signature, and while the database does store a "
+                 "per-file 'Encryption Key' and IV for each row, that stored value decodes from "
+                 "base64 to 48 bytes, which is not the length of a bare 32-byte AES key, and no "
+                 "key that decrypts the files was recovered from the extraction. The wrapped key "
+                 "and IV are still reported here exactly as stored, in case a future extraction "
+                 "method recovers the missing unwrapping key, but this module makes no attempt "
+                 "to decrypt the media itself. 'View Count', 'Favourite' and 'Deleted' are "
+                 "reported as stored; what updates them is not established.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard", "timeline"],
         "artifact_icon": "photo",

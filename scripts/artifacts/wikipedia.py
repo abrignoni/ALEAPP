@@ -20,10 +20,12 @@ __artifacts_v2__ = {
                  "(app/src/main/java/org/wikipedia/history/HistoryEntry.kt at "
                  "wikimedia/apps-android-wikipedia 07777215); any other value is reported as stored. "
                  "Time Spent, the article Description and the article's Latitude and Longitude come "
-                 "from PageImage where the app recorded them, and the coordinates are 0 for an article "
-                 "with no location. Namespace is the article's namespace and is empty for a main article, which is the usual case, and carries a value only for a Talk, User or other namespace page. The database runs in WAL mode and on the tested device held every "
-                 "row in the -wal sidecar with an empty main file, so the sidecar is in the paths and "
-                 "is required. The client has no account, so this is a local record of reading on this "
+                 "from PageImage where the app recorded them; coordinates of 0 are reported as "
+                 "stored. Namespace is the namespace column, reported as stored. The database "
+                 "runs in WAL mode and on the tested device held every row in the -wal sidecar "
+                 "with an empty main file, so the sidecar is in the paths and is required. "
+                 "Whether the history is tied to a signed in account is not established here; "
+                 "the rows are reported as a record of reading on this "
                  "device.",
         "paths": ('*/org.wikipedia*/databases/wikipedia.db*',),
         "output_types": "standard",
@@ -43,8 +45,9 @@ __artifacts_v2__ = {
         "notes": "One row per query in the RecentSearch table of databases/wikipedia.db. Each row is a "
                  "term entered into the app's search, with the Timestamp of the last time it was "
                  "run, stored as "
-                 "Unix milliseconds and reported as UTC. The table keys on the search text, so a repeat "
-                 "of the same term updates the one row rather than adding another. The data lives in "
+                 "Unix milliseconds and reported as UTC. Whether a repeat of the same term "
+                 "updates the existing row or adds another is not established here. The data "
+                 "lives in "
                  "the wikipedia.db WAL sidecar on the tested device, which is why it is in the paths.",
         "paths": ('*/org.wikipedia*/databases/wikipedia.db*',),
         "output_types": "standard",

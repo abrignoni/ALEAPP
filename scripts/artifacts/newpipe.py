@@ -21,8 +21,9 @@ __artifacts_v2__ = {
                  "TeamNewPipe/NewPipeExtractor f9e6bb80): 0 YouTube, 1 SoundCloud, 2 media.ccc.de, "
                  "3 PeerTube, 4 Bandcamp; any other id is reported as stored. Opening a stream is not "
                  "the same as watching it to the end; the Playback Positions artifact records how far "
-                 "into a stream the client reached. NewPipe records history only while the "
-                 "enable_watch_history preference is set, which it is by default.",
+                 "into a stream the client reached. The client has an enable_watch_history "
+                 "preference; how it gates this table and its default value were not exercised "
+                 "or sourced here.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
         "output_types": "standard",
         "artifact_icon": "history",
@@ -42,9 +43,10 @@ __artifacts_v2__ = {
                  "the search history, with its Creation Date and the service it was run against. Creation Date "
                  "is Unix milliseconds and was UTC on the tested device, so it is converted as UTC. Service is "
                  "decoded from the service id per NewPipe Extractor's ServiceList (see the Watch History notes "
-                 "for the mapping and pinned source). NewPipe writes a row when a search is submitted and the "
-                 "enable_search_history preference is set, which it is by default; suggestions shown while "
-                 "typing are not stored. The data lives in the newpipe.db WAL sidecar on the tested device, "
+                 "for the mapping and pinned source). The client has an enable_search_history "
+                 "preference; how it gates this table, its default value and whether typed "
+                 "suggestions are stored were not exercised or sourced here. The data lives in "
+                 "the newpipe.db WAL sidecar on the tested device, "
                  "which is why it is in the paths.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
         "output_types": "standard",
@@ -63,8 +65,8 @@ __artifacts_v2__ = {
         "category": "NewPipe",
         "notes": "One row per subscriptions entry in databases/newpipe.db: the channel name, its url, "
                  "avatar url, the subscriber count and description as cached, and the notification "
-                 "mode. NewPipe has no account, so a subscription is a local record that the user "
-                 "chose to follow that channel on this device. Service is decoded from the service id "
+                 "mode. A subscription is a local record held by the client on this device. "
+                 "Service is decoded from the service id "
                  "per NewPipe Extractor's ServiceList (see the Watch History notes). The table carries "
                  "no subscribe timestamp, so when the user subscribed cannot be established from it. "
                  "The row lives in the newpipe.db WAL sidecar on the tested device.",
@@ -86,8 +88,9 @@ __artifacts_v2__ = {
         "notes": "One row per stream_state entry in databases/newpipe.db, joined to its stream. "
                  "Progress Time is how far into the stream the client had reached, stored in "
                  "milliseconds, shown here alongside the stream's total duration in seconds so the two "
-                 "can be compared. A row is stronger evidence of actual viewing than a watch history "
-                 "entry, which only records that the stream was opened. The table carries no timestamp "
+                 "can be compared. A row records a position the client stored for the stream; "
+                 "the Watch History artifact records only that the stream was opened. The table "
+                 "carries no timestamp "
                  "of its own; the Access Date for the same stream is in the Watch History artifact. "
                  "The row lives in the newpipe.db WAL sidecar on the tested device.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
@@ -107,12 +110,12 @@ __artifacts_v2__ = {
         "category": "NewPipe",
         "notes": "One row per stream in each local playlist, from the playlists and "
                  "playlist_stream_join tables of databases/newpipe.db joined to streams, in the "
-                 "playlist's stored order. Local playlists are lists the user built on this device. "
-                 "This was empty on the tested device, so the join is code-present and exercised "
-                 "against no rows here. Two related stores are not parsed by this artifact and are "
-                 "named so an examiner knows where they are: remote_playlists holds playlists the user "
-                 "bookmarked from a service rather than built locally, and feed_group holds the user's "
-                 "own groupings of their subscriptions; both were also empty on the tested device. The "
+                 "playlist's stored order. Local playlists are lists held in the client's own "
+                 "database. This was empty on the tested device, so the join is code-present and "
+                 "exercised against no rows here. Two related stores are not parsed by this "
+                 "artifact and are named so an examiner knows where they are: remote_playlists "
+                 "and feed_group; both were also empty on the tested device and what they hold "
+                 "was not observed. The "
                  "data lives in the newpipe.db WAL sidecar on the tested device.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
         "output_types": "standard",

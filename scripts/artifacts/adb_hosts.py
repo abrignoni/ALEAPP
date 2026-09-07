@@ -2,8 +2,8 @@
 __artifacts_v2__ = {
     "adb_hosts": {
         "name": "ADB Hosts",
-        "description": "Authentication keys used in the Android Debug Bridge (ADB) protocol \
-            to secure communication between a device and a computer.",
+        "description": "Username and hostname comments recorded beside the public keys in the "
+                       "device's misc/adb/adb_keys file.",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-11-21",
         "last_update_date": "2025-03-15",

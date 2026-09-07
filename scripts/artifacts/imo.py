@@ -25,7 +25,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "IMO",
         "notes": ("Direction is decoded from the messages table 'message_type' column. "
-                  "Direction/status value mappings were established through testing; unrecognized "
+                  "Direction is mapped from message_type values 1 Incoming and 2 Outgoing; that "
+                  "mapping is not sourced from the app. Unrecognized "
                   "values are reported as stored, so rows the mapping does not cover are not "
                   "labelled as sent or received.\n"
                   "In the conversation view only rows labelled Outgoing are attributed to the "

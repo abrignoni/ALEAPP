@@ -9,9 +9,10 @@ __artifacts_v2__ = {
         "requirements": "polyline",
         "category": "Adidas",
         "notes": "Interactive folium map and online reverse-geocoding removed; route shown as an "
-                 "offline image (media) + a downloadable route KML. The values reported as 'N/A' are "
-                 "sentinels (temperature -300, max elevation -32768, min elevation 32767, humidity -1) "
-                 "that were established through testing, not from app documentation. The Latitude and "
+                 "offline image (media) + a downloadable route KML. The values temperature -300, "
+                 "max elevation -32768, min elevation 32767 and humidity -1 are treated by this "
+                 "parser as sentinels and reported as 'N/A'; no app documentation for them was "
+                 "found. The Latitude and "
                  "Longitude columns are the first point of the decoded encodedTrace polyline and End "
                  "Latitude/End Longitude the last point; they are reported as start and end on the "
                  "assumption that the polyline is stored in chronological order, which the data does "

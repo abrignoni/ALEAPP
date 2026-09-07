@@ -11,11 +11,9 @@ __artifacts_v2__ = {
             "emu_a15_oss_v4": "Fossify Keyboard 1.9.1 | 1 rows",
         },
         "notes": "One row per entry in the clips table of databases/clips.db. Fossify Keyboard is a "
-                 "keyboard app with a clipboard manager, and this table holds the clips saved into it, "
-                 "which are the pinned entries kept for reuse rather than the transient recent "
-                 "clipboard. Each row is the saved text (Clip Text), and clip text often carries "
-                 "addresses, phone numbers, links, codes or passwords a person copied and chose to "
-                 "keep. The table stores only an auto-increment id and the text (Clip.kt at "
+                 "keyboard app with a clipboard manager, and this table holds the clips saved "
+                 "into it. Each row is the saved text (Clip Text), reported as stored. The table "
+                 "stores only an auto-increment id and the text (Clip.kt at "
                  "FossifyOrg/Keyboard 1a2ecdff4e07826d8673576c82637541abbe5264), so there is no "
                  "timestamp for when a clip was saved and none is reported. Fossify Keyboard is the "
                  "maintained successor to Simple Keyboard (com.simplemobiletools.keyboard); that app's "

@@ -35,8 +35,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Vinted",
         "notes": "One row per recorded listing. Favourited is the flag the row carries, "
-                 "reported as stored, so a row marked false records that the app tracked the "
-                 "listing rather than that it was favourited. Cache Expires is Unix "
+                 "reported as stored, so a row marked false is not evidence the listing was "
+                 "favourited; why the app holds such rows is not established. Cache Expires is "
+                 "Unix "
                  "milliseconds and is the app's own expiry rather than an action by the "
                  "account holder; the table carries no time for when a listing was "
                  "favourited. Title and Address are filled from the cached listing of the "
@@ -61,14 +62,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Vinted",
-        "notes": "One row per feedback entry. Row Created is Unix milliseconds and records "
-                 "when the app wrote the row, not when the feedback was left; the feedback's "
-                 "own date is a date string with no time part and is reported separately. "
-                 "Owner is the account the feedback belongs to, taken from the row rather "
-                 "than from the document. Author is the account that left the feedback and "
-                 "Reply Author is the account that replied, both read from the stored "
-                 "document. Rating is the value the document carries, as stored. System "
-                 "Feedback marks entries the service generated rather than a person. Field "
+        "notes": "One row per feedback entry. Row Created is the table's created_at column in "
+                 "Unix milliseconds and is distinct from the feedback's own date, which is a "
+                 "date string with no time part and is reported separately. Owner is the account "
+                 "the feedback belongs to, taken from the row rather than from the document. "
+                 "Author is the account that left the feedback and Reply Author is the account "
+                 "that replied, both read from the stored document. Rating is the value the "
+                 "document carries, as stored. System Feedback is the document's system_feedback "
+                 "flag, reported as stored. Field "
                  "mapping was done against three private samples provided by Mattia; no "
                  "sample data is recorded for them.",
         "paths": (
@@ -87,8 +88,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Vinted",
         "notes": "One row per app data directory. Help Session Time is Unix milliseconds. "
-                 "Sessions is the running count the app keeps, so it describes the whole "
-                 "life of the install rather than one session. Locale and Currency are the "
+                 "Sessions is the number_of_sessions value the app stores, reported as stored; "
+                 "whether it counts the whole life of the install is not established. Locale and "
+                 "Currency are the "
                  "values the app recorded for itself. The tested samples carried no signed "
                  "in account name or identifier in this store; where an account can be named "
                  "at all it is named on the feedback rows instead. Field mapping was done "

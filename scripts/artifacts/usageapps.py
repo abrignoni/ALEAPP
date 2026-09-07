@@ -2,7 +2,8 @@ __artifacts_v2__ = {
     "get_usageapps": {
         "name": "usageapps",
         "description": "App usage events from the Device Personalization Services "
-                       "reflection_gel_events database (includes deleted apps)",
+                       "reflection_gel_events database, with rows whose id carries a deleted_app "
+                       "marker flagged",
         "author": "@abrignoni",
         "creation_date": "2020-04-11",
         "last_update_date": "2020-04-11",

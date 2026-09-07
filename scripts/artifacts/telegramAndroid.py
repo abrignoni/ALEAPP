@@ -40,7 +40,7 @@ __artifacts_v2__ = {
                  "stored the message's media at a known location it appends that path to the "
                  "record as a trailing string, which is reported as the recorded media path; "
                  "it is the path the app wrote, and the file is linked only when it is still "
-                 "present in the extraction, since Telegram evicts cached media. Reference: "
+                 "present in the extraction. Reference: "
                  "Telegram-Android, "
                  "'TL_legacy_message.java (TL_message layer constructors)', "
                  "https://github.com/DrKLO/Telegram/blob/"
@@ -80,8 +80,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Telegram",
         "notes": "Both tables store their values as plain text. They are joined on the key "
-                 "column, which is the device address-book identifier Telegram used for the "
-                 "import, so one contact can carry several phone numbers. The uid column "
+                 "column, so one contact can carry several phone numbers. The uid column "
                  "links the imported contact to a Telegram user in the users table.",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
@@ -100,8 +99,8 @@ __artifacts_v2__ = {
         "name": "Telegram - Users",
         "description": (
             "Parses the Telegram users cached in the users table of cache4.db, including the "
-            "display name, username and last-seen status. Telegram caches a user record when "
-            "it encounters the account, so a user can appear here without any exchanged "
+            "display name, username and last-seen status. A user can appear here without any "
+            "exchanged "
             "messages."
         ),
         "author": "Alexis Brignoni",
@@ -111,8 +110,8 @@ __artifacts_v2__ = {
         "category": "Telegram",
         "notes": "The name column stores the display name and username separated by ';;;'. "
                  "The status column holds the last-seen time as a Unix timestamp when it is "
-                 "positive; the client also stores small negative values that encode a "
-                 "hidden or bucketed last-seen state rather than a time, so only positive "
+                 "positive; negative values also occur and are not a time; what they encode is "
+                 "not sourced here, so only positive "
                  "values are reported as a timestamp and the raw value is kept alongside.",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
@@ -141,7 +140,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Telegram",
         "notes": "The did column is the dialog peer id, resolved against the users and chats "
-                 "tables for a name. A folder_id of 1 is the Archived chat list. The message "
+                 "tables for a name. A folder_id of 1 is labelled Archived and any other value "
+                 "Main; that mapping is not sourced here. The message "
                  "count is taken from the messages_v2 rows carrying the same dialog id.",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
@@ -199,7 +199,7 @@ __artifacts_v2__ = {
         "description": (
             "Parses the cached profile detail Telegram stores for users in the user_settings "
             "table of cache4.db, reporting the profile bio and whether the user is blocked. "
-            "Telegram caches this record when a profile is opened, so it can exist for a user "
+            "The record can exist for a user "
             "with no exchanged messages."
         ),
         "author": "Alexis Brignoni",
@@ -329,9 +329,8 @@ __artifacts_v2__ = {
     "get_telegramChatHints": {
         "name": "Telegram - Frequent Chats",
         "description": (
-            "Parses the chat_hints table of cache4.db, which Telegram maintains to rank the "
-            "chats it suggests first. Each row carries a chat and a rating value, so the "
-            "table reflects which chats the client scored as most used."
+            "Parses the chat_hints table of cache4.db. Each row carries a chat and a rating "
+            "value, reported as stored; what the client uses the rating for is not sourced here."
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-05",
@@ -359,8 +358,8 @@ __artifacts_v2__ = {
         "name": "Telegram - VoIP Call Logs",
         "description": (
             "Parses the per-call WebRTC logs Telegram writes under cache/voip_logs. Each log "
-            "is named for the call it belongs to, so the file itself records that a call took "
-            "place and how long the call stack was running, independently of the message "
+            "is named for the call it belongs to, so the file records a call id and the span of "
+            "its logged timestamps, independently of the message "
             "history."
         ),
         "author": "Alexis Brignoni",
@@ -368,13 +367,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-05",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The log file name is the call id, which is the same id the phone call "
-                 "service message in the chat carries, so the two can be tied together. The "
-                 "timestamps inside the log are local-time strings with no timezone, so they "
-                 "are reported as recorded and only their difference is used for the logged "
-                 "span; the file modification time is used as the UTC reference point. A log "
-                 "spans the call stack running, which starts before and ends after the "
-                 "connected call, so the logged span is not the billed call duration. "
+        "notes": "The log file name is a call id; where a phone call service message in the chat "
+                 "carries the same id, the two can be tied together. The timestamps inside the "
+                 "log are local-time strings with no timezone, so they are reported as recorded "
+                 "and only their difference is used for the logged span; the file modification "
+                 "time is used as the UTC reference point. The logged span is the difference "
+                 "between the first and last timestamp in the log and is not a call duration. "
                  "Approach adapted from a Telegram parser contributed by WriteBlocked in "
                  "ALEAPP pull request 716.",
         "paths": ('*/org.telegram.messenger*/cache/voip_logs/*',),

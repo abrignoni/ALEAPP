@@ -17,13 +17,14 @@ __artifacts_v2__ = {
                  "HabitType enum, 0 Yes/No and 1 Numerical (HabitType.kt at iSoron/uhabits tag "
                  "v2.3.1, 516bf394f85a5a3ab25f476da230ae2a93815a40); any other value is reported "
                  "as stored. Frequency is shown as the stored numerator and denominator, so 1/1 is "
-                 "every day and 3/7 is three times a week. Archived marks a habit the person "
-                 "hid rather than deleted. Reminder Time is built from the stored reminder hour "
-                 "and minute and is blank where no reminder was set; it is a local wall-clock time "
+                 "every day and 3/7 is three times a week. Archived is the stored archived flag, "
+                 "reported as stored. Reminder Time is built from the stored reminder hour and "
+                 "minute and is blank where no reminder was set; it is a local wall-clock time "
                  "the app schedules against, not an instant, so it is reported as stored without "
                  "a timezone. Reminder Days is the stored day bitmask, reported as stored. The "
-                 "individual check-ins are in the Check-ins artifact, keyed by Habit ID. A habit's "
-                 "Name and Question are text the person wrote, so they can carry personal detail "
+                 "individual check-ins are in the Check-ins artifact, keyed by Habit ID. A "
+                 "habit's Name and Question are free text as stored, so they can carry personal "
+                 "detail "
                  "beyond the habit itself.",
         "paths": ('*/org.isoron.uhabits/databases/uhabits.db*',),
         "output_types": "standard",
@@ -52,9 +53,10 @@ __artifacts_v2__ = {
                  "than a moment: both check-ins on the tested device were stored at exactly "
                  "00:00:00 UTC, so the date is reported as stored and is deliberately not "
                  "converted into a local timezone, which would move it to the previous day for any "
-                 "negative offset. The check-in records the day a habit was marked, not the time "
-                 "of day the person marked it, and a Yes (manual) value is one entered in the app "
-                 "rather than derived by it. Notes is the optional note attached to a check-in.",
+                 "negative offset. The check-in records a day, not a time of day. Yes (manual) "
+                 "and Yes (automatic) are the constant names as Entry.kt declares them; what "
+                 "distinguishes them in the app was not established here. Notes is the optional "
+                 "note attached to a check-in.",
         "paths": ('*/org.isoron.uhabits/databases/uhabits.db*',),
         "output_types": "standard",
         "artifact_icon": "check-square",

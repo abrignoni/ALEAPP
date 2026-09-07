@@ -24,12 +24,11 @@ __artifacts_v2__ = {
                  "Search Term is the title field, which for a typed search is the text submitted. "
                  "Type read freeText on both rows of the tested device, where both searches were "
                  "typed rather than chosen from a suggestion. Place ID, Address, Category, "
-                 "Latitude, Longitude, Place Category ID and Href were null on every row for the "
-                 "same reason: they are the fields the app fills when an entry names a resolved "
-                 "place rather than a free text query, and they are reported because that is the "
-                 "case worth having on a device where it occurs. "
-                 "The list is a recent-searches list, so the app orders it and may drop older "
-                 "entries. Whether it is capped, and at what, was not established: the tested "
+                 "Latitude, Longitude, Place Category ID and Href were null on every row of the "
+                 "tested device, where both entries were free text; they are kept as columns "
+                 "because the JSON carries them, and whether the app fills them for an entry "
+                 "that names a resolved place was not exercised. The list is a recent-searches "
+                 "list. Whether it is capped, and at what, was not established: the tested "
                  "device held two entries, which cannot reach a cap. Either way an absent term "
                  "is not evidence it was never searched for.",
         "paths": ('*/com.here.app.maps/shared_prefs/FlutterSharedPreferences.xml',),
@@ -68,8 +67,8 @@ __artifacts_v2__ = {
                  "under a collection named for the test, whose title, address, coordinate, "
                  "category and category id were all known before the file was read. Fields that "
                  "held no value on the tested device are not reported. "
-                 "A Hive box is append only, so an entry that was written more than once keeps "
-                 "its earlier frames in the file. The current state is the last frame for a key, "
+                 "A key can appear in more than one frame of the box; the Hive format's append "
+                 "behaviour is not sourced here. The current state is the last frame for a key, "
                  "which is what is reported, and Earlier Writes counts the superseded frames that "
                  "remain in the file for that key. "
                  "Entry Key is the key the box stores the entry under. Rows are box entries, not "
@@ -82,7 +81,7 @@ __artifacts_v2__ = {
     },
     "here_wego_map_positions": {
         "name": "HERE WeGo Map Positions",
-        "description": "The last device location and last map view HERE WeGo recorded",
+        "description": "The last_location and last_map_view_center values HERE WeGo recorded",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -93,13 +92,14 @@ __artifacts_v2__ = {
         },
         "notes": "Up to two rows, read from the last_location and last_map_view_center values in "
                  "com.here.app.maps/shared_prefs/FlutterSharedPreferences.xml. "
-                 "Last Location is a bare latitude and longitude pair the app stores for the "
-                 "device's own last known position. Last Map View Center is a JSON object holding "
-                 "the centre of the map the last time it was displayed, together with a distance "
-                 "and a zoom level, which are reported as stored. "
-                 "These are two different things and the notes are worth reading before either is "
-                 "used. The first is where the app last placed the device. The second is where "
-                 "the map was last looking, which a person can pan anywhere without going there. "
+                 "Last Location is a bare latitude and longitude pair stored under the key "
+                 "last_location; what position it records was not sourced. Last Map View Center "
+                 "is a JSON object holding the centre of the map the last time it was displayed, "
+                 "together with a distance and a zoom level, which are reported as stored. These "
+                 "are two different things and the notes are worth reading before either is "
+                 "used. The meaning of each is taken from its key name only. A map view centre "
+                 "can be panned anywhere without the device going there, so the second is not a "
+                 "device position. "
                  "On the tested device they differed, the map centre sitting about 2.7 kilometres "
                  "from the recorded device position. "
                  "Neither value carries a timestamp, so neither can be placed in time from this "
@@ -110,7 +110,7 @@ __artifacts_v2__ = {
     },
     "here_wego_settings": {
         "name": "HERE WeGo Settings",
-        "description": "HERE WeGo preferences, including whether the terms were accepted",
+        "description": "HERE WeGo preferences from FlutterSharedPreferences.xml",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -123,17 +123,15 @@ __artifacts_v2__ = {
                  "com.here.app.maps/shared_prefs/FlutterSharedPreferences.xml, with the flutter. "
                  "prefix the Flutter plugin adds stripped from the reported name. Type is the XML "
                  "element the value was stored as. "
-                 "Setting names are the app's own. is_terms_and_privacy_accepted records whether "
-                 "the service terms were accepted, is_ftu_complete whether first time use "
-                 "finished, and first_session_monthly_date carries a timestamp for the first "
-                 "session that does end in Z and so is UTC, unlike the search timestamps in the "
-                 "Recent Searches artifact. prefs_app_version carries the app version the "
-                 "preferences were last written by. "
-                 "recentSearchResults, last_location and last_map_view_center are reported by the "
-                 "other three artifacts in this module and are skipped here, so that a long "
-                 "encoded value does not sit in this table. Every other key is reported as "
-                 "stored, including keys this module does not interpret, because the set of keys "
-                 "changes between releases and an unrecognised one is still evidence of a "
+                 "Setting names are the app's own. The meanings of "
+                 "is_terms_and_privacy_accepted, is_ftu_complete and prefs_app_version are not "
+                 "sourced beyond their names. first_session_monthly_date carries a timestamp "
+                 "that ends in Z and so is UTC, unlike the search timestamps in the Recent "
+                 "Searches artifact. recentSearchResults, last_location and last_map_view_center "
+                 "are reported by the other three artifacts in this module and are skipped here, "
+                 "so that a long encoded value does not sit in this table. Every other key is "
+                 "reported as stored, including keys this module does not interpret, because an "
+                 "unrecognised key is still a stored "
                  "setting.",
         "paths": ('*/com.here.app.maps/shared_prefs/FlutterSharedPreferences.xml',),
         "output_types": "standard",

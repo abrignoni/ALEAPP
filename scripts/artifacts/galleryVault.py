@@ -54,7 +54,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "The folder type labels come from the names the app gives its own default "
-                 "folders in this table; a type of 0 is used by folders the user creates.",
+                 "folders in this table; a type of 0 matched no default folder name and is "
+                 "labelled 'User created', a reading that is not sourced.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -90,9 +91,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-06",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "File names follow PS_YYYYMMDD_HHMMSS. The app writes these files in device local "
-                 "time, so the reported value is labelled as local rather than UTC. These images "
-                 "survive on external storage after the database rows are gone.",
+        "notes": "File names follow PS_YYYYMMDD_HHMMSS. The time in the file name carries no "
+                 "zone and is reported as stored under Capture Time (device local); the zone the "
+                 "app writes it in was not sourced. The images sit on external storage and are "
+                 "reported whether or not a matching database row exists.",
         "paths": ('*/.galleryvault_*/BreakInReports/*',),
         "output_types": "standard",
         "artifact_icon": "camera",
@@ -162,8 +164,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-06",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "The app ships with preset entries; a visit count of zero and empty timestamps "
-                 "indicate a preset that was not opened on the device.",
+        "notes": "Visit Count and the timestamps are reported as stored. Whether the table holds "
+                 "entries the app ships with was not sourced, so a row is not by itself evidence "
+                 "that the page was opened on the device.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",
@@ -198,7 +201,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-06",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "The export_unhidden_history table is absent from older schema versions.",
+        "notes": "The export_unhidden_history table can be absent; when it is, no rows are "
+                 "reported.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "upload",
@@ -234,7 +238,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-06",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "This log lives outside the app sandbox and can outlive the application database.",
+        "notes": "This log lives on external storage outside the app sandbox.",
         "paths": ('*/.galleryvault_*/backup/file_action_log.db*',),
         "output_types": "standard",
         "artifact_icon": "list",
@@ -258,8 +262,9 @@ __artifacts_v2__ = {
             "Every row reports the interpreted preference label together with the "
             "original shared_prefs key so the value can be verified directly against "
             "Kidd.xml. LockPin components are presented as SHA1 and MD5. "
-            "GalleryVault supports launcher icon disguise, including a calculator "
-            "disguise. Last Android ID is the value used elsewhere in this parser "
+            "Icon Disguise Enabled and Calculator Disguise Shortcut ID are reported from the "
+            "corresponding preference keys as stored. Last Android ID is the value used "
+            "elsewhere in this parser "
             "to derive the DES key for AccountProfile.xml. Cloud Storage Type should "
             "be cross-referenced against galleryvault_cloud_account when cloud_cache.db "
             "is present."
@@ -284,8 +289,8 @@ __artifacts_v2__ = {
         "notes": (
             "GalleryVault encrypts account profile values using DES. "
             "The account profile is decrypted using key material derived "
-            "from the Android ID recorded in Kidd.xml. The decrypted "
-            "AccountInfo structure may contain an account authentication token."
+            "from the Android ID recorded in Kidd.xml. The Account Token column reports the "
+            "token field of the decrypted AccountInfo structure where present."
         ),
         "paths": (
             '*/com.thinkyeah.galleryvault/shared_prefs/AccountProfile.xml*',
@@ -306,9 +311,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
-            "drive_account_id is the cloud account (e.g. a Google account email) that "
-            "GalleryVault is syncing hidden vault content to, independent of the device "
-            "owner's own accounts. This ties hidden content to an off-device destination."
+            "drive_account_id is the account identifier stored for the cloud provider, reported "
+            "as stored. It names an off-device account; whether any vault content reached it is "
+            "not established by this table (see the Cloud Files and Cloud Upload Tasks "
+            "artifacts)."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -322,7 +328,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "Mirrors the local vault folder structure as it exists in the cloud copy.",
+        "notes": "Rows are the cloud_folders table entries with parent paths resolved from the "
+                 "same table.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -339,10 +346,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
-            "file_encryption_key is the key GalleryVault used to encrypt this file's "
-            "content before upload; it is not the DES key used elsewhere in this parser. "
-            "It is presented here so it is available if the corresponding cloud object "
-            "is later obtained through legal process against the cloud provider."
+            "file_encryption_key is reported as stored; it is a per-file value distinct from the "
+            "DES key used elsewhere in this parser, and what it encrypts was not sourced."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -362,9 +367,8 @@ __artifacts_v2__ = {
         "notes": (
             "Change Action Value is presented as the raw numeric code recorded by the "
             "app; the mapping to add/modify/delete has not been confirmed against a "
-            "large enough corpus to label with confidence. This log can outlive the "
-            "file or folder row it refers to, so Entry Name may be blank for entries "
-            "later removed from cloud_files/cloud_folders."
+            "large enough corpus to label with confidence. Entry Name is blank when no row in "
+            "cloud_files or cloud_folders carries the entry's uuid."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -382,10 +386,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
-            "A row here shows a sync was attempted even when it never completed "
-            "(Task State/Task Error Code non-zero and bytes uploaded less than bytes "
-            "total), which is evidence distinct from a finished upload in "
-            "galleryvault_cloud_files."
+            "Task State, Task Error Code, File Bytes Uploaded and File Bytes Total are reported "
+            "as stored; the meaning of the state and error codes was not sourced, and a row here "
+            "is a queued task record rather than a completed upload."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",

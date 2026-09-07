@@ -21,20 +21,21 @@ __artifacts_v2__ = {
                  "image preview (Constants.java lines 263 to 275 at QuantumBadger/RedReader tag "
                  "v1.26, c250817d4eba13f5ed2b26d33fbc9044095ff8aa); any other value is reported as "
                  "stored. "
-                 "The type is what decides how much weight a row carries. A Subreddit about row and a "
-                 "Post list row are fetched when a subreddit is opened, so together they date a "
-                 "visit to that subreddit; on the tested device the two subreddits opened produced "
-                 "exactly two about rows and four list rows, and the URL names the subreddit. A "
-                 "Comment list row is weaker: the app precaches comment threads for the posts it "
-                 "lists (the same source file defines a COMMENT_PRECACHE download priority at line "
-                 "256), so a comment row records that the thread was fetched, not that anyone "
-                 "opened it. The tested device opened two threads and holds seventy comment rows. "
-                 "The thread's post id is in the URL, so a row still names a post that was on "
-                 "screen in a listing. Thumbnail and preview rows are images fetched to draw the "
-                 "listing. Session is the app's per-request identifier. Status was 2 on every "
-                 "tested row and is reported as stored. The cache content itself lives in files "
-                 "under the app's cache directory named by the id here and is not parsed. This is "
-                 "a cache, so the app prunes old entries; an absence here is not evidence a request "
+                 "The type is what decides how much weight a row carries. On the tested device, "
+                 "opening two subreddits produced exactly two Subreddit about rows and four Post "
+                 "list rows, and the URL names the subreddit, so an about row and a list row "
+                 "together date a fetch of that subreddit; whether they are fetched other than "
+                 "by opening it was not exercised. A Comment list row is weaker: the app "
+                 "precaches comment threads for the posts it lists (the same source file defines "
+                 "a COMMENT_PRECACHE download priority at line 256), so a comment row records "
+                 "that the thread was fetched, not that anyone opened it. The tested device "
+                 "opened two threads and holds seventy comment rows. The thread's post id is in "
+                 "the URL, so a row still names a post that was in a fetched listing. Thumbnail "
+                 "and preview rows are image fetches. Session is the app's per-request "
+                 "identifier. Status was 2 on every tested row and is reported as stored. The "
+                 "cache content itself lives in files under the app's cache directory named by "
+                 "the id here and is not parsed. This is a cache, and an absence here is not "
+                 "evidence a request "
                  "was never made.",
         "paths": ('*/org.quantumbadger.redreader/databases/cache.db*',),
         "output_types": "standard",
@@ -42,7 +43,8 @@ __artifacts_v2__ = {
     },
     "redreader_subreddits": {
         "name": "RedReader - Subreddits Opened",
-        "description": "Parses the cached subreddit records from the RedReader Android app, one per subreddit that was opened.",
+        "description": "Parses the cached subreddit records from the RedReader Android app, one "
+                       "per subreddit whose details the app fetched.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
@@ -60,9 +62,10 @@ __artifacts_v2__ = {
                  "signed-in account's file begins with the SHA-1 of its username. The Account Hash "
                  "column carries that prefix, which lets an examiner test a suspected username "
                  "against the file. "
-                 "The app writes a row here when a subreddit's details are fetched, which happens "
-                 "when the subreddit is opened, so on the tested device the two rows are exactly "
-                 "the two subreddits opened, each with a Cached time matching the visit. Cached is "
+                 "The app writes a row here when a subreddit's details are fetched; on the "
+                 "tested device opening two subreddits produced exactly those two rows, each "
+                 "with a Cached time matching the visit, and whether a row is written other than "
+                 "by opening the subreddit was not exercised. Cached is "
                  "Unix milliseconds reported as UTC. The remaining columns are the subreddit's own "
                  "public metadata as Reddit returned it: Display Name, Title, Subscribers, whether "
                  "it is marked Over 18, the Created time Reddit records for the subreddit (Unix "
@@ -93,10 +96,11 @@ __artifacts_v2__ = {
                  "Kind Subscriptions rows come from the objects table of "
                  "databases/rr_subscriptions.db, one per account, with the subreddit list the app "
                  "holds for it as a semicolon-separated string and Updated as Unix milliseconds "
-                 "reported as UTC. For the anonymous account that list is the app's own shipped "
-                 "default set of subreddits, not choices anyone made, which is what the tested "
-                 "device shows; for a signed-in account it is that account's real subscriptions "
-                 "as last synced. The Account Hash column gives the SHA-1 of the username, so the "
+                 "reported as UTC. For the anonymous account on the tested device that list held "
+                 "subreddits none of which had been chosen there, and whether that is a default "
+                 "set the app ships was not sourced. For a signed-in account the list's content "
+                 "was not exercised here. The Account Hash column gives the SHA-1 of the "
+                 "username, so the "
                  "row can be tied to the per-account subreddit database described in the "
                  "Subreddits Opened artifact. The rr_multireddit_subscriptions.db store holds the "
                  "same shape for multireddits and was empty apart from a placeholder row on the "

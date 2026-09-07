@@ -14,20 +14,15 @@ __artifacts_v2__ = {
                  "<calls> element. Backup Time is that element's backup_date attribute, Unix "
                  "milliseconds, reported as UTC; on the tested image it matched the run to the "
                  "second. Item Count is the count attribute the app wrote, and Items Parsed is "
-                 "how many child elements this module actually read, so the two disagreeing "
-                 "marks a truncated or partly written file rather than being hidden. Backup Set "
-                 "is the app's own UUID for the run and is what ties a backup file to its "
-                 "siblings. Backup Type is the type attribute, 'full' on the tested image. "
-                 "The app offers a cloud service or local storage, and only local files are "
-                 "visible in an extraction. On the tested device it was set to the app's own files "
-                 "directory, which is why the path is inside the app container, and that is the "
-                 "only location exercised here. Its dialog also offers a folder of the user's "
-                 "choosing; a backup written there would sit outside this glob and go unreported, "
-                 "which is a limit worth knowing rather than a claim about where such a device "
-                 "puts them. "
-                 "A backup file is a copy of the messages as they were at that moment, so it can "
-                 "hold messages that have since been deleted from the device, which is the reason "
-                 "the file is worth reading even when the live message store is also available.",
+                 "how many child elements this module actually read, so a disagreement between "
+                 "the two is visible rather than hidden. Backup Set is the backup_set attribute "
+                 "as stored. Backup Type is the type attribute, 'full' on the tested image. On "
+                 "the tested device the backup location was the app's own files directory, which "
+                 "is why the path is inside the app container, and that is the only location "
+                 "exercised here. A backup written to another folder, or held only by a cloud "
+                 "service, would sit outside this glob and go unreported. A backup file records "
+                 "the messages as they stood when it was written, so it can hold messages that "
+                 "are no longer in the live message store.",
         "paths": ('*/com.riteshsahu.SMSBackupRestore/files/sms-*.xml',
                   '*/com.riteshsahu.SMSBackupRestore/files/calls-*.xml'),
         "output_types": "standard",
@@ -55,14 +50,12 @@ __artifacts_v2__ = {
                  "Direction is decoded from the type attribute, where 1 is a received message and "
                  "2 is a sent one, taken from the values present rather than from any published "
                  "source, so anything else is reported as stored. Read is the app's read flag as "
-                 "stored. Contact Name is what the app resolved from the address book at backup "
-                 "time and read '(Unknown)' on all three rows of the tested image, where no "
-                 "contacts were saved. Whether it holds a name when the number is in contacts "
-                 "was not exercised. "
-                 "Only <sms> elements are read here. The app writes MMS and their attachments "
-                 "into the same file as <mms> elements with base64 parts, and call logs into a "
-                 "separate calls-*.xml; neither was present on the tested image, so neither is "
-                 "parsed and both are named here so the gap is visible rather than silent.",
+                 "stored. Contact Name is the contact_name attribute as stored; it read "
+                 "'(Unknown)' on all three rows of the tested image, where no contacts were "
+                 "saved. Whether it holds a name when the number is in contacts was not "
+                 "exercised. Only <sms> elements are read here. <mms> elements and calls-*.xml "
+                 "files are not parsed; neither was present on the tested image, and both are "
+                 "named here so the gap is visible rather than silent.",
         "paths": ('*/com.riteshsahu.SMSBackupRestore/files/sms-*.xml',),
         "output_types": "standard",
         "artifact_icon": "message-square",

@@ -64,8 +64,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "eBay",
         "notes": "Read from the suggestions table of suggestions.db, whose schema is the one the "
-                 "Android platform's SearchRecentSuggestionsProvider creates. This store holds "
-                 "terms entered on the device rather than suggestions downloaded from a server. "
+                 "Android platform's SearchRecentSuggestionsProvider creates. Whether a term was "
+                 "entered on the device or supplied by a server is not recorded in the store; "
+                 "the observations that follow bear on that question. "
                  "On the tested samples the row ids were gapped rather than a contiguous run, "
                  "every stored date was distinct and they spanned 122, 205 and 183 days, no two "
                  "consecutive rows were written within a second of each other, the schema carries "
@@ -202,10 +203,11 @@ __artifacts_v2__ = {
                  "samples the share table's user id equalled the identifier the network log "
                  "recorded, and the followed seller table's hashed user id equalled the one the "
                  "recent search table recorded, which is what allows rows in those tables to be "
-                 "attributed. More than one identifier of the same form in one extraction means "
-                 "more than one account was used on the device; two tested samples held two and "
-                 "three distinct recent search user ids. No account name, email address or display "
-                 "name is stored in these tables. Field mapping was done against private samples; "
+                 "attributed. More than one identifier of the same form in one extraction shows "
+                 "that more than one account identifier was stored; two tested samples held two "
+                 "and three distinct recent search user ids. No account name, email address or "
+                 "display name was found in these tables on the tested samples. Field mapping "
+                 "was done against private samples; "
                  "no sample data is recorded for them.",
         "paths": ('*/com.ebay.mobile/databases/nautilus_db*',),
         "output_types": ["html", "tsv", "lava"],
@@ -219,15 +221,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "eBay",
-        "notes": "Read from the FtsMetadataEntity table of nautilus_db, which is the record the app "
-                 "wrote when it last fetched its feature configuration. It states the app version, "
-                 "the eBay marketplace site and country, the language, the Android SDK level and "
-                 "the environment the app was running against, and the fetch time as a Unix "
-                 "millisecond value. Site Code and Country Code are separate values that agree on a "
-                 "marketplace whose site and country codes are the same letters. The companion "
-                 "FtsDataEntity table "
-                 "values themselves, which are settings the server sent to the device rather than "
-                 "anything the user did, so its rows are counted here and not listed. Field "
+        "notes": "Read from the FtsMetadataEntity table of nautilus_db. It states the app "
+                 "version, the eBay marketplace site and country, the language, the Android SDK "
+                 "level and the environment the app was running against, and the fetch time as a "
+                 "Unix millisecond value. Site Code and Country Code are separate values that "
+                 "agree on a marketplace whose site and country codes are the same letters. The "
+                 "companion FtsDataEntity table holds feature configuration values; its rows are "
+                 "counted here and not listed. Field "
                  "mapping was done against private samples; no sample data is recorded for them.",
         "paths": ('*/com.ebay.mobile/databases/nautilus_db*',),
         "output_types": ["html", "tsv", "lava"],
@@ -243,8 +243,8 @@ __artifacts_v2__ = {
         "category": "eBay",
         "notes": "Read from the key_value table of nautilus_db, one row per entry, with the value "
                  "taken from whichever of the table's typed columns the entry populated and the "
-                 "column named on the row. Timestamp is a Unix millisecond value and is when the "
-                 "app last wrote that entry. Entries are keyed by the app's own user id as well as "
+                 "column named on the row. Timestamp is a Unix millisecond value, reported as "
+                 "stored. Entries are keyed by the app's own user id as well as "
                  "by name, so the same key can appear more than once for different accounts and "
                  "the user id is reported. What the app does with each entry is not established "
                  "here, so no meaning is asserted beyond the key name the app itself uses. Two "

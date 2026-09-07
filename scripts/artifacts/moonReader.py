@@ -25,21 +25,18 @@ __artifacts_v2__ = {
                  "America/New_York zone, and the app filed it under the previous day. Day (first "
                  "entry) is therefore rendered as a plain date with no zone conversion, since "
                  "converting a local day count as though it were UTC would move it. "
-                 "day's milliseconds and words, and 19.64% is how far through the file the reader "
-                 "had reached. A file read across several days carries several such groups, which "
-                 "was not exercised here, so the column is passed through rather than split. "
-                 "Reading Time (ms) and Words Read are the whole-file totals. "
-                 "There is no absolute timestamp in this table, so a row dates reading only to "
-                 "the day numbers inside Per-day Detail, and the Day (first entry) column is that "
-                 "first day number converted to a date for convenience. "
-                 "A row is evidence the app had the file open long enough to count time against "
-                 "it, not that a person read it. "
-                 "Other tables in the same database are not parsed here and were all empty on the "
+                 "A file read across several days carries several such groups, which was not "
+                 "exercised here, so the column is passed through rather than split. Reading "
+                 "Time (ms) and Words Read are the whole-file totals. There is no absolute "
+                 "timestamp in this table, so a row dates reading only to the day numbers inside "
+                 "Per-day Detail, and the Day (first entry) column is that first day number "
+                 "converted to a date for convenience. A row is evidence the app had the file "
+                 "open long enough to count time against it, not that a person read it. Other "
+                 "tables in the same database are not parsed here and were all empty on the "
                  "tested image: books is the library shelf, and the tested book was read without "
                  "being added to it, which is worth knowing because it means statistics records "
-                 "reading for a file that never appears in books; notes holds highlights and "
-                 "annotations; tmpbooks is a scratch list; covers2 holds cover images. Each would "
-                 "carry data on a device that used those features.",
+                 "reading for a file that never appears in books; notes, tmpbooks and covers2 "
+                 "were empty on the tested image and are not parsed.",
         "paths": ('*/com.flyersoft.moonreader/databases/mrbooks.db*',),
         "output_types": "standard",
         "artifact_icon": "book-open",

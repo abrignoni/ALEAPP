@@ -1,7 +1,8 @@
 __artifacts_v2__ = {
     "inshot_projects": {
         "name": "InShot Projects",
-        "description": "Editing projects InShot saved, with when each was created and how often it was opened",
+        "description": "Editing project files InShot saved, with the stored creation time and "
+                       "open count",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -12,20 +13,19 @@ __artifacts_v2__ = {
         },
         "notes": "One row per .profile file under "
                  "com.camerasideas.instashot/files/inshot/.VideoProfile. Each is a JSON document "
-                 "describing one editing project, written when the project is saved. "
-                 "Created is the file's own CreateTime, Unix milliseconds, reported as UTC. The "
-                 "file name carries a second time, as Video_<yyyyMMdd>_<HHmmssSSS>, and that one "
-                 "is **device local**: on the tested device the name read 114256229 for a "
-                 "CreateTime of 15:42:44 UTC, four hours ahead, so the two are reported side by "
-                 "side rather than one being converted into the other. They also differ by a few "
-                 "seconds, the name appearing to mark the save and CreateTime the creation. "
-                 "Open Count is the file's openCount. Timeline Duration is MediaClipConfig.MCC_2 "
-                 "in microseconds, mapped by loading a clip of known length: a 30 second clip "
-                 "gave 30000000. Clips is how many entries its ConfigJson holds. "
-                 "Cover is the still InShot renders for the project, kept under .ProfileCover and "
-                 "named by a hash; it is surfaced as an image, so the project can be recognised "
-                 "without opening anything. Label is the project's name and was empty on the "
-                 "tested device, which is the app's default until a project is renamed. "
+                 "describing one editing project. Created is the file's own CreateTime, Unix "
+                 "milliseconds, reported as UTC. The file name carries a second time, as "
+                 "Video_<yyyyMMdd>_<HHmmssSSS>, and that one is **device local**: on the tested "
+                 "device the name read 114256229 for a CreateTime of 15:42:44 UTC, four hours "
+                 "ahead, so the two are reported side by side rather than one being converted "
+                 "into the other. They also differed by a few seconds on the tested device; "
+                 "which event each marks was not established. Open Count is the file's "
+                 "openCount. Timeline Duration is MediaClipConfig.MCC_2 in microseconds, mapped "
+                 "by loading a clip of known length: a 30 second clip gave 30000000. Clips is "
+                 "how many entries its ConfigJson holds. Cover is the still InShot renders for "
+                 "the project, kept under .ProfileCover and named by a hash; it is surfaced as "
+                 "an image, so the project can be recognised without opening anything. Label is "
+                 "the project's name field and was empty on the tested device. "
                  "Watermark is the hasWatermark flag as stored. "
                  "A row is evidence the app saved a project, not that anything was exported. The "
                  "media the project refers to is reported by the Project Clips artifact.",
@@ -47,8 +47,8 @@ __artifacts_v2__ = {
         },
         "notes": "One row per clip inside a project's MediaClipConfig.ConfigJson, read from the "
                  "same .profile files as the Projects artifact. This is the part that names "
-                 "files: a project records the full path of every piece of media placed on its "
-                 "timeline, so it can evidence that a file was edited even when that file is no "
+                 "files: a project records the full path of each piece of media placed on its "
+                 "timeline, so the path is available even when that file is no "
                  "longer on the device. "
                  "The keys inside a clip are obfuscated and were mapped by loading media of "
                  "known length and path, not from any published source. Media Path is MCI_1's "

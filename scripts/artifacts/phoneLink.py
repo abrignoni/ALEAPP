@@ -18,7 +18,8 @@ __artifacts_v2__ = {
                  "datastore/datastore-preferences-core/src/main/proto/preferences.proto.\n"
                  "A sibling ACCOUNT_DATA_NAME file holds one or more opaque encoded blobs per "
                  "account, keyed by the account key with an attribute name appended. The values "
-                 "are encoded envelopes rather than plain text, and some are credential material "
+                 "are encoded envelopes rather than plain text, and some attribute names "
+                 "indicate credential material "
                  "such as a private key or an identity token, so no value from that file is "
                  "reported. The attribute names are reported as Stored Attributes, with their "
                  "count, so an examiner knows what the app held for each account.\n"
@@ -61,8 +62,7 @@ __artifacts_v2__ = {
     "phonelink_content_access": {
         "name": "Phone Link - Content Access Events",
         "description": "Rows from the content_access_event table of the app's eventstore, each "
-                       "recording that content of a stored type was accessed through the link "
-                       "and for how long",
+                       "with a start time, a stored content type and a stored duration",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -70,14 +70,14 @@ __artifacts_v2__ = {
         "category": "Phone Link",
         "notes": "com.microsoft.appmanager is the phone side of Microsoft Phone Link, which pairs "
                  "a phone with a Windows PC. content_access_event is the only table in this "
-                 "package holding a dated user-driven event on the corpora below. start_time is "
-                 "Unix milliseconds and duration is stored alongside it without a recorded unit, "
-                 "so Duration (as stored) is reported unconverted. Content Type (as stored) and "
+                 "package holding dated event rows on the corpora below. start_time is Unix "
+                 "milliseconds and duration is stored alongside it without a recorded unit, so "
+                 "Duration (as stored) is reported unconverted. Content Type (as stored) and "
                  "Access Was Useful (as stored) are the schema's own integer columns; no source "
-                 "for their code lists was located, so they are not expanded into labels. Content "
-                 "Type was 22 on every row of seven of the eight corpora below and carried "
-                 "fifteen different values on the eighth. The table is a rolling buffer the app "
-                 "trims, so the database and its write-ahead log hold different row sets: this "
+                 "for their code lists was located, so they are not expanded into labels. "
+                 "Content Type was 22 on every row of seven of the eight corpora below and "
+                 "carried fifteen different values on the eighth. The database and its "
+                 "write-ahead log hold different row sets: this "
                  "artifact reads both and reports their union, with Reading naming where each row "
                  "was found. Rows marked as recovered from the pre-log database are ones the "
                  "current state no longer carries, and on the corpora below the recovered share "
@@ -98,32 +98,31 @@ __artifacts_v2__ = {
     },
     "phonelink_phone_apps": {
         "name": "Phone Link - Linked Phone Apps",
-        "description": "Rows from the phoneAppsTable of PhoneAppsDatabase, the inventory of "
-                       "applications the phone reported to the paired PC, with each one's "
+        "description": "Rows from the phoneAppsTable of PhoneAppsDatabase, an inventory of "
+                       "installed applications the Phone Link app keeps, with each one's "
                        "package name and version",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Phone Link",
-        "notes": "PhoneAppsDatabase is the list of installed applications the phone side sends "
-                 "to the paired PC so they can be launched from it, so it is a record of what "
-                 "was installed built by a different subsystem than the package manager and can "
-                 "be compared against it. Last Updated is Unix milliseconds and held the same "
-                 "value on all 75 rows of the corpus below, so it dates the inventory as a "
-                 "whole rather than each application; it is kept because that is the time the "
-                 "inventory was written. Favorite Rank was 0 on every row there, so no "
-                 "application had been pinned in the app, and the column is kept because a "
-                 "non-zero value would identify one that had been. The same database holds "
+        "notes": "PhoneAppsDatabase is a list of installed applications kept by the Phone Link "
+                 "app; how the app uses it is not sourced here. It is a record of what was "
+                 "installed built by a different subsystem than the package manager and can be "
+                 "compared against it. Last Updated is Unix milliseconds and held the same value "
+                 "on all 75 rows of the corpus below, so on that corpus it dates the inventory "
+                 "as a whole rather than each application; what event it marks is not "
+                 "established. Favorite Rank was 0 on every row there and is reported as stored; "
+                 "what a non-zero value marks was not exercised here. The same database holds "
                  "browserHistoryTable, whose columns include a web address and a favicon, and "
                  "recentAppsTable, whose columns include a task id and an intent action; both "
-                 "were present and empty on every corpus below and neither has an artifact "
-                 "here, so their absence is a checked result rather than an omission. A corpus "
-                 "with rows in browserHistoryTable would close a real gap, since that table is "
-                 "where the phone's browsing reaches the PC. content.db in the same package "
-                 "holds a content_view table, 183 rows on the corpus below, carrying only a "
-                 "content type, an id, two sequence numbers and a checksum; it is the sync "
-                 "bookkeeping behind the tables above and names nothing an examiner could act "
+                 "were present and empty on every corpus below and neither has an artifact here, "
+                 "so their absence is a checked result rather than an omission. A corpus with "
+                 "rows in browserHistoryTable would close a real gap, since its columns name a "
+                 "web address and a favicon. content.db in the same package holds a content_view "
+                 "table, 183 rows on the corpus below, carrying only a content type, an id, two "
+                 "sequence numbers and a checksum; its purpose is not established here and it "
+                 "names nothing an examiner could act "
                  "on, so it is not reported.",
         "paths": ('*/com.microsoft.appmanager/databases/PhoneAppsDatabase*',),
         "output_types": "standard",

@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "notes": (
             "Tested on version 5.255.0 (Oct, 31st 2025). Cached Tab Preview Time is decoded "
             "from the tab preview file name, which is a number read as a Unix time in "
-            "milliseconds; that reading was established through testing and the file name is "
+            "milliseconds; that reading is not documented and the file name is "
             "its only basis. It is rendered in UTC. Tab Last Accessed is the stored "
             "tabs.lastAccessTime string reproduced as recorded, with the ISO 'T' separator "
             "replaced by a space; the file carries no time zone for it, and it is reported as "
@@ -126,7 +126,7 @@ __artifacts_v2__ = {
         "category": "DuckDuckGo",
         "notes": (
             "Timestamp is decoded from the thumbnail file name, which is a number read as a "
-            "Unix time in milliseconds; that reading was established through testing and the "
+            "Unix time in milliseconds; that reading is not documented and the "
             "file name is its only basis. It is rendered in UTC. Referenced In Tabs Table "
             "records whether the file name appears in the tabs table of app.db; it describes "
             "that reference only and does not establish whether a tab is open or closed."

@@ -11,15 +11,16 @@ __artifacts_v2__ = {
             "emu_a15_oss_v4": "AntennaPod 3.12.0 | 1 rows",
         },
         "notes": "One row per entry in the Feeds table of databases/Antennapod.db. AntennaPod is "
-                 "an open source podcast manager. Each row is a podcast the person subscribed to, "
-                 "with the Title, an optional Custom Title the user set, the Author, the Feed URL "
-                 "(the RSS download_url), the Website link, Language, Type, the feed Description, "
-                 "and Last Update. Last Update is the feed's own published timestamp string as "
-                 "stored (an RFC-822 date such as 'Tue, 25 Aug 2026 21:54:28 GMT'), not converted. "
-                 "On the tested device one feed was added by RSS address (the Changelog podcast). "
-                 "The feed content itself (episode list) is in the Episodes artifact. Subscribing "
-                 "to a feed causes the app to download the feed's episode catalogue, so the "
-                 "presence of a feed reflects a subscription the user made.",
+                 "an open source podcast manager. Each row is a feed in the Feeds table, with "
+                 "the Title, an optional Custom Title, the Author, the Feed URL (the RSS "
+                 "download_url), the Website link, Language, Type, the feed Description, and "
+                 "Last Update. Last Update is the last_update string as stored (an RFC-822 date "
+                 "such as 'Tue, 25 Aug 2026 21:54:28 GMT'), not converted; whether it is the "
+                 "feed's own published date or the time of the app's last fetch was not "
+                 "established. On the tested device one feed was added by RSS address (the "
+                 "Changelog podcast). The feed content itself (episode list) is in the Episodes "
+                 "artifact. Whether the Feeds table can hold entries other than subscriptions a "
+                 "person added was not established.",
         "paths": ('*/de.danoeh.antennapod/databases/Antennapod.db*',),
         "output_types": "standard",
         "artifact_icon": "rss",
@@ -51,11 +52,10 @@ __artifacts_v2__ = {
                  "Unix millisecond times reported as UTC; these were empty on the tested device "
                  "because the episode was marked played rather than played with a saved position, "
                  "and Downloaded was No for every row because no episode audio was downloaded. "
-                 "Duration is formatted from milliseconds. File Size is the audio file size in "
-                 "bytes as advertised by the feed. Media URL is the episode's audio download URL "
-                 "and Episode Link is its web page. The SimpleChapters table (chapter markers "
-                 "parsed from each episode's feed metadata) is feed-supplied content, not user "
-                 "activity, and is not parsed.",
+                 "Duration is formatted from milliseconds. File Size is the FeedMedia filesize "
+                 "value as stored. Media URL is the episode's audio download URL and Episode "
+                 "Link is its web page. The SimpleChapters table (chapter markers for episodes) "
+                 "is not parsed.",
         "paths": ('*/de.danoeh.antennapod/databases/Antennapod.db*',),
         "output_types": "standard",
         "artifact_icon": "headphones",

@@ -7,7 +7,23 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-24",
         "requirements": "BeautifulSoup",
         "category": "Email",
-        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from numbered fields of the zipped message protobuf. Protobuf field positions were established through testing; Mailed By and Signed by reflect stored header values and are not verified against Authentication-Results. Message is the readable text extracted from the stored HTML body (tags, styling and repeated whitespace removed); Links lists the distinct link targets the same body carries, in document order, as stored. The unmodified body stays in the source database. The app keeps one bigTopDataDB.<id> store per signed-in account; every matched store is read, across every Android user of the device, with duplicate storage spellings (data/data, data/user/<n>, data_mirror) collapsed first and stores read in sorted path order. Account ID is the numeric store id as stored. The Account column is filled only when the Java String.hashCode of an address recorded in the same app instance's Gmail.xml equals the store id, which held for every store in the tested images; a store with no matching recorded address keeps a blank Account. A store that cannot be opened or queried is logged and skipped without dropping the other accounts' rows.",
+        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from "
+                 "numbered fields of the zipped message protobuf. Protobuf field positions are "
+                 "not documented and were assigned from the values seen on tested images; Mailed "
+                 "By and Signed by reflect stored header values and are not verified against "
+                 "Authentication-Results. Message is the readable text extracted from the stored "
+                 "HTML body (tags, styling and repeated whitespace removed); Links lists the "
+                 "distinct link targets the same body carries, in document order, as stored. The "
+                 "unmodified body stays in the source database. The app keeps one "
+                 "bigTopDataDB.<id> store per signed-in account; every matched store is read, "
+                 "across every Android user of the device, with duplicate storage spellings "
+                 "(data/data, data/user/<n>, data_mirror) collapsed first and stores read in "
+                 "sorted path order. Account ID is the numeric store id as stored. The Account "
+                 "column is filled only when the Java String.hashCode of an address recorded in "
+                 "the same app instance's Gmail.xml equals the store id, which held for every "
+                 "store in the tested images; a store with no matching recorded address keeps a "
+                 "blank Account. A store that cannot be opened or queried is logged and skipped "
+                 "without dropping the other accounts' rows.",
         "paths": ('*/com.google.android.gm/databases/bigTopDataDB.*','*/com.google.android.gm/files/downloads/*/attachments/*/*.*','*/com.google.android.gm/shared_prefs/Gmail.xml'),
         "output_types": "standard",
         "artifact_icon": "inbox",

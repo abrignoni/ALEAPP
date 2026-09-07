@@ -46,7 +46,8 @@ __artifacts_v2__ = {
     },
     "uber_shortcuts": {
         "name": "Uber - Suggested Destinations",
-        "description": "Parses the shortcuts cache, which holds destinations offered to the rider.",
+        "description": "Parses the shortcuts cache of destination entries held by the Uber "
+                       "Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
@@ -86,7 +87,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Uber",
-        "notes": "The record describes the service area the app last loaded products for. Vehicle views "
+        "notes": "The record describes a service area; whether it is the one the app last loaded "
+                 "products for is not established. Vehicle views "
                  "are reported as a count and a comma separated list of the identifiers the record "
                  "orders them by. Field mapping was done against a private sample provided by Mattia; no "
                  "sample data is recorded for it.",
@@ -121,15 +123,16 @@ __artifacts_v2__ = {
     },
     "uber_telemetry": {
         "name": "Uber - Telemetry Messages",
-        "description": "Parses queued telemetry messages from the Uber Android message database.",
+        "description": "Parses telemetry messages from the Uber Android message database.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Uber",
-        "notes": "Rows are messages the app had queued for upload. Each content payload carries a "
-                 "contextual_data.prod_meta block describing the app, device, carrier, network, city and "
-                 "session at the time the message was sealed. createdAt and createdAtNtp are the table's "
+        "notes": "Rows are messages from the message table of ur_message.db; whether a row was "
+                 "queued for upload or uploaded is not established. Each content payload carries "
+                 "a contextual_data.prod_meta block describing the app, device, carrier, "
+                 "network, city and session. createdAt and createdAtNtp are the table's "
                  "own columns in Unix milliseconds; createdAtNtp was empty on every row of the tested "
                  "sample. The message_type value is reported as stored. Field mapping was done against a "
                  "private sample provided by Mattia; no sample data is recorded for it.",

@@ -196,8 +196,8 @@ __artifacts_v2__ = {
                  "extraction, and is blank otherwise; it is not a guess at the remaining names. "
                  "The PASSWORD entry held a plain text value in the corpus below, which is a "
                  "finding about how the app stores that value on that version, not about any "
-                 "other version. Entries beginning IABTCF_ belong to the IAB Transparency and "
-                 "Consent Framework used by the bundled ad libraries rather than to the app's own "
+                 "other version. Entries beginning IABTCF_ follow the IAB Transparency and "
+                 "Consent Framework key naming and are not part of the app's own "
                  "storage feature.",
         "paths": ('*/com.calculator.lock.hide.photo.video/shared_prefs/'
                   'com.calculator.lock.hide.photo.video_preferences.xml',),

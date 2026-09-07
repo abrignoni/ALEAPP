@@ -7,7 +7,18 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on Android', https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. Reference: Mozilla NSPR, 'prtime.h (PRTime is microseconds since the epoch)', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/nsprpub/pr/include/prtime.h This artifact covers every Gecko browser on the device, not only org.mozilla.firefox: the path pattern is anchored on the files/places.sqlite layout the Firefox codebase writes, so forks such as Fennec F-Droid, Mull, IronFox and Iceraven are read too, and the Browser column names the package each row came from. Tor Browser also uses this layout and its bookmarks are additionally reported by the dedicated Tor Browser artifact. On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were installed side by side and both are reported.",
+        "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
+                 "Android', "
+                 "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
+                 "Reference: Mozilla NSPR, 'prtime.h (PRTime is microseconds since the epoch)', "
+                 "https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/nsprpub/pr/include/prtime.h "
+                 "This artifact is not limited to org.mozilla.firefox: the path pattern is "
+                 "anchored on the files/places.sqlite layout rather than on a package, so "
+                 "Gecko-based forks that use that layout are read too, and the Browser column "
+                 "names the package each row came from. Tor Browser also uses this layout and "
+                 "its bookmarks are additionally reported by the dedicated Tor Browser artifact. "
+                 "On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were "
+                 "installed side by side and both are reported.",
         "paths": ('*/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -24,7 +35,20 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on Android', https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. Reference: Mozilla NSPR, 'prtime.h (PRTime is microseconds since the epoch)', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/nsprpub/pr/include/prtime.h. Reference: Mozilla, 'nsINavHistoryService TRANSITION_* constants', https://searchfox.org/mozilla-central/source/toolkit/components/places/nsINavHistoryService.idl This artifact covers every Gecko browser on the device, not only org.mozilla.firefox: the path pattern is anchored on the files/places.sqlite layout the Firefox codebase writes, so forks such as Fennec F-Droid, Mull, IronFox and Iceraven are read too, and the Browser column names the package each row came from. Tor Browser also uses this layout and its bookmarks are additionally reported by the dedicated Tor Browser artifact. On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were installed side by side and both are reported.",
+        "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
+                 "Android', "
+                 "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
+                 "Reference: Mozilla NSPR, 'prtime.h (PRTime is microseconds since the epoch)', "
+                 "https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/nsprpub/pr/include/prtime.h. "
+                 "Reference: Mozilla, 'nsINavHistoryService TRANSITION_* constants', "
+                 "https://searchfox.org/mozilla-central/source/toolkit/components/places/nsINavHistoryService.idl "
+                 "This artifact is not limited to org.mozilla.firefox: the path pattern is "
+                 "anchored on the files/places.sqlite layout rather than on a package, so "
+                 "Gecko-based forks that use that layout are read too, and the Browser column "
+                 "names the package each row came from. Tor Browser also uses this layout and "
+                 "its bookmarks are additionally reported by the dedicated Tor Browser artifact. "
+                 "On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were "
+                 "installed side by side and both are reported.",
         "paths": ('*/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -41,7 +65,18 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on Android', https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. Reference: Mozilla NSPR, 'prtime.h (PRTime is microseconds since the epoch)', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/nsprpub/pr/include/prtime.h This artifact covers every Gecko browser on the device, not only org.mozilla.firefox: the path pattern is anchored on the files/places.sqlite layout the Firefox codebase writes, so forks such as Fennec F-Droid, Mull, IronFox and Iceraven are read too, and the Browser column names the package each row came from. Tor Browser also uses this layout and its bookmarks are additionally reported by the dedicated Tor Browser artifact. On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were installed side by side and both are reported.",
+        "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
+                 "Android', "
+                 "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
+                 "Reference: Mozilla NSPR, 'prtime.h (PRTime is microseconds since the epoch)', "
+                 "https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/nsprpub/pr/include/prtime.h "
+                 "This artifact is not limited to org.mozilla.firefox: the path pattern is "
+                 "anchored on the files/places.sqlite layout rather than on a package, so "
+                 "Gecko-based forks that use that layout are read too, and the Browser column "
+                 "names the package each row came from. Tor Browser also uses this layout and "
+                 "its bookmarks are additionally reported by the dedicated Tor Browser artifact. "
+                 "On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were "
+                 "installed side by side and both are reported.",
         "paths": ('*/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",
@@ -58,7 +93,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Firefox",
-        "notes": " This artifact covers every Gecko browser on the device, not only org.mozilla.firefox: the path pattern is anchored on the files/places.sqlite layout the Firefox codebase writes, so forks such as Fennec F-Droid, Mull, IronFox and Iceraven are read too, and the Browser column names the package each row came from. Tor Browser also uses this layout and its bookmarks are additionally reported by the dedicated Tor Browser artifact. On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were installed side by side and both are reported.",
+        "notes": "This artifact is not limited to org.mozilla.firefox: the path pattern is "
+                 "anchored on the files/places.sqlite layout rather than on a package, so "
+                 "Gecko-based forks that use that layout are read too, and the Browser column "
+                 "names the package each row came from. Tor Browser also uses this layout and "
+                 "its bookmarks are additionally reported by the dedicated Tor Browser artifact. "
+                 "On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were "
+                 "installed side by side and both are reported.",
         "paths": ('*/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "search",

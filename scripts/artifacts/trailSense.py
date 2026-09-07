@@ -20,8 +20,8 @@ __artifacts_v2__ = {
                  "696d2f54fbcfeeab94efbf62e778716a9317e524); any other value is reported as stored. "
                  "That distinction matters: the User value marks a beacon added through the app, while the others "
                  "are app-generated, so the tested device held one User beacon and one CellSignal "
-                 "beacon named for the last 4G signal. Temporary is the temporary flag, Yes for an "
-                 "auto-created beacon the app may discard. Comment is the note field on the beacon and "
+                 "beacon named for the last 4G signal. Temporary is the temporary flag, reported "
+                 "as stored. Comment is the note field on the beacon and "
                  "was empty on the tested beacons. The beacon_group_id and styling columns (color, "
                  "icon) are not reported. KML output is produced from the coordinates. This table holds "
                  "coordinates the app stored, not positions the device was independently measured at.",
@@ -41,16 +41,15 @@ __artifacts_v2__ = {
             "emu_a15_oss_v4": "Trail Sense 8.1.1 | 1 rows",
         },
         "notes": "One row per entry in the paths table of databases/trail_sense. A path is a track the "
-                 "app recorded, most often through its Backtrack feature, which logs the device's "
-                 "location on a timer. Each row summarises the track: the Name where a name was given to it "
-                 "(a Backtrack path is unnamed, which is why Name was empty on the tested device), the "
-                 "Start and End times, the Distance in metres, the number of Waypoints, and the "
-                 "bounding box of the track as North, East, South and West coordinates. Start and End "
-                 "are Unix milliseconds and were UTC on the tested device (01:52 UTC matched the "
-                 "device's 21:52 local clock). Temporary is the temporary flag, Yes for a track the app "
-                 "may discard. The individual points of each track are in the Waypoints artifact, keyed "
-                 "by Path ID. The styling columns are not reported. A path is evidence the app recorded "
-                 "the device moving through those points during that time span.",
+                 "app recorded. Each row summarises the track: the Name where a name was given "
+                 "to it (a Backtrack path is unnamed, which is why Name was empty on the tested "
+                 "device), the Start and End times, the Distance in metres, the number of "
+                 "Waypoints, and the bounding box of the track as North, East, South and West "
+                 "coordinates. Start and End are Unix milliseconds and were UTC on the tested "
+                 "device (01:52 UTC matched the device's 21:52 local clock). Temporary is the "
+                 "temporary flag, reported as stored. The individual points of each track are in "
+                 "the Waypoints artifact, keyed by Path ID. The styling columns are not "
+                 "reported. A path is evidence the app recorded positions during that time span.",
         "paths": ('*/com.kylecorry.trail_sense/databases/trail_sense*',),
         "output_types": "standard",
         "artifact_icon": "share-2",
@@ -78,8 +77,8 @@ __artifacts_v2__ = {
                  "Good, which matched the name of the last-signal beacon the app dropped at the same "
                  "point. Any other value for either is reported as stored, and both are empty where the "
                  "app recorded no cell signal. Unlike the Beacons table, a waypoint is a position the "
-                 "app logged from the device's location at that time, so the rows are a location history "
-                 "for the recording period. KML output is produced from the coordinates.",
+                 "app recorded along a path with a time attached, so the rows are a location "
+                 "history as the app recorded it. KML output is produced from the coordinates.",
         "paths": ('*/com.kylecorry.trail_sense/databases/trail_sense*',),
         "output_types": "all",
         "artifact_icon": "navigation",

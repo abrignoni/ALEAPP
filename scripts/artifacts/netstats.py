@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "notes": "The binary format is read per the AOSP sources named in this module "
                  "(NetworkStatsCollection, NetworkIdentitySet and NetworkStatsHistory in "
                  "packages/modules/Connectivity). Only the unified collection format "
-                 "(version 16, in use since Android 4.0) is parsed; older versions are "
+                 "(version 16) is parsed; older versions are "
                  "rejected rather than guessed at.\n"
                  "UIDs are resolved to package names through packages.xml where it parses. "
                  "One tested image stored packages.xml encrypted; usage is still reported "

@@ -11,17 +11,15 @@ __artifacts_v2__ = {
             "emu_a15_oss_v6": "Aurora Store 4.8.4 | 1 rows",
         },
         "notes": "One row per entry in the account table of databases/aurora_database. Aurora "
-                 "Store is an open source client for Google Play. Each row is a session the app "
-                 "holds, with the Email and Display Name it carries, the Account Type, and Added "
-                 "which is Unix milliseconds reported as UTC. Account Type is the app's own value "
-                 "and is reported as stored; on the tested device it read ANONYMOUS, which is the "
-                 "app's shared-account mode, so the email shown belongs to an account the project "
-                 "operates rather than to the person using the device. A GOOGLE value in that "
-                 "column is the other case the app offers and would carry the signed-in person's "
-                 "own address, so the Account Type is what decides whether the Email identifies "
-                 "anyone. The stored auth and AAS tokens are credentials and are deliberately not "
-                 "reported. The row records that Aurora Store was set up on this device and when, "
-                 "which is what bounds the periods the other Aurora artifacts can cover.",
+                 "Store is an open source client for Google Play. Each row is an account record, "
+                 "with the Email and Display Name it carries, the Account Type, and Added which "
+                 "is Unix milliseconds reported as UTC. Account Type is the app's own value and "
+                 "is reported as stored; on the tested device it read ANONYMOUS. No source is "
+                 "cited here for what the ANONYMOUS and GOOGLE values denote, so whether the "
+                 "Email belongs to the person using the device or to an account the project "
+                 "operates is not established from this field alone. The stored auth and AAS "
+                 "tokens are credentials and are deliberately not reported. Added is the time "
+                 "the account record carries, as stored.",
         "paths": ('*/com.aurora.store/databases/aurora_database*',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -42,12 +40,12 @@ __artifacts_v2__ = {
                  "Version Code, Size in bytes, the Download Status as the app records it, how "
                  "many of the expected files arrived, the Target SDK, whether the app Requires "
                  "GMS, and Downloaded At as Unix milliseconds reported as UTC. Installed is the "
-                 "app's flag for a download it went on to install. The download table was present "
-                 "and empty on the tested device because no app was downloaded through Aurora "
-                 "Store there, so the columns are described from the schema and the app's own "
-                 "source rather than from decoded rows; a sample carrying a completed download "
-                 "would close that gap. The related update and ignored_update tables, which hold "
-                 "the updates Aurora offered and the ones a person chose to ignore, were likewise "
+                 "app's installed flag, reported as stored. The download table was present and "
+                 "empty on the tested device because no app was downloaded through Aurora Store "
+                 "there, so the columns are described from the schema rather than from decoded "
+                 "rows, and the meaning of the flags is not exercised here; a sample carrying a "
+                 "completed download would close that gap. The related update and ignored_update "
+                 "tables were likewise "
                  "present and empty and are reported by the Updates artifact.",
         "paths": ('*/com.aurora.store/databases/aurora_database*',),
         "output_types": "standard",
@@ -65,9 +63,9 @@ __artifacts_v2__ = {
             "emu_a15_oss_v6": "Aurora Store 4.8.4 | 1 rows",
         },
         "notes": "One row per entry in the favourite table of databases/aurora_database. A "
-                 "favourite is an app marked in Aurora Store's own list, which is a deliberate "
-                 "action rather than something the app records on its own, so a row shows an app "
-                 "someone singled out without necessarily installing it. Each row carries the "
+                 "favourite is an entry in the app's favourite table; on the tested device the "
+                 "one entry was created by marking an app from its page, and whether the app "
+                 "writes entries here on its own was not established. Each row carries the "
                  "Package, the Display Name, Added as Unix milliseconds reported as UTC, and Mode "
                  "which is the app's own value for how the entry was created and is reported as "
                  "stored; the tested device recorded MANUAL for an entry added from an app's page. "
@@ -90,19 +88,18 @@ __artifacts_v2__ = {
         },
         "notes": "Rows from the update and review tables of databases/aurora_database, combined "
                  "because both key on a package and both were empty on the tested device. An "
-                 "update row is an update Aurora found for an installed app, with its Package, "
-                 "Version Name and Code, Developer, Size and the Updated On date, and it records "
-                 "what the app offered rather than anything a person did. A review row is the "
-                 "opposite: it is text someone wrote, with the Title, Comment, Rating and the "
-                 "account Email it was posted under, so it is user-authored content tied to an "
-                 "identity. Kind names which table a row came from. Both tables were present and "
-                 "empty on the tested device, where no app was installed through Aurora Store and "
-                 "no review was written, so this artifact is a checked absence there; the columns "
-                 "come from the schema. The ignored_update table holds only a package and a "
-                 "version code for updates a person dismissed and is named here rather than given "
-                 "its own artifact. The exodus_tracker table held 432 rows on the tested device "
-                 "and is the Exodus Privacy tracker catalogue the app downloads for its privacy "
-                 "reports, so it is reference data rather than device activity and is not parsed.",
+                 "update row carries a Package, Version Name and Code, Developer, Size and an "
+                 "Updated On date. A review row carries a Title, Comment, Rating and an account "
+                 "Email. Both are described from the schema, since neither table held a row on "
+                 "the tested device, and what the app writes to them was not exercised. Kind "
+                 "names which table a row came from. Both tables were present and empty on the "
+                 "tested device, where no app was installed through Aurora Store and no review "
+                 "was written, so this artifact is a checked absence there; the columns come "
+                 "from the schema. The ignored_update table holds only a package and a version "
+                 "code and is named here rather than given its own artifact. The exodus_tracker "
+                 "table held 432 rows on the tested device and is not parsed; its name refers to "
+                 "the Exodus Privacy tracker catalogue and nothing in it was read as device "
+                 "activity.",
         "paths": ('*/com.aurora.store/databases/aurora_database*',),
         "output_types": "standard",
         "artifact_icon": "refresh-cw",

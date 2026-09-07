@@ -67,9 +67,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Discord Chats",
-        "notes": "Read from the same cache as the Cached Messages artifact. The app requests a profile when a user "
-                 "is looked at; the cache holds the response, so a row records that the profile was fetched, at "
-                 "the Cached time, not who the account holder is. Values are reported as stored; Connected "
+        "notes": "Read from the same cache as the Cached Messages artifact. The cache holds the "
+                 "response to a profile request, so a row records that the profile was fetched "
+                 "at the Cached time, not who the account holder is or why it was fetched. "
+                 "Values are reported as stored; Connected "
                  "Accounts joins each account's type and name. A user fetched more than once is reported once, "
                  "from the earliest cached response, with the number of cached copies. On the 9 profiles of the 5 "
                  "tested images that held one, Bio, Pronouns, Connected Accounts and Premium Since were blank, and "
@@ -99,11 +100,12 @@ __artifacts_v2__ = {
         "category": "Discord Chats",
         "notes": "One row per <hash>.0 metadata file in cache/http-cache whose first line is a URL. Sent and "
                  "Received are the OkHttp-Sent-Millis and OkHttp-Received-Millis headers OkHttp writes into the "
-                 "entry (Unix milliseconds; written since OkHttp 3.4.0, present on all 317 entries of the tested "
-                 "images). OkHttp caches GET responses only (Cache.kt put, release parent-5.5.0), so no method "
-                 "column is reported. Media renders the body when its bytes are a JPEG, PNG, GIF or WebP image and "
-                 "the response is not compressed: the attachment images, avatars, server icons and stickers the "
-                 "app displayed (55 of the 317 entries on the tested images; 255 bodies are JSON). Journal State "
+                 "entry (Unix milliseconds; present on all 317 entries of the tested images). "
+                 "OkHttp caches GET responses only (Cache.kt put, release parent-5.5.0), so no "
+                 "method column is reported. Media renders the body when its bytes are a JPEG, "
+                 "PNG, GIF or WebP image and the response is not compressed: the attachment "
+                 "images, avatars, server icons and stickers the app fetched (55 of the 317 "
+                 "entries on the tested images; 255 bodies are JSON). Journal State "
                  "is the last CLEAN, DIRTY or REMOVE line for the entry's key in the cache's journal, blank when "
                  "the key is not in the journal; it was CLEAN on every entry of the tested images. 6 of the 31 "
                  "tested images held the cache (86, 57, 53, 46, 46 and 29 entries). This is the Android "
