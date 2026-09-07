@@ -1,7 +1,8 @@
 __artifacts_v2__ = {
     "get_bluetoothConnections": {
         "name": "Bluetooth Connections",
-        "description": "Parses previously connected Bluetooth devices (first connected timestamp, device name, MAC address and link key) from bt_config.conf.",
+        "description": "Parses Bluetooth devices recorded in bt_config.conf (the stored "
+                       "Timestamp, device name, MAC address and link key).",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-23",
         "last_update_date": "2021-06-23",

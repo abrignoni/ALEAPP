@@ -7,15 +7,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Aegis",
-        "notes": "One row per aegis.json vault file in the app's files directory. Aegis stores every "
-                 "two factor entry in this one JSON vault. The vault can be plaintext or encrypted, "
-                 "and this artifact reports which: when the header carries encryption slots the db "
-                 "field is a base64 string and the entries cannot be read without the user's password, "
-                 "and the Entry Count is reported as unknown for that case; when it is plaintext the "
-                 "entries are readable and are listed by the Entries artifact. Aegis encrypts the whole "
-                 "vault with a key derived from the password, so an encrypted vault yields no issuers "
-                 "or account names from a logical extraction, which is itself the finding rather than "
-                 "an absence of 2FA. The Encryption column reports whether slots are present and how "
+        "notes": "One row per aegis.json vault file in the app's files directory. The vault can "
+                 "be plaintext or encrypted, and this artifact reports which: when the header "
+                 "carries encryption slots the db field is a base64 string, this artifact does "
+                 "not decrypt it, and the Entry Count is reported as unknown for that case; when "
+                 "it is plaintext the entries are readable and are listed by the Entries "
+                 "artifact. An encrypted vault therefore yields no issuers or account names "
+                 "here, which is not evidence that no two factor entries exist. The Encryption "
+                 "column reports whether slots are present and how "
                  "many, as stored.",
         "paths": ('*/com.beemdevelopment.aegis/files/aegis.json',),
         "output_types": "standard",
@@ -32,18 +31,19 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Aegis",
-        "notes": "One row per two factor entry in a plaintext aegis.json vault, showing which services "
-                 "and accounts the user has set up two factor authentication for. Issuer is the "
-                 "service, Name is the account at that service, and the remaining columns are the OTP "
-                 "parameters: Type, Algorithm, Digits and Period. Type is one of the values defined by "
-                 "the app, totp, hotp, steam, motp or yandex "
-                 "(app/src/main/java/com/beemdevelopment/aegis/otp at beemdevelopment/Aegis 17a87a4e); "
-                 "any other value is reported as stored. Favorite, Note and Groups are the user's own "
-                 "labels; Groups is resolved from the group ids on the entry to the group names in the "
-                 "same vault. The shared secret is deliberately not reported: the forensic value here "
-                 "is which services have two factor set up, not the secrets that generate the codes. If "
-                 "the vault is encrypted this artifact returns nothing, because the entries are not "
-                 "readable without the password; the Vault artifact reports that the vault is "
+        "notes": "One row per two factor entry in a plaintext aegis.json vault, with the issuer "
+                 "and account name recorded for each entry. Issuer is the service, Name is the "
+                 "account at that service, and the remaining columns are the OTP parameters: "
+                 "Type, Algorithm, Digits and Period. Type is one of the values defined by the "
+                 "app, totp, hotp, steam, motp or yandex "
+                 "(app/src/main/java/com/beemdevelopment/aegis/otp at beemdevelopment/Aegis "
+                 "17a87a4e); any other value is reported as stored. Favorite, Note and Groups "
+                 "are reported as stored; Groups is resolved from the group ids on the entry to "
+                 "the group names in the same vault. The shared secret is deliberately not "
+                 "reported: the forensic value here is which services have two factor set up, "
+                 "not the secrets that generate the codes. If the vault is encrypted this "
+                 "artifact returns nothing, because it does not decrypt the vault; the Vault "
+                 "artifact reports that the vault is "
                  "encrypted. The UUID is the entry's own identifier in the vault.",
         "paths": ('*/com.beemdevelopment.aegis/files/aegis.json',),
         "output_types": "standard",

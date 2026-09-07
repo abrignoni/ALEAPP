@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_blueskysearches": {
         "name": "Bluesky - Searches",
-        "description": "User generated searches",
+        "description": "Search terms stored by the Bluesky app",
         "author": "DFIRcon 2025 Miami",
         "creation_date": "2024-11-15",
         "last_update_date": "2024-11-15",

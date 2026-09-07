@@ -89,10 +89,11 @@ __artifacts_v2__ = {
                  "values marked 1 were numeric and all four marked 0 were real paths, so the "
                  "flag is used to filter rather than guessing from the shape of the value. "
                  "Entries marked 1 are not reported.\n"
-                 "Kind separates media the app supplied from media it did not: a path inside the "
-                 "app's own storage under Android/data/com.quvideo.xiaoying is reported as an "
-                 "app asset, which on the tested project was the app's own watermark image. "
-                 "Everything else is reported as user media. The same path can appear more "
+                 "Kind is derived from where the path points: a path inside the app's own "
+                 "storage under Android/data/com.quvideo.xiaoying is reported as an app asset, "
+                 "which on the tested project was the app's own watermark image, and every other "
+                 "path is reported as user media. The label describes the path location, not who "
+                 "placed the file there. The same path can appear more "
                  "than once in one project, under both a normal_source and a media_source "
                  "element, and is reported once. A row records what the project referred to, not "
                  "that the media was exported or shared.",
@@ -112,8 +113,9 @@ __artifacts_v2__ = {
             "emu_a15_oss2_v1": "VivaVideo 9.38.0 | 2 rows",
         },
         "notes": "One row per exportCover file in a project directory. The app names these "
-                 "<project>_exportCover_<epoch>.jpg, and that epoch is true Unix milliseconds "
-                 "reported here as UTC, which was checked against the device clock.\n"
+                 "<project>_exportCover_<epoch>.jpg, and that epoch is reported as Unix "
+                 "milliseconds in UTC; the comparison against the device clock is the one "
+                 "described with its values in the VivaVideo Projects notes.\n"
                  "**An exportCover file is evidence an export was started, not that one "
                  "finished.** That was measured rather than assumed: on the tested device two "
                  "exportCover files were written for one project, and both export attempts were "

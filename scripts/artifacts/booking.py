@@ -36,10 +36,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Booking.com",
         "notes": "Read from the roomReservations records of post_booking_reservation_cache and "
-                 "joined to the booking number held in the parent record's key. An app version "
-                 "seen in the tested samples caches the same booking once per authentication "
-                 "key it was fetched with, so one room was held in two records that were "
-                 "identical once the key inside their references was set aside; rows are "
+                 "joined to the booking number held in the parent record's key. In the tested "
+                 "samples one room was held in two records that were identical once the "
+                 "authentication key inside their references was set aside; rows are "
                  "reported once per booking number and roomReservationId pair so a room is not "
                  "counted twice. Room type "
                  "identifiers, smoking preference, cancellation type and cancellation bucket are "

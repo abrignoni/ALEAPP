@@ -32,8 +32,9 @@ __artifacts_v2__ = {
                   "what was transferred, which is the separate Messages artifact. "
                   "No registered corpus carries Xender, so this could not be re-derived from "
                   "case data. On an emulator with the app installed and opened, the profile "
-                  "table was present and empty, which also shows the device does not write its "
-                  "own profile there. A populated table needs a second device to connect to, "
+                  "table was present and empty, so the device's own profile was not written "
+                  "there on that emulator. A populated table needs a second device to connect "
+                  "to, "
                   "which was not available, so the columns are code-present and unexercised "
                   "against real rows."),
         "paths": ('*/cn.xender/databases/trans-history-db*',),
@@ -49,7 +50,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "File Transfer",
         "notes": ("Direction is decoded from the new_history 'c_direction' column. Direction/status "
-                  "value mappings were established through testing; unrecognized values are "
+                  "value mappings are not vendor-documented and the evidence for them is not "
+                  "recorded here; unrecognized values are "
                   "reported as stored.\n"
                   "to_id and from_id carry the recipient and sender device IDs recorded on the same "
                   "row (r_device_id and s_device_id) and are left blank when the database does not "

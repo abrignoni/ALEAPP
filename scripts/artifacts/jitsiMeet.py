@@ -20,8 +20,9 @@ __artifacts_v2__ = {
                  "local clock. Duration is the duration field, which the same source computes as "
                  "Date.now() minus date when the conference ends, so it is milliseconds and is reported "
                  "here in seconds. A row records that the app joined that meeting from this device, not "
-                 "who else attended, and the app does not store the participants or the chat here. An "
-                 "entry that is still open, or a join that never completed, can carry a zero duration.",
+                 "who else attended, and the app does not store the participants or the chat "
+                 "here. A zero Duration is reported as stored; what produces it was not "
+                 "exercised.",
         "paths": ('*/org.jitsi.meet/databases/RKStorage*',),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -40,16 +41,13 @@ __artifacts_v2__ = {
         "notes": "One row per reported setting read from the catalystLocalStorage table of "
                  "databases/RKStorage. Jitsi Meet needs no account, so the identifying values it keeps "
                  "are these. Display Name and Email come from the @jitsi-meet/features/base/settings "
-                 "document and hold the self-chosen name and address the app presents to other "
-                 "participants; on the tested device the display name entered at the join screen was "
-                 "stored here and no email was set. Install ID is @jitsi-meet/jitsiMeetId, a "
-                 "value the app generates and keeps across meetings, so the same value appearing "
-                 "elsewhere ties activity to this installation. Call Stats Username is "
-                 "@jitsi-meet/callStatsUserName, a name the app generates for its statistics service and "
-                 "not one the user chose. Known Domains is @jitsi-meet/features/base/known-domains, the "
-                 "list of servers the app has seen, which shows whether meetings used the public "
-                 "meet.jit.si service or a self-hosted server; the list is seeded with the app's own "
-                 "defaults, so the presence of a default entry is not evidence a meeting used it. Only "
+                 "document; on the tested device the display name entered at the join screen was "
+                 "stored here and no email was set. Install ID is @jitsi-meet/jitsiMeetId and "
+                 "Call Stats Username is @jitsi-meet/callStatsUserName, both reported as stored; "
+                 "how the app produces them was not sourced. Known Domains is "
+                 "@jitsi-meet/features/base/known-domains, reported as stored; the presence of a "
+                 "domain in the list is not evidence a meeting used it, and how the app "
+                 "populates the list was not sourced. Only "
                  "the settings named here are reported; the remaining keys in the table hold the fetched "
                  "server configuration, feature toggles and interface preferences. The value of each "
                  "setting is reported as stored and a setting the app never wrote is absent rather than "

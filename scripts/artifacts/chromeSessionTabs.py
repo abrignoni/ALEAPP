@@ -32,7 +32,7 @@ __artifacts_v2__ = {
                  "right.\n"
                  "This is the browser's own restore file, so a row means the page was in a tab "
                  "the browser was holding, not that it was open when the device was seized, and "
-                 "the file keeps a limited number of tabs rather than a full history. A page here "
+                 "the file is not a full browsing history. A page here "
                  "need not appear in the browser's History database.",
         "paths": ('*/app_chrome/*/Sessions/Tabs_*',),
         "output_types": "standard",
@@ -75,8 +75,9 @@ __artifacts_v2__ = {
         "notes": "Read from the same Tabs_<number> files, from the command Chromium calls "
                  "kCommandSelectedNavigationInTab. Unlike the navigation entries this record is "
                  "not a pickle but a fixed structure of a tab id, the selected navigation index "
-                 "and a timestamp, microseconds since 1601. Chromium's tab restore service "
-                 "records that timestamp when the tab is closed. One row per record.\n"
+                 "and a timestamp, microseconds since 1601. The event at which Chromium records "
+                 "that timestamp was not sourced here, so it is reported as stored. One row per "
+                 "record.\n"
                  "Selected Index refers to the Index column of the navigation entries artifact "
                  "for the same Tab ID, so the two join on Tab ID to show which page the tab was "
                  "on. Browser reports the package the file was found under.",

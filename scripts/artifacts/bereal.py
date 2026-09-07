@@ -28,7 +28,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "Accepted friends are confirmed to come from the /friends-v1 endpoint. Pending requests (/friend-requests/received, /friend-requests/sent) and suggestions (/friends-of-friends) are confirmed as distinct endpoints and are excluded.",
+        "notes": "Accepted friends are read from cached /friends-v1 endpoint responses. Pending "
+                 "requests (/friend-requests/received, /friend-requests/sent) and suggestions "
+                 "(/friends-of-friends) come from other endpoints and are excluded.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/files/*",
@@ -90,7 +92,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "Comments are extracted from a post's own embedded \"comments\" array (confirmed schema) or a standalone {postId, comments:[...]} endpoint response, not from generic keyword matching.",
+        "notes": "Comments are extracted from a post's own embedded \"comments\" array or a "
+                 "standalone {postId, comments:[...]} endpoint response, not from generic "
+                 "keyword matching.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
         ),
@@ -109,7 +113,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array (confirmed schema), distinguishing Instant vs standard RealMojis.",
+        "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array, "
+                 "distinguishing Instant from standard RealMojis as the record marks them.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/cache/profile_picture_friends_cache/*",

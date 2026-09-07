@@ -9,9 +9,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "what3words",
         "notes": "Read from the class_LocationRealm table of the app's Realm store "
-                 "(files/default.realm) using the vendored realm_parser. Each three word address "
-                 "maps to a fixed 3m square; the latitude and longitude are the square's "
-                 "coordinates as the app stored them.",
+                 "(files/default.realm) using the vendored realm_parser. The latitude and "
+                 "longitude are the coordinates the app stored for the address.",
         "paths": ('*/com.what3words.android/files/default.realm',),
         "output_types": "standard",
         "artifact_icon": "map-pin",

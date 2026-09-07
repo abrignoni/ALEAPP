@@ -52,7 +52,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Contacts",
         "notes": ("Sex is decoded from the users.sex column as 1 = Male and 2 = Female. That mapping "
-                  "is not documented in the data and was established through testing; any other "
+                  "is not documented in the data, no source or measurement for it is recorded "
+                  "here, and any other "
                   "value is reported as stored."),
         "paths": ("*/com.knuddels.android/databases/knuddels*",),
         "output_types": "standard",

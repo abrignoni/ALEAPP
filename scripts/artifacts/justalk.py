@@ -91,14 +91,13 @@ __artifacts_v2__ = {
         "category": "JusTalk",
         "notes": "Each row is one class_ROFileUrl record. The record's 'md5' column is base64 of "
                  "the MD5 of the file's contents, so cached copies are located by hashing every "
-                 "file in the paths above and matching, rather than by file name. The same content "
-                 "is often cached in more than one place: files/imfilecache holds the app's own "
-                 "copy, files/image_manager_disk_cache and files/http410cache held further copies "
-                 "of some items in the sample. All matches are reported.\n"
-                 "Cached files that no class_ROFileUrl record accounts for are listed as their own "
-                 "rows with an empty File Key so they are not dropped. Thumbnails, avatars and "
-                 "sticker assets are expected to appear there. Files in these caches are often "
-                 "stored with no extension or a '.0' extension; in the sample they were still "
+                 "file in the paths above and matching, rather than by file name. In the sample "
+                 "the same content was cached in more than one place: files/imfilecache held one "
+                 "copy, and files/image_manager_disk_cache and files/http410cache held further "
+                 "copies of some items. All matches are reported.\nCached files that no "
+                 "class_ROFileUrl record accounts for are listed as their own rows with an empty "
+                 "File Key so they are not dropped. In the sample, files in these caches were "
+                 "stored with no extension or a '.0' extension and were still "
                  "images, so the extension is reported as found and the content is checked in on "
                  "its own sniffed type.\n"
                  "The class_ROFileUrl table also carries sticker pack assets, which have a "
@@ -128,8 +127,8 @@ __artifacts_v2__ = {
         "notes": "Read from the class_ServerFriend table. The class_Contact table, which holds "
                  "device address book matches, was empty in the sample this artifact was built "
                  "from and is not covered here.\n"
-                 "The 'version' column carries a platform-prefixed client version string for the "
-                 "other party's account, for example a value beginning 'ios.'. 'loginCountry' is "
+                 "The 'version' column is reported as stored; in the sample it held a value "
+                 "beginning 'ios.'. 'loginCountry' is "
                  "reported as stored; in the sample it held a value matching a telephone country "
                  "calling code, but nothing in the extraction documents the format.\n"
                  "relationType and serverRelationType are reported as stored.",
@@ -140,7 +139,7 @@ __artifacts_v2__ = {
     },
     "justalk_members": {
         "name": "JusTalk - Members",
-        "description": "Server members (contacts/groups) from the JusTalk Realm store",
+        "description": "Rows from the class_ServerMember table of the JusTalk Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
@@ -154,7 +153,7 @@ __artifacts_v2__ = {
     },
     "justalk_moments": {
         "name": "JusTalk - Moments",
-        "description": "Moments (timeline posts) from the JusTalk Realm store",
+        "description": "Rows from the class_Moment table of the JusTalk Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
@@ -209,8 +208,8 @@ __artifacts_v2__ = {
                  "signature is not verified and the token is not tested against any server, so "
                  "these columns describe what the token asserts about itself and not whether it "
                  "is currently valid.\n"
-                 "The Realm header reports two top references, which is the store's normal "
-                 "committed and uncommitted pair. Both are read and their row counts compared; "
+                 "The Realm header reports two top references. Both are read and their row "
+                 "counts compared; "
                  "where they differ, content is present in one view and not the other. In the "
                  "sample they matched exactly.\n"
                  "shared_prefs/com.juphoon.justalk_preferences.xml was checked and carries only "
@@ -240,15 +239,13 @@ __artifacts_v2__ = {
         "category": "JusTalk",
         "notes": "Read from files/mmkv/mmkv.default with the shared mmkv_parser. Keys and values "
                  "are reported as the app wrote them and are not renamed or interpreted.\n"
-                 "MMKV appends rather than edits, so changing a key writes a new entry and leaves "
-                 "the previous one in the file. Every entry is reported in file order. The Current "
-                 "Value column marks the last entry for a key, which is the one the app reads; "
-                 "rows marked otherwise are earlier values still present in the store. In the "
-                 "sample this preserved one superseded value, an empty VersionCheckerNewVersion "
-                 "written before the current one.\n"
-                 "A repeated entry is not by itself evidence the value changed. The app rewrites "
-                 "some keys with the value they already held, which is why most repeats here are "
-                 "identical.\n"
+                 "A key can appear more than once in the file. Every entry is reported in file "
+                 "order. The Current Value column marks the last entry for a key, which is the "
+                 "one the app reads; rows marked otherwise are earlier values still present in "
+                 "the store. In the sample this preserved one superseded value, an empty "
+                 "VersionCheckerNewVersion written before the current one.\nA repeated entry is "
+                 "not by itself evidence the value changed; in the sample most repeated entries "
+                 "held identical values.\n"
                  "A zero-length value is how MMKV records a removal, and is shown as an empty "
                  "Value with the type reported as removed. That is distinct from a key holding "
                  "an empty string.\n"
@@ -349,14 +346,13 @@ __artifacts_v2__ = {
         "category": "JusTalk Kids",
         "notes": "Each row is one class_ROFileUrl record. The record's 'md5' column is base64 of "
                  "the MD5 of the file's contents, so cached copies are located by hashing every "
-                 "file in the paths above and matching, rather than by file name. The same content "
-                 "is often cached in more than one place: files/imfilecache holds the app's own "
-                 "copy, files/image_manager_disk_cache and files/http410cache held further copies "
-                 "of some items in the sample. All matches are reported.\n"
-                 "Cached files that no class_ROFileUrl record accounts for are listed as their own "
-                 "rows with an empty File Key so they are not dropped. Thumbnails, avatars and "
-                 "sticker assets are expected to appear there. Files in these caches are often "
-                 "stored with no extension or a '.0' extension; in the sample they were still "
+                 "file in the paths above and matching, rather than by file name. In the sample "
+                 "the same content was cached in more than one place: files/imfilecache held one "
+                 "copy, and files/image_manager_disk_cache and files/http410cache held further "
+                 "copies of some items. All matches are reported.\nCached files that no "
+                 "class_ROFileUrl record accounts for are listed as their own rows with an empty "
+                 "File Key so they are not dropped. In the sample, files in these caches were "
+                 "stored with no extension or a '.0' extension and were still "
                  "images, so the extension is reported as found and the content is checked in on "
                  "its own sniffed type.\n"
                  "The class_ROFileUrl table also carries sticker pack assets, which have a "
@@ -384,8 +380,8 @@ __artifacts_v2__ = {
         "notes": "Read from the class_ServerFriend table. The class_Contact table, which holds "
                  "device address book matches, was empty in the sample this artifact was built "
                  "from and is not covered here.\n"
-                 "The 'version' column carries a platform-prefixed client version string for the "
-                 "other party's account, for example a value beginning 'ios.'. 'loginCountry' is "
+                 "The 'version' column is reported as stored; in the sample it held a value "
+                 "beginning 'ios.'. 'loginCountry' is "
                  "reported as stored; in the sample it held a value matching a telephone country "
                  "calling code, but nothing in the extraction documents the format.\n"
                  "relationType and serverRelationType are reported as stored.",
@@ -396,7 +392,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_members": {
         "name": "JusTalk Kids - Members",
-        "description": 'Server members (contacts/groups) from the JusTalk Kids Realm store',
+        "description": "Rows from the class_ServerMember table of the JusTalk Kids Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
@@ -410,7 +406,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_moments": {
         "name": "JusTalk Kids - Moments",
-        "description": 'Moments (timeline posts) from the JusTalk Kids Realm store',
+        "description": "Rows from the class_Moment table of the JusTalk Kids Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
@@ -464,8 +460,8 @@ __artifacts_v2__ = {
                  "signature is not verified and the token is not tested against any server, so "
                  "these columns describe what the token asserts about itself and not whether it "
                  "is currently valid.\n"
-                 "The Realm header reports two top references, which is the store's normal "
-                 "committed and uncommitted pair. Both are read and their row counts compared; "
+                 "The Realm header reports two top references. Both are read and their row "
+                 "counts compared; "
                  "where they differ, content is present in one view and not the other. In the "
                  "sample they matched exactly.\n"
                  "shared_prefs/com.justalk.kids.android_preferences.xml was checked and carries only "
@@ -493,15 +489,13 @@ __artifacts_v2__ = {
         "category": "JusTalk Kids",
         "notes": "Read from files/mmkv/mmkv.default with the shared mmkv_parser. Keys and values "
                  "are reported as the app wrote them and are not renamed or interpreted.\n"
-                 "MMKV appends rather than edits, so changing a key writes a new entry and leaves "
-                 "the previous one in the file. Every entry is reported in file order. The Current "
-                 "Value column marks the last entry for a key, which is the one the app reads; "
-                 "rows marked otherwise are earlier values still present in the store. In the "
-                 "sample this preserved one superseded value, an empty VersionCheckerNewVersion "
-                 "written before the current one.\n"
-                 "A repeated entry is not by itself evidence the value changed. The app rewrites "
-                 "some keys with the value they already held, which is why most repeats here are "
-                 "identical.\n"
+                 "A key can appear more than once in the file. Every entry is reported in file "
+                 "order. The Current Value column marks the last entry for a key, which is the "
+                 "one the app reads; rows marked otherwise are earlier values still present in "
+                 "the store. In the sample this preserved one superseded value, an empty "
+                 "VersionCheckerNewVersion written before the current one.\nA repeated entry is "
+                 "not by itself evidence the value changed; in the sample most repeated entries "
+                 "held identical values.\n"
                  "A zero-length value is how MMKV records a removal, and is shown as an empty "
                  "Value with the type reported as removed. That is distinct from a key holding "
                  "an empty string.\n"

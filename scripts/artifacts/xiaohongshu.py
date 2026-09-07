@@ -12,10 +12,11 @@ __artifacts_v2__ = {
         "notes": "Read from the historyRecord table of the PlayHistoryRecordDB Room store in "
                  "com.xingin.xhs (Xiaohongshu, also published as RED and as Little Red Book).\n"
                  "Column meanings are taken from the column names the app declares. user_id is "
-                 "the local account the row is filed under and is reported as Account User ID; "
-                 "user_name is the note author's display name, which is a different party, so the "
-                 "two are reported under distinct headers to keep them from being read as the "
-                 "same person. author_id is populated on some rows and an empty string on others: "
+                 "reported as Account User ID and user_name as Note Author, under distinct "
+                 "headers, because the two columns need not name the same party; which party "
+                 "each names is taken from the column name alone and is not otherwise "
+                 "established. author_id is populated on some rows and an empty string on "
+                 "others: "
                  "19 of the 45 rows in the tested corpus held an empty string. It is reported as "
                  "stored, so an empty cell there means the app recorded no author id for that "
                  "row rather than that the parser dropped it.\n"
@@ -71,8 +72,7 @@ __artifacts_v2__ = {
     },
     "xiaohongshu_recent_chats": {
         "name": "Xiaohongshu (RED) - Recent Chats",
-        "description": "The users the account recently had a direct chat with, as the app cached "
-                       "them under its recent share-user keys",
+        "description": "Users the Xiaohongshu app cached under its recent share-user keys",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-04",

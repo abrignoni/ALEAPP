@@ -1,7 +1,8 @@
 __artifacts_v2__ = {
     "get_battery_usage_v9": {
         "name": "Settings Services - Battery Usages v9 - Battery States",
-        "description": "Getting Battery Usage data out of the database battery-usage-db-v9. Introduced with Android 14",
+        "description": "Battery usage states from the Settings Services battery-usage-db-v9 "
+                       "database, seen on Android 14",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-05-12",
         "last_update_date": "2026-08-01",

@@ -7,18 +7,17 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Syncthing",
-        "notes": "One row per device element in files/config.xml, which lists this device together "
-                 "with every device it is configured to synchronise with. Each row carries the Device "
-                 "ID, the Name the user gave it, its configured addresses, whether it is paused or "
-                 "marked untrusted, the Auto Accept Folders flag, and the introducer fields. Auto "
-                 "Accept Folders is blank unless the device is set to accept folders offered to it "
-                 "automatically, which neither device was on the tested config. "
-                 "Introduced By names the device that added this one to the configuration when Syncthing"
-                 "'s introducer feature was used, which is a trust relationship worth following. The "
-                 "config does not itself flag which entry is the local device; on the tested device the "
-                 "local one carried the device model as its Name. The local device's own ID can be "
-                 "derived from the certificate in files/cert.pem, which is not parsed here. A device "
-                 "being present means the user set up a sync relationship with it, not that a transfer "
+        "notes": "One row per device element in files/config.xml, which lists the devices in the "
+                 "configuration, the local device included. Each row carries the Device ID, the "
+                 "Name, its configured addresses, whether it is paused or marked untrusted, the "
+                 "Auto Accept Folders flag, and the introducer fields. Auto Accept Folders is "
+                 "blank unless the device is set to accept folders offered to it automatically, "
+                 "which neither device was on the tested config. Introduced By is the "
+                 "introducedBy attribute as stored; how Syncthing's introducer feature fills it "
+                 "is not sourced here. The config does not itself flag which entry is the local "
+                 "device; on the tested device the local one carried the device model as its "
+                 "Name. files/cert.pem is not parsed here. A device being present in the "
+                 "configuration does not establish that a transfer "
                  "took place.",
         "paths": ('*/com.nutomic.syncthingandroid/files/config.xml',),
         "output_types": "standard",
@@ -40,8 +39,8 @@ __artifacts_v2__ = {
                  "sendreceive as stored), whether it is paused, the rescan interval, and Shared With, "
                  "the devices the folder is shared with. Shared With resolves each shared device id to "
                  "the device name from the same config where one is set, so it shows which other "
-                 "devices receive or send this folder's files. The Path is where the synced files live "
-                 "on this device. On the tested device Syncthing had auto created a sendonly Camera "
+                 "devices the folder is configured to be shared with. Path is the folder path as "
+                 "stored. On the tested device the configuration held a sendonly Camera "
                  "folder for the DCIM directory.",
         "paths": ('*/com.nutomic.syncthingandroid/files/config.xml',),
         "output_types": "standard",

@@ -58,7 +58,7 @@ __artifacts_v2__ = {
         "notes": (
             "Tested on version 1.9.26 (Oct, 22nd 2025). Tab Preview File Name Time is "
             "decoded from the tab preview file name, which is a number read as a Unix time "
-            "in milliseconds; that reading was established through testing and the file name "
+            "in milliseconds; that reading is not documented and the file name "
             "is its only basis. It is rendered in UTC."
         ),
         "paths": (
@@ -112,7 +112,7 @@ __artifacts_v2__ = {
         "notes": (
             "Tested on version 1.9.26 (Oct, 22nd 2025). Timestamp is decoded from the "
             "thumbnail file name, which is a number read as a Unix time in milliseconds; "
-            "that reading was established through testing and the file name is its only "
+            "that reading is not documented and the file name is its only "
             "basis. It is rendered in UTC."
         ),
         "paths": (

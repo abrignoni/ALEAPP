@@ -7,18 +7,18 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Kiwix",
-        "notes": "One row per entry in the HistoryRoomEntity table of databases/KiwixRoom.db. Kiwix "
-                 "reads offline content packaged as ZIM files, so each row records that an article was "
-                 "opened inside one of those files, with the article title and its in content URL, "
-                 "the name of the ZIM the article came from, and the path to that ZIM on the device. "
-                 "Timestamp is Unix milliseconds and was UTC on the tested device (16:13 UTC matched "
-                 "the device's 12:13 local clock), so it is reported as UTC; the app also stores a "
-                 "human date string which is carried in the Date Text column as stored. The ZIM path "
-                 "shows which downloaded content library the article was read from. The stored favicon "
-                 "for each entry is a base64 image and is not reported. Two related stores in the same "
-                 "database are not parsed here: RecentSearchRoomEntity is covered by the Searches "
-                 "artifact, and NotesRoomEntity holds notes written against articles, which was "
-                 "empty on the tested device. The database runs in WAL mode and held its rows in the "
+        "notes": "One row per entry in the HistoryRoomEntity table of databases/KiwixRoom.db. "
+                 "Each row carries the article title and its in content URL, the name of the ZIM "
+                 "file the entry names, and the path to that ZIM on the device as stored. "
+                 "Timestamp is Unix milliseconds and was UTC on the tested device (16:13 UTC "
+                 "matched the device's 12:13 local clock), so it is reported as UTC; the app "
+                 "also stores a human date string which is carried in the Date Text column as "
+                 "stored. The ZIM path names the content file the entry was recorded against. "
+                 "The stored favicon for each entry is a base64 image and is not reported. Two "
+                 "related stores in the same database are not parsed here: "
+                 "RecentSearchRoomEntity is covered by the Searches artifact, and "
+                 "NotesRoomEntity was empty on the tested device and is not parsed. The database "
+                 "runs in WAL mode and held its rows in the "
                  "-wal sidecar on the tested device, so the sidecar is in the paths and is required.",
         "paths": ('*/org.kiwix.kiwixmobile*/databases/KiwixRoom.db*',),
         "output_types": "standard",

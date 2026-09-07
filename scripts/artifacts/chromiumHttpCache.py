@@ -41,8 +41,8 @@ __artifacts_v2__ = {
                  "present; the body itself is not decoded or rendered, and is stored as the server sent it "
                  "(Content-Encoding applies). Entry Version is the header's version field as stored, 5 on every "
                  "tested entry. An entry records that the browser fetched or revalidated the URL at Response "
-                 "Time; it does not by itself show that a page was displayed, and Chromium evicts entries as "
-                 "the cache fills, so this is the recent working set rather than a history.",
+                 "Time; it does not by itself show that a page was displayed, and the cache is "
+                 "not a browsing history: an absent URL is not evidence it was never fetched.",
         "paths": ('*/cache/[Cc]ache/Cache_Data/*',
                   '*/com.duckduckgo.mobile.android/cache/WebView/*/HTTP Cache/Cache_Data/*'),
         "output_types": "standard",

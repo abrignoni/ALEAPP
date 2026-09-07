@@ -17,11 +17,9 @@ __artifacts_v2__ = {
                  "was set. Last Sync, When Modified and Site Fetched are Unix milliseconds and are "
                  "reported as UTC; they are stored as java.time.Instant values (Feed.kt at "
                  "spacecowboy/Feeder tag 2.22.0, 6764cf5f27581a2337cdc9099e8b7220e342f177). Notify "
-                 "is the per-feed notification setting. The feed a person subscribes to is a "
-                 "choice they made in the app, unlike the articles it then downloads, which are "
-                 "in the Articles artifact. Feeder ships with its own release-notes feed already "
-                 "subscribed, so its presence alone is not evidence of a subscription a person "
-                 "chose; the Feed URL distinguishes it.",
+                 "is the per-feed notification setting. Articles the app downloads are in the "
+                 "Articles artifact. A feed's presence alone is not evidence of a subscription a "
+                 "person chose; the Feed URL distinguishes the app's own release-notes feed.",
         "paths": ('*/com.nononsenseapps.feeder/databases/rssDatabase*',),
         "output_types": "standard",
         "artifact_icon": "rss",

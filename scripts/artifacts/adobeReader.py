@@ -12,8 +12,8 @@ __artifacts_v2__ = {
                  "account identity as plain text values. AccessTokenExpiration is a Unix "
                  "millisecond value stored as a string. Account type, service level and the "
                  "entitlement and subscription flags from the services account preferences "
-                 "are reported as stored. An entitlement flag records what the account was "
-                 "provisioned for and does not establish that the service was used. Field "
+                 "are reported as stored. An entitlement flag is reported as stored and does not "
+                 "establish that the service was used. Field "
                  "mapping was done against a private sample provided by Mattia; no sample "
                  "data is recorded for it.",
         "paths": (

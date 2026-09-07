@@ -10,10 +10,10 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v4": "VLC 3.7.1 | 1 rows",
         },
-        "notes": "One row per thumbnail JPEG VLC generated for a media-library entry. On VLC 3.x "
-                 "the thumbnails are stored in the app's external files directory at "
-                 "Android/data/org.videolan.vlc/files/medialib and are named for the media id "
-                 "(id_media.jpg on the tested device, VLC 3.7.1). The VLC Thumbnail Data artifact "
+        "notes": "One row per thumbnail JPEG VLC generated for a media-library entry. On the "
+                 "tested device (VLC 3.7.1) the thumbnails were stored in the app's external "
+                 "files directory at Android/data/org.videolan.vlc/files/medialib and were named "
+                 "for the media id (id_media.jpg). The VLC Thumbnail Data artifact "
                  "joins these images to the media-library rows they belong to.",
         "paths": ('*/org.videolan.vlc/files/medialib/*.jpg',),
         "output_types": "standard",

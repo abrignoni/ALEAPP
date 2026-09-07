@@ -98,8 +98,9 @@ __artifacts_v2__ = {
                   "Attachment Type and Local URI are reported as stored. No source for the "
                   "type codes was found, so none is named here. The values seen on the "
                   "tested images were 0, 1, 2, 4, 15, 16 and 17; the four files that "
-                  "resolved all carried type 1. A type of 6 is a call record and those rows "
-                  "are left to the Line - Call Logs artifact. Local URI held a value on "
+                  "resolved all carried type 1. Rows with a type of 6 are excluded here and "
+                  "calls are reported by the Line - Call Logs artifact from call_history; no "
+                  "source for that type reading is named. Local URI held a value on "
                   "one row of one tested image, a content:// MediaStore reference to a video, "
                   "and was null on every other row; it is reported as stored and is not "
                   "resolved to a file here."),

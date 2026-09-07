@@ -8,7 +8,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "Reads from the plain text preferences file io.invertase.firebase.xml. Iterates through saved strings to parse Untappd FCM push notifications and venue menu updates stored as JSON. Deliberately skips the all_notification_ids key to focus on message payloads. The timestamp is extracted directly from the XML key (by splitting the string and converting the first value from microseconds to a UTC datetime). Extracts the message ID, title, body, push type, and action ID.",
+        "notes": "Reads from the plain text preferences file io.invertase.firebase.xml. Iterates "
+                 "through saved strings to parse Untappd FCM push notifications and venue menu "
+                 "updates stored as JSON. Deliberately skips the all_notification_ids key to "
+                 "focus on message payloads. The timestamp is extracted directly from the XML "
+                 "key (by splitting the string and converting the first value to a UTC datetime "
+                 "as microseconds; no source for that unit is cited here). Extracts the message "
+                 "ID, title, body, push type, and action ID.",
         "paths": (
             '*/com.untappdllc.app/shared_prefs/io.invertase.firebase.xml',
         ), 
@@ -83,7 +89,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "Parses GZIP-compressed binary files (.1 extension) found in the cache/http-cache/ directory. Decodes the uncompressed raw bytes into UTF-8 JSON strings to extract comprehensive check-in data. Captures the Checkin ID, UTC creation date, rating, and user comments. Additionally pulls nested information for the user (UID, username, full name), beer (name, ABV), brewery, venue (name, latitude, longitude), app source name, attached media (grabbing the high-resolution photo_img_lg URL), and container/serving style.",
+        "notes": "Parses GZIP-compressed binary files (.1 extension) found in the "
+                 "cache/http-cache/ directory. Decodes the uncompressed raw bytes into UTF-8 "
+                 "JSON strings to extract check-in data. Captures the Checkin ID, UTC creation "
+                 "date, rating, and user comments. Additionally pulls nested information for the "
+                 "user (UID, username, full name), beer (name, ABV), brewery, venue (name, "
+                 "latitude, longitude), app source name, attached media (grabbing the "
+                 "high-resolution photo_img_lg URL), and container/serving style.",
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.1',
         ),
@@ -95,14 +107,19 @@ __artifacts_v2__ = {
     },
     "untappd_discover_locations": {
         "name": "Untappd - Discover Locations",
-        "description": "When the Discover page loads, it fetches current locations for "
-                       "feeding local events, badges, beers, etc.",
+        "description": "Location items read from cached Discover responses in the Untappd HTTP "
+                       "cache.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "Parses GZIP-compressed HTTP cache files from the Discover page loads. To determine the cache timestamp, the parser locates the companion .0 meta file on disk and extracts the HTTP Date header, converting it to a standard UTC datetime. It then opens the .1 gzip file, extracts the discover_items JSON payload, and reports the item type along with its latitude and longitude.",
+        "notes": "Parses GZIP-compressed HTTP cache files whose payload carries a discover_items "
+                 "member. To determine the cache timestamp, the parser locates the companion .0 "
+                 "meta file on disk and extracts the HTTP Date header, converting it to a "
+                 "standard UTC datetime. It then opens the .1 gzip file, extracts the "
+                 "discover_items JSON payload, and reports the item type along with its latitude "
+                 "and longitude.",
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.*',
         ),
@@ -114,14 +131,21 @@ __artifacts_v2__ = {
     },
     "untappd_recent_locations": {
         "name": "Untappd - Checkin Location Suggestions",
-        "description": "When checking in a new beer it gives suggestions on locations "
-                       "such as recent past checkin locations and nearby locations fed by Foursquare",
+        "description": "Location suggestions read from cached Untappd HTTP responses, with the "
+                       "'recent' and 'foursquare' entries as stored",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "Parses location suggestions stored in GZIP-compressed HTTP cache files when a user drafts a new check-in. Like other cache parsers, it extracts the HTTP Date header from the companion .0 file for the query timestamp. Extracts the device's current location (latitude/longitude), along with two types of suggested venues: 'Recent' check-in locations (which include past check-in timestamps) and 'Foursquare' nearby suggestions (which lack timestamps). Reports the venue name, distance in miles, and coordinates for each suggested location.",
+        "notes": "Parses location suggestions stored in GZIP-compressed HTTP cache files; when "
+                 "the app requests them is not established. Like other cache parsers, it "
+                 "extracts the HTTP Date header from the companion .0 file for the query "
+                 "timestamp. The response's location member is reported as Current Latitude and "
+                 "Current Longitude, whose meaning is taken from the member name, along with two "
+                 "types of suggested venues: 'Recent' entries (which include past check-in "
+                 "timestamps) and 'Foursquare' entries (which lack timestamps). Reports the "
+                 "venue name, distance in miles, and coordinates for each suggested location.",
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.*',
         ),

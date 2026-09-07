@@ -39,7 +39,7 @@ __artifacts_v2__ = {
                  "two resolved to the same instant on the tested sample, which is what "
                  "established each unit. Spam score, spam type, badges, source and gender "
                  "are reported as stored. A cached contact is not evidence the user knows "
-                 "the person: the app caches results of its own lookups. Field mapping was "
+                 "the person. Field mapping was "
                  "done against a private sample provided by Mattia; no sample data is "
                  "recorded for it.",
         "paths": ('*/com.truecaller/databases/tc.db*',),
@@ -95,7 +95,8 @@ __artifacts_v2__ = {
         "category": "Truecaller",
         "notes": "Read from the call_cache table of calling-cache.db. The timestamp column "
                  "is Unix milliseconds. The state column is reported as stored. The max age "
-                 "column is a cache lifetime rather than an event time. Field mapping was "
+                 "column is reported as stored and is not treated as an event time. Field "
+                 "mapping was "
                  "done against a private sample provided by Mattia; no sample data is "
                  "recorded for it.",
         "paths": ('*/com.truecaller/databases/calling-cache.db*',),

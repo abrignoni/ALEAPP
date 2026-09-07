@@ -9,12 +9,12 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Viber",
         "notes": ("Call Direction is decoded from the calls table 'type' column. Direction/status "
-                  "value mappings were established through testing; unrecognized values are "
-                  "reported as stored, so a value the mapping does not cover (a missed, rejected or "
-                  "unanswered call, for example) appears as the stored number rather than as a "
-                  "direction.\n"
-                  "Call End Time is not stored by the app: it is start time plus the duration "
-                  "column, which is treated as whole seconds."),
+                  "value mappings are not vendor-documented and the evidence for them is not "
+                  "recorded here; unrecognized values are reported as stored, so a value the "
+                  "mapping does not cover (a missed, rejected or unanswered call, for example) "
+                  "appears as the stored number rather than as a direction.\nCall End Time is not "
+                  "a stored column: it is computed as start time plus the duration column, which "
+                  "is treated as whole seconds; the unit of duration is not documented."),
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -51,7 +51,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Viber",
         "notes": ("Direction is decoded from the messages table 'send_type' column. Direction/status "
-                  "value mappings were established through testing; unrecognized values are reported "
+                  "value mappings are not vendor-documented and the evidence for them is not "
+                  "recorded here; unrecognized values are reported "
                   "as stored.\n"
                   "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "

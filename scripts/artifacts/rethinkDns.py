@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         },
         "notes": "One row per entry in the DnsLogs table of databases/rethink_logs.db. RethinkDNS "
                  "runs as a local VPN and resolves DNS for the whole device, so while it is "
-                 "running it records every name each app asked to resolve. Each row carries the "
+                 "running it records the names apps asked it to resolve. Each row carries the "
                  "Query (the domain), the App and Package that asked for it, the record type as "
                  "the app labels it (Query Type, such as IPv4, IPv6 or HTTP Service Binding), the "
                  "Resolved IPs it got back with their country prefix, and the Resolver used. Time "
@@ -46,7 +46,7 @@ __artifacts_v2__ = {
             "emu_a15_oss_v6": "RethinkDNS 0.5.6 | 214 rows",
         },
         "notes": "One row per entry in the ConnectionTracker table of databases/rethink_logs.db. "
-                 "While RethinkDNS is running every network connection the device makes passes "
+                 "While RethinkDNS is running network connections the device makes pass "
                  "through it, so each row records one connection with the App and Package that "
                  "opened it, its Linux UID, the destination IP Address and Port, the Country the "
                  "app resolved that address to, the bytes sent and received, and the connection "

@@ -16,20 +16,20 @@ __artifacts_v2__ = {
                  "comes from a value the app stored rather than from the file name; it is left "
                  "blank when that row is absent. Sender is the username the users table carries "
                  "for that id, and falls back to the raw user id when the users row is missing. "
-                 "created_at, updated_at and deleted_at are Unix seconds. A message deleted in "
-                 "the app keeps its row with Message Type 'deleted' and its stored text replaced "
-                 "by the app's own tombstone wording, so the row still shows when it was sent and "
-                 "by whom but no longer holds what it said; 2 of 17 messages were in that state "
-                 "on the corpus below. Attachments holds the descriptor JSON as stored, which "
-                 "carries remote URLs rather than local files, and no attachment referenced a "
-                 "file present in the extraction, so no media is checked in. Reaction Counts is "
-                 "as stored; the one reaction present used a numeric type code that was not "
-                 "resolved to an emoji. Message text can be empty on a row whose content is an "
-                 "attachment, which is why Message is blank on 2 rows. Conversation holds the "
-                 "channel identifier and carries one value on every row of the corpus below "
-                 "because that extraction held a single conversation; it is kept because it is "
-                 "what separates conversations on a device that has more than one. Reply Count "
-                 "was 0 on every row there, meaning no message carried a threaded reply.",
+                 "created_at, updated_at and deleted_at are Unix seconds. A row with Message "
+                 "Type 'deleted' keeps its sent time and sender but its stored text holds "
+                 "tombstone wording rather than the message; 2 of 17 messages were in that state "
+                 "on the corpus below. Deleting a message in the app was not exercised. "
+                 "Attachments holds the descriptor JSON as stored, which carries remote URLs "
+                 "rather than local files, and no attachment referenced a file present in the "
+                 "extraction, so no media is checked in. Reaction Counts is as stored; the one "
+                 "reaction present used a numeric type code that was not resolved to an emoji. "
+                 "Message text can be empty on a row whose content is an attachment, which is "
+                 "why Message is blank on 2 rows. Conversation holds the channel identifier and "
+                 "carries one value on every row of the corpus below because that extraction "
+                 "held a single conversation; it is kept because it is what separates "
+                 "conversations on a device that has more than one. Reply Count was 0 on every "
+                 "row there.",
         "paths": ('*/com.gettr.gettr/app_flutter/db_u*.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -110,8 +110,8 @@ __artifacts_v2__ = {
     },
     "gettr_app_state": {
         "name": "GETTR - App State",
-        "description": "Key and value rows from the app's kv stores, which hold the signed-in "
-                       "account record, the device identifier the app generated, and the app's "
+        "description": "Key and value rows from the app's kv stores, including the signed-in "
+                       "account record, a device identifier and the app's "
                        "own settings",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
@@ -123,11 +123,11 @@ __artifacts_v2__ = {
                  "still appear and nothing is filtered on a guess at which keys matter. The "
                  "values are as stored. Some carry account identity and session material, "
                  "including a key holding the account record with a refresh token and a key "
-                 "holding an app-generated device identifier. Others are timeline and feed "
-                 "caches whose contents are posts the app fetched from the server, which record "
-                 "that the app retrieved them and not that anyone read them; those values are "
-                 "reported as stored and are not broken out into rows of their own for that "
-                 "reason. Store names the file the row came from and Account is taken from the "
+                 "holding a device identifier. Others are timeline and feed caches holding post "
+                 "content; a cached post records that the app held it and not that anyone read "
+                 "it, and those values are reported as stored rather than broken out into rows "
+                 "of their own. Store names the file the row came from and Account is taken from "
+                 "the "
                  "private_<username>.db file name, and is blank for g.db, which is not per "
                  "account.",
         "paths": ('*/com.gettr.gettr/databases/g.db*',

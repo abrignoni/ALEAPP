@@ -83,7 +83,8 @@ __artifacts_v2__ = {
     },
     "solid_explorer_connections": {
         "name": "Solid Explorer Connections",
-        "description": "Storage connections Solid Explorer holds, local and remote",
+        "description": "Rows of Solid Explorer's file_systems table, which holds its local and "
+                       "any remote storage connections",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -94,8 +95,9 @@ __artifacts_v2__ = {
         },
         "notes": "One row per row of the file_systems table in "
                  "pl.solidexplorer2/databases/explorer.db. This is where a remote connection "
-                 "lives: the app supports FTP, SFTP, SMB, WebDAV and cloud accounts, and each "
-                 "one adds a row carrying its server, port, user name and remote path. "
+                 "would be stored: the table carries server, port, user name and remote path "
+                 "columns for it. No remote connection was present on the tested device, so none "
+                 "was exercised. "
                  "Password Stored reports only whether the password column holds a value. The "
                  "password itself is not printed. "
                  "Connection Type and Connection Mode are reported as stored, being undocumented "
@@ -123,20 +125,19 @@ __artifacts_v2__ = {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 4 rows",
         },
         "notes": "One row per row of the dirinfo table in "
-                 "pl.solidexplorer2/databases/explorer.db. The table exists to remember how a "
-                 "folder should be displayed, so a row means the app kept settings for that "
-                 "folder rather than that someone deliberately configured it. "
-                 "A row is not written for every folder opened, which was tested rather than "
-                 "assumed: a folder was opened twice from a bookmark during the session that "
-                 "built the sample and gained no row, while four other folders had rows "
-                 "throughout. So a row shows the app held settings for that folder, and the "
-                 "absence of one is not evidence the folder was never opened. No timestamp is "
-                 "stored either, so nothing here can be placed in time. "
+                 "pl.solidexplorer2/databases/explorer.db. The table holds per-folder display "
+                 "settings, so a row means the app kept settings for that folder rather than "
+                 "that someone deliberately configured it. A row is not written for every folder "
+                 "opened, which was tested rather than assumed: a folder was opened twice from a "
+                 "bookmark during the session that built the sample and gained no row, while "
+                 "four other folders had rows throughout. So a row shows the app held settings "
+                 "for that folder, and the absence of one is not evidence the folder was never "
+                 "opened. No timestamp is stored either, so nothing here can be placed in time. "
                  "Sort Mode, View Mode, View Scale and Grouped are the display settings and are "
-                 "reported as stored. Hidden Files Shown reports whether hidden files were "
-                 "displayed in that folder; it read No on every row of the tested device, "
-                 "where the setting was never turned on, and is reported because it "
-                 "separates folders on a device where it was. File System is the id of the "
+                 "reported as stored. Hidden Files Shown is the flag of that name, reported as "
+                 "stored; it read No on every row of the tested device, where the setting was "
+                 "never turned on, and is reported because it separates folders on a device "
+                 "where it varies. File System is the id of the "
                  "file_systems row the folder belongs to, which is the link the database "
                  "itself records.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),

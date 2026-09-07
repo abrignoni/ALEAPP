@@ -8,20 +8,19 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Mi Browser",
-        "notes": "com.mi.globalbrowser is the browser shipped on Xiaomi devices. date and "
-                 "created are Unix milliseconds. Visits is the table's own counter, so one row "
-                 "can stand for several visits and the row count is not a count of page views. "
-                 "The user_entered column, reported here under that name, held 0 on "
-                 "every row of the corpus below, so it separates nothing there; "
-                 "it is kept because another value would. The same "
-                 "database holds a historysync table with more rows, 342 against 247 here, but "
-                 "it is a sync mirror rather than a separate record: its deleted column was 0 on "
-                 "every row and both tables held the same 214 distinct addresses with none "
-                 "present in only one of them, so reporting it as well would repeat this "
-                 "artifact's rows and it is not read. The bookmarks and bookmarks2 tables each "
-                 "held a single row, the root folder, with no saved bookmark, and "
-                 "preload_website_list holds 249 addresses the application ships rather than "
-                 "ones the user visited; neither is reported.",
+        "notes": "com.mi.globalbrowser is the Mi Browser package. date and created are Unix "
+                 "milliseconds. Visits is the table's own counter, so one row can stand for "
+                 "several visits and the row count is not a count of page views. The "
+                 "user_entered column, reported here under that name, held 0 on every row of the "
+                 "corpus below, so it separates nothing there; it is kept because another value "
+                 "would. The same database holds a historysync table with more rows, 342 against "
+                 "247 here, but it is a sync mirror rather than a separate record: its deleted "
+                 "column was 0 on every row and both tables held the same 214 distinct addresses "
+                 "with none present in only one of them, so reporting it as well would repeat "
+                 "this artifact's rows and it is not read. The bookmarks and bookmarks2 tables "
+                 "each held a single row, the root folder, with no saved bookmark, and "
+                 "preload_website_list held 249 addresses on the corpus below; what populates it "
+                 "was not established, and neither is reported.",
         "paths": ('*/com.mi.globalbrowser/databases/browser2.db*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -47,9 +46,8 @@ __artifacts_v2__ = {
                  "carries the value so the two kinds stay distinguishable. date is Unix "
                  "milliseconds; which event it records, whether first or most recent, is not "
                  "established, so the column is named for the field. Sub Title, Doc Type and Ads "
-                 "Info are columns the table carries for served content; all three were empty on "
-                 "every row below, so nothing on this corpus came from a served list, and they "
-                 "are kept because a populated value would show that a row did. Web URL "
+                 "Info were empty on every row below; what populates them was not established, "
+                 "and they are kept because a populated value would separate rows. Web URL "
                  "was empty on every row below as well, the URL column carrying the "
                  "address on all of them.",
         "paths": ('*/com.mi.globalbrowser/databases/browser2.db*',),

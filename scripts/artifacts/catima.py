@@ -17,21 +17,20 @@ __artifacts_v2__ = {
                  "9876543210123), an optional separate Barcode ID (used when the printed barcode "
                  "value differs from the shown card number, blank when they are the same), the "
                  "Barcode Type (a ZXing format name such as CODE_128), a Balance and its Balance "
-                 "Type (blank Balance Type is the app's points default). Last Used is the time the "
-                 "card was last opened, stored as Unix seconds (Utils.getUnixTime is "
+                 "Type (blank Balance Type is the app's points default). Last Used is the app's "
+                 "lastUsed value, stored as Unix seconds (Utils.getUnixTime is "
                  "System.currentTimeMillis()/1000) and reported as UTC; the tested card read "
                  "1788229821, which is 2026-09-01 02:30:21 UTC and matched the 22:30 local save "
                  "time on the America/New_York device. Valid From and Expiry are the card's "
-                 "validity dates, stored as Unix milliseconds (Date.getTime) and reported as UTC; "
-                 "they were empty on the tested card so the millisecond unit is taken from the "
-                 "app's source and not proven on data here. Starred is the favourite flag and "
-                 "Archived is the archive flag (LoyaltyCard.java and DBHelper.java at "
-                 "CatimaLoyalty/Android tag v2.45.0, "
-                 "22193b1872ee0df6efa6111972b90b59a0253c4d). Groups lists the user-named groups "
-                 "the card is filed under, from the cardsGroups table, and was empty on the "
-                 "tested device. The header colour and zoom columns are display styling and are "
-                 "not reported. The fts tables are a full-text search index Catima maintains and "
-                 "are not evidence, so they are not parsed.",
+                 "validity dates, stored as Unix milliseconds (Date.getTime) and reported as "
+                 "UTC; they were empty on the tested card so the millisecond unit is taken from "
+                 "the app's source and not proven on data here. Starred is the favourite flag "
+                 "and Archived is the archive flag (LoyaltyCard.java and DBHelper.java at "
+                 "CatimaLoyalty/Android tag v2.45.0, 22193b1872ee0df6efa6111972b90b59a0253c4d). "
+                 "Groups lists the user-named groups the card is filed under, from the "
+                 "cardsGroups table, and was empty on the tested device. The header colour and "
+                 "zoom columns are display styling and are not reported. The fts tables are a "
+                 "full-text search index and are not parsed.",
         "paths": ('*/me.hackerchick.catima/databases/Catima.db*',),
         "output_types": "standard",
         "artifact_icon": "credit-card",

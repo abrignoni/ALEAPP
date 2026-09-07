@@ -8,7 +8,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "File Transfer",
         "notes": ("direction is decoded from the transfer table 'direction' column. "
-                  "Direction/status value mappings were established through testing; unrecognized "
+                  "Direction/status value mappings are not vendor-documented and the evidence "
+                  "for them is not recorded here; unrecognized "
                   "values are reported as stored.\n"
                   "fromid and toid are populated only when the direction value is recognized; the "
                   "other device recorded on the row is reported in the Device column regardless."),

@@ -17,8 +17,9 @@ __artifacts_v2__ = {
                  "sampled packages from them were confirmed installed on that device. The "
                  "neighbouring locks table is NOT parsed here: it held 19 rows naming packages "
                  "including com.google.android.gallery3d, which is not installed on the tested "
-                 "device, so it reads as a list the app ships rather than a record of what is "
-                 "locked. Presence of a row is evidence the package is in the app's lock list. It "
+                 "device, so its rows are not treated as a record of what is locked and what the "
+                 "table holds is not established. Presence of a row is evidence the package is "
+                 "in the app's lock list. It "
                  "is not evidence that anyone was ever prompted for the lock, and the store keeps "
                  "no timestamp for when a package was added.",
         "paths": ('*/com.domobile.applockwatcher/databases/domobile_elock.db*',),

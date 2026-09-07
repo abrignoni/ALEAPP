@@ -7,12 +7,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Life360",
-        "notes": "A message with a photo has a message_media row whose photo_key is the photo's URL. The app's "
-                 "Picasso image cache (cache/picasso-cache) is an OkHttp DiskLruCache whose <hash>.0 file starts "
-                 "with the URL requested and whose <hash>.1 file is the body, so the Photo column renders the "
-                 "cached copy whose stored URL equals photo_key exactly, when the bytes are a JPEG, PNG, GIF or "
-                 "WebP image; Photo URL is photo_key as stored. A photo message whose image was never cached, or "
-                 "was evicted, has the URL and no picture. pixel7a_a14 was the only tested image with messages: "
+        "notes": "A message with a photo has a message_media row whose photo_key is the photo's "
+                 "URL. The cache/picasso-cache directory is read as an OkHttp DiskLruCache, in "
+                 "which the <hash>.0 file starts with the URL requested and the <hash>.1 file is "
+                 "the body, so the Photo column renders the cached copy whose stored URL equals "
+                 "photo_key exactly, when the bytes are a JPEG, PNG, GIF or WebP image; Photo "
+                 "URL is photo_key as stored. A photo message whose URL matches no cache entry "
+                 "is reported with the URL and no picture. pixel7a_a14 was the only tested image "
+                 "with messages: "
                  "all 20 belong to one Thread ID, both of its photo messages resolved to a cached image, Location "
                  "Timestamp, Has Location, Latitude, Longitude, Location Name and Message Dismissed were blank on "
                  "all 20 messages, Message Sent and Message Read were Yes on all 20, and Message Deleted was Yes "

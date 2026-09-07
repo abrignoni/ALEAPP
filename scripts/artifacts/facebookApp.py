@@ -26,10 +26,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Facebook",
         "notes": "This is the app's own contacts store and is separate from the msys mailbox "
-                 "contacts reported by the Facebook Messenger artifacts. The store is populated "
-                 "by a server sync, so a row records a contact the app held for this account "
-                 "rather than one entered on the device. The companion Contact Sync artifact "
-                 "reports when that sync last ran.",
+                 "contacts reported by the Facebook Messenger artifacts. A row records a contact "
+                 "the app held for this account; it does not establish that the contact was "
+                 "entered on the device. The companion Contact Sync artifact reports the sync "
+                 "times the store recorded.",
         "paths": ('*/com.facebook.katana/databases/*android_facebook_contacts_db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -108,9 +108,10 @@ __artifacts_v2__ = {
         "category": "Facebook",
         "notes": "The table holds cache bookkeeping, not story content: there is no author or "
                  "message column, and this artifact reports the keys and state the app stored. "
-                 "The rows are server-supplied feed items the app downloaded, so their presence "
-                 "does not establish that the user viewed them. seen_state and image_seen_state "
-                 "are the app's own record of that and are reported as stored; on sharon_a13 "
+                 "The rows are feed items the app cached, so their presence does not establish "
+                 "that the user viewed them. seen_state and image_seen_state are reported as "
+                 "stored and their meaning beyond the column name is not established; on "
+                 "sharon_a13 "
                  "seen_state was 0 on 67 rows and 1 on 19. fetched_at is Unix "
                  "milliseconds, converted at this call site. Media Count is the number of "
                  "home_stories_media rows sharing the story's dedup_key.",
@@ -147,8 +148,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-20",
         "requirements": "none",
         "category": "Facebook",
-        "notes": "This is a bootstrap list the app fetched so it can offer suggestions while "
-                 "the user types a mention. A row records an entity the app held for this "
+        "notes": "This is the list held in the mentions_entities table of the app's search "
+                 "bootstrap database. A row records an entity the app held for this "
                  "account; it is not a record that the user searched for, mentioned or "
                  "interacted with that entity. type and friendship_status are reported as "
                  "stored. On sharon_a13 the 182 rows were 181 of type User and 1 of type "
@@ -193,7 +194,8 @@ __artifacts_v2__ = {
                  "as epoch seconds. The start_event and end_event integers are reported as "
                  "stored; nothing in the extraction maps them. The user id in the User ID "
                  "column is taken from the database file name. An interval is a record the app "
-                 "wrote about its own foreground time; this artifact does not interpret what "
+                 "wrote in its time_in_app store; what it measures beyond the table and column "
+                 "names is not established, and this artifact does not interpret what "
                  "activity occurred within it. The store has the same shape as the Instagram "
                  "one read by instagramTimeInApp.",
         "paths": ('*/com.facebook.katana/databases/time_in_app_*.db*',),

@@ -15,7 +15,8 @@ __artifacts_v2__ = {
     },
         "grok_useraccount": {
         "name": "Grok - User Account",
-        "description": "Parses Ornet Browser Usage Information",
+        "description": "Parses Grok user account attributes from the app's Intercom SDK shared "
+                       "preferences files",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
         "last_update_date": "2025-11-14",

@@ -12,8 +12,8 @@ __artifacts_v2__ = {
                  "the value the row carries, as stored, because nothing in the extraction "
                  "states its unit. Events counts the entries in the same store that name "
                  "this session, and First Event and Last Event bound them in time; the "
-                 "entries themselves are the app's own SDK bookkeeping rather than user "
-                 "actions, so they are counted rather than listed. The store recorded that "
+                 "entries are counted rather than listed, and what each records was not "
+                 "established. The store recorded that "
                  "no account was signed in on every entry it holds. The app's editing "
                  "projects are not in this artifact and were not present in the tested "
                  "sample: its project and draft tables held no rows, and CapCut keeps "
@@ -36,8 +36,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "CapCut",
         "notes": "One row per app data directory. Install Recorded is Unix milliseconds. "
-                 "The device identifier is written to three of the app's preference files "
-                 "by different parts of it and all three held the same value on the tested "
+                 "The device identifier appears in three of the app's preference files and all "
+                 "three held the same value on the tested "
                  "device, so the column names one value rather than comparing them. The "
                  "app stores two candidate device identifiers under the same name in two "
                  "different preference files and they differed on the tested device, so "

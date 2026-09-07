@@ -9,23 +9,22 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "MeWe",
         "notes": ("Source: MeWe moved its chat store from 'app_database' to 'app_v3.db'; both are read. "
-                  "Newer builds leave an empty 'mewe_old' beside it, which is skipped.\n"
-                  "Direction: 'Sent' means the account signed in on this device sent the message. "
-                  "Its user ID is the suffix of the 'user_info<id>' key in SGSession.xml (see MeWe - "
-                  "SGSession), which can be matched against User Id to confirm who the owner is. "
-                  "Message Direction is read from the CHAT_MESSAGE 'currentUserMessage' flag; on a "
+                  "An empty 'mewe_old' can sit beside it and is skipped.\nDirection: 'Sent' means "
+                  "the account signed in on this device sent the message. Its user ID is the "
+                  "suffix of the 'user_info<id>' key in SGSession.xml (see MeWe - SGSession), "
+                  "which can be matched against User Id to confirm who the owner is. Message "
+                  "Direction is read from the CHAT_MESSAGE 'currentUserMessage' flag; on a "
                   "schema generation that does not carry that column the direction cannot be "
                   "established and Message Direction is blank for every row of that database. In "
-                  "the conversation view a blank direction is not attributed to the owner.\n"
-                  "Thread Name is the other party on a one-to-one chat, not a group name; a Group Id "
-                  "of 'contacts' likewise indicates a direct chat rather than a group.\n"
-                  "Deleted: 'YES' is the app's own deletion flag. The row and its text are still "
-                  "present here, so a deleted message can remain readable. The flag is read from the "
-                  "CHAT_MESSAGE 'deleted' column; where that column is absent the cell is blank "
-                  "rather than reported as 'NO'.\n"
-                  "Shared locations arrive as an openstreetmap.org URL in Message Text, with the "
-                  "coordinates in the mlat/mlon parameters.\n"
-                  "Attachment Name is often empty even when Message Type is set (for example PHOTO); "
+                  "the conversation view a blank direction is not attributed to the "
+                  "owner.\nThread Name and Group Id are reported as stored; what a Group Id of "
+                  "'contacts' denotes is not established.\nDeleted: 'YES' is the app's own "
+                  "deletion flag. The row and its text are still present here, so a deleted "
+                  "message can remain readable. The flag is read from the CHAT_MESSAGE 'deleted' "
+                  "column; where that column is absent the cell is blank rather than reported as "
+                  "'NO'.\nA Message Text holding an openstreetmap.org URL carries coordinates in "
+                  "its mlat/mlon parameters.\nAttachment Name can be empty even when Message Type "
+                  "is set (for example PHOTO); "
                   "the absence of a name does not mean the absence of an attachment.\n"
                   "Timestamps are UTC, converted from whole Unix seconds."),
         "paths": ('*/com.mewe/databases/app_database',
@@ -68,7 +67,7 @@ __artifacts_v2__ = {
                   "the Post Id, not the row, as the unit when counting distinct posts.\n"
                   "Poll Votes is the total across all voters, not the owner's vote.\n"
                   "Timestamps are UTC, converted from whole Unix seconds. An Edited value of 0 "
-                  "renders blank and means never edited."),
+                  "renders blank."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
@@ -113,9 +112,9 @@ __artifacts_v2__ = {
         "category": "MeWe",
         "notes": ("Image URL and Video URL Template are server-side paths on MeWe's CDN (for "
                   "example /api/v2/photo/...), NOT files on the device. Do not expect to find a "
-                  "file at that path. Any locally cached copy lives under the app's Glide cache "
-                  "(cache/image_manager_disk_cache) under a hashed filename that cannot be "
-                  "correlated back to these URLs by name.\n"
+                  "file at that path. This artifact does not correlate them to files in the "
+                  "app's image cache (cache/image_manager_disk_cache), whose file names are "
+                  "hashes.\n"
                   "Rows describe media attached to cached feed posts, so the same caveat as MeWe "
                   "- Posts applies: this is what was delivered to the device, not what the owner "
                   "posted or viewed.\n"
@@ -186,15 +185,14 @@ __artifacts_v2__ = {
         "category": "MeWe",
         "notes": ("Three tables are merged and the Type column says which one a row came from: "
                   "Group (GROUP_), Page (PAGE) or Community (COMMUNITY). The same entity can appear "
-                  "twice, once as a Group or Page and again as a Community, because MeWe caches "
-                  "both views; match on Id.\n"
-                  "A cached row is not a membership record. A row can be present because the entity "
-                  "was merely rendered in a feed. Confirmed is the isConfirmed flag of the GROUP_ / "
-                  "COMMUNITY row rendered as Yes, and Role is built from the PAGE isOwner, isAdmin "
-                  "and isFollower flags; what the app sets either of them for was not established, "
-                  "so neither establishes that the account joined or follows the entity.\n"
-                  "Last Opened is converted from milliseconds and reflects the last time the app "
-                  "surfaced the entity, which is not necessarily a deliberate visit by the user."),
+                  "twice, once as a Group or Page and again as a Community; match on Id.\nA "
+                  "cached row is not a membership record; why a row is present was not "
+                  "established. Confirmed is the isConfirmed flag of the GROUP_ / COMMUNITY row "
+                  "rendered as Yes, and Role is built from the PAGE isOwner, isAdmin and "
+                  "isFollower flags; what the app sets either of them for was not established, "
+                  "so neither establishes that the account joined or follows the entity.\nLast "
+                  "Opened is converted from milliseconds; what event the app records it for was "
+                  "not established, so it is not by itself evidence of a deliberate visit."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
@@ -217,7 +215,7 @@ __artifacts_v2__ = {
                   "image yielded a single participant row in total. Cross-reference Participant Id "
                   "against the 'user_info<id>' key in SGSession.xml to identify the owner where "
                   "one is listed.\n"
-                  "Status is the presence value last cached by the app (typically OFFLINE) and "
+                  "Status is reported as stored and "
                   "carries no timestamp, so it should not be read as a state at any particular "
                   "moment.\n"
                   "Only participants present in CHAT_THREAD_PARTICIPANT appear. A thread with no "
@@ -246,7 +244,7 @@ __artifacts_v2__ = {
                   "owner is.\n"
                   "Contains authentication material (user_token, refresh_token) and a token "
                   "expiration time. Handle accordingly.\n"
-                  "Keys containing a dot are skipped as framework noise."),
+                  "Keys containing a dot are skipped."),
         "paths": ('*/com.mewe/shared_prefs/SGSession.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "key",

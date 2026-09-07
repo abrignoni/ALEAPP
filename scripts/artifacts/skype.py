@@ -9,7 +9,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Skype",
         "notes": ("Call Direction is decoded from the chatitem 'is_sender_me' flag. Direction/status "
-                  "value mappings were established through testing; unrecognized values, including "
+                  "value mappings are the labels this parser assigns; the source for them is not "
+                  "established, and unrecognized values, including "
                   "NULL, are left blank rather than assigned a direction.\n"
                   "End Time is not stored by the app: it is the message time plus the duration "
                   "column, which is treated as whole seconds. The unit of that column has not been "
@@ -28,7 +29,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Skype",
         "notes": ("Direction is decoded from the chatitem 'is_sender_me' flag. Direction/status "
-                  "value mappings were established through testing; unrecognized values, including "
+                  "value mappings are the labels this parser assigns; the source for them is not "
+                  "established, and unrecognized values, including "
                   "NULL, are left blank rather than assigned a direction.\n"
                   "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction is blank is not attributed to the owner.\n"
