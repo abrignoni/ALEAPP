@@ -140,6 +140,7 @@
   "*/system/install_sessions.xml": "shared or system location: no app data container in the path; the platform package installer session store, measured 2026-09-03 across 23 Android corpora",
   "*/system/packages.list": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/packages.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
+  "*/system/packages.xml.reservecopy": "shared or system location: no app data container in the path; the platform's reserve copy of packages.xml, measured 2026-09-06 on 24 of the 39 registered Android corpora",
   "*/system/shutdown-checkpoints/checkpoints-*": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/sync/accounts.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/usagestats/*": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",

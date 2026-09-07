@@ -1,0 +1,37 @@
+{
+  "russell_a14": {
+    "description": "Google Pixel 6a, Android 14, Cellebrite CTF 2024 public image. Holds packages.xml and its packages.xml.reservecopy, both ABX binary XML, which are the only two of the image's 145,645 files the patterns match. The pair exercises the reserve copy collapsing into one row per package, Android user and state instead of doubling the rows, and the two Android users the image carries: 135 rows from 69 package names that have no package record left in the file, 69 rows for user 0 and 66 for user 10.",
+    "maker": "@AlexisBrignoni, Claude",
+    "make_data": {
+      "input_data_path": "EXTRACTION_FFS.zip",
+      "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-09-06T19:31:51.453779",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-09-06T19:31:51.437644",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "package_user_states_orphaned": {
+        "search_patterns": [
+          "*/system/packages.xml",
+          "*/system/packages.xml.reservecopy"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_name": "russell_a14",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "14",
+      "device_model": "Google Pixel 6a"
+    }
+  }
+}
