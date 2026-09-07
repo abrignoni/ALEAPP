@@ -21,7 +21,9 @@ __artifacts_v2__ = {
     },
     "get_line_messages": {
         "name": "Line - Messages",
-        "description": "Parses LINE messages (time, sender and recipient IDs, direction, thread, message and attachments) from the LINE databases.",
+        "description": "LINE messages, with any picture the app kept shown on the message's own "
+                       "row, plus time, sender and recipient identifiers, direction and "
+                       "thread.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-29",
@@ -36,8 +38,46 @@ __artifacts_v2__ = {
                   "To ID is filled only for rows recognized as outgoing.\n"
                   "Messages are reported even when the contacts and membership tables are "
                   "empty; on a tested Android 14 image both were empty while chat_history "
-                  "held rows, and the previous inner join dropped every message."),
-        "paths": ('*/jp.naver.line.android/databases/**',),
+                  "held rows, and the previous inner join dropped every message.\n"
+                  "Attachment shows the file the app kept for that message, on the message's "
+                  "own row. The link is one the app recorded rather than a match on size or "
+                  "time: the app writes the file to files/chats/<chat id>/messages/<message "
+                  "id>, so the folder is the row's chat_id and the file name is the row's id. "
+                  "Every one of the seven attachment files across the tested images sat under "
+                  "the chat_id its row names and was named for that row's id.\n"
+                  "Those files are not in the app's private storage. On both tested images "
+                  "that carry them they sit in the user's external storage, under "
+                  "Android/data/jp.naver.line.android/files/chats, while the database sits in "
+                  "the app's private storage, so an extraction that collected one and not the "
+                  "other will show messages with no picture or files with no message.\n"
+                  "A full file and a .thumb sibling can both exist. The full file is the one "
+                  "shown; the thumbnail is shown only when the full file is absent, and "
+                  "Attachment File names which of the two was used, so a row reading .thumb is "
+                  "a row whose full sized file was not in the extraction. That case is real: "
+                  "on the tested Android 12 image one row had a thumbnail and no full file.\n"
+                  "Attachment Format is read from the file's leading bytes rather than from "
+                  "its name, because these files carry no extension. All seven files across "
+                  "the tested images were JPEG. A file whose bytes match no known signature is "
+                  "reported by name and format so the examiner knows it exists, and is not "
+                  "rendered.\n"
+                  "Because the two live in different places, a file is paired with a message "
+                  "on the Android user both belong to, read from the path: data/data is user "
+                  "0, and data/user/<n>, data_mirror, data/media/<n> and storage/emulated/<n> "
+                  "name their own. A second Android user's copy of the app therefore cannot "
+                  "supply a picture for this one's message. Where no user can be read from a "
+                  "path, nothing is paired with it and a line is logged, because a wrong "
+                  "picture on a message is worse than no picture. The duplicate storage views "
+                  "of one file are collapsed before anything is read.\n"
+                  "Attachment Type and Local URI are reported as stored. No source for the "
+                  "type codes was found, so none is named here. The values seen on the "
+                  "tested images were 0, 1, 2, 4, 15, 16 and 17; the four files that "
+                  "resolved all carried type 1. A type of 6 is a call record and those rows "
+                  "are left to the Line - Call Logs artifact. Local URI held a value on "
+                  "one row of one tested image, a content:// MediaStore reference to a video, "
+                  "and was null on every other row; it is reported as stored and is not "
+                  "resolved to a file here."),
+        "paths": ('*/jp.naver.line.android/databases/**',
+                  '*/jp.naver.line.android/files/chats/*'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
@@ -52,7 +92,8 @@ __artifacts_v2__ = {
                 "directionColumn": "Direction",
                 "directionSentValue": "Outgoing",
                 "timeColumn": "Start Time",
-                "senderColumn": "From ID"
+                "senderColumn": "From ID",
+                "mediaColumn": "Attachment"
             }
         },
     },
@@ -84,14 +125,95 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import os
+import re
 
-from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, logfunc, open_sqlite_db_readonly
+from scripts import filetype
+from scripts.artifacts.storagePathViews import unique_files
+from scripts.ilapfuncs import (artifact_processor, attach_sqlite_db_readonly, check_in_media,
+                               logfunc, open_sqlite_db_readonly)
 
 
 def _sec_to_utc(value):
     if value:
         return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
     return ''
+
+
+# The app writes a message's attachment to files/chats/<chat id>/messages/<message id>, with a
+# ".thumb" sibling for the thumbnail, so the file itself carries the link the app recorded.
+_CHATS = '/jp.naver.line.android/files/chats/'
+# The database sits in the app's private storage and the chat files in the user's external
+# storage, so the two share no directory and are paired on the Android user instead. Ordered
+# with the views that name a user first; data/data is user 0 by definition.
+_USER_VIEWS = (
+    re.compile(r'(?:^|/)data/user/(\d+)/jp\.naver\.line\.android/'),
+    re.compile(r'(?:^|/)data/user_de/(\d+)/jp\.naver\.line\.android/'),
+    re.compile(r'(?:^|/)data_mirror/data_[cd]e/[^/]+/(\d+)/jp\.naver\.line\.android/'),
+    re.compile(r'(?:^|/)data/media/(\d+)/Android/data/jp\.naver\.line\.android/'),
+    re.compile(r'(?:^|/)storage/emulated/(\d+)/Android/data/jp\.naver\.line\.android/'),
+)
+_USER_ZERO = re.compile(r'(?:^|/)data/data/jp\.naver\.line\.android/')
+
+
+def _android_user(path):
+    """The Android user a Line file belongs to, or '' when the path does not name one."""
+    path = str(path).replace('\\', '/')
+    for pattern in _USER_VIEWS:
+        match = pattern.search(path)
+        if match:
+            return match.group(1)
+    return '0' if _USER_ZERO.search(path) else ''
+
+
+def _attachment_files(files_found, user):
+    """{(chat id, message id): {'full': path, 'thumb': path}} for one Android user.
+
+    Only files belonging to the same Android user as the database are paired, so a second
+    user's copy of the app cannot supply a picture for this one's message. When the user
+    cannot be read from a path nothing is paired with it, because a wrong picture on a
+    message is worse than no picture.
+    """
+    found = {}
+    for file_found in files_found:
+        path = str(file_found).replace('\\', '/')
+        if _CHATS not in path or os.path.isdir(path):
+            continue
+        if not user or _android_user(path) != user:
+            continue
+        parts = path.split(_CHATS, 1)[1].split('/')
+        if len(parts) < 3 or parts[1] != 'messages':
+            continue
+        chat_id, name = parts[0], parts[-1]
+        kind = 'thumb' if name.endswith('.thumb') else 'full'
+        message_id = name[:-len('.thumb')] if kind == 'thumb' else name
+        found.setdefault((chat_id, message_id), {})[kind] = file_found
+    return found
+
+
+def _attachment(pair):
+    """(media reference, file name shown, format) for the best file of a message.
+
+    The full sized file is preferred and the thumbnail is used only when it is absent, so a
+    row naming a ".thumb" file is one whose full sized file was not in the extraction. The
+    format is read from the leading bytes rather than from the name, because these files
+    carry no extension, and a file whose bytes match no known signature is reported by name
+    and not rendered.
+    """
+    path = pair.get('full') or pair.get('thumb')
+    if not path:
+        return '', '', ''
+    name = os.path.basename(str(path).replace('\\', '/'))
+    try:
+        kind = filetype.guess(str(path))
+    except Exception as ex:                      # pylint: disable=broad-except
+        logfunc(f'Line: could not read {name}: {ex}')
+        kind = None
+    if not kind:
+        return '', name, 'unrecognised'
+    reference = check_in_media(str(path), name, force_type=kind.mime,
+                               force_extension=kind.extension)
+    return reference or '', name, kind.mime
 
 
 def _line_dbs(files_found):
@@ -126,10 +248,17 @@ def get_line(context):
 
 @artifact_processor
 def get_line_messages(context):
-    files_found = context.get_files_found()
+    # The duplicate storage views of one file are collapsed first, so a database is not read
+    # once per view and an attachment is paired with one app data directory rather than three.
+    files_found = unique_files(context)
     msg_db, _ = _line_dbs(files_found)
     data_list = []
     if msg_db:
+        user = _android_user(msg_db)
+        if not user:
+            logfunc('Line: the Android user could not be read from the database path, '
+                    'so no attachment is paired with a message')
+        attachments = _attachment_files(files_found, user)
         db = open_sqlite_db_readonly(msg_db)
         cursor = db.cursor()
         try:
@@ -143,7 +272,8 @@ def get_line_messages(context):
                        contact_book_w_groups.members, messages.from_mid,
                        messages.content, messages.created_time/1000, messages.attachement_type,
                        messages.attachement_local_uri,
-                       case messages.status when 1 then "Incoming" when 2 then "Outgoing" else messages.status end status
+                       case messages.status when 1 then "Incoming" when 2 then "Outgoing" else messages.status end status,
+                       messages.id, messages.chat_id
                 FROM   chat_history AS messages
                        LEFT JOIN (SELECT id, Group_concat(M.m_id) AS members
                                   FROM   membership AS M GROUP BY id
@@ -166,13 +296,17 @@ def get_line_messages(context):
                     to_id = row[1]
                 else:
                     to_id = row[0]
-            attachment = row[6]
-            if attachment is None or 'content' in attachment:
-                attachment = None
+            # The pairing is on the row's own chat_id and id, which is where the app wrote the
+            # file, not on the chat the join resolved, so an unmatched contact cannot move it.
+            media, media_name, media_format = _attachment(
+                attachments.get((str(row[9]), str(row[8])), {}))
             created_time = _sec_to_utc(row[4])
-            data_list.append((created_time, row[7], row[2], row[3], to_id, thread_id, attachment))
+            data_list.append((created_time, row[7], row[2], row[3], media, media_name,
+                              media_format, row[5], row[6], to_id, thread_id))
 
-    data_headers = (('Start Time', 'datetime'), 'Direction', 'From ID', 'Message', 'To ID', 'Thread ID', 'Attachments')
+    data_headers = (('Start Time', 'datetime'), 'Direction', 'From ID', 'Message',
+                    ('Attachment', 'media'), 'Attachment File', 'Attachment Format',
+                    'Attachment Type (as stored)', 'Local URI (as stored)', 'To ID', 'Thread ID')
     return data_headers, data_list, msg_db
 
 
