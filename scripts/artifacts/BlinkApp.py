@@ -150,9 +150,114 @@ __artifacts_v2__ = {
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "wifi"
+    },
+    "blink_key_value_store": {
+        "name": "Blink App Key Value Store",
+        "description": "Values the Blink app stored in its own key and value table",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-09-11",
+        "last_update_date": "2026-09-11",
+        "requirements": "none",
+        "category": "Blink",
+        "notes": "Rows come from the key_value_pair table of the app's Room database, which is a key and "
+                 "value store the app writes. Value is reported as stored because Value Type does not "
+                 "say whether a value is a timestamp: on the tested file the three values typed LONG "
+                 "were a Unix millisecond timestamp, a network id and a zero. Two keys on that file held "
+                 "an ISO 8601 timestamp typed STRING, and one of those carried a -04:00 offset, which is "
+                 "the offset America/New_York was on for that value's date and is the zone the network "
+                 "row records. Some keys embed a camera id, and two on the tested file also began with a "
+                 "brace character. What each key means, and the full set of keys the app can write, are "
+                 "not established. Measured on one BlinkRoom file supplied by Christian Frahm, who "
+                 "reports it came from a Samsung SM-A166U running Android 16: 15 rows. None of the 40 "
+                 "registered Android test corpora carry this app, so the module has not been exercised "
+                 "against them.",
+        "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
+        "output_types": "standard",
+        "artifact_icon": "settings"
+    },
+    "blink_subscriptions": {
+        "name": "Blink Subscriptions",
+        "description": "Subscription records the Blink app stored, with the plan, trial window and cycle dates",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-09-11",
+        "last_update_date": "2026-09-11",
+        "requirements": "none",
+        "category": "Blink",
+        "notes": "Rows come from the subscription table of the app's Room database. Target and Target ID "
+                 "name what a subscription is attached to, and that vocabulary is not the one the "
+                 "entitlement table uses: on the tested file the single subscription's target did not "
+                 "appear as an entitlement target, and its target id matched no camera, sync module or "
+                 "network id in the same file, so what it points at is not established. "
+                 "camera.subscription_id was zero on both cameras and the sync module's was empty, so "
+                 "nothing in that file tied a device to this subscription. Subscription Type, Source, "
+                 "Active, Attached, Cycle State, Cycle Action and Trial Period are reported as stored "
+                 "and the full set of values each can take is not established. The five timestamp "
+                 "columns are stored as ISO 8601 text carrying an explicit UTC offset and are reported "
+                 "as stored; Cycle Timestamp, Trial Starts Timestamp and Trial Ends Timestamp are "
+                 "nullable in the schema and were filled on the tested file. An account with one "
+                 "subscription produces one row, so every column holds a single value on that file. "
+                 "Measured on one BlinkRoom file supplied by Christian Frahm, who reports it came from a "
+                 "Samsung SM-A166U running Android 16: 1 row. None of the 40 registered Android test "
+                 "corpora carry this app, so the module has not been exercised against them.",
+        "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
+        "output_types": "standard",
+        "artifact_icon": "credit-card"
+    },
+    "blink_app_messages": {
+        "name": "Blink App Messages",
+        "description": "Notices the Blink app raised in its own interface, with the network they belong to",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-09-11",
+        "last_update_date": "2026-09-11",
+        "requirements": "none",
+        "category": "Blink",
+        "notes": "Rows come from the message table of the app's Room database, which holds notices the "
+                 "app raised in its own interface. The table has no sender or recipient column, so "
+                 "nothing in it records a message a person sent or received. Created Timestamp is stored "
+                 "as a Unix value in milliseconds and is converted here rather than passed to a helper "
+                 "that infers the unit: read as seconds, the single value on the tested file gives a "
+                 "year outside the range a date can represent, which is what rules that unit out. "
+                 "Network ID names the row in Blink Network Information the message belongs to. Sub "
+                 "Message held an empty string on the tested file's single row; it is reported because "
+                 "it is a separate column of the message record, and whether the app ever fills it was "
+                 "not established. Priority and Dismiss Until are reported as stored; Dismiss Until is "
+                 "an integer that was zero on the tested file and whether it is a timestamp is not "
+                 "established. The message text on that file named a camera by the same name Blink "
+                 "Camera Information reports. Message ID is an autoincrement value that reached 11 with "
+                 "1 row held, so the table does not hold every message ever written; whether the app "
+                 "removes them or the supplied file was edited is not established. Measured on one "
+                 "BlinkRoom file supplied by Christian Frahm, who reports it came from a Samsung "
+                 "SM-A166U running Android 16: 1 row. None of the 40 registered Android test corpora "
+                 "carry this app, so the module has not been exercised against them.",
+        "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
+        "output_types": "standard",
+        "artifact_icon": "bell"
+    },
+    "blink_tracking_events": {
+        "name": "Blink Tracking Events",
+        "description": "App events the Blink app recorded with a timestamp, reported by the name it stored",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-09-11",
+        "last_update_date": "2026-09-11",
+        "requirements": "none",
+        "category": "Blink",
+        "notes": "Rows come from the tracking_event table of the app's Room database. Timestamp is "
+                 "stored as ISO 8601 text carrying a Z offset and is reported as stored. Event Name is "
+                 "reported as stored and the full set of names the app can write is not established; the "
+                 "single row on the tested file carried the name SESSION_BACKGROUNDED. Event ID is an "
+                 "autoincrement value that reached 5274 with 1 row held, so the table does not hold "
+                 "every event ever written; whether the app removes them or the supplied file was edited "
+                 "is not established. Nothing in the table names a camera, a network or an account. "
+                 "Measured on one BlinkRoom file supplied by Christian Frahm, who reports it came from a "
+                 "Samsung SM-A166U running Android 16: 1 row. None of the 40 registered Android test "
+                 "corpora carry this app, so the module has not been exercised against them.",
+        "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
+        "output_types": "standard",
+        "artifact_icon": "activity"
     }
 }
 
+import datetime
 import os
 
 from scripts.artifacts.storagePathViews import unique_files
@@ -385,5 +490,161 @@ def blink_network_information(context):
         'Daylight Saving (as stored)',
         'Armed (as stored)',
         'Save All Live Views (as stored)',
+    )
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+@artifact_processor
+def blink_key_value_store(context):
+    source_paths = _blink_databases(context)
+    data_list = []
+
+    query = """
+    SELECT
+    key_value_pair.key,
+    key_value_pair.value,
+    key_value_pair.type,
+    key_value_pair.client_options
+    FROM key_value_pair
+    ORDER BY key_value_pair.key"""
+
+    for source_path in source_paths:
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append((record[0],  # Key, as stored
+                              record[1],  # Value, as stored, unit not given by the type column
+                              record[2],  # Value Type, as stored
+                              record[3],  # client_options, integer flag
+                              ))
+
+    data_headers = (
+        'Key',
+        'Value (as stored)',
+        'Value Type (as stored)',
+        'Client Options (as stored)',
+    )
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+@artifact_processor
+def blink_subscriptions(context):
+    source_paths = _blink_databases(context)
+    data_list = []
+
+    query = """
+    SELECT
+    subscription.created_at,
+    subscription.updated_at,
+    subscription.cycle_at,
+    subscription.cycle_trial_starts_at,
+    subscription.cycle_trial_ends_at,
+    subscription.plan_name,
+    subscription.plan_interval,
+    subscription.type,
+    subscription.id,
+    subscription.target,
+    subscription.target_id,
+    subscription.source,
+    subscription.active,
+    subscription.attached,
+    subscription.cycle_state,
+    subscription.cycle_action,
+    subscription.cycle_trial_period
+    FROM subscription
+    ORDER BY subscription.created_at"""
+
+    for source_path in source_paths:
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append(tuple(record))
+
+    data_headers = (
+        ('Created Timestamp', 'datetime'),
+        ('Updated Timestamp', 'datetime'),
+        ('Cycle Timestamp', 'datetime'),
+        ('Trial Starts Timestamp', 'datetime'),
+        ('Trial Ends Timestamp', 'datetime'),
+        'Plan Name',
+        'Plan Interval',
+        'Subscription Type',
+        'Subscription ID',
+        'Target (as stored)',
+        'Target ID',
+        'Source',
+        'Active (as stored)',
+        'Attached (as stored)',
+        'Cycle State (as stored)',
+        'Cycle Action (as stored)',
+        'Trial Period (as stored)',
+    )
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+@artifact_processor
+def blink_app_messages(context):
+    source_paths = _blink_databases(context)
+    data_list = []
+
+    query = """
+    SELECT
+    message.created_at,
+    message.message,
+    message.sub_message,
+    message.id,
+    message.network_id,
+    message.priority,
+    message.dismiss_until
+    FROM message
+    ORDER BY message.created_at"""
+
+    for source_path in source_paths:
+        for record in get_sqlite_db_records(source_path, query):
+            # Stored in milliseconds. Converted here rather than through a helper that infers
+            # the unit from the value's magnitude, because the column's unit is known.
+            created = datetime.datetime.fromtimestamp(int(record[0]) / 1000,
+                                                      datetime.timezone.utc)
+            data_list.append((created,     # Created Timestamp
+                              record[1],   # Message text
+                              record[2],   # Sub message text
+                              record[3],   # Message ID, autoincrement
+                              record[4],   # Network ID, joins to the network table
+                              record[5],   # priority, as stored
+                              record[6],   # dismiss_until, as stored
+                              ))
+
+    data_headers = (
+        ('Created Timestamp', 'datetime'),
+        'Message',
+        'Sub Message',
+        'Message ID',
+        'Network ID',
+        'Priority (as stored)',
+        'Dismiss Until (as stored)',
+    )
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+@artifact_processor
+def blink_tracking_events(context):
+    source_paths = _blink_databases(context)
+    data_list = []
+
+    query = """
+    SELECT
+    tracking_event.timestamp,
+    tracking_event.name,
+    tracking_event.id
+    FROM tracking_event
+    ORDER BY tracking_event.timestamp"""
+
+    for source_path in source_paths:
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append((record[0],  # Timestamp, ISO 8601 with a Z offset
+                              record[1],  # Event Name, as stored
+                              record[2],  # Event ID, autoincrement
+                              ))
+
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'Event Name',
+        'Event ID',
     )
     return data_headers, data_list, '\n'.join(source_paths)
