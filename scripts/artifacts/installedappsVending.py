@@ -19,11 +19,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.vending vc 85180930 | 147 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.vending vc 84812830 | 97 rows",
             "pixel7a_a14": "Android 14 | com.android.vending vc 84191730 | 155 rows",
-            "samsunga53_a14": "Android 14 | com.android.vending vc 84913330 | 204 rows",
+            "samsunga53_a14": "Android 14 | com.android.vending vc 84913330 | 68 rows",
             "samsungs20_a13": "Android 13 | com.android.vending vc 84962330 | 150 rows",
             "sharon_a14": "Android 14 | com.android.vending vc 84222730 | 122 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.vending vc 83631220 | 204 rows",
-            "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 214 rows",
+            "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 107 rows",
         },
     }
 }

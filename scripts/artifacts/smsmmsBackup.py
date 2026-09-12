@@ -127,13 +127,34 @@ def get_mms_from_backup(context):
         for mms in read_messages_from_backup(file_found):
             body = mms.get('mms_body', '')
             data_list.append((
-                ReadUnixTime(mms.get('date', 0)), ReadUnixTime(mms.get('date_sent', 0)),
-                mms.get('ct_l', ''), ', '.join(mms.get('recipients', [])), mms.get('sub', ''),
-                mms.get('read', ''), str(mms.get('mms_addresses', [])), mms.get('tr_id', ''),
-                mms.get('v', ''), body, mms.get('m_type', ''), MMS_BOX.get(mms.get('msg_box', ''), mms.get('msg_box', ''))))
+                ReadUnixTime(mms.get('date', 0)),
+                ReadUnixTime(mms.get('date_sent', 0)),
+                MMS_BOX.get(mms.get('msg_box', ''), mms.get('msg_box', '')),
+                ', '.join(mms.get('recipients', [])),
+                body,
+                mms.get('ct_l', ''),
+                mms.get('sub', ''),
+                mms.get('read', ''),
+                str(mms.get('mms_addresses', [])),
+                mms.get('tr_id', ''),
+                mms.get('v', ''),
+                mms.get('m_type', ''),
+            ))
 
-    data_headers = (('Date', 'datetime'), ('Date sent', 'datetime'), 'Content Location', 'Recipients', 'Subject',
-                    'Read', 'MMS Addresses', 'Transaction ID', 'MMS Version', 'Body', 'Message Type', 'Message Box')
+    data_headers = (
+        ('Date', 'datetime'),
+        ('Date sent', 'datetime'),
+        'Message Box',
+        'Recipients',
+        'Body',
+        'Content Location',
+        'Subject',
+        'Read',
+        'MMS Addresses',
+        'Transaction ID',
+        'MMS Version',
+        'Message Type',
+    )
     return data_headers, data_list, source_path
 
 
@@ -147,10 +168,16 @@ def get_sms_from_backup(context):
         for sms in read_messages_from_backup(file_found):
             body = sms.get('body', '')
             data_list.append((
-                ReadUnixTimeMs(sms.get('date', 0)), ReadUnixTimeMs(sms.get('date_sent', 0)),
-                sms.get('read', ''), sms.get('type', ''), body,
-                ', '.join(sms.get('recipients', [])), sms.get('address', ''), sms.get('status', ''),
-                SMS_TYPE.get(sms.get('type', ''), sms.get('type', ''))))
+                ReadUnixTimeMs(sms.get('date', 0)),
+                ReadUnixTimeMs(sms.get('date_sent', 0)),
+                SMS_TYPE.get(sms.get('type', ''), sms.get('type', '')),
+                sms.get('address', ''),
+                body,
+                sms.get('read', ''),
+                sms.get('type', ''),
+                ', '.join(sms.get('recipients', [])),
+                sms.get('status', ''),
+            ))
 
-    data_headers = (('Date', 'datetime'), ('Date sent', 'datetime'), 'Read', 'Type', 'Body', 'recipients', ('Address', 'phonenumber'), 'Status', 'Direction')
+    data_headers = (('Date', 'datetime'), ('Date sent', 'datetime'), 'Direction', ('Address', 'phonenumber'), 'Body', 'Read', 'Type', 'recipients', 'Status')
     return data_headers, data_list, source_path

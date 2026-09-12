@@ -6,10 +6,10 @@ __artifacts_v2__ = {
                        "covering the per-account _im.db files found.",
         "author": "@abrignoni",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "TikTok",
-        "notes": "One _im.db exists per logged-in account, named <account uid>_im.db, and "
+        "notes": "_im.db files are named <account uid>_im.db and "
                  "all of them are parsed; the Account ID column carries each file's uid and "
                  "messages whose sender equals it are marked Outgoing.\n"
                  "Every msg row is reported. The Message, link and sticker columns are "
@@ -18,8 +18,19 @@ __artifacts_v2__ = {
                  "as stored since no source for those integers was verified.\n"
                  "Sender names are resolved against SIMPLE_USER in db_im_xx and "
                  "IM_USER_BASE_INFO in the db_im_contact databases, where present. A sender "
-                 "in neither store shows a bare UID.",
-        "paths": ('*_im.db*', '*db_im_xx*', '*db_im_contact*'),
+                 "in neither store shows a bare UID.\n"
+                 "Path patterns are anchored to the TikTok package names, "
+                 "com.zhiliaoapp.musically and com.ss.android.ugc.trill; only the former "
+                 "appears in the registered corpora. Another app can keep IM databases "
+                 "whose names match the same file patterns (observed with Lemon8, "
+                 "com.bd.nproject, on one tested image); the package anchor keeps those "
+                 "files out of this artifact.",
+        "paths": ('*/com.zhiliaoapp.musically/*_im.db*',
+                  '*/com.zhiliaoapp.musically/*db_im_xx*',
+                  '*/com.zhiliaoapp.musically/*db_im_contact*',
+                  '*/com.ss.android.ugc.trill/*_im.db*',
+                  '*/com.ss.android.ugc.trill/*db_im_xx*',
+                  '*/com.ss.android.ugc.trill/*db_im_contact*'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
@@ -35,7 +46,9 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 0 rows",
             "sharon_a13": "Android 13 | 0 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 0 rows",
-            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.zhiliaoapp.musically present without IM "
+                              "databases; a Lemon8 (com.bd.nproject) _im.db is outside "
+                              "the anchored paths | 0 rows",
         },
         "data_views": {
             "conversation": {
@@ -54,7 +67,7 @@ __artifacts_v2__ = {
                        "status) from the TikTok IM databases.",
         "author": "@abrignoni",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "TikTok",
         "notes": "Contacts come from IM_USER_BASE_INFO in the db_im_contact databases and "
@@ -63,8 +76,15 @@ __artifacts_v2__ = {
                  "IM_USER_BASE_INFO preferred since it also records an update timestamp. "
                  "Update Time, Blocked and Deleted are only available from "
                  "IM_USER_BASE_INFO; Blocked and Deleted are reported as stored since no "
-                 "source for those integers was verified.",
-        "paths": ('*db_im_xx*', '*db_im_contact*'),
+                 "source for those integers was verified.\n"
+                 "Path patterns are anchored to the TikTok package names, "
+                 "com.zhiliaoapp.musically and com.ss.android.ugc.trill; only the former "
+                 "appears in the registered corpora, and files under any other package "
+                 "name are not read.",
+        "paths": ('*/com.zhiliaoapp.musically/*db_im_xx*',
+                  '*/com.zhiliaoapp.musically/*db_im_contact*',
+                  '*/com.ss.android.ugc.trill/*db_im_xx*',
+                  '*/com.ss.android.ugc.trill/*db_im_contact*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
         "sample_data": {
@@ -80,7 +100,8 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 2 rows",
             "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 2 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 1 row",
-            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.zhiliaoapp.musically present without IM "
+                              "contact stores | 0 rows",
         },
     },
     "get_tikTok_app_open": {
@@ -94,8 +115,8 @@ __artifacts_v2__ = {
         "category": "TikTok",
         "notes": "Hu and Karabiyik describe TIKTOK.db as keeping track of the timestamps "
                  "for each instance the app is opened. On the tested image every open_time "
-                 "value fell exactly on a local midnight, so that build appears to record "
-                 "at day rather than moment granularity; the value is reported as stored. "
+                 "value fell exactly on a local midnight; the value is reported as stored and "
+                 "its granularity is not established. "
                  "Reference: Xiao Hu and Umit Karabiyik, 'Shopping while Watching: An "
                  "Updated Forensic Analysis of TikTok on Android and iOS', ISNCC 2024, "
                  "https://doi.org/10.1109/ISNCC62547.2024.10759027",
@@ -150,7 +171,7 @@ __artifacts_v2__ = {
             "sharon_a13": "Android 13 | 60 rows",
             "pixel3_a12": "Android 12 | 49 rows",
             "pixel3_a11": "Android 11 | 48 rows (schema lacks the timestamp columns)",
-            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 12 rows",
+            "samsunga53_a14": "Android 14 | com.zhiliaoapp.musically | 12 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 5 rows",
         },
     },
@@ -236,6 +257,7 @@ import sqlite3
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 _ACCOUNT_DB_RE = re.compile(r'(\d+)_im\.db$')
 
@@ -265,34 +287,16 @@ def _rows(source_path, sql):
     return rows
 
 
-def _unique_files(context, suffix=None):
-    '''The context's files matching suffix, without the duplicate paths extractions carry
-    for the same file (data_mirror, and /data/data next to /data/user/0), preserving order.
-
-    The dedupe key is the evidence-relative path, not the extracted path: the report's own
-    data folder ends in /data, so a raw-path regex can rewrite the harness boundary instead
-    of the evidence path on archives whose members start with data/.'''
-    seen = set()
-    result = []
-    for file_found in context.get_files_found():
-        file_found = str(file_found)
-        if suffix is not None and not file_found.endswith(suffix):
-            continue
-        relative = str(context.get_relative_path(file_found)).replace('\\', '/')
-        if 'data_mirror' in relative:
-            continue
-        normalized = re.sub(r'(^|/)data/data/', r'\1data/user/0/', relative)
-        if normalized in seen:
-            continue
-        seen.add(normalized)
-        result.append(file_found)
-    return result
+def _files_ending(context, suffix):
+    '''The context's files ending in suffix, one copy per duplicate storage view.'''
+    return unique_files(context, [f for f in context.get_files_found()
+                                  if str(f).endswith(suffix)])
 
 
 def _account_dbs(context):
     '''Every per-account <uid>_im.db, as [(account uid, path)].'''
     account_dbs = []
-    for file_found in _unique_files(context, suffix='_im.db'):
+    for file_found in _files_ending(context, '_im.db'):
         match = _ACCOUNT_DB_RE.search(os.path.basename(file_found))
         if match:
             account_dbs.append((match.group(1), file_found))
@@ -303,7 +307,7 @@ def _contact_sources(context):
     '''Contact stores as [(table, path)], IM_USER_BASE_INFO stores first.'''
     contact_dbs = []
     simple_dbs = []
-    for file_found in _unique_files(context):
+    for file_found in unique_files(context):
         name = os.path.basename(file_found)
         if name == 'db_im_xx':
             simple_dbs.append(('SIMPLE_USER', file_found))
@@ -364,17 +368,40 @@ def get_tikTok(context):
             else:
                 direction = ''
             data_list.append((
-                _ms_to_utc(created), sender, unique_id, nickname,
+                _ms_to_utc(created),
+                direction,
+                nickname,
                 _json_field(content, 'text'),
+                sender,
+                unique_id,
                 _json_field(content, 'display_name'),
                 _json_field(content, 'url', 'url_list', 0),
-                message_type, deleted, read_status, local_info,
-                conversation_id, account_uid, direction, source_file))
+                message_type,
+                deleted,
+                read_status,
+                local_info,
+                conversation_id,
+                account_uid,
+                source_file,
+            ))
 
-    data_headers = (('Timestamp', 'datetime'), 'UID', 'Unique ID', 'Nickname', 'Message',
-                    'Link GIF Name', 'Link GIF URL', 'Message Type (as stored)',
-                    'Deleted (as stored)', 'Read?', 'Local Info', 'Conversation ID',
-                    'Account ID', 'Direction', 'Source File')
+    data_headers = (
+        ('Timestamp', 'datetime'),
+        'Direction',
+        'Nickname',
+        'Message',
+        'UID',
+        'Unique ID',
+        'Link GIF Name',
+        'Link GIF URL',
+        'Message Type (as stored)',
+        'Deleted (as stored)',
+        'Read?',
+        'Local Info',
+        'Conversation ID',
+        'Account ID',
+        'Source File',
+    )
     return data_headers, data_list, source_path or 'see Source File column'
 
 
@@ -433,7 +460,7 @@ def get_tikTok_account(context):
     data_list = []
     source_path = ''
 
-    for file_found in _unique_files(context, suffix='aweme_user.xml'):
+    for file_found in _files_ending(context, 'aweme_user.xml'):
         source_path = source_path or file_found
         source_file = context.get_relative_path(file_found)
         try:
@@ -478,7 +505,7 @@ def _tolerant_select(source_path, table, columns, tail=''):
 def get_tikTok_app_open(context):
     data_list = []
     source_path = ''
-    for file_found in _unique_files(context, suffix='TIKTOK.db'):
+    for file_found in _files_ending(context, 'TIKTOK.db'):
         source_path = source_path or file_found
         source_file = context.get_relative_path(file_found)
         for (open_time,) in _rows(file_found,
@@ -492,7 +519,7 @@ def get_tikTok_app_open(context):
 def get_tikTok_downloads(context):
     data_list = []
     source_path = ''
-    for file_found in _unique_files(context, suffix='downloader.db'):
+    for file_found in _files_ending(context, 'downloader.db'):
         source_path = source_path or file_found
         source_file = context.get_relative_path(file_found)
         sql = _tolerant_select(
@@ -515,7 +542,7 @@ def get_tikTok_downloads(context):
 def get_tikTok_app_log_events(context):
     data_list = []
     source_path = ''
-    for file_found in _unique_files(context, suffix='ss_app_log.db'):
+    for file_found in _files_ending(context, 'ss_app_log.db'):
         source_path = source_path or file_found
         source_file = context.get_relative_path(file_found)
         for (timestamp, category, tag, label, ext_json, session_id,

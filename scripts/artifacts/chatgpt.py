@@ -1,7 +1,8 @@
 __artifacts_v2__ = {
     "get_chatgpt": {
         "name": "ChatGPT - Conversations Metadata",
-        "description": "Metadata related to the user's ChatGPT conversations. Validated up to app 1.2024.177.",
+        "description": "Metadata for the ChatGPT conversations stored by the app. Exercised on "
+                       "app versions up to 1.2024.177.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
         "last_update_date": "2026-08-01",

@@ -61,8 +61,9 @@ __artifacts_v2__ = {
         "category": "Dahua Technology (DMSS)",
         "notes": "Alarm Notification renders the stored alarmTypeStr token as a readable label "
                  "(for example gwMsg_AlarmLocal_PassiveInfrared as 'Motion detected'). Those "
-                 "token-to-label meanings are not documented in the data; they were established "
-                 "through testing. Any token without a mapping is reported as stored. "
+                 "token-to-label meanings are not documented in the data, and no source or "
+                 "measurement supporting them is recorded here. Any token without a mapping is "
+                 "reported as stored. "
                  "Reference: E. Dragonas, C. Lambrinoudakis, M. Kotsis, 'IoT Forensics: "
                  "Investigating the Mobile App of Dahua Technology', IEEE CSR 2023, "
                  "https://ieeexplore.ieee.org/document/10224982",

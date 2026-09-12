@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_calendar": {
         "name": "Calendar - Events",
         "description": "Parses provider calendar events",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-06",
         "last_update_date": "2023-01-06",
         "requirements": "none",
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
     "get_calendar_calendars": {
         "name": "Calendar - Calendars",
         "description": "Parses provider calendars",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-06",
         "last_update_date": "2023-01-06",
         "requirements": "none",
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
                        "database: start and end, title, description, the calendar and "
                        "account they belong to and the event web link, decoded from each "
                        "event's protobuf record.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",

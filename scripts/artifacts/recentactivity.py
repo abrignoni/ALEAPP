@@ -12,17 +12,15 @@ __artifacts_v2__ = {
             "Recent Tasks is a mutable system list, not a complete application-use history. "
             "A task snapshot may be a real screen capture or a theme-generated substitute; "
             "consult Is Real Snapshot before interpreting the image. Snapshot files are "
-            "credential-encrypted and may be removed when a task leaves recents. Android sources: "
+            "kept under credential-encrypted storage; a task record can be present without a "
+            "snapshot file, and when the platform removes snapshots is not established here. "
+            "Android sources: "
             "https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/"
             "services/core/java/com/android/server/wm/TaskPersister.java and "
             "https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/"
             "proto/src/windowmanager.proto"
         ),
-        "paths": ('*/system_ce/*',
-                  '*/system_ce/*/recent_tasks/*',
-                  '*/system_ce/*/snapshots/*',
-                  '*/system_ce/*/recent_images/*',
-                  '*/system_ce/*/recent_images/*/*'),
+        "paths": ('*/system_ce/*',),
         "output_types": "standard",
         "artifact_icon": "activity",
         "sample_data": {

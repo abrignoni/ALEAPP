@@ -102,8 +102,9 @@ __artifacts_v2__ = {
                  "files/native_content_manager/com.snap.file_manager_*_SCContent_*/. A message "
                  "may render both a full snap and its thumbnail. The bytes are read from disk "
                  "as stored: on the tested image they were unencrypted MP4 and JPEG. A media "
-                 "message whose local copy is absent (evicted or never downloaded) reports a "
-                 "blank Media cell rather than being dropped. See the Snapchat - Chat Media "
+                 "message whose local copy is absent reports a blank Media cell rather than "
+                 "being dropped; why the copy is absent is not established. See the Snapchat - "
+                 "Chat Media "
                  "artifact for the file-centric view including orphans.\n"
                  "Limits. WAL frames are not parsed, so a message absent here is not evidence it "
                  "did not exist: a development-only frame parser read a further 29 rows across 10 "
@@ -223,14 +224,14 @@ __artifacts_v2__ = {
         "requirements": "blackboxprotobuf", "category": "Snapchat",
         "notes": "Rows come from CACHE_FILE_CLAIM in "
                  "databases/native_content_manager/cache_controller.db, limited to the "
-                 "chat_snap, snap and chat_media_thumbnail external-key prefixes; the rest "
-                 "of that store is lens, bitmoji and UI assets. Each claim's CACHE_KEY is "
-                 "the file name under "
+                 "chat_snap, snap and chat_media_thumbnail external-key prefixes; on the tested "
+                 "image the rest of that store held lens, bitmoji and UI assets. Each claim's "
+                 "CACHE_KEY is the file name under "
                  "files/native_content_manager/com.snap.file_manager_*_SCContent_*/, and the "
                  "Media column renders that file when it is present. The bytes are read as "
-                 "stored: on the tested image the files were unencrypted MP4 and JPEG.\n"
-                 "A claim whose file is not on disk is still reported, with an empty Media "
-                 "cell and On Disk set to NO, so evicted or server-only media is visible "
+                 "stored: on the tested image the files were unencrypted MP4 and JPEG.\nA claim "
+                 "whose file is not on disk is still reported, with an empty Media cell and On "
+                 "Disk set to NO, so a claim whose file is absent is visible "
                  "rather than dropped. The Conversation ID and Client Message ID columns are "
                  "filled when the media key is found inside a conversation_message protobuf "
                  "in arroyo.db; a claim referenced by no surviving message leaves them "
@@ -836,9 +837,10 @@ def _message_sql(source_path):
 _MESSAGE_KEY = (12, 13)
 
 _MESSAGE_HEADERS = (('Creation Timestamp', 'datetime'), ('Read Timestamp', 'datetime'),
+                    'Message Direction', 'Sender Username', 'Message Text', ('Media', 'media'),
                     'Record Origin',
-                    'Sender Username', 'Sender Display Name', 'Sender ID', 'Message Direction',
-                    'Conversation Participants', 'Message Text', ('Media', 'media'),
+                    'Sender Display Name', 'Sender ID',
+                    'Conversation Participants',
                     'Content Type (as stored)',
                     'Message State Type', 'Is Saved', 'Is Viewed By User', 'Created On Device',
                     'Remote Media Count', 'Replies Count', 'Quoted Server Message ID',
@@ -936,9 +938,11 @@ def _message_rows(rows, friends, participants, local_user_id, provenance, media_
         else:
             direction = 'Outgoing' if sender_id == local_user_id else 'Incoming'
         data_list.append((
-            _ms_to_utc(created), _ms_to_utc(read), origin,
-            _friend_name(friends, sender_id), _friend_name(friends, sender_id, 1), sender_id,
-            direction, participants.get(conversation_id, ('', ''))[1], text, media_cell,
+            _ms_to_utc(created), _ms_to_utc(read),
+            direction, _friend_name(friends, sender_id), text, media_cell,
+            origin,
+            _friend_name(friends, sender_id, 1), sender_id,
+            participants.get(conversation_id, ('', ''))[1],
             content_type, state,
             _yes_no(saved), _yes_no(viewed), _yes_no(on_device), media_count, replies, quoted_id,
             conversation_id, client_message_id, server_message_id, method, location))

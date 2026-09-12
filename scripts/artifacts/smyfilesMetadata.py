@@ -48,7 +48,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "My Files",
-        "notes": "analyze_storage is the file list the app's storage-analysis feature builds. as_type "
+        "notes": "analyze_storage rows are reported as stored; what populates the table was not "
+                 "exercised, since it was empty on the registered corpora. as_type "
                  "and mediaType are integer category codes reported as stored. The Cached Thumbnail "
                  "column shows the app's cached preview when FileCache.db links one to the file's "
                  "path; the preview is a cache and its presence does not establish that the original "
@@ -67,13 +68,15 @@ __artifacts_v2__ = {
     },
     "get_smyfiles_frequent_folders": {
         "name": "My Files - Frequent Folders",
-        "description": "Frequently accessed folders with an access count from the Samsung My Files Frequency.db",
+        "description": "Folder entries with a count from the frequently_folder table of the "
+                       "Samsung My Files Frequency.db",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "My Files",
-        "notes": "frequently_folder records folders the user opens often; mCount is the access count.",
+        "notes": "frequently_folder rows are reported as stored. Access Count is the mCount "
+                 "column as stored; its meaning as a count of folder openings is not established.",
         "paths": ('*/com.sec.android.app.myfiles/databases/Frequency.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -87,10 +90,11 @@ __artifacts_v2__ = {
         "description": "File search terms and timestamps from the Samsung My Files FileInfo.db search_history table",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "My Files",
-        "notes": "search_history records terms the user typed into the My Files search box. Empty on the "
+        "notes": "search_history rows are reported as stored; the table was empty on the "
+                 "registered corpora. Empty on the "
                  "registered corpora; the layout was mapped against a private Android 16 sample.",
         "paths": ('*/com.sec.android.app.myfiles/databases/FileInfo.db*',),
         "output_types": "standard",
@@ -109,10 +113,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "My Files",
-        "notes": "home_item holds the categories and shortcuts shown on the My Files home screen. "
-                 "item_type is an integer code reported as stored. last_used_time is a small integer "
-                 "(observed -1 to 3), an ordering rank rather than a timestamp, so it is reported as "
-                 "stored.",
+        "notes": "home_item rows are reported as stored. item_type is an integer code reported "
+                 "as stored. last_used_time is a small integer (observed -1 to 3), not a "
+                 "timestamp, and is reported as stored; its meaning is not established.",
         "paths": ('*/com.sec.android.app.myfiles/databases/HomeItem.db*',),
         "output_types": "standard",
         "artifact_icon": "home",
@@ -130,7 +133,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "My Files",
-        "notes": "trash_apps records how many items each app has in the trash and their size. Empty on "
+        "notes": "trash_apps rows (a per-app count and size) are reported as stored; the table "
+                 "was empty on the registered corpora. Empty on "
                  "the registered corpora; the layout was mapped against a private Android 16 sample.",
         "paths": ('*/com.sec.android.app.myfiles/databases/TrashAppInfo.db*',),
         "output_types": "standard",

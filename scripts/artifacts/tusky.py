@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_tusky": {
         "name": "Tusky - Timeline",
         "description": "Parses Tusky timeline",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-12",
         "last_update_date": "2022-12-12",
         "requirements": "BeautifulSoup",
@@ -16,7 +16,7 @@ __artifacts_v2__ = {
     "get_tusky_accounts": {
         "name": "Tusky - Account Details",
         "description": "Parses Tusky account details",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-12",
         "last_update_date": "2022-12-12",
         "requirements": "BeautifulSoup",

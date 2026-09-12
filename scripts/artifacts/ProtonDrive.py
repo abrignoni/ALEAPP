@@ -55,7 +55,7 @@ def protondrive_useraccount(context):
             break
 
     if not source_path:
-        return (), [], "db-drive not found"
+        return (), [], ''
 
     query = '''
             SELECT
@@ -100,7 +100,7 @@ def protondrive_fileinfo(context):
             break
 
     if not source_path:
-        return (), [], "db-drive not found"
+        return (), [], ''
 
     query = '''
         SELECT

@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "requirements": "re, json",
         "category": "Thunderbird App",
         "notes": "",
-        "paths": ('*data/net.thunderbird.android/databases/*', '*data/net.thunderbird.android/databases/*_att/*'),
+        "paths": ('*data/net.thunderbird.android/databases/*',),
         "output_types": ["standard"],
         "html_columns": ["Content"],
         "artifact_icon": "mail"
@@ -164,6 +164,7 @@ def thunderbird_messages(context):
     ''')
     
     data_list = []
+    source_paths = set()
 
     for file in files_found:
         db_records = get_sqlite_db_records(str(file), query)
@@ -171,7 +172,9 @@ def thunderbird_messages(context):
             account = uuid_mapping[re.search(uuid_regex, file).group(0)]
         except KeyError:
             continue
-    
+
+        source_paths.add(str(file))
+
         for row in db_records:
             sent = convert_unix_ts_to_utc(row[0]/1000) if row[0] is not None else None
             stored = convert_unix_ts_to_utc(row[1]/1000) if row[1] is not None else None
@@ -194,4 +197,4 @@ def thunderbird_messages(context):
 
     data_headers = ( 'Timestamp Sent', 'Timestamp Stored', 'Account', 'Sender', 'Receiver', 'CC', 'BCC', 'Subject', 'Preview', 'Content', 'Attachments', 'Read?', 'Flagged?', 'Answered?', 'Forwarded?', 'Folder Name', 'Source File')
 
-    return data_headers, data_list, 'See source file(s) below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

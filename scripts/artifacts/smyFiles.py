@@ -15,7 +15,8 @@ __artifacts_v2__ = {
     },
     "get_smyFiles_legacy": {
         "name": "My Files - Download History (Legacy)",
-        "description": "Pre-Android 12 download_history schema",
+        "description": "Download history from the older Samsung My Files download_history schema "
+                       "(date, name, size and _data columns)",
         "author": "@abrignoni",
         "creation_date": "2020-12-17",
         "last_update_date": "2020-12-17",

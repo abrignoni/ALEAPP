@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_samsungSmartThings": {
         "name": "samsungSmartThings",
         "description": "Samsung SmartThings",
-        "author": "Kevin Pagano (@KevinPagno3)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-06-13",
         "last_update_date": "2022-06-13",
         "requirements": "none",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
 }
 
 # Samsung SmartThings
-# Author: Kevin Pagano (@KevinPagno3)
+# Author: Kevin Pagano (@stark4n6)
 # Date: 2022-06-13
 # Artifact version: 0.0.1
 # Requirements: none

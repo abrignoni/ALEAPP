@@ -18,6 +18,9 @@ on:
       - 'aleapp.py'
       - 'aleappGUI.py'
 
+permissions:
+  contents: read
+
 jobs:
   runtime-contract:
     runs-on: ubuntu-latest

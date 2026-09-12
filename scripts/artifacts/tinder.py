@@ -10,14 +10,15 @@ __artifacts_v2__ = {
         "category": "Tinder",
         "notes": "Direction is derived, not stored. The match_person table holds the profiles of "
                  "matched accounts and the match table links each match to one of them through "
-                 "person_id. A message whose from_id equals that person_id is reported as Incoming; "
-                 "a message whose to_id equals it is reported as Outgoing. In the tested images "
-                 "every message row satisfied exactly one of the two comparisons, and on Outgoing "
-                 "rows from_id equalled the account identifier held in files/datastore/id. A row "
-                 "matching neither comparison is reported with a blank Direction.\n"
-                 "Sender Name is the matched person's stored name on Incoming rows and the profile "
-                 "name from files/datastore/user on Outgoing rows; it is blank when those sources "
-                 "are absent. Timestamps are stored as epoch milliseconds. The type and "
+                 "person_id. A message whose from_id equals that person_id is reported as "
+                 "Incoming; a message whose to_id equals it is reported as Outgoing. In the "
+                 "tested images every message row satisfied exactly one of the two comparisons, "
+                 "and on Outgoing rows from_id equalled the account identifier held in "
+                 "files/datastore/id. A row matching neither comparison is reported with a blank "
+                 "Direction.\n"
+                 "Sender Name is the matched person's stored name on Incoming rows and the "
+                 "profile name from files/datastore/user on Outgoing rows; it is blank when those "
+                 "sources are absent. Timestamps are stored as epoch milliseconds. The type and "
                  "delivery_status columns are reported as stored; in the tested images type was "
                  "'UNKNOWN' and delivery_status was 'SUCCESS' on every row, and nothing in the "
                  "extraction documents their other values.\n"
@@ -29,17 +30,18 @@ __artifacts_v2__ = {
                  "not used. Content Type is the JSON type field as stored: 'gif' was the only "
                  "value observed, on rows whose Message column holds the media.tenor.com URL of "
                  "the GIF (the JSON fixed_height field holds a smaller rendition of the same "
-                 "GIF). A blank Content Type means the JSON carried no type field, which on "
-                 "every tested row accompanied plain message text; it is not a statement that "
-                 "other content types do not exist.\n"
-                 "GIF content is reported as its URL, not rendered: the tested extractions "
-                 "record no reproducible link from these URLs to cached bytes. The Glide cache "
-                 "file names in cache/image_manager_disk_cache are not derivable from the URL, "
-                 "and the ExoPlayer cache index in databases/exoplayer_internal.db held only "
-                 "profile loop and marketing video URLs, none from media.tenor.com. The URLs "
-                 "are not fetched. No message row with empty text was observed in the tested "
-                 "images. A match whose messages were removed reports no rows here; an empty "
-                 "result is not evidence no messages were ever exchanged.",
+                 "GIF). A blank Content Type means the JSON carried no type field, which on 14 of "
+                 "the 15 tested rows accompanied plain message text, the one typed row being a "
+                 "gif that also carried text; it is not a statement that other content types do "
+                 "not exist.\n"
+                 "GIF content is reported as its URL, not rendered: the tested extractions record "
+                 "no reproducible link from these URLs to cached bytes. The Glide cache file "
+                 "names in cache/image_manager_disk_cache are not derivable from the URL, and the "
+                 "ExoPlayer cache index in databases/exoplayer_internal.db held only profile loop "
+                 "and marketing video URLs, none from media.tenor.com. The URLs are not fetched. "
+                 "No message row with empty text was observed in the tested images. A match whose "
+                 "messages were removed reports no rows here; an empty result is not evidence no "
+                 "messages were ever exchanged.",
         "paths": ('*/com.tinder/databases/tinder-3.db*',
                   '*/com.tinder/files/datastore/id',
                   '*/com.tinder/files/datastore/user'),
@@ -399,9 +401,9 @@ def tinderMessages(context):
             data_list.append((
                 _ms_to_utc(sent_date),
                 direction,
-                person_name or '',
                 sender_name,
                 text,
+                person_name or '',
                 content_type,
                 gif_description,
                 msg_type,
@@ -418,9 +420,9 @@ def tinderMessages(context):
     data_headers = (
         ('Sent Timestamp', 'datetime'),
         'Direction',
-        'Matched Person',
         'Sender Name',
         'Message',
+        'Matched Person',
         'Content Type (as stored)',
         'GIF Description (as stored)',
         'Type (as stored)',

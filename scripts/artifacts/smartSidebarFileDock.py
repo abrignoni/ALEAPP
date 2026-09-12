@@ -31,17 +31,14 @@ __artifacts_v2__ = {
     "get_smartSidebarFileDock": {
         "name": "Smart Sidebar File Dock",
         "description": (
-            "Items the user added to the OxygenOS/ColorOS Smart Sidebar File "
-            "Dock (OnePlus/Oppo/Realme) by drag and drop or via the share "
-            "sheet's Save to File Dock. Each item is a cached copy stored "
-            "under Download/.com_coloros_smartsidebar/transferdock/ in a "
-            "Base64-named folder encoding the time it was added to the dock. "
-            "Media dragged out of apps is saved as OPLUSDRAG_<source app>_"
-            "<view>_<local time> files; the cached copy persists independently "
-            "of the source app (observed with Snapchat content on the test "
-            "devices this artifact was built from). Text "
-            "selections and links are stored as transferdock_<ms>.txt and "
-            "link_file_<ms>.link files; other files keep their original names."
+            "Cached copies of items placed in the OxygenOS/ColorOS Smart Sidebar File Dock "
+            "(OnePlus/Oppo/Realme), stored under "
+            "Download/.com_coloros_smartsidebar/transferdock/ in a Base64-named folder that "
+            "encodes the time the item was added. Files named OPLUSDRAG_<source "
+            "app>_<view>_<local time>, transferdock_<ms>.txt and link_file_<ms>.link are "
+            "reported by those name patterns; other files are reported under their stored names. "
+            "On the test devices this artifact was built from, cached copies of Snapchat content "
+            "were present after that content was no longer in the source app."
         ),
         "author": "@akhil-dara",
         "creation_date": "2026-07-18",
@@ -51,7 +48,9 @@ __artifacts_v2__ = {
         "notes": (
             "Folder name format: base64(<uuid>|<uuid>|<epoch ms added>|<last 20 "
             "chars of file name>). The capture time inside OPLUSDRAG file names "
-            "is device local time. Items observed to persist for 2+ years."
+            "is device local time. On the test devices this artifact was built from, dock items "
+            "whose folder timestamp was more than two years before the extraction were still "
+            "present."
         ),
         "paths": ('*/Download/.com_coloros_smartsidebar/transferdock/*/*',),
         "output_types": "standard",
@@ -74,11 +73,12 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Smart Sidebar",
         "notes": (
-            "The main db file is often nearly empty with schema and rows "
-            "resident in the un-checkpointed WAL, hence the db* search pattern. "
-            "For text selections the db may hold only a preview of the text "
-            "(isAll=false); the full text is in the cached transferdock file. "
-            "fileType codes observed: 1=text, 2=image, 4=file, 6=link."
+            "The main db file can be nearly empty with schema and rows resident in the "
+            "un-checkpointed WAL, hence the db* search pattern. For text selections the db may "
+            "hold only a preview of the text (isAll=false); the full text is in the cached "
+            "transferdock file. fileType codes as observed on the test devices this artifact was "
+            "built from, not vendor-documented: 1=text, 2=image, 4=file, 6=link; other values "
+            "are reported as stored."
         ),
         "paths": ('*/com.coloros.smartsidebar/databases/smartSidebar.db*',),
         "output_types": "standard",

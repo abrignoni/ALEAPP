@@ -1,13 +1,11 @@
 __artifacts_v2__ = {
     "get_c2paProvenance": {
         "name": "C2PA Content Provenance (AI Provenance)",
-        "description": "Extracts content-provenance metadata from media files via two independent "
-                       "paths: (1) C2PA / Content Credentials manifests and (2) IPTC/XMP "
-                       "DigitalSourceType tags. Reports the claim generator, edit actions, digital "
-                       "source type, author/creator, credit/copyright, ingredients (prior assets), "
-                       "the stated signer certificate and signing time, and an AI-generated "
-                       "indicator. Useful for establishing whether an image was AI-generated or "
-                       "edited and by what tool.",
+        "description": "Extracts content-provenance metadata from media files via two independent paths: (1) C2PA / "
+                       "Content Credentials manifests and (2) IPTC/XMP DigitalSourceType tags. Reports the claim "
+                       "generator, edit actions, digital source type, author/creator, credit/copyright, ingredients "
+                       "(prior assets), the stated signer certificate and signing time, and an AI-generated indicator. "
+                       "Values are reported as the file carries them and are not cryptographically verified.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-07-12",
         "last_update_date": "2026-07-12",
@@ -18,12 +16,13 @@ __artifacts_v2__ = {
                  "verify the signature, validate the certificate chain, or check revocation, so "
                  "'Signed By' is a lead to corroborate, not proof of origin. Implementation is "
                  "pure-Python with no external dependencies: a JUMBF/CBOR parser for C2PA, an XML "
-                 "reader for the IPTC/XMP DigitalSourceType (which AI tools often embed with no "
-                 "C2PA manifest at all), and a COSE_Sign1 + X.509 + RFC 3161 reader for the "
+                 "reader for the IPTC/XMP DigitalSourceType (which a file can carry with no C2PA "
+                 "manifest at all), and a COSE_Sign1 + X.509 + RFC 3161 reader for the "
                  "signature. The 'Metadata Source' column distinguishes C2PA from XMP/IPTC "
-                 "findings. JPEG (C2PA + XMP + signature) is validated against test files and real "
-                 "Google/Gemini images; PNG and ISOBMFF (HEIC/AVIF/MP4/MOV) containers are handled "
-                 "per the C2PA specification.",
+                 "findings. JPEG (C2PA + XMP + signature) handling was exercised on test files "
+                 "and on images produced by Google/Gemini tools; PNG and ISOBMFF "
+                 "(HEIC/AVIF/MP4/MOV) containers are implemented from the C2PA specification, "
+                 "and whether they were exercised on any tested file is not recorded here.",
         "paths": (  # case-insensitive extensions; fnmatch '*' already spans '/', so these
                     # match media at ANY depth. Uppercase forms catch iOS defaults (.HEIC/.JPG/.MOV).
             '*.[jJ][pP][gG]', '*.[jJ][pP][eE][gG]', '*.[jJ][pP][eE]',

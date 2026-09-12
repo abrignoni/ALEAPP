@@ -22,7 +22,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.maps vc 1068347331 | 1 row",
             "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 6 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 6 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 3 rows",
         },
     },
     "get_googleMapsGmm_places": {
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "notes": ("Updated 2023-12-12 by @segumarc\n"
                   "Label is read from the sync_item key_string. The keys '0:0' and '1:0' are "
                   "rendered as 'Home' and 'Work'; that key-to-label mapping is not documented in "
-                  "the data and was established through testing. A stored label does not establish "
+                  "the data and is not sourced here. A stored label does not establish "
                   "that the address is the person's residence or workplace, only that the entry "
                   "carries that label. Any other key is reported with the label held in the "
                   "protobuf.\n"

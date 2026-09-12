@@ -8,10 +8,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": (
-            "Event-type labels were established through testing against Samsung Digital "
-            "Wellbeing data; Samsung's implementation is not documented and its codes are "
-            "not verified to match the AOSP UsageEvents.Event constants used by the "
-            "usagestats artifact. An event type with no matching label is shown as stored. "
+            "Event-type labels are the AOSP UsageEvents.Event constant names applied to the "
+            "stored codes; Samsung's implementation is not documented and its codes are not "
+            "verified to match those constants, so the labels are unverified. An event type with "
+            "no matching label is shown as stored. "
             "A label names a recorded transition and does not by itself establish a user "
             "action."
         ),
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
     "samsung_wellbeing_timezone": {
         "name": "Samsung Digital Wellbeing - Timezone Changes",
         "description": "Parses Samsung Digital Wellbeing timezone changes from dwbCommon.db.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-03",
         "last_update_date": "2026-08-03",
         "requirements": "none",

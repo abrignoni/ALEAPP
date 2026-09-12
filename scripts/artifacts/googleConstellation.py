@@ -9,8 +9,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Device Information",
-        "notes": "The sim_slot column does not exist on older Play services versions and "
-                 "is reported empty there. The state column is stored as a raw integer "
+        "notes": "The sim_slot column can be absent and is reported empty when it is. The state "
+                 "column is stored as a raw integer "
                  "and is reported as-is.",
         "paths": ('*/com.google.android.gms/databases/constellation.db*',),
         "output_types": "standard",

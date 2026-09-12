@@ -1,0 +1,47 @@
+{
+  "metadata": {
+    "module_name": "PrivatePhotoVault",
+    "artifact_name": "Private Photo Vault - Albums",
+    "function_name": "private_photo_vault_albums",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 5,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 68,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/PrivatePhotoVault/testdata.PrivatePhotoVault.private_photo_vault_albums.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:39.212162+00:00",
+    "end_time": "2026-08-25T04:48:39.270254+00:00",
+    "run_time_seconds": 0.0006887912750244141,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-08-25T04:48:39.266896",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Album Name",
+    "Bucket ID",
+    "Created",
+    "Order Number",
+    "Deleted"
+  ],
+  "data": [
+    [
+      "Main Album",
+      "albums",
+      1714253641,
+      "1008G",
+      ""
+    ],
+    [
+      "Main Album",
+      "albums_decoy",
+      1714253641,
+      "100GW",
+      ""
+    ]
+  ]
+}

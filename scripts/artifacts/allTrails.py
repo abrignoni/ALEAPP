@@ -10,22 +10,21 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "AllTrails",
         "notes": "Read from the trackpoints table of databases/alltrails.\n"
-                 "lat and lng are stored as integers. Dividing them by 1,000,000 is the only "
-                 "scaling of the stored values that produces a valid coordinate pair, and the "
-                 "result falls in the same state as the place names recorded in the database's "
-                 "locations table, so that is the scaling used.\n"
-                 "Two timestamps are stored per point and both are reported: time and "
-                 "systemtime, each Unix epoch milliseconds. They differ by a fraction of a second "
-                 "on the tested corpus and nothing in the extraction documents which clock each "
-                 "comes from, so neither is presented as authoritative over the other.\n"
-                 "Elevation, accuracy, speed and bearing are reported as stored. The units are "
-                 "not stated in the database; for speed, metres per second is consistent with "
-                 "the recorded track (see the AllTrails - Recorded Activities notes), but the "
-                 "column is reported unlabelled rather than converted.\n"
-                 "Track ID groups the points of one recording and matches the line the AllTrails "
-                 "- Recorded Activities artifact reports.\n"
-                 "The database's WAL is load-bearing for this app, so the -wal and -shm sidecars "
-                 "are included in the paths above and must travel with the database.",
+                 "lat and lng are stored as integers. Dividing them by 1,000,000 produces a "
+                 "coordinate pair that falls in the same state as the place names recorded in "
+                 "the database's locations table, so that is the scaling used; the scale is not "
+                 "documented.\nTwo timestamps are stored per point and both are reported: time "
+                 "and systemtime, each Unix epoch milliseconds. They differ by a fraction of a "
+                 "second on the tested corpus and nothing in the extraction documents which "
+                 "clock each comes from, so neither is presented as authoritative over the "
+                 "other.\nElevation, accuracy, speed and bearing are reported as stored. The "
+                 "units are not stated in the database; for speed, metres per second is "
+                 "consistent with the recorded track (see the AllTrails - Recorded Activities "
+                 "notes), but the column is reported unlabelled rather than converted.\nTrack ID "
+                 "groups the points of one recording and matches the line the AllTrails - "
+                 "Recorded Activities artifact reports.\nThe -wal and -shm sidecars are included "
+                 "in the paths above and must travel with the database, because rows can sit in "
+                 "the write ahead log.",
         "paths": ('*/com.alltrails.alltrails/databases/alltrails*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -114,11 +113,10 @@ __artifacts_v2__ = {
         "category": "AllTrails",
         "notes": "Read from the users table of databases/alltrails, joined to locations through "
                  "location_id for the recorded place names.\n"
-                 "Remote ID is the account identifier AllTrails uses server side, and is the "
-                 "value the userlists table references as its user_id. The referral link "
-                 "contains the account's own referral code and is reported as stored.\n"
-                 "The counts on this row (reviews, followers, tracks, photos) are the values the "
-                 "client had cached for the profile.",
+                 "Remote ID is the remote_id value as stored, and is the value the userlists "
+                 "table references as its user_id. The referral link contains the account's own "
+                 "referral code and is reported as stored.\nThe counts on this row (reviews, "
+                 "followers, tracks, photos) are reported as stored.",
         "paths": ('*/com.alltrails.alltrails/databases/alltrails*',),
         "output_types": "standard",
         "artifact_icon": "user",

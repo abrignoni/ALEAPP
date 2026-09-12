@@ -1,0 +1,56 @@
+{
+  "pixel7a_a14": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "EXTRACTION_FFS.zip",
+      "os": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-08-24T23:47:17.802439",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-08-24T23:47:17.792252",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "private_photo_vault_account": {
+        "search_patterns": [
+          "*/com.enchantedcloud.photovault/shared_prefs/APP_PREFERENCES.xml"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "private_photo_vault_albums": {
+        "search_patterns": [
+          "*/com.enchantedcloud.photovault/databases/ppv.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "private_photo_vault_media": {
+        "search_patterns": [
+          "*/com.enchantedcloud.photovault/databases/ppv.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_name": "pixel7a_a14",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "14",
+      "device_model": "Google Pixel 7a"
+    }
+  }
+}

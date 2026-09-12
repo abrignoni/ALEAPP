@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "module_name": "alex_live_data",
+    "artifact_name": "Dumpsys - Shortcuts (Discord)",
+    "function_name": "alex_live_discord_shortcut",
+    "case_number": "caseALEX_TEST_1",
+    "number_of_columns": 10,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 516,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/alex_live_data/testdata.alex_live_data.alex_live_discord_shortcut.caseALEX_TEST_1.zip",
+    "start_time": "2026-09-05T00:33:41.796085+00:00",
+    "end_time": "2026-09-05T00:33:41.816764+00:00",
+    "run_time_seconds": 0.004008769989013672,
+    "last_commit": {
+      "hash": "207d7953b2f117c1085090a9087d10d1be2c0346",
+      "author_name": "prosch88",
+      "author_email": "prosch88@googlemail.com",
+      "date": "2026-09-05T02:21:21+02:00",
+      "message": "Added testdata and fixed indent"
+    }
+  },
+  "headers": [
+    "Shortcut ID",
+    "Timestamp (Shortcut)",
+    "Message Time",
+    "Label",
+    "Guild ID",
+    "Channel ID",
+    "Message ID",
+    "Message",
+    "User",
+    "User ID"
+  ],
+  "data": [
+    [
+      "known-dm-alpha",
+      1788443892,
+      1788443892,
+      "known_user_alpha",
+      "300000000000000001",
+      "100000000000000001",
+      "200000000000000001",
+      "SYNTHETIC KNOWN MESSAGE ONE",
+      "known_user_alpha",
+      "400000000000000001"
+    ],
+    [
+      "known-dm-bravo",
+      1788439205,
+      1788439205,
+      "known_user_bravo",
+      "300000000000000002",
+      "100000000000000002",
+      "200000000000000002",
+      "SYNTHETIC KNOWN MESSAGE TWO",
+      "known_user_bravo",
+      "400000000000000002"
+    ],
+    [
+      "known-guild-charlie",
+      1788383733,
+      1788383733,
+      "known-guild / #known-channel",
+      "300000000000000003",
+      "100000000000000003",
+      "200000000000000003",
+      "SYNTHETIC KNOWN MESSAGE THREE",
+      "known_user_charlie",
+      "400000000000000003"
+    ]
+  ]
+}

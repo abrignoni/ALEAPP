@@ -71,7 +71,7 @@ def get_burnerMessages(context):
 
         for row in all_rows:
             created = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
-            data_list.append((created, row[1], row[2], row[3], row[4]))
+            data_list.append((created, row[3], row[1], row[2], row[4]))
 
-    data_headers = (('Timestamp', 'datetime'), ('Contact', 'phonenumber'), 'Message Text', 'Direction', 'Read Status')
+    data_headers = (('Timestamp', 'datetime'), 'Direction', ('Contact', 'phonenumber'), 'Message Text', 'Read Status')
     return data_headers, data_list, source_path

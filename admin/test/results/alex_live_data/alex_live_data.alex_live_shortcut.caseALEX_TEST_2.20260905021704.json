@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "module_name": "alex_live_data",
+    "artifact_name": "Dumpsys - Shortcuts",
+    "function_name": "alex_live_shortcut",
+    "case_number": "caseALEX_TEST_2",
+    "number_of_columns": 8,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/alex_live_data/testdata.alex_live_data.alex_live_shortcut.caseALEX_TEST_2.zip",
+    "start_time": "2026-09-05T02:17:04.898001+00:00",
+    "end_time": "2026-09-05T02:17:04.922562+00:00",
+    "run_time_seconds": 0.00034928321838378906,
+    "last_commit": {
+      "hash": "207d7953b2f117c1085090a9087d10d1be2c0346",
+      "author_name": "prosch88",
+      "author_email": "prosch88@googlemail.com",
+      "date": "2026-09-05T02:21:21+02:00",
+      "message": "Added testdata and fixed indent"
+    }
+  },
+  "headers": [
+    "Package",
+    "ID",
+    "Timestamp",
+    "Short Label",
+    "Long Label",
+    "Persons",
+    "Rank",
+    "Intent"
+  ],
+  "data": []
+}

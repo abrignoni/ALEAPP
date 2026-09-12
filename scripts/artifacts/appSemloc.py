@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_appSemloc": {
         "name": "App Semantic Locations",
-        "description": "App Semantic Locations",
+        "description": "Location records from Google Play services' app_semanticlocation_rawsignal LevelDB, with coordinates and accuracy",
         "author": "Alexis 'Brigs' Brignoni",
         "creation_date": "2024/06/21",
         "last_update_date": "2024/06/21",

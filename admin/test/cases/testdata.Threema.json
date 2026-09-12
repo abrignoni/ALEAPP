@@ -1,0 +1,58 @@
+{
+  "pixel7a_a14": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "EXTRACTION_FFS.zip",
+      "os": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-08-24T23:47:18.997832",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-08-24T23:47:18.988346",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "threema_account": {
+        "search_patterns": [
+          "*/ch.threema.app/shared_prefs/ch.threema.app_preferences.xml"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "threema_contacts": {
+        "search_patterns": [
+          "*/ch.threema.app/files/key.dat",
+          "*/ch.threema.app/databases/threema4.db*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "threema_messages": {
+        "search_patterns": [
+          "*/ch.threema.app/files/key.dat",
+          "*/ch.threema.app/databases/threema4.db*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_name": "pixel7a_a14",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "14",
+      "device_model": "Google Pixel 7a"
+    }
+  }
+}

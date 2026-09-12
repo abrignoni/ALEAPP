@@ -8,8 +8,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Tasks",
-        "notes": "Protobuf field positions for created/modified/completed times were established "
-                 "through testing. Task Due Date is reported as stored in the DueDate column, without "
+        "notes": "Protobuf field positions for created/modified/completed times are not "
+                 "documented and were assigned from the values seen on tested data. Task Due "
+                 "Date is reported as stored in the DueDate column, without "
                  "conversion, unlike the three converted UTC time columns.",
         "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db*',),
         "output_types": "standard",

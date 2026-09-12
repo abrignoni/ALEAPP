@@ -24,8 +24,9 @@ __artifacts_v2__ = {
                  "Chrome package. A Web Data file left with a hot rollback journal cannot be "
                  "recovered through a read-only handle; such a file is logged and skipped so it "
                  "does not end the run before the other browsers on the device are read. One such "
-                 "file was found in the tested images, at a data_mirror path that is filtered "
-                 "before opening, so the skip was exercised by staging that same file at an "
+                 "file was found in the tested images, at a data_mirror path that the storage "
+                 "view dedupe excludes before opening, so the skip was exercised by staging "
+                 "that same file at an "
                  "ordinary path, where it was logged and the run went on to report another "
                  "browser's row. Extractions carry the same database at more than one path "
                  "(data_mirror, and /data/data next to /data/user/0), so files are deduplicated on "
@@ -62,11 +63,11 @@ __artifacts_v2__ = {
 }
 
 import os
-import re
 import sqlite3
 
 from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _table_exists(cursor, table):
@@ -75,26 +76,18 @@ def _table_exists(cursor, table):
 
 
 def _unique_web_data(context):
-    '''The context's Web Data files, without the duplicate paths extractions carry for the
-    same file (data_mirror, and /data/data next to /data/user/0), keyed on the
-    evidence-relative path so the report's own data folder cannot be rewritten instead.'''
-    seen = set()
-    result = []
+    '''The context's Web Data files, one copy per duplicate storage view, skipping
+    .magisk mirror copies.'''
+    kept = []
     for file_found in context.get_files_found():
         file_found = str(file_found)
         if os.path.basename(file_found) != 'Web Data':  # skip -journal and other files
             continue
         relative = str(context.get_relative_path(file_found)).replace('\\', '/')
-        if 'data_mirror' in relative:
-            continue
         if '.magisk' in relative and 'mirror' in relative:
             continue
-        normalized = re.sub(r'(^|/)data/data/', r'\1data/user/0/', relative)
-        if normalized in seen:
-            continue
-        seen.add(normalized)
-        result.append(file_found)
-    return result
+        kept.append(file_found)
+    return unique_files(context, kept)
 
 
 @artifact_processor

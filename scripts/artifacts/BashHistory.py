@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "bashHistory": {
         "name": "Bash History",
         "description": "Parses the bash history entries",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-10-11",
         "last_update_date": "2025-08-09",
         "requirements": "none",

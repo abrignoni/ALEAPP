@@ -1,7 +1,8 @@
 __artifacts_v2__ = {
     "get_package_info": {
         "name": "package_info",
-        "description": "Represents an app",
+        "description": "Parses installed package records (name, install and update times, "
+                       "installer and code path) from the system packages.xml.",
         "author": "@ydkhatri",
         "creation_date": "2020-11-03",
         "last_update_date": "2026-07-10",

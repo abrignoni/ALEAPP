@@ -28,7 +28,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "Accepted friends are confirmed to come from the /friends-v1 endpoint. Pending requests (/friend-requests/received, /friend-requests/sent) and suggestions (/friends-of-friends) are confirmed as distinct endpoints and are excluded.",
+        "notes": "Accepted friends are read from cached /friends-v1 endpoint responses. Pending "
+                 "requests (/friend-requests/received, /friend-requests/sent) and suggestions "
+                 "(/friends-of-friends) come from other endpoints and are excluded.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/files/*",
@@ -90,7 +92,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "Comments are extracted from a post's own embedded \"comments\" array (confirmed schema) or a standalone {postId, comments:[...]} endpoint response, not from generic keyword matching.",
+        "notes": "Comments are extracted from a post's own embedded \"comments\" array or a "
+                 "standalone {postId, comments:[...]} endpoint response, not from generic "
+                 "keyword matching.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
         ),
@@ -109,7 +113,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array (confirmed schema), distinguishing Instant vs standard RealMojis.",
+        "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array, "
+                 "distinguishing Instant from standard RealMojis as the record marks them.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/cache/profile_picture_friends_cache/*",
@@ -631,6 +636,12 @@ def _own_bts_video_index(files_found):
 def _closest_own_bts_video(bts_index, captured_at, tolerance_ms=120_000):
     if not bts_index or not isinstance(captured_at, datetime):
         return ""
+    # bts_index holds absolute epoch milliseconds read from the filename, so
+    # captured_at has to be timezone aware for the two to be comparable.
+    # _timestamp() guarantees that on both of its datetime branches. If it ever
+    # returns a naive value, timestamp() reads it in the host timezone and every
+    # delta exceeds the tolerance, so this silently matches nothing rather than
+    # matching wrongly.
     target_ms = captured_at.timestamp() * 1000
     best_path, best_delta = "", None
     for ts, path in bts_index:

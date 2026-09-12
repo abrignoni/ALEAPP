@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Libre Torrent",
         "notes": "",
-        "paths": ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*', '*/libretorrent.db*'),
+        "paths": ('*/libretorrent.db*',),
         "output_types": "standard",
         "artifact_icon": "download",
     }

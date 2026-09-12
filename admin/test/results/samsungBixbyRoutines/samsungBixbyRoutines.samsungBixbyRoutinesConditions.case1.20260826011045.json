@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "module_name": "samsungBixbyRoutines",
+    "artifact_name": "Samsung Bixby Routines - Routine Conditions",
+    "function_name": "samsungBixbyRoutinesConditions",
+    "case_number": "case1",
+    "number_of_columns": 12,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/samsungBixbyRoutines/testdata.samsungBixbyRoutines.samsungBixbyRoutinesConditions.case1.zip",
+    "start_time": "2026-08-26T01:10:45.987965+00:00",
+    "end_time": "2026-08-26T01:10:46.003928+00:00",
+    "run_time_seconds": 0.0011348724365234375,
+    "last_commit": {
+      "hash": "3d04d69be03aca78b71590a81a01e5fd284a34c1",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T16:56:04-04:00",
+      "message": "Add samsungBixbyRoutines ALEAPP module with test fixtures"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Routine Name",
+    "Routine ID",
+    "Condition Tag",
+    "Package",
+    "Is Enabled",
+    "Is Negative",
+    "Label Params",
+    "Intent Params",
+    "Bundle Data",
+    "Previous Params",
+    "Valid State (as stored)"
+  ],
+  "data": []
+}

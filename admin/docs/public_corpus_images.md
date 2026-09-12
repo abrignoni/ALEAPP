@@ -18,6 +18,10 @@ reproduce a recorded row count, this is where you find out what to download.
 
 Keys naming non-public images are listed at the end so you know not to go looking.
 
+`admin/image_manifest.json` carries the same public keys in machine-readable form, one entry per
+key, and `admin/test/scripts/make_test_data.py` reads it to find your local copy. Anything added
+here should be added there too, and the other way round.
+
 ## How to read the "correlated by" column
 
 The identification is not equally strong for every row, and the difference matters if you are
@@ -27,8 +31,8 @@ relying on it.
   distributes. That is a definitive identification.
 - **Extraction metadata** means our copy is the inner image un-nested from the publisher's wrapper
   archive, so its hash cannot match the published wrapper by construction. The link comes from the
-  Cellebrite or UFED metadata inside the extraction naming the event and the persona
-  (`DeviceInfo.txt`, the `.ufd`, the folder structure).
+  publisher's own packaging and the documentation inside the extraction naming the event and the
+  persona (`DeviceInfo.txt`, the `.ufd`, an `image_info.txt`, the folder structure).
 - **Publisher datasheet** means the publisher distributes a hash for the file itself and our copy
   matches it.
 - **Inferred** means none of the above. Read the note before relying on it.
@@ -41,8 +45,13 @@ rows marked MD5 where the two are known to agree.
 | `sample_data` key | Device and OS | Published by | Published file | MD5 (as published) | Correlated by |
 | --- | --- | --- | --- | --- | --- |
 | `galaxys10_a10` | Samsung Galaxy S10 SM-G973F, Android 10 | DFRWS 2021 Challenge | `3_Samsung GSM_SM-G973F_DS Galaxy S10.zip` | `A86049E46D1E19A961A3AECD97B78BD5` | **MD5** |
+| `cookbook_a11` | Samsung Galaxy S21 SM-G991U, Android 11 | Cody Bounds, Digital Forensics Cookbook Datasets | `Android.7z` | `7188177ACDC73A5EDB8F6B969E9D6881` | Extraction metadata |
+| `pixel3_a11` | Google Pixel 3, Android 11 | Josh Hickman, public images | `android_11.zip` | `9553729D10BC6CAE84916A506CB74D98` | Extraction metadata |
+| `pixel3_a12` | Google Pixel 3, Android 12 | Josh Hickman, public images | `android_12.zip` | `B9CB5E213B765D5D649A9634E119B3AA` | Extraction metadata |
 | `russell_pixel6a_a13` | Google Pixel 6a, Android 13 | Cellebrite CTF 2023 ("Russell") | `CellebriteCTF23_Russell.zip` | `DC5C077DBD2C2DF6C644473447DE092B` | Extraction metadata |
+| `sharon_a13` | Samsung Galaxy S21 5G SM-G991B, Android 13 | Cellebrite CTF 2023 ("Sharon") | `CellebriteCTF23_Sharon.zip` | `C94AB827D5AF5ED22A394FD45D676DE3` | Extraction metadata |
 | `userb2_a13` | Android 13, data partition only | Hexordia, Magnet Virtual Summit CTF 2025 | `UserB2.7z` | `76077DCE06C68D8EC5505173180E0A5F` | Extraction metadata |
+| `russell_a14` | Google Pixel 6a, Android 14 | Cellebrite CTF 2024 ("Russell") | `CellebriteCTF24_Russell.zip` | `E182FC05A9B83FCACC9582DB92CEF6C8` | Extraction metadata |
 | `sharon_a14` | Samsung Galaxy S21 SM-G991B, Android 14 | Cellebrite CTF 2024 ("Sharon") | `CellebriteCTF24_Sharon.zip` | `514BF12C5862B20937F9F808932B1368` | Extraction metadata |
 | `samsunga53_a14` | Samsung A53 SM-S536DL, Android 14 | Hexordia, Magnet Virtual Summit CTF 2026 | `SamsungA53.zip` | `BEE600ECC8086325211A4AB5CBF5FF47` | Extraction metadata |
 | `pixel7a_a14` | Google Pixel 7a, Android 14 | Josh Hickman, public images | `Android_14_Public_Image.tar.gz` | `2F9578715A315C0897E51EF9C1007F2D` | **Inferred**, see below |
@@ -91,20 +100,6 @@ a file that was never distributed.
 
 If you hold an image that would let one of these counts be reproduced publicly, that is a
 genuinely useful contribution.
-
-## Public images already registered but not yet cited
-
-These are public, already carry a registry key, and no artifact declares `sample_data` against
-them yet. They are listed so a contributor looking for coverage on a given Android release knows
-the image exists.
-
-| Key | Device and OS | Published by |
-| --- | --- | --- |
-| `pixel3_a11` | Google Pixel 3, Android 11 | Josh Hickman, public images |
-| `pixel3_a12` | Google Pixel 3, Android 12 | Josh Hickman, public images |
-| `cookbook_a11` | Samsung Galaxy S21 SM-G991U, Android 11 | Cody Bounds, Digital Forensics Cookbook Datasets |
-| `sharon_a13` | Samsung Galaxy S21 5G SM-G991B, Android 13 | Cellebrite CTF 2023 ("Sharon") |
-| `russell_a14` | Google Pixel 6a, Android 14 | Cellebrite CTF 2024 ("Russell") |
 
 ## The matching iOS document
 

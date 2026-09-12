@@ -10,10 +10,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Each row is a log line matching one of eight event tokens; the token-to-event "
-                 "mapping comes from the author's research on WhatsApp logs and the full line is "
-                 "reported beside it so the reading can be checked. Lines mentioning "
-                 "status@broadcast are skipped by design.\n"
-                 "The logs redact phone numbers, so a JID in a line may carry only trailing "
+                 "mapping is not vendor-documented and the full line is reported beside it so "
+                 "the reading can be checked. Lines mentioning status@broadcast are skipped by "
+                 "design.\nA JID in a line may carry only trailing "
                  "digits. The Possible Full Numbers column lists every wa.db contact whose number "
                  "ends in the same last four digits; that is a candidate list, not an "
                  "identification, and more than one candidate is shown joined with 'or'. An "

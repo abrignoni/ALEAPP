@@ -128,10 +128,20 @@ def zangichats(context):
         if chat_id == "" or chat_id == None:
             pass
         else:
-            data_list.append((m_time, chat_name, chat_id, message_id, sender, sender_id, receiver, receiver_id, message, attach_file, outgoing))
+            data_list.append((m_time, outgoing, sender, chat_name, message, attach_file, chat_id, message_id, sender_id, receiver, receiver_id))
     
     data_headers = (
-        ('Timestamp', 'datetime'), 'Chat', 'Chat-ID', 'Message-ID', 'Sender Name', 'From ID', 'Receiver', 'To ID',
-        'Message', ('Attachment File', 'media'), 'From Me')
+        ('Timestamp', 'datetime'),
+        'From Me',
+        'Sender Name',
+        'Chat',
+        'Message',
+        ('Attachment File', 'media'),
+        'Chat-ID',
+        'Message-ID',
+        'From ID',
+        'Receiver',
+        'To ID',
+    )
 
     return data_headers, data_list, source_path

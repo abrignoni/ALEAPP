@@ -1,153 +1,218 @@
 __artifacts_v2__ = {
     "alex_live_appops": {
         "name": "App Ops",
-        "description": "Reads App Ops Data \
-            from a PRFS backup created by ALEX.",
+        "description": "Reads App Ops Data from a PRFS backup created by ALEX.",
         "author": "@C_Peter",
         "creation_date": "2026-01-30",
         "last_update_date": "2026-01-30",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per package and operation in app_ops.json, skipping operations "
+                 "whose value is ignore. Value is the operation's state string as "
+                 "stored. Access Timestamp and Reject Timestamp come from the time and "
+                 "rejectTime entries that follow the state, read as Unix seconds and "
+                 "reported as UTC; a row without them leaves those columns blank.",
         "paths": ('*/extra/app_ops.json'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "package"
     },
     "alex_live_wifi_conf_net": {
         "name": "Dumpsys - Configured Networks",
-        "description": "Outputs the configured \
-            (known) networks from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the configured (known) networks from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-02",
         "last_update_date": "2026-02-02",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the ID and DSBLE ID entries under Configured networks in the "
+                 "wifi section of the dumpsys; DSBLE is true for an entry listed as "
+                 "DSBLE ID. Creation Time is the creation millis value when present, "
+                 "otherwise the creation time string; Last Connected is the "
+                 "lastConnected string. Both strings are parsed as UTC without "
+                 "adjustment, and a string the parser does not recognise is reported as "
+                 "written. Random MAC is mRandomizedMacAddress, Autojoin is 1 or 0 from "
+                 "the autojoin or allowAutojoin field, and Hidden is the HIDDEN value as "
+                 "dumped.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "wifi"
     },
     "alex_live_usagestats_events": {
         "name": "Dumpsys - Usagestats Events",
-        "description": "Outputs the Usagestats \
-            Event entries from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the Usagestats Event entries from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-03",
         "last_update_date": "2026-02-03",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per line in the usagestats section of the dumpsys that starts "
+                 "with time= and carries type= and package=. Event Type, Package and "
+                 "Reason are as dumped; Event holds the line's remaining key=value "
+                 "pairs. The formats the time parser accepts carry no zone, so the time "
+                 "is reported as UTC without adjustment; a string it cannot parse is "
+                 "reported as written.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "activity"
     },
     "alex_live_usagestats_yearly": {
         "name": "Dumpsys - Usagestats (yearly)",
-        "description": "Outputs the Usagestats \
-            (yearly) entries from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the Usagestats (yearly) entries from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-04",
         "last_update_date": "2026-02-04",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the package= lines carrying lastTime that follow the first "
+                 "In-memory yearly stats marker in the usagestats section of the "
+                 "dumpsys. Columns are the keys of the first such line, in dumped order. "
+                 "A value the time parser recognises is typed as a date and reported as "
+                 "UTC without adjustment; the rest are reported as dumped, with "
+                 "Arabic-Indic digits mapped to ASCII.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "chart-bar"
     },
     "alex_live_bt_bonded": {
         "name": "Dumpsys - BTM Bonded Devices",
-        "description": "Outputs the Bonded \
-            Bluetooth devices from the Dumpsys \
-                log of an ALEX PRFS backup. \
-                    Usually only included if \
-                        Bluetooth was active \
-                            during backup.",
+        "description": "Outputs the bonded Bluetooth devices from the dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-05",
         "last_update_date": "2026-02-05",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the lines after Bonded devices: in the bluetooth_manager "
+                 "section of the dumpsys, up to the first blank line, that start with a "
+                 "MAC address; Name is the text after the address as dumped. Reports no "
+                 "rows when the dumpsys has no bluetooth_manager section.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "bluetooth"
     },
     "alex_live_companiondevice": {
         "name": "Dumpsys - Companiondevice",
-        "description": "Outputs the associated \
-            Companion devices from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the associated Companion devices from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-06",
         "last_update_date": "2026-02-06",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per Association{...} line in the companiondevice section of "
+                 "the dumpsys. Columns are the field names of the first association, in "
+                 "dumped order. Values are reported as dumped with surrounding quotes "
+                 "removed and null or None reported blank; no field, including any "
+                 "timestamp, is converted.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "device-watch"
     },
     "alex_live_role": {
         "name": "Dumpsys - Role (Default Apps)",
-        "description": "Outputs the Default \
-            Apps from the Dumpsys \
-                log of an ALEX PRFS backup.",
+        "description": "Outputs the Default Apps from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-06",
         "last_update_date": "2026-02-06",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the roles listed inside each user_states block of the role "
+                 "section of the dumpsys. Name and Holders are as dumped; User is the "
+                 "block's user_id.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "circle-check"
     },
     "alex_live_account": {
         "name": "Dumpsys - Accounts",
-        "description": "Outputs the Accounts \
-            from the Dumpsys log of an \
-                ALEX PRFS backup.",
+        "description": "Outputs the Accounts from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-02-06",
         "last_update_date": "2026-02-06",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the Account {name=..., type=...} strings in the account "
+                 "section of the dumpsys, reported as dumped. Only the name and type are "
+                 "read; nothing else in the section is carried into the rows.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "user"
     },
     "alex_live_batterystats": {
         "name": "Dumpsys - Batterystats",
-        "description": "Outputs the Batterystats \
-            from the Dumpsys log of an \
-                ALEX PRFS backup.",
+        "description": "Outputs the Batterystats from the Dumpsys log of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-03-19",
         "last_update_date": "2026-03-19",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "Rows are the history lines of the batterystats section of the dumpsys. "
+                 "A line that begins with a month-day time is read as that date and "
+                 "time, with the year taken from the Unix timestamp in the dumpsys file "
+                 "name (1970 when the name carries none); a line that begins with a + "
+                 "offset or a bare 0 is read as that offset from the most recent "
+                 "RESET:TIME line. Both are reported as UTC without adjustment. Battery "
+                 "Level and Mask are as dumped. States (from Mask) decodes the mask "
+                 "against a bit table chosen by the Android major version in "
+                 "device_info_alex.json, using the highest of the tables keyed 4, 5, 6 "
+                 "and 9 that does not exceed the version; without that file the column "
+                 "is blank. Continuation lines are skipped.",
         "paths": ('*/extra/dumpsys_*.txt',
             '*/device_info_alex.json'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "battery-charging"
     },
+    "alex_live_shortcut": {
+        "name": "Dumpsys - Shortcuts",
+        "description": "Outputs the shortcuts from the dumpsys log of an ALEX PRFS backup.",
+        "author": "@C_Peter",
+        "creation_date": "2026-08-30",
+        "last_update_date": "2026-09-05",
+        "requirements": "none",
+        "category": "ALEX Live Data",
+        "notes": "One row per ShortcutInfo block in the shortcut section of the dumpsys. "
+                 "Timestamp is the shortcut's timestamp field, which AOSP ShortcutInfo sets "
+                 "to the last time one of the shortcut's fields changed, converted from "
+                 "milliseconds to UTC. Intent is the intents field as dumped: each intent "
+                 "followed by its persistable extras. A dumped value of null or [] is "
+                 "reported blank in whichever column it lands.",
+        "paths": ('*/extra/dumpsys_*.txt'),
+        "output_types": ["html", "lava", "tsv"],
+        "artifact_icon": "link"
+    },
+    "alex_live_discord_shortcut": {
+        "name": "Dumpsys - Shortcuts (Discord)",
+        "description": "Parses the com.discord entries in the shortcut section of the dumpsys log of an ALEX PRFS backup.",
+        "author": "@C_Peter",
+        "creation_date": "2026-08-30",
+        "last_update_date": "2026-09-05",
+        "requirements": "none",
+        "category": "ALEX Live Data",
+        "notes": "One row per shortcut whose package is com.discord and whose intents field "
+                 "is populated. Guild ID, Channel ID, Message ID and User ID are read from "
+                 "the guild_id, channel_id, message_id and user_id keys of the intent's "
+                 "persistable extras, and User from user_username. Message is read from "
+                 "message_content, or from body when message_content cannot be read. "
+                 "Message Time is the JSON timestamp value in the extras, or scheduled_at "
+                 "when there is none; the string is read as UTC and an offset it carries is "
+                 "not applied. Timestamp (Shortcut) is the shortcut's own timestamp field, "
+                 "the last time one of its fields changed, converted from milliseconds to "
+                 "UTC. A key that is absent leaves its column blank.",
+        "paths": ('*/extra/dumpsys_*.txt'),
+        "output_types": ["html", "lava", "tsv"],
+        "artifact_icon": "link-plus"
+    },
     "alex_live_logcat": {
         "name": "Logcat",
-        "description": "Parses the Logcat \
-            logs of an \
-                ALEX PRFS backup.",
+        "description": "Parses the Logcat logs of an ALEX PRFS backup.",
         "author": "@C_Peter",
         "creation_date": "2026-03-03",
         "last_update_date": "2026-03-03",
         "requirements": "none",
         "category": "ALEX Live Data",
-        "notes": "",
+        "notes": "One row per logcat.txt line of the form epoch seconds, PID, TID, level "
+                 "letter, tag and message; a line of another shape, including a "
+                 "continuation line of a multi-line message, is skipped. Timestamp is "
+                 "the epoch value reported as UTC. Level expands the letter to Verbose, "
+                 "Debug, Info, Warn, Error or Fatal.",
         "paths": ('*/extra/logcat.txt'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "terminal"
@@ -161,7 +226,7 @@ import datetime
 from scripts.ilapfuncs import artifact_processor, \
     get_file_path, logfunc
 
-_PARSED_DUMPSYS = False
+_PARSED_DUMPSYS = None
 _DUMPSYS_DICT = {}
 _DEVICE_TIME = 0
 #Convert arabic numbers:
@@ -267,16 +332,25 @@ def parse_relative_time(s):
     )
     return total_ms / 1000
 
+# Helper to clean "null" Values
+def clean(value):
+    """Helper to normalize `null` and `[]` to None"""
+    if value is None:
+        return None
+    value = value.strip()
+    return None if value == "null" or value == "[]" else value
+
 # Helper to split the Dumpsys Output
 def split_dumpsys_log(dumpsys_file) -> dict:
     """Function to split the dumpsys txt file in service parts"""
     global _PARSED_DUMPSYS, _DUMPSYS_DICT, _DEVICE_TIME # pylint: disable=global-statement
-    if _PARSED_DUMPSYS:
-        return
     if not dumpsys_file:
+        return
+    if _PARSED_DUMPSYS == dumpsys_file:
         return
 
     ds_filename = os.path.basename(dumpsys_file)
+    _DEVICE_TIME = 0
     try:
         _DEVICE_TIME = int(ds_filename.split('_', 1)[1].split('.', 1)[0])
     except (ValueError, IndexError):
@@ -323,13 +397,79 @@ def split_dumpsys_log(dumpsys_file) -> dict:
                 dur_match.group(2).strip(),
                 "%Y-%m-%d %H:%M:%S"
             )
+            # strptime returns a naive datetime and timestamp() reads a naive
+            # value in the host timezone, so this shifted by the offset of
+            # whoever ran the tool. Pinned to match the other converters here.
+            end_time = end_time.replace(tzinfo=datetime.timezone.utc)
             current_start_ts = (
                 end_time - datetime.timedelta(seconds=duration_s)
             ).timestamp()
 
     flush()
     _DUMPSYS_DICT = dumpdict
-    _PARSED_DUMPSYS = True
+    _PARSED_DUMPSYS = dumpsys_file
+
+# Helper for Dumpsys Shortcut Output
+def shortcut_data(shortcut_part, s_type="default"):
+    data_list = []
+    shortcut_pattern = re.compile(r'ShortcutInfo\s*\{(.*?)(?=^\s*ShortcutInfo\s*\{|\Z)', re.MULTILINE | re.DOTALL)
+    for match in shortcut_pattern.finditer(shortcut_part):
+        shortcut = match.group(1)
+        shortcut_id_pattern     = re.search(r'^id=(.*?), flags=', shortcut, re.MULTILINE)
+        package_name_pattern    = re.search(r'^\s*packageName=(.*)$', shortcut, re.MULTILINE)
+        short_label_pattern     = re.search(r'^\s*shortLabel=(.*?), resId=', shortcut, re.MULTILINE)
+        long_label_pattern      = re.search(r'^\s*longLabel=(.*?), resId=', shortcut, re.MULTILINE)
+        persons_pattern         = re.search(r'^\s*persons=(.*)$', shortcut, re.MULTILINE)
+        rank_timestamp_pattern  = re.search(r'^\s*rank=(.*?), timestamp=(.*)$', shortcut, re.MULTILINE)
+        intents_pattern         = re.search(r'^\s*intents=(.*?)^\s*extras=', shortcut, re.MULTILINE | re.DOTALL)
+
+        shortcut_id     = clean(shortcut_id_pattern.group(1) if shortcut_id_pattern else None)
+        package_name    = clean(package_name_pattern.group(1) if package_name_pattern else None)
+        short_label     = clean(short_label_pattern.group(1) if short_label_pattern else None)
+        long_label      = clean(long_label_pattern.group(1) if long_label_pattern else None)
+        persons         = clean(persons_pattern.group(1) if persons_pattern else None)
+        rank            = clean(rank_timestamp_pattern.group(1) if rank_timestamp_pattern else None)
+        timestamp       = clean(rank_timestamp_pattern.group(2) if rank_timestamp_pattern else None)
+        intents         = clean(intents_pattern.group(1) if intents_pattern else None)
+        if timestamp:
+            out_time = datetime.datetime.fromtimestamp(int(timestamp)/1000, tz=datetime.timezone.utc)
+        else:
+            out_time = None
+        if s_type == "default":
+            data_list.append((package_name, shortcut_id, out_time, short_label, long_label, persons, rank, intents))
+        elif s_type == "discord":
+            if package_name == "com.discord" and intents:
+                cid_pattern  = re.search(r'channel_id,\s*(\d+),', intents)
+                mid_pattern  = re.search(r'message_id,\s*(\d+),', intents)
+                gid_pattern  = re.search(r'guild_id,\s*(\d+),', intents)
+                usr_pattern  = re.search(r'user_username,\s*(.*?),\s*user_id,', intents)
+                uid_pattern  = re.search(r'user_id,\s*(\d+),', intents)
+                msg_pattern  = re.search(r'message_content,\s*(.*?),\s*user_username,', intents, re.DOTALL)
+                bod_pattern  = re.search(r'body,\s*(.*?),\s*icon,', intents, re.DOTALL)
+                time_pattern = re.search(r'"timestamp":"([^"]+)","pinned"', intents)
+                schd_pattern = re.search(r'scheduled_at,\s*([^,]+),\s*receiving_user_id,', intents)
+
+                cid = clean(cid_pattern.group(1) if cid_pattern else None)
+                mid = clean(mid_pattern.group(1) if mid_pattern else None)
+                gid = clean(gid_pattern.group(1) if gid_pattern else None)
+                msg = clean(msg_pattern.group(1) if msg_pattern else None)
+                usr = clean(usr_pattern.group(1) if usr_pattern else None)
+                uid = clean(uid_pattern.group(1) if uid_pattern else None)
+                if msg is None:
+                    msg = clean(bod_pattern.group(1) if bod_pattern else None)
+                rawtime = clean(time_pattern.group(1) if time_pattern else None)
+                if rawtime is None:
+                    rawtime = clean(schd_pattern.group(1) if schd_pattern else None)
+                msg_time = None
+                if rawtime:
+                    u_time = parse_timestamp(rawtime, _DEVICE_TIME)
+                    if u_time:
+                        msg_time = datetime.datetime.fromtimestamp(u_time, tz=datetime.timezone.utc)
+                    else:
+                        msg_time = None
+
+                data_list.append((shortcut_id, out_time, msg_time, long_label, gid, cid, mid, msg, usr, uid))
+    return data_list
 
 # Dumpsys - Wifi - Configured Networks
 @artifact_processor
@@ -565,7 +705,7 @@ def alex_live_usagestats_yearly(context):
 
             data_list.append(tuple(row_values))
 
-        return tuple(data_headers), data_list, source_path
+    return tuple(data_headers), data_list, source_path
 
 # Dumpsys - Bluetooth Manager - Bonded Devices
 @artifact_processor
@@ -611,8 +751,7 @@ def alex_live_bt_bonded(context):
                         data_list.append((mac, name.strip()))
                 else:
                     continue
-        data_headers = ('MAC', "Name")
-
+    data_headers = ('MAC', "Name")
     return data_headers, data_list, source_path
 
 # Dumpsys - Companiondevice
@@ -630,8 +769,6 @@ def alex_live_companiondevice(context):
 
     if cmpd_dump is None:
         logfunc('Dumpsys does not include a "companiondevice" part.')
-        return data_headers, data_list, source_path
-    
     else:
         logtext = (
             'Dumpsys does include a \"companiondevice\" part without timestamp.'
@@ -668,7 +805,7 @@ def alex_live_companiondevice(context):
             row = tuple(assoc.get(key) for key in data_headers)
             data_list.append(row)
 
-        return data_headers, data_list, source_path
+    return data_headers, data_list, source_path
 
 # Dumpsys - Role (Default Apps)
 @artifact_processor
@@ -885,6 +1022,58 @@ def alex_live_batterystats(context):
 
             data_list.append((out_time, battery, hex_mask, stat1, message))
     data_headers = (('Time', 'datetime'), 'Battery Level', 'Mask', 'States (from Mask)', 'Message')
+    return data_headers, data_list, source_path
+
+# Dumpsys - Shortcut (Discord)
+@artifact_processor
+def alex_live_shortcut(context):
+    """Parses the dumpsys shortcut dump for entires"""
+    files_found = context.get_files_found()
+    source_path = files_found[0]
+    data_list = []
+    split_dumpsys_log(source_path)
+    acc_dump, acc_ts = _DUMPSYS_DICT.get("shortcut", (None, None))
+
+    if acc_dump is None:
+        logfunc('Dumpsys does not include an "shortcut" part.')
+    else:
+        logtext = (
+            'Dumpsys does include a \"shortcut\" part without timestamp.'
+            if acc_ts is None
+            else f'Dumpsys does include a \"shortcut\" part with timestamp: {str(acc_ts)}'
+        )
+        logfunc(logtext)
+        data_list = shortcut_data(acc_dump)
+    
+    data_headers = ('Package', 'ID', ('Timestamp', 'datetime'), 'Short Label', 'Long Label', 'Persons', 'Rank', 'Intent')       
+    return data_headers, data_list, source_path
+
+
+    # App specific:
+
+@artifact_processor
+def alex_live_discord_shortcut(context):
+    """Parses Discord-specific entries from the ‘Shortcuts’ section of an ALEX PRFS backup."""
+    files_found = context.get_files_found()
+    source_path = files_found[0]
+    data_list = []
+    split_dumpsys_log(source_path)
+    acc_dump, acc_ts = _DUMPSYS_DICT.get("shortcut", (None, None))
+
+    if acc_dump is None:
+        logfunc('Dumpsys does not include a "shortcut" part.')
+    elif "packageName=com.discord" not in acc_dump:
+        logfunc('Dumpsys "shortcut" part holds no com.discord entries.')
+    else:
+        logtext = (
+            'Dumpsys does include a \"shortcut\" part for discord without timestamp.'
+            if acc_ts is None
+            else f'Dumpsys does include a \"shortcut\" part for discord with timestamp: {str(acc_ts)}'
+        )
+        logfunc(logtext)
+        data_list = shortcut_data(acc_dump, "discord")
+
+    data_headers = ('Shortcut ID', ('Timestamp (Shortcut)', 'datetime'), ('Message Time', 'datetime'), 'Label', 'Guild ID', 'Channel ID', 'Message ID', 'Message', 'User', 'User ID')
     return data_headers, data_list, source_path
 
 # App Ops

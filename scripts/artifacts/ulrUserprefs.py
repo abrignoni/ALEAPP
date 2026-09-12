@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_urluser": {
         "name": "ULR User Prefs",
-        "description": "ULR User Prefs",
+        "description": "Name and value pairs from Google Play services' ULR_USER_PREFS.xml",
         "author": "Alexis 'Brigs' Brignoni",
         "creation_date": "2024-06-21",
         "last_update_date": "2024-06-21",
@@ -17,11 +17,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 15 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 15 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 14 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gms | 81 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 27 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gms | 28 rows",
             "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 15 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 25 rows",
-            "userb2_a13": "Android 13 | com.google.android.gms | 30 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 15 rows",
         },
     }
 }

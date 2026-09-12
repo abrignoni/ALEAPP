@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Browser Start Pages",
+    "function_name": "galleryvault_browser_urls",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 6,
+    "number_of_rows": 8,
+    "total_data_size_bytes": 300,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_browser_urls.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:38.856088+00:00",
+    "end_time": "2026-08-25T04:48:38.903114+00:00",
+    "run_time_seconds": 0.0007429122924804688,
+    "last_commit": {
+      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-07T23:27:07-04:00",
+      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+    }
+  },
+  "headers": [
+    "Last Visit Time",
+    "Create Time",
+    "Title",
+    "URL",
+    "Visit Count",
+    "Favicon URL"
+  ],
+  "data": [
+    [
+      "",
+      "",
+      "Facebook",
+      "https://m.facebook.com/",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "Instagram",
+      "https://www.instagram.com/",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "Tiktok",
+      "https://www.tiktok.com/",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "X",
+      "https://x.com/",
+      0,
+      "https://abs.twimg.com/favicons/twitter.3.ico"
+    ],
+    [
+      "",
+      "",
+      "Vimeo",
+      "https://vimeo.com/watch",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "DailyMonition",
+      "https://www.dailymotion.com/",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "500px",
+      "https://www.500px.com/popular",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "Pinterest",
+      "https://www.pinterest.com/",
+      0,
+      ""
+    ]
+  ]
+}
