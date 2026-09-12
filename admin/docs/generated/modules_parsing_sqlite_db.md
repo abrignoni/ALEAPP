@@ -85,6 +85,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | linkbox |
 | loopHabits |
 | magisk |
+| megaCloud |
 | miBrowser |
 | moonReader |
 | musicolet |
