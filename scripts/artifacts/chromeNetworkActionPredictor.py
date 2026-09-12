@@ -21,11 +21,12 @@ __artifacts_v2__ = {
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_chromeNetworkActionPredictor(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
 
     data_headers = ['User Text', 'URL', 'Number of Hits', 'Number of Misses']

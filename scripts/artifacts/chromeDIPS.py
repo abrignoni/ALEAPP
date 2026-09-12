@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_chromeDIPS": {
         "name": "ChromeDIPS",
-        "description": "Module Description: Parses Chromium DIPS (Detect Incidental Party State)",
+        "description": "Parses Chromium DIPS (Detect Incidental Party State)",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-07",
         "last_update_date": "2026-07-10",
@@ -17,10 +17,10 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.android.chrome vc 616710133, com.microsoft.emmx vc 259210005 | 36 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 19 rows",
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 3 rows",
-            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 15 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 5 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 13 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033 | 19 rows",
-            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 10 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 5 rows",
         },
     }
 }
@@ -31,6 +31,7 @@ import datetime
 
 from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readonly
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _webkit_to_utc(value):
@@ -47,7 +48,7 @@ def _first_column(columns, candidates):
 
 @artifact_processor
 def get_chromeDIPS(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     # all_data is a consolidated list of all browsers with an extra column to discriminate the browser
     all_data = []
 
