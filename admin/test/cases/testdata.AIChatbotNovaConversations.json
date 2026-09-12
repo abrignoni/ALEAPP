@@ -1,0 +1,32 @@
+{
+  "case1": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "full_system_dump_nova_ai_reference.zip",
+      "os": "Linux-7.1.10-200.fc44.x86_64-x86_64-with-glibc2.43",
+      "timestamp": "2026-08-30T22:37:34.328715",
+      "last_commit": {
+        "hash": "0cfab8434883aba1c1daa222295ca463f1c7774f",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-08-10T09:05:12-04:00",
+        "message": "fix: carry the Nova artifacts onto the current core and house vocabulary"
+      }
+    },
+    "artifacts": {
+      "nova_chatbot_conversations": {
+        "search_patterns": [
+          "**/com.scaleup.chatai/databases/chat-ai.db",
+          "**/com.android.providers.media/databases/external*.db",
+          "**/com.google.android.providers.media.module/databases/external*.db"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
