@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "blink_camera_information": {
         "name": "Blink Camera Information",
-        "description": "Cameras recorded in the Blink app's local database, with the serial number, model and account timestamps stored for each",
+        "description": "Cameras recorded in the Blink app's local database, with the serial number, model and the timestamps stored on each record",
         "author": "Christian Frahm",
         "creation_date": "2026-08-20",
         "last_update_date": "2026-09-11",
@@ -20,9 +20,10 @@ __artifacts_v2__ = {
                  "acquisition or as internal identifiers; they include armed, battery, wifi_signal, "
                  "lfr_signal, thumbnail and its timestamp, snooze, onboarding and subscription "
                  "identifiers. Measured on one BlinkRoom file supplied by the contributor, who reports "
-                 "it came from a Samsung SM-A166U running Android 16: 2 rows. None of the 40 registered "
-                 "Android test corpora carry this app, so the module has not been exercised against "
-                 "them.",
+                 "it came from a Samsung SM-A166U running Android 16: 2 rows. That is the only data this "
+                 "module has been run against, and a sanitized copy of it is committed as the module's "
+                 "test case; a second Blink extraction would be the first test of any of this against "
+                 "another account.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "camera"
@@ -53,9 +54,10 @@ __artifacts_v2__ = {
                  "left join, so a camera carrying no entitlement row is still reported with the "
                  "entitlement columns blank; no tested file exercised that case. Measured on one "
                  "BlinkRoom file supplied by the contributor, who reports it came from a Samsung "
-                 "SM-A166U running Android 16: 26 rows, 13 entitlements against each of 2 cameras. None "
-                 "of the 40 registered Android test corpora carry this app, so the module has not been "
-                 "exercised against them.",
+                 "SM-A166U running Android 16: 26 rows, 13 entitlements against each of 2 cameras. That "
+                 "is the only data this module has been run against, and a sanitized copy of it is "
+                 "committed as the module's test case; a second Blink extraction would be the first test "
+                 "of any of this against another account.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "camera"
@@ -81,8 +83,9 @@ __artifacts_v2__ = {
                  "take is not established. Measured on one BlinkRoom file supplied by the contributor, "
                  "who reports it came from a Samsung SM-A166U running Android 16: 1 row. An account with "
                  "one sync module produces one row, so every column holds a single value on that file. "
-                 "None of the 40 registered Android test corpora carry this app, so the module has not "
-                 "been exercised against them.",
+                 "That is the only data this module has been run against, and a sanitized copy of it is "
+                 "committed as the module's test case; a second Blink extraction would be the first test "
+                 "of any of this against another account.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "camera"
@@ -113,8 +116,9 @@ __artifacts_v2__ = {
                  "entitlement row is still reported with the entitlement columns blank; no tested file "
                  "exercised that case. Measured on one BlinkRoom file supplied by the contributor, who "
                  "reports it came from a Samsung SM-A166U running Android 16: 4 rows against 1 sync "
-                 "module. None of the 40 registered Android test corpora carry this app, so the module "
-                 "has not been exercised against them.",
+                 "module. That is the only data this module has been run against, and a sanitized copy "
+                 "of it is committed as the module's test case; a second Blink extraction would be the "
+                 "first test of any of this against another account.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "camera"
@@ -140,13 +144,14 @@ __artifacts_v2__ = {
                  "each can take is not established. Created Timestamp and Updated Timestamp are stored "
                  "as ISO 8601 text carrying an explicit UTC offset and are reported as stored. On the "
                  "tested file the network record's created_at preceded the sync module record's by 8 "
-                 "seconds and the two camera records' by about 3 and 5 minutes. What that ordering "
-                 "means, and whether it holds generally, were not established. The priority column is "
-                 "not reported. Measured on one BlinkRoom file supplied by Christian Frahm, who reports "
-                 "it came from a Samsung SM-A166U running Android 16: 1 row. An account with one network "
-                 "produces one row, so every column holds a single value on that file. None of the 40 "
-                 "registered Android test corpora carry this app, so the module has not been exercised "
-                 "against them.",
+                 "seconds and the two camera records' by 2 minutes 43 seconds and 5 minutes 32 seconds. "
+                 "What that ordering means, and whether it holds generally, were not established. The "
+                 "priority column is not reported. Measured on one BlinkRoom file supplied by Christian "
+                 "Frahm, who reports it came from a Samsung SM-A166U running Android 16: 1 row. An "
+                 "account with one network produces one row, so every column holds a single value on "
+                 "that file. That is the only data this module has been run against, and a sanitized "
+                 "copy of it is committed as the module's test case; a second Blink extraction would be "
+                 "the first test of any of this against another account.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "wifi"
@@ -168,9 +173,10 @@ __artifacts_v2__ = {
                  "row records. Some keys embed a camera id, and two on the tested file also began with a "
                  "brace character. What each key means, and the full set of keys the app can write, are "
                  "not established. Measured on one BlinkRoom file supplied by Christian Frahm, who "
-                 "reports it came from a Samsung SM-A166U running Android 16: 15 rows. None of the 40 "
-                 "registered Android test corpora carry this app, so the module has not been exercised "
-                 "against them.",
+                 "reports it came from a Samsung SM-A166U running Android 16: 15 rows. That is the only "
+                 "data this module has been run against, and a sanitized copy of it is committed as the "
+                 "module's test case; a second Blink extraction would be the first test of any of this "
+                 "against another account.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "settings"
@@ -197,8 +203,10 @@ __artifacts_v2__ = {
                  "nullable in the schema and were filled on the tested file. An account with one "
                  "subscription produces one row, so every column holds a single value on that file. "
                  "Measured on one BlinkRoom file supplied by Christian Frahm, who reports it came from a "
-                 "Samsung SM-A166U running Android 16: 1 row. None of the 40 registered Android test "
-                 "corpora carry this app, so the module has not been exercised against them.",
+                 "Samsung SM-A166U running Android 16: 1 row. That is the only data this module has been "
+                 "run against, and a sanitized copy of it is committed as the module's test case; a "
+                 "second Blink extraction would be the first test of any of this against another "
+                 "account.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "credit-card"
@@ -227,8 +235,9 @@ __artifacts_v2__ = {
                  "1 row held, so the table does not hold every message ever written; whether the app "
                  "removes them or the supplied file was edited is not established. Measured on one "
                  "BlinkRoom file supplied by Christian Frahm, who reports it came from a Samsung "
-                 "SM-A166U running Android 16: 1 row. None of the 40 registered Android test corpora "
-                 "carry this app, so the module has not been exercised against them.",
+                 "SM-A166U running Android 16: 1 row. That is the only data this module has been run "
+                 "against, and a sanitized copy of it is committed as the module's test case; a second "
+                 "Blink extraction would be the first test of any of this against another account.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "bell"
@@ -249,8 +258,10 @@ __artifacts_v2__ = {
                  "every event ever written; whether the app removes them or the supplied file was edited "
                  "is not established. Nothing in the table names a camera, a network or an account. "
                  "Measured on one BlinkRoom file supplied by Christian Frahm, who reports it came from a "
-                 "Samsung SM-A166U running Android 16: 1 row. None of the 40 registered Android test "
-                 "corpora carry this app, so the module has not been exercised against them.",
+                 "Samsung SM-A166U running Android 16: 1 row. That is the only data this module has been "
+                 "run against, and a sanitized copy of it is committed as the module's test case; a "
+                 "second Blink extraction would be the first test of any of this against another "
+                 "account.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "activity"
