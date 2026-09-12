@@ -1,0 +1,110 @@
+{
+    "casesm_a166u_a16": {
+        "description": "Blink (com.immediasemi.android.blink) BlinkRoom database from a Samsung SM-A166U running Android 16, supplied by Christian Frahm on PR #1196. SANITIZED before committing. Changed: the camera, sync module, network, account and subscription identifiers were renumbered, the hardware serial numbers were replaced with same-length synthetic values, and the camera and network names were replaced, with the message text rewritten so it still names the camera it named. Every relationship was rewritten together, so camera.id still matches entitlement.target_id, the key_value_pair keys that embed a camera id still match a camera, clip_list_tab still holds the network id, and message.network_id still matches network.id. The file was VACUUMed and then scanned byte by byte for every original value in every encoding SQLite uses for it, including the rowid varint, with each scan proven against the unsanitized copy first: zero hits. NOT changed, because the artifacts' notes measure them: every timestamp, the IANA time zone on the network row, the -04:00 offset on the key_value_pair value that corroborates that zone, the camera.type and syncmodule.type codes and the entitlement.target codes the entitlement joins depend on, the entitlement names and statuses, the subscription plan and cycle values, and the autoincrement ids on message and tracking_event. Row counts are unchanged in every table: camera 2, entitlement 34, key_value_pair 15, network 1, subscription 1, syncmodule 1, message 1, tracking_event 1, and the nine artifacts report the same counts on this file as on the original (2, 26, 1, 4, 1, 15, 1, 1, 1). The extraction holds one copy of the database, so file_count is 1 per artifact and this case does not exercise the duplicate storage views.",
+        "maker": "@AlexisBrignoni",
+        "make_data": {
+            "input_data_path": "blink_sanitized_extraction.zip",
+            "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-09-11T22:58:18.909872",
+            "last_commit": {
+                "hash": "83736b2d90c0b8b7ee0d45afb44f9e35f45c941a",
+                "author_name": "Brigs",
+                "author_email": "abrignoni@gmail.com",
+                "date": "2026-09-11T22:50:41-04:00",
+                "message": "Blink: parse the four remaining populated tables in BlinkRoom"
+            }
+        },
+        "artifacts": {
+            "blink_camera_information": {
+                "search_patterns": [
+                    "*/com.immediasemi.android.blink/databases/BlinkRoom*"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "blink_camera_entitlements": {
+                "search_patterns": [
+                    "*/com.immediasemi.android.blink/databases/BlinkRoom*"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "blink_syncmodule_information": {
+                "search_patterns": [
+                    "*/com.immediasemi.android.blink/databases/BlinkRoom*"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "blink_syncmodule_entitlements": {
+                "search_patterns": [
+                    "*/com.immediasemi.android.blink/databases/BlinkRoom*"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "blink_network_information": {
+                "search_patterns": [
+                    "*/com.immediasemi.android.blink/databases/BlinkRoom*"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "blink_key_value_store": {
+                "search_patterns": [
+                    "*/com.immediasemi.android.blink/databases/BlinkRoom*"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "blink_subscriptions": {
+                "search_patterns": [
+                    "*/com.immediasemi.android.blink/databases/BlinkRoom*"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "blink_app_messages": {
+                "search_patterns": [
+                    "*/com.immediasemi.android.blink/databases/BlinkRoom*"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "blink_tracking_events": {
+                "search_patterns": [
+                    "*/com.immediasemi.android.blink/databases/BlinkRoom*"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}
