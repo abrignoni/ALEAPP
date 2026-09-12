@@ -5,10 +5,10 @@ __artifacts_v2__ = {
         "description": "Parses Chrome autofill entries",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-09-12",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "A 'Web Data' database that cannot be read is logged and skipped, and the remaining browsers on the device are still reported. SQLite treats a non-empty '-journal' sidecar as a hot journal and begins a recovery that has to write, which a read-only handle cannot do. The pixel3_a12 image carries one file in that state, the Gmail WebView copy under data_mirror, whose sidecar holds 16 bytes of LevelDB text rather than a rollback journal. The storage-view dedupe selects the data/data spelling of that same database, so the unreadable copy is not opened during a normal run on this image; read with its journal ignored it holds no autofill rows.",
+        "notes": "A 'Web Data' database that cannot be read is logged and skipped, and the remaining browsers on the device are still reported. A database whose journal SQLite treats as hot cannot be opened through a read-only handle, because replaying that journal has to write. A non-empty journal is not by itself hot: four non-empty sidecars beside Chromium databases in the registered Android corpora were tested by opening the database read-only, and three of the four opened normally. The one that did not is on the pixel3_a12 image, the Gmail WebView copy of 'Web Data' under data_mirror, whose 16-byte sidecar holds the LevelDB text 'MANIFEST-000001' rather than a rollback journal. The storage-view dedupe selects the data/data spelling of that same database, so the unreadable copy is not opened during a normal run on this image; read with its journal ignored it holds no autofill rows.",
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "description": "Parses Chrome autofill profiles",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-08-08",
+        "last_update_date": "2026-09-12",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Chrome stores autofill address profiles in two layouts and both are read. Older releases use autofill_profiles joined to autofill_profile_names, _emails and _phones. Current releases use a single addresses table whose field values live in address_type_tokens, keyed by Chromium's FieldType enum; the values read are 3 NAME_FIRST, 4 NAME_MIDDLE, 5 NAME_LAST, 9 EMAIL_ADDRESS, 14 PHONE_HOME_WHOLE_NUMBER, 33 ADDRESS_HOME_CITY, 34 ADDRESS_HOME_STATE, 35 ADDRESS_HOME_ZIP, 60 COMPANY_NAME and 77 ADDRESS_HOME_STREET_ADDRESS. Field types outside that set are not reported rather than labelled, so a later Chrome field cannot reach the report under a guessed column; ADDRESS_HOME_COUNTRY and NAME_FULL are present in tested samples and are among those not reported. A third spelling, local_addresses, was seen empty on two tested images and is not read. Reference: Chromium, 'components/autofill/core/browser/field_types.h', https://github.com/chromium/chromium/blob/e90fec8693b4bd68806f3a5addec6722c0bc3939/components/autofill/core/browser/field_types.h",
@@ -107,7 +107,6 @@ def get_chromeAutofill(context):
             continue  # Skip mirror, it should be duplicate data
 
         browser_name = _browser_for(file_found)
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         db = open_sqlite_db_readonly(file_found)
         if db is None:
@@ -145,6 +144,8 @@ def get_chromeAutofill(context):
             continue
         finally:
             db.close()
+
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         if len(data_list) > 0:
             all_data.extend([row + (browser_name,) for row in data_list])
@@ -223,11 +224,13 @@ def get_chromeAutofillProfiles(context):
             continue  # Skip mirror, it should be duplicate data
 
         browser_name = _browser_for(file_found)
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
+        if db is None:
+            continue
+
         try:
+            cursor = db.cursor()
             if _table_exists(cursor, 'autofill_profiles'):
                 cursor.execute('''
                     select
@@ -258,8 +261,11 @@ def get_chromeAutofillProfiles(context):
                 rows = []
         except Exception as e:
             logfunc(str(e))
-            rows = []
-        db.close()
+            continue
+        finally:
+            db.close()
+
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
         data_list = []
         for r in rows:
