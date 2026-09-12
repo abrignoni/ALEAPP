@@ -15,14 +15,14 @@ __artifacts_v2__ = {
                  "or operating the camera. Camera Model is the type column as stored; on the tested file "
                  "its value was also the entitlement target used in Blink Camera Entitlements, and the "
                  "full set of model codes is not established. The camera table holds 30 columns and this "
-                 "artifact reports 7 of them. The rest were left out as state at acquisition or as "
-                 "internal identifiers; they include armed, battery, wifi_signal, lfr_signal, thumbnail "
-                 "and its timestamp, snooze, onboarding and subscription identifiers. The network table "
-                 "in the same database records the account's IANA time zone and daylight saving flag and "
-                 "is not parsed by any artifact in this module. Measured on one BlinkRoom file supplied "
-                 "by the contributor, who reports it came from a Samsung SM-A166U running Android 16: 2 "
-                 "rows. None of the 40 registered Android test corpora carry this app, so the module has "
-                 "not been exercised against them.",
+                 "artifact reports 8 of them, including network_id, which names the row in Blink Network "
+                 "Information that this camera belongs to. The rest were left out as state at "
+                 "acquisition or as internal identifiers; they include armed, battery, wifi_signal, "
+                 "lfr_signal, thumbnail and its timestamp, snooze, onboarding and subscription "
+                 "identifiers. Measured on one BlinkRoom file supplied by the contributor, who reports "
+                 "it came from a Samsung SM-A166U running Android 16: 2 rows. None of the 40 registered "
+                 "Android test corpora carry this app, so the module has not been exercised against "
+                 "them.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "camera"
@@ -68,20 +68,21 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-11",
         "requirements": "none",
         "category": "Blink",
-        "notes": "Rows come from the syncmodule table of the app's Room database. Created Timestamp and "
-                 "Updated Timestamp are stored as ISO 8601 text carrying an explicit UTC offset and are "
-                 "reported as stored; on the tested file both carried +00:00. Local Storage Compatible "
-                 "and Local Storage Enabled are the local_storage_compatible and local_storage_enabled "
-                 "integer columns; Local Storage Status is the separate local_storage_status text "
-                 "column. The tested file held a text status of ACTIVE beside integer flags of 1, and "
-                 "with a single sync module on that file the relationship between the three is not "
-                 "established, so each is reported as stored. Syncmodule Status and Local Storage Status "
-                 "are reported as stored and the full set of values either can take is not established. "
-                 "Measured on one BlinkRoom file supplied by the contributor, who reports it came from a "
-                 "Samsung SM-A166U running Android 16: 1 row. An account with one sync module produces "
-                 "one row, so every column holds a single value on that file. None of the 40 registered "
-                 "Android test corpora carry this app, so the module has not been exercised against "
-                 "them.",
+        "notes": "Rows come from the syncmodule table of the app's Room database. Network ID names the "
+                 "row in Blink Network Information that this sync module belongs to. Created Timestamp "
+                 "and Updated Timestamp are stored as ISO 8601 text carrying an explicit UTC offset and "
+                 "are reported as stored; on the tested file both carried +00:00. Local Storage "
+                 "Compatible and Local Storage Enabled are the local_storage_compatible and "
+                 "local_storage_enabled integer columns; Local Storage Status is the separate "
+                 "local_storage_status text column. The tested file held a text status of ACTIVE beside "
+                 "integer flags of 1, and with a single sync module on that file the relationship "
+                 "between the three is not established, so each is reported as stored. Syncmodule Status "
+                 "and Local Storage Status are reported as stored and the full set of values either can "
+                 "take is not established. Measured on one BlinkRoom file supplied by the contributor, "
+                 "who reports it came from a Samsung SM-A166U running Android 16: 1 row. An account with "
+                 "one sync module produces one row, so every column holds a single value on that file. "
+                 "None of the 40 registered Android test corpora carry this app, so the module has not "
+                 "been exercised against them.",
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "camera"
@@ -117,6 +118,38 @@ __artifacts_v2__ = {
         "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
         "output_types": "standard",
         "artifact_icon": "camera"
+    },
+    "blink_network_information": {
+        "name": "Blink Network Information",
+        "description": "The Blink network a sync module and its cameras belong to, with the IANA time zone stored for it",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-09-11",
+        "last_update_date": "2026-09-11",
+        "requirements": "none",
+        "category": "Blink",
+        "notes": "Rows come from the network table of the app's Room database. Blink groups a sync "
+                 "module and its cameras into a network, which the app presents as one system; "
+                 "camera.network_id and syncmodule.network_id name the network a device belongs to and "
+                 "both artifacts report that id. Time Zone is an IANA zone name stored on the network "
+                 "row. It is not needed to read any timestamp in this database: every stored timestamp "
+                 "measured across the tested file carried its own UTC offset or was a Unix epoch value, "
+                 "so none of them is ambiguous. What sets the zone, and what the app uses it for, were "
+                 "not established. Network Name is the label stored for the system; whether a person "
+                 "chose it or the app supplied a default was not established. Daylight Saving, Armed and "
+                 "Save All Live Views are integer columns reported as stored and the full set of values "
+                 "each can take is not established. Created Timestamp and Updated Timestamp are stored "
+                 "as ISO 8601 text carrying an explicit UTC offset and are reported as stored. On the "
+                 "tested file the network record's created_at preceded the sync module record's by 8 "
+                 "seconds and the two camera records' by about 3 and 5 minutes. What that ordering "
+                 "means, and whether it holds generally, were not established. The priority column is "
+                 "not reported. Measured on one BlinkRoom file supplied by Christian Frahm, who reports "
+                 "it came from a Samsung SM-A166U running Android 16: 1 row. An account with one network "
+                 "produces one row, so every column holds a single value on that file. None of the 40 "
+                 "registered Android test corpora carry this app, so the module has not been exercised "
+                 "against them.",
+        "paths": ('*/com.immediasemi.android.blink/databases/BlinkRoom*',),
+        "output_types": "standard",
+        "artifact_icon": "wifi"
     }
 }
 
@@ -150,6 +183,7 @@ def blink_camera_information(context):
     camera.updated_at,
     camera.name,
     camera.id,
+    camera.network_id,
     camera.serial_number,
     camera.type,
     camera.network_type
@@ -161,9 +195,10 @@ def blink_camera_information(context):
                               record[1],  # Updated TS, ISO 8601 with offset
                               record[2],  # Camera Name
                               record[3],  # Camera ID, the entitlement target_id
-                              record[4],  # Camera Serial Number
-                              record[5],  # Camera Model, the entitlement target
-                              record[6],  # Network Type
+                              record[4],  # Network ID, joins to the network table
+                              record[5],  # Camera Serial Number
+                              record[6],  # Camera Model, the entitlement target
+                              record[7],  # Network Type
                               ))
 
     data_headers = (
@@ -171,6 +206,7 @@ def blink_camera_information(context):
         ('Updated Timestamp', 'datetime'),
         'Camera Name',
         'Camera ID',
+        'Network ID',
         'Camera Serial Number',
         'Camera Model',
         'Network Type',
@@ -235,6 +271,7 @@ def blink_syncmodule_information(context):
     syncmodule.updated_at,
     syncmodule.serial,
     syncmodule.id,
+    syncmodule.network_id,
     syncmodule.status,
     syncmodule.local_storage_compatible,
     syncmodule.local_storage_enabled,
@@ -247,10 +284,11 @@ def blink_syncmodule_information(context):
                               record[1],  # Updated TS, ISO 8601 with offset
                               record[2],  # Syncmodule Serial Number
                               record[3],  # Syncmodule ID, the entitlement target_id
-                              record[4],  # Syncmodule Status, as stored
-                              record[5],  # local_storage_compatible, integer flag
-                              record[6],  # local_storage_enabled, integer flag
-                              record[7],  # local_storage_status, separate text column
+                              record[4],  # Network ID, joins to the network table
+                              record[5],  # Syncmodule Status, as stored
+                              record[6],  # local_storage_compatible, integer flag
+                              record[7],  # local_storage_enabled, integer flag
+                              record[8],  # local_storage_status, separate text column
                               ))
 
     data_headers = (
@@ -258,6 +296,7 @@ def blink_syncmodule_information(context):
         ('Updated Timestamp', 'datetime'),
         'Syncmodule Serial Number',
         'Syncmodule ID',
+        'Network ID',
         'Syncmodule Status',
         'Local Storage Compatible',
         'Local Storage Enabled',
@@ -304,5 +343,47 @@ def blink_syncmodule_entitlements(context):
         'Entitlement Name',
         'Entitlement Status',
         'Subscription Required',
+    )
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+@artifact_processor
+def blink_network_information(context):
+    source_paths = _blink_databases(context)
+    data_list = []
+
+    query = """
+    SELECT
+    network.created_at,
+    network.updated_at,
+    network.name,
+    network.id,
+    network.time_zone,
+    network.dst,
+    network.armed,
+    network.save_all_liveviews
+    FROM network"""
+
+    for source_path in source_paths:
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append((record[0],  # Created TS, ISO 8601 with offset
+                              record[1],  # Updated TS, ISO 8601 with offset
+                              record[2],  # Network Name
+                              record[3],  # Network ID, joined by camera and syncmodule
+                              record[4],  # IANA time zone stored on the network row
+                              record[5],  # dst, integer flag
+                              record[6],  # armed, integer flag
+                              record[7],  # save_all_liveviews, integer flag
+                              ))
+
+    data_headers = (
+        ('Created Timestamp', 'datetime'),
+        ('Updated Timestamp', 'datetime'),
+        'Network Name',
+        'Network ID',
+        'Time Zone',
+        'Daylight Saving (as stored)',
+        'Armed (as stored)',
+        'Save All Live Views (as stored)',
     )
     return data_headers, data_list, '\n'.join(source_paths)
