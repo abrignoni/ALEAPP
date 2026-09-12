@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_chromeDIPS": {
         "name": "ChromeDIPS",
-        "description": "Module Description: Parses Chromium DIPS (Detect Incidental Party State)",
+        "description": "Parses Chromium DIPS (Detect Incidental Party State)",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-07",
         "last_update_date": "2026-07-10",
