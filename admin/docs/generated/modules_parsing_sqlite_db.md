@@ -8,6 +8,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 <!-- GET_RECORDS_START -->
 | Source Modules |
 |----------------|
+| BlinkApp |
 | DuckDuckGo |
 | FairEmail |
 | GooglePlayMoviesAccounts |
