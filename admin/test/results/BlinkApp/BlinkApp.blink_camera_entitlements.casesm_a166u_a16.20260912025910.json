@@ -1,0 +1,269 @@
+{
+  "metadata": {
+    "module_name": "BlinkApp",
+    "artifact_name": "Blink Camera Entitlements",
+    "function_name": "blink_camera_entitlements",
+    "case_number": "casesm_a166u_a16",
+    "number_of_columns": 7,
+    "number_of_rows": 26,
+    "total_data_size_bytes": 1713,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/BlinkApp/testdata.BlinkApp.blink_camera_entitlements.casesm_a166u_a16.zip",
+    "start_time": "2026-09-12T02:59:10.195405+00:00",
+    "end_time": "2026-09-12T02:59:10.223236+00:00",
+    "run_time_seconds": 0.0008902549743652344,
+    "last_commit": {
+      "hash": "83736b2d90c0b8b7ee0d45afb44f9e35f45c941a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-11T22:50:41-04:00",
+      "message": "Blink: parse the four remaining populated tables in BlinkRoom"
+    }
+  },
+  "headers": [
+    "Camera Name",
+    "Camera ID",
+    "Camera Serial Number",
+    "Entitlement Target",
+    "Entitlement Name",
+    "Entitlement Status",
+    "Subscription Required"
+  ],
+  "data": [
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "auto_update_thumbnail",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "cloud_storage",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "custom_snooze",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "cv_detection",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "device_pairing",
+      "NOT_ELIGIBLE",
+      0
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "ls_cam2sm",
+      "ACTIVE",
+      0
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "ls_sm_backup",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "lv_extended",
+      "NOT_ELIGIBLE",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "lv_recording",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "smart_video_descriptions",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "snapshots",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "video_collection_research",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Front Door",
+      1000001,
+      "GNTTEST0001",
+      "sedona",
+      "warranty",
+      "ACTIVE",
+      0
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "auto_update_thumbnail",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "cloud_storage",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "custom_snooze",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "cv_detection",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "device_pairing",
+      "NOT_ELIGIBLE",
+      0
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "ls_cam2sm",
+      "ACTIVE",
+      0
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "ls_sm_backup",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "lv_extended",
+      "NOT_ELIGIBLE",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "lv_recording",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "smart_video_descriptions",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "snapshots",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "video_collection_research",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "Back Yard",
+      1000002,
+      "GNTTEST0002",
+      "sedona",
+      "warranty",
+      "ACTIVE",
+      0
+    ]
+  ]
+}

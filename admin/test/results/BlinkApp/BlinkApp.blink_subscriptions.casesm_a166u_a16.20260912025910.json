@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "module_name": "BlinkApp",
+    "artifact_name": "Blink Subscriptions",
+    "function_name": "blink_subscriptions",
+    "case_number": "casesm_a166u_a16",
+    "number_of_columns": 17,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 156,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/BlinkApp/testdata.BlinkApp.blink_subscriptions.casesm_a166u_a16.zip",
+    "start_time": "2026-09-12T02:59:10.297695+00:00",
+    "end_time": "2026-09-12T02:59:10.325818+00:00",
+    "run_time_seconds": 0.0008082389831542969,
+    "last_commit": {
+      "hash": "83736b2d90c0b8b7ee0d45afb44f9e35f45c941a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-11T22:50:41-04:00",
+      "message": "Blink: parse the four remaining populated tables in BlinkRoom"
+    }
+  },
+  "headers": [
+    "Created Timestamp",
+    "Updated Timestamp",
+    "Cycle Timestamp",
+    "Trial Starts Timestamp",
+    "Trial Ends Timestamp",
+    "Plan Name",
+    "Plan Interval",
+    "Subscription Type",
+    "Subscription ID",
+    "Target (as stored)",
+    "Target ID",
+    "Source",
+    "Active (as stored)",
+    "Attached (as stored)",
+    "Cycle State (as stored)",
+    "Cycle Action (as stored)",
+    "Trial Period (as stored)"
+  ],
+  "data": [
+    [
+      "2025-01-16T17:12:27Z",
+      "2025-01-16T17:17:41Z",
+      "2025-02-16T04:59:59Z",
+      "2025-01-16T17:12:27Z",
+      "2025-02-16T04:59:59Z",
+      "plus",
+      "month",
+      "trial",
+      5000001,
+      "location",
+      5000002,
+      "blink",
+      0,
+      1,
+      "active",
+      "renew",
+      30
+    ]
+  ]
+}

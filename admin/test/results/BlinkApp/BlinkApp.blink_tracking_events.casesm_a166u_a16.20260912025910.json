@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "module_name": "BlinkApp",
+    "artifact_name": "Blink Tracking Events",
+    "function_name": "blink_tracking_events",
+    "case_number": "casesm_a166u_a16",
+    "number_of_columns": 3,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 48,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/BlinkApp/testdata.BlinkApp.blink_tracking_events.casesm_a166u_a16.zip",
+    "start_time": "2026-09-12T02:59:10.168532+00:00",
+    "end_time": "2026-09-12T02:59:10.194906+00:00",
+    "run_time_seconds": 0.0006277561187744141,
+    "last_commit": {
+      "hash": "83736b2d90c0b8b7ee0d45afb44f9e35f45c941a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-11T22:50:41-04:00",
+      "message": "Blink: parse the four remaining populated tables in BlinkRoom"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Event Name",
+    "Event ID"
+  ],
+  "data": [
+    [
+      "2025-11-22T23:43:14.709Z",
+      "SESSION_BACKGROUNDED",
+      5274
+    ]
+  ]
+}

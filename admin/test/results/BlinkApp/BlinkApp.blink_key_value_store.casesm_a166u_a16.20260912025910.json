@@ -1,0 +1,122 @@
+{
+  "metadata": {
+    "module_name": "BlinkApp",
+    "artifact_name": "Blink App Key Value Store",
+    "function_name": "blink_key_value_store",
+    "case_number": "casesm_a166u_a16",
+    "number_of_columns": 4,
+    "number_of_rows": 15,
+    "total_data_size_bytes": 609,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/BlinkApp/testdata.BlinkApp.blink_key_value_store.casesm_a166u_a16.zip",
+    "start_time": "2026-09-12T02:59:10.352515+00:00",
+    "end_time": "2026-09-12T02:59:10.383660+00:00",
+    "run_time_seconds": 0.0007390975952148438,
+    "last_commit": {
+      "hash": "83736b2d90c0b8b7ee0d45afb44f9e35f45c941a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-11T22:50:41-04:00",
+      "message": "Blink: parse the four remaining populated tables in BlinkRoom"
+    }
+  },
+  "headers": [
+    "Key",
+    "Value (as stored)",
+    "Value Type (as stored)",
+    "Client Options (as stored)"
+  ],
+  "data": [
+    [
+      "CURRENT_ADVERTISEMENT_BANNER",
+      "NONE",
+      "STRING",
+      0
+    ],
+    [
+      "HAS_SHOWN_TOOLTIP_ARM_DISARM",
+      "true",
+      "BOOLEAN",
+      1
+    ],
+    [
+      "HAS_SHOWN_TOOLTIP_CLIP_LIST",
+      "true",
+      "BOOLEAN",
+      1
+    ],
+    [
+      "HAS_SHOWN_TOOLTIP_LIVE_VIEW",
+      "true",
+      "BOOLEAN",
+      1
+    ],
+    [
+      "HAS_SHOWN_TOOLTIP_MORE_BUTTON",
+      "true",
+      "BOOLEAN",
+      1
+    ],
+    [
+      "LAST_ENTITLEMENTS_SYNC",
+      "2025-10-24T03:07:19+00:00",
+      "STRING",
+      0
+    ],
+    [
+      "MOMENTS_ENABLED_TIME",
+      "1757875552061",
+      "LONG",
+      0
+    ],
+    [
+      "MOTION_SETTINGS_FIRST_ACCESSED",
+      "2025-09-04T20:57:29.575-04:00",
+      "STRING",
+      1
+    ],
+    [
+      "PREF_SHOW_NOTIFICATION_DELETE",
+      "false",
+      "BOOLEAN",
+      0
+    ],
+    [
+      "SEEN_ENABLE_NOTIFICATIONS_PROMPT",
+      "true",
+      "BOOLEAN",
+      1
+    ],
+    [
+      "STARTUP_POPUPS_DETERMINED",
+      "true",
+      "BOOLEAN",
+      0
+    ],
+    [
+      "clip_list_tab",
+      "3000001",
+      "LONG",
+      1
+    ],
+    [
+      "homescreensync",
+      "0",
+      "LONG",
+      0
+    ],
+    [
+      "{LIVE_VIEW_CAMERA_MUTE_1000001",
+      "true",
+      "BOOLEAN",
+      1
+    ],
+    [
+      "{LIVE_VIEW_CAMERA_MUTE_1000002",
+      "false",
+      "BOOLEAN",
+      1
+    ]
+  ]
+}
