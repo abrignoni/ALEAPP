@@ -1,20 +1,40 @@
 __artifacts_v2__ = {
     "get_chromeNetworkActionPredictor": {
-        "name": "Network Action Predictor",
-        "description": "Parses the Network Action Predictor from Chromium Based Browsers",
-        "author": "Kevin Pagano (@stark4n6)",
-        "creation_date": "2020-03-19",
-        "last_update_date": "2026-07-10",
-        "requirements": "none",
-        "category": "Chromium",
-        "notes": "",
-        "paths": ('*/app_Chrome/Default/Network Action Predictor*', '*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predicator*', '*/app_webview/Default/Network Action Predictor*'),
+        "name": 'Network Action Predictor',
+        "description": 'Parses the Network Action Predictor from Chromium Based Browsers',
+        "author": 'Kevin Pagano (@stark4n6)',
+        "creation_date": '2020-03-19',
+        "last_update_date": '2026-09-11',
+        "requirements": 'none',
+        "category": 'Chromium',
+        "notes": 'Reads the network_action_predictor table from each Chromium profile the declared paths match, one '
+                  'storage view per file, and reports user_text, url, number_of_hits and number_of_misses as stored. '
+                  'Measured over all 42 registered Android corpora on 2026-09-11: 34 carry a file named Network '
+                  'Action Predictor and every copy sits under app_chrome/Default or app_sbrowser/Default. No copy '
+                  'sits under app_opera or app_webview on any of them: three corpora carry an app_opera directory '
+                  '(pixel3_a11, pixel3_a12, pixel7a_a14) and none holds this file there, so both of those declared '
+                  'patterns are unexercised. Row counts come from profile-driven runs over the 20 registered zip '
+                  'corpora, cross-checked against a direct read of the same databases; the two agree on all 20. Nine '
+                  'reported rows, 1,172 of them from com.android.chrome and 2,029 from com.microsoft.emmx. The '
+                  'com.brave.browser copy held the table and no rows on all 7 run corpora carrying it, and of the 9 '
+                  'Samsung Browser copies read 6 hold no network_action_predictor table and 3 hold it empty, so no '
+                  'Brave or Samsung Browser row was observed. An absent browser here is not evidence that browser was '
+                  'unused. Where a device carries more than one Android user each profile is reported separately: on '
+                  'russell_pixel6a_a13 the Android user 0 Chrome profile holds 273 rows and the user 10 profile holds '
+                  'none.',
+        "paths": ('*/app_chrome/Default/Network Action Predictor*', '*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predictor*', '*/app_webview/Default/Network Action Predictor*'),
         "output_types": ['html', 'tsv', 'lava'],
-        "artifact_icon": "wifi",
+        "artifact_icon": 'wifi',
         "sample_data": {
-            "sharon_a14": "Android 14 | com.sec.android.app.sbrowser vc 1260103502 | 0 rows",
-            "anne_a15": "Android 15 | com.sec.android.app.sbrowser vc 1280509502 | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.sec.android.app.sbrowser vc 1300067502 | 0 rows",
+            "galaxys10_a10": 'Android 10 | com.android.chrome vc 438910534 | 7 rows',
+            "pixel3_a12": 'Android 12 | com.android.chrome vc 463805033, com.brave.browser vc 413211224, com.microsoft.emmx vc 96108015 | 483 rows',
+            "russell_pixel6a_a13": 'Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 273 rows',
+            "s20fe_a13": 'Android 13 | com.android.chrome vc 787112833, com.sec.android.app.sbrowser vc 1300067502 | 203 rows',
+            "pixel7a_a14": 'Android 14 | com.android.chrome vc 616710133, com.brave.browser vc 426712324, com.microsoft.emmx vc 259210005 | 414 rows',
+            "samsunga53_a14": 'Android 14 | com.android.chrome vc 744417133 | 0 rows',
+            "sharon_a14": 'Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 0 rows',
+            "anne_a15": 'Android 15 | com.android.chrome vc 733915533, com.sec.android.app.sbrowser vc 1280509502 | 23 rows',
+            "hc_pixel8pro_a16": 'Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204, com.sec.android.app.sbrowser vc 1300067502 | 0 rows',
         },
     }
 }
