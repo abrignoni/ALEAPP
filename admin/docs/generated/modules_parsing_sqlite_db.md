@@ -140,6 +140,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | weibo |
 | wikipedia |
 | xiaohongshu |
+| youCamPerfect |
 <!-- GET_RECORDS_END -->
 
 ### open_sqlite_db_readonly() Usage
