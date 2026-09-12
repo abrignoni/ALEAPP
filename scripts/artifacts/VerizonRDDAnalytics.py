@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_rdd_analytics": {
         "name": "VerizonRDD-Battery",
-        "description": "Module Description: Parses Verizon RDD Analytics Battery History",
+        "description": "Parses Verizon RDD Analytics Battery History",
         "author": "John Hyla",
         "creation_date": "2023-07-07",
         "last_update_date": "2023-07-07",
