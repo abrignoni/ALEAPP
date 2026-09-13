@@ -3,19 +3,25 @@ __artifacts_v2__ = {
         "name": "TikTok - Messages",
         "description": "Parses TikTok direct messages (timestamp, user, nickname, message, "
                        "links, read state and conversation) from the TikTok IM databases, "
-                       "covering the per-account _im.db files found.",
+                       "covering each <uid>_im.db file found.",
         "author": "@abrignoni",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-08-28",
+        "last_update_date": "2026-09-12",
         "requirements": "none",
         "category": "TikTok",
-        "notes": "_im.db files are named <account uid>_im.db and "
-                 "all of them are parsed; the Account ID column carries each file's uid and "
-                 "messages whose sender equals it are marked Outgoing.\n"
-                 "Every msg row is reported. The Message, link and sticker columns are "
-                 "filled only when the row's content field holds JSON; rows whose content "
-                 "is not JSON report the SQL columns alone, with Message Type and Deleted "
-                 "as stored since no source for those integers was verified.\n"
+        "notes": "Every database named <uid>_im.db is parsed, including those named "
+                 "biz_2_<uid>_im.db. The Account ID column carries the uid from the file "
+                 "name, and messages whose sender equals it are marked Outgoing. On the "
+                 "tested images every database holding messages was named for a uid listed "
+                 "in logged_in_uid_list in aweme_user.xml. Two tested images also held "
+                 "another <uid>_im.db and a biz_2_<uid>_im.db, both without messages, named "
+                 "for a uid that logged_in_uid_list does not contain.\n"
+                 "Every msg row is reported when the msg table has every column this "
+                 "artifact selects, which held on every tested image. The Message, "
+                 "Link GIF Name and Link GIF URL columns are filled only when the row's "
+                 "content field holds JSON; rows whose content is not JSON report the SQL "
+                 "columns alone, with Message Type and Deleted as stored since no source "
+                 "for those integers was verified.\n"
                  "Sender names are resolved against SIMPLE_USER in db_im_xx and "
                  "IM_USER_BASE_INFO in the db_im_contact databases, where present. A sender "
                  "in neither store shows a bare UID.\n"
@@ -67,16 +73,19 @@ __artifacts_v2__ = {
                        "status) from the TikTok IM databases.",
         "author": "@abrignoni",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-08-28",
+        "last_update_date": "2026-09-12",
         "requirements": "none",
         "category": "TikTok",
         "notes": "Contacts come from IM_USER_BASE_INFO in the db_im_contact databases and "
                  "from SIMPLE_USER in db_im_xx. A UID present in more than one store is "
-                 "reported once, from the first store that carries it, with "
+                 "reported once, from the first store that returns it, with "
                  "IM_USER_BASE_INFO preferred since it also records an update timestamp. "
                  "Update Time, Blocked and Deleted are only available from "
                  "IM_USER_BASE_INFO; Blocked and Deleted are reported as stored since no "
-                 "source for those integers was verified.\n"
+                 "source for those integers was verified. IM_USER_BASE_INFO rows are "
+                 "reported only when that table has every column this artifact selects; "
+                 "on three tested images it lacked a DELETED column, so none of its rows "
+                 "were reported and the rows shown came from SIMPLE_USER alone.\n"
                  "Path patterns are anchored to the TikTok package names, "
                  "com.zhiliaoapp.musically and com.ss.android.ugc.trill; only the former "
                  "appears in the registered corpora, and files under any other package "
@@ -332,24 +341,26 @@ def _json_field(content, *path):
 
 
 def _name_map(context):
-    '''UID to (unique id, nickname) from every contact store found.'''
+    '''UID to (unique id, nickname), and the contact stores read to build it.'''
     names = {}
+    stores = []
     for table, path in _contact_sources(context):
+        stores.append(path)
         for uid, unique_id, nickname in _rows(
                 path, f'SELECT UID, UNIQUE_ID, NICK_NAME FROM {table}'):
             if uid is not None and uid not in names:
                 names[uid] = (unique_id or '', nickname or '')
-    return names
+    return names, stores
 
 
 @artifact_processor
 def get_tikTok(context):
     data_list = []
-    source_path = ''
-    names = _name_map(context)
+    source_paths = []
+    names, name_stores = _name_map(context)
 
     for account_uid, maindb in _account_dbs(context):
-        source_path = source_path or maindb
+        source_paths.append(maindb)
         source_file = context.get_relative_path(maindb)
         for (created, sender, content, message_type, deleted, read_status,
              conversation_id) in _rows(maindb, '''
@@ -402,17 +413,17 @@ def get_tikTok(context):
         'Account ID',
         'Source File',
     )
-    return data_headers, data_list, source_path or 'see Source File column'
+    return data_headers, data_list, '\n'.join(source_paths + name_stores)
 
 
 @artifact_processor
 def get_tikTok_contacts(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     seen = set()
 
     for table, path in _contact_sources(context):
-        source_path = source_path or path
+        source_paths.append(path)
         source_file = context.get_relative_path(path)
         if table == 'IM_USER_BASE_INFO':
             sql = '''SELECT UID, NICK_NAME, UNIQUE_ID, INITIAL_LETTER, AVATAR_THUMB,
@@ -435,7 +446,7 @@ def get_tikTok_contacts(context):
     data_headers = (('Update Time', 'datetime'), 'UID', 'Nickname', 'Unique ID',
                     'Initial Letter', 'Avatar URL', 'Follow Status', 'Blocked (as stored)',
                     'Deleted (as stored)', 'Source File')
-    return data_headers, data_list, source_path or 'see Source File column'
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 def _account_json_rows(entry_name, text, source_file):
