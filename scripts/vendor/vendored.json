@@ -3,12 +3,12 @@
     {
       "path": "scripts/vendor/qnxprobe.py",
       "name": "qnxprobe",
-      "version": "1.28",
+      "version": "1.29",
       "upstream": "https://github.com/abrignoni/qnxprobe",
       "upstream_file": "qnxprobe.py",
-      "commit": "cc1d8dd9340da731423d9ff79be484ab9fce8589",
-      "commit_date": "2026-09-12T21:51:26-04:00",
-      "sha256": "3f0d51de91f6cdca7aee656008defafe09c745764aa5f1220be9b47acb953349",
+      "commit": "10b1addf168bd26ca09d6141945d7efa1bd02260",
+      "commit_date": "2026-09-12T22:33:21-04:00",
+      "sha256": "af8697851db58b1283cdb1b5f21feb0af2a48a7e6078ca3bb9227a57f28f2330",
       "licence": "MIT",
       "licence_file": "scripts/vendor/LICENSE-qnxprobe",
       "note": "Copied verbatim. Fix upstream and re-vendor; edits here are reverted by the next sync."
