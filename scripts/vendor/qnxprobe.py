@@ -42,7 +42,7 @@ except ImportError:                  # not on sys.path when imported as a module
     except ImportError:
         ewfprobe = None
 
-QNXPROBE_VERSION = "1.28"
+QNXPROBE_VERSION = "1.29"
 
 QNX6_MAGIC     = 0x68191122
 BOOTBLOCK_SIZE = 0x2000
@@ -1064,7 +1064,11 @@ class F2fsWalker:
         self.bs = 1 << self.log_bs
         self.seg_blocks = 1 << struct.unpack_from("<I", sb, 20)[0]   # always 512
         self.cp_blkaddr = struct.unpack_from("<I", sb, 76)[0]
+        self.sit_blkaddr = struct.unpack_from("<I", sb, 80)[0]
         self.nat_blkaddr = struct.unpack_from("<I", sb, 84)[0]
+        self.main_blkaddr = struct.unpack_from("<I", sb, 92)[0]
+        self.sit_segs_total = struct.unpack_from("<I", sb, 56)[0]   # segment_count_sit, both copies
+        self.main_segs = struct.unpack_from("<I", sb, 68)[0]        # segment_count_main
         self.root_ino = struct.unpack_from("<I", sb, 96)[0]
         self.cp_payload = struct.unpack_from("<I", sb, 1664)[0]
         self.feature = struct.unpack_from("<I", sb, 2180)[0]
@@ -1180,8 +1184,26 @@ class F2fsWalker:
 
     @staticmethod
     def _test_bit(bm, i):
+        """Bit i of a little-endian bitmap: the kernel's set_bit_le and
+        find_next_bit_le, which F2FS uses for a directory's validity bitmap
+        (fs/f2fs/dir.c f2fs_update_dentry sets it, f2fs_fill_dentries reads it).
+        Bit 0 is the least significant bit of byte 0. Not the order of the SIT
+        valid_map or of the version bitmaps, which f2fs_set_bit writes the other
+        way round; see _f2fs_test_bit."""
         j = i >> 3
         return (bm[j] >> (i & 7)) & 1 if j < len(bm) else 0
+
+    @staticmethod
+    def _f2fs_test_bit(bm, i):
+        """Bit i the way F2FS's own f2fs_test_bit reads it: bit 0 is the MOST
+        significant bit of byte 0 (fs/f2fs/f2fs.h: mask = BIT(7 - (nr & 7))).
+        This is the order of the NAT and SIT version bitmaps in the checkpoint,
+        which say which of a block's two on-disk copies is current
+        (node.h current_nat_addr, segment.h current_sit_addr). Reading them
+        little-endian picks the stale copy whenever the two orders disagree, and
+        a fresh volume, whose bitmaps are all zero, cannot show the difference."""
+        j = i >> 3
+        return (bm[j] >> (7 - (i & 7))) & 1 if j < len(bm) else 0
 
     def resolve(self, nid):
         """The block address holding node nid, or 0 if it is unallocated."""
@@ -1190,7 +1212,7 @@ class F2fsWalker:
         start = (nid // self.nepb) * self.nepb
         block_off = start // self.nepb
         addr = self.nat_blkaddr + (block_off << 1) - (block_off & (self.seg_blocks - 1))
-        if self._test_bit(self.nat_bitmap, block_off):
+        if self._f2fs_test_bit(self.nat_bitmap, block_off):
             addr += self.seg_blocks
         blk = self.block(addr)
         eo = (nid - start) * F2FS_NAT_ENTRY_SIZE
@@ -1373,6 +1395,135 @@ class F2fsWalker:
             yield buf[:take]
             left -= take
             L += 1
+
+    def _sit_bitmap(self):
+        """The SIT version bitmap: which of a SIT block's two copies is current.
+        Placement follows f2fs.h __bitmap_ptr(SIT_BITMAP): with the large-NAT-
+        bitmap flag it follows the NAT bitmap after a 4-byte checksum; with a
+        checkpoint payload it is the block after the checkpoint header; else it
+        is first in the version-bitmap region at offset 192."""
+        if self.cp_flags & F2FS_CP_LARGE_NAT_BITMAP:
+            nat_len = struct.unpack_from("<I", self.ckpt, 160)[0]
+            return self.ckpt[192 + nat_len + 4:]
+        if self.cp_payload > 0:
+            return self.block(self.start_cp + 1)
+        return self.ckpt[192:]
+
+    def _load_sit_journal(self):
+        """SIT entries updated since the table was last written live in the
+        checkpoint's cold-data summary journal and override the on-disk table
+        (segment.c build_sit_entries applies them after reading it). Same
+        placement rules as the NAT journal, one summary type along: normal
+        summaries keep it in the COLD_DATA block, compact ones keep the two
+        journals back to back at the start of the summary area."""
+        self.sit_j = {}
+        sum_bs = 4096 if (self.feature & F2FS_FEAT_PACKED_SSA) else self.bs
+        sum_entry_size = 7 * (sum_bs // 8)
+        sum_journal_size = sum_bs - 5 - sum_entry_size       # SUM_FOOTER_SIZE is 5
+        if self.cp_flags & F2FS_CP_COMPACT_SUM:
+            blk = self.start_cp + struct.unpack_from("<I", self.ckpt, 140)[0]
+            joff = sum_journal_size                          # the second journal
+        elif self.cp_flags & (F2FS_CP_UMOUNT | F2FS_CP_FASTBOOT):
+            blk = self.start_cp + self.cp_total - 7 + 2      # COLD_DATA summary, base 6
+            joff = sum_entry_size
+        else:
+            blk = self.start_cp + self.cp_total - 4 + 2      # base 3
+            joff = sum_entry_size
+        buf = self.block(blk)
+        if len(buf) < self.bs or joff + 2 > len(buf):
+            return
+        n_sits = struct.unpack_from("<H", buf, joff)[0]
+        p = joff + 2
+        for _ in range(n_sits):
+            if p + 78 > len(buf):
+                break
+            # sit_journal_entry: segno(4) then f2fs_sit_entry (74 bytes)
+            self.sit_j[struct.unpack_from("<I", buf, p)[0]] = buf[p + 4:p + 78]
+            p += 78
+
+    def _sit_entry(self, segno):
+        """The raw 74-byte f2fs_sit_entry for main-area segment segno, journal
+        first, else the current on-disk copy (segment.h current_sit_addr); None
+        past the end of the image."""
+        raw = self.sit_j.get(segno)
+        if raw is not None:
+            return raw
+        sents = self.bs // 74                                # SIT_ENTRY_PER_BLOCK
+        block_off = segno // sents
+        addr = self.sit_blkaddr + block_off
+        if self._f2fs_test_bit(self._sit_bitmap(), block_off):
+            addr += (self.sit_segs_total >> 1) * self.seg_blocks   # sit_blocks: the second copy
+        buf = self.block(addr)
+        eo = (segno % sents) * 74
+        if eo + 74 > len(buf):
+            return None
+        return buf[eo:eo + 74]
+
+    def free_extents(self, min_bytes=0):
+        """[(byte offset, length)] for the runs of space the volume says are free.
+
+        F2FS keeps one validity bit per block of the main area, 512 bits per
+        segment in f2fs_sit_entry.valid_map. The bits are set by the filesystem's
+        own f2fs_set_bit (segment.c update_sit_entry), so bit 0 is the MOST
+        significant bit of byte 0; segment.h check_block_count reads the same map
+        with the little-endian helpers, but only to count clear bits, which no
+        order changes. Position does change: read least-significant-first, this
+        map put 14 live blocks of one test volume inside "free" runs while the
+        total still matched the checkpoint's own count. A clear bit is a block no
+        live node or data occupies, which is where deleted content survives until
+        the log wraps round to it. The current copy of each SIT block is chosen by
+        the checkpoint's SIT version bitmap, read the same most-significant-first
+        way, and an entry still in the cold-data summary journal overrides the
+        table. Only the main area is reported: the superblock, checkpoint, SIT,
+        NAT and SSA areas are the filesystem's own bookkeeping and hold no user
+        content.
+
+        Offsets are into the image rather than the volume, so a caller reading
+        the whole disk can use them directly. ``min_bytes`` drops runs too short
+        to hold anything worth recovering.
+        """
+        if not self.main_segs or not self.seg_blocks:
+            return []
+        self._load_sit_journal()
+        # per byte of a valid_map, the (first block, count) runs of clear bits,
+        # bit 0 being the most significant bit (f2fs_set_bit's order)
+        table = []
+        for byte in range(256):
+            runs, start = [], None
+            for bit in range(8):
+                if (byte >> (7 - bit)) & 1:
+                    if start is not None:
+                        runs.append((start, bit - start))
+                        start = None
+                elif start is None:
+                    start = bit
+            if start is not None:
+                runs.append((start, 8 - start))
+            table.append(tuple(runs))
+        out, run_start, run_len = [], None, 0
+        for segno in range(self.main_segs):
+            raw = self._sit_entry(segno)
+            if raw is None:                                  # the image ends inside the SIT
+                break
+            base_blk = self.main_blkaddr + segno * self.seg_blocks
+            vmap = raw[2:2 + (self.seg_blocks >> 3)]
+            for i, byte in enumerate(vmap):
+                for first, n in table[byte]:
+                    blk = base_blk + i * 8 + first
+                    if run_start is not None and run_start + run_len == blk:
+                        run_len += n
+                    else:
+                        if run_start is not None:
+                            out.append((run_start, run_len))
+                        run_start, run_len = blk, n
+        if run_start is not None:
+            out.append((run_start, run_len))
+        result = []
+        for first, n in out:
+            length = n * self.bs
+            if length >= min_bytes:
+                result.append((self.base + first * self.bs, length))
+        return result
 
 
 # ---------------------------------------------------------------------------
@@ -7139,6 +7290,108 @@ def _f2fs_fixture_check(image_gz, listing):
     return kind, matched, len(want), missing, different
 
 
+def _f2fs_free_check(image_gz):
+    """Read a committed F2FS fixture's free space and hold it against the volume
+    itself. Returns (kind, free_blocks, main_blocks, valid_blocks, named_blocks,
+    named_in_free).
+
+    Two statements, neither derived from free_extents: the checkpoint's own
+    valid_block_count must equal the main area minus what is reported free (the
+    filesystem's accounting), and no block a live file or node occupies may lie
+    in a reported run (position, which is what tells a wrong bit order from a
+    right one when the counts agree). named_blocks is every data block of every
+    reachable file and directory plus every node block that addresses them; on
+    both committed fixtures it equals valid_block_count, so the named blocks and
+    the free runs together tile the whole main area.
+    """
+    import gzip, io
+    with gzip.open(image_gz, "rb") as gz:
+        img = io.BytesIO(gz.read())
+    size = img.getbuffer().nbytes
+    kind = (identify_fs(img, 0, size) or (None,))[0]
+    if kind != "f2fs":
+        return kind, 0, 0, 0, 0, 0
+    w = F2fsWalker(img, 0)
+    runs = w.free_extents()
+    free_blocks = sum(n for _, n in runs) // w.bs
+    main_blocks = w.main_segs * w.seg_blocks
+    valid = struct.unpack_from("<Q", w.ckpt, 16)[0]
+    named = set()
+
+    def node(nid):
+        b = w.resolve(nid)
+        if b not in (F2FS_NULL_ADDR, F2FS_NEW_ADDR):
+            named.add(b)
+
+    seen = set()
+
+    def walk(nid):
+        if nid in seen:
+            return
+        seen.add(nid)
+        node(nid)
+        ino = w.inode(nid)
+        if ino is None:
+            return
+        for k in range(5):
+            n = w._nid_slot(ino, k)                 # pylint: disable=protected-access
+            if n:
+                node(n)
+                if k >= 2:                          # an indirect node names direct nodes
+                    nb = w._node(n)                 # pylint: disable=protected-access
+                    for j in range(w.addrs_per_block if nb else 0):
+                        child = struct.unpack_from("<I", nb, j * 4)[0]
+                        if child:
+                            node(child)
+        isdir = bool(ino["mode"] & S_IFDIR)
+        inline = F2FS_INLINE_DENTRY if isdir else F2FS_INLINE_DATA
+        if not (ino["inline"] & inline):
+            for L in range((ino["size"] + w.bs - 1) // w.bs):
+                a = w._block_of(ino, L)             # pylint: disable=protected-access
+                if a not in (F2FS_NULL_ADDR, F2FS_NEW_ADDR, F2FS_COMPRESS_ADDR):
+                    named.add(a)
+        if isdir:
+            for _name, child in w.listdir(nid):
+                walk(child)
+
+    walk(w.root)
+    starts = [a for a, _n in runs]
+    import bisect
+
+    def in_free(blk):
+        off = w.base + blk * w.bs
+        i = bisect.bisect_right(starts, off) - 1
+        return i >= 0 and runs[i][0] <= off < runs[i][0] + runs[i][1]
+
+    named_in_free = sum(1 for b in named if in_free(b))
+    return kind, free_blocks, main_blocks, valid, len(named), named_in_free
+
+
+def _f2fs_marker_check(image_gz):
+    """The two properties only the kernel-written two-session fixture has.
+    Returns (nat bitmap has a set bit, marker blocks found, marker blocks in
+    free runs). The marker is a file of 256 blocks deleted before the last
+    checkpoint, each block beginning ``F2FS-FREE-MARKER-<index>-``; its bytes
+    are searched for directly, so the count is a fact about the image, and
+    every block found must lie inside a run free_extents reports."""
+    import gzip, io, re, bisect
+    with gzip.open(image_gz, "rb") as gz:
+        raw = gz.read()
+    w = F2fsWalker(io.BytesIO(raw), 0)
+    nat_len = struct.unpack_from("<I", w.ckpt, 160)[0]
+    has_bit = any(bytes(w.nat_bitmap[:nat_len]))
+    runs = w.free_extents()
+    starts = [a for a, _n in runs]
+    blocks = {m.start() // w.bs for m in re.finditer(rb"F2FS-FREE-MARKER-\d{4}-", raw)}
+    in_free = 0
+    for blk in blocks:
+        off = w.base + blk * w.bs
+        i = bisect.bisect_right(starts, off) - 1
+        if i >= 0 and runs[i][0] <= off < runs[i][0] + runs[i][1]:
+            in_free += 1
+    return has_bit, len(blocks), in_free
+
+
 def _ntfs_fixture_check(image_gz, listing):
     """Walk the committed NTFS fixture and compare every file against the
     hashes an independent reader recorded from the same image.
@@ -9069,6 +9322,135 @@ def self_test():
         else:
             print("  [SKIP] the F2FS holes fixture is not beside this script, so the "
                   "hole path was not compared against the kernel driver")
+
+        # F2FS free space, first on a SIT written out by hand. Segment 0 has
+        # blocks {0, 1, 2, 9, 20..23} in use and segment 1 is empty, so the free
+        # runs are 3..8, 10..19 and 24..1023, the last one crossing the segment
+        # boundary; those are written out here, not computed. The used bits are
+        # set the way F2FS sets them (bit 0 is the most significant bit), and the
+        # first copy of the SIT block is entirely in use while the version bitmap's
+        # byte is 0x80, so only a reader that takes bit 0 from the top of the byte
+        # reaches the second copy and the expected runs; one that reads
+        # little-endian lands on the first copy and reports nothing free.
+        SIT_BS, SIT_SEG = 4096, 512
+        SIT_BASE, SIT_MAIN, SIT_ADDR = 1 << 20, 4096, 100
+        SIT_USED = {0, 1, 2, 9, 20, 21, 22, 23}
+        SIT_WANT = [(3, 6), (10, 10), (24, 1000)]
+        _seg0 = bytearray(74)
+        for _b in SIT_USED:
+            _seg0[2 + (_b >> 3)] |= 1 << (7 - (_b & 7))
+        struct.pack_into("<H", _seg0, 0, len(SIT_USED))
+        _copy2 = bytes(_seg0) + bytes(74) + bytes(SIT_BS - 148)       # seg 1 all free
+        _full = bytearray(74)
+        _full[2:66] = b"\xff" * 64
+        _copy1 = bytes(_full) * 2 + bytes(SIT_BS - 148)               # everything used
+        _ck = bytearray(SIT_BS)
+        struct.pack_into("<I", _ck, 132, F2FS_CP_UMOUNT)
+        struct.pack_into("<I", _ck, 136, 8)                           # cp_pack_total_block_count
+        struct.pack_into("<I", _ck, 156, 64)                          # sit_ver_bitmap_bytesize
+        struct.pack_into("<I", _ck, 160, 64)
+        _ck[192] = 0x80                                               # SIT block 0: second copy
+
+        class _SitOnly:
+            """Only what free_extents asks of an F2FS walker."""
+            free_extents = F2fsWalker.free_extents
+            _load_sit_journal = F2fsWalker._load_sit_journal   # pylint: disable=protected-access
+            _sit_entry = F2fsWalker._sit_entry                 # pylint: disable=protected-access
+            _sit_bitmap = F2fsWalker._sit_bitmap               # pylint: disable=protected-access
+            _f2fs_test_bit = staticmethod(F2fsWalker._f2fs_test_bit)  # pylint: disable=protected-access
+            bs, seg_blocks, base = SIT_BS, SIT_SEG, SIT_BASE
+            main_blkaddr, main_segs = SIT_MAIN, 2
+            sit_blkaddr, sit_segs_total = SIT_ADDR, 2          # one copy is 512 blocks
+            cp_flags, cp_payload, feature = F2FS_CP_UMOUNT, 0, 0
+            ckpt, start_cp, cp_total = bytes(_ck), 512, 8
+            short = False
+
+            def block(self, addr):
+                if self.short:
+                    return b""
+                if addr == SIT_ADDR:
+                    return _copy1
+                if addr == SIT_ADDR + SIT_SEG:
+                    return _copy2
+                return bytes(SIT_BS)                              # the journal block: no entries
+
+        _sgot = _SitOnly().free_extents()
+        _swant = [(SIT_BASE + (SIT_MAIN + b) * SIT_BS, n * SIT_BS) for b, n in SIT_WANT]
+        sit_free_ok = _sgot == _swant
+        sit_floor_ok = (_SitOnly().free_extents(min_bytes=11 * SIT_BS)
+                        == [(SIT_BASE + (SIT_MAIN + 24) * SIT_BS, 1000 * SIT_BS)])
+        _cut = _SitOnly()
+        _cut.short = True
+        sit_cut_ok = _cut.free_extents() == []
+        for label, cond in (
+                ("an F2FS SIT reads back as the runs of free space it describes, "
+                 "the used bits taken from the top of each byte and the current SIT "
+                 "copy chosen the same way", sit_free_ok),
+                ("an F2FS free-space floor drops the short runs", sit_floor_ok),
+                ("an F2FS volume cut short before its SIT answers nothing rather than "
+                 "raising", sit_cut_ok)):
+            if not cond:
+                ok = False
+            print(f"  [{'PASS' if cond else 'FAIL'}] {label}")
+
+        # The two-session fixture (tools/make_f2fs_free_fixture.sh): the kernel
+        # rewrote NAT block 0, so the checkpoint's NAT version bitmap carries a set
+        # bit and which copy is current is decided by bit order for real; the 1.28
+        # reader, little-endian there, finds no files on this volume at all. Every
+        # file must read back as the kernel read it, the bitmap must actually have
+        # a set bit (else this leg has lost its point), and all 256 blocks of the
+        # file deleted before the last checkpoint must sit in reported free space
+        # with their bytes intact.
+        f2fs_free_fix = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     "tests", "fixtures", "f2fs-fixture-free.img.gz")
+        f2fs_free_want = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      "tests", "fixtures", "f2fs-fixture.free.sha256")
+        if os.path.isfile(f2fs_free_fix) and os.path.isfile(f2fs_free_want):
+            try:
+                vk, vgot, vwant, vmiss, vdiff = _f2fs_fixture_check(f2fs_free_fix, f2fs_free_want)
+                vbit, vfound, vfree = _f2fs_marker_check(f2fs_free_fix)
+                vbroke = ""
+            except Exception as exc:                 # pylint: disable=broad-except
+                vk, vgot, vwant, vmiss, vdiff, vbit, vfound, vfree = None, 0, 0, 0, 0, False, 0, 0
+                vbroke = f"; raised {type(exc).__name__}: {exc}"
+            vcond = (vk == "f2fs" and vgot and vgot == vwant and not vmiss and not vdiff
+                     and vbit and vfound == 256 and vfree == 256 and not vbroke)
+            if not vcond:
+                ok = False
+            print(f"  [{'PASS' if vcond else 'FAIL'}] on the volume the kernel wrote twice, "
+                  f"whose NAT version bitmap {'carries a' if vbit else 'CARRIES NO'} set bit, "
+                  f"every file reads back as the kernel read it ({vgot} of {vwant}"
+                  + (f", {vmiss} missing" if vmiss else "")
+                  + (f", {vdiff} different" if vdiff else "")
+                  + f") and the deleted marker's blocks lie in free space ({vfree} of "
+                  f"{vfound} found, 256 written)" + vbroke)
+        else:
+            print("  [SKIP] the two-session F2FS fixture is not beside this script, so the "
+                  "NAT copy selection and the deleted-file control were not checked")
+
+        # Then on the committed images: the checkpoint's own count, and position.
+        for stem in ("f2fs-fixture", "f2fs-fixture-holes", "f2fs-fixture-free"):
+            fx = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                              "tests", "fixtures", stem + ".img.gz")
+            if not os.path.isfile(fx):
+                print(f"  [SKIP] the {stem} fixture is not beside this script, so its free "
+                      "space was not checked")
+                continue
+            try:
+                fk, ffree, fmain, fvalid, fnamed, fbad = _f2fs_free_check(fx)
+                fbroke = ""
+            except Exception as exc:                 # pylint: disable=broad-except
+                fk, ffree, fmain, fvalid, fnamed, fbad = None, 0, 0, 0, 0, 0
+                fbroke = f"; raised {type(exc).__name__}: {exc}"
+            fcond = (fk == "f2fs" and fmain and ffree == fmain - fvalid
+                     and fnamed == fvalid and fbad == 0 and not fbroke)
+            if not fcond:
+                ok = False
+            print(f"  [{'PASS' if fcond else 'FAIL'}] {stem}: free space plus the blocks "
+                  f"live files and nodes occupy tile the main area, and none of those "
+                  f"blocks is reported free ({ffree:,} free + {fnamed:,} named = "
+                  f"{fmain:,}; checkpoint says {fvalid:,} valid"
+                  + (f"; {fbad} live blocks in free runs" if fbad else "") + ")" + fbroke)
 
         ntfs_fix = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 "tests", "fixtures", "ntfs-fixture.img.gz")
