@@ -53,13 +53,13 @@ def _ms_to_utc(value):
 @artifact_processor
 def get_googleCallScreen(context):
     files_found = context.get_files_found()
-    source_path = ''
+    source_paths = []
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('callscreen_transcripts'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -98,4 +98,4 @@ def get_googleCallScreen(context):
             data_list.append((_ms_to_utc(row[0]), row[1], conversation, audio))
 
     data_headers = (('Timestamp', 'datetime'), 'Recording File Path', 'Conversation', ('Audio', 'media'))
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

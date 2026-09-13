@@ -51,13 +51,13 @@ def get_setupWizardinfo(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('setup_wizard_info.xml'):
             continue  # Skip all other files
 
-        source_path = file_found
+        source_paths.append(file_found)
         root = _parse_xml(file_found)
         for elem in root:
             item = elem.attrib
@@ -66,4 +66,4 @@ def get_setupWizardinfo(context):
                 data_list.append((timestamp, item['name']))
 
     data_headers = (('Timestamp', 'datetime'), 'Name')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

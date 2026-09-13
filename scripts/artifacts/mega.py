@@ -35,14 +35,14 @@ from scripts.artifacts.storagePathViews import unique_files
 def get_mega(context):
     files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('.db'):
             continue  # Skip all other files
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -95,4 +95,4 @@ def get_mega(context):
         'Chat Message',
         'Attachment Name',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

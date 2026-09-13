@@ -56,7 +56,7 @@ def get_runtimePerms(context):
 
     slash = '\\' if is_platform_windows() else '/'
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -71,7 +71,7 @@ def get_runtimePerms(context):
         else:
             continue
 
-        source_path = file_found
+        source_paths.append(file_found)
         root = _parse_xml(file_found)
         for elem in root:
             usagetype = elem.tag
@@ -83,4 +83,4 @@ def get_runtimePerms(context):
                 data_list.append((user, usagetype, name, permission, granted, flags))
 
     data_headers = ('User', 'Type', 'Name', 'Permission', 'Granted?', 'Flag')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

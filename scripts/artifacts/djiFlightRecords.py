@@ -137,13 +137,13 @@ def _to_utc(gps_date, gps_time):
 def djiFlightRecordDatGps(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.lower().endswith('.dat'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         try:
             with open(file_found, 'rb') as handle:
                 data = handle.read()
@@ -166,4 +166,4 @@ def djiFlightRecordDatGps(context):
         'Flight File',
         'Source File',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

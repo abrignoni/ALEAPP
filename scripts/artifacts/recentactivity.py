@@ -140,7 +140,7 @@ def _snapshot_metadata(folder, task_id):
 def get_recentactivity(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         norm = file_found.replace('\\', '/')
@@ -150,7 +150,7 @@ def get_recentactivity(context):
             continue
         uid = parts[-1]
         folder = file_found
-        source_path = folder
+        source_paths.append(folder)
         for filename in glob.iglob(os.path.join(folder, 'recent_tasks', '**'), recursive=True):
             if not os.path.isfile(filename):
                 continue
@@ -196,4 +196,4 @@ def get_recentactivity(context):
                     'Content Insets (L, T, R, B)', 'Letterbox Insets (L, T, R, B)',
                     'Appearance', 'UI Mode', ('Recent Image', 'media'),
                     'Task Attributes', 'Activity Attributes')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

@@ -48,7 +48,7 @@ def get_calllogs(context):
     files_found = context.get_files_found()
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_name = str(file_found)
         if os.path.basename(file_name) not in ('contacts2.db', 'contacts.db', 'logs.db'):
@@ -64,7 +64,7 @@ def get_calllogs(context):
             # has nothing for this artifact; the calllog module covers the rest.
             continue
 
-        source_path = file_name
+        source_paths.append(file_name)
         db = open_sqlite_db_readonly(file_name)
         cursor = db.cursor()
         try:
@@ -88,4 +88,4 @@ def get_calllogs(context):
             data_list.append((callerId, calleeId, starttime, endtime, direction, call_type, row[0], row[4]))
 
     data_headers = ('from_id', 'to_id', ('start_date', 'datetime'), ('end_date', 'datetime'), 'direction', 'call_type', ('number', 'phonenumber'), 'name')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

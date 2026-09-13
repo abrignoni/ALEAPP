@@ -46,7 +46,7 @@ def get_installedappsVending(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('localappstate.db'):
@@ -56,7 +56,7 @@ def get_installedappsVending(context):
         if user == 'data':
             user = '0'
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
 
@@ -79,4 +79,4 @@ def get_installedappsVending(context):
             data_list.append((user, _ms_to_utc(row[0]), row[1], row[2], row[3], _ms_to_utc(row[4]), row[5], row[6]))
 
     data_headers = ('User', ('First Download', 'datetime'), 'Package Name', 'Title', 'Install Reason', ('Last Updated', 'datetime'), 'Auto Update?', 'Account')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

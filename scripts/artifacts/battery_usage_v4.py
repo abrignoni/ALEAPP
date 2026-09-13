@@ -37,13 +37,13 @@ def get_battery_usage_v4(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_name = str(file_found)
         if not file_name.endswith('battery-usage-db-v4'):
             continue  # Skip -shm, -wal, etc.
 
-        source_path = file_name
+        source_paths.append(file_name)
         db = open_sqlite_db_readonly(file_name)
         cursor = db.cursor()
         cursor.execute('''
@@ -72,4 +72,4 @@ def get_battery_usage_v4(context):
             data_list.append((_ms_to_utc(row[0]), row[1], row[2], row[3], _ms_to_utc(row[4]), row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
 
     data_headers = (('Timestamp', 'datetime'), 'Application', 'Package Name', 'Hidden', ('Boot Timestamp', 'datetime'), 'Timezone', 'Total Power', 'Consumed Power', '% Of Consumed', 'Foreground Usage (Seconds)', 'Background Usage (Seconds)', 'Battery Level (%)', 'Battery Status')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

@@ -103,7 +103,7 @@ def googlevoice_accounts(context):
     files_found = context.get_files_found()
     data_headers = ('Account Number', 'Full Name', 'Email Address', 'Linked Phone Number', 'Current Google Voice Number')
     data_list = []
-    source_path = ""
+    source_paths = []
 
     account_number = ""
     full_name = ""
@@ -121,7 +121,7 @@ def googlevoice_accounts(context):
     for i in range(len(accounts)):
         for file in files_found:
             if os.path.basename(file) == 'AccountData.pb':
-                source_path = file
+                source_paths.append(file)
                 pb = get_binary_file_content(file)
 
                 message = decode_protobuf(pb)
@@ -176,7 +176,7 @@ def googlevoice_accounts(context):
         if account_number:
             data_list.append((account_number,full_name,email_address,linked_number,voice_number))
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 @artifact_processor
 def googlevoice_calls(context):

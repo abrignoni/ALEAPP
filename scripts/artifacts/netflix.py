@@ -525,10 +525,10 @@ def netflix_playback(context):
     titles = _title_lookup(files_found)
     artwork = _artwork_index(files_found)
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for path in _databases(files_found, 'appHistory'):
-        source_path = path
+        source_paths.append(path)
         for row in get_sqlite_db_records(path, '''
                 SELECT eventTime, playableId, xid, eventType, network, duration, offline, id
                 FROM playEvent ORDER BY eventTime'''):
@@ -562,7 +562,7 @@ def netflix_playback(context):
         'Duration (hh:mm:ss)',
         'Row ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -570,10 +570,10 @@ def netflix_streaming_sessions(context):
     files_found = unique_files(context)
     titles = _title_lookup(files_found)
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for path in _databases(files_found, 'appHistory'):
-        source_path = path
+        source_paths.append(path)
         for row in get_sqlite_db_records(path, '''
                 SELECT timestamp, streamId, bytes, interval, locationID, ip, networkType,
                        totalBufferingTime
@@ -604,7 +604,7 @@ def netflix_streaming_sessions(context):
         'Interval (ms)',
         'Total Buffering Time (ms)',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -887,7 +887,7 @@ def netflix_artwork(context):
 def netflix_account(context):
     files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
 
     country_files = _paths_matching(files_found, '/shared_prefs/CurrentCountryCode.xml')
     country_code = ''
@@ -895,7 +895,7 @@ def netflix_account(context):
         country_code = _read_prefs(path).get('code', '') or country_code
 
     for path in _paths_matching(files_found, '/shared_prefs/nfxpref.xml'):
-        source_path = path
+        source_paths.append(path)
         prefs = _read_prefs(path)
         row = (
             _timestamp_value(prefs.get('playAppInstallTime')),
@@ -949,7 +949,7 @@ def netflix_account(context):
         'Channel ID',
         'Source File',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor

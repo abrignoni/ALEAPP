@@ -101,12 +101,12 @@ def get_vlcThumbs_data(context):
     files_found = unique_files(context)
     jpg_by_name = {os.path.basename(str(f)): str(f) for f in files_found if str(f).endswith('.jpg')}
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('vlc_media.db'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         if db is None:
             continue
@@ -132,4 +132,4 @@ def get_vlcThumbs_data(context):
     data_headers = (
         ('Last Played', 'datetime'), ('Insertion Date', 'datetime'), 'ID Media', 'Filename',
         'Type', 'Play Count', 'Is Favorite', ('Thumbnail', 'media'))
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
