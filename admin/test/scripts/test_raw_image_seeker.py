@@ -388,7 +388,8 @@ class RawImageSeekerTest(unittest.TestCase):
     def test_the_filesystem_list_names_only_kinds_the_reader_walks(self):
         walkers = {'QNX6': qnxprobe.Qnx6Walker, 'QNX4': qnxprobe.Qnx4Walker,
                    'ETFS': qnxprobe.EtfsWalker, 'EFS': qnxprobe.EfsWalker,
-                   'ext2/3/4': qnxprobe.ExtWalker, 'FAT32': qnxprobe.Fat32Walker,
+                   'ext2/3/4': qnxprobe.ExtWalker, 'F2FS': qnxprobe.F2fsWalker,
+                   'FAT32': qnxprobe.Fat32Walker,
                    'exFAT': qnxprobe.ExfatWalker, 'NTFS': qnxprobe.NtfsWalker,
                    'HFS+': qnxprobe.HfsPlusWalker, 'APFS': qnxprobe.ApfsWalker,
                    'QNX IFS': qnxprobe.IfsWalker}
