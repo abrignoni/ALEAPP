@@ -55,7 +55,7 @@ def get_googleMessages(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if file_found.endswith(('-wal', '-shm', '-journal')):
@@ -63,7 +63,7 @@ def get_googleMessages(context):
         if not file_found.endswith('bugle_db'):
             continue  # Skip all other files
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         # Older bugle_db generations lack file_size_bytes and local_cache_path
@@ -102,4 +102,4 @@ def get_googleMessages(context):
             data_list.append((timestamp, row[8], row[3], row[2], row[4], row[1], row[5], row[6], row[7]))
 
     data_headers = (('Message Timestamp', 'datetime'), 'Direction', ('Message Sender', 'phonenumber'), 'Other Participant/Conversation Name', 'Message', 'Message Type', 'Attachment Byte Size', 'Attachment Location', 'Conversation ID')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

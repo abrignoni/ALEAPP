@@ -471,7 +471,7 @@ def pinterest_account(context):
 @artifact_processor
 def pinterest_stored_accounts(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     group_ids = {}
 
     # Read as a fallback: the account record usually carries the group id itself.
@@ -483,7 +483,7 @@ def pinterest_stored_accounts(context):
     for file_found in unique_files(context):
         if not os.path.basename(file_found).startswith('PREF_MY_USER_USER_ACCOUNTS'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         entries = _read_preferences(file_found)
         for account_id in entries:
             record = _json_value(entries, account_id)
@@ -519,7 +519,7 @@ def pinterest_stored_accounts(context):
         'Profile Image URL',
         'Source File',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor

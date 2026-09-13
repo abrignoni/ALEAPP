@@ -288,7 +288,7 @@ def xiaohongshu_recent_chats(context):
         'Source File',
     )
     data_list = []
-    source = ''
+    sources = []
     for file_found in unique_files(context):
         file_found = str(file_found)
         base = os.path.basename(file_found)
@@ -311,8 +311,8 @@ def xiaohongshu_recent_chats(context):
                 ))
                 rows += 1
         if rows:
-            source = file_found
-    return data_headers, data_list, source
+            sources.append(file_found)
+    return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor

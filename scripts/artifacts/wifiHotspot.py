@@ -42,10 +42,10 @@ def get_wifiHotspot(context):
     files_found = context.get_files_found()
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
-        source_path = file_found
+        source_paths.append(file_found)
 
         ssid = ''
         security_type = ''
@@ -80,4 +80,4 @@ def get_wifiHotspot(context):
             data_list.append((ssid, passphrase, security_type))
 
     data_headers = ('SSID', 'Passphrase', 'SecurityType')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

@@ -32,13 +32,13 @@ def get_pSettings(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('googlesettings.db'):
             continue
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -52,4 +52,4 @@ def get_pSettings(context):
             data_list.append((row[0], row[1]))
 
     data_headers = ('Name', 'Value')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

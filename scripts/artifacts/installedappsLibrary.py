@@ -38,7 +38,7 @@ def get_installedappsLibrary(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -49,7 +49,7 @@ def get_installedappsLibrary(context):
         if user == 'data':
             user = '0'
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -64,4 +64,4 @@ def get_installedappsLibrary(context):
             data_list.append((user, purchase_time, row[1], row[2]))
 
     data_headers = ('User', ('Purchase Time', 'datetime'), 'Account', 'Doc ID')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

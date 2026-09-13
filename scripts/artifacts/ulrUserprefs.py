@@ -56,13 +56,13 @@ def get_urluser(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('ULR_USER_PREFS.xml'):
             continue
 
-        source_path = file_found
+        source_paths.append(file_found)
         root = _parse_xml(file_found)
         for child in root:
             jsondata = child.attrib
@@ -71,4 +71,4 @@ def get_urluser(context):
             data_list.append((name, value))
 
     data_headers = ('Name', 'Value')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

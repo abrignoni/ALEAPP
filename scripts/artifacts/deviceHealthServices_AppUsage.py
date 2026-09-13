@@ -56,10 +56,10 @@ def get_Turbo_AppUsage(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
-        source_path = file_found
+        source_paths.append(file_found)
         tree = _parse_xml(file_found)
 
         for elem in tree.iter(tag='string'):
@@ -72,4 +72,4 @@ def get_Turbo_AppUsage(context):
                 data_list.append((timestamp_split, app_name))
 
     data_headers = (('App Launch Timestamp', 'datetime'), 'App Name')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

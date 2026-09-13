@@ -27,13 +27,13 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 def get_firefoxDownloads(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not os.path.basename(file_found) == 'mozac_downloads_database':  # skip -journal and other files
             continue
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
 
@@ -73,4 +73,4 @@ def get_firefoxDownloads(context):
         'Status',
         'Destination Directory',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

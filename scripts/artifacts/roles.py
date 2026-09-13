@@ -58,7 +58,7 @@ def get_roles(context):
 
     slash = '\\' if is_platform_windows() else '/'
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -78,7 +78,7 @@ def get_roles(context):
         else:
             continue
 
-        source_path = file_found
+        source_paths.append(file_found)
         root = _parse_xml(file_found)
         for elem in root:
             holder = ''
@@ -88,4 +88,4 @@ def get_roles(context):
             data_list.append((path_variant, user, role, holder))
 
     data_headers = ('Source Path Variant', 'User', 'Role', 'Holder')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

@@ -95,13 +95,13 @@ def _run(source_path, sql):
 @artifact_processor
 def get_googleMapsGmm(context):
     files_found = unique_files(context)
-    source_path = ''
+    source_paths = []
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('gmm_storage.db'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         for row in _run(file_found, 'SELECT rowid, _data, _key_pri FROM gmm_storage_table'):
             try:
                 rowid, data, keypri = row[0], row[1], row[2]
@@ -131,19 +131,19 @@ def get_googleMapsGmm(context):
 
     data_headers = ('Directions URL', 'Latitude', 'Longitude', 'To Latitude', 'To Longitude',
                     'Row ID', 'Type')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def get_googleMapsGmm_places(context):
     files_found = unique_files(context)
-    source_path = ''
+    source_paths = []
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('gmm_myplaces.db'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         # Older gmm_myplaces.db generations have no sync_item table
         # (community report, PR #633).
         if not does_table_exist_in_db(file_found, 'sync_item'):
@@ -170,4 +170,4 @@ def get_googleMapsGmm_places(context):
             data_list.append((_ms_to_utc(row[5]), label, row[2], row[3], address, url))
 
     data_headers = (('Timestamp', 'datetime'), 'Label', 'Latitude', 'Longitude', 'Address', 'URL')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
