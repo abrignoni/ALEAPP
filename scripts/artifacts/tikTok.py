@@ -332,24 +332,26 @@ def _json_field(content, *path):
 
 
 def _name_map(context):
-    '''UID to (unique id, nickname) from every contact store found.'''
+    '''UID to (unique id, nickname), and the contact stores read to build it.'''
     names = {}
+    stores = []
     for table, path in _contact_sources(context):
+        stores.append(path)
         for uid, unique_id, nickname in _rows(
                 path, f'SELECT UID, UNIQUE_ID, NICK_NAME FROM {table}'):
             if uid is not None and uid not in names:
                 names[uid] = (unique_id or '', nickname or '')
-    return names
+    return names, stores
 
 
 @artifact_processor
 def get_tikTok(context):
     data_list = []
-    source_path = ''
-    names = _name_map(context)
+    source_paths = []
+    names, name_stores = _name_map(context)
 
     for account_uid, maindb in _account_dbs(context):
-        source_path = source_path or maindb
+        source_paths.append(maindb)
         source_file = context.get_relative_path(maindb)
         for (created, sender, content, message_type, deleted, read_status,
              conversation_id) in _rows(maindb, '''
@@ -402,17 +404,17 @@ def get_tikTok(context):
         'Account ID',
         'Source File',
     )
-    return data_headers, data_list, source_path or 'see Source File column'
+    return data_headers, data_list, '\n'.join(source_paths + name_stores)
 
 
 @artifact_processor
 def get_tikTok_contacts(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     seen = set()
 
     for table, path in _contact_sources(context):
-        source_path = source_path or path
+        source_paths.append(path)
         source_file = context.get_relative_path(path)
         if table == 'IM_USER_BASE_INFO':
             sql = '''SELECT UID, NICK_NAME, UNIQUE_ID, INITIAL_LETTER, AVATAR_THUMB,
@@ -435,7 +437,7 @@ def get_tikTok_contacts(context):
     data_headers = (('Update Time', 'datetime'), 'UID', 'Nickname', 'Unique ID',
                     'Initial Letter', 'Avatar URL', 'Follow Status', 'Blocked (as stored)',
                     'Deleted (as stored)', 'Source File')
-    return data_headers, data_list, source_path or 'see Source File column'
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 def _account_json_rows(entry_name, text, source_file):
