@@ -278,19 +278,35 @@ __artifacts_v2__ = {
     "galleryvault_account_profile": {
         "name": "GalleryVault - Account Profile",
         "description": (
-            "Decrypts GalleryVault account profile information stored in "
-            "AccountProfile.xml using the Android ID recorded in Kidd.xml."
+            "Decrypts each GalleryVault AccountProfile.xml with the DES key derived "
+            "from the last_android_id in the Kidd.xml of the same app container."
         ),
-        "author": "@segumarc",
+        "author": "@segumarc, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-13",
-        "last_update_date": "2026-08-13",
+        "last_update_date": "2026-09-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
-            "GalleryVault encrypts account profile values using DES. "
-            "The account profile is decrypted using key material derived "
-            "from the Android ID recorded in Kidd.xml. The Account Token column reports the "
-            "token field of the decrypted AccountInfo structure where present."
+            "GalleryVault stores its account fields DES-ECB encrypted in AccountProfile.xml. "
+            "The 8-byte key is the first eight characters of the last_android_id value in "
+            "Kidd.xml; this was confirmed by decryption on the tested images, where "
+            "AccountEmail, AccountId and the AccountInfo JSON recovered cleanly. "
+            "AccountProfile.xml and Kidd.xml are paired within a single app container: the "
+            "duplicate storage views of one container are collapsed first, then each "
+            "container's profile is decrypted only with the Kidd.xml from the same "
+            "container, so on a device with more than one Android user each user's profile "
+            "is keyed on its own "
+            "android_id rather than another user's. The Android User column is read from the "
+            "path above the package directory: data/data is user 0, and data/user/N and "
+            "data_mirror/data_ce/<volume>/N are user N; it is blank where the path shows none "
+            "of these. A row is one decrypted field, so each account contributes eight rows, "
+            "and Account Token is the token field of the decrypted AccountInfo where present. "
+            "A container holding only one of the two files is skipped, since it cannot be "
+            "decrypted. Every AccountProfile.xml and Kidd.xml that produced a row is named in "
+            "the source path. The single-container decryption is proven on the corpora below; "
+            "the two-user pairing was exercised on a constructed two-container input built "
+            "from these images, as no tested extraction carried the app under more than one "
+            "Android user."
         ),
         "paths": (
             '*/com.thinkyeah.galleryvault/shared_prefs/AccountProfile.xml*',
@@ -298,6 +314,16 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "user",
+        "sample_data": {
+            "pixel3_a11": "Android 11 | com.thinkyeah.galleryvault | 8 rows",
+            "pixel3_a12": "Android 12 | com.thinkyeah.galleryvault | 8 rows",
+            "pixel7a_a14": "Android 14 | com.thinkyeah.galleryvault | "
+                           "Kidd.xml only, no AccountProfile.xml, 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.thinkyeah.galleryvault | "
+                                "Kidd.xml only, no AccountProfile.xml, 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.thinkyeah.galleryvault | "
+                                "Kidd.xml only, no AccountProfile.xml, 0 rows",
+        },
     },
     "galleryvault_cloud_account": {
         "name": "GalleryVault - Cloud Account",
@@ -405,7 +431,7 @@ import xml.etree.ElementTree as ET
 
 from Crypto.Cipher import DES
 
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import canonical_path, unique_files
 
 from scripts.ilapfuncs import (
     artifact_processor,
@@ -434,6 +460,15 @@ FOLDER_TYPES = {
 }
 
 BREAK_IN_NAME = re.compile(r'PS_(\d{8})_(\d{6})')
+
+# The Android user whose app data directory holds a shared_prefs file, read from the
+# directories above the package directory in the evidence relative path: data/data is
+# user 0, and data/user/N and data_mirror/data_ce/<volume>/N are user N. Anchored on the
+# com.thinkyeah.galleryvault path segment, so it matches a directory name and not a
+# substring. A layout that shows none of these leaves the user blank.
+_ACCOUNT_USER_DIR = re.compile(
+    r'(?:^|/)(?:(?:user)?data/(?:data|user/(\d+))|data_mirror/data_ce/[^/]+/(\d+))'
+    r'/com\.thinkyeah\.galleryvault/shared_prefs/')
 
 # entry_type values in entry_change_history, confirmed against cloud_folders/cloud_files uuids.
 CLOUD_ENTRY_TYPES = {
@@ -654,6 +689,28 @@ def _galleryvault_des_decrypt(value, key):
             f'GalleryVault: could not decrypt account value: {error}'
         )
         return ''
+
+
+def _account_container(relative_path):
+    """Key shared by every storage view of one app container and distinct between
+    Android users, so AccountProfile.xml and Kidd.xml pair only within one container.
+
+    canonical_path folds the storage view (data/data, data/user/N,
+    data_mirror/data_ce/<volume>/N) to its storage class and Android user and keeps
+    the full path including the com.thinkyeah.galleryvault segment, so two users never
+    share a key and the package cannot collide with another by substring. Dropping the
+    basename keys on the shared_prefs directory the two files sit in.
+    """
+    key, _rank = canonical_path(relative_path)
+    return key.rsplit('/', 1)[0]
+
+
+def _account_user(relative_path):
+    match = _ACCOUNT_USER_DIR.search(str(relative_path).replace('\\', '/'))
+    if not match:
+        return ''
+    return match.group(1) or match.group(2) or '0'
+
 
 @artifact_processor
 def galleryvault_vault_files(context):
@@ -1158,126 +1215,83 @@ def galleryvault_preferences(context):
 
 @artifact_processor
 def galleryvault_account_profile(context):
-    files_found = context.get_files_found()
+    # AccountProfile.xml is decrypted with a key derived from last_android_id in the
+    # Kidd.xml sitting next to it. A device with more than one Android user holds one
+    # pair per user, each with its own android_id, so the two files must be paired
+    # inside a single container. Group by the container the storage views collapse to
+    # (unique_files removes the duplicate spellings first), then decrypt each container's
+    # profile only with its own Kidd, so one user's profile is never keyed on another's.
+    containers = {}
 
-    account_profile_path = ''
-    kidd_path = ''
-
-    for file_found in files_found:
+    for file_found in unique_files(context):
         file_found = str(file_found)
-
         basename = os.path.basename(file_found)
+        if basename not in ('AccountProfile.xml', 'Kidd.xml'):
+            continue
+        relative = context.get_relative_path(file_found)
+        slot = containers.setdefault(_account_container(relative), {})
+        slot['profile' if basename == 'AccountProfile.xml' else 'kidd'] = file_found
 
-        if basename == 'AccountProfile.xml':
-            account_profile_path = file_found
+    data_list = []
+    source_paths = []
 
-        elif basename == 'Kidd.xml':
-            kidd_path = file_found
+    for container in sorted(containers):
+        slot = containers[container]
+        profile_path = slot.get('profile')
+        kidd_path = slot.get('kidd')
 
-    if not account_profile_path or not kidd_path:
-        return (
-            ('Name', 'Value'),
-            [],
-            account_profile_path or kidd_path,
-        )
+        if not profile_path or not kidd_path:
+            present = profile_path or kidd_path
+            logfunc('GalleryVault: AccountProfile.xml and Kidd.xml are not both present '
+                    f'for container {context.get_relative_path(present)}; skipping')
+            continue
 
-    try:
-        kidd_root = ET.parse(kidd_path).getroot()
-        profile_root = ET.parse(account_profile_path).getroot()
-
-    except (ET.ParseError, OSError) as error:
-        logfunc(
-            f'GalleryVault: could not parse account preferences: {error}'
-        )
-
-        return (
-            ('Name', 'Value'),
-            [],
-            account_profile_path,
-        )
-
-    android_id = _get_xml_value(
-        kidd_root,
-        'last_android_id'
-    ).strip()
-
-    if len(android_id) < 8:
-        logfunc(
-            'GalleryVault: last_android_id not found or invalid'
-        )
-        return ('Name', 'Value'), [], account_profile_path
-
-
-    # GalleryVault's DES helper uses an 8-byte DES key.
-    des_key = android_id[:8]
-
-    encrypted_email = _get_xml_value(
-        profile_root,
-        'AccountEmail'
-    )
-
-    encrypted_id = _get_xml_value(
-        profile_root,
-        'AccountId'
-    )
-
-    encrypted_info = _get_xml_value(
-        profile_root,
-        'AccountInfo'
-    )
-
-    account_email = _galleryvault_des_decrypt(
-        encrypted_email,
-        des_key
-    )
-
-    account_id = _galleryvault_des_decrypt(
-        encrypted_id,
-        des_key
-    )
-
-    account_info_raw = _galleryvault_des_decrypt(
-        encrypted_info,
-        des_key
-    )
-
-    account_info = {}
-
-    if account_info_raw:
         try:
-            account_info = json.loads(account_info_raw)
-        except ValueError:
-            logfunc(
-                'GalleryVault: decrypted AccountInfo is not valid JSON'
-            )
+            kidd_root = ET.parse(kidd_path).getroot()
+            profile_root = ET.parse(profile_path).getroot()
+        except (ET.ParseError, OSError) as error:
+            logfunc(f'GalleryVault: could not parse account preferences: {error}')
+            continue
 
-    data_list = [
-        ('Account Email', account_email),
-        ('Account ID', account_id),
-        ('Account Name', account_info.get('name', '')),
-        (
-            'Account Active',
-            str(account_info.get('active', ''))
-        ),
-        (
-            'OAuth Login',
-            str(account_info.get('is_oauth_login', ''))
-        ),
-        (
-            'OAuth Provider',
-            account_info.get('oauth_provider', '')
-        ),
-        (
-            'OAuth User Email',
-            account_info.get('oauth_user_email', '')
-        ),
-        (
-            'Account Token',
-            account_info.get('token', '')
-        ),
-    ]
+        android_id = _get_xml_value(kidd_root, 'last_android_id').strip()
+        if len(android_id) < 8:
+            logfunc('GalleryVault: last_android_id not found or invalid in '
+                    f'{context.get_relative_path(kidd_path)}')
+            continue
+
+        source_paths.extend((kidd_path, profile_path))
+
+        # GalleryVault's DES helper uses an 8-byte DES key.
+        des_key = android_id[:8]
+
+        account_email = _galleryvault_des_decrypt(
+            _get_xml_value(profile_root, 'AccountEmail'), des_key)
+        account_id = _galleryvault_des_decrypt(
+            _get_xml_value(profile_root, 'AccountId'), des_key)
+        account_info_raw = _galleryvault_des_decrypt(
+            _get_xml_value(profile_root, 'AccountInfo'), des_key)
+
+        account_info = {}
+        if account_info_raw:
+            try:
+                account_info = json.loads(account_info_raw)
+            except ValueError:
+                logfunc('GalleryVault: decrypted AccountInfo is not valid JSON')
+
+        user = _account_user(context.get_relative_path(kidd_path))
+        data_list.extend([
+            (user, 'Account Email', account_email),
+            (user, 'Account ID', account_id),
+            (user, 'Account Name', account_info.get('name', '')),
+            (user, 'Account Active', str(account_info.get('active', ''))),
+            (user, 'OAuth Login', str(account_info.get('is_oauth_login', ''))),
+            (user, 'OAuth Provider', account_info.get('oauth_provider', '')),
+            (user, 'OAuth User Email', account_info.get('oauth_user_email', '')),
+            (user, 'Account Token', account_info.get('token', '')),
+        ])
 
     data_headers = (
+        'Android User',
         'Name',
         'Value',
     )
@@ -1285,7 +1299,7 @@ def galleryvault_account_profile(context):
     return (
         data_headers,
         data_list,
-        account_profile_path,
+        '\n'.join(source_paths),
     )
 
 @artifact_processor
