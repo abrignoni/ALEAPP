@@ -999,7 +999,7 @@ output_folder_name_entry.pack(side='left', fill='x', expand=True)
 ### Bottom Bar (Process, Close, Case Data) - permanently docked to bottom
 bottom_frame = ttk.Frame(main_window)
 bottom_frame.pack(side='bottom', padx=16, pady=8, fill='x')
-process_button = ttk.Button(bottom_frame, text='▶  Process', command=lambda: process(casedata))
+process_button = ttk.Button(bottom_frame, text='Process', command=lambda: process(casedata))
 process_button.pack(side='left', padx=5)
 close_button = ttk.Button(bottom_frame, text='Close', command=main_window.quit)
 close_button.pack(side='left', padx=5)
