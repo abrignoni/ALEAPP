@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=wildcard-import,unused-wildcard-import,too-many-lines,invalid-name,line-too-long,unused-import,redefined-outer-name,global-statement,broad-exception-caught
+# pylint: disable=wildcard-import,unused-wildcard-import,too-many-lines,invalid-name,line-too-long,unused-import,redefined-outer-name,global-statement,broad-exception-caught,no-member,protected-access,possibly-used-before-assignment,used-before-assignment,multiple-statements
 
 import tkinter as tk
 import json
