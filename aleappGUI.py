@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-import typing
 import json
 import queue
 import threading
@@ -170,11 +169,12 @@ def load_profile():
                                                      filetypes=(('ALEAPP Profile', '*.alprofile'),))
 
     if destination_path and os.path.exists(destination_path):
+        profile = None
         profile_load_error = None
         with open(destination_path, 'rt', encoding='utf-8') as profile_in:
             try:
                 profile = json.load(profile_in)
-            except:
+            except Exception:
                 profile_load_error = 'File was not a valid profile file: invalid format'
         if not profile_load_error:
             if isinstance(profile, dict):
@@ -478,11 +478,7 @@ def open_settings_window():
 
 
 def resource_path(filename):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
     return os.path.join(base_path, 'assets', filename)
 
 
@@ -731,11 +727,12 @@ def case_data():
                                                          filetypes=(('LEAPP Case Data', '*.lcasedata'),))
 
         if destination_path and os.path.exists(destination_path):
+            case_data = None
             case_data_load_error = None
             with open(destination_path, 'rt', encoding='utf-8') as case_data_in:
                 try:
                     case_data = json.load(case_data_in)
-                except:
+                except Exception:
                     case_data_load_error = 'File was not a valid case data file: invalid format'
             if not case_data_load_error:
                 if isinstance(case_data, dict):
@@ -771,12 +768,13 @@ def case_data():
 
         if logo_path and os.path.exists(logo_path):
             agency_logo_load_error = None
+            agency_logo_base64_encoded = ''
             with open(logo_path, 'rb') as agency_logo_file:
-                agency_logo_mimetype = guess_mime(agency_logo_file)
+                agency_logo_mimetype = guess_mime(agency_logo_file) or ''
                 if agency_logo_mimetype and 'image' in agency_logo_mimetype:
                     try:
-                        agency_logo_base64_encoded = base64.b64encode(agency_logo_file.read())
-                    except:
+                        agency_logo_base64_encoded = base64.b64encode(agency_logo_file.read()).decode('utf-8')
+                    except Exception:
                         agency_logo_load_error = 'Unable to encode the selected file in base64.'
                 else:
                     agency_logo_load_error = 'Selected file is not a valid picture file.'
@@ -885,8 +883,7 @@ def case_data():
 ## Main window creation
 main_window = tk.Tk()
 icon = resource_path('icon.png')
-loader: typing.Optional[plugin_loader.PluginLoader] = None
-loader = plugin_loader.PluginLoader()
+loader: plugin_loader.PluginLoader = plugin_loader.PluginLoader()
 mlist = {}
 profile_filename = None
 casedata = {'Case Number': tk.StringVar(),

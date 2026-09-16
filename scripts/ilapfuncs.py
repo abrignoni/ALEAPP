@@ -9,6 +9,7 @@ import re  # pylint: disable=unused-import
 import shutil
 import sqlite3
 import sys
+import typing
 
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
@@ -76,11 +77,11 @@ class OutputParameters:
         
 class GuiWindow:
     '''This only exists to hold window handle if script is run from GUI'''
-    window_handle = None  # static variable
+    window_handle: typing.Any = None  # static variable
     # Set to a queue.Queue by the GUI while a run is on a worker thread, and back to None
     # when it finishes. Tk is not thread-safe: while this is set, nothing below may touch a
     # widget, so progress and log lines are handed to the GUI's poller instead.
-    message_queue = None
+    message_queue: typing.Any = None
 
     @staticmethod
     def end_worker_run():
@@ -547,6 +548,7 @@ def artifact_processor(func):
 
             # Check if headers contains a 'media' type
             media_header_info = get_media_header_info(data_headers)
+            txt_data_list = None
             if media_header_info:
                 html_columns.extend([data_headers[idx][0] for idx in media_header_info])
                 html_data_list, txt_data_list = get_data_list_with_media(media_header_info, data_list)
@@ -1349,7 +1351,6 @@ def abxread(in_path,
     import base64
     import enum
     import struct
-    import typing
     import xml.etree.ElementTree as etree
 
     __version__ = "0.2.0"  # pylint: disable=unused-variable
