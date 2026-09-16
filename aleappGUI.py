@@ -904,7 +904,8 @@ theme_fgcolor = '#d0dbbd'
 theme_button = '#d0dbbd'
 
 ## Main window properties
-main_window.minsize(890, 690)
+main_window.minsize(800, 520)
+main_window.geometry('940x650')
 main_window.title(f'ALEAPP version {leapp_version}')
 main_window.configure(bg=theme_bgcolor)
 logo_icon = tk.PhotoImage(file=icon)
@@ -995,6 +996,28 @@ output_folder_name_entry.configure(
     validatecommand=(main_window.register(allow_output_folder_name_chars), '%P'))
 output_folder_name_entry.pack(side='left', fill='x', expand=True)
 
+### Bottom Bar (Process, Close, Case Data) - permanently docked to bottom
+bottom_frame = ttk.Frame(main_window)
+bottom_frame.pack(side='bottom', padx=16, pady=8, fill='x')
+process_button = ttk.Button(bottom_frame, text='▶  Process', command=lambda: process(casedata))
+process_button.pack(side='left', padx=5)
+close_button = ttk.Button(bottom_frame, text='Close', command=main_window.quit)
+close_button.pack(side='left', padx=5)
+case_data_button_frame = ttk.Frame(bottom_frame)
+case_data_button_frame.pack(side='left', expand=True, fill='x')
+case_data_button = ttk.Button(case_data_button_frame, text='Case Data', command=case_data)
+case_data_button.pack(padx=5)
+selected_modules_frame = ttk.Frame(bottom_frame)
+selected_modules_frame.pack(side='right', padx=5)
+selected_modules_label = ttk.Label(selected_modules_frame, text='Number of selected modules: ')
+selected_modules_label.pack(anchor='e')
+auto_unselected_modules_label = ttk.Label(
+    selected_modules_frame,
+    text='(Modules making some time to run were automatically unselected)',
+    font='Helvetica 10')
+auto_unselected_modules_label.pack(anchor='e')
+
+### Available Modules List
 mlist_frame = ttk.LabelFrame(main_window, text=' Available Modules: ', name='f_list')
 mlist_frame.pack(padx=14, pady=5, expand=True, fill='both')
 
@@ -1038,28 +1061,6 @@ main_window.bind("<Control-f>", lambda event: modules_filter_entry.focus_set()) 
 main_window.bind("<Control-i>", lambda event: input_entry.focus_set()) # Focus on the Input Field
 main_window.bind("<Control-o>", lambda event: output_entry.focus_set()) # Focus on the Output Field
 
-### Process
-bottom_frame = ttk.Frame(main_window)
-bottom_frame.pack(padx=16, pady=6, fill='x')
-process_button = ttk.Button(bottom_frame, text='Process', command=lambda: process(casedata))
-process_button.pack(side='left', padx=5)
-close_button = ttk.Button(bottom_frame, text='Close', command=main_window.quit)
-close_button.pack(side='left', padx=5)
-# ttk.Separator(bottom_frame, orient='vertical').pack(padx=10, side='left', expand=True, fill='both')
-case_data_button_frame = ttk.Frame(bottom_frame)
-case_data_button_frame.pack(side='left', expand=True, fill='x')
-case_data_button = ttk.Button(case_data_button_frame, text='Case Data', command=case_data)
-case_data_button.pack(padx=5)
-# ttk.Separator(bottom_frame, orient='vertical').pack(padx=10, side='left', expand=True, fill='both')
-selected_modules_frame = ttk.Frame(bottom_frame)
-selected_modules_frame.pack(side='right', padx=5)
-selected_modules_label = ttk.Label(selected_modules_frame, text='Number of selected modules: ')
-selected_modules_label.pack(anchor='e')
-auto_unselected_modules_label = ttk.Label(
-    selected_modules_frame,
-    text='(Modules making some time to run were automatically unselected)',
-    font='Helvetica 10')
-auto_unselected_modules_label.pack(anchor='e')
 get_selected_modules()
 
 #### Logs
