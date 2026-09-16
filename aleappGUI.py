@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=wildcard-import,unused-wildcard-import,too-many-lines,invalid-name,line-too-long,unused-import,redefined-outer-name,global-statement,broad-exception-caught
 
 import tkinter as tk
 import json
@@ -72,7 +73,6 @@ def pickModules():
     '''Create a list of available modules:
         - usagestatsVersion that is required is excluded
         - ones that take a long time to run are deselected by default'''
-    global mlist
     for plugin in sorted(loader.plugins, key=lambda p: p.category.upper()):
         # Modules that are required are not added to the dictionary
         if plugin.name == 'usagestatsVersion':
@@ -122,7 +122,7 @@ def deselect_all():
     get_selected_modules()
 
 
-def filter_modules(*args):
+def filter_modules(*_args):
     mlist_text.config(state='normal')
     filter_term = modules_filter_var.get().lower()
 
@@ -328,7 +328,7 @@ def open_settings_window():
     settings_window.title('Settings')
     settings_window.grid_columnconfigure(0, weight=1)
 
-    def on_main_focus(event):
+    def on_main_focus(_event):
         if settings_window.winfo_exists():
             settings_window.bell()
             settings_window.lift()
@@ -375,7 +375,7 @@ def open_settings_window():
         clear_window.title('Clear History')
         clear_window.grid_columnconfigure(0, weight=1)
 
-        def on_settings_focus(event):
+        def on_settings_focus(_event):
             if clear_window.winfo_exists():
                 clear_window.bell()
                 clear_window.lift()
@@ -399,8 +399,8 @@ def open_settings_window():
         clear_message_label = ttk.Label(clear_window, text=clear_message, wraplength=420)
         clear_message_label.grid(row=1, column=0, padx=14, pady=10, sticky='w')
 
-        button_frame = ttk.Frame(clear_window)
-        button_frame.grid(row=2, column=0, padx=14, pady=18, sticky='e')
+        clear_btn_frame = ttk.Frame(clear_window)
+        clear_btn_frame.grid(row=2, column=0, padx=14, pady=18, sticky='e')
 
         def clear_single_leapp_history():
             if not tk_msgbox.askyesno(
@@ -482,7 +482,7 @@ def resource_path(filename):
     return os.path.join(base_path, 'assets', filename)
 
 
-def process(casedata):
+def process(case_data_inputs):
     '''Execute selected modules and create reports'''
     # check if selections made properly; if not we will return to input form without exiting app altogether
     is_valid, extracttype = ValidateInput()
@@ -503,7 +503,7 @@ def process(casedata):
         selected_modules.insert(0, 'usagestatsVersion') # Force usagestatsVersion as first item to be parsed
         selected_modules = [loader[module] for module in selected_modules]
         progress_bar.config(maximum=len(selected_modules))
-        casedata = {key: value.get() for key, value in casedata.items()}
+        case_data_values = {key: value.get() for key, value in case_data_inputs.items()}
         out_params = OutputParameters(output_folder, output_folder_name_entry.get().strip())
         Context.set_output_params(out_params)
         wrap_text = True
@@ -527,7 +527,7 @@ def process(casedata):
         worker = threading.Thread(
             target=run_crunch,
             args=(GuiWindow.message_queue, selected_modules, extracttype, input_path,
-                  out_params, wrap_text, casedata),
+                  out_params, wrap_text, case_data_values),
             daemon=True)
         worker.start()
         main_window.after(CRUNCH_POLL_MS, poll_crunch, GuiWindow.message_queue, out_params)
@@ -727,31 +727,31 @@ def case_data():
                                                          filetypes=(('LEAPP Case Data', '*.lcasedata'),))
 
         if destination_path and os.path.exists(destination_path):
-            case_data = None
+            loaded_case_json = None
             case_data_load_error = None
             with open(destination_path, 'rt', encoding='utf-8') as case_data_in:
                 try:
-                    case_data = json.load(case_data_in)
+                    loaded_case_json = json.load(case_data_in)
                 except Exception:
                     case_data_load_error = 'File was not a valid case data file: invalid format'
             if not case_data_load_error:
-                if isinstance(case_data, dict):
-                    if case_data.get('leapp') != 'case_data':
+                if isinstance(loaded_case_json, dict):
+                    if loaded_case_json.get('leapp') != 'case_data':
                         case_data_load_error = 'File was not a valid case data file'
                     else:
-                        casedata = case_data.get('case_data_values', {})
+                        loaded_case_values = loaded_case_json.get('case_data_values', {})
                         case_number_entry.delete(0, 'end')
-                        case_number_entry.insert(0, casedata.get('Case Number', ''))
+                        case_number_entry.insert(0, loaded_case_values.get('Case Number', ''))
                         case_agency_name_entry.delete(0, 'end')
-                        case_agency_name_entry.insert(0, casedata.get('Agency', ''))
+                        case_agency_name_entry.insert(0, loaded_case_values.get('Agency', ''))
                         case_agency_logo_path_entry.delete(0, 'end')
-                        case_agency_logo_path_entry.insert(0, casedata.get('Agency Logo Path', ''))
+                        case_agency_logo_path_entry.insert(0, loaded_case_values.get('Agency Logo Path', ''))
                         case_agency_logo_mimetype.delete(0, 'end')
-                        case_agency_logo_mimetype.insert(0, casedata.get('Agency Logo mimetype', ''))
+                        case_agency_logo_mimetype.insert(0, loaded_case_values.get('Agency Logo mimetype', ''))
                         case_agency_logo_b64.delete(0, 'end')
-                        case_agency_logo_b64.insert(0, casedata.get('Agency Logo base64', ''))
+                        case_agency_logo_b64.insert(0, loaded_case_values.get('Agency Logo base64', ''))
                         case_examiner_entry.delete(0, 'end')
-                        case_examiner_entry.insert(0, casedata.get('Examiner', ''))
+                        case_examiner_entry.insert(0, loaded_case_values.get('Examiner', ''))
                 else:
                     case_data_load_error = 'File was not a valid case data file: invalid format'
             if case_data_load_error:
@@ -820,7 +820,7 @@ def case_data():
     case_window.title('Add Case Data')
     case_window.grid_columnconfigure(0, weight=1)
 
-    def on_main_focus(event):
+    def on_main_focus(_event):
         if case_window.winfo_exists():
             case_window.bell()
             case_window.lift()
