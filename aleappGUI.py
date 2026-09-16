@@ -495,8 +495,10 @@ def process(case_data_inputs):
         # Android file system extractions contain paths > 260 char, which causes problems
         # This fixes the problem by prefixing \\?\ on each windows path.
         if is_platform_windows():
-            if input_path[1] == ':' and extracttype == 'fs': input_path = '\\\\?\\' + input_path.replace('/', '\\')
-            if output_folder[1] == ':': output_folder = '\\\\?\\' + output_folder.replace('/', '\\')
+            if input_path[1] == ':' and extracttype == 'fs':
+                input_path = '\\\\?\\' + input_path.replace('/', '\\')
+            if output_folder[1] == ':':
+                output_folder = '\\\\?\\' + output_folder.replace('/', '\\')
 
         # re-create modules list based on user selection
         selected_modules = get_selected_modules()
