@@ -4,6 +4,7 @@ import io
 import os.path
 import typing
 import scripts.report as report
+import scripts.artifact_report as artifact_report
 import traceback
 import sys
 
@@ -174,6 +175,10 @@ def main():
                         help=("Generate a text file list of artifact paths. "
                               "This argument is meant to be used alone, without any other arguments."))
     parser.add_argument('--custom_output_folder', required=False, action="store", help="Custom name for the output folder")
+    parser.add_argument('--html_row_limit', required=False, action="store", type=int,
+                        default=artifact_report.HTML_TABLE_ROW_LIMIT,
+                        help="Rows above which an artifact's table is left off its HTML page, which then points at "
+                             "the LAVA database and the TSV export instead (default %(default)s). 0 writes every table.")
     parser.add_argument('--custom_artifacts_path', required=False, action="store", help="Additional path to load artifacts from (e.g., scripts/alternate_artifacts)")
 
     profile_filename = None
@@ -185,6 +190,9 @@ def main():
         sys.exit()
 
     args = parser.parse_args()
+    if args.html_row_limit < 0:
+        parser.error('--html_row_limit must be 0 or a positive number of rows')
+    artifact_report.set_html_row_limit(args.html_row_limit)
 
     loader_paths = [plugin_loader.PLUGINPATH]
     if args.custom_artifacts_path:
