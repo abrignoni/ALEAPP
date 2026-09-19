@@ -439,6 +439,7 @@ def crunch_artifacts(
                         continue  # cannot do work
                 try:
                     plugin.method(files_found, category_folder, seeker, wrap_text)
+                    lava_commit()
                 except Exception as ex:  # pylint: disable=broad-exception-caught
                     logfunc('Reading {} artifact had errors!'.format(plugin.name))
                     logfunc('Error was {}'.format(str(ex)))
@@ -448,6 +449,7 @@ def crunch_artifacts(
                     logfunc('{} [{}] artifact failed after {:.1f}s'.format(
                         plugin.name, plugin.module_name, plugin_elapsed))
                     lava_add_module(plugin.module_name, "Error", len(files_found), plugin.name)
+                    lava_commit()
                     continue  # nope
                 lava_add_module(plugin.module_name, "Complete", len(files_found), plugin.name)
             else:
