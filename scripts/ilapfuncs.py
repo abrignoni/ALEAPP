@@ -464,6 +464,24 @@ def get_data_list_with_media(media_header_info, data_list):
 
 _reported_unsafe_report_names = set()
 
+# Tables left off their HTML page for exceeding artifact_report.HTML_TABLE_ROW_LIMIT, listed
+# on the index page so an examiner sees them without opening each artifact. Mutated in
+# place only: report.py imports the list itself.
+html_tables_held_back = []
+
+
+def record_html_table_held_back(category, artifact_name, safe_artifact_name, rows):
+    """Remember a table the HTML report held back, for the index page and the run log."""
+    html_tables_held_back.append({
+        'category': category,
+        'artifact_name': artifact_name,
+        # report.generate_report names the final page from the .temphtml file this way
+        'page': safe_artifact_name.replace(' ', '_') + '.html',
+        'rows': rows,
+    })
+    logfunc(f'{artifact_name}: {rows:,} rows, above the {artifact_report.HTML_TABLE_ROW_LIMIT:,}-row '
+            f'limit for HTML pages; the table is left off the page and stays in the other outputs')
+
 def sanitize_report_name(name, kind='name'):
     """
     Replaces path separators in an artifact name or category so it is usable as a file
@@ -556,9 +574,17 @@ def artifact_processor(func):
                 report = artifact_report.ArtifactHtmlReport(artifact_name)
                 report.start_artifact_report(report_folder, safe_artifact_name, description)
                 report.add_script()
-                report.write_artifact_data_table(stripped_headers, html_data_list, source_path,
-                                                 html_no_escape=html_columns)
+                full_data_locations = []
+                if check_output_types('lava', output_types):
+                    full_data_locations.append(artifact_report.LAVA_DATABASE_LOCATION)
+                if check_output_types('tsv', output_types):
+                    full_data_locations.append(artifact_report.tsv_export_location(safe_artifact_name))
+                held_back = report.write_artifact_data_table(stripped_headers, html_data_list, source_path,
+                                                             html_no_escape=html_columns,
+                                                             full_data_locations=full_data_locations)
                 report.end_artifact_report()
+                if held_back:
+                    record_html_table_held_back(category, artifact_name, safe_artifact_name, len(data_list))
 
             if check_output_types('tsv', output_types):
                 tsv(report_folder, stripped_headers, txt_data_list if media_header_info else data_list, safe_artifact_name)
