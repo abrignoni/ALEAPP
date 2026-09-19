@@ -18,7 +18,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | 528 rows",
             "kevin_pocox7_a15": "Android 15 | 520 rows",
             "pixel7a_a14": "Android 14 | 511 rows",
-            "samsungs20_a13": "Android 13 | 792 rows",
+            "samsungs20_a13": "Android 13 | 802 rows",
             "sharon_a14": "Android 14 | 901 rows",
             "russell_pixel6a_a13": "Android 13 | 456 rows",
             "userb2_a13": "Android 13 | 265 rows",

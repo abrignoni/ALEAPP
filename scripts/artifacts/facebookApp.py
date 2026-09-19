@@ -246,7 +246,7 @@ __artifacts_v2__ = {
             "pixel3_a12": "Android 12 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | 0 rows",
             "s20fe_a13": "Android 13 | 75 rows",
-            "samsungs20_a13": "Android 13 | 216 rows",
+            "samsungs20_a13": "Android 13 | 1128 rows",
             "sharon_a13": "Android 13 | 896 rows",
             "userb2_a13": "Android 13 | 0 rows",
             "pixel7a_a14": "Android 14 | 0 rows",
