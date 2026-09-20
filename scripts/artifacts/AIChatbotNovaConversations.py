@@ -2,24 +2,24 @@ __artifacts_v2__ = {
     "nova_chatbot_conversations": {
         "name": "Conversations (Full Detail)",
         "description": (
-            "Reconstructs full conversations from the AI Chatbot - Nova app by joining "
-            "History, HistoryDetail, HistoryDetailImage, HistoryDetailDocument, and "
-            "HistoryDetailLink tables. Cross-references local file attachments with the "
-            "Android MediaStore database to map real physical file storage paths for both "
-            "documents and user-submitted images."
+            "Conversations from the AI Chatbot - Nova app, one row per message, joining "
+            "History, HistoryDetail, HistoryDetailImage, HistoryDetailDocument and "
+            "HistoryDetailLink, with the path the Android MediaStore index holds for each "
+            "attached document and image."
         ),
         "author": "Guilherme Guilherme",
         "creation_date": "2026-05-30",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-09-19",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
-        "notes": ("Sources: chat-ai.db and the Android MediaStore databases. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. A path shown as Not in MediaStore means no MediaStore row matched the file name, not that the file never existed locally. Attachment URLs are concatenated by SQLite and split on commas, so a URL containing a comma would split wrong; only the first image attachment is rendered as media. Developed against the author's own installation; no registered corpus image carries this app."),
+        "notes": (
+            "Sources: chat-ai.db and the Android MediaStore databases. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. A path shown as Not in MediaStore means no MediaStore row matched the file name, not that the file never existed locally. Attachment URLs are concatenated by SQLite and split on commas, so a URL containing a comma would split wrong; only the first image attachment is rendered as media. An extraction can carry one copy of each database per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. The committed test case carries no file under the app's shared media folder and no link record, so Image Media, Document Media and Link URL(s) have no value on any of its rows and Image Path reads Not in MediaStore throughout. Developed against the author's own installation; no registered corpus image carries this app."
+        ),
         "paths": (
             "**/com.scaleup.chatai/databases/chat-ai.db",
             "**/com.android.providers.media/databases/external*.db",
             "**/com.google.android.providers.media.module/databases/external*.db",
         ),
-        "function": "get_nova_chatbot_conversations",
         "output_types": ["standard", "lava"],
         "artifact_icon": "message-square",
     }
@@ -27,12 +27,12 @@ __artifacts_v2__ = {
 
 import datetime
 import os
+from scripts.artifacts.storagePathViews import unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
     logfunc,
     open_sqlite_db_readonly,
     check_in_media,
-    get_file_path,
 )
 
 CHAT_BOT_MODEL_MAP = {
@@ -188,30 +188,30 @@ ORDER BY h.id ASC, hd.createdAt ASC
 
 
 @artifact_processor
-def get_nova_chatbot_conversations(files_found, _report_folder, _seeker, _wrap_text):
-    nova_db = get_file_path(files_found, "chat-ai.db")
-    media_db = next(
-        (
-            str(x)
-            for x in files_found
-            if "external" in str(x) and str(x).endswith(".db")
-        ),
-        None,
+def nova_chatbot_conversations(context):
+    # unique_files collapses the data/data, data/user/0 and data_mirror views of one
+    # file and keeps a second Android user's own copy, so both users are reported.
+    files_found = [str(f) for f in unique_files(context)]
+    nova_dbs = sorted(f for f in files_found if os.path.basename(f) == "chat-ai.db")
+    media_dbs = sorted(
+        f for f in files_found
+        if os.path.basename(f).startswith("external") and f.endswith(".db")
     )
 
-    if not nova_db:
-        logfunc("[nova_chatbot_conversations] Nova database file not found.")
+    if not nova_dbs:
+        logfunc("Nova conversations - chat-ai.db not found")
         return (), [], ""
 
     # Pre-build lookup for local files in the extraction
     nova_files_lookup = {}
     nova_path_part = "Android/media/com.scaleup.chatai/Nova"
     for f in files_found:
-        if nova_path_part in str(f):
-            nova_files_lookup[os.path.basename(f).lower()] = str(f)
+        if nova_path_part in f:
+            nova_files_lookup[os.path.basename(f).lower()] = f
 
     media_lookup = {}
-    if media_db:
+    sources = []
+    for media_db in media_dbs:
         try:
             with open_sqlite_db_readonly(media_db) as db:
                 cur = db.cursor()
@@ -221,20 +221,23 @@ def get_nova_chatbot_conversations(files_found, _report_folder, _seeker, _wrap_t
                 for display_name, data_path in cur.fetchall():
                     key = (display_name or os.path.basename(str(data_path))).lower()
                     media_lookup[key] = data_path
+            sources.append(media_db)
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logfunc(
-                f"[nova_chatbot_conversations] Error building MediaStore lookup: {e}"
-            )
+            logfunc(f"Nova conversations - MediaStore lookup unavailable ({e})")
 
     rows_raw = []
-    try:
-        with open_sqlite_db_readonly(nova_db) as db:
-            cursor = db.cursor()
-            cursor.execute(QUERY)
-            rows_raw = cursor.fetchall()
-    except Exception as e:  # pylint: disable=broad-exception-caught
-        logfunc(f"[nova_chatbot_conversations] Error reading {nova_db}: {e}")
-        return (), [], ""
+    for nova_db in nova_dbs:
+        try:
+            with open_sqlite_db_readonly(nova_db) as db:
+                cursor = db.cursor()
+                cursor.execute(QUERY)
+                rows_raw.extend(cursor.fetchall())
+            sources.append(nova_db)
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logfunc(f"Nova conversations - could not read the database ({e})")
+
+    if not rows_raw:
+        return (), [], "\n".join(sources)
 
     headers = (
         "Conv. ID",
@@ -346,4 +349,4 @@ def get_nova_chatbot_conversations(files_found, _report_folder, _seeker, _wrap_t
             )
         )
 
-    return headers, rows, nova_db
+    return headers, rows, "\n".join(sources)

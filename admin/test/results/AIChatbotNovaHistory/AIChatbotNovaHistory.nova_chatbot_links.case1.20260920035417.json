@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "module_name": "AIChatbotNovaHistory",
+    "artifact_name": "HistoryDetailLinks",
+    "function_name": "nova_chatbot_links",
+    "case_number": "case1",
+    "number_of_columns": 12,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/AIChatbotNovaHistory/testdata.AIChatbotNovaHistory.nova_chatbot_links.case1.zip",
+    "start_time": "2026-09-20T03:54:17.419598+00:00",
+    "end_time": "2026-09-20T03:54:17.436652+00:00",
+    "run_time_seconds": 0.0006239414215087891,
+    "last_commit": {
+      "hash": "0cfab8434883aba1c1daa222295ca463f1c7774f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-10T09:05:12-04:00",
+      "message": "fix: carry the Nova artifacts onto the current core and house vocabulary"
+    }
+  },
+  "headers": [
+    "Link ID",
+    "Msg ID",
+    "Conv ID",
+    "Conv UUID",
+    "Conv Title",
+    "AI Model",
+    "Assistant Persona",
+    "Conv Deleted",
+    "Msg Role",
+    "Msg Text",
+    "Msg Timestamp",
+    "URL"
+  ],
+  "data": []
+}
