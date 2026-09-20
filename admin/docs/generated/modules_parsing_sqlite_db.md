@@ -8,6 +8,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 <!-- GET_RECORDS_START -->
 | Source Modules |
 |----------------|
+| AIChatbotNovaHistory |
 | BlinkApp |
 | DuckDuckGo |
 | FairEmail |
@@ -147,6 +148,9 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 <!-- READONLY_START -->
 | Source Modules |
 |----------------|
+| AIChatbotNovaConversations |
+| AIChatbotNovaHistory |
+| AIChatbotNovaMediastore |
 | AdidasActivities |
 | AdidasGoals |
 | AdidasUser |
