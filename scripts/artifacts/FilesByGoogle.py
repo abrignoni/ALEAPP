@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "fbg_master": {
         "name": "Files By Google - Files Master",
         "description": "Parses the master files list from the Files by Google application",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-18",
         "last_update_date": "2025-09-09",
         "requirements": "none",
@@ -16,13 +16,13 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.google.android.apps.nbu.files vc 1508395 | 434 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.nbu.files vc 695143 | 228 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.nbu.files vc 492527 | 95 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.nbu.files vc 1107071 | 16 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.nbu.files vc 1107071 | 8 rows",
         }
     },
     "fbg_searchhistory": {
         "name": "Files By Google - Search History",
         "description": "Parses the Files by Google application search history",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-18",
         "last_update_date": "2025-09-09",
         "requirements": "none",
@@ -35,17 +35,20 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
 def fbg_master(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list_master = []
+    source_paths = set()
 
     for file_found in files_found:
         file_found = str(file_found)
-        
+
         # Master list
         if file_found.endswith('files_master_database'):
+            source_paths.add(file_found)
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -90,18 +93,20 @@ def fbg_master(context):
             db.close()
             
     data_headers = (('Date Modified','datetime'),'Root Path','Root Relative Path','File Name','Size','Mime Type','Media Type','URI','Hidden','Title','Parent Folder','Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-    return data_headers, data_list_master, 'See source file(s) below'
+    return data_headers, data_list_master, '\n'.join(sorted(source_paths))
             
 @artifact_processor
 def fbg_searchhistory(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list_search = []
-    
+    source_paths = set()
+
     for file_found in files_found:
         file_found = str(file_found)
 
         # Search History
         if file_found.endswith('search_history_database'):
+            source_paths.add(file_found)
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -130,4 +135,4 @@ def fbg_searchhistory(context):
             continue # Skip all other files
             
     data_headers = (('Timestamp','datetime'),'Search Term','Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
-    return data_headers, data_list_search, 'See source file(s) below'
+    return data_headers, data_list_search, '\n'.join(sorted(source_paths))

@@ -57,8 +57,8 @@ def get_smyfilescache(context):
             break
 
     data_list = []
-    if db_path:
-        db = open_sqlite_db_readonly(db_path)
+    db = open_sqlite_db_readonly(db_path) if db_path else None
+    if db is not None:
         cursor = db.cursor()
         rows = []
         for sql in SQL_VARIANTS:

@@ -17,6 +17,8 @@ __artifacts_v2__ = {
 
 import datetime
 
+_EPOCH_UTC = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+
 from scripts.html_safe import esc
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
@@ -42,7 +44,9 @@ def get_puma_users(context):
 
     data_list = []
     for row in all_rows:
-        dob = datetime.datetime.fromtimestamp(int(row[4]) / 1000, datetime.timezone.utc) if row[4] else ''
+        # Added to the epoch rather than passed to fromtimestamp: a date of birth can
+        # predate 1970, where that function raises gmtime() errors on some platforms.
+        dob = _EPOCH_UTC + datetime.timedelta(milliseconds=int(row[4])) if row[4] else ''
         work_time = row[16] / 60 if row[16] else 'N/A'
         # The avatar URL is remote, so an <img> here would make opening the report
         # fetch it and disclose the examination to the service. Report the URL as

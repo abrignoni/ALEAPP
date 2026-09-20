@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     
     "history_log": {
         "name": "Samsung Knox History Log",
-        "description": "Samsung Knox History Log",
+        "description": 'Entries from the Samsung Knox Secure Folder HistoryLog table, with tag and message',
         "author": "Alexis Brignoni {linqapp.com/abrignoni}",
         "creation_date": "2026-02-27",
         "last_update_date": "2025-02-27",

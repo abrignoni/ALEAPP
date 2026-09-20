@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_Cello": {
         "name": "Cello - Google Drive",
         "description": "Parses the Cello db for Google Drive metadata",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-12-21",
         "last_update_date": "2020-12-21",
         "requirements": "none",
@@ -18,11 +18,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.docs vc 214512167 | 0 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.apps.docs vc 214173331 | 2 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.docs vc 213440084 | 4 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.apps.docs vc 214258185 | 51 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.docs vc 214258185 | 17 rows",
             "samsungs20_a13": "Android 13 | com.google.android.apps.docs vc 214207580 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.docs vc 213692448 | 20 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.docs vc 213183212 | 1 row",
-            "userb2_a13": "Android 13 | com.google.android.apps.docs vc 213806576 | 8 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.docs vc 213806576 | 4 rows",
         },
     }
 }
@@ -31,6 +31,7 @@ import datetime
 import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _ms_to_utc(value):
@@ -44,7 +45,7 @@ def _ms_to_utc(value):
 
 @artifact_processor
 def get_Cello(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

@@ -9,12 +9,12 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Viber",
         "notes": ("Call Direction is decoded from the calls table 'type' column. Direction/status "
-                  "value mappings were established through testing; unrecognized values are "
-                  "reported as stored, so a value the mapping does not cover (a missed, rejected or "
-                  "unanswered call, for example) appears as the stored number rather than as a "
-                  "direction.\n"
-                  "Call End Time is not stored by the app: it is start time plus the duration "
-                  "column, which is treated as whole seconds."),
+                  "value mappings are not vendor-documented and the evidence for them is not "
+                  "recorded here; unrecognized values are reported as stored, so a value the "
+                  "mapping does not cover (a missed, rejected or unanswered call, for example) "
+                  "appears as the stored number rather than as a direction.\nCall End Time is not "
+                  "a stored column: it is computed as start time plus the duration column, which "
+                  "is treated as whole seconds; the unit of duration is not documented."),
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -47,13 +47,14 @@ __artifacts_v2__ = {
         "description": "Parses Viber messages (date, sender and recipients, thread, content, direction, unread flag and attachments) from the Viber databases.",
         "author": "@markmckinnon",
         "creation_date": "2020-12-24",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Viber",
         "notes": ("Direction is decoded from the messages table 'send_type' column. Direction/status "
-                  "value mappings were established through testing; unrecognized values are reported "
+                  "value mappings are not vendor-documented and the evidence for them is not "
+                  "recorded here; unrecognized values are reported "
                   "as stored.\n"
-                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
                   "Unread carries the messages table 'unread' column as stored; it is not a "
@@ -209,9 +210,9 @@ def get_Viber_messages(context):
             all_rows = []
         db.close()
         for r in all_rows:
-            data_list.append((_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7]))
+            data_list.append((_ms_to_utc(r[0]), r[5], r[1], r[4], r[2], r[3], r[6], r[7]))
 
-    data_headers = (('Message Date', 'datetime'), ('From Phone Number', 'phonenumber'), 'Recipients', 'Thread ID', 'Message', 'Direction', 'Unread', 'File Attachment')
+    data_headers = (('Message Date', 'datetime'), 'Direction', ('From Phone Number', 'phonenumber'), 'Message', 'Recipients', 'Thread ID', 'Unread', 'File Attachment')
     return data_headers, data_list, messages_db
 
 

@@ -10,7 +10,8 @@ __artifacts_v2__ = {
         "category": "Chats",
         "notes": (
             "Timestamps are rendered in UTC. The Method names for the stored numeric "
-            "'method' field (1, 3 and 8) were established through testing; a value with no "
+            "'method' field (1, 3 and 8) are the labels this parser assigns; the source for them "
+            "is not established, and a value with no "
             "matching name is shown as 'Unknown'. Rows come from conversation_item, and "
             "contact_address is joined on the stored address, so an item whose address has "
             "no matching contact record is still listed, with empty name columns."

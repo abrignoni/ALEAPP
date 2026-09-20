@@ -27,16 +27,19 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
 def googleCast(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
-    
+    source_paths = set()
+
     for file_found in files_found:
         file_found = str(file_found)
-        
+
         if file_found.endswith('cast.db'):
+            source_paths.add(file_found)
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
             cursor.execute('''
@@ -97,4 +100,4 @@ def googleCast(context):
             continue # Skip all other files
     
     data_headers = (('Last Published Timestamp','datetime'),'Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID',('Last Discovered Timestamp','datetime'),('Last Discovered By BLE Timestamp','datetime'),'Source File') 
-    return data_headers, data_list, 'See source file(s) below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

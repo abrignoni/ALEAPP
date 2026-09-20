@@ -17,6 +17,12 @@ on:
       # break on an older Python
       - 'aleapp.py'
       - 'aleappGUI.py'
+      # The entry points and scripts/ilapfuncs.py import leapp_functions, so a
+      # change there is equally able to break on an older Python
+      - 'leapp_functions/**'
+
+permissions:
+  contents: read
 
 jobs:
   runtime-contract:
@@ -24,7 +30,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11']
+        # The versions README.md tells users to run
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
 
     steps:
       - name: Checkout code

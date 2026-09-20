@@ -2,7 +2,7 @@ __artifacts_v2__ = {
   
     "snotes": {
         "name": "Samsung Notes",
-        "description": "Samsung Notes",
+        "description": "Notes from Samsung Notes' sdoc.db, with their text, times, deletion state and media",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2026-01-17",
         "last_update_date": "2026-01-17",

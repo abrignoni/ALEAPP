@@ -28,6 +28,7 @@ import os
 from pathlib import Path
 
 from scripts.ilapfuncs import artifact_processor, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _sec_to_utc(value):
@@ -41,7 +42,7 @@ def _sec_to_utc(value):
 
 @artifact_processor
 def get_googlemapaudioTemp(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

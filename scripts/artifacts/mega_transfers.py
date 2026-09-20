@@ -26,6 +26,7 @@ import sqlite3
 from Crypto.Cipher import AES
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 DIRECTION = {"0": "Download", "1": "Upload", "2": "Download"}
 STATE = {
@@ -53,7 +54,7 @@ def decrypt(cell):
 
 @artifact_processor
 def get_mega_transfers(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

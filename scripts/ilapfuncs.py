@@ -4,14 +4,13 @@ import csv
 import hashlib
 import inspect
 import json
-import math
 import os
 import re  # pylint: disable=unused-import
 import shutil
 import sqlite3
 import sys
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote
@@ -41,13 +40,13 @@ _console_write = sys.stdout.write
 import pytz
 import simplekml
 from scripts import blackboxprotobuf
-from scripts.filetype import guess_mime, guess_extension
+from scripts.filetype import get_signature_bytes, guess_mime, guess_extension
 from functools import wraps
 
 from scripts.html_safe import esc, safe_local_path
 from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_get_media_item, \
     lava_insert_sqlite_media_item, lava_insert_sqlite_media_references, lava_get_media_references, \
-    lava_get_full_media_info
+    lava_get_full_media_info, bind_dates_as_text
 
 os.path.basename = lru_cache(maxsize=None)(os.path.basename)
 
@@ -78,10 +77,27 @@ class OutputParameters:
 class GuiWindow:
     '''This only exists to hold window handle if script is run from GUI'''
     window_handle = None  # static variable
+    # Set to a queue.Queue by the GUI while a run is on a worker thread, and back to None
+    # when it finishes. Tk is not thread-safe: while this is set, nothing below may touch a
+    # widget, so progress and log lines are handed to the GUI's poller instead.
+    message_queue = None
+
+    @staticmethod
+    def end_worker_run():
+        '''Called on the main thread once the worker is finished.
+
+        logfunc points sys.stdout.write at queue_logs for as long as message_queue is set.
+        Clearing the queue on its own leaves that binding in place, so the next print()
+        that does not go through logfunc raises AttributeError on a queue that is gone.
+        '''
+        GuiWindow.message_queue = None
+        sys.stdout.write = _console_write
 
     @staticmethod
     def SetProgressBar(n, total):  # pylint: disable=unused-argument
-        if GuiWindow.window_handle:
+        if GuiWindow.message_queue is not None:
+            GuiWindow.message_queue.put(('progress', n))
+        elif GuiWindow.window_handle:
             progress_bar = GuiWindow.window_handle.nametowidget('progress_bar_frame.progress_bar')
             progress_bar.config(value=n)
 
@@ -129,7 +145,15 @@ def logfunc(message=""):
         log_text.see('end')
         log_text.update()
 
-    if GuiWindow.window_handle:
+    def queue_logs(string):
+        _console_write(string)
+        GuiWindow.message_queue.put(('log', string))
+
+    if GuiWindow.message_queue is not None:
+        # On a worker thread. The poller on the main thread does the insert, so the run no
+        # longer depends on log_text.update() to keep the event loop alive.
+        sys.stdout.write = queue_logs
+    elif GuiWindow.window_handle:
         log_text = GuiWindow.window_handle.nametowidget('logs_frame.log_text')
         sys.stdout.write = redirect_logs
 
@@ -315,8 +339,9 @@ def check_in_media(file_path, name="", converted_file_path=False, force_type=Non
     file_info = Context.get_seeker().file_infos.get(extraction_path)
     if file_info:
         media_id = hashlib.sha1(f"{file_info.source_path}".encode()).hexdigest()
-        with open(extraction_path, "rb") as f:
-            file_data = f.read()
+        # Only the type sniffer reads media_data for a file on disk, and it looks at no more
+        # than the first 8,192 bytes, so read just those instead of the whole file.
+        file_data = get_signature_bytes(extraction_path)
         return _check_in_media(media_id, file_path, False, name, media_data=file_data, converted_file_path=converted_file_path,
                                force_type=force_type, force_extension=force_extension,
                                force_creation_date=force_creation_date, force_modification_date=force_modification_date)
@@ -439,6 +464,24 @@ def get_data_list_with_media(media_header_info, data_list):
 
 _reported_unsafe_report_names = set()
 
+# Tables left off their HTML page for exceeding artifact_report.HTML_TABLE_ROW_LIMIT, listed
+# on the index page so an examiner sees them without opening each artifact. Mutated in
+# place only: report.py imports the list itself.
+html_tables_held_back = []
+
+
+def record_html_table_held_back(category, artifact_name, safe_artifact_name, rows):
+    """Remember a table the HTML report held back, for the index page and the run log."""
+    html_tables_held_back.append({
+        'category': category,
+        'artifact_name': artifact_name,
+        # report.generate_report names the final page from the .temphtml file this way
+        'page': safe_artifact_name.replace(' ', '_') + '.html',
+        'rows': rows,
+    })
+    logfunc(f'{artifact_name}: {rows:,} rows, above the {artifact_report.HTML_TABLE_ROW_LIMIT:,}-row '
+            f'limit for HTML pages; the table is left off the page and stays in the other outputs')
+
 def sanitize_report_name(name, kind='name'):
     """
     Replaces path separators in an artifact name or category so it is usable as a file
@@ -531,9 +574,17 @@ def artifact_processor(func):
                 report = artifact_report.ArtifactHtmlReport(artifact_name)
                 report.start_artifact_report(report_folder, safe_artifact_name, description)
                 report.add_script()
-                report.write_artifact_data_table(stripped_headers, html_data_list, source_path,
-                                                 html_no_escape=html_columns)
+                full_data_locations = []
+                if check_output_types('lava', output_types):
+                    full_data_locations.append(artifact_report.LAVA_DATABASE_LOCATION)
+                if check_output_types('tsv', output_types):
+                    full_data_locations.append(artifact_report.tsv_export_location(safe_artifact_name))
+                held_back = report.write_artifact_data_table(stripped_headers, html_data_list, source_path,
+                                                             html_no_escape=html_columns,
+                                                             full_data_locations=full_data_locations)
                 report.end_artifact_report()
+                if held_back:
+                    record_html_table_held_back(category, artifact_name, safe_artifact_name, len(data_list))
 
             if check_output_types('tsv', output_types):
                 tsv(report_folder, stripped_headers, txt_data_list if media_header_info else data_list, safe_artifact_name)
@@ -672,12 +723,29 @@ def decode_protobuf(data, typedef=None):
     fields that are not messages decode as bytes, and fields with alternate
     typedefs split into 'N-M' keys. See scripts/blackboxprotobuf/README.md
     for why the library is vendored.
+
+    Speculative nested-message guessing is bounded (see the note above
+    decode_guess in scripts/blackboxprotobuf/lib/types/length_delim.py); when
+    the bound trips, the affected ambiguous fields decode as bytes and the
+    degradation is logged here rather than hanging the run.
     '''
-    return blackboxprotobuf.decode_message(data, typedef)
+    result = blackboxprotobuf.decode_message(data, typedef)
+    from scripts.blackboxprotobuf.lib.types import length_delim
+    if length_delim.budget_exceeded:
+        logfunc('decode_protobuf: speculation budget exceeded; '
+                'ambiguous protobuf fields returned as bytes for this blob')
+    return result
 
 def get_sqlite_db_path(path):
     if is_platform_windows():
-        path_str = str(path)
+        # An upstream caller may hand us a path normalised to forward slashes,
+        # including any extended-length prefix (\\?\ becomes //?/). Windows
+        # extended paths require backslashes, and '/' is never a valid filename
+        # character on Windows, so restore backslashes before inspecting the
+        # prefix. Without this a forward-slashed extended path matches none of
+        # the checks below, falls through to the normal-path branch, and gets a
+        # second \\?\ prepended (\\?\//?/D:/...), which SQLite cannot open.
+        path_str = str(path).replace('/', '\\')
         if path_str.startswith('\\\\?\\UNC\\'): # UNC long path
             remainder = path_str[4:]
         elif path_str.startswith('\\\\?\\'):    # normal long path
@@ -687,8 +755,8 @@ def get_sqlite_db_path(path):
         else:                                   # normal path
             remainder = path_str
         # Encode special URI characters (e.g. '#', space) so SQLite doesn't
-        # treat them as fragment delimiters or query separators. Keep ':'
-        # and '/' safe so the drive letter and forward slashes are preserved.
+        # treat them as fragment delimiters or query separators. Keep ':' safe
+        # so the drive letter is preserved; separators are now all backslashes.
         return "%5C%5C%3F%5C" + quote(remainder, safe=':/')
     else:
         return quote(str(path), safe='/')
@@ -739,7 +807,7 @@ def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
         data_headers_list = list(data_headers)
         data_headers_list.append('Source Path')
         data_headers = tuple(data_headers_list)
-        source_path = 'file path in the report below'
+        source_path = '\n'.join(path_list)
     elif path_list:
         source_path = path_list[0]
     for file in path_list:
@@ -747,7 +815,7 @@ def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
         for record in db_records:
             if multiple_source_files:
                 modifiable_record = list(record)
-                modifiable_record.append(file)
+                modifiable_record.append(Context.get_relative_path(file))
                 record = tuple(modifiable_record)
             data_list.append(record)
     return data_headers, data_list, source_path
@@ -955,7 +1023,7 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
             pnt.name = times
             pnt.description = f"{times_header}: {times} - {kmlactivity}"
             pnt.coords = [(lon, lat)]
-            data.append((times, lat, lon, kmlactivity))
+            data.append((bind_dates_as_text(times), lat, lon, kmlactivity))
         a += 1
 
     if len(data) > 0:
@@ -986,77 +1054,6 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
         db.commit()
         db.close()
         kml.save(os.path.join(kml_report_folder, f'{kmlactivity}.kml'))
-
-def media_to_html(media_path, files_found, report_folder):
-
-    def media_path_filter(name):
-        return media_path in name
-
-    def relative_paths(source, splitter):
-        splitted_a = source.split(splitter)
-        for x in splitted_a:
-            if '_HTML' in x:
-                splitted_b = source.split(x)
-                return '.' + splitted_b[1]
-            elif 'data' in x:
-                index = splitted_a.index(x)
-                splitted_b = source.split(splitted_a[index - 1])
-                return '..' + splitted_b[1]
-
-
-    platform = is_platform_windows()
-    if platform:
-        media_path = media_path.replace('/', '\\')
-        splitter = '\\'
-    else:
-        splitter = '/'
-
-    thumb = media_path
-    for match in filter(media_path_filter, files_found):
-        filename = os.path.basename(match)
-        if filename.startswith('~') or filename.startswith('._') or filename != media_path:
-            continue
-
-        dirs = os.path.dirname(report_folder)
-        dirs = os.path.dirname(dirs)
-        env_path = os.path.join(dirs, 'data')
-        if env_path in match:
-            source = match
-            source = relative_paths(source, splitter)
-        else:
-            path = os.path.dirname(match)
-            dirname = os.path.basename(path)
-            filename = Path(match)
-            filename = filename.name
-            locationfiles = Path(report_folder).joinpath(dirname)
-            Path(f'{locationfiles}').mkdir(parents=True, exist_ok=True)
-            shutil.copy2(match, locationfiles)
-            source = Path(locationfiles, filename)
-            source = relative_paths(str(source), splitter)
-
-        mimetype = guess_mime(match)
-        if mimetype is None:
-            mimetype = ''
-
-        # allow_parent: relative_paths() above deliberately emits ../data/... to reach
-        # the extraction folder beside the report. The evidence filename in the
-        # fallback link text is escaped -- it used to be interpolated raw.
-        # Bind the escaped values to their own names rather than writing back over
-        # `source`, which is assigned several times above. Reading a name that only
-        # ever holds a checked value makes the safety local and obvious, to a reader
-        # and to admin/scripts/check_html_safety.py alike.
-        safe_source = safe_local_path(source, allow_parent=True)
-        safe_filename = esc(filename)
-
-        if 'video' in mimetype:
-            thumb = f'<video width="320" height="240" controls="controls"><source src="{safe_source}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
-        elif 'image' in mimetype:
-            thumb = f'<a href="{safe_source}" target="_blank"><img src="{safe_source}" width="300"></img></a>'
-        elif 'audio' in mimetype:
-            thumb = f'<audio controls><source src="{safe_source}" type="audio/ogg"><source src="{safe_source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
-        else:
-            thumb = f'<a href="{safe_source}" target="_blank"> Link to {safe_filename} file</a>'
-    return thumb
 
 
 # pylint: disable-next=pointless-string-statement
@@ -1195,17 +1192,40 @@ def device_info(category, label, value, source_file=""):
     identifiers[category] = values
 
 ### New timestamp conversion functions
+_UNIX_EPOCH_UTC = datetime(1970, 1, 1, tzinfo=timezone.utc)
+
 def convert_unix_ts_in_seconds(ts):
-    digits = int(math.log10(ts))+1
-    if digits > 10:
-        extra_digits = digits - 10
-        ts = ts // 10**extra_digits
-    return int(ts)
+    """A Unix timestamp normalised to whole seconds, whatever sub-second unit it is stored in.
+
+    The unit is taken from the value's magnitude and divided by the matching power of a
+    thousand, keeping this module's long-standing boundary that more than ten digits means
+    sub-second units. Sizing by digit count alone, as this did previously, assumed the value
+    in seconds was itself ten digits, which only holds from 2001-09-09 to 2286. Outside that
+    window a millisecond value was rescaled by the wrong factor, so a 1990 date read as 2170
+    and a 1952 birth date as 1795, and any negative value raised ValueError from math.log10.
+
+    Magnitude cannot separate the units close to the epoch: any value standing for an
+    instant within about four months either side of it is read as the next coarser unit,
+    whichever unit it was really in. A caller that knows the unit should convert it itself
+    rather than rely on this.
+    """
+    ts = int(ts)
+    magnitude = abs(ts)
+    if magnitude >= 10**16:
+        return ts // 1_000_000_000  # nanoseconds
+    if magnitude >= 10**13:
+        return ts // 1_000_000      # microseconds
+    if magnitude >= 10**10:
+        return ts // 1_000          # milliseconds
+    return ts
 
 def convert_unix_ts_to_utc(ts):
     if ts:
         ts = convert_unix_ts_in_seconds(ts)
-        return datetime.fromtimestamp(ts, tz=timezone.utc)
+        # Added to the epoch rather than passed to datetime.fromtimestamp, which the Python
+        # documentation notes may raise OSError for a timestamp the platform C gmtime()
+        # cannot represent. Values before 1970 are the case that reaches here.
+        return _UNIX_EPOCH_UTC + timedelta(seconds=ts)
     else:
         return ts
 

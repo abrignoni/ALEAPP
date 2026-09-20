@@ -84,6 +84,7 @@ from html.parser import HTMLParser
 
 from scripts.ccl.ccl_android_fcm_queued_messages import FcmIterator
 from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 _APP_IDS = {"com.skype.raider": "Skype", "com.microsoft.teams": "Teams"}
 
@@ -273,7 +274,7 @@ def _load(files_found):
 
 @artifact_processor
 def get_fcm_skype(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     messages, _notifications, source = _load(files_found)
     data_headers = (('FCM Timestamp', 'datetime'), 'App', 'Original Timestamp', 'Conversation ID',
                     'Recipient', 'Sender', 'Content', 'Metadata')
@@ -282,7 +283,7 @@ def get_fcm_skype(context):
 
 @artifact_processor
 def get_fcm_skype_notifications(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     _messages, notifications, source = _load(files_found)
     data_headers = (('Timestamp', 'datetime'), 'App', 'Title', 'Message', 'Recipient', 'Link')
     return data_headers, notifications, source

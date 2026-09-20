@@ -19,7 +19,6 @@ __artifacts_v2__ = {
 import bencoding
 import hashlib
 import datetime
-import textwrap
 
 from scripts.ilapfuncs import artifact_processor, logfunc
 from scripts.html_safe import esc
@@ -75,7 +74,7 @@ def get_torrentinfo(context):
                 else:
                     aggregate = aggregate + f'{esc(key.decode())}: {esc(value.decode())} <br>' #add if value is binary decode
 
-            data_list.append((textwrap.fill(file_found.strip(), width=25),infohash,aggregate))
+            data_list.append((context.get_relative_path(file_found),infohash,aggregate))
         except Exception as e: logfunc(str(e))
 
     data_headers = ('File', 'InfoHash', 'Data')

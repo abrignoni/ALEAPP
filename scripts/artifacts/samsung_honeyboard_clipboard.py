@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "category": "Clipboard",
         "notes": (
             "Source app decoded from Samsung's proprietary SEFT trailer appended "
-            "after the JPEG EOI marker (FF D9) — invisible to standard viewers and "
+            "after the JPEG EOI marker (FF D9). It is invisible to standard viewers and "
             "absent from EXIF. Copy time from the parent directory name "
             "(millisecond Unix epoch); capture time from EXIF DateTimeOriginal."
         ),

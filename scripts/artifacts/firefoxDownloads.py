@@ -2,10 +2,10 @@ __artifacts_v2__ = {
     "get_firefoxDownloads": {
         "name": "Firefox - Downloads",
         "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database. The Tor Browser path is also matched; in the samples examined it carried the same database.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
-        "last_update_date": "2026-08-01",
-        "notes": "Two schema variants are handled: destination_directory and directory_path. Reference: Mozilla android-components, 'DownloadState.Status (PAUSED=3, CANCELLED=4, FAILED=5, COMPLETED=6)', https://github.com/mozilla-firefox/firefox/blob/main/mobile/android/android-components/components/browser/state/src/main/java/mozilla/components/browser/state/state/content/DownloadState.kt",
+        "last_update_date": "2026-08-15",
+        "notes": "Two schema variants are handled: destination_directory and directory_path. Reference: Mozilla android-components, 'DownloadState.Status (PAUSED=3, CANCELLED=4, FAILED=5, COMPLETED=6)', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/mobile/android/android-components/components/browser/state/src/main/java/mozilla/components/browser/state/state/content/DownloadState.kt",
         "requirements": "none",
         "category": "Firefox",
         "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',
@@ -27,13 +27,13 @@ from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, conve
 def get_firefoxDownloads(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not os.path.basename(file_found) == 'mozac_downloads_database':  # skip -journal and other files
             continue
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
 
@@ -73,4 +73,4 @@ def get_firefoxDownloads(context):
         'Status',
         'Destination Directory',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

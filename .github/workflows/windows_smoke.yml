@@ -12,6 +12,9 @@ on:
       - '.github/workflows/windows_smoke.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   windows-smoke:
     runs-on: windows-latest
@@ -29,3 +32,18 @@ jobs:
 
       - name: Import all artifact modules on Windows
         run: python admin/test/scripts/test_artifact_imports.py
+
+      - name: Open SQLite on a path longer than 260 characters
+        run: python admin/test/scripts/test_sqlite_longpath_uri.py
+
+      # Pre-1970 timestamps are converted by adding a timedelta to the epoch rather than
+      # through datetime.fromtimestamp, which can raise OSError where the platform C
+      # gmtime() cannot represent the value. Running here proves that on Windows.
+      - name: Convert pre-1970 Unix timestamps
+        run: python admin/test/scripts/test_unix_timestamp_conversion.py
+
+      # The entry points hand a directory input to the seeker with the extended-length
+      # prefix on Windows, so the recorded evidence path and the staged path are
+      # checked here with that prefix as well as without it.
+      - name: Stage from a directory input with and without the extended-length prefix
+        run: python admin/test/scripts/test_seeker_source_path.py

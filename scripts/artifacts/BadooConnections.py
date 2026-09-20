@@ -1,7 +1,9 @@
 __artifacts_v2__ = {
     "get_badoo_conn": {
         "name": "BadooConnections",
-        "description": "Get Information related to possible connections (messages, views etc) of the user with other users from the Badoo app (com.badoo.mobile)",
+        "description": "Rows from the Badoo CombinedConnectionsDatabase (com.badoo.mobile), with "
+                       "name, gender, origin, sort timestamp, avatar URL and display message as "
+                       "stored",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-05-03",
         "last_update_date": "2023-05-03",

@@ -18,7 +18,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.google.android.apps.maps vc 1067620099 | 301 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 362 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 252 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 26 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 13 rows",
         },
     }
 }
@@ -29,6 +29,7 @@ import re
 from pathlib import Path
 
 from scripts.ilapfuncs import artifact_processor, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 NAME_PATTERN = re.compile(r"-?\d+_\d+")
 
@@ -44,7 +45,7 @@ def _ms_to_utc(value):
 
 @artifact_processor
 def get_googlemapaudio(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

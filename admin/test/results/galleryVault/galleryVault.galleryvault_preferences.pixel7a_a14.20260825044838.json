@@ -1,0 +1,136 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Preferences",
+    "function_name": "galleryvault_preferences",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 3,
+    "number_of_rows": 21,
+    "total_data_size_bytes": 1148,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_preferences.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:38.950230+00:00",
+    "end_time": "2026-08-25T04:48:38.995892+00:00",
+    "run_time_seconds": 0.0003027915954589844,
+    "last_commit": {
+      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-07T23:27:07-04:00",
+      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+    }
+  },
+  "headers": [
+    "Preference",
+    "Value",
+    "Original Key"
+  ],
+  "data": [
+    [
+      "Authentication Email",
+      "lizdehner505@gmail.com",
+      "AuthenticationEmail"
+    ],
+    [
+      "Gallery Vault Folder",
+      ".galleryvault_DoNotDelete_1707411051",
+      "gallery_vault_folder"
+    ],
+    [
+      "First Open Time",
+      1707411035,
+      "first_open_time"
+    ],
+    [
+      "Last Recycle Bin Cleanup Time",
+      1707411113,
+      "last_clear_expire_recycle_bin_file_time"
+    ],
+    [
+      "Cloud Storage Type",
+      "",
+      "use_cloud_storage_type"
+    ],
+    [
+      "Icon Disguise Enabled",
+      "",
+      "icon_disguise_enabled"
+    ],
+    [
+      "Calculator Disguise Shortcut ID",
+      "",
+      "calculator_short_cut_id"
+    ],
+    [
+      "Icon Disguise Enabled Time",
+      "",
+      "last_enable_icon_disguise_time"
+    ],
+    [
+      "Install Referrer Package",
+      "com.android.vending",
+      "app_fresh_installer"
+    ],
+    [
+      "Install Signature (App Instance UUID)",
+      "e907ac33-bb4b-4583-a959-527359a94549",
+      "signature"
+    ],
+    [
+      "Currently Unlocked",
+      "false",
+      "is_unlocked"
+    ],
+    [
+      "Last Active Time",
+      1707418524,
+      "ActiveTimeMS"
+    ],
+    [
+      "App Version Code",
+      "40309",
+      "VersionCode"
+    ],
+    [
+      "Fresh Install Version Code",
+      "40309",
+      "FreshInstallVersionCode"
+    ],
+    [
+      "Launch Count",
+      "2",
+      "launch_times"
+    ],
+    [
+      "Add File Count",
+      "2",
+      "add_file_times"
+    ],
+    [
+      "Last Unlocked Profile ID",
+      "1",
+      "unlock_successfully_profile_id"
+    ],
+    [
+      "Last Android ID (DES key source)",
+      "875ad176ffb951ac",
+      "last_android_id"
+    ],
+    [
+      "LockPin",
+      "7110EDA4D09E062AA5E4A390B0A572AC0D2C022081DC9BDB52D04DC20036DBD8313ED055",
+      "LockPin"
+    ],
+    [
+      "LockPin Part 1 SHA1 (40 hex)",
+      "7110EDA4D09E062AA5E4A390B0A572AC0D2C0220",
+      "LockPin"
+    ],
+    [
+      "LockPin Part 2 MD5 (32 hex)",
+      "81DC9BDB52D04DC20036DBD8313ED055",
+      "LockPin"
+    ]
+  ]
+}

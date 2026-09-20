@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_mastodon": {
         "name": "Mastodon - Hashtag Searches",
         "description": "Parses Mastodon hashtag searches",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
     "get_mastodon_account_searches": {
         "name": "Mastodon - Account Searches",
         "description": "Parses Mastodon account searches",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
     "get_mastodon_notifications": {
         "name": "Mastodon - Notifications",
         "description": "Parses Mastodon notifications",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
     "get_mastodon_timeline": {
         "name": "Mastodon - Timeline",
         "description": "Parses Mastodon timeline",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
     "get_mastodon_accounts": {
         "name": "Mastodon - Account Details",
         "description": "Parses Mastodon account details",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
@@ -83,7 +83,7 @@ __artifacts_v2__ = {
     "get_mastodon_instance": {
         "name": "Mastodon - Instance Details",
         "description": "Parses Mastodon instance details",
-        "author": "@KevinPagano3 (Twitter) / stark4n6@infosec.exchange (Mastodon)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",

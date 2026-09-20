@@ -7,7 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2024-06-05",
         "requirements": "none",
         "category": "My Files",
-        "notes": "Timestamp corroborated with My Files Operation History database",
+        "notes": "Deletion Timestamp is reported as stored; the My Files Operation History "
+                 "artifact reads a separate record of file operations that can be compared with "
+                 "it.",
         "paths": ('*/com.sec.android.app.myfiles/files/trash/*', '*/.Trash/com.sec.android.app.myfiles/*'),
         "output_types": "standard",
         "artifact_icon": "trash",

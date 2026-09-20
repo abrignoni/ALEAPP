@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "BlinkApp",
+    "artifact_name": "Blink Syncmodule Entitlements",
+    "function_name": "blink_syncmodule_entitlements",
+    "case_number": "casesm_a166u_a16",
+    "number_of_columns": 6,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 192,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/BlinkApp/testdata.BlinkApp.blink_syncmodule_entitlements.casesm_a166u_a16.zip",
+    "start_time": "2026-09-12T02:59:10.223893+00:00",
+    "end_time": "2026-09-12T02:59:10.246828+00:00",
+    "run_time_seconds": 0.0006389617919921875,
+    "last_commit": {
+      "hash": "83736b2d90c0b8b7ee0d45afb44f9e35f45c941a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-11T22:50:41-04:00",
+      "message": "Blink: parse the four remaining populated tables in BlinkRoom"
+    }
+  },
+  "headers": [
+    "Syncmodule Serial Number",
+    "Syncmodule ID",
+    "Entitlement Target",
+    "Entitlement Name",
+    "Entitlement Status",
+    "Subscription Required"
+  ],
+  "data": [
+    [
+      "GNTTESTSYNC01",
+      2000001,
+      "sm2",
+      "cloud_storage",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "GNTTESTSYNC01",
+      2000001,
+      "sm2",
+      "ls_cam2sm",
+      "ACTIVE",
+      0
+    ],
+    [
+      "GNTTESTSYNC01",
+      2000001,
+      "sm2",
+      "ls_sm_backup",
+      "SUBSCRIPTION_REQUIRED",
+      1
+    ],
+    [
+      "GNTTESTSYNC01",
+      2000001,
+      "sm2",
+      "warranty",
+      "ACTIVE",
+      0
+    ]
+  ]
+}

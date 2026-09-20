@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "module_name": "samsungBixbyRoutines",
+    "artifact_name": "Samsung Bixby Routines - Routine Run History",
+    "function_name": "samsungBixbyRoutinesRunHistory",
+    "case_number": "case1",
+    "number_of_columns": 7,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/samsungBixbyRoutines/testdata.samsungBixbyRoutines.samsungBixbyRoutinesRunHistory.case1.zip",
+    "start_time": "2026-08-26T01:10:45.939553+00:00",
+    "end_time": "2026-08-26T01:10:45.955289+00:00",
+    "run_time_seconds": 0.0010428428649902344,
+    "last_commit": {
+      "hash": "3d04d69be03aca78b71590a81a01e5fd284a34c1",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-25T16:56:04-04:00",
+      "message": "Add samsungBixbyRoutines ALEAPP module with test fixtures"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Routine Name",
+    "Routine ID",
+    "Running Type (as stored)",
+    "Recover Type (as stored)",
+    "Invalid Action Instance ID",
+    "Unknown Action Instance ID"
+  ],
+  "data": []
+}

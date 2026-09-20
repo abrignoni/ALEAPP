@@ -34,6 +34,7 @@ import sqlite3
 from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.artifacts.storagePathViews import unique_files
 
 _TYPES = {'1': {'type': 'message', 'message_typedef': {
     '1': {'type': 'uint', 'name': 'id'},
@@ -73,7 +74,7 @@ def _recursive_bytes_to_str(obj):
 
 @artifact_processor
 def get_quicksearch_recent(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     account_name = ''
     screenshots = {}
     pb_files = []

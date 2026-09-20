@@ -43,6 +43,7 @@ lava_data = None
 lava_db = None
 lava_db_name = '_lava_artifacts.db'
 lava_json_name = '_lava_data.lava'
+LAVA_SCHEMA_VERSION = 2
 
 
 def sanitize_sql_name(name):
@@ -97,24 +98,38 @@ def get_sql_type(python_type):
 
     type_map = {
         'datetime': 'INTEGER',
-        'date': 'INTEGER',
+        'date': 'TEXT',
     }
     return type_map.get(python_type, 'TEXT')
 
 
-def initialize_lava(input_path, output_path, input_type):
+def bind_dates_as_text(value):
+    """
+    Return a date or datetime as the text sqlite3's default adapters wrote for it.
+
+    Those adapters are deprecated as of Python 3.12 and warn on every value they convert.
+    str() returns exactly what they did, isoformat(" ") for a datetime and isoformat() for a
+    date, so binding its result stores the same text. Any other value is returned unchanged.
+    """
+    if isinstance(value, datetime.date):
+        return str(value)
+    return value
+
+
+def initialize_lava(input_path, output_path, input_type, profile_filename=None):
     '''
     Initialize the LAVA data.
     Args:
         input_path: The path to the input file.
         output_path: The path to the output file.
         input_type: The type of input file.
-        selected_artifacts: List of selected artifacts.
+        profile_filename: The profile file used for module selection, if any.
     '''
 
     global lava_data, lava_db
 
     lava_data = {
+        "lava_schema_version": LAVA_SCHEMA_VERSION,
         "parser_info": {
             "leapp_name": leapp_name,
             "leapp_version": leapp_version,
@@ -126,6 +141,8 @@ def initialize_lava(input_path, output_path, input_type):
         "param_input": input_path,
         "param_output": output_path,
         "param_type": input_type,
+        "param_profile": profile_filename,
+        "profile_used": profile_filename is not None,
         "processing_status": "In Progress",
         "lava_db_name": lava_db_name,
         "modules": [],
@@ -187,6 +204,13 @@ def initialize_lava(input_path, output_path, input_type):
                         LEFT JOIN _lava_media_items as lmi ON lmr.media_item_id = lmi.id''')
 
 
+# Conversation view keys whose value is data rather than a column name. LAVA reads these two
+# as written and resolves every other key to a column, so the writer must not turn them into
+# a column's SQL name when the value happens to match a header, as a 'Sent' direction value
+# does beside a 'Sent' time column.
+CONVERSATION_VALUE_KEYS = ('directionSentValue', 'sentMessageStaticLabel')
+
+
 def lava_process_artifact(
         category,
         module_name,
@@ -246,6 +270,7 @@ def lava_process_artifact(
     module_info['artifacts'].append(artifact_meta)
 
     artifact = {
+        "artifact_key": func_name,
         "name": artifact_name,
         "tablename": sanitized_table_name,
         "module": module_name,
@@ -289,8 +314,9 @@ def lava_process_artifact(
                 # Remap old keys to new keys
                 final_key = convert_map.get(key, key)
 
-                # Sanitize value if it's a column name, otherwise pass through
-                if value in column_names:
+                # Sanitize value if it's a column name, otherwise pass through. A value key
+                # carries data, so it passes through even when it equals a column name.
+                if final_key not in CONVERSATION_VALUE_KEYS and value in column_names:
                     sanitized_params[final_key] = sanitize_sql_name(value)
                 else:
                     sanitized_params[final_key] = value
@@ -304,13 +330,14 @@ def lava_process_artifact(
     return sanitized_table_name, object_columns, column_map
 
 
-def lava_add_module(module_name, module_status, file_count=None):
+def lava_add_module(module_name, module_status, file_count=None, artifact_name=None):
     """
     Adds a module to the global lava_data structure.
     Parameters:
         module_name (str): The name of the module to be added.
         module_status (str): The status of the module (e.g., 'active', 'inactive').
         file_count (int, optional): The number of files associated with the module. Defaults to None.
+        artifact_name (str, optional): The selected artifact name when it differs from the module filename.
     Returns:
         None
     Global Variables:
@@ -321,6 +348,8 @@ def lava_add_module(module_name, module_status, file_count=None):
         "module_name": module_name,
         "module_status": module_status
     }
+    if artifact_name is not None:
+        module["artifact_name"] = artifact_name
     if file_count is not None:
         module["file_count"] = file_count
     lava_data["modules"].append(module)
@@ -383,7 +412,8 @@ def lava_insert_sqlite_data(table_name, data, object_columns, headers, column_ma
         data (list): A list of rows to insert, where each row is a sequence of values
                      corresponding to the headers.
         object_columns (dict): A dictionary mapping column names to their data types.
-                              Supports 'datetime' type for automatic timestamp conversion.
+                              'datetime' values are stored as Unix timestamps (UTC).
+                              'date' values are stored as YYYY-MM-DD strings (no time / TZ).
         headers (list): A list of column headers. Each header can be a string or a tuple
                        where the first element is the column name.
         column_map (dict): Column mapping configuration (currently unused in the function).
@@ -429,12 +459,44 @@ def lava_insert_sqlite_data(table_name, data, object_columns, headers, column_ma
                     if value.tzinfo is None:
                         value = value.replace(tzinfo=datetime.timezone.utc)
                     value = int(value.timestamp())
-            processed_row.append(value)
+            elif sanitized_column in object_columns and object_columns[sanitized_column] == 'date':
+                # Store calendar dates as YYYY-MM-DD only, never midnight timestamps.
+                # Timestamps invite timezone day-shifts for date-only fields.
+                d = None
+                if isinstance(value, datetime.datetime):
+                    d = value.date()
+                elif isinstance(value, datetime.date):
+                    d = value
+                elif isinstance(value, str):
+                    text = value.strip()
+                    if text:
+                        try:
+                            d = datetime.date.fromisoformat(text[:10])
+                        except ValueError:
+                            try:
+                                d = datetime.datetime.fromisoformat(text).date()
+                            except ValueError:
+                                d = None
+                if d is not None:
+                    value = d.isoformat()
+            processed_row.append(bind_dates_as_text(value))
         rows_to_insert.append(tuple(processed_row))
 
     # Execute the insert
     cursor.executemany(query, rows_to_insert)
     lava_db.commit()
+
+
+def lava_commit():
+    """Commit the LAVA database.
+
+    The per-row inserts below (media items and references, search patterns, file
+    paths and their links) leave their rows in the open transaction; the main loop
+    calls this once after each artifact, so a run pays one durable commit per
+    artifact instead of one per staged file.
+    """
+    if lava_db is not None:
+        lava_db.commit()
 
 
 def lava_get_media_item(media_id):
@@ -479,14 +541,13 @@ def lava_insert_sqlite_media_item(media_item):
         str(media_item.extraction_path),
         media_item.mimetype,
         media_item.metadata,
-        media_item.created_at if media_item.created_at else None,
-        media_item.updated_at if media_item.updated_at else None,
+        bind_dates_as_text(media_item.created_at) if media_item.created_at else None,
+        bind_dates_as_text(media_item.updated_at) if media_item.updated_at else None,
         media_item.is_embedded
     )
 
     try:
         cursor.execute(sql, params)
-        lava_db.commit()
     except sqlite3.IntegrityError as e:
         print(str(e))
 
@@ -533,7 +594,6 @@ def lava_insert_sqlite_media_references(media_references):
         media_references.name
     )
     cursor.execute(sql, params)
-    lava_db.commit()
 
 
 def lava_get_full_media_info(media_ref_id):
@@ -578,7 +638,6 @@ def lava_insert_sqlite_artifact_search_pattern(artifact_regex_id, module_name, a
 
     try:
         cursor.execute(sql, data)
-        lava_db.commit()
     except sqlite3.IntegrityError as e:
         print(str(e))
 
@@ -600,7 +659,6 @@ def lava_insert_sqlite_file_path(file_id, file_path):
 
     try:
         cursor.execute(sql, data)
-        lava_db.commit()
     except sqlite3.IntegrityError as e:
         print(str(e))
 
@@ -622,7 +680,6 @@ def lava_insert_sqlite_artifact_link_pattern_to_file(artifact_regex_id, file_id)
 
     try:
         cursor.execute(sql, data)
-        lava_db.commit()
     except sqlite3.IntegrityError as e:
         print(str(e))
 
@@ -665,4 +722,5 @@ def lava_finalize_output(output_path):
         json.dump(lava_data, f, indent=4)
 
     # Close the SQLite database
+    lava_db.commit()
     lava_db.close()

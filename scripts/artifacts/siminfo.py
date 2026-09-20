@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "SIM card details (number, IMSI, ICCID, carrier) from the telephony provider database",
         "author": "@abrignoni",
         "creation_date": "2020-03-02",
-        "last_update_date": "2020-03-02",
+        "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "Device Information",
         "notes": "",
@@ -64,6 +64,10 @@ def get_siminfo(context):
             continue
 
         db = open_sqlite_db_readonly(file_found)
+        if db is None:
+            # open_sqlite_db_readonly returns None (and logs the reason) when the
+            # database cannot be opened; skip it rather than crashing the artifact.
+            continue
         cursor = db.cursor()
         try:
             cursor.execute(PRIMARY_SQL)

@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses tracker detections from the AirGuard AirTag app",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-01-08",
-        "last_update_date": "2022-01-08",
+        "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "AirTags",
         "notes": "",
@@ -20,7 +20,7 @@ __artifacts_v2__ = {
         "description": "Parses scan history from the AirGuard AirTag app",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-01-08",
-        "last_update_date": "2022-01-08",
+        "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "AirTags",
         "notes": "",
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
 import datetime
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, does_table_exist_in_db
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, does_table_exist_in_db, logfunc
 
 
 def _iso_to_utc(value):
@@ -66,11 +66,15 @@ def _run(source_path, sql):
     if not source_path:
         return []
     db = open_sqlite_db_readonly(source_path)
+    if db is None:
+        logfunc(f'airGuard: {source_path} could not be opened read-only; artifact skipped')
+        return []
     cursor = db.cursor()
     try:
         cursor.execute(sql)
         rows = cursor.fetchall()
-    except sqlite3.Error:
+    except sqlite3.Error as ex:
+        logfunc(f'airGuard: query error on {source_path}: {ex}')
         rows = []
     db.close()
     return rows
@@ -87,6 +91,8 @@ def get_airGuard(context):
     else:
         coords = 'beacon.latitude, beacon.longitude'
         coord_join = ''
+        if source_path:
+            logfunc('airGuard: no location table in attd_db; reading latitude/longitude from the beacon table')
     rows = _run(source_path, f'''
         SELECT device.lastSeen, beacon.receivedAt, beacon.deviceAddress, {coords}, beacon.rssi,
         device.deviceType, device.firstDiscovery, device.lastNotificationSent

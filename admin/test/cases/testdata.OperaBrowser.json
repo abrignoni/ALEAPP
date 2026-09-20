@@ -1,0 +1,48 @@
+{
+  "pixel7a_a14": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "EXTRACTION_FFS.zip",
+      "os": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-08-24T23:47:21.917282",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-08-24T23:47:21.907295",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "opera_tabs": {
+        "search_patterns": [
+          "*/app_opera/session_db*",
+          "*/app_opera/History*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "opera_tab_navigation": {
+        "search_patterns": [
+          "*/app_opera/session_db*",
+          "*/app_opera/History*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_name": "pixel7a_a14",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "14",
+      "device_model": "Google Pixel 7a"
+    }
+  }
+}

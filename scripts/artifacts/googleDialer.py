@@ -87,6 +87,7 @@ __artifacts_v2__ = {
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, \
     convert_unix_ts_to_utc, decode_protobuf
+from scripts.artifacts.storagePathViews import unique_files
 
 # Android CallLog.Calls type constants
 CALL_TYPES = {
@@ -111,7 +112,7 @@ PRESENTATIONS = {
 
 def _db_files(context):
     '''The db globs also match -journal/-wal/-shm sidecars; keep only the databases.'''
-    return [str(x) for x in context.get_files_found() if str(x).endswith('.db')]
+    return [str(x) for x in unique_files(context) if str(x).endswith('.db')]
 
 
 def _ms_to_utc(value):

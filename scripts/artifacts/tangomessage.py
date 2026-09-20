@@ -9,7 +9,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Tango",
         "notes": ("Direction is decoded from the messages table 'direction' column. "
-                  "Direction/status value mappings were established through testing; unrecognized "
+                  "Direction values 1 and 2 are labelled Incoming and Outgoing; that mapping is "
+                  "not vendor-documented and no source or measurement for it is given here, so "
+                  "the labels are unverified. Unrecognized "
                   "values are reported as stored."),
         "paths": ('*/com.sgiggle.production/files/tc.db*',),
         "output_types": "standard",

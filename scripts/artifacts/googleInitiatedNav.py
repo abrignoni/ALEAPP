@@ -9,13 +9,12 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GEO Location",
         "notes": "",
-        "paths": ('*/com.google.android.apps.maps/files/new_recent_history_cache_navigated.cs',
-                  '*/new_recent_history_cache_navigated.cs'),
+        "paths": ('*/new_recent_history_cache_navigated.cs',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
         "sample_data": {
-            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 4 rows",
-            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 14 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.apps.maps vc 1068243484 | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 7 rows",
         },
     }
 }
@@ -25,6 +24,7 @@ import datetime
 from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _us_to_utc(value):
@@ -38,7 +38,7 @@ def _us_to_utc(value):
 
 @artifact_processor
 def get_googleInitiatedNav(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

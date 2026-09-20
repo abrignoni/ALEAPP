@@ -2,7 +2,8 @@ __artifacts_v2__ = {
     "get_usageapps": {
         "name": "usageapps",
         "description": "App usage events from the Device Personalization Services "
-                       "reflection_gel_events database (includes deleted apps)",
+                       "reflection_gel_events database, with rows whose id carries a deleted_app "
+                       "marker flagged",
         "author": "@abrignoni",
         "creation_date": "2020-04-11",
         "last_update_date": "2020-04-11",
@@ -70,6 +71,10 @@ def get_usageapps(context):
         source_path = file_found
 
         db = open_sqlite_db_readonly(file_found)
+        if db is None:
+            # open_sqlite_db_readonly returns None (and logs the reason) when the
+            # database cannot be opened; skip it rather than crashing the artifact.
+            continue
         cursor = db.cursor()
         cursor.execute('SELECT timestamp, id, proto, generated_from FROM reflection_event')
         all_rows = cursor.fetchall()

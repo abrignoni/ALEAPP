@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "powerOffReset": {
         "name": "Power Off Reset",
         "description": "Parses powering off and reset events",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-10-12",
         "last_update_date": "2025-08-09",
         "requirements": "none",
@@ -25,11 +25,13 @@ from scripts.ilapfuncs import artifact_processor
 def powerOffReset(context):
     files_found = context.get_files_found()
     data_list = []
+    source_paths = set()
     pattern = 'REASON:'
-    
+
     for file_found in files_found:
         file_found = str(file_found)
-            
+        source_paths.add(file_found)
+
         with open(file_found, "r", encoding="utf-8") as f:
             data = f.readlines()
             for line in data:
@@ -57,4 +59,4 @@ def powerOffReset(context):
                     continue
 
     data_headers = (('Timestamp (Local)','datetime'),'Timezone Offset','Action','Reason','Source File')
-    return data_headers, data_list, 'See source file(s) below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

@@ -20,7 +20,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.dynamite vc 5349480, com.google.android.gm vc 64361093 | 37 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 54 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 18 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.dynamite vc 5349480, com.google.android.gm vc 64361093 | 2 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 3 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 1 row",
             "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
@@ -112,7 +112,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gm vc 65800239 | 0 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.dynamite vc 5349480, com.google.android.gm vc 64361093 | 12 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 6 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.apps.dynamite vc 6281014, com.google.android.gm vc 65429598 | 2 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gm vc 65465122 | 0 rows",
             "sharon_a14": "Android 14 | com.google.android.gm vc 64719072 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gm vc 63927733 | 0 rows",
@@ -130,6 +130,7 @@ from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 from scripts.context import Context
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _us_to_utc(value):
@@ -195,7 +196,7 @@ def _parse_annotation(blob):
 
 @artifact_processor
 def get_googleChat(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):
@@ -222,17 +223,17 @@ def get_googleChat(context):
                 direction = 'Outgoing' if str(r[6]) == owner_id else 'Incoming'
             else:
                 direction = ''
-            data_list.append((_us_to_utc(r[0]), r[1], r[2], r[3]) + ann + (Context.get_relative_path(source_path), r[5], direction))
+            data_list.append((_us_to_utc(r[0]), direction, r[2], r[1], r[3]) + ann + (Context.get_relative_path(source_path), r[5]))
 
-    data_headers = (('Message Timestamp', 'datetime'), 'Group Name', 'Sender', 'Message',
+    data_headers = (('Message Timestamp', 'datetime'), 'Direction', 'Sender', 'Group Name', 'Message',
                     'Meeting Code', 'Meeting URL', 'Meeting Sender', 'Meeting Sender Profile Pic URL',
-                    'Filename', 'File Type', 'Width', 'Height', 'Source File', 'Group ID', 'Direction')
+                    'Filename', 'File Type', 'Width', 'Height', 'Source File', 'Group ID')
     return data_headers, data_list, source_path
 
 
 @artifact_processor
 def get_googleChat_groups(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):
@@ -252,7 +253,7 @@ def get_googleChat_groups(context):
 
 @artifact_processor
 def get_googleChat_drafts(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):
@@ -270,7 +271,7 @@ def get_googleChat_drafts(context):
 
 @artifact_processor
 def get_googleChat_users(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for source_path in _dbs(files_found):

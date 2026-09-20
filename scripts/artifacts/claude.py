@@ -8,8 +8,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Claude",
         "notes": "Timestamps stored as ISO 8601 combined date-time format. "
-                 "Display name is what the AI addresses the user as. "
-                 "Email address is also stored in additional XML, which does not contain any other account info.",
+                 "Display Name is reported as stored. An XML file in the app container also "
+                 "holds the email address; that file is not read by this artifact.",
         "paths": ('*/com.anthropic.claude/cache/app_start/acc_*/org_*/cache.json'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -48,10 +48,9 @@ __artifacts_v2__ = {
         "category": "Claude",
         "notes": "Join used to provide context of conversation when messages cannot be followed in order by conversation. "
                  "Timestamps stored as ISO 8601 combined date-time format and converted for LAVA. "
-                 "Images used in conversations appear to be temporary and the path folder remains empty; "
-                 "the file name is provided for context of which image was used. "
-                 "json_each is utilized where the AI is reaching out for sources; "
-                 "each reference url is provided in json as well.",
+                 "The image path folder held no files; the file name is reported as stored, and "
+                 "whether the image was retained elsewhere is not established. json_each is used "
+                 "to expand the stored reference URLs, which are reported as stored.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -80,9 +79,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Claude",
-        "notes": "Projects can include document and file uploads to each separate project. "
-                 "The user can add conversations to a project to keep context for usage. "
-                 "Project creator is stored as the full name in the profile. "
+        "notes": "Project creator is stored as the full name in the profile. "
                  "Timestamps are ISO 8601 combined date-time format.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
@@ -232,20 +229,20 @@ def claudeMessages(context):
         
         data_list.append((
             created_at,
-            record[1],
-            record[2],
             record[3],
             record[4],
-            record[5]
+            record[1],
+            record[2],
+            record[5],
         ))
         
     data_headers = (
         ('Message Created Time', 'datetime'),
-        'Message',
-        'Image File Name',
         'Sender',
         'Conversation Name',
-        'Conversation ID'
+        'Message',
+        'Image File Name',
+        'Conversation ID',
     )
     
     return data_headers, data_list, source_path

@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "SimpleStorage_applaunch": {
         "name": "SimpleStorage - App Launch",
         "description": "Parses SimpleStorage for application launch",
-        "author": "@KevinPagano3",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-13",
         "last_update_date": "2022-12-13",
         "last_updated": "2025-09-12",
@@ -59,4 +59,4 @@ def SimpleStorage_applaunch(context):
         data_list.append((time_launched,record[1],record[2], Context.get_relative_path(source_path)))
  
     data_headers = (('App Launched Timestamp','datetime'),'App Name','Launched From', 'Source File')
-    return data_headers, data_list, 'See source file(s) below'
+    return data_headers, data_list, source_path

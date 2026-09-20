@@ -27,11 +27,12 @@ import os
 
 from scripts.ilapfuncs import logfunc, artifact_processor
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 @artifact_processor
 def get_chromeBookmarks(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     # all_data is a consolidated list of all browsers with an extra column to discriminate the browser
     all_data = []
 

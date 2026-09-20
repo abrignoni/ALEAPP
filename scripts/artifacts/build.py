@@ -63,7 +63,7 @@ def get_build(context):
 
     data_list = []
     seen_labels = set()
-    source_path = ''
+    source_paths = []
 
     for file_found in files_found:
         with open(file_found, "r", encoding='utf-8', errors='replace') as f:
@@ -74,16 +74,16 @@ def get_build(context):
                     continue
                 seen_labels.add(label)
                 data_list.append((label, value))
-                if not source_path:
-                    source_path = file_found
+                if file_found not in source_paths:
+                    source_paths.append(file_found)
                 if label == 'Android Version':
                     if scripts.artifacts.artGlobals.versionf == 0:
                         scripts.artifacts.artGlobals.versionf = value
                     logfunc(f"Android version per build.props: {value}")
                 logdevinfo(f"<b>{DEVINFO_TEXT.get(label, label)}: </b>{value}")
 
-    if not source_path:
-        source_path = files_found[0]
+    if not source_paths:
+        source_paths.append(files_found[0])
 
     data_headers = ('Key', 'Value')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

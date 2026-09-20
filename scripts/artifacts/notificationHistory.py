@@ -117,12 +117,12 @@ def _xml_root(file_found, multi_root):
 def get_notificationHistory_status(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not os.path.basename(file_found).endswith('settings_secure.xml'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         user = os.path.basename(os.path.dirname(file_found))
         root = _xml_root(file_found, True)
         for setting in root.findall(".//setting"):
@@ -132,7 +132,7 @@ def get_notificationHistory_status(context):
                 data_list.append((value, user))
 
     data_headers = ('Status', 'User')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor

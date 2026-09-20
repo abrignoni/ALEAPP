@@ -49,7 +49,7 @@ def samsungTrash(context):
     """
 
     data_list = []
-    source_path = "See Source DB column"
+    source_paths = set()
     media_files = [str(path) for path in files_found if "/.Trash/" in str(path)]
 
     for file_found in files_found:
@@ -57,6 +57,7 @@ def samsungTrash(context):
         if not file_found.endswith("trash.db"):
             continue
 
+        source_paths.add(file_found)
         db_records = get_sqlite_db_records(file_found, query)
 
         # Get the media file path to show the media in the results table
@@ -110,4 +111,4 @@ def samsungTrash(context):
         "Source DB",
     )
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_Twitter": {
         "name": "twitter",
         "description": "Twitter Searches",
-        "author": "Kevin Pagano (https://startme.stark4n6.com)",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "None",

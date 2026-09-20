@@ -26,6 +26,7 @@ import struct
 from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, check_in_embedded_media
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _read_unix_time(value):
@@ -98,7 +99,7 @@ def _parse_session(values):
 
 @artifact_processor
 def get_quicksearch(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     source_path = ''
     for file_found in files_found:

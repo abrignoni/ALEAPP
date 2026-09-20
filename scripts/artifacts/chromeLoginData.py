@@ -25,11 +25,13 @@ __artifacts_v2__ = {
 import datetime
 import os
 import re
+import sqlite3
 
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def decrypt(ciphertxt, key=b"peanuts"):
@@ -69,7 +71,7 @@ def get_valid_date(d1, d2):
 
 @artifact_processor
 def get_chromeLoginData(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     all_data = []
 
     data_headers = ['Created Time', 'Username', 'Password', 'Origin URL', 'Blacklisted by User']
@@ -90,8 +92,15 @@ def get_chromeLoginData(context):
             continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
 
         db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        if db is None:
+            continue
+
+        # One unreadable database must not end the artifact: a Login Data file
+        # left with a non-empty rollback journal cannot be read through a
+        # read-only handle, because SQLite has to write to replay and clear it.
+        try:
+            cursor = db.cursor()
+            cursor.execute('''
         SELECT
         username_value,
         password_value,
@@ -106,8 +115,13 @@ def get_chromeLoginData(context):
         blacklisted_by_user
         FROM logins
         ''')
+            all_rows = cursor.fetchall()
+        except sqlite3.Error as ex:
+            logfunc(f'Unable to read {browser_name} login data in {file_found}: {ex}')
+            continue
+        finally:
+            db.close()
 
-        all_rows = cursor.fetchall()
         if len(all_rows) > 0:
             report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
@@ -124,7 +138,5 @@ def get_chromeLoginData(context):
             all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Login Data available')
-
-        db.close()
 
     return all_data_headers, all_data, report_file

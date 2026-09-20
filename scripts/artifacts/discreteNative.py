@@ -74,7 +74,7 @@ def _parse_xml(file_found):
 def get_discreteNative(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         filename = str(pathlib.Path(file_found).name)
@@ -82,7 +82,7 @@ def get_discreteNative(context):
         if not os.path.isfile(file_found):
             continue
 
-        source_path = file_found
+        source_paths.append(file_found)
         if (checkabx(file_found)):
             multi_root = False
             root = abxread(file_found, multi_root).getroot()
@@ -110,4 +110,4 @@ def get_discreteNative(context):
                     data_list.append((timestampcalc(ntattrib), ptagattrib, atagattrib, oplist(otagattrib), ndattrib, filename))
 
     data_headers = (('Timestamp', 'datetime'), 'Bundle', 'Module', 'Operation', 'Usage in Seconds', 'Source Filename')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

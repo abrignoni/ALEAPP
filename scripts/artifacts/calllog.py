@@ -17,7 +17,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 705 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 12 rows",
             "pixel7a_a14": "Android 14 | com.android.providers.contacts | 2655 rows",
-            "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 69 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 23 rows",
             "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 12 rows",
             "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 397 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.providers.contacts | 42 rows",
@@ -30,6 +30,7 @@ __artifacts_v2__ = {
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 CALL_TYPE_ICONS = {
     'Incoming': ' <i data-feather="phone-incoming" stroke="green"></i>',
@@ -44,16 +45,16 @@ CALL_TYPE_ICONS = {
 
 @artifact_processor
 def get_calllog(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('calllog.db'):
             continue
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -90,4 +91,4 @@ def get_calllog(context):
             data_list.append((call_date, row[1], row[2], call_type_html, str(row[4]), row[5], row[6], row[7], row[8], row[9], str(row[10])))
 
     data_headers = (('Call Date', 'datetime'), 'Phone Account Address', ('Partner', 'phonenumber'), 'Type', 'Duration in Secs', 'Partner Location', 'Country ISO', 'Data', 'Mime Type', 'Transcription', 'Deleted')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

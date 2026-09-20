@@ -9,7 +9,9 @@ __artifacts_v2__ = {
         "category": "Device Information",
         "notes": "Each line of the version file is split on ';' and the fields are named by position "
                  "from the observed format: first the Android version, then the codename, then the "
-                 "build version, then the country specific code. The country specific code is only "
+                 "build version, then a fourth field reported as Country Specific Code; those "
+                 "names are this parser's labels for the positions and no platform source for "
+                 "the field order is cited here. The country specific code is only "
                  "reported when a line holds exactly five fields, and a fifth field, where present, "
                  "is not reported.",
         "paths": ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),

@@ -22,7 +22,7 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.maps vc 1068347331 | 1 row",
             "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 6 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 6 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 3 rows",
         },
     },
     "get_googleMapsGmm_places": {
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "notes": ("Updated 2023-12-12 by @segumarc\n"
                   "Label is read from the sync_item key_string. The keys '0:0' and '1:0' are "
                   "rendered as 'Home' and 'Work'; that key-to-label mapping is not documented in "
-                  "the data and was established through testing. A stored label does not establish "
+                  "the data and is not sourced here. A stored label does not establish "
                   "that the address is the person's residence or workplace, only that the entry "
                   "carries that label. Any other key is reported with the label held in the "
                   "protobuf.\n"
@@ -66,6 +66,7 @@ import struct
 from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, logfunc, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _ms_to_utc(value):
@@ -93,14 +94,14 @@ def _run(source_path, sql):
 
 @artifact_processor
 def get_googleMapsGmm(context):
-    files_found = context.get_files_found()
-    source_path = ''
+    files_found = unique_files(context)
+    source_paths = []
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('gmm_storage.db'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         for row in _run(file_found, 'SELECT rowid, _data, _key_pri FROM gmm_storage_table'):
             try:
                 rowid, data, keypri = row[0], row[1], row[2]
@@ -130,19 +131,19 @@ def get_googleMapsGmm(context):
 
     data_headers = ('Directions URL', 'Latitude', 'Longitude', 'To Latitude', 'To Longitude',
                     'Row ID', 'Type')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def get_googleMapsGmm_places(context):
-    files_found = context.get_files_found()
-    source_path = ''
+    files_found = unique_files(context)
+    source_paths = []
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('gmm_myplaces.db'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         # Older gmm_myplaces.db generations have no sync_item table
         # (community report, PR #633).
         if not does_table_exist_in_db(file_found, 'sync_item'):
@@ -169,4 +170,4 @@ def get_googleMapsGmm_places(context):
             data_list.append((_ms_to_utc(row[5]), label, row[2], row[3], address, url))
 
     data_headers = (('Timestamp', 'datetime'), 'Label', 'Latitude', 'Longitude', 'Address', 'URL')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

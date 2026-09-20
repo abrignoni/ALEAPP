@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_googlePhotos": {
         "name": "Google Photos - Local Media",
         "description": "Local media indexed by Google Photos (gphotos*.db local_media)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -23,13 +23,13 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.photos vc 51079548 | 24 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.photos vc 48388495 | 336 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.photos vc 48388511 | 204 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 16 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 8 rows",
         },
     },
     "get_googlePhotos_remote": {
         "name": "Google Photos - Remote Media",
         "description": "Remote (cloud) media indexed by Google Photos (gphotos*.db remote_media)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -52,13 +52,13 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.photos vc 51079548 | 7 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.photos vc 48388495 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.photos vc 48388511 | 98 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 6 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 3 rows",
         },
     },
     "get_googlePhotos_shared": {
         "name": "Google Photos - Shared Media",
         "description": "Shared media indexed by Google Photos (gphotos*.db shared_media)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_folders": {
         "name": "Google Photos - Backup Folders",
         "description": "Folders listed in the backup_folders table (gphotos*.db)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -113,7 +113,7 @@ __artifacts_v2__ = {
     "get_googlePhotos_cache": {
         "name": "Google Photos - Cache",
         "description": "Google Photos disk/glide cache entries with cached images",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2021-04-14",
         "requirements": "none",
@@ -133,13 +133,13 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.google.android.apps.photos vc 51079548 | 43 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.photos vc 48388495 | 68 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.photos vc 48388511 | 704 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 10 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.photos vc 49358716 | 5 rows",
         },
     },
     "get_googlePhotos_trash": {
         "name": "Google Photos - Local Trash",
         "description": "Google Photos local trash entries and the trash files still present (local_trash.db)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -171,6 +171,7 @@ import os
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media, \
     does_column_exist_in_db, does_table_exist_in_db
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _str_to_utc(value):
@@ -207,9 +208,9 @@ def _find_media(files_found, key):
 
 @artifact_processor
 def get_googlePhotos(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
     for db_path in _gphotos_dbs(files_found):
         source = os.path.basename(db_path)
         folder = _col_or_blank(db_path, 'local_media', 'folder_name')
@@ -233,21 +234,21 @@ def get_googlePhotos(context):
             rows = []
         db.close()
         for r in rows:
-            source_path = db_path
+            source_paths.append(db_path)
             data_list.append((source, _str_to_utc(r[0]), r[1], r[2], _str_to_utc(r[3]), r[4], r[5], r[6],
                               r[7], r[8], r[9], r[10], r[11], r[12], _str_to_utc(r[13]), _str_to_utc(r[14])))
 
     data_headers = ('Source', ('Timestamp', 'datetime'), 'File Name', 'File Path', ('Captured Timestamp', 'datetime'),
                     'Timezone Offset (hours, truncated)', 'Width', 'Height', 'Size', 'Duration', 'Latitude', 'Longitude',
                     'Folder Name', 'Media Store ID', ('Trashed Timestamp', 'datetime'), ('Purge Timestamp', 'datetime'))
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def get_googlePhotos_remote(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
     for db_path in _gphotos_dbs(files_found):
         source = os.path.basename(db_path)
         upload = _col_or_blank(db_path, 'remote_media', 'upload_status')
@@ -269,21 +270,21 @@ def get_googlePhotos_remote(context):
             rows = []
         db.close()
         for r in rows:
-            source_path = db_path
+            source_paths.append(db_path)
             data_list.append((source, _str_to_utc(r[0]), r[1], r[2], _str_to_utc(r[3]), r[4], r[5], r[6],
                               r[7], r[8], r[9], r[10]))
 
     data_headers = ('Source', ('Timestamp', 'datetime'), 'File Name', 'Remote URL', ('Captured Timestamp', 'datetime'),
                     'Timezone Offset (hours, truncated)', 'Duration', 'Latitude', 'Longitude',
                     'Inferred Latitude', 'Inferred Longitude', 'Upload Status')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def get_googlePhotos_shared(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
     for db_path in _gphotos_dbs(files_found):
         if not does_table_exist_in_db(db_path, 'shared_media'):
             continue
@@ -301,19 +302,19 @@ def get_googlePhotos_shared(context):
             rows = []
         db.close()
         for r in rows:
-            source_path = db_path
+            source_paths.append(db_path)
             data_list.append((source, _str_to_utc(r[0]), r[1], r[2], r[3], _str_to_utc(r[4]), r[5], r[6]))
 
     data_headers = ('Source', ('Timestamp', 'datetime'), 'File Name', 'Remote URL', 'Size',
                     ('Captured Timestamp', 'datetime'), 'Timezone Offset (hours, truncated)', 'Upload Status')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def get_googlePhotos_folders(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
     for db_path in _gphotos_dbs(files_found):
         if not does_table_exist_in_db(db_path, 'backup_folders'):
             continue
@@ -332,23 +333,23 @@ def get_googlePhotos_folders(context):
             rows = []
         db.close()
         for r in rows:
-            source_path = db_path
+            source_paths.append(db_path)
             data_list.append((source, r[0], r[1], r[2]))
 
     data_headers = ('Source', 'Bucket ID', 'Folder Name', 'Folder Path')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def get_googlePhotos_cache(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.lower().endswith('disk_cache'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         try:
@@ -365,19 +366,19 @@ def get_googlePhotos_cache(context):
             data_list.append((_str_to_utc(r[0]), r[1], _find_media(files_found, r[1]), r[2], r[3]))
 
     data_headers = (('Timestamp', 'datetime'), 'Key', ('Image', 'media'), 'Size', 'Pending Deletion')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def get_googlePhotos_trash(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.lower().endswith('local_trash.db'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         msid = _col_or_blank(file_found, 'local', 'media_store_id')
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
@@ -396,4 +397,4 @@ def get_googlePhotos_trash(context):
 
     data_headers = (('Timestamp', 'datetime'), 'Local Path', 'Content URI', 'File Name', ('Image', 'media'),
                     'Is Video', 'Media Store ID')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

@@ -1,7 +1,8 @@
 __artifacts_v2__ = {
     "get_package_info": {
         "name": "package_info",
-        "description": "Represents an app",
+        "description": "Parses installed package records (name, install and update times, "
+                       "installer and code path) from the system packages.xml.",
         "author": "@ydkhatri",
         "creation_date": "2020-11-03",
         "last_update_date": "2026-07-10",
@@ -19,7 +20,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | 369 rows",
             "samsunga53_a14": "Android 14 | 486 rows",
             "sharon_a14": "Android 14 | 499 rows",
-            "samsungs20_a13": "Android 13 | 0 rows",
+            "samsungs20_a13": "Android 13 | 506 rows",
             "russell_pixel6a_a13": "Android 13 | 303 rows",
             "userb2_a13": "Android 13 | 303 rows",
         },

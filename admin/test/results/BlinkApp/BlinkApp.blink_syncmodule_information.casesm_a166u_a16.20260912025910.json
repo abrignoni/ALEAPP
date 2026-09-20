@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "module_name": "BlinkApp",
+    "artifact_name": "Blink Syncmodule Information",
+    "function_name": "blink_syncmodule_information",
+    "case_number": "casesm_a166u_a16",
+    "number_of_columns": 9,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 91,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/BlinkApp/testdata.BlinkApp.blink_syncmodule_information.casesm_a166u_a16.zip",
+    "start_time": "2026-09-12T02:59:10.273757+00:00",
+    "end_time": "2026-09-12T02:59:10.296984+00:00",
+    "run_time_seconds": 0.0006289482116699219,
+    "last_commit": {
+      "hash": "83736b2d90c0b8b7ee0d45afb44f9e35f45c941a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-11T22:50:41-04:00",
+      "message": "Blink: parse the four remaining populated tables in BlinkRoom"
+    }
+  },
+  "headers": [
+    "Created Timestamp",
+    "Updated Timestamp",
+    "Syncmodule Serial Number",
+    "Syncmodule ID",
+    "Network ID",
+    "Syncmodule Status",
+    "Local Storage Compatible",
+    "Local Storage Enabled",
+    "Local Storage Status"
+  ],
+  "data": [
+    [
+      "2025-03-31T12:04:32+00:00",
+      "2025-11-22T23:06:05+00:00",
+      "GNTTESTSYNC01",
+      2000001,
+      3000001,
+      "online",
+      1,
+      1,
+      "ACTIVE"
+    ]
+  ]
+}

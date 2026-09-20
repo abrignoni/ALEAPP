@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parse the plz_interaction table: postal code entries with timestamps and stored coordinates",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2025-09-25",
-        "last_update_date": "2026-08-04",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Meteo",
         "notes": "The 'Meteo of the city (link)' coordinates are converted from the x and y columns "
@@ -14,7 +14,8 @@ __artifacts_v2__ = {
                  "conversion formula only; it does not establish the meaning of any column "
                  "reported by this artifact. "
                  "Reference: Swisstopo-WGS84-LV03, 'wgs84_ch1903.py', "
-                 "https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/master/scripts/py/wgs84_ch1903.py",
+                 "https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/"
+                 "f1a7e0129d93647c1c11e151b95a208a53e57ce6/scripts/py/wgs84_ch1903.py",
         "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite*', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite*'),
         "output_types": "standard",
         "html_columns": ['Meteo of the city (link)', 'Recorded Coordinates'],
@@ -125,7 +126,7 @@ def coordinate_to_osm(lat, lon):
     return f"https://www.openstreetmap.org/?mlat={esc(lat)}&mlon={esc(lon)}&zoom=15"
 
 def lv03_to_osm(E, N): 
-    # based on https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/master/scripts/py/wgs84_ch1903.py
+    # based on https://github.com/ValentinMinder/Swisstopo-WGS84-LV03/blob/f1a7e0129d93647c1c11e151b95a208a53e57ce6/scripts/py/wgs84_ch1903.py
     y, x = (E-600000)/1e6, (N-200000)/1e6
     lat = (16.9023892 + (3.238272 * x)) + \
             - (0.270978 * pow(y, 2)) + \

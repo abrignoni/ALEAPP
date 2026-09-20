@@ -17,10 +17,10 @@ __artifacts_v2__ = {
         "description": "Parses Proton Drive File Information",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Proton Drive",
-        "notes": "Tested on version 2.29.1 (Nov 10th, 2025). Reference: Proton Drive Android, 'LinkDto (TYPE_FOLDER=1, TYPE_FILE=2, TYPE_ALBUM=3; STATE_DRAFT=0, ACTIVE=1, TRASHED=2, DELETED=3, RESTORING=4)', https://github.com/ProtonDriveApps/android-drive/blob/main/drive/link/data/src/main/kotlin/me/proton/core/drive/link/data/api/entity/LinkDto.kt",
+        "notes": "Tested on version 2.29.1 (Nov 10th, 2025). Reference: Proton Drive Android, 'LinkDto (TYPE_FOLDER=1, TYPE_FILE=2, TYPE_ALBUM=3; STATE_DRAFT=0, ACTIVE=1, TRASHED=2, DELETED=3, RESTORING=4)', https://github.com/ProtonDriveApps/android-drive/blob/e34735ace07f3c7da13e289d2653bd46537441e0/drive/link/data/src/main/kotlin/me/proton/core/drive/link/data/api/entity/LinkDto.kt",
         "paths": ('*/me.proton.android.drive/databases/db-drive'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "file"
@@ -55,7 +55,7 @@ def protondrive_useraccount(context):
             break
 
     if not source_path:
-        return (), [], "db-drive not found"
+        return (), [], ''
 
     query = '''
             SELECT
@@ -100,7 +100,7 @@ def protondrive_fileinfo(context):
             break
 
     if not source_path:
-        return (), [], "db-drive not found"
+        return (), [], ''
 
     query = '''
         SELECT

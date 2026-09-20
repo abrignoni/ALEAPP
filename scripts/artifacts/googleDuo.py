@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_googleDuo": {
         "name": "Google Duo - Call History",
         "description": "Google Duo / Meet call history",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-07-28",
         "last_update_date": "2026-08-10",
         "requirements": "none",
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
     "get_googleDuo_contacts": {
         "name": "Google Duo - Contacts",
         "description": "Google Duo / Meet contacts",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-07-28",
         "last_update_date": "2021-07-28",
         "requirements": "none",
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
     "get_googleDuo_notes": {
         "name": "Google Duo - Notes",
         "description": "Google Duo / Meet notes (media messages)",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-07-28",
         "last_update_date": "2026-08-10",
         "requirements": "none",

@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-from PyInstaller.utils.hooks import collect_data_files
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 # mister_skinnylegs discovers its plugins at runtime via a filesystem glob
 # (PLUGIN_PATH.glob("*_plugin.py")), so PyInstaller's import-graph analysis
@@ -12,8 +12,21 @@ a = Analysis(
     ['../../aleapp.py'],
     pathex=['../scripts/artifacts'],
     binaries=[],
-    datas=[('../', 'scripts'), *msl_plugin_datas],
+    datas=[
+        ('../', 'scripts'),
+        ('../../leapp_functions', 'leapp_functions'),
+        ('../../assets', 'assets'),
+        *msl_plugin_datas],
     hiddenimports=[
+        # Artifacts are bundled as data files and imported from disk at runtime,
+        # so PyInstaller's import-graph analysis never sees what they import.
+        # Collect the packages
+        # artifacts import wholesale; a missing submodule here is a startup
+        # crash in the frozen build only.
+        *collect_submodules('Crypto'),
+        *collect_submodules('google.protobuf'),
+        *collect_submodules('leapp_functions'),
+        *collect_submodules('PIL'),
         'bcrypt',
         'bencoding',
         'bs4',
@@ -22,8 +35,8 @@ a = Analysis(
         'fitdecode',
         'html.parser',
         'mister_skinnylegs',
-        'PIL.Image',
         'polyline',
+        'sqlcipher3',
         'uuid',
         'xmltodict',
         'zoneinfo'

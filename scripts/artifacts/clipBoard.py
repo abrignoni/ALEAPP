@@ -66,13 +66,13 @@ def clipboard(context):
                         pass
                     else:
                         media = check_in_media(file_found, name=os.path.basename(file_found)) or ''
-                        path = file_found
+                        path = context.get_relative_path(file_found)
                         modtime = os.path.getmtime(file_found)
                         modtime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modtime))
                         data_list.append((modtime, '', media, path))
                 else:
                     #print('Outside of Matching')
-                    path = file_found
+                    path = context.get_relative_path(file_found)
                     textdata = triage_text(file_found)
                     modtime = os.path.getmtime(file_found)
                     modtime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(modtime))
