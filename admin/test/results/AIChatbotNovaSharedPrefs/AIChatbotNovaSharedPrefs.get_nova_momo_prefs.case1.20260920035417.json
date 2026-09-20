@@ -1,0 +1,721 @@
+{
+  "metadata": {
+    "module_name": "AIChatbotNovaSharedPrefs",
+    "artifact_name": "Shared Preferences - Account & Usage",
+    "function_name": "get_nova_momo_prefs",
+    "case_number": "case1",
+    "number_of_columns": 3,
+    "number_of_rows": 138,
+    "total_data_size_bytes": 5579,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/AIChatbotNovaSharedPrefs/testdata.AIChatbotNovaSharedPrefs.get_nova_momo_prefs.case1.zip",
+    "start_time": "2026-09-20T03:54:17.789476+00:00",
+    "end_time": "2026-09-20T03:54:17.811767+00:00",
+    "run_time_seconds": 0.0004012584686279297,
+    "last_commit": {
+      "hash": "0cfab8434883aba1c1daa222295ca463f1c7774f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-10T09:05:12-04:00",
+      "message": "fix: carry the Nova artifacts onto the current core and house vocabulary"
+    }
+  },
+  "headers": [
+    "Category",
+    "Field",
+    "Value"
+  ],
+  "data": [
+    [
+      "Data",
+      "User Usage Right Count Media Gpt4o",
+      "1"
+    ],
+    [
+      "Data",
+      "User Installations Id",
+      "b4e2ea417e4589126e573ec9f701da2e"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Gpt51",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Mistral",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Grok",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Deepseekr1",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Gpt4",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Llama",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Grok",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Ai Filter",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Ai Filter",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media App Default Bot",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Llama2",
+      "3"
+    ],
+    [
+      "Settings",
+      "Is Conversation First Open",
+      "No"
+    ],
+    [
+      "Data",
+      "History Box Shown",
+      "10"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Gemini3",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Web Search",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Signature Generator",
+      "0"
+    ],
+    [
+      "Data",
+      "Platform Id",
+      "44f1eef31b0904d8"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Deepseek",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Gpt51",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Essayhelper",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Image Logo",
+      "0"
+    ],
+    [
+      "Settings",
+      "Did User See Ai Assistant Intro Pop Up",
+      "Yes"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Ai Filter",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Nova",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Document",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Grok",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Gpt4",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Image Logo",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Gpt4",
+      "0"
+    ],
+    [
+      "Settings",
+      "Did User See Main Page",
+      "Yes"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Tattoo Generator",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Web Search",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Image Generator",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Superbot",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Document",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Voice Token Voice Chat",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Studyplanner",
+      "1"
+    ],
+    [
+      "Settings",
+      "Did User See Tutorial",
+      "Yes"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Gemini3",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Document",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Gemini3",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Voice Chat",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Snapandsolve",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Image Tattoo",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Studyplanner",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Image Generator",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Superbot",
+      "1"
+    ],
+    [
+      "Settings",
+      "Did User Responded Image Generation First Message",
+      "Yes"
+    ],
+    [
+      "Data",
+      "User Usage Total Count",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Voice Chat",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Studyplanner",
+      "1"
+    ],
+    [
+      "Data",
+      "Successfull Chat Response",
+      "8"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Deepseekr1",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Gemini",
+      "1"
+    ],
+    [
+      "Settings",
+      "Is Main Feature Used Event Sent In Session",
+      "No"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Logo Generator",
+      "1"
+    ],
+    [
+      "Settings",
+      "Did User See Paywall V27 Animation In Session",
+      "Yes"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Voice Token Voice Chat",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Quizmaker",
+      "1"
+    ],
+    [
+      "Settings",
+      "Is Custom First Open",
+      "No"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Quizmaker",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Web Search",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Essayhelper",
+      "3"
+    ],
+    [
+      "Settings",
+      "Is Document Introduction Bottom Sheet Displayed",
+      "Yes"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Gemini",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Claude",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Deepseekr1",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Snapandsolve",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Vision",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Document",
+      "1"
+    ],
+    [
+      "Settings",
+      "Is Login Popup Needed To Show",
+      "No"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Voice Chat",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Bard",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Gemini",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Quizmaker",
+      "1"
+    ],
+    [
+      "Settings",
+      "Is Superbot Introduction Bottom Sheet Displayed",
+      "Yes"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Gpt51",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Snapandsolve",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Logo Generator",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Deepseek",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Gemini3",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Vision",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Superbot",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Tattoo Generator",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Essayhelper",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Grok",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Gpt4",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Image",
+      "1"
+    ],
+    [
+      "Settings",
+      "Is Welcome Screen Seen Event Sent",
+      "Yes"
+    ],
+    [
+      "Data",
+      "User Usage Right Count App Default",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Mistral",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Llama",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Signature Generator",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Bard",
+      "3"
+    ],
+    [
+      "Data",
+      "Fcm Token",
+      "cn75IpNAQ1unUG-OyHskBJ:APA91bGG9YpjQ2GNHTPKHxjMnD1gEzSWVI8evHhav5Jh2b5kZoPOOVzdewPYvc8LPXB0eAk-DdOmqo7FiDg9Zrae61GwUr5u0AF0Bh2e-lAaklzCavzL8P4"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Signature Generator",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Voice Chat",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Vision",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Quizmaker",
+      "3"
+    ],
+    [
+      "Data",
+      "User Authentication Id",
+      "vYMIuoMky3hfdXOvmjPJvUsrt2o1"
+    ],
+    [
+      "Settings",
+      "Did Paywall Seen",
+      "Yes"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Bard",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Snapandsolve",
+      "1"
+    ],
+    [
+      "Settings",
+      "Did User See Nomination Pop Up",
+      "No"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Web Search",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Claude",
+      "0"
+    ],
+    [
+      "Settings",
+      "Is Purchaser Main Feature Used Event Sent In Session",
+      "No"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media App Default Bot",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Bard",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Superbot",
+      "1"
+    ],
+    [
+      "Settings",
+      "Is Premium Via Native Purchase",
+      "No"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Deepseek",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Image",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Ai Filter",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Mistral",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Deepseek",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Mistral",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Essayhelper",
+      "1"
+    ],
+    [
+      "Account",
+      "Email",
+      "user@example.com"
+    ],
+    [
+      "Account",
+      "Name",
+      "Test User"
+    ],
+    [
+      "Account",
+      "UID",
+      "test_user_id_1234567890"
+    ],
+    [
+      "Account",
+      "Provider",
+      "google.com"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Vision",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Studyplanner",
+      "3"
+    ],
+    [
+      "Data",
+      "Session Count",
+      "21"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Llama2",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Deepseekr1",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Gemini",
+      "3"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Image Tattoo",
+      "0"
+    ],
+    [
+      "Data",
+      "User Usage Right Count Media Signature Generator",
+      "0"
+    ],
+    [
+      "Settings",
+      "Is Sign In Flow Activated",
+      "No"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Gpt4o",
+      "1"
+    ],
+    [
+      "Data",
+      "User Usage Total Count Media Gpt51",
+      "0"
+    ]
+  ]
+}
