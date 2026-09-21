@@ -84,6 +84,12 @@ F2FS, HFS+, APFS, QNX6, QNX4, ETFS, EFS and QNX IFS volumes are searched directl
 only the files an artifact asks for are read out of the image. The GUI picks
 `raw` on its own for those extensions. See `admin/docs/raw_image_input.md`.
 
+`tar` also reads an xz-compressed tar (`.tar.xz`), and the GUI picks `tar` for that
+extension. A compressed tar, `.tar.gz` included, is read much more slowly than a plain one:
+each time a file earlier in the archive is needed, the reader decompresses from the start
+again. For a large extraction, decompress it first (`xz -dk` or `gunzip -k`) and give the
+tool the `.tar`.
+
 ### GUI
 
 ```
