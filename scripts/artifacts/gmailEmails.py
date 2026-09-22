@@ -14,8 +14,9 @@ __artifacts_v2__ = {
                  "Authentication-Results. Message is the readable text extracted from the stored "
                  "HTML body (tags, styling and repeated whitespace removed). Each link's place in "
                  "the text is marked [n], and Links lists the link targets by those numbers, as "
-                 "stored; a repeated target keeps its first number, and a marker with no text "
-                 "beside it is a link that carried none, such as a linked image. The "
+                 "stored; a repeated target keeps its first number. A link with no words of its "
+                 "own, such as a linked image, still gets a marker, so the words just before a "
+                 "marker are not always the link's text. The "
                  "unmodified body stays in the source database. The app keeps one "
                  "bigTopDataDB.<id> store per signed-in account; every matched store is read, "
                  "across every Android user of the device, with duplicate storage spellings "
@@ -130,8 +131,9 @@ def body_text_and_links(html_body):
     Tags are dropped and whitespace runs (including the zero-width padding marketing
     mail hides its preheader behind) collapse to one space. Each link's place in the
     text is marked [n], and the second value lists the targets by those numbers, as
-    stored. A repeated target keeps its first number, and a marker with no text beside
-    it is a link that carried none, such as a linked image."""
+    stored. A repeated target keeps its first number. A link with no words of its own,
+    such as a linked image, still gets a marker, so the words just before a marker are
+    not always the link's text."""
     if not html_body:
         return '', ''
     soup = BeautifulSoup(html_body, 'html.parser')
