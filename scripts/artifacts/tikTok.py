@@ -3,23 +3,40 @@ __artifacts_v2__ = {
         "name": "TikTok - Messages",
         "description": "Parses TikTok direct messages (timestamp, user, nickname, message, "
                        "links, read state and conversation) from the TikTok IM databases, "
-                       "covering the per-account _im.db files found.",
+                       "covering each <uid>_im.db file found.",
         "author": "@abrignoni",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-09-12",
         "requirements": "none",
         "category": "TikTok",
-        "notes": "One _im.db exists per logged-in account, named <account uid>_im.db, and "
-                 "all of them are parsed; the Account ID column carries each file's uid and "
-                 "messages whose sender equals it are marked Outgoing.\n"
-                 "Every msg row is reported. The Message, link and sticker columns are "
-                 "filled only when the row's content field holds JSON; rows whose content "
-                 "is not JSON report the SQL columns alone, with Message Type and Deleted "
-                 "as stored since no source for those integers was verified.\n"
+        "notes": "Every database named <uid>_im.db is parsed, including those named "
+                 "biz_2_<uid>_im.db. The Account ID column carries the uid from the file "
+                 "name, and messages whose sender equals it are marked Outgoing. On the "
+                 "tested images every database holding messages was named for a uid listed "
+                 "in logged_in_uid_list in aweme_user.xml. Two tested images also held "
+                 "another <uid>_im.db and a biz_2_<uid>_im.db, both without messages, named "
+                 "for a uid that logged_in_uid_list does not contain.\n"
+                 "Every msg row is reported when the msg table has every column this "
+                 "artifact selects, which held on every tested image. The Message, "
+                 "Link GIF Name and Link GIF URL columns are filled only when the row's "
+                 "content field holds JSON; rows whose content is not JSON report the SQL "
+                 "columns alone, with Message Type and Deleted as stored since no source "
+                 "for those integers was verified.\n"
                  "Sender names are resolved against SIMPLE_USER in db_im_xx and "
                  "IM_USER_BASE_INFO in the db_im_contact databases, where present. A sender "
-                 "in neither store shows a bare UID.",
-        "paths": ('*_im.db*', '*db_im_xx*', '*db_im_contact*'),
+                 "in neither store shows a bare UID.\n"
+                 "Path patterns are anchored to the TikTok package names, "
+                 "com.zhiliaoapp.musically and com.ss.android.ugc.trill; only the former "
+                 "appears in the registered corpora. Another app can keep IM databases "
+                 "whose names match the same file patterns (observed with Lemon8, "
+                 "com.bd.nproject, on one tested image); the package anchor keeps those "
+                 "files out of this artifact.",
+        "paths": ('*/com.zhiliaoapp.musically/*_im.db*',
+                  '*/com.zhiliaoapp.musically/*db_im_xx*',
+                  '*/com.zhiliaoapp.musically/*db_im_contact*',
+                  '*/com.ss.android.ugc.trill/*_im.db*',
+                  '*/com.ss.android.ugc.trill/*db_im_xx*',
+                  '*/com.ss.android.ugc.trill/*db_im_contact*'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
@@ -35,7 +52,9 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 0 rows",
             "sharon_a13": "Android 13 | 0 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 0 rows",
-            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.zhiliaoapp.musically present without IM "
+                              "databases; a Lemon8 (com.bd.nproject) _im.db is outside "
+                              "the anchored paths | 0 rows",
         },
         "data_views": {
             "conversation": {
@@ -54,17 +73,27 @@ __artifacts_v2__ = {
                        "status) from the TikTok IM databases.",
         "author": "@abrignoni",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-09-12",
         "requirements": "none",
         "category": "TikTok",
         "notes": "Contacts come from IM_USER_BASE_INFO in the db_im_contact databases and "
                  "from SIMPLE_USER in db_im_xx. A UID present in more than one store is "
-                 "reported once, from the first store that carries it, with "
+                 "reported once, from the first store that returns it, with "
                  "IM_USER_BASE_INFO preferred since it also records an update timestamp. "
                  "Update Time, Blocked and Deleted are only available from "
                  "IM_USER_BASE_INFO; Blocked and Deleted are reported as stored since no "
-                 "source for those integers was verified.",
-        "paths": ('*db_im_xx*', '*db_im_contact*'),
+                 "source for those integers was verified. IM_USER_BASE_INFO rows are "
+                 "reported only when that table has every column this artifact selects; "
+                 "on three tested images it lacked a DELETED column, so none of its rows "
+                 "were reported and the rows shown came from SIMPLE_USER alone.\n"
+                 "Path patterns are anchored to the TikTok package names, "
+                 "com.zhiliaoapp.musically and com.ss.android.ugc.trill; only the former "
+                 "appears in the registered corpora, and files under any other package "
+                 "name are not read.",
+        "paths": ('*/com.zhiliaoapp.musically/*db_im_xx*',
+                  '*/com.zhiliaoapp.musically/*db_im_contact*',
+                  '*/com.ss.android.ugc.trill/*db_im_xx*',
+                  '*/com.ss.android.ugc.trill/*db_im_contact*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
         "sample_data": {
@@ -80,7 +109,8 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | com.zhiliaoapp.musically vc 2023705030 | 2 rows",
             "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 2 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 1 row",
-            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 0 rows",
+            "samsunga53_a14": "Android 14 | com.zhiliaoapp.musically present without IM "
+                              "contact stores | 0 rows",
         },
     },
     "get_tikTok_app_open": {
@@ -94,8 +124,8 @@ __artifacts_v2__ = {
         "category": "TikTok",
         "notes": "Hu and Karabiyik describe TIKTOK.db as keeping track of the timestamps "
                  "for each instance the app is opened. On the tested image every open_time "
-                 "value fell exactly on a local midnight, so that build appears to record "
-                 "at day rather than moment granularity; the value is reported as stored. "
+                 "value fell exactly on a local midnight; the value is reported as stored and "
+                 "its granularity is not established. "
                  "Reference: Xiao Hu and Umit Karabiyik, 'Shopping while Watching: An "
                  "Updated Forensic Analysis of TikTok on Android and iOS', ISNCC 2024, "
                  "https://doi.org/10.1109/ISNCC62547.2024.10759027",
@@ -150,7 +180,7 @@ __artifacts_v2__ = {
             "sharon_a13": "Android 13 | 60 rows",
             "pixel3_a12": "Android 12 | 49 rows",
             "pixel3_a11": "Android 11 | 48 rows (schema lacks the timestamp columns)",
-            "samsunga53_a14": "Android 14 | com.bd.nproject vc 100203 | 12 rows",
+            "samsunga53_a14": "Android 14 | com.zhiliaoapp.musically | 12 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 5 rows",
         },
     },
@@ -311,24 +341,26 @@ def _json_field(content, *path):
 
 
 def _name_map(context):
-    '''UID to (unique id, nickname) from every contact store found.'''
+    '''UID to (unique id, nickname), and the contact stores read to build it.'''
     names = {}
+    stores = []
     for table, path in _contact_sources(context):
+        stores.append(path)
         for uid, unique_id, nickname in _rows(
                 path, f'SELECT UID, UNIQUE_ID, NICK_NAME FROM {table}'):
             if uid is not None and uid not in names:
                 names[uid] = (unique_id or '', nickname or '')
-    return names
+    return names, stores
 
 
 @artifact_processor
 def get_tikTok(context):
     data_list = []
-    source_path = ''
-    names = _name_map(context)
+    source_paths = []
+    names, name_stores = _name_map(context)
 
     for account_uid, maindb in _account_dbs(context):
-        source_path = source_path or maindb
+        source_paths.append(maindb)
         source_file = context.get_relative_path(maindb)
         for (created, sender, content, message_type, deleted, read_status,
              conversation_id) in _rows(maindb, '''
@@ -381,17 +413,17 @@ def get_tikTok(context):
         'Account ID',
         'Source File',
     )
-    return data_headers, data_list, source_path or 'see Source File column'
+    return data_headers, data_list, '\n'.join(source_paths + name_stores)
 
 
 @artifact_processor
 def get_tikTok_contacts(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     seen = set()
 
     for table, path in _contact_sources(context):
-        source_path = source_path or path
+        source_paths.append(path)
         source_file = context.get_relative_path(path)
         if table == 'IM_USER_BASE_INFO':
             sql = '''SELECT UID, NICK_NAME, UNIQUE_ID, INITIAL_LETTER, AVATAR_THUMB,
@@ -414,7 +446,7 @@ def get_tikTok_contacts(context):
     data_headers = (('Update Time', 'datetime'), 'UID', 'Nickname', 'Unique ID',
                     'Initial Letter', 'Avatar URL', 'Follow Status', 'Blocked (as stored)',
                     'Deleted (as stored)', 'Source File')
-    return data_headers, data_list, source_path or 'see Source File column'
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 def _account_json_rows(entry_name, text, source_file):

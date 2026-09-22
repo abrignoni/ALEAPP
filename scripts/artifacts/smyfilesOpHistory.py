@@ -10,10 +10,11 @@ __artifacts_v2__ = {
         "category": "My Files",
         "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown "
                  "characters will be replaced with '?'. The substitution table used to turn the stored "
-                 "item paths into cleartext was established through testing, not from app or vendor "
-                 "documentation. Columns of operation_history are read by position over "
-                 "'Select * from operation_history'; that mapping was likewise established against the "
-                 "Android 10-12 versions above and may not hold on other versions. The operation date "
+                 "item paths into cleartext is not from app or vendor documentation and no "
+                 "source for it is cited; characters outside it are replaced with '?'. Columns "
+                 "of operation_history are read by position over 'Select * from "
+                 "operation_history'; that positional mapping is not established for versions "
+                 "other than the Android 10-12 ones above. The operation date "
                  "is reported exactly as stored; the timezone it is recorded in has not been verified.",
         "paths": ('*/com.sec.android.app.myfiles/databases/OperationHistory.db*',),
         "output_types": ['html', 'tsv', 'lava'],

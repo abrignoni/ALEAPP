@@ -26,10 +26,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Facebook",
         "notes": "This is the app's own contacts store and is separate from the msys mailbox "
-                 "contacts reported by the Facebook Messenger artifacts. The store is populated "
-                 "by a server sync, so a row records a contact the app held for this account "
-                 "rather than one entered on the device. The companion Contact Sync artifact "
-                 "reports when that sync last ran.",
+                 "contacts reported by the Facebook Messenger artifacts. A row records a contact "
+                 "the app held for this account; it does not establish that the contact was "
+                 "entered on the device. The companion Contact Sync artifact reports the sync "
+                 "times the store recorded.",
         "paths": ('*/com.facebook.katana/databases/*android_facebook_contacts_db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -108,9 +108,10 @@ __artifacts_v2__ = {
         "category": "Facebook",
         "notes": "The table holds cache bookkeeping, not story content: there is no author or "
                  "message column, and this artifact reports the keys and state the app stored. "
-                 "The rows are server-supplied feed items the app downloaded, so their presence "
-                 "does not establish that the user viewed them. seen_state and image_seen_state "
-                 "are the app's own record of that and are reported as stored; on sharon_a13 "
+                 "The rows are feed items the app cached, so their presence does not establish "
+                 "that the user viewed them. seen_state and image_seen_state are reported as "
+                 "stored and their meaning beyond the column name is not established; on "
+                 "sharon_a13 "
                  "seen_state was 0 on 67 rows and 1 on 19. fetched_at is Unix "
                  "milliseconds, converted at this call site. Media Count is the number of "
                  "home_stories_media rows sharing the story's dedup_key.",
@@ -147,8 +148,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-20",
         "requirements": "none",
         "category": "Facebook",
-        "notes": "This is a bootstrap list the app fetched so it can offer suggestions while "
-                 "the user types a mention. A row records an entity the app held for this "
+        "notes": "This is the list held in the mentions_entities table of the app's search "
+                 "bootstrap database. A row records an entity the app held for this "
                  "account; it is not a record that the user searched for, mentioned or "
                  "interacted with that entity. type and friendship_status are reported as "
                  "stored. On sharon_a13 the 182 rows were 181 of type User and 1 of type "
@@ -193,7 +194,8 @@ __artifacts_v2__ = {
                  "as epoch seconds. The start_event and end_event integers are reported as "
                  "stored; nothing in the extraction maps them. The user id in the User ID "
                  "column is taken from the database file name. An interval is a record the app "
-                 "wrote about its own foreground time; this artifact does not interpret what "
+                 "wrote in its time_in_app store; what it measures beyond the table and column "
+                 "names is not established, and this artifact does not interpret what "
                  "activity occurred within it. The store has the same shape as the Instagram "
                  "one read by instagramTimeInApp.",
         "paths": ('*/com.facebook.katana/databases/time_in_app_*.db*',),
@@ -244,7 +246,7 @@ __artifacts_v2__ = {
             "pixel3_a12": "Android 12 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | 0 rows",
             "s20fe_a13": "Android 13 | 75 rows",
-            "samsungs20_a13": "Android 13 | 216 rows",
+            "samsungs20_a13": "Android 13 | 1128 rows",
             "sharon_a13": "Android 13 | 896 rows",
             "userb2_a13": "Android 13 | 0 rows",
             "pixel7a_a14": "Android 14 | 0 rows",
@@ -275,9 +277,18 @@ def _rows(source_path, sql, params=()):
         return []
 
 
+# The globs end in * so the seeker stages each database's sidecars alongside it, which is
+# what lets SQLite apply a write ahead log on open. The artifact itself must not treat one
+# as a database: opening it fails, and the failure is silent because the path still lands
+# in source_path, which is what the report prints as the row's location.
+_SIDECARS = ('-journal', '-wal', '-shm')
+
+
 def _matching(context, pattern):
-    """Files whose base name matches, with duplicate storage views removed."""
-    return [p for p in unique_files(context) if re.search(pattern, os.path.basename(str(p)))]
+    """Databases whose base name matches, with duplicate storage views and sidecars removed."""
+    return [p for p in unique_files(context)
+            if not str(p).endswith(_SIDECARS)
+            and re.search(pattern, os.path.basename(str(p)))]
 
 
 def _unix_seconds(value):
@@ -301,9 +312,9 @@ def _unix_millis(value):
 @artifact_processor
 def facebookAppContacts(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'android_facebook_contacts_db$'):
-        source_path = path
+        source_paths.append(str(path))
         for row in _rows(path, '''
                 SELECT contact_id, fbid, display_name, first_name, last_name,
                        small_picture_url, big_picture_url
@@ -312,15 +323,15 @@ def facebookAppContacts(context):
             data_list.append((row[1], row[2], row[3], row[4], row[0], row[5], row[6]))
     data_headers = ('Facebook ID', 'Display Name', 'First Name', 'Last Name', 'Contact ID',
                     'Small Picture URL', 'Big Picture URL')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppContactSync(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'android_facebook_contacts_db$'):
-        source_path = path
+        source_paths.append(str(path))
         for key, value in _rows(path, 'SELECT key, value FROM contacts_db_properties'):
             converted = ''
             if isinstance(key, str) and key.endswith('_time_ms'):
@@ -339,15 +350,15 @@ def facebookAppContactSync(context):
             data_list.append(('', 'Upload Snapshot', f'local_contact_id {local_id}',
                               f'{contact_hash} / {extra_hash}'))
     data_headers = (('Converted Value', 'datetime'), 'Record Type', 'Key', 'Stored Value')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppFeedCache(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'android_facebook_newsfeed_db$'):
-        source_path = path
+        source_paths.append(str(path))
         media = {}
         for dedup_key, count in _rows(path, '''
                 SELECT dedup_key, COUNT(*) FROM home_stories_media GROUP BY dedup_key'''):
@@ -362,15 +373,15 @@ def facebookAppFeedCache(context):
     data_headers = (('Fetched At', 'datetime'), 'Feed Type', 'Seen State (as stored)',
                     'Image Seen State (as stored)', 'Media Count', 'Dedup Key', 'Sort Key',
                     'Ranking Weight', 'Cursor')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppMentionEntities(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'search_bootstrap_db'):
-        source_path = path
+        source_paths.append(str(path))
         for row in _rows(path, '''
                 SELECT fbid, name, subtext, type, friendship_status, profile_picture_uri
                 FROM mentions_entities
@@ -378,15 +389,15 @@ def facebookAppMentionEntities(context):
             data_list.append((row[0], row[1], row[2], row[3], row[4], row[5]))
     data_headers = ('Facebook ID', 'Name', 'Subtext', 'Type (as stored)',
                     'Friendship Status (as stored)', 'Profile Picture URI')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppTimeInApp(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'^time_in_app_\d+\.db$'):
-        source_path = path
+        source_paths.append(str(path))
         match = re.fullmatch(r'time_in_app_(\d+)\.db', os.path.basename(str(path)))
         user_id = match.group(1) if match else ''
         for start_wall, end_wall, start_event, end_event, seq in _rows(path, '''
@@ -398,17 +409,17 @@ def facebookAppTimeInApp(context):
     data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'),
                     'Start Event (as stored)', 'End Event (as stored)', 'Sequence Number',
                     'User ID')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def facebookAppPreferences(context):
     data_list = []
-    source_path = ''
+    source_paths = []
     for path in _matching(context, r'^prefs_db$'):
-        source_path = path
+        source_paths.append(str(path))
         for key, value, stored_type in _rows(path, '''
                 SELECT key, value, type FROM preferences ORDER BY key'''):
             data_list.append((key, value, stored_type))
     data_headers = ('Key', 'Value', 'Type (as stored)')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

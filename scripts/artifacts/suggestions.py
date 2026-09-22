@@ -15,7 +15,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.settings.intelligence vc 1000282241 | 2 rows",
             "pixel7a_a14": "Android 14 | com.google.android.settings.intelligence vc 1000230247 | 3 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.settings.intelligence vc 1000217934 | 5 rows",
-            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 6 rows",
+            "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 3 rows",
         },
     }
 }
@@ -57,13 +57,13 @@ def get_suggestions(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('suggestions.xml'):
             continue  # Skip all other files
 
-        source_path = file_found
+        source_paths.append(file_found)
         root = _parse_xml(file_found)
         for elem in root:
             item = elem.attrib
@@ -72,4 +72,4 @@ def get_suggestions(context):
                 data_list.append((timestamp, item['name']))
 
     data_headers = (('Timestamp', 'datetime'), 'Name')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

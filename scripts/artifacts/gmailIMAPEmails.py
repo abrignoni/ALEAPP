@@ -92,6 +92,7 @@ def gmailIMAPEmails(context):
     emailProviderDB_found = []
 
     data_list = []
+    source_paths = set()
 
     bodyTxt_list = []
     bodyHtml_list = []
@@ -140,6 +141,7 @@ def gmailIMAPEmails(context):
             ''')
 
             all_rows = cursor.fetchall()
+            source_paths.add(emailProviderDB)
             for row in all_rows:
                 row = list(row)
                 try:
@@ -232,13 +234,14 @@ def gmailIMAPEmails(context):
             db.close()
 
     data_headers = (('Timestamp','datetime'),'Account','Account ID','_id','Snippet', 'Body(TXT)', 'Body(HTML)', 'Links', 'Recipient','Reply To','Subject Line','From','Display Name', 'Read', 'AttachmentFlag', ('Attachments', 'media'), 'Mailbox Folder', 'Source File')
-    return data_headers, data_list, 'See source file(s) below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 @artifact_processor
 def gmailIMAPAccounts(context):
     emailProviderDB_found = []
 
     data_list = []
+    source_paths = set()
 
     for file_found in unique_files(context):
         file_found = str(file_found)
@@ -267,6 +270,7 @@ def gmailIMAPAccounts(context):
             ''')
 
             all_rows = cursor.fetchall()
+            source_paths.add(emailProviderDB)
             for row in all_rows:
                 row = list(row)
 
@@ -279,4 +283,4 @@ def gmailIMAPAccounts(context):
             db.close()
 
     data_headers = ('_id', 'displayName', 'emailAddress', 'senderName', 'login','password','address','port', 'Source File')
-    return data_headers, data_list, 'See source file(s) below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

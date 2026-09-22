@@ -18,18 +18,64 @@ __artifacts_v2__ = {
     },
     "get_snapchat_friends": {
         "name": "Snapchat - Friends",
-        "description": "Snapchat friends / contacts",
-        "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
-        "requirements": "none", "category": "Snapchat", "notes": "",
+        "description": "Users the Snapchat account added, from Friend rows in main.db whose addedTimestamp "
+                       "is above 0, with the time each one added the account where recorded.",
+        "author": "@A-725-K, @AlexisBrignoni, Claude",
+        "creation_date": "2021-11-10", "last_update_date": "2026-09-21",
+        "requirements": "none", "category": "Snapchat",
+        "notes": "main.db (com.snapchat.android/databases/) holds a Friend table that is not a friends "
+                 "list. On the 8 tested images whose Friend table held rows, 2,441 of the 2,487 rows had "
+                 "no addedTimestamp, including 561 of the 564 users the app lists in its SuggestedFriend "
+                 "table. Rows here are the Friend entries whose addedTimestamp is above 0, 12 on those "
+                 "images.\n"
+                 "The schema's own comments define addedTimestamp as the time the 'FROM user' added the "
+                 "'TO user' and reverseAddedTimestamp as the time the 'TO user' added the 'FROM user'. "
+                 "All 22 rows the app lists in its FriendWhoAddedMe table had a reverseAddedTimestamp "
+                 "above 0, including the 12 whose addedTimestamp was 0, so the account is the 'FROM "
+                 "user': Added Timestamp is when the account added the user, and Reverse Added "
+                 "Timestamp, blank when 0, is when that user added the account. That table's own added "
+                 "column was 0 on those 12 rows and 1 on the other 10, each of which had an "
+                 "addedTimestamp above 0. Of the 12 reported rows, 10 had a reverseAddedTimestamp above "
+                 "0.\n"
+                 "Versions of this artifact before 2026-09-21 selected rows whose addedTimestamp was not "
+                 "NULL, which also admitted the 34 rows where it was 0: the account's own row on each of "
+                 "the 8 images (the row whose userId is key_user_id in user_session_shared_pref.xml), "
+                 "teamsnapchat (7), snapchatai (6), and 13 users whose reverseAddedTimestamp was above "
+                 "0. Reports from versions since 2022-06-13 show those rows with an empty Added "
+                 "Timestamp.\n"
+                 "Friend Link Type (as stored) is friendLinkType. The app's own view "
+                 "DiscoverFeedFriendStoriesViewV2, present in all 10 tested main.db files, keeps a "
+                 "friend story when the poster's friendLinkType is 0 (or is NULL and the story has a "
+                 "rankingId), under the comment 'Only show MUTUAL friends', and the same comment says "
+                 "friend stories 'could include OUTGOING|FOLLOWING friends'. No source for the value of "
+                 "any other type was found. friendLinkType was 0 on the 10 reported rows whose "
+                 "reverseAddedTimestamp was above 0. The other 2 reported rows had a "
+                 "reverseAddedTimestamp of 0; one held 1 and the other held 0, the value the view treats "
+                 "as mutual, while its reverseAddedTimestamp records no add; which of the two is current "
+                 "is not established. friendLinkType was also 0 on the account's own row and on the "
+                 "teamsnapchat and snapchatai rows, whose addedTimestamp was 0.\n"
+                 "Birthday is reported as stored and was empty on 4 of the 12 reported rows; the "
+                 "schema's comment describes it as a long consisting of two integers representing the "
+                 "month and day. Phone Nr was empty on all 2,487 Friend rows of the tested images.\n"
+                 "One main.db is read per run, the first the search returns, so when a device holds the "
+                 "app's store for more than one Android user, only one of them is read. Of the 42 "
+                 "registered Android corpora, 10 carry the file, all for Android user 0; the two "
+                 "carrying it under more than one path held byte-identical copies, and on two others its "
+                 "Friend table was empty. The declared tcspahn.db path matched no file on any of them, "
+                 "so that store is unexercised.",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
         "output_types": "standard", "artifact_icon": "users",
         "sample_data": {
-            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 4 rows",
-            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 0 rows",
-            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 4 rows",
-            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows",
-            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 6 rows",
-            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 5 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.snapchat.android vc 295722 | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | com.snapchat.android vc 302522 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | com.snapchat.android vc 238022 | 0 rows (Friend table empty)",
+            "pixel3_a11": "Android 11 | com.snapchat.android vc 2110 | 2 rows",
+            "pixel3_a12": "Android 12 | com.snapchat.android vc 84535 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.snapchat.android vc 147872 | 1 row",
+            "russell_a14": "Android 14 | com.snapchat.android vc 153422 | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.snapchat.android vc 101539 | 1 row",
+            "samsungs20_a13": "Android 13 | com.snapchat.android vc 260222 | 0 rows (Friend table empty)",
+            "sharon_a14": "Android 14 | com.snapchat.android vc 151972 | 3 rows",
         },
     },
     "get_snapchat_messages": {
@@ -102,8 +148,9 @@ __artifacts_v2__ = {
                  "files/native_content_manager/com.snap.file_manager_*_SCContent_*/. A message "
                  "may render both a full snap and its thumbnail. The bytes are read from disk "
                  "as stored: on the tested image they were unencrypted MP4 and JPEG. A media "
-                 "message whose local copy is absent (evicted or never downloaded) reports a "
-                 "blank Media cell rather than being dropped. See the Snapchat - Chat Media "
+                 "message whose local copy is absent reports a blank Media cell rather than "
+                 "being dropped; why the copy is absent is not established. See the Snapchat - "
+                 "Chat Media "
                  "artifact for the file-centric view including orphans.\n"
                  "Limits. WAL frames are not parsed, so a message absent here is not evidence it "
                  "did not exist: a development-only frame parser read a further 29 rows across 10 "
@@ -223,14 +270,14 @@ __artifacts_v2__ = {
         "requirements": "blackboxprotobuf", "category": "Snapchat",
         "notes": "Rows come from CACHE_FILE_CLAIM in "
                  "databases/native_content_manager/cache_controller.db, limited to the "
-                 "chat_snap, snap and chat_media_thumbnail external-key prefixes; the rest "
-                 "of that store is lens, bitmoji and UI assets. Each claim's CACHE_KEY is "
-                 "the file name under "
+                 "chat_snap, snap and chat_media_thumbnail external-key prefixes; on the tested "
+                 "image the rest of that store held lens, bitmoji and UI assets. Each claim's "
+                 "CACHE_KEY is the file name under "
                  "files/native_content_manager/com.snap.file_manager_*_SCContent_*/, and the "
                  "Media column renders that file when it is present. The bytes are read as "
-                 "stored: on the tested image the files were unencrypted MP4 and JPEG.\n"
-                 "A claim whose file is not on disk is still reported, with an empty Media "
-                 "cell and On Disk set to NO, so evicted or server-only media is visible "
+                 "stored: on the tested image the files were unencrypted MP4 and JPEG.\nA claim "
+                 "whose file is not on disk is still reported, with an empty Media cell and On "
+                 "Disk set to NO, so a claim whose file is absent is visible "
                  "rather than dropped. The Conversation ID and Client Message ID columns are "
                  "filled when the media key is found inside a conversation_message protobuf "
                  "in arroyo.db; a claim referenced by no surviving message leaves them "
@@ -517,13 +564,18 @@ def get_snapchat_feeds(context):
 def get_snapchat_friends(context):
     files_found = context.get_files_found()
     source_path = _find(files_found, 'main.db', 'tcspahn.db')
-    rows = _rows(source_path, '''
-        SELECT addedTimestamp, username, userId, displayName, phone, birthday
-        FROM Friend WHERE addedTimestamp IS NOT NULL
-    ''')
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5]) for r in rows]
-    data_headers = (('Added Timestamp', 'datetime'), 'Username', 'User ID', 'Display Name',
-                    'Phone Nr', 'Birthday')
+    # addedTimestamp is 0 rather than NULL on some rows the account never added (its own row
+    # among them), so the test is > 0, not IS NOT NULL.
+    rows = _rows(source_path, _tolerant_select(
+        source_path, 'Friend',
+        ('addedTimestamp', 'reverseAddedTimestamp', 'username', 'userId', 'displayName',
+         'phone', 'birthday', 'friendLinkType'),
+        'WHERE addedTimestamp > 0'))
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5], r[6], r[7])
+                 for r in rows]
+    data_headers = (('Added Timestamp', 'datetime'), ('Reverse Added Timestamp', 'datetime'),
+                    'Username', 'User ID', 'Display Name', 'Phone Nr', 'Birthday',
+                    'Friend Link Type (as stored)')
     return data_headers, data_list, source_path
 
 

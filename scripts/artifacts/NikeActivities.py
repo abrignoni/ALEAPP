@@ -12,7 +12,7 @@ __artifacts_v2__ = {
                  "same names the Nike - Activity Route artifact selects, so a schema change fails "
                  "instead of relabelling another column. The value reported under 'Source', and the "
                  "columns read from activity_tag and activity_summary, are still read by position; "
-                 "that mapping was established against the app version this parser was written for "
+                 "that mapping was written against one app version, which is not recorded here, "
                  "and may not hold on other versions.",
         "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
         "output_types": "standard",

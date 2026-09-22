@@ -14,11 +14,11 @@ __artifacts_v2__ = {
         "sample_data": {
             "galaxys10_a10": "Android 10 | com.google.android.gsf | 13 rows",
             "pixel7a_a14": "Android 14 | com.google.android.gsf | 18 rows",
-            "samsunga53_a14": "Android 14 | com.google.android.gsf | 57 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gsf | 19 rows",
             "samsungs20_a13": "Android 13 | com.google.android.gsf | 33 rows",
             "sharon_a14": "Android 14 | com.google.android.gsf | 18 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.gsf | 30 rows",
-            "userb2_a13": "Android 13 | com.google.android.gsf | 36 rows",
+            "userb2_a13": "Android 13 | com.google.android.gsf | 18 rows",
         },
     }
 }
@@ -32,13 +32,13 @@ def get_pSettings(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('googlesettings.db'):
             continue
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         cursor.execute('''
@@ -52,4 +52,4 @@ def get_pSettings(context):
             data_list.append((row[0], row[1]))
 
     data_headers = ('Name', 'Value')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

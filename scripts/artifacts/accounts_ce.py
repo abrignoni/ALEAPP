@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "accounts_ce": {
         "name": "Accounts_ce",
-        "description": "Application accounts used on the device",
+        "description": "Application accounts recorded in accounts_ce.db",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-03-02",
         "last_update_date": "2025-03-14",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
     },
     "accounts_ce_authtokens": {
         "name": "Authentication tokens",
-        "description": "Application accounts that use authentication tokens.",
+        "description": "Authentication tokens recorded per account in accounts_ce.db.",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-03-04",
         "last_update_date": "2025-03-14",

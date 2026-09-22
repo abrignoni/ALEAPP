@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_rdd_wifi": {
         "name": "VerizonRDD-WIFI",
-        "description": "Module Description: Parses Verizon RDD Wifi Data",
+        "description": "Parses Verizon RDD Wifi Data",
         "author": "John Hyla",
         "creation_date": "2023-07-07",
         "last_update_date": "2023-07-07",

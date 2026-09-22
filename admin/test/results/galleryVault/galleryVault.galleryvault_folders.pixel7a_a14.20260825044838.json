@@ -1,0 +1,202 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Folders",
+    "function_name": "galleryvault_folders",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 9,
+    "number_of_rows": 15,
+    "total_data_size_bytes": 1130,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_folders.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:38.489314+00:00",
+    "end_time": "2026-08-25T04:48:38.535834+00:00",
+    "run_time_seconds": 0.0008668899536132812,
+    "last_commit": {
+      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-07T23:27:07-04:00",
+      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+    }
+  },
+  "headers": [
+    "Create Time",
+    "Folder Name",
+    "Folder Type",
+    "Child File Count",
+    "Child Folder Count",
+    "Parent Folder ID",
+    "Folder Password Set",
+    "UUID",
+    "Folder ID"
+  ],
+  "data": [
+    [
+      1707411111,
+      "Recycle Bin",
+      "Recycle Bin",
+      0,
+      0,
+      0,
+      "No",
+      "40000000-0000-0000-0000-000000000001",
+      1
+    ],
+    [
+      1707411111,
+      "From Camera",
+      "From Camera",
+      0,
+      0,
+      0,
+      "No",
+      "30000000-0000-0000-0000-000000000001",
+      2
+    ],
+    [
+      1707411111,
+      "From Download",
+      "From Download",
+      0,
+      0,
+      0,
+      "No",
+      "20000000-0000-0000-0000-000000000001",
+      3
+    ],
+    [
+      1707411111,
+      "From Restore",
+      "From Restore",
+      0,
+      0,
+      0,
+      "No",
+      "50000000-0000-0000-0000-000000000001",
+      4
+    ],
+    [
+      1707411111,
+      "From Share",
+      "From Share",
+      0,
+      0,
+      0,
+      "No",
+      "10000000-0000-0000-0000-000000000001",
+      5
+    ],
+    [
+      1707411111,
+      "Recycle Bin",
+      "Recycle Bin",
+      0,
+      0,
+      0,
+      "No",
+      "40000000-0000-0000-0000-000000000002",
+      6
+    ],
+    [
+      1707411111,
+      "My Pictures",
+      "User created",
+      1,
+      0,
+      0,
+      "No",
+      "01000000-0000-0000-0000-000000000001",
+      7
+    ],
+    [
+      1707411111,
+      "My Videos",
+      "User created",
+      0,
+      0,
+      0,
+      "No",
+      "02000000-0000-0000-0000-000000000001",
+      8
+    ],
+    [
+      1707411111,
+      "Cards and IDs",
+      "User created",
+      0,
+      0,
+      0,
+      "No",
+      "03000000-0000-0000-0000-000000000001",
+      9
+    ],
+    [
+      1707411111,
+      "Documents",
+      "User created",
+      0,
+      0,
+      0,
+      "No",
+      "04000000-0000-0000-0000-000000000001",
+      10
+    ],
+    [
+      1707411111,
+      "My Pictures",
+      "User created",
+      0,
+      0,
+      0,
+      "No",
+      "01000000-0000-0000-0000-000000000002",
+      11
+    ],
+    [
+      1707411111,
+      "My Videos",
+      "User created",
+      0,
+      0,
+      0,
+      "No",
+      "02000000-0000-0000-0000-000000000002",
+      12
+    ],
+    [
+      1707411111,
+      "Cards and IDs",
+      "User created",
+      0,
+      0,
+      0,
+      "No",
+      "03000000-0000-0000-0000-000000000002",
+      13
+    ],
+    [
+      1707411111,
+      "Documents",
+      "User created",
+      0,
+      0,
+      0,
+      "No",
+      "04000000-0000-0000-0000-000000000002",
+      14
+    ],
+    [
+      1707418656,
+      "My Secret Folder",
+      "User created",
+      1,
+      0,
+      0,
+      "No",
+      "107dc66a-5452-43f3-b0b7-9b28cf4a14b1",
+      15
+    ]
+  ]
+}

@@ -9,7 +9,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "File Transfer",
         "notes": ("direction is decoded from the history table 'history_type' column. "
-                  "Direction/status value mappings were established through testing; unrecognized "
+                  "Direction/status value mappings are the labels this parser assigns; the "
+                  "source for them is not established, and unrecognized "
                   "values are reported as stored.\n"
                   "from_id and to_id hold the device_id of the row and are filled only when the "
                   "direction value is recognized."),

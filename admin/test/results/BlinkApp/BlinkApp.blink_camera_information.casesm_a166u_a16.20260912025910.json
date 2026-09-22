@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "module_name": "BlinkApp",
+    "artifact_name": "Blink Camera Information",
+    "function_name": "blink_camera_information",
+    "case_number": "casesm_a166u_a16",
+    "number_of_columns": 8,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 189,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/BlinkApp/testdata.BlinkApp.blink_camera_information.casesm_a166u_a16.zip",
+    "start_time": "2026-09-12T02:59:10.326358+00:00",
+    "end_time": "2026-09-12T02:59:10.351972+00:00",
+    "run_time_seconds": 0.0006661415100097656,
+    "last_commit": {
+      "hash": "83736b2d90c0b8b7ee0d45afb44f9e35f45c941a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-11T22:50:41-04:00",
+      "message": "Blink: parse the four remaining populated tables in BlinkRoom"
+    }
+  },
+  "headers": [
+    "Created Timestamp",
+    "Updated Timestamp",
+    "Camera Name",
+    "Camera ID",
+    "Network ID",
+    "Camera Serial Number",
+    "Camera Model",
+    "Network Type"
+  ],
+  "data": [
+    [
+      "2025-03-31T12:07:07+00:00",
+      "2025-11-22T23:42:59+00:00",
+      "Front Door",
+      1000001,
+      3000001,
+      "GNTTEST0001",
+      "sedona",
+      "wifi"
+    ],
+    [
+      "2025-03-31T12:09:56+00:00",
+      "2025-11-22T23:09:42+00:00",
+      "Back Yard",
+      1000002,
+      3000001,
+      "GNTTEST0002",
+      "sedona",
+      "wifi"
+    ]
+  ]
+}

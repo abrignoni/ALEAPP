@@ -480,7 +480,7 @@ def samsungSecureFolderHistoryLog(context):
 
     query = f"SELECT timestamp, tag, message FROM {HISTORY_TABLE} ORDER BY id"
     data_list = []
-    source_path = ""
+    source_paths = []
 
     for file_found in context.get_files_found():
         file_found = str(file_found)
@@ -494,7 +494,8 @@ def samsungSecureFolderHistoryLog(context):
 
         db_records = get_sqlite_db_records(file_found, query)
 
-        source_path = context.get_relative_path(file_found)
+        relative_path = context.get_relative_path(file_found)
+        source_paths.append(relative_path)
         records = [
             _parse_record(sequence, row[0], row[1], row[2])
             for sequence, row in enumerate(db_records, start=1)
@@ -502,11 +503,11 @@ def samsungSecureFolderHistoryLog(context):
         events = _pair_records(records)
         _assign_event_path_fields(events)
         for event in events:
-            data_list.append(_event_to_row(event, source_path))
+            data_list.append(_event_to_row(event, relative_path))
 
         logfunc(
             f"Samsung Secure Folder HistoryLog: {len(events)} event(s) "
-            f"from {len(records)} record(s) in {source_path}"
+            f"from {len(records)} record(s) in {relative_path}"
         )
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

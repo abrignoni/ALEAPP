@@ -66,6 +66,7 @@ def _parse_xml(file_found):
 @artifact_processor
 def get_gmailActive(context):
     data_list = []
+    source_paths = set()
 
     # Every Android user's Gmail.xml gets read, not just whichever file the
     # seeker happened to list first; duplicate storage spellings of one file
@@ -74,6 +75,7 @@ def get_gmailActive(context):
                          key=lambda p: Context.get_relative_path(str(p)).replace('\\', '/'))
     for file_found in files_found:
         file_found = str(file_found)
+        source_paths.add(file_found)
         root = _parse_xml(file_found)
         for child in root:
             if child.attrib.get('name') == "active-account" and child.text:
@@ -81,4 +83,4 @@ def get_gmailActive(context):
                 data_list.append((child.text, Context.get_relative_path(file_found)))
 
     data_headers = ('Active Gmail Address', 'Source File')
-    return data_headers, data_list, 'See source file(s) below:'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))

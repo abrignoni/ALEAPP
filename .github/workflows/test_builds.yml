@@ -42,20 +42,14 @@ jobs:
           # that leg is exploratory until a run proves it.
           python-version: '3.14'
 
-      - name: Install dependencies
+      - name: Install dependencies and PyInstaller
         # Requirements install alone in this step: a pwsh multi-line run does not
         # stop on a failed command, so bundling more commands after it lets a
         # failed install pass silently and surface later as a missing-module
         # crash in the frozen exe (seen on RLEAPP's arm64 leg, run 31444496033).
-        run: pip install -r requirements.txt
-
-      - name: Install PyInstaller
-        # Separate from the requirements on purpose: requirements.txt pins
-        # packaging==20.1, and resolving pyinstaller in the same command drags it
-        # back to 4.5.1 (the last release satisfied by that pin), which imports
-        # pkg_resources and cannot run on Python 3.14. Installing afterwards lets
-        # pip upgrade packaging for the build environment.
-        run: pip install "pyinstaller>=6.22"
+        run: |
+          pip install -r requirements.txt
+          pip install "pyinstaller>=6.22"
 
       - name: Build CLI and GUI with PyInstaller
         working-directory: scripts/pyinstaller
@@ -74,6 +68,23 @@ jobs:
           "placeholder" | Out-File smoke_in\placeholder.txt
           dist_build\aleapp.exe -t fs -i smoke_in -o smoke_out
           if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      # A raw image is read through the vendored reader imported as a module, which
+      # is the path a frozen build is most likely to break: an earlier design ran the
+      # reader as a subprocess through sys.executable, and in a bundle that is the
+      # tool itself, so -t raw could never work frozen and nothing smoke-tested it.
+      - name: Smoke test the frozen CLI on a raw image
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path smoke_raw_out | Out-Null
+          python -c "import gzip, shutil; shutil.copyfileobj(gzip.open('admin/test/data/raw_images/ntfs-fixture.img.gz'), open('smoke_in/ntfs-fixture.img', 'wb'))"
+          dist_build\aleapp.exe -t raw -i smoke_in\ntfs-fixture.img -o smoke_raw_out
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          $log = Get-ChildItem -Path smoke_raw_out -Recurse -Filter "Screen_Output.html" | Select-Object -First 1
+          if (-not $log) { Write-Error "no run log was written"; exit 1 }
+          if (-not (Select-String -Path $log.FullName -Pattern "walked lba0: 4" -Quiet)) {
+            Write-Error "the frozen build did not walk the NTFS fixture"; exit 1
+          }
 
       - name: Package artifact
         run: |
@@ -114,20 +125,14 @@ jobs:
           sudo apt-get install -y -q libtcl8.6 libtk8.6
           python -c "import tkinter" || { echo "tkinter unavailable in this Python"; exit 1; }
 
-      - name: Install dependencies
+      - name: Install dependencies and PyInstaller
         # Requirements install alone in this step: a pwsh multi-line run does not
         # stop on a failed command, so bundling more commands after it lets a
         # failed install pass silently and surface later as a missing-module
         # crash in the frozen exe (seen on RLEAPP's arm64 leg, run 31444496033).
-        run: pip install -r requirements.txt
-
-      - name: Install PyInstaller
-        # Separate from the requirements on purpose: requirements.txt pins
-        # packaging==20.1, and resolving pyinstaller in the same command drags it
-        # back to 4.5.1 (the last release satisfied by that pin), which imports
-        # pkg_resources and cannot run on Python 3.14. Installing afterwards lets
-        # pip upgrade packaging for the build environment.
-        run: pip install "pyinstaller>=6.22"
+        run: |
+          pip install -r requirements.txt
+          pip install "pyinstaller>=6.22"
 
       - name: Build CLI and GUI with PyInstaller
         working-directory: scripts/pyinstaller
@@ -141,6 +146,15 @@ jobs:
           mkdir smoke_in smoke_out
           echo placeholder > smoke_in/placeholder.txt
           dist_build/aleapp -t fs -i smoke_in -o smoke_out
+
+      # Same on Linux: the frozen build has to read a raw image through the vendored
+      # reader imported as a module, and the run log has to show the walk.
+      - name: Smoke test the frozen CLI on a raw image
+        run: |
+          mkdir smoke_raw_out
+          python -c "import gzip, shutil; shutil.copyfileobj(gzip.open('admin/test/data/raw_images/ntfs-fixture.img.gz'), open('smoke_in/ntfs-fixture.img', 'wb'))"
+          dist_build/aleapp -t raw -i smoke_in/ntfs-fixture.img -o smoke_raw_out
+          grep -rq "walked lba0: 4" smoke_raw_out --include="Screen_Output.html" || { echo "the frozen build did not walk the NTFS fixture"; exit 1; }
 
       - name: Package artifact
         run: |

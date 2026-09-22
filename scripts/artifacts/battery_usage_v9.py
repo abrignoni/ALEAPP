@@ -1,7 +1,8 @@
 __artifacts_v2__ = {
     "get_battery_usage_v9": {
         "name": "Settings Services - Battery Usages v9 - Battery States",
-        "description": "Getting Battery Usage data out of the database battery-usage-db-v9. Introduced with Android 14",
+        "description": "Battery usage states from the Settings Services battery-usage-db-v9 "
+                       "database, seen on Android 14",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-05-12",
         "last_update_date": "2026-08-01",
@@ -17,7 +18,7 @@ __artifacts_v2__ = {
     },
     "get_app_usage_events": {
         "name": "Settings Services - App Battery Usages v9 - App Battery Usage Events",
-        "description": "Getting Battery Usage data out of the database battery-usage-db-v9. Introduced with Android 14",
+        "description": 'App battery usage events from the Settings battery-usage-db-v9 AppUsageEventEntity table, Android 14',
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-05-12",
         "last_update_date": "2026-08-01",
@@ -40,7 +41,6 @@ import sqlite3
 from scripts.ilapfuncs import decode_protobuf
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
-from scripts.context import Context
 
 _STATUS = {1: 'Unknown', 2: 'Charging', 3: 'Discharging', 4: 'Not Charging', 5: 'Fully charged'}
 _HEALTH = {1: 'Unknown', 2: 'Good', 3: 'Overheat', 4: 'Dead', 5: 'Over Voltage',
@@ -149,14 +149,13 @@ def get_battery_usage_v9(context):
             info.get('1', ''),                                 # Battery Level
             _status(info.get('2')),                            # Battery Status
             _HEALTH.get(_as_int(info.get('3')), 'None'),       # Battery Health
-            _txt(proto.get('13')),                             # Drain Type
-            Context.get_relative_path(source_path)))
+            _txt(proto.get('13'))))                            # Drain Type
 
     data_headers = (('Timestamp', 'datetime'), 'Application', 'Package Name', 'Hidden',
                     'Boot Timestamp', 'Timezone', 'Total Power', 'Consumed Power',
                     'Foreground Usage (Seconds)', 'Foreground Service Usage (seconds)',
                     'Background Usage (Seconds)', 'Battery Level (%)', 'Battery Status',
-                    'Battery Health', 'Drain Type', 'Source File')
+                    'Battery Health', 'Drain Type')
     return data_headers, data_list, source_path
 
 
@@ -172,7 +171,7 @@ def get_app_usage_events(context):
         packageName, taskRootPackageName, instanceId
         FROM AppUsageEventEntity
     ''')
-    data_list = [(r[0], r[1], _ms_to_utc(r[2]), r[3], r[4], r[5], r[6], Context.get_relative_path(source_path)) for r in rows]
+    data_list = [(r[0], r[1], _ms_to_utc(r[2]), r[3], r[4], r[5], r[6]) for r in rows]
     data_headers = ('uid', 'userId', ('Timestamp', 'datetime'), 'App Usage Event Type',
-                    'Package Name', 'Root Package Name', 'Instance Id', 'Source File')
+                    'Package Name', 'Root Package Name', 'Instance Id')
     return data_headers, data_list, source_path

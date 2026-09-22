@@ -28,8 +28,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "ProtonMail",
-        "notes": "Reads the uniffi Inbox cache used by current Proton Mail for Android, separate from "
-                 "the older *-MessagesDatabase.db store. In the tested image the subject, sender and "
+        "notes": "Reads the uniffi Inbox cache of Proton Mail for Android, separate from the "
+                 "*-MessagesDatabase.db store. In the tested image the subject, sender and "
                  "recipient values are stored in clear text; the message body is kept PGP-encrypted in "
                  "raw_message_body and is not shown. Folder is resolved from the app's own labels "
                  "table. A cached row reflects what the app had synced locally, not necessarily the "
@@ -71,9 +71,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "ProtonMail",
-        "notes": "Contact email rows from the Inbox cache. A proton-autosave uid marks a contact the "
-                 "app created automatically from a sent or received message rather than one the user "
-                 "saved.",
+        "notes": "Contact email rows from the Inbox cache. A proton-autosave uid is reported as "
+                 "stored; what distinguishes a contact carrying it from one saved by hand is not "
+                 "sourced here.",
         "paths": ('*/ch.protonmail.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "address-book",

@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Unhide and Export History",
+    "function_name": "galleryvault_unhide_history",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 12,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_unhide_history.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:48:38.395775+00:00",
+    "end_time": "2026-08-25T04:48:38.441565+00:00",
+    "run_time_seconds": 0.000659942626953125,
+    "last_commit": {
+      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-07T23:27:07-04:00",
+      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+    }
+  },
+  "headers": [
+    "Action Time",
+    "Create Time",
+    "File Name",
+    "Action Type Value",
+    "File Type Value",
+    "Target Path",
+    "Original Path",
+    "MIME Type",
+    "Size",
+    "Duration",
+    "UUID",
+    "File ID"
+  ],
+  "data": []
+}

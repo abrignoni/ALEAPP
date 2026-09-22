@@ -21,11 +21,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-2.html "
-                 "Columns of the Track table are read by position; the mapping was established against "
-                 "the app versions listed at the top of this module and may not hold on other versions. "
-                 "Two activity category names are supplied by this parser and are not read from the "
-                 "activityCategory table: 37 ('Sleeping') and 272 ('Activity Tracking started manually'). "
-                 "Both were established through manual analysis, not from app documentation.",
+                 "Columns of the Track table are read by position; the mapping was written "
+                 "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
+                 "recorded in the module's comment header, and may not hold on other versions. "
+                 "Two activity category names are supplied by this parser and are not read from "
+                 "the activityCategory table: 37 ('Sleeping') and 272 ('Activity Tracking "
+                 "started manually'). Both names are this parser's own and are not read from the "
+                 "app or its documentation; the meaning of categories 37 and 272 is not "
+                 "established.",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*',
                   '*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
@@ -41,8 +44,9 @@ __artifacts_v2__ = {
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
                  "Columns of the WorkoutLocation table, including Latitude and Longitude, are read by "
-                 "position; the mapping was established against the app versions listed at the top of "
-                 "this module and may not hold on other versions.",
+                 "position; the mapping was written against app versions 5.1.4 (Android 6) and "
+                 "6.3.1 (Android 13), the versions recorded in the module's comment header, and "
+                 "may not hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*'),
         "output_types": "standard",
         "artifact_icon": "map-pin"
@@ -56,8 +60,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
-                 "Columns of the chat table are read by position; the mapping was established against "
-                 "the app versions listed at the top of this module and may not hold on other versions.",
+                 "Columns of the chat table are read by position; the mapping was written "
+                 "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
+                 "recorded in the module's comment header, and may not hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
         "artifact_icon": "message"
@@ -71,8 +76,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
-                 "Columns of the leaderboard table are read by position; the mapping was established "
-                 "against the app versions listed at the top of this module and may not hold on other "
+                 "Columns of the leaderboard table are read by position; the mapping was written "
+                 "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
+                 "recorded in the module's comment header, and may not hold on other "
                  "versions.",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*'),
         "output_types": "standard",
@@ -88,8 +94,9 @@ __artifacts_v2__ = {
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
                  "Columns of the vasistas table, including the values reported as SPO2 and Core "
-                 "Temperature, are read by position; the mapping was established against the app "
-                 "versions listed at the top of this module and may not hold on other versions.",
+                 "Temperature, are read by position; the mapping was written against app "
+                 "versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions recorded in "
+                 "the module's comment header, and may not hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
         "artifact_icon": "activity"
@@ -105,7 +112,8 @@ __artifacts_v2__ = {
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
                  "Columns of the devices table, including the value reported as the Last Used "
                  "Timestamp and the Latitude/Longitude pair, are read by position; the mapping was "
-                 "established against the app versions listed at the top of this module and may not "
+                 "written against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the "
+                 "versions recorded in the module's comment header, and may not "
                  "hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",

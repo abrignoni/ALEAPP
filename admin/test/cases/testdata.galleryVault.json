@@ -1,0 +1,218 @@
+{
+  "pixel7a_a14": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "EXTRACTION_FFS.zip",
+      "os": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-08-24T23:47:13.941675",
+      "last_commit": {
+        "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-08-07T23:27:07-04:00",
+        "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+      }
+    },
+    "artifacts": {
+      "galleryvault_vault_files": {
+        "search_patterns": [
+          "*/.galleryvault_*/files/*/*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_hidden_files": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/galleryvault.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_folders": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/galleryvault.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_break_in_reports": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/galleryvault.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_break_in_images": {
+        "search_patterns": [
+          "*/.galleryvault_*/BreakInReports/*"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "galleryvault_locked_apps": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/AppLock.db*"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "galleryvault_applock_break_ins": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/AppLock.db*"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "galleryvault_browser_history": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/galleryvault.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_browser_urls": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/galleryvault.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_downloads": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/galleryvault.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_unhide_history": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/galleryvault.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_recycle_bin": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/galleryvault.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_file_actions": {
+        "search_patterns": [
+          "*/.galleryvault_*/backup/file_action_log.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_preferences": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/shared_prefs/Kidd.xml*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_account_profile": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/shared_prefs/AccountProfile.xml*",
+          "*/com.thinkyeah.galleryvault/shared_prefs/Kidd.xml*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_cloud_account": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/cloud_cache.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_cloud_folders": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/cloud_cache.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_cloud_files": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/cloud_cache.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_cloud_change_history": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/cloud_cache.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "galleryvault_cloud_upload_tasks": {
+        "search_patterns": [
+          "*/com.thinkyeah.galleryvault/databases/cloud_cache.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_name": "pixel7a_a14",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "14",
+      "device_model": "Google Pixel 7a"
+    }
+  }
+}

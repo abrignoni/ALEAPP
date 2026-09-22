@@ -20,15 +20,15 @@ __artifacts_v2__ = {
                  "for the signed-in account against the preferences file named in the paths; "
                  "it is blank when neither source carries the id.\n"
                  "Item Type is reported as stored. Rows typed video_call_event are reported by "
-                 "the Instagram - Direct Call Events artifact, not here. Rows typed media carry "
-                 "no text; their Media URL column holds the first image or video candidate URL "
-                 "from the JSON, with the media's stored taken_at time and owner where present. "
-                 "The URLs are reported as text and are not fetched. No cached copy of any "
-                 "direct-message media was locatable in the tested images by media id or URL "
-                 "file name, so no media is rendered; absence of a cached copy is a property "
-                 "of these extractions, not proof the media never existed on the device.\n"
-                 "In newer images the app stores direct messages elsewhere and this database "
-                 "holds none; a zero-row result is not evidence no messages existed.",
+                 "the Instagram - Direct Call Events artifact, not here. Rows typed media "
+                 "carried no text on the tested images; their Media URL column holds the first "
+                 "image or video candidate URL from the JSON, with the media's stored taken_at "
+                 "time and owner where present. The URLs are reported as text and are not "
+                 "fetched. No cached copy of any direct-message media was locatable in the "
+                 "tested images by media id or URL file name, so no media is rendered; absence "
+                 "of a cached copy is a property of these extractions, not proof the media never "
+                 "existed on the device.\nOn some tested images this database held no messages; a "
+                 "zero-row result is not evidence no messages existed.",
         "paths": ('*/com.instagram.android/databases/direct.db*',
                   '*/com.instagram.android/shared_prefs/com.instagram.android_preferences.xml'),
         "output_types": "standard",
@@ -104,10 +104,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Instagram",
         "notes": "One row per threads table entry. Participants and the inviter are read from "
-                 "the thread_info JSON as username (full name) pairs; the signed-in account is "
-                 "not listed among the participants by the app. Last Activity Time is the "
-                 "table's own column, stored as epoch microseconds. Thread Title is the stored "
-                 "title, which the app may derive from the participant names.",
+                 "the thread_info JSON as username (full name) pairs; on the tested images the "
+                 "signed-in account was not listed among the participants. Last Activity Time is "
+                 "the table's own column, stored as epoch microseconds. Thread Title is the "
+                 "stored title, reported as stored.",
         "paths": ('*/com.instagram.android/databases/direct.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -141,8 +141,9 @@ __artifacts_v2__ = {
                  "says which one a row came from, so the same account can appear twice with "
                  "different levels of detail. The user id is the JSON id, instagram_pk or pk "
                  "field, whichever is present. Follower Count, Following Count, Biography and "
-                 "External URL are only stored in the user_access_map entries of some app "
-                 "versions and are blank elsewhere; a blank is absence from the file, not a "
+                 "External URL are filled only where the entry carries them, which on tested "
+                 "images was some user_access_map entries; a blank is absence from the file, not "
+                 "a "
                  "zero. Account Type is reported as stored; nothing in the extraction maps "
                  "its values.",
         "paths": ('*/com.instagram.android/shared_prefs/com.instagram.android_preferences.xml',),
@@ -215,8 +216,9 @@ __artifacts_v2__ = {
         "notes": "One row per intervals table entry. start_walltime and end_walltime are "
                  "stored as epoch seconds. The start_event and end_event integers are "
                  "reported as stored; nothing in the extraction maps them. The user id in "
-                 "the User ID column is taken from the database file name. An interval is a "
-                 "record the app wrote about its own foreground time; this artifact does not "
+                 "the User ID column is taken from the database file name. What an interval "
+                 "measures is taken from the database and table names and is not sourced; this "
+                 "artifact does not "
                  "interpret what activity occurred within it.",
         "paths": ('*/com.instagram.android/databases/time_in_app_*.db*',),
         "output_types": "standard",

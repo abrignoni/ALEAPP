@@ -8,9 +8,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-06",
         "requirements": "none",
         "category": "BeReal",
-        "notes": "BeReal keeps its Room databases (bereal.core.database.db and the others) as "
-                 "SQLCipher encrypted files whose passphrase is wrapped by an Android Keystore "
-                 "backed key, so those databases cannot be read from a file system extraction. "
+        "notes": "The BeReal Room databases (bereal.core.database.db and the others) are "
+                 "encrypted and are not read by this artifact; no key for them was found in the "
+                 "extraction. "
                  "The media itself survives in the app caches. The OkHttp network cache stores a "
                  "'.0' metadata file next to each '.1' body; the source URL is the first line and "
                  "the response date is a header, and both are reported here. The Coil image caches "

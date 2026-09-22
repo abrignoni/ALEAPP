@@ -81,8 +81,8 @@ __artifacts_v2__ = {
     },
     "kik_chat_metadata": {
         "name": "Kik Chat Metadata",
-        "description": "Rows from chatMetaInfTable, including the chat end time and the flags Kik "
-                       "keeps for anonymously matched chats",
+        "description": "Rows from chatMetaInfTable, including the chat end time and the "
+                       "anonymous-chat flag columns as stored",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",

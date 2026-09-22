@@ -40,8 +40,8 @@ __artifacts_v2__ = {
                  "tables share. If a database is met whose schema exposes no shared user id, the rows "
                  "are paired by result order instead, and an unequal number of rows on either side "
                  "would then attribute an account to the wrong user. Values inside each row are read "
-                 "by position; that mapping was established against the app version this parser was "
-                 "written for and may not hold on other versions.",
+                 "by position; that mapping was written against one app version, which is not "
+                 "recorded here, and may not hold on other versions.",
         "paths": ('*/ch.protonvpn.android/databases/db',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",

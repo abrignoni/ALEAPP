@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "module_name": "GooglePlayMoviesAccounts",
+    "artifact_name": "Google Play Movies & TV - Signed-In Accounts",
+    "function_name": "google_play_movies_account",
+    "case_number": "case2",
+    "number_of_columns": 4,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 93,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/GooglePlayMoviesAccounts/testdata.GooglePlayMoviesAccounts.google_play_movies_account.case2.zip",
+    "start_time": "2026-08-29T19:57:28.238107+00:00",
+    "end_time": "2026-08-29T19:57:28.265948+00:00",
+    "run_time_seconds": 0.002355813980102539,
+    "last_commit": {
+      "hash": "3d809e9fa3dc80a9b18a8ddfe67b1f9cb434586b",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-29T15:42:11-04:00",
+      "message": "Correct Google Play Movies & TV artifact claims and widen validation"
+    }
+  },
+  "headers": [
+    "Google Account Email",
+    "Has Configuration Record",
+    "Country Code",
+    "Source File"
+  ],
+  "data": [
+    [
+      "ldehner505@gmail.com",
+      "Yes",
+      "US",
+      "Dump/data/data/com.google.android.videos/databases/purchase_store.db"
+    ]
+  ]
+}

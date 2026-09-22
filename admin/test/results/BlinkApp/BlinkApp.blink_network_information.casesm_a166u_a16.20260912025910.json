@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "module_name": "BlinkApp",
+    "artifact_name": "Blink Network Information",
+    "function_name": "blink_network_information",
+    "case_number": "casesm_a166u_a16",
+    "number_of_columns": 8,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 88,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/BlinkApp/testdata.BlinkApp.blink_network_information.casesm_a166u_a16.zip",
+    "start_time": "2026-09-12T02:59:10.133968+00:00",
+    "end_time": "2026-09-12T02:59:10.168055+00:00",
+    "run_time_seconds": 0.0008099079132080078,
+    "last_commit": {
+      "hash": "83736b2d90c0b8b7ee0d45afb44f9e35f45c941a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-11T22:50:41-04:00",
+      "message": "Blink: parse the four remaining populated tables in BlinkRoom"
+    }
+  },
+  "headers": [
+    "Created Timestamp",
+    "Updated Timestamp",
+    "Network Name",
+    "Network ID",
+    "Time Zone",
+    "Daylight Saving (as stored)",
+    "Armed (as stored)",
+    "Save All Live Views (as stored)"
+  ],
+  "data": [
+    [
+      "2025-03-31T12:04:24+00:00",
+      "2025-11-22T12:20:36+00:00",
+      "Test Network",
+      3000001,
+      "America/New_York",
+      1,
+      1,
+      0
+    ]
+  ]
+}

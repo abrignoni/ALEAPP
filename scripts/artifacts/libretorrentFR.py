@@ -12,7 +12,7 @@ __artifacts_v2__ = {
                  "not hold on other versions. Total Downloaded and Total Uploaded are the bencoded "
                  "total_downloaded and total_uploaded values reported as stored; the unit is not "
                  "recorded in the file.",
-        "paths": ('*/data/com.houseoflife.bitlord/databases/libretorrent.db*', '*/libretorrent.db*'),
+        "paths": ('*/libretorrent.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "download",
         "html_columns": ['Length - Path', 'Key - Value'],

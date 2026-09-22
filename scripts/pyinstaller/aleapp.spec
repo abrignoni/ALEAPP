@@ -38,6 +38,7 @@ a = Analysis(
       'html.parser',
       'mister_skinnylegs',
       'polyline',
+      'sqlcipher3',
       'uuid',
       'xmltodict',
       'zoneinfo'
@@ -65,7 +66,7 @@ exe = EXE(
    debug=False,
    bootloader_ignore_signals=False,
    strip=False,
-   upx=True,
+   upx=False,
    upx_exclude=[],
    runtime_tmpdir=None,
    version='aleapp-file_version_info.txt',

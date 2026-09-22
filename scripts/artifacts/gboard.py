@@ -17,7 +17,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 4 rows",
             "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 4 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 4 rows",
-            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 8 rows",
+            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 4 rows",
         },
     },
     "get_gboardCache_keystrokes": {
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 359 rows",
             "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 230 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 357 rows",
-            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 140 rows",
+            "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 70 rows",
         },
     }
 }
@@ -246,7 +246,7 @@ def get_gboardCache(context):
 @artifact_processor
 def get_gboardCache_keystrokes(context):
     files_found = unique_files(context)
-    source_path = ''
+    source_paths = []
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
@@ -258,26 +258,26 @@ def get_gboardCache_keystrokes(context):
             events = _events_trainingcachev2(file_found)
         else:
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         name = os.path.basename(file_found)
         for ke in events:
             data_list.append((name, _str_to_utc(ke.event_date), ke.id, ke.text, ke.app,
                               ke.textbox_name, ke.textbox_id))
 
     data_headers = ('Source', ('Event Timestamp', 'datetime'), 'ID', 'Text', 'App', 'Input Name', 'Input ID')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def get_gboardCache_sessions(context):
     files_found = unique_files(context)
-    source_path = ''
+    source_paths = []
     data_list = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('trainingcachev3.db'):
             continue
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         try:
@@ -296,4 +296,4 @@ def get_gboardCache_sessions(context):
 
     data_headers = (('_session_id (as timestamp)', 'datetime'), ('_timestamp_', 'datetime'),
                     'Session ID', 'Application')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

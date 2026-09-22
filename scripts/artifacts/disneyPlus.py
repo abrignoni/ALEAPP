@@ -45,8 +45,8 @@ __artifacts_v2__ = {
                  "key is written per series, with the series identifier carried in the key "
                  "name itself. On the one tested sample the content id of the overall key was "
                  "also present in the resume points table, which is a recorded link rather "
-                 "than a correlation, and the two keys held identical values because the last "
-                 "item played overall was the one from that series. contentIdentifierType is "
+                 "than a correlation, and the two keys held identical values. "
+                 "contentIdentifierType is "
                  "reported as stored. Field mapping was done against one private sample from "
                  "a single device; no sample data is recorded for it.",
         "paths": ('*/com.disney.disneyplus/shared_prefs/default.xml',),
@@ -140,8 +140,8 @@ __artifacts_v2__ = {
         "category": "Disney+",
         "notes": "One row per media identifier, summarising the request URLs recorded in the "
                  "app's sdk-cache entries for the media delivery hosts. The individual "
-                 "manifest fetches are counted rather than listed, because they repeat for a "
-                 "single playback and an examiner cannot act on each one; the URL path of "
+                 "manifest fetches are counted rather than listed, because an examiner cannot "
+                 "act on each one; the URL path of "
                  "every one of them carries the same media, device and account identifiers, "
                  "which are reported here, and the cache directory still holds each entry. "
                  "The expiry values are Unix seconds naming when a delivery token ceases to "
@@ -176,10 +176,9 @@ __artifacts_v2__ = {
                  "the cached body; the last frame was complete within the bytes present, so "
                  "it is counted and the disagreement is reported in its own column rather "
                  "than the frame being dropped. A single frame from about a quarter of the "
-                 "way through each index is checked in and rendered, because the opening "
-                 "frames of a title are commonly blank; every frame remains in the cached "
-                 "file for an examiner who needs them. The app fetches the whole index for a "
-                 "title, so the presence of a frame does not establish that the offset it "
+                 "way through each index is checked in and rendered; every frame remains in the "
+                 "cached file for an examiner who needs them. The presence of a frame does not "
+                 "establish that the offset it "
                  "sits at was played. Field mapping was done against one private sample from "
                  "a single device; no sample data is recorded for it.",
         "paths": ('*/com.disney.disneyplus/cache/sdk-cache/*',),
@@ -227,9 +226,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Disney+",
-        "notes": "One row per image store rather than one per file. The images are service "
-                 "supplied artwork for catalogue titles and avatars; the app stores no user "
-                 "created images, so enumerating each file would fill the report with rows an "
+        "notes": "One row per image store rather than one per file. On the tested sample the "
+                 "images were service supplied artwork for catalogue titles and avatars and no "
+                 "user created image was found, so enumerating each file would fill the report "
+                 "with rows an "
                  "examiner cannot act on. Each row gives the file count, how many are "
                  "distinct by content hash, how many can be tied to a source URL and on what "
                  "basis, and the directory holding them. An http-cache entry records its own "

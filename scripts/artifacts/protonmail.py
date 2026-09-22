@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_protonmail_messages": {
         "name": "ProtonMail - Messages",
         "description": "Parses ProtonMail messages (timestamp, subject, sender, direction, status, size, folder, attachments and recipient lists) from the ProtonMail messages database.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "none",
@@ -15,7 +15,7 @@ __artifacts_v2__ = {
     "get_protonmail_contacts": {
         "name": "ProtonMail - Contacts",
         "description": "Parses ProtonMail contacts (creation and modified timestamps, name and email) from the ProtonMail contacts database.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "none",

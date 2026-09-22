@@ -15,7 +15,8 @@ __artifacts_v2__ = {
     },
         "grok_useraccount": {
         "name": "Grok - User Account",
-        "description": "Parses Ornet Browser Usage Information",
+        "description": "Parses Grok user account attributes from the app's Intercom SDK shared "
+                       "preferences files",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
         "last_update_date": "2025-11-14",
@@ -156,7 +157,7 @@ def grok_generatedvideos(context):
             continue
 
         filename = media_path.name
-        location = str(media_path.parent)
+        location = context.get_relative_path(str(media_path.parent))
 
         # Extract cache ID from filename: "4.0.1763060403970.v3.exo" - first part - 4
         file_id = None
@@ -310,7 +311,7 @@ def grok_useraccount(context):
         root = _parse_xml(source_path)
 
         filename = Path(source_path).name
-        path = source_path
+        path = context.get_relative_path(source_path)
 
         cached_json = None
         for elem in root.iter():

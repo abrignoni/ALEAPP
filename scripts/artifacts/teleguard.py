@@ -7,8 +7,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-21",
         "requirements": "none",
         "category": "Teleguard",
-        "notes": "Is Edited? held 0 on every message row of every tested extraction, so no message "
-                 "in them had been edited. The column is reported so an edited message is visible "
+        "notes": "Is Edited? held 0 on every message row of every tested extraction. The column "
+                 "is reported so a row with another value is visible "
                  "on an extraction that has one. Call events and membership events are rows of this "
                  "same table, of type CALL and SERVICE, and are also reported in full by "
                  "Teleguard - Calls and Teleguard - Chat Events.",
@@ -83,8 +83,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Teleguard",
         "notes": "The channels table is read with 'SELECT *' and the first twelve columns are labelled "
-                 "by position; the mapping was established against the app version this parser was "
-                 "written for and may not hold on other versions. Any further columns are not reported.",
+                 "by position; the mapping was made against one app version and is not "
+                 "established for other versions. Any further columns are not reported.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": "standard",
         "artifact_icon": "radio",
@@ -166,10 +166,8 @@ __artifacts_v2__ = {
                  "fingerprint of the DER body, which is enough to correlate the account across "
                  "extractions without copying a private key into report output. Fields absent from "
                  "an app version's JSON are left blank rather than reported as empty values. "
-                 "Personal ID and Current Phone were empty on the tested extraction: TeleGuard "
-                 "issues the Server ID itself and requires no telephone number, and a personal ID "
-                 "is set by the account holder only if they choose one, so both columns being blank "
-                 "is a result about the account rather than a column that is never populated. The "
+                 "Personal ID and Current Phone were empty on the tested extraction; whether "
+                 "either is populated on other accounts was not exercised. The "
                  "settings key holding the phone value was spelled '_currentPhone' on Android and "
                  "'currentPhone' on iOS in the tested extractions and both spellings are read.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
@@ -193,9 +191,9 @@ __artifacts_v2__ = {
                  "teleguard_database.db. The draft table is keyed on the recipient's serverId, which "
                  "is resolved to a contact alias from the contacts table of the main database in the "
                  "same app data directory. The Draft Text column was an empty string, not null, on "
-                 "every row of every tested extraction: the app keeps a draft row per conversation "
-                 "and clears the text when the message is sent, so a row records that a draft existed "
-                 "for that conversation and the tested devices held no recoverable draft text. The "
+                 "every row of every tested extraction: why the app keeps a row whose text is "
+                 "empty is not established, and the tested devices held no recoverable draft "
+                 "text. The "
                  "same database carries a messages_buffer table, which held no rows in any tested "
                  "extraction and is not reported.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_temp.db*',
@@ -222,7 +220,7 @@ __artifacts_v2__ = {
                  "are the plugin's own and are reported as stored. The file name is the server file "
                  "identifier, which is the key used in a message's metadata files object, so rows are "
                  "joined back to the message that carried the media by that identifier. One media "
-                 "object can own more than one row, because a retry is recorded as its own task. The "
+                 "object can own more than one row. The "
                  "task's headers column holds a bearer token; the token is not written to the report "
                  "and only the account identifier from its subject claim is reported. MIME Type, "
                  "Saved Directory and Requesting Account each held one value across the tested "

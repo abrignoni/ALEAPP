@@ -33,6 +33,7 @@ from leapp_functions.app.output import (  # pylint: disable=unused-import
     resolve_output_folder_name,
     validate_output_folder_available,
 )
+from leapp_functions.app.artifact_result import ArtifactResult
 
 _console_write = sys.stdout.write
 
@@ -40,13 +41,14 @@ _console_write = sys.stdout.write
 import pytz
 import simplekml
 from scripts import blackboxprotobuf
-from scripts.filetype import guess_mime, guess_extension
+from scripts.filetype import get_signature_bytes, guess_mime, guess_extension
 from functools import wraps
 
 from scripts.html_safe import esc, safe_local_path
-from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_get_media_item, \
+from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_iter_artifact_rows, lava_update_record_count, \
+    lava_get_media_item, \
     lava_insert_sqlite_media_item, lava_insert_sqlite_media_references, lava_get_media_references, \
-    lava_get_full_media_info
+    lava_get_full_media_info, bind_dates_as_text
 
 os.path.basename = lru_cache(maxsize=None)(os.path.basename)
 
@@ -77,10 +79,27 @@ class OutputParameters:
 class GuiWindow:
     '''This only exists to hold window handle if script is run from GUI'''
     window_handle = None  # static variable
+    # Set to a queue.Queue by the GUI while a run is on a worker thread, and back to None
+    # when it finishes. Tk is not thread-safe: while this is set, nothing below may touch a
+    # widget, so progress and log lines are handed to the GUI's poller instead.
+    message_queue = None
+
+    @staticmethod
+    def end_worker_run():
+        '''Called on the main thread once the worker is finished.
+
+        logfunc points sys.stdout.write at queue_logs for as long as message_queue is set.
+        Clearing the queue on its own leaves that binding in place, so the next print()
+        that does not go through logfunc raises AttributeError on a queue that is gone.
+        '''
+        GuiWindow.message_queue = None
+        sys.stdout.write = _console_write
 
     @staticmethod
     def SetProgressBar(n, total):  # pylint: disable=unused-argument
-        if GuiWindow.window_handle:
+        if GuiWindow.message_queue is not None:
+            GuiWindow.message_queue.put(('progress', n))
+        elif GuiWindow.window_handle:
             progress_bar = GuiWindow.window_handle.nametowidget('progress_bar_frame.progress_bar')
             progress_bar.config(value=n)
 
@@ -128,7 +147,15 @@ def logfunc(message=""):
         log_text.see('end')
         log_text.update()
 
-    if GuiWindow.window_handle:
+    def queue_logs(string):
+        _console_write(string)
+        GuiWindow.message_queue.put(('log', string))
+
+    if GuiWindow.message_queue is not None:
+        # On a worker thread. The poller on the main thread does the insert, so the run no
+        # longer depends on log_text.update() to keep the event loop alive.
+        sys.stdout.write = queue_logs
+    elif GuiWindow.window_handle:
         log_text = GuiWindow.window_handle.nametowidget('logs_frame.log_text')
         sys.stdout.write = redirect_logs
 
@@ -314,8 +341,9 @@ def check_in_media(file_path, name="", converted_file_path=False, force_type=Non
     file_info = Context.get_seeker().file_infos.get(extraction_path)
     if file_info:
         media_id = hashlib.sha1(f"{file_info.source_path}".encode()).hexdigest()
-        with open(extraction_path, "rb") as f:
-            file_data = f.read()
+        # Only the type sniffer reads media_data for a file on disk, and it looks at no more
+        # than the first 8,192 bytes, so read just those instead of the whole file.
+        file_data = get_signature_bytes(extraction_path)
         return _check_in_media(media_id, file_path, False, name, media_data=file_data, converted_file_path=converted_file_path,
                                force_type=force_type, force_extension=force_extension,
                                force_creation_date=force_creation_date, force_modification_date=force_modification_date)
@@ -436,7 +464,75 @@ def get_data_list_with_media(media_header_info, data_list):
     return html_data_list, txt_data_list
 
 
+
+def iter_data_list_with_media(media_header_info, data_list, html_output=False):
+    """
+    Stream rows with media reference columns converted for the requested output.
+    """
+    output_params = Context.get_output_params()
+
+    for data in data_list:
+        row = list(data)
+
+        for idx, style in media_header_info.items():
+            media_ref_id_cell = row[idx]
+            if not media_ref_id_cell:
+                row[idx] = ''
+                continue
+
+            html_code = ''
+            path_list = []
+            media_ref_ids = media_ref_id_cell if isinstance(media_ref_id_cell, list) else [media_ref_id_cell]
+
+            for ref_id in media_ref_ids:
+                media_item = lava_get_full_media_info(ref_id)
+                if not (media_item and media_item['extraction_path']):
+                    continue
+
+                canonical_path = os.path.join(output_params.output_folder_base, media_item['extraction_path'])
+                html_path = os.path.join(output_params.html_media_folder, Path(canonical_path).name)
+
+                if os.path.exists(canonical_path) and not os.path.exists(html_path):
+                    try:
+                        os.link(canonical_path, html_path)
+                    except OSError:
+                        shutil.copy2(canonical_path, html_path)
+
+                if html_output:
+                    html_code += html_media_tag(
+                        media_item['extraction_path'], media_item['type'], style, media_item['name'])
+                else:
+                    path_list.append(media_item['extraction_path'])
+
+            if html_output:
+                row[idx] = html_code
+            elif isinstance(media_ref_id_cell, list):
+                row[idx] = ' | '.join(path_list)
+            else:
+                row[idx] = path_list[0] if path_list else ''
+
+        yield tuple(row)
+
+
 _reported_unsafe_report_names = set()
+
+# Tables left off their HTML page for exceeding artifact_report.HTML_TABLE_ROW_LIMIT, listed
+# on the index page so an examiner sees them without opening each artifact. Mutated in
+# place only: report.py imports the list itself.
+html_tables_held_back = []
+
+
+def record_html_table_held_back(category, artifact_name, safe_artifact_name, rows):
+    """Remember a table the HTML report held back, for the index page and the run log."""
+    html_tables_held_back.append({
+        'category': category,
+        'artifact_name': artifact_name,
+        # report.generate_report names the final page from the .temphtml file this way
+        'page': safe_artifact_name.replace(' ', '_') + '.html',
+        'rows': rows,
+    })
+    logfunc(f'{artifact_name}: {rows:,} rows, above the {artifact_report.HTML_TABLE_ROW_LIMIT:,}-row '
+            f'limit for HTML pages; the table is left off the page and stays in the other outputs')
 
 def sanitize_report_name(name, kind='name'):
     """
@@ -490,12 +586,37 @@ def artifact_processor(func):
         Context.set_module_name(module_name)
         Context.set_module_file_path(module_file_path)
         Context.set_artifact_name(artifact_name)
+        Context.set_artifact_func_name(func_name)
 
         sig = inspect.signature(func)
-        if len(sig.parameters) == 1:
-            data_headers, data_list, source_path = func(Context)
+        try:
+            if len(sig.parameters) == 1:
+                artifact_result = func(Context)
+            else:
+                artifact_result = func(files_found, report_folder, seeker, wrap_text)
+        except BaseException:
+            # A streaming module has already written rows by the time it raises. Drop them
+            # with the manifest entry, so the report cannot show a table that is short
+            # while the run log says the artifact failed. A list-returning module that
+            # raises leaves nothing behind, and this keeps the two paths alike.
+            partial = Context.get_artifact_result()
+            if partial is not None:
+                partial.discard()
+            raise
+
+        is_artifact_result = isinstance(artifact_result, ArtifactResult)
+        if is_artifact_result:
+            data_headers = artifact_result.headers
+            data_list = artifact_result
+            source_path = artifact_result.source_path
         else:
-            data_headers, data_list, source_path = func(files_found, report_folder, seeker, wrap_text)
+            data_headers, data_list, source_path = artifact_result
+            is_artifact_result = isinstance(data_list, ArtifactResult)
+            if is_artifact_result:
+                if data_list.headers is None:
+                    data_list.set_headers(data_headers)
+                if source_path and not data_list.source_path:
+                    data_list.set_source_path(source_path)
 
         if data_list and not source_path:
             logfunc("No source_path provided")
@@ -508,62 +629,123 @@ def artifact_processor(func):
             data_list, html_data_list = data_list
         else:
             html_data_list = data_list
-        if len(data_list):
-            logfunc(f"Found {len(data_list):,} {'records' if len(data_list) > 1 else 'record'} for {artifact_name}")
-            # Path separators would break (or misplace) the report files, so the HTML, TSV
-            # and KML outputs are written under a path safe name. The sidebar keys off the
-            # on-disk names, so the icon lookup has to use the same safe names.
-            safe_artifact_name = sanitize_report_name(artifact_name)
-            safe_category = sanitize_report_name(category, 'category')
-            icons.setdefault(safe_category, {safe_artifact_name: icon}).update({safe_artifact_name: icon})
+        txt_data_list = data_list
 
-            # Strip tuples from headers for HTML, TSV, and timeline
-            stripped_headers = strip_tuple_from_headers(data_headers)
+        try:
+            if data_list:
+                if data_headers is None:
+                    raise ValueError(f"No data_headers provided for {artifact_name}")
 
-            # Check if headers contains a 'media' type
-            media_header_info = get_media_header_info(data_headers)
-            if media_header_info:
-                html_columns.extend([data_headers[idx][0] for idx in media_header_info])
-                html_data_list, txt_data_list = get_data_list_with_media(media_header_info, data_list)
+                row_count = len(data_list)
+                if row_count:
+                    logfunc(f"Found {row_count:,} {'records' if row_count>1 else 'record'} for {artifact_name}")
+                else:
+                    logfunc(f"Processing streamed records for {artifact_name}")
 
-            if check_output_types('html', output_types):
-                report = artifact_report.ArtifactHtmlReport(artifact_name)
-                report.start_artifact_report(report_folder, safe_artifact_name, description)
-                report.add_script()
-                report.write_artifact_data_table(stripped_headers, html_data_list, source_path,
-                                                 html_no_escape=html_columns)
-                report.end_artifact_report()
+                # Path separators would break (or misplace) report files, so
+                # file outputs use safe names while LAVA keeps display names.
+                safe_artifact_name = sanitize_report_name(artifact_name)
+                safe_category = sanitize_report_name(category, 'category')
+                icons.setdefault(safe_category, {safe_artifact_name: icon}).update({safe_artifact_name: icon})
 
-            if check_output_types('tsv', output_types):
-                tsv(report_folder, stripped_headers, txt_data_list if media_header_info else data_list, safe_artifact_name)
+                # Strip tuples from headers for HTML, TSV, and timeline
+                stripped_headers = strip_tuple_from_headers(data_headers)
 
-            if check_output_types('timeline', output_types):
-                timeline(report_folder, artifact_name, txt_data_list if media_header_info else data_list,
-                         stripped_headers)
+                # Check if headers contains a 'media' type
+                media_header_info = get_media_header_info(data_headers)
+                needs_text_or_html_data = any(
+                    check_output_types(output_type, output_types)
+                    for output_type in ('html', 'tsv', 'timeline', 'kml')
+                )
+                if media_header_info and needs_text_or_html_data:
+                    html_columns.extend([data_headers[idx][0] for idx in media_header_info])
+                    if not is_artifact_result:
+                        html_data_list, txt_data_list = get_data_list_with_media(media_header_info, data_list)
 
-            if check_output_types('lava', output_types):
-                table_name, object_columns, column_map = lava_process_artifact(category,
-                                                                               module_name,
-                                                                               artifact_name,
-                                                                               data_headers,
-                                                                               len(data_list),
-                                                                               func_name=func_name,
-                                                                               data_views=artifact_info.get(
-                                                                                   "data_views"),
-                                                                               artifact_icon=icon,
-                                                                               source_path=source_path)
-                lava_insert_sqlite_data(table_name, data_list, object_columns, data_headers, column_map)
+                table_name = None
+                object_columns = None
+                inserted_count = row_count
+                if is_artifact_result and data_list.is_lava_backed:
+                    data_list.close()
+                    table_name = data_list.table_name
+                    object_columns = data_list.object_columns
+                    inserted_count = data_list.row_count
+                    logfunc(f"Inserted {inserted_count:,} streamed records for {artifact_name}")
+                elif is_artifact_result or check_output_types('lava', output_types):
+                    record_count = None if is_artifact_result else len(data_list)
+                    table_name, object_columns, column_map = lava_process_artifact(category,
+                                                                                   module_name,
+                                                                                   artifact_name,
+                                                                                   data_headers,
+                                                                                   record_count,
+                                                                                   func_name=func_name,
+                                                                                   data_views=artifact_info.get("data_views"),
+                                                                                   artifact_icon=icon,
+                                                                                   source_path=source_path)
+                    inserted_count = lava_insert_sqlite_data(
+                        table_name,
+                        data_list,
+                        object_columns,
+                        data_headers,
+                        column_map,
+                        async_write=getattr(data_list, 'async_write', False),
+                        queue_size=getattr(data_list, 'queue_size', 5000),
+                    )
+                    if is_artifact_result:
+                        data_list.set_row_count(inserted_count)
+                        lava_update_record_count(category, table_name, inserted_count)
+                        logfunc(f"Inserted {inserted_count:,} streamed records for {artifact_name}")
 
-            if check_output_types('kml', output_types):
-                kmlgen(report_folder, safe_artifact_name, txt_data_list if media_header_info else data_list,
-                       stripped_headers)
+                def output_rows(html_output=False):
+                    rows = data_list
+                    if is_artifact_result:
+                        rows = lava_iter_artifact_rows(table_name, data_headers, object_columns, inserted_count)
+                    if media_header_info and needs_text_or_html_data:
+                        return iter_data_list_with_media(media_header_info, rows, html_output)
+                    return rows
 
-        else:
-            if output_types != 'none':
+                if check_output_types('html', output_types):
+                    report = artifact_report.ArtifactHtmlReport(artifact_name)
+                    report.start_artifact_report(report_folder, safe_artifact_name, description)
+                    report.add_script()
+                    full_data_locations = []
+                    if check_output_types('lava', output_types):
+                        full_data_locations.append(artifact_report.LAVA_DATABASE_LOCATION)
+                    if check_output_types('tsv', output_types):
+                        full_data_locations.append(artifact_report.tsv_export_location(safe_artifact_name))
+                    # A streamed table above the row limit is held back before its rows are
+                    # read out of LAVA, so the notice costs no replay.
+                    held_back = report.write_artifact_data_table(
+                        stripped_headers,
+                        output_rows(html_output=True) if is_artifact_result else html_data_list,
+                        source_path,
+                        html_no_escape=html_columns,
+                        row_count=inserted_count if is_artifact_result else None,
+                        full_data_locations=full_data_locations)
+                    report.end_artifact_report()
+                    if held_back:
+                        record_html_table_held_back(category, artifact_name, safe_artifact_name,
+                                                    inserted_count if is_artifact_result else len(data_list))
+
+                if check_output_types('tsv', output_types):
+                    tsv_rows = output_rows() if is_artifact_result else txt_data_list if media_header_info else data_list
+                    tsv(report_folder, stripped_headers, tsv_rows, safe_artifact_name)
+
+                if check_output_types('timeline', output_types):
+                    timeline_rows = output_rows() if is_artifact_result else txt_data_list if media_header_info else data_list
+                    timeline(report_folder, artifact_name, timeline_rows, stripped_headers)
+
+                if check_output_types('kml', output_types):
+                    kml_rows = output_rows() if is_artifact_result else txt_data_list if media_header_info else data_list
+                    kmlgen(report_folder, safe_artifact_name, kml_rows, stripped_headers)
+
+            elif output_types != 'none':
                 logfunc(f"No data found for {artifact_name}")
+        finally:
+            if is_artifact_result:
+                data_list.cleanup()
 
         return data_headers, data_list, source_path
-
     return wrapper
 
 
@@ -755,7 +937,7 @@ def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
         data_headers_list = list(data_headers)
         data_headers_list.append('Source Path')
         data_headers = tuple(data_headers_list)
-        source_path = 'file path in the report below'
+        source_path = '\n'.join(path_list)
     elif path_list:
         source_path = path_list[0]
     for file in path_list:
@@ -763,7 +945,7 @@ def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
         for record in db_records:
             if multiple_source_files:
                 modifiable_record = list(record)
-                modifiable_record.append(file)
+                modifiable_record.append(Context.get_relative_path(file))
                 record = tuple(modifiable_record)
             data_list.append(record)
     return data_headers, data_list, source_path
@@ -952,10 +1134,8 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
 
     data = []
     kml = simplekml.Kml(open=1)    
-    a = 0
-    length = len(data_list)
-    while a < length:
-        modifiedDict = dict(zip(data_headers, data_list[a]))
+    for row in data_list:
+        modifiedDict = dict(zip(data_headers, row))
         lon = modifiedDict['Longitude']
         lat = modifiedDict['Latitude']
         times_header = "Timestamp"
@@ -971,8 +1151,7 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
             pnt.name = times
             pnt.description = f"{times_header}: {times} - {kmlactivity}"
             pnt.coords = [(lon, lat)]
-            data.append((times, lat, lon, kmlactivity))
-        a += 1
+            data.append((bind_dates_as_text(times), lat, lon, kmlactivity))
 
     if len(data) > 0:
         report_folder = report_folder.rstrip('/')
@@ -1002,77 +1181,6 @@ def kmlgen(report_folder, kmlactivity, data_list, data_headers):
         db.commit()
         db.close()
         kml.save(os.path.join(kml_report_folder, f'{kmlactivity}.kml'))
-
-def media_to_html(media_path, files_found, report_folder):
-
-    def media_path_filter(name):
-        return media_path in name
-
-    def relative_paths(source, splitter):
-        splitted_a = source.split(splitter)
-        for x in splitted_a:
-            if '_HTML' in x:
-                splitted_b = source.split(x)
-                return '.' + splitted_b[1]
-            elif 'data' in x:
-                index = splitted_a.index(x)
-                splitted_b = source.split(splitted_a[index - 1])
-                return '..' + splitted_b[1]
-
-
-    platform = is_platform_windows()
-    if platform:
-        media_path = media_path.replace('/', '\\')
-        splitter = '\\'
-    else:
-        splitter = '/'
-
-    thumb = media_path
-    for match in filter(media_path_filter, files_found):
-        filename = os.path.basename(match)
-        if filename.startswith('~') or filename.startswith('._') or filename != media_path:
-            continue
-
-        dirs = os.path.dirname(report_folder)
-        dirs = os.path.dirname(dirs)
-        env_path = os.path.join(dirs, 'data')
-        if env_path in match:
-            source = match
-            source = relative_paths(source, splitter)
-        else:
-            path = os.path.dirname(match)
-            dirname = os.path.basename(path)
-            filename = Path(match)
-            filename = filename.name
-            locationfiles = Path(report_folder).joinpath(dirname)
-            Path(f'{locationfiles}').mkdir(parents=True, exist_ok=True)
-            shutil.copy2(match, locationfiles)
-            source = Path(locationfiles, filename)
-            source = relative_paths(str(source), splitter)
-
-        mimetype = guess_mime(match)
-        if mimetype is None:
-            mimetype = ''
-
-        # allow_parent: relative_paths() above deliberately emits ../data/... to reach
-        # the extraction folder beside the report. The evidence filename in the
-        # fallback link text is escaped -- it used to be interpolated raw.
-        # Bind the escaped values to their own names rather than writing back over
-        # `source`, which is assigned several times above. Reading a name that only
-        # ever holds a checked value makes the safety local and obvious, to a reader
-        # and to admin/scripts/check_html_safety.py alike.
-        safe_source = safe_local_path(source, allow_parent=True)
-        safe_filename = esc(filename)
-
-        if 'video' in mimetype:
-            thumb = f'<video width="320" height="240" controls="controls"><source src="{safe_source}" type="video/mp4" preload="none">Your browser does not support the video tag.</video>'
-        elif 'image' in mimetype:
-            thumb = f'<a href="{safe_source}" target="_blank"><img src="{safe_source}" width="300"></img></a>'
-        elif 'audio' in mimetype:
-            thumb = f'<audio controls><source src="{safe_source}" type="audio/ogg"><source src="{safe_source}" type="audio/mpeg">Your browser does not support the audio element.</audio>'
-        else:
-            thumb = f'<a href="{safe_source}" target="_blank"> Link to {safe_filename} file</a>'
-    return thumb
 
 
 # pylint: disable-next=pointless-string-statement

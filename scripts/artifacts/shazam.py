@@ -1,9 +1,9 @@
 __artifacts_v2__ = {
     "shazam_recognitions": {
         "name": "Shazam Recognitions",
-        "description": "Rows of the tag table in the Shazam library database, each holding the "
-                       "time of a music recognition with the track it resolved to, the stored "
-                       "coordinates and place names, and the recognition request identifier",
+        "description": "Rows of the tag table in the Shazam library database, each holding the time of a music "
+                       "recognition with the track it resolved to, the coordinate and place name columns where the row "
+                       "carries them, and the recognition request identifier",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",

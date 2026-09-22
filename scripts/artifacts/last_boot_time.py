@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "last_boot_time": {
         "name": "Last Boot Time",
         "description": "Reports the last_boot_time_utc bootstat record; AOSP stores the event value in the file's modification time.",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-05",
         "last_update_date": "2026-08-01",
         "requirements": "none",

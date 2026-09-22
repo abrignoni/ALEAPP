@@ -28,13 +28,13 @@ def get_sWipehist(context):
     files_found = context.get_files_found()
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not (file_found.endswith('history') or file_found.endswith('recovery_history.log')):
             continue  # Skip all other files
 
-        source_path = file_found
+        source_paths.append(file_found)
         timestamp = wipe = promptwipe = reason = provider = rebootreason = locale = updateorg = updatepkg = reqtime = ''
         with open(file_found, 'r', encoding='utf-8', errors='replace') as f:
             for line in f:
@@ -89,4 +89,4 @@ def get_sWipehist(context):
                     wipe = 'Yes'
 
     data_headers = ('Timestamp', 'Wipe', 'Prompt & Wipe', 'Reason', 'Provider', 'Reboot Reason', 'Locale', 'Request Timestamp')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

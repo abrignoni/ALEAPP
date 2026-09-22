@@ -14,9 +14,9 @@ __artifacts_v2__ = {
                  "the engagement counts and region_name.\n"
                  "These are posts the app had cached for the timeline it was showing. That is a "
                  "record of what the client held, and it does not establish that the account "
-                 "holder read any particular post. The Account UID column is the uid the row is "
-                 "filed under, which is the local account the timeline belongs to, not the "
-                 "author.\n"
+                 "holder read any particular post. The Account UID column is the uid column the "
+                 "row is filed under, reported as stored; it is reported separately from the "
+                 "author because it need not name the same party.\n"
                  "Posted From is the stored region_name string, which was present on some rows "
                  "and absent on others in the tested corpus; it is reported as stored and is not "
                  "translated. The separate 'source' field of the JSON is reported as Author "
@@ -46,8 +46,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "Weibo",
-        "notes": "Read from long_text_table in ArticleDb.db, which holds the expanded body of "
-                 "posts too long to fit the timeline entry. _own_uid is the local account the row "
+        "notes": "Read from long_text_table in ArticleDb.db, which holds long post bodies. "
+                 "_own_uid is the local account the row "
                  "is filed under and is reported as Account UID; _mid is the post id, which is "
                  "the same identifier the timeline artifact reports as Post ID, so rows can be "
                  "matched between the two.\n"
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
                  "present under the package are emoji packs and interface card graphics. So this "
                  "artifact checks nothing in as media, and an entry records that the client held "
                  "a reference to an image rather than that the image was stored on the device.\n"
-                 "The URL columns are reported as links. Following one requests the image from "
+                 "The URL columns are reported as text. Following one requests the image from "
                  "Sina's servers, which is a live network request, so whether to follow it is a "
                  "decision for the examiner rather than something this artifact does.\n"
                  "Post Author Name and Post Text are looked up by post id from the timeline and "

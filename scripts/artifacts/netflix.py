@@ -13,8 +13,8 @@ __artifacts_v2__ = {
                  "stored and are not mapped to labels. Only one value of eventType was present in "
                  "the data tested, so the column is unexercised beyond that value. The duration "
                  "value was identical across every repeat in the data tested (9 playable ids with "
-                 "more than one event, none with a differing duration), so it appears to describe "
-                 "the playable rather than the individual event. Titles are filled in from the "
+                 "more than one event, none with a differing duration); what it describes is not "
+                 "established. Titles are filled in from the "
                  "offlineFalkorPlayable table and the Apollo cache when the same video id appears "
                  "there, and are left blank otherwise; those two stores hold whatever the app had "
                  "cached, so most rows have no title available. Artwork is shown when a file named "
@@ -118,8 +118,8 @@ __artifacts_v2__ = {
                  "fields. videoType, maturityLevel and the boolean-looking integers are reported "
                  "as stored because the app's constant names are stripped by R8 in the app binary "
                  "checked. Artwork is shown when a file named after the video id exists under "
-                 "files/img/of/videos. The table holds the playables the app had prepared for "
-                 "offline use, which is a smaller set than the titles played. The database uses "
+                 "files/img/of/videos. The table holds the playables the app had stored for "
+                 "offline use, which is not the same set as the titles played. The database uses "
                  "WAL and the sidecars are matched with it."
                  " In the corpora listed below the app was installed and the "
                  "database was present with this table empty, checked directly "
@@ -239,7 +239,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Netflix",
         "notes": "One row per preferences file that carries at least one of the reported values. "
-                 "Older releases write none of them, and such a file produces no row here; its "
+                 "A file that carries none of them produces no row here; its "
                  "contents still appear in the Netflix Preferences artifact. "
                  "The ESN and the Widevine device id are identifiers "
                  "the app stores for itself; they are reported as stored. Credential bearing keys "
@@ -525,10 +525,10 @@ def netflix_playback(context):
     titles = _title_lookup(files_found)
     artwork = _artwork_index(files_found)
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for path in _databases(files_found, 'appHistory'):
-        source_path = path
+        source_paths.append(path)
         for row in get_sqlite_db_records(path, '''
                 SELECT eventTime, playableId, xid, eventType, network, duration, offline, id
                 FROM playEvent ORDER BY eventTime'''):
@@ -562,7 +562,7 @@ def netflix_playback(context):
         'Duration (hh:mm:ss)',
         'Row ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -570,10 +570,10 @@ def netflix_streaming_sessions(context):
     files_found = unique_files(context)
     titles = _title_lookup(files_found)
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for path in _databases(files_found, 'appHistory'):
-        source_path = path
+        source_paths.append(path)
         for row in get_sqlite_db_records(path, '''
                 SELECT timestamp, streamId, bytes, interval, locationID, ip, networkType,
                        totalBufferingTime
@@ -604,7 +604,7 @@ def netflix_streaming_sessions(context):
         'Interval (ms)',
         'Total Buffering Time (ms)',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -887,7 +887,7 @@ def netflix_artwork(context):
 def netflix_account(context):
     files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
 
     country_files = _paths_matching(files_found, '/shared_prefs/CurrentCountryCode.xml')
     country_code = ''
@@ -895,7 +895,7 @@ def netflix_account(context):
         country_code = _read_prefs(path).get('code', '') or country_code
 
     for path in _paths_matching(files_found, '/shared_prefs/nfxpref.xml'):
-        source_path = path
+        source_paths.append(path)
         prefs = _read_prefs(path)
         row = (
             _timestamp_value(prefs.get('playAppInstallTime')),
@@ -949,7 +949,7 @@ def netflix_account(context):
         'Channel ID',
         'Source File',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor

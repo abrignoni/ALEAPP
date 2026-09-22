@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "shutdown_checkpoints": {
         "name": "Shutdown Checkpoints",
         "description": "Parses powering off and reset events",
-        "author": "@stark4n6",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-22",
         "last_update_date": "2025-08-09",
         "requirements": "none",
@@ -28,11 +28,13 @@ from scripts.ilapfuncs import artifact_processor
 def shutdown_checkpoints(context):
     files_found = context.get_files_found()
     data_list = []
+    source_paths = set()
     pattern = 'Shutdown request from '
 
     for file_found in files_found:
         file_found = str(file_found)
-            
+        source_paths.add(file_found)
+
         with open(file_found, "r", encoding="utf-8") as f:
             data = f.readlines()
             for line in data:
@@ -51,4 +53,4 @@ def shutdown_checkpoints(context):
                     continue
 
     data_headers = (('Timestamp','datetime'),'Requestor','Entry','Source File')
-    return data_headers, data_list, 'See source file(s) below:' 
+    return data_headers, data_list, '\n'.join(sorted(source_paths)) 

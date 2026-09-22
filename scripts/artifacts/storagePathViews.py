@@ -18,6 +18,14 @@ com.android.providers.telephony/databases/mmssms.db exists in both and the two c
 differ. The Android user id is part of the key for the same reason, so a second user's
 data is never folded into user 0's.
 
+The copies are usually byte identical, but not always, and the difference is worth
+knowing when reading a report. On samsunga53_a14, 19 of the 35,177 files present under all
+three credential encrypted views differ between them: write ahead logs, shared memory
+files and logs an app was writing while the extraction ran, so each view caught a slightly
+different moment. The copy under the preferred spelling is the one reported and the others
+are not read. Measured 2026-08-27; on that image no artifact's row count changed as a
+result, and contacts2.db returns the same rows through all three views.
+
 Keying is done on the evidence relative path rather than the extracted path. The report's
 own extraction folder is itself named "data", so a pattern applied to the full on-disk
 path can rewrite the harness boundary instead of the evidence path on extractions whose

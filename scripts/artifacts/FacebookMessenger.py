@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_fb_user_id": {
         "name": "Facebook Messenger - User ID",
         "description": "Facebook/Messenger logged-in user id (threads_db2-uid)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -21,12 +21,20 @@ __artifacts_v2__ = {
     "get_fb_msys_chats": {
         "name": "Facebook Messenger - Chats (msys_database)",
         "description": "Facebook/Messenger chat messages (msys_database)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-07-03",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "Rows that are the same record found in more than one place are merged, and the Source File column lists every location a row was found in. The Facebook app and Messenger keep the same MSYS mailbox, so an extraction holding both carries a copy in each sandbox; the join in this query can also emit the same row more than once from a single copy. Merging is keyed on row content, not on package name, so a record present in only one sandbox is kept: on one tested image the two copies held 11 and 13 contacts and the merged result is 13. Signed CDN links are excluded from the key because each app fetches its own for the same item, which means two genuinely different items would merge if they matched on every other reported column.",
+        "notes": "Rows that are the same record found in more than one place are merged, and the "
+                 "Source File column lists every location a row was found in. An extraction "
+                 "holding both the Facebook app and Messenger can carry a copy of msys_database "
+                 "in each sandbox; the join in this query can also emit the same row more than "
+                 "once from a single copy. Merging is keyed on row content, not on package name, "
+                 "so a record present in only one sandbox is kept: on one tested image the two "
+                 "copies held 11 and 13 contacts and the merged result is 13. Signed CDN links "
+                 "are excluded from the key, which means two genuinely different items would "
+                 "merge if they matched on every other reported column.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -51,12 +59,20 @@ __artifacts_v2__ = {
     "get_fb_msys_calls": {
         "name": "Facebook Messenger - Calls (msys_database)",
         "description": "Facebook/Messenger call log (msys_database)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "Rows that are the same record found in more than one place are merged, and the Source File column lists every location a row was found in. The Facebook app and Messenger keep the same MSYS mailbox, so an extraction holding both carries a copy in each sandbox; the join in this query can also emit the same row more than once from a single copy. Merging is keyed on row content, not on package name, so a record present in only one sandbox is kept: on one tested image the two copies held 11 and 13 contacts and the merged result is 13. Signed CDN links are excluded from the key because each app fetches its own for the same item, which means two genuinely different items would merge if they matched on every other reported column.",
+        "notes": "Rows that are the same record found in more than one place are merged, and the "
+                 "Source File column lists every location a row was found in. An extraction "
+                 "holding both the Facebook app and Messenger can carry a copy of msys_database "
+                 "in each sandbox; the join in this query can also emit the same row more than "
+                 "once from a single copy. Merging is keyed on row content, not on package name, "
+                 "so a record present in only one sandbox is kept: on one tested image the two "
+                 "copies held 11 and 13 contacts and the merged result is 13. Signed CDN links "
+                 "are excluded from the key, which means two genuinely different items would "
+                 "merge if they matched on every other reported column.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -71,12 +87,20 @@ __artifacts_v2__ = {
     "get_fb_msys_contacts": {
         "name": "Facebook Messenger - Contacts (msys_database)",
         "description": "Facebook/Messenger contacts (msys_database)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "Rows that are the same record found in more than one place are merged, and the Source File column lists every location a row was found in. The Facebook app and Messenger keep the same MSYS mailbox, so an extraction holding both carries a copy in each sandbox; the join in this query can also emit the same row more than once from a single copy. Merging is keyed on row content, not on package name, so a record present in only one sandbox is kept: on one tested image the two copies held 11 and 13 contacts and the merged result is 13. Signed CDN links are excluded from the key because each app fetches its own for the same item, which means two genuinely different items would merge if they matched on every other reported column.",
+        "notes": "Rows that are the same record found in more than one place are merged, and the "
+                 "Source File column lists every location a row was found in. An extraction "
+                 "holding both the Facebook app and Messenger can carry a copy of msys_database "
+                 "in each sandbox; the join in this query can also emit the same row more than "
+                 "once from a single copy. Merging is keyed on row content, not on package name, "
+                 "so a record present in only one sandbox is kept: on one tested image the two "
+                 "copies held 11 and 13 contacts and the merged result is 13. Signed CDN links "
+                 "are excluded from the key, which means two genuinely different items would "
+                 "merge if they matched on every other reported column.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -91,7 +115,7 @@ __artifacts_v2__ = {
     "get_fb_threads_chats": {
         "name": "Facebook Messenger - Chats (threads_db2)",
         "description": "Facebook/Messenger chat messages (threads_db2)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-08-10",
         "requirements": "none",
@@ -110,7 +134,7 @@ __artifacts_v2__ = {
     "get_fb_threads_calls": {
         "name": "Facebook Messenger - Calls (threads_db2)",
         "description": "Facebook/Messenger call log (threads_db2)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -129,7 +153,7 @@ __artifacts_v2__ = {
     "get_fb_threads_contacts": {
         "name": "Facebook Messenger - Contacts (threads_db2)",
         "description": "Facebook/Messenger contacts (threads_db2)",
-        "author": "Kevin Pagano",
+        "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-08-10",
         "requirements": "none",
@@ -150,6 +174,7 @@ __artifacts_v2__ = {
 import datetime
 import sqlite3
 
+from scripts.context import Context
 from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
 
 
@@ -169,11 +194,10 @@ def _candidate(file_found):
     return 'mirror' not in file_found and '/user/0/' not in file_found
 
 
-def _src(file_found, seeker):
-    try:
-        return file_found.replace(seeker.data_folder, '')
-    except AttributeError:
-        return file_found
+def _src(file_found, _seeker):
+    # The evidence relative path for a row. The framework's reducer, not a hand-rolled
+    # replace with a fallback that would publish the staged path.
+    return Context.get_relative_path(file_found)
 
 
 def _q(cursor, sql):

@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "module_name": "Threema",
+    "artifact_name": "Threema - Account",
+    "function_name": "threema_account",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 3,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 25,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_account.pixel7a_a14.zip",
+    "start_time": "2026-08-25T04:54:37.334088+00:00",
+    "end_time": "2026-08-25T04:54:37.392636+00:00",
+    "run_time_seconds": 0.0007023811340332031,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-08-25T04:54:37.389755",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Threema ID",
+    "Nickname",
+    "Linked Mobile Number"
+  ],
+  "data": [
+    [
+      "T4UFS63T",
+      "Liz D",
+      "+19199282177"
+    ]
+  ]
+}

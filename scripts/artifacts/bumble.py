@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_bumble": {
         "name": "Bumble - User Settings",
         "description": "Bumble local user details from the settings protobuf",
-        "author": "@KevinPagano3", "creation_date": "2022-11-07", "last_update_date": "2022-11-07",
+        "author": "Kevin Pagano (@stark4n6)", "creation_date": "2022-11-07", "last_update_date": "2022-11-07",
         "requirements": "none", "category": "Bumble",
         "paths": ('*/com.bumble.app/files/c2V0dGluZ3M=',),
         "output_types": "standard", "artifact_icon": "user",
@@ -11,7 +11,7 @@ __artifacts_v2__ = {
     "get_bumble_messages": {
         "name": "Bumble - Chat Messages",
         "description": "Bumble chat messages",
-        "author": "@KevinPagano3", "creation_date": "2022-11-07", "last_update_date": "2026-07-03",
+        "author": "Kevin Pagano (@stark4n6)", "creation_date": "2022-11-07", "last_update_date": "2026-07-03",
         "requirements": "none", "category": "Bumble",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*', '*/com.bumble.app/files/c2V0dGluZ3M='),
         "output_types": "standard", "artifact_icon": "message",
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
     "get_bumble_matches": {
         "name": "Bumble - Matches",
         "description": "Bumble matches / conversations",
-        "author": "@KevinPagano3", "creation_date": "2022-11-07", "last_update_date": "2022-11-07",
+        "author": "Kevin Pagano (@stark4n6)", "creation_date": "2022-11-07", "last_update_date": "2022-11-07",
         "requirements": "none", "category": "Bumble",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*',),
         "output_types": "standard", "artifact_icon": "users",

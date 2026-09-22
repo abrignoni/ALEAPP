@@ -19,11 +19,11 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.vending vc 85180930 | 147 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.vending vc 84812830 | 97 rows",
             "pixel7a_a14": "Android 14 | com.android.vending vc 84191730 | 155 rows",
-            "samsunga53_a14": "Android 14 | com.android.vending vc 84913330 | 204 rows",
+            "samsunga53_a14": "Android 14 | com.android.vending vc 84913330 | 68 rows",
             "samsungs20_a13": "Android 13 | com.android.vending vc 84962330 | 150 rows",
             "sharon_a14": "Android 14 | com.android.vending vc 84222730 | 122 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.vending vc 83631220 | 204 rows",
-            "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 214 rows",
+            "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 107 rows",
         },
     }
 }
@@ -46,7 +46,7 @@ def get_installedappsVending(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('localappstate.db'):
@@ -56,7 +56,7 @@ def get_installedappsVending(context):
         if user == 'data':
             user = '0'
 
-        source_path = file_found
+        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
 
@@ -79,4 +79,4 @@ def get_installedappsVending(context):
             data_list.append((user, _ms_to_utc(row[0]), row[1], row[2], row[3], _ms_to_utc(row[4]), row[5], row[6]))
 
     data_headers = ('User', ('First Download', 'datetime'), 'Package Name', 'Title', 'Install Reason', ('Last Updated', 'datetime'), 'Auto Update?', 'Account')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

@@ -121,9 +121,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Etsy",
-        "notes": "These rows record advertising the app displayed to the user and, for a "
-                 "click row, that the advertisement was tapped. An impression records "
-                 "delivery by the app rather than an action by the user. timestamp is Unix "
+        "notes": "The two tables are named for advertising impressions and clicks; what a row "
+                 "records was not exercised, because no row was present on the tested device. "
+                 "timestamp is Unix "
                  "milliseconds. Impression and click rows share a column count, so they "
                  "are told apart by the shape their schemas require: the click table's "
                  "first column is its integer primary key and is therefore absent from the "
@@ -176,9 +176,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Etsy",
         "notes": "The breadcrumb cache is written by the Sentry SDK the app embeds and is "
-                 "scoped here to the app's own data directory. It holds the requests of "
-                 "the session in progress when the file was last written, so it is a short "
-                 "record of the most recent session rather than a history. The file is a "
+                 "scoped here to the app's own data directory. It holds the requests recorded up "
+                 "to the time the file was last written, so it is a short record rather than a "
+                 "history. The file is a "
                  "fixed size buffer, so JSON objects are located within it rather than the "
                  "file being parsed as a whole document. Start and end times are Unix "
                  "milliseconds and the duration is their difference. Each breadcrumb also "

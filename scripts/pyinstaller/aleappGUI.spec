@@ -39,6 +39,7 @@ a = Analysis(
       'html.parser',
       'mister_skinnylegs',
       'polyline',
+      'sqlcipher3',
       'uuid',
       'xmltodict',
       'zoneinfo'
@@ -66,7 +67,7 @@ exe = EXE(
    debug=False,
    bootloader_ignore_signals=False,
    strip=False,
-   upx=True,
+   upx=False,
    console=True,
    hide_console='hide-early',
    disable_windowed_traceback=False,

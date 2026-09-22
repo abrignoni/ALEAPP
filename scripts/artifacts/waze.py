@@ -17,7 +17,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com. "
-                 "Field mappings were established through testing.",
+                 "Field mappings are the parser's own; no test count, image or source for them "
+                 "is recorded here.",
         "paths": ("*/com.waze/user",
                   "*/com.waze/waze/cached_data*"),
         "output_types": ["standard"],
@@ -37,7 +38,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com. "
-                 "Key-to-field mappings were established through testing.",
+                 "Key-to-field mappings are the parser's own; no test count, image or source for "
+                 "them is recorded here.",
         "paths": ("*/com.waze/session"),
         "output_types": ["all"],
         "artifact_icon": "navigation",
@@ -55,10 +57,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com. "
-                 "Log field mappings were established through testing. The accuracy columns "
-                 "combine the legacy C++ ACC_MIN/ACC_AVG/ACC_MAX fields, which carry no unit in "
-                 "the log, with the Swift accuracy_min_meters/accuracy_avg_meters/"
-                 "accuracy_max_meters fields, which are expressed in meters.",
+                 "Log field mappings are the parser's own; no test count, image or source for "
+                 "them is recorded here. The accuracy columns combine the "
+                 "ACC_MIN/ACC_AVG/ACC_MAX fields, which carry no unit in the log, with the "
+                 "accuracy_min_meters/accuracy_avg_meters/accuracy_max_meters fields, whose "
+                 "names carry a unit of meters.",
         "paths": ("*/com.waze/spdlog.*logdata",
                   "*/com.waze/waze_log.txt",
                   "*/com.waze/*spdlog.logdata.gz"),
@@ -78,7 +81,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com. "
-                 "Field mappings were established through testing; unrecognized values are "
+                 "Field mappings are the parser's own; no test count, image or source for them "
+                 "is recorded here; unrecognized values are "
                  "reported as stored.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
@@ -97,7 +101,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com. "
-                 "Recent-entry type mappings were established through testing; unrecognized "
+                 "Recent-entry type mappings are the parser's own; no test count, image or "
+                 "source for them is recorded here; unrecognized "
                  "values are reported as stored.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
@@ -116,7 +121,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com. "
-                 "Favorite-entry type mappings were established through testing; unrecognized "
+                 "Favorite-entry type mappings are the parser's own; no test count, image or "
+                 "source for them is recorded here; unrecognized "
                  "values are reported with the raw stored value.",
         "paths": ("*/com.waze/user.db*",
                   "*/com.waze/waze/cached_data*"),
@@ -136,7 +142,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com. "
-                 "Field mappings were established through testing.",
+                 "Field mappings are the parser's own; no test count, image or source for them "
+                 "is recorded here.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "artifact_icon": "map-pin",
@@ -154,7 +161,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com. "
-                 "Event type and all-day mappings were established through testing; unrecognized "
+                 "Event type and all-day mappings are the parser's own; no test count, image or "
+                 "source for them is recorded here; unrecognized "
                  "values are reported as stored.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
@@ -174,7 +182,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Waze",
         "notes": "https://djangofaiola.blogspot.com. "
-                 "Text type mappings were established through testing; unrecognized values are "
+                 "Text type mappings are the parser's own; no test count, image or source for "
+                 "them is recorded here; unrecognized values are "
                  "reported as stored.",
         "paths": ("*/com.waze/waze/tts/tts.db*"),
         "output_types": ["standard"],

@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "module_name": "Samsungwallet",
+    "artifact_name": "Samsung Wallet - Card Art",
+    "function_name": "samsung_wallet_card_art",
+    "case_number": "case1",
+    "number_of_columns": 4,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 752,
+    "media_checkins": 4,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Samsungwallet/testdata.Samsungwallet.samsung_wallet_card_art.case1.zip",
+    "start_time": "2026-08-28T01:47:45.483738+00:00",
+    "end_time": "2026-08-28T01:47:45.507040+00:00",
+    "run_time_seconds": 0.0013020038604736328,
+    "last_commit": {
+      "hash": "747bb6cb24d1e48398f977e1323dc4143c0f7373",
+      "author_name": "Gear-I",
+      "author_email": "dielleaiko@hotmail.com",
+      "date": "2026-08-26T19:29:18-04:00",
+      "message": "Add Samsung Wallet enrolled-cards and receipts artifacts"
+    }
+  },
+  "headers": [
+    "Card Enrollment ID",
+    "Art Type",
+    "Card Art",
+    "File Name"
+  ],
+  "data": [
+    [
+      "lb44qc014qdqpcr214f6jltqbn",
+      "CARD_ART_TYPE_BANK_APP_ICON",
+      "mock_hash_for_us_card_artlb44qc014qdqpcr214f6jltqbnCARD_ART_TYPE_BANK_APP_ICON.png",
+      "us_card_artlb44qc014qdqpcr214f6jltqbnCARD_ART_TYPE_BANK_APP_ICON.png"
+    ],
+    [
+      "lb44qc014qdqpcr214f6jltqbn",
+      "CARD_ART_TYPE_BANK_ICON",
+      "mock_hash_for_us_card_artlb44qc014qdqpcr214f6jltqbnCARD_ART_TYPE_BANK_ICON.png",
+      "us_card_artlb44qc014qdqpcr214f6jltqbnCARD_ART_TYPE_BANK_ICON.png"
+    ],
+    [
+      "lb44qc014qdqpcr214f6jltqbn",
+      "CARD_ART_TYPE_LOGO",
+      "mock_hash_for_us_card_artlb44qc014qdqpcr214f6jltqbnCARD_ART_TYPE_LOGO.png",
+      "us_card_artlb44qc014qdqpcr214f6jltqbnCARD_ART_TYPE_LOGO.png"
+    ],
+    [
+      "lb44qc014qdqpcr214f6jltqbn",
+      "CARD_ART_TYPE_SYMBOL",
+      "mock_hash_for_us_card_artlb44qc014qdqpcr214f6jltqbnCARD_ART_TYPE_SYMBOL.png",
+      "us_card_artlb44qc014qdqpcr214f6jltqbnCARD_ART_TYPE_SYMBOL.png"
+    ]
+  ]
+}

@@ -19,7 +19,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.google.android.apps.maps vc 1067620099 | 2 rows",
             "sharon_a14": "Android 14 | com.google.android.apps.maps vc 1067648704 | 2 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.maps vc 1067057900 | 2 rows",
-            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 4 rows",
+            "userb2_a13": "Android 13 | com.google.android.apps.maps vc 1067804533 | 2 rows",
         },
     }
 }

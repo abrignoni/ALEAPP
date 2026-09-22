@@ -37,6 +37,7 @@ a = Analysis(
         'html.parser',
         'mister_skinnylegs',
         'polyline',
+        'sqlcipher3',
         'uuid',
         'xmltodict',
         'zoneinfo'
@@ -80,5 +81,5 @@ app = BUNDLE(
     name='aleappGUI.app',
     icon='../../assets/icon.icns',
     bundle_identifier='4n6.brigs.ALEAPP',
-    version='2026.3.2-dev',
+    version='2026.4.0',
 )

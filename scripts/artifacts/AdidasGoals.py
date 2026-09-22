@@ -8,11 +8,11 @@ __artifacts_v2__ = {
         "requirements": "Python 3.7 or higher",
         "category": "Adidas-Running",
         "notes": "Columns of goalV2 are read by position over 'Select * from goalV2'; the mapping was "
-                 "established against the app version this parser was written for and may not hold on "
-                 "other versions. The eighth column of the table is not reported. The Start Date and "
-                 "End Date values are stored as plain integers and are split into YYYY-MM-DD by this "
-                 "parser; that interpretation comes from the observed values and is not confirmed by "
-                 "app documentation.",
+                 "written against one app version, which is not recorded here, and may not hold "
+                 "on other versions. The eighth column of the table is not reported. The Start "
+                 "Date and End Date values are stored as plain integers and are split into "
+                 "YYYY-MM-DD by this parser; that interpretation is not documented by the app "
+                 "and is not established.",
         "paths": ('*/com.runtastic.android/databases/goals*',),
         "output_types": "standard",
         "artifact_icon": "activity",

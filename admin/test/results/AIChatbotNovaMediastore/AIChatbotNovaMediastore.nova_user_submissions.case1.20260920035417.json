@@ -1,0 +1,161 @@
+{
+  "metadata": {
+    "module_name": "AIChatbotNovaMediastore",
+    "artifact_name": "User Media Submissions",
+    "function_name": "nova_user_submissions",
+    "case_number": "case1",
+    "number_of_columns": 7,
+    "number_of_rows": 14,
+    "total_data_size_bytes": 2582,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/AIChatbotNovaMediastore/testdata.AIChatbotNovaMediastore.nova_user_submissions.case1.zip",
+    "start_time": "2026-09-20T03:54:17.670058+00:00",
+    "end_time": "2026-09-20T03:54:17.695983+00:00",
+    "run_time_seconds": 0.00127410888671875,
+    "last_commit": {
+      "hash": "0cfab8434883aba1c1daa222295ca463f1c7774f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-08-10T09:05:12-04:00",
+      "message": "fix: carry the Nova artifacts onto the current core and house vocabulary"
+    }
+  },
+  "headers": [
+    "File Name",
+    "Type",
+    "Context",
+    "Date",
+    "MIME",
+    "Media",
+    "Path"
+  ],
+  "data": [
+    [
+      "sample-local-pdf.pdf",
+      "Document",
+      "What is this PDF about?",
+      1775592752,
+      "application/pdf",
+      "",
+      "/storage/emulated/0/Download/sample-local-pdf.pdf"
+    ],
+    [
+      "ps-proposal.pdf",
+      "Document",
+      "What should I do as a Cibersecurity student for this project?\n",
+      1776760580,
+      "application/pdf",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "file_example_MP4_480_1_5MG.mp4",
+      "Document",
+      "What is the content of this video?\n",
+      1777893350,
+      "video/mp4",
+      "",
+      "/storage/emulated/0/Download/file_example_MP4_480_1_5MG.mp4"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Digital forensics themed image | Prompt: I want to generate an image with the theme Digital Forensics",
+      1775593718,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Academic-style image with scholarly elements | Prompt: I want to generate another image more academic",
+      1775607777,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Clean, professional logo showcasing mobile forensics concept | Prompt: Magnifying glass over smartphone forensics",
+      1776163113,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Clean, professional logo showcasing mobile forensics concept | Prompt: Mobile app tablet with forensic elements",
+      1776163113,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Tattoo design prompts based on forensic analysis of Android apps. | Prompt: Android bug with forensic tools tattoo",
+      1776163388,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Tattoo design prompts based on forensic analysis of Android apps. | Prompt: Mobile app analysis symbols tattoo",
+      1776163388,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Two signature design prompts for Joao Silva, focusing on elegant cursive and modern stylized signatures. | Prompt: Elegant signature style for Joao Silva, flowing cursive with intricate curves, artistic flourishes, refined strokes, high contrast, vintage calligraphy influence, smooth and sophisticated composition, suitable for luxury branding",
+      1776848415,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Two signature design prompts for Joao Silva, focusing on elegant cursive and modern stylized signatures. | Prompt: Stylish signature for J. Silva, modern and sleek with bold sweeping lines, minimalist flourish, dynamic motion, high detail, refined aesthetics, emphasis on elegance and fluidity, artistic typography for personal branding",
+      1776848415,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Focus on creating sleek, modern logo concepts emphasizing simplicity and clarity. | Prompt: Modern logo clean simple design",
+      1777803605,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "result.jpeg",
+      "Image",
+      "Msg: Focus on creating sleek, modern logo concepts emphasizing simplicity and clarity. | Prompt: Contemporary minimalist logo style",
+      1777803605,
+      "",
+      "",
+      "Not in MediaStore"
+    ],
+    [
+      "vision-image-input-4648e8a7-b1e7-4b38-941a-4a0b92fb1fb9",
+      "Image",
+      "Msg: What is this? | Prompt: None",
+      1777816067,
+      "",
+      "",
+      "Not in MediaStore"
+    ]
+  ]
+}

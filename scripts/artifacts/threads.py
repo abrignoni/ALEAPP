@@ -60,9 +60,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Threads",
-        "notes": "One row per post inside a stored feed item. These are posts by other "
-                 "people that the app held for the account named in the store's file name, "
-                 "not posts made by the account holder. Source is the value the row carries "
+        "notes": "One row per post inside a stored feed item. These are posts the app held in "
+                 "the feed store for the account named in the store's file name, with the author "
+                 "of each reported as stored. Source is the value the row carries "
                  "for how the item arrived and read background_prefetch on the tested "
                  "device, so a row records that the app fetched the item rather than that "
                  "the account holder saw it. Posted is the post's own Unix second timestamp "

@@ -13,10 +13,9 @@ __artifacts_v2__ = {
                  "and the file path and dates from the files table. Tag Type is the tags "
                  "table's own tag_display_name (values such as Scene and SubScene as stored) "
                  "and Tag is its tag_data.\n"
-                 "The labels are produced by the device's own image classification. A label "
-                 "records what that classification returned for the image; it is not a "
-                 "statement that the subject was present, and the provider does not record who "
-                 "or what produced any individual label.\n"
+                 "What produced the labels is not recorded in the store. A label records what "
+                 "was stored against the image; it is not a statement that the subject was "
+                 "present.\n"
                  "Scene Score is reported as stored and was unpopulated in the images tested. "
                  "The companion CMH artifact reports the files table itself.",
         "paths": ('*/cmh.db*',),
@@ -43,12 +42,11 @@ __artifacts_v2__ = {
         "notes": "Rows come from the ocr_tag table in cmh.db, joined to the files table on "
                  "fk_file_id. Recognised Text is the stored image_ocr_tag value; the provider "
                  "separates the segments it read with 0x1F unit separators, which are shown "
-                 "here as ' | ' so the row stays readable. The text is the output of the "
-                 "device's own recognition and can be partial or wrong; it is not a "
-                 "transcription verified by anything.\n"
-                 "Tag Added Timestamp is the ocr_tag row's tag_added_date, stored in "
-                 "milliseconds and reported as UTC. Recogniser Version is the version string "
-                 "the provider wrote for the model that produced the row, as stored.",
+                 "here as ' | ' so the row stays readable. The text is reported as stored and "
+                 "can be partial or wrong; it is not a transcription verified by anything.\nTag "
+                 "Added Timestamp is the ocr_tag row's tag_added_date, stored in milliseconds "
+                 "and reported as UTC. Recogniser Version is the ocr_tag row's version column, "
+                 "as stored.",
         "paths": ('*/cmh.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",

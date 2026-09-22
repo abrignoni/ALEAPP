@@ -80,6 +80,7 @@ def _parse_xml(file_found):
 def torbrowser_thumbnails(context):
     files_found = unique_files(context)
     data_list = []
+    source_paths = set()
 
     for file_found in files_found:
         media_path = Path(file_found)
@@ -89,8 +90,9 @@ def torbrowser_thumbnails(context):
         if media_path.suffix.lower() != '.0':
             continue
 
+        source_paths.add(str(file_found))
         filename = media_path.name
-        location = str(media_path.parent)
+        location = context.get_relative_path(str(media_path.parent))
 
         modified_ts = os.path.getmtime(file_found)
         modifiedtime = datetime.datetime.fromtimestamp(int(modified_ts), datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
@@ -102,7 +104,7 @@ def torbrowser_thumbnails(context):
 
     data_headers = (('ModifiedTime', 'datetime'), ('Thumbnail', 'media'), 'File Name', 'Location')
 
-    return data_headers, data_list, 'See source path(s) below'
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
@@ -166,7 +168,7 @@ def torbrowser_usageinfo(context):
         root = _parse_xml(source_path)
 
         filename = Path(source_path).name
-        path = source_path
+        path = context.get_relative_path(source_path)
 
         for elem in root.iter():
             key_name = elem.get("name")

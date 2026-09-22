@@ -36,6 +36,7 @@ a = Analysis(
         'html.parser',
         'mister_skinnylegs',
         'polyline',
+        'sqlcipher3',
         'uuid',
         'xmltodict',
         'zoneinfo'

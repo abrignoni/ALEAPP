@@ -11,8 +11,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "Coordinates are stored as E7 fixed-point integers inside the protobuf "
-                 "and were validated against multiple test images. Reference: Cellebrite "
+        "notes": "Coordinates are read as E7 fixed-point integers inside the protobuf. "
+                 "Reference: Cellebrite "
                  "Location Booklet 2025.",
         "paths": ('*/com.google.android.gms/databases/odlh-storage.db*',),
         "output_types": "all",

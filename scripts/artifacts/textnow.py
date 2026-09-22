@@ -2,15 +2,18 @@
 __artifacts_v2__ = {
     "get_textnow_call_logs": {
         "name": "Text Now - Call Logs",
-        "description": "Parses TextNow call logs (start and end time, participant IDs and direction) from the TextNow textnow_data.db.",
+        "description": "Parses TextNow call logs (start time, a computed end time, participant IDs and direction) from "
+                       "the TextNow textnow_data.db.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Text Now",
         "notes": ("Call Direction is decoded from the messages table 'message_direction' column, the "
-                  "same column and mapping used by Text Now - Messages. Direction/status value "
-                  "mappings were established through testing; unrecognized values are reported as "
+                  "same column and mapping used by Text Now - Messages. Values 1 and 2 are "
+                  "labelled Incoming and Outgoing; that mapping is not vendor-documented and no "
+                  "source or measurement for it is given here, so the labels are unverified. "
+                  "Unrecognized values are reported as "
                   "stored.\n"
                   "End Time is not stored by the app: it is the start time plus the 'message_text' "
                   "column read as a number of seconds. That column is not established to hold a "
@@ -29,8 +32,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Text Now",
         "notes": ("Direction is decoded from the messages table 'message_direction' column, the same "
-                  "column and mapping used by Text Now - Call Logs. Direction/status value mappings "
-                  "were established through testing; unrecognized values are reported as stored."),
+                  "column and mapping used by Text Now - Call Logs. Values 1 and 2 are labelled "
+                  "Incoming and Outgoing; that mapping is not vendor-documented and no source or "
+                  "measurement for it is given here, so the labels are unverified. Unrecognized "
+                  "values are reported as stored."),
         "paths": ('*/com.enflick.android.TextNow/databases/textnow_data.db*',),
         "output_types": "standard",
         "artifact_icon": "message",

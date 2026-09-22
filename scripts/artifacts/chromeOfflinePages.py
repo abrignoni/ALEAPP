@@ -17,16 +17,17 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433, com.brave.browser vc 429117204 | 2 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 2 rows",
             "pixel7a_a14": "Android 14 | com.android.chrome vc 616710133, com.brave.browser vc 426712324, com.microsoft.emmx vc 259210005 | 8 rows",
-            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 12 rows",
+            "samsunga53_a14": "Android 14 | com.android.chrome vc 744417133 | 4 rows",
             "samsungs20_a13": "Android 13 | com.android.chrome vc 749919233, com.brave.browser vc 428414124, com.microsoft.emmx vc 365012523 | 7 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 38 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 9 rows",
-            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 8 rows",
+            "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 4 rows",
         },
     }
 }
 
 import os
+import sqlite3
 
 from scripts.ilapfuncs import logfunc, open_sqlite_db_readonly, artifact_processor, convert_human_ts_to_utc
 from scripts.artifacts.chrome import get_browser_name
@@ -56,11 +57,16 @@ def get_chromeOfflinePages(context):
         elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
             continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
 
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
-
         db = open_sqlite_db_readonly(file_found)
-        cursor = db.cursor()
-        cursor.execute('''
+        if db is None:
+            continue
+
+        # One unreadable database must not end the artifact: a file left with a
+        # non-empty rollback journal cannot be read through a read-only handle,
+        # because SQLite has to write to replay and clear the journal.
+        try:
+            cursor = db.cursor()
+            cursor.execute('''
         SELECT
         datetime(creation_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch") as creation_time,
         datetime(last_access_time / 1000000 + (strftime('%s', '1601-01-01')), "unixepoch") as last_access_time,
@@ -71,8 +77,15 @@ def get_chromeOfflinePages(context):
         file_size
         from offlinepages_v1
         ''')
+            all_rows = cursor.fetchall()
+        except sqlite3.Error as ex:
+            logfunc(f'Unable to read {browser_name} offline pages in {file_found}: {ex}')
+            continue
+        finally:
+            db.close()
 
-        all_rows = cursor.fetchall()
+        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+
         if len(all_rows) > 0:
             data_list = []
             for row in all_rows:
@@ -82,7 +95,5 @@ def get_chromeOfflinePages(context):
             all_data.extend(data_list)
         else:
             logfunc(f'No {browser_name} - Offline Pages data available')
-
-        db.close()
 
     return all_data_headers, all_data, report_file

@@ -30,7 +30,7 @@ __artifacts_v2__ = {
     },
     "get_kleinanzeigennonresettablerecentsearchescache": {
         "name": "kleinanzeigen.de - Non resettable Recent Searches Cache",
-        "description": "Extracts Recent Searches Cache",
+        "description": "Recent search terms from kleinanzeigen.de's NON_RESETTABLE_RECENT_SEARCHES_CACHE file, with category and time",
         "author": "@BrunoFischerGermany",
         "creation_date": "2024-04-08",
         "last_update_date": "2024-04-08",
@@ -59,14 +59,14 @@ __artifacts_v2__ = {
         "description": "Extracts individual messages from the message database",
         "author": "@BrunoFischerGermany",
         "creation_date": "2024-04-13",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "kleinanzeigen.de App",
-        "notes": ("Direction is decoded from each message's 'sender' value: 'ME' identifies a "
-                  "message sent from this device. Direction/status value mappings were established "
-                  "through testing; any other sender value is reported as stored, and a message "
+        "notes": ("Direction is decoded from each message's 'sender' value: 'ME' is read as a "
+                  "message sent from this account. No source or measurement for that mapping is "
+                  "recorded here; any other sender value is reported as stored, and a message "
                   "with no sender value is left blank.\n"
-                  "In the conversation view only rows labelled Outgoing are shown as sent by the "
+                  "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
                   "Timestamp is converted from the stored ISO 8601 string; a value that cannot be "

@@ -9,7 +9,8 @@ __artifacts_v2__ = {
         "category": "Travel",
         "notes": (
             "Timestamps are rendered in UTC. The Type names for the stored 'a', 'p', 'c' "
-            "and 's' values were established through testing; any other value is shown as "
+            "and 's' values are the labels this parser assigns; the source for them is not "
+            "established, and any other value is shown as "
             "stored."
         ),
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
@@ -30,8 +31,9 @@ __artifacts_v2__ = {
         "category": "Travel",
         "notes": (
             "Timestamps are rendered in UTC. The Departure (type) and Destination (type) "
-            "names for the stored 'a', 'p', 'c' and 's' values were established through "
-            "testing; any other value is shown as stored. Result Coordinates are the "
+            "names for the stored 'a', 'p', 'c' and 's' values are the labels this parser "
+            "assigns; the source for them is not established, and any other value is shown as "
+            "stored. Result Coordinates are the "
             "latitude and longitude stored on the search row, which describe a place in the "
             "itinerary and not the location of the device when the search was made."
         ),

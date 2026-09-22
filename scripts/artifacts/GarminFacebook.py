@@ -55,10 +55,10 @@ def _s(value):
 def get_garminFB(context):
     files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
-        source_path = file_found
+        source_paths.append(file_found)
         try:
             root = ET.parse(file_found).getroot()
         except (ET.ParseError, OSError, ValueError) as exc:
@@ -95,4 +95,4 @@ def get_garminFB(context):
                 data_list.append((key, _s(value)))
 
     data_headers = ('Name', 'Value')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
