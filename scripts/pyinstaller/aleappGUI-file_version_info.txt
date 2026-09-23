@@ -16,12 +16,12 @@ VSVersionInfo(
         '040904b0',
         [StringStruct('CompanyName', 'Alexis Brignoni'),
         StringStruct('FileDescription', 'ALEAPP GUI'),
-        StringStruct('FileVersion', '2026.4.1'),
+        StringStruct('FileVersion', '2026.4.1-dev'),
         StringStruct('InternalName', 'ALEAPP'),
         StringStruct('LegalCopyright', 'Result of a collaborative effort in the DFIR community.'),
         StringStruct('OriginalFilename', 'aleappGUI.exe'),
         StringStruct('ProductName', 'ALEAPP'),
-        StringStruct('ProductVersion', '2026.4.1')])
+        StringStruct('ProductVersion', '2026.4.1-dev')])
       ]), 
     VarFileInfo([VarStruct('Translation', [1033, 1200])])
   ]
