@@ -1,0 +1,32 @@
+{
+  "synthetic_hidden_album": {
+    "description": "SYNTHETIC. Built by hand for PR #1434 because the only real extraction carrying this store is from a case that cannot be shared or sanitized. Nothing here came from a device: secured.db holds a files table created with the column names the module reads (plus _id), so it tests the parser's logic and says nothing about Samsung's real schema, column types or units. The sec_pass images are 16x16 solid-colour placeholders. Four rows: (1) _data resolves to an extracted JPEG, date_added and date_modified in seconds, datetime in milliseconds; (2) _data resolves to an extracted PNG, captured_url set, datetime NULL; (3) _data names sec_pass/gallery/20240401_080000.jpg, which was not extracted, while a same-named file sits in sec_pass/other, so the media column must stay empty; (4) _data, _size and every timestamp NULL or 0, which must not raise. Expected: 4 rows, 2 with media.",
+    "maker": "@AlexisBrignoni, Claude",
+    "os_name": "Android",
+    "make_data": {
+      "input_data_path": "synthetic_hidden_album.zip",
+      "os": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+      "timestamp": "2026-09-24T02:46:56.355168",
+      "last_commit": {
+        "hash": "c4e5e2370b4d0ef46544755e9666d6d1d73878b7",
+        "author_name": "John Hyla",
+        "author_email": "jfhyla@gmail.com",
+        "date": "2026-09-23T22:14:09-04:00",
+        "message": "Samsung Gallery Hidden Album"
+      }
+    },
+    "artifacts": {
+      "samsung_gallery_hidden_album": {
+        "search_patterns": [
+          "*/sec/gallery/secured/databases/secured.db*",
+          "*/data/sec_pass/*"
+        ],
+        "file_count": 7,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
