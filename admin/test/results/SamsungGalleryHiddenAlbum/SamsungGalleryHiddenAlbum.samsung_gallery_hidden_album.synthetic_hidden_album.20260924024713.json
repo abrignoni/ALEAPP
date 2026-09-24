@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "module_name": "SamsungGalleryHiddenAlbum",
+    "artifact_name": "Samsung Gallery Hidden Album",
+    "function_name": "samsung_gallery_hidden_album",
+    "case_number": "synthetic_hidden_album",
+    "number_of_columns": 11,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 674,
+    "media_checkins": 2,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/SamsungGalleryHiddenAlbum/testdata.SamsungGalleryHiddenAlbum.samsung_gallery_hidden_album.synthetic_hidden_album.zip",
+    "start_time": "2026-09-24T02:47:13.008572+00:00",
+    "end_time": "2026-09-24T02:47:13.018630+00:00",
+    "run_time_seconds": 0.0006034374237060547,
+    "last_commit": {
+      "hash": "c4e5e2370b4d0ef46544755e9666d6d1d73878b7",
+      "author_name": "John Hyla",
+      "author_email": "jfhyla@gmail.com",
+      "date": "2026-09-23T22:14:09-04:00",
+      "message": "Samsung Gallery Hidden Album"
+    }
+  },
+  "headers": [
+    "Date Added",
+    "Date Modified",
+    "Datetime",
+    "Media",
+    "Stored Path (_data)",
+    "Size",
+    "Display Name",
+    "Captured URL",
+    "Original Path",
+    "Cam Model",
+    "Owner Package Name"
+  ],
+  "data": [
+    [
+      1710497800,
+      1710497805,
+      1710497700,
+      "mock_hash_for_20240315_101500.jpg",
+      "/data/sec_pass/gallery/20240315_101500.jpg",
+      633,
+      "20240315_101500.jpg",
+      "",
+      "/storage/emulated/0/DCIM/Camera/20240315_101500.jpg",
+      "SYNTHETIC-CAM",
+      "com.example.synthetic.camera"
+    ],
+    [
+      1711000000,
+      1711000000,
+      "",
+      "mock_hash_for_synthetic_download.png",
+      "/data/sec_pass/gallery/synthetic_download.png",
+      82,
+      "synthetic_download.png",
+      "https://example.com/synthetic_download.png",
+      "/storage/emulated/0/Download/synthetic_download.png",
+      "",
+      "com.example.synthetic.browser"
+    ],
+    [
+      1711958400,
+      1711958400,
+      1711958400,
+      "",
+      "/data/sec_pass/gallery/20240401_080000.jpg",
+      2048,
+      "20240401_080000.jpg",
+      "",
+      "/storage/emulated/0/DCIM/Camera/20240401_080000.jpg",
+      "SYNTHETIC-CAM",
+      "com.example.synthetic.camera"
+    ],
+    [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "synthetic_no_path.jpg",
+      "",
+      "",
+      "",
+      ""
+    ]
+  ]
+}
