@@ -200,6 +200,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | PumaActivities |
 | PumaUsers |
 | RunkeeperActivities |
+| SamsungGalleryHiddenAlbum |
 | Todoist |
 | Twitter |
 | VerizonRDDAnalytics |
