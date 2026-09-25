@@ -158,8 +158,9 @@ def main():
                               "'tar', 'zip', or 'gz' for compressed packages containing files with normal names, "
                               "'raw' for a disk image (.img, .dd, .bin, or any numbered .001 segment of a split "
                               "set) or an EnCase/EWF .E01 acquisition, read in place without mounting: its "
-                              "NTFS, FAT32, exFAT, ext2/3/4, F2FS, HFS+, APFS, QNX6, QNX4, ETFS, EFS and QNX IFS "
-                              "volumes are searched directly."
+                              "NTFS, FAT32, exFAT, ext2/3/4, F2FS, HFS+, APFS, QNX6, QNX4, "
+                              "ETFS, EFS, SquashFS, JFFS2, UBI/UBIFS, YAFFS and QNX IFS volumes "
+                              "are searched directly."
                               ))
     parser.add_argument('-o', '--output_path', required=False, action="store",
                         help='Path to base output folder (this must exist)')
