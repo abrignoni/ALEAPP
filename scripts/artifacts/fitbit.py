@@ -135,7 +135,8 @@ def get_fitbit_activity(context):
         DETAILS_TYPE, CALORIES, MANUAL_CALORIES_POPULATED, SOURCE_NAME, SOURCE_TYPE, HAS_GPS,
         SWIM_LENGTHS, POOL_LENGTH, POOL_LENGTH_UNIT, VERY_ACTIVE_MINUTES, MODERATELY_ACTIVE_MINUTES,
         FAT_BURN_HEART_RATE_ZONE, CARDIO_HEART_RATE_ZONE, PEAK_HEART_RATE_ZONE FROM ACTIVITY_LOG_ENTRY''')
-    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1])) + tuple(r[2:]) + (src,) for r in rows]
+    rel = context.get_relative_path(src)
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1])) + tuple(r[2:]) + (rel,) for r in rows]
     data_headers = (('Timestamp', 'datetime'), ('Time Created', 'datetime'), 'Name', 'Log Type',
                     'Active Duration', 'Speed', 'Pace', 'Elevation Gain', 'Avg Heart Rate', 'Distance',
                     'Distance Unit', 'Duration (as stored)', 'Duration / 60', 'Steps', 'Details Type',
@@ -152,7 +153,8 @@ def get_fitbit_device(context):
     src = _find(files_found, 'device_database')
     rows = _run(src, '''SELECT lastsynctime, deviceName, bleMacAddress, batteryPercent, deviceType
         FROM core_device''')
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], src) for r in rows]
+    rel = context.get_relative_path(src)
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], rel) for r in rows]
     data_headers = (('Last Synced Timestamp', 'datetime'), 'Device Name', 'Bluetooth MAC Address',
                     'Battery Percentage', 'Device Type', 'Source File')
     return data_headers, data_list, src
@@ -167,7 +169,8 @@ def _phone_gps_rows(src):
 def get_fitbit_exercise(context):
     files_found = context.get_files_found()
     src = _find(files_found, 'exercise_db')
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], src)
+    rel = context.get_relative_path(src)
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], rel)
                  for r in _phone_gps_rows(src)]
     data_headers = (('Timestamp', 'datetime'), 'Label', 'Latitude', 'Longitude', 'Accuracy',
                     'Altitude', 'Speed', 'Pace', 'Session ID', 'Source File')
@@ -202,7 +205,8 @@ def get_fitbit_heart(context):
     files_found = context.get_files_found()
     src = _find(files_found, 'heart_rate_db')
     rows = _run(src, 'SELECT DATE_TIME, AVERAGE_HEART_RATE, RESTING_HEART_RATE FROM HEART_RATE_DAILY_SUMMARY')
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], src) for r in rows]
+    rel = context.get_relative_path(src)
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], rel) for r in rows]
     data_headers = (('Timestamp', 'datetime'), 'Avg Heart Rate', 'Resting Heart Rate', 'Source File')
     return data_headers, data_list, src
 
@@ -212,7 +216,8 @@ def get_fitbit_sleep_detail(context):
     files_found = context.get_files_found()
     src = _find(files_found, 'sleep')
     rows = _run(src, 'SELECT DATE_TIME, SECONDS, LEVEL_STRING, LOG_ID FROM SLEEP_LEVEL_DATA')
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], src) for r in rows]
+    rel = context.get_relative_path(src)
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], rel) for r in rows]
     data_headers = (('Timestamp', 'datetime'), 'Seconds', 'Level', 'Log ID', 'Source File')
     return data_headers, data_list, src
 
@@ -223,7 +228,8 @@ def get_fitbit_sleep_summary(context):
     src = _find(files_found, 'sleep')
     rows = _run(src, '''SELECT DATE_OF_SLEEP, START_TIME, SYNC_STATUS_STRING, DURATION, DURATION/60000,
         MINUTES_AFTER_WAKEUP, MINUTES_ASLEEP, MINUTES_AWAKE, MINUTES_TO_FALL_ASLEEP, LOG_ID FROM SLEEP_LOG''')
-    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], src)
+    rel = context.get_relative_path(src)
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], rel)
                  for r in rows]
     data_headers = (('Timestamp', 'datetime'), ('Start Time', 'datetime'), 'Sync Status',
                     'Duration (as stored)', 'Duration / 60000', 'Minutes After Wakeup', 'Minutes Asleep',
@@ -236,7 +242,8 @@ def get_fitbit_friends(context):
     files_found = context.get_files_found()
     src = _find(files_found, 'social_db')
     rows = _run(src, 'SELECT OWNING_USER_ID, ENCODED_ID, DISPLAY_NAME, AVATAR_URL, FRIEND, CHILD FROM FRIEND')
-    data_list = [(r[0], r[1], r[2], r[3], r[4], r[5], src) for r in rows]
+    rel = context.get_relative_path(src)
+    data_list = [(r[0], r[1], r[2], r[3], r[4], r[5], rel) for r in rows]
     data_headers = ('Owning User ID', 'Encoded ID', 'Display Name', 'Avatar URL', 'Friend', 'Child',
                     'Source File')
     return data_headers, data_list, src
@@ -249,8 +256,9 @@ def get_fitbit_user(context):
     rows = _run(src, '''SELECT LAST_UPDATED, DISPLAY_NAME, FULL_NAME, ABOUT_ME, AVATAR_URL,
         COVER_PHOTO_URL, CITY, STATE, COUNTRY, JOINED_DATE, DATE_OF_BIRTH, HEIGHT, WEIGHT, GENDER, COACH
         FROM USER_PROFILE''')
+    rel = context.get_relative_path(src)
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], _ms_to_utc(r[9]),
-                  _ms_to_utc(r[10]), r[11], r[12], r[13], r[14], src) for r in rows]
+                  _ms_to_utc(r[10]), r[11], r[12], r[13], r[14], rel) for r in rows]
     data_headers = (('Last Updated', 'datetime'), 'Display Name', 'Full Name', 'About Me', 'Avatar URL',
                     'Cover Photo URL', 'City', 'State', 'Country', ('Joined Date', 'datetime'),
                     ('Date of Birth', 'datetime'), 'Height', 'Weight', 'Gender', 'Coach', 'Source File')
@@ -263,7 +271,8 @@ def get_fitbit_steps(context):
     src = _find(files_found, 'mobile_track_db')
     rows = _run(src, '''SELECT TIMESTAMP, STEPS_COUNT, METS_COUNT, TIME_CREATED, TIME_UPDATED
         FROM PEDOMETER_MINUTE_DATA''')
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], _ms_to_utc(r[3]), _ms_to_utc(r[4]), src) for r in rows]
+    rel = context.get_relative_path(src)
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], _ms_to_utc(r[3]), _ms_to_utc(r[4]), rel) for r in rows]
     data_headers = (('Timestamp', 'datetime'), 'Steps Count', 'Mets Count', ('Time Created', 'datetime'),
                     ('Time Updated', 'datetime'), 'Source File')
     return data_headers, data_list, src
