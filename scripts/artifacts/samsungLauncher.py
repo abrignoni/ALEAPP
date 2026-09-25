@@ -84,7 +84,7 @@ def samsungLauncherItems(context):
                    container_type, container_id, hidden, profile_id, restored,
                    reference_package_name
             FROM item
-            ORDER BY container_type, container_id, rank
+            ORDER BY container_type, container_id, rank, item.rowid
         ''')
 
         for row in db_records:
@@ -118,7 +118,7 @@ def samsungLauncherIcons(context):
         db_records = get_sqlite_db_records(file_found, '''
             SELECT last_updated, label, component_name, profile_id, version
             FROM icon
-            ORDER BY last_updated DESC
+            ORDER BY last_updated DESC, icon.rowid
         ''')
 
         for row in db_records:

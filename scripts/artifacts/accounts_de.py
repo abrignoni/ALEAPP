@@ -48,7 +48,7 @@ def accounts_de(context):
     debug_table.time
     FROM accounts
     INNER JOIN debug_table on accounts._id=debug_table._id
-    ORDER by time
+    ORDER by time, accounts.rowid, debug_table.rowid
     '''
 
     data_headers = (

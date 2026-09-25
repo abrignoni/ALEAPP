@@ -139,7 +139,7 @@ def gmsOdlhSemanticSegments(context):
                    semantic_segment, shown_in_timeline, is_finalized, hierarchy_level,
                    segment_id, obfuscated_gaia_id
             FROM semantic_segment_table
-            ORDER BY start_timestamp_seconds DESC
+            ORDER BY start_timestamp_seconds DESC, semantic_segment_table.rowid
         ''')
 
         for row in db_records:

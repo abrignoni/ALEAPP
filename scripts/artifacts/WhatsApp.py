@@ -435,7 +435,8 @@ def get_whatsapp_group_messages(context):
         LEFT JOIN message_location ON message_location.message_row_id=message._id
         LEFT JOIN wa_contacts ON wa_contacts.jid=jid.raw_string
         WHERE message.recipient_count>=1
-        ORDER BY message.timestamp ASC
+        ORDER BY message.timestamp ASC, message.rowid, chat.rowid, jid.rowid, message_media.rowid,
+            message_location.rowid, wa_contacts.rowid
         ''')
         for row in rows:
             data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), _str_to_utc(row[15]),

@@ -196,7 +196,7 @@ def googleDialerPhoneLookupHistory(context):
         db_records = get_sqlite_db_records(file_found, '''
             SELECT normalized_number, phone_lookup_info, last_modified
             FROM PhoneLookupHistory
-            ORDER BY last_modified DESC
+            ORDER BY last_modified DESC, PhoneLookupHistory.rowid
         ''')
 
         for row in db_records:
@@ -245,7 +245,7 @@ def googleDialerSmartdial(context):
             SELECT display_name, phone_number, normalized_number, contact_id,
                    last_smartdial_update_time, last_time_used, times_used, starred
             FROM smartdial_table
-            ORDER BY display_name
+            ORDER BY display_name, smartdial_table.rowid
         ''')
 
         for row in db_records:

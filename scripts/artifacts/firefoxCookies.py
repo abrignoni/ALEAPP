@@ -72,7 +72,7 @@ def get_firefoxCookies(context):
         datetime({expiry_seconds},'unixepoch') AS ExpirationDate,
         path AS Path
         from moz_cookies
-        ORDER BY lastAccessedDate ASC
+        ORDER BY lastAccessedDate ASC, moz_cookies.id
         ''')
 
         all_rows = cursor.fetchall()

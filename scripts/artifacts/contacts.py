@@ -62,7 +62,7 @@ def contacts(context):
                       LEFT OUTER JOIN data ON (data.raw_contact_id=raw_contacts._id) 
                       LEFT OUTER JOIN mimetypes ON (data.mimetype_id=mimetypes._id) 
                      WHERE mimetype = 'vnd.android.cursor.item/phone_v2' OR mimetype = 'vnd.android.cursor.item/email_v2'
-                     ORDER BY name_raw_contact.display_name ASC;''')
+                     ORDER BY name_raw_contact.display_name ASC, raw_contacts.rowid, contacts.rowid, name_raw_contact.rowid, data.rowid, mimetypes.rowid;''')
             else:
                 cursor.execute('''
                     SELECT mimetype, data1, raw_contacts.display_name AS display_name

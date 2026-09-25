@@ -757,7 +757,7 @@ def process_usagestats(folder, uid, version):
     source,
     fullatt
     from data
-    order by lasttimeactive DESC
+    order by lasttimeactive DESC, data.rowid
     ''')
     all_rows = cursor.fetchall()
 

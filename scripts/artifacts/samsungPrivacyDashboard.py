@@ -70,7 +70,7 @@ def samsungPrivacyDashboardAccess(context):
             SELECT ACCESS_TIME, PACKAGE_NAME, PERMISSION_GROUP_ID, OPERATION_CODE,
                    BACKGROUND, PROXY_NAME, PROXY_ATTRIBUTION_TAG, {uid_column}
             FROM permissionAccessInformations
-            ORDER BY ACCESS_TIME DESC
+            ORDER BY ACCESS_TIME DESC, permissionAccessInformations.rowid
         ''')
 
         for row in db_records:

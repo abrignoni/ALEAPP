@@ -480,6 +480,9 @@ def get_whatsapp_system_events(context):
             else:
                 number_cols = 'NULL, NULL'
                 number_join = ''
+            order_extra = ''.join(f', {alias}.rowid' for alias, join in
+                                  (('n', number_join), ('oj', number_join), ('nj', number_join))
+                                  if join)
             if _table_exists(cursor, 'message_system_value_change'):
                 value_col = 'v.old_data'
                 value_join = ('\n            LEFT JOIN message_system_value_change v'
@@ -487,6 +490,7 @@ def get_whatsapp_system_events(context):
             else:
                 value_col = 'NULL'
                 value_join = ''
+            order_extra += ', v.rowid' if value_join else ''
             if _table_exists(cursor, 'message_system_group'):
                 group_col = 'g.is_me_joined'
                 group_join = ('\n            LEFT JOIN message_system_group g'
@@ -494,6 +498,7 @@ def get_whatsapp_system_events(context):
             else:
                 group_col = 'NULL'
                 group_join = ''
+            order_extra += ', g.rowid' if group_join else ''
             rows = _run(cursor, source, f'''
             SELECT m.timestamp, s.action_type, cj.raw_string, ch.subject, m.text_data,
                    {participants},
@@ -502,7 +507,7 @@ def get_whatsapp_system_events(context):
             JOIN message m ON m._id = s.message_row_id
             LEFT JOIN chat ch ON ch._id = m.chat_row_id
             LEFT JOIN jid cj ON cj._id = ch.jid_row_id{number_join}{value_join}{group_join}
-            ORDER BY m.timestamp
+            ORDER BY m.timestamp, s.rowid, m.rowid, ch.rowid, cj.rowid{order_extra}
             ''')
             for row in rows:
                 data_list.append((_ts(row[0]), row[1], row[2], row[3], row[4], row[5],

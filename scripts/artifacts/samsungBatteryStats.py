@@ -132,7 +132,7 @@ def sdhmsBatteryAppHistory(context):
                    cpu_time, wakelock_time, mobile_packet, wifi_packet, wakeup_alarm,
                    gps_time, audio_time, mobile_active, {bt_scan_column}
             FROM APP_HISTORY
-            ORDER BY start_time DESC
+            ORDER BY start_time DESC, APP_HISTORY.rowid
         ''')
 
         for row in db_records:
