@@ -125,7 +125,7 @@ def get_teams(context):
         Message.conversationId, messageId
         FROM Message
         left join Conversation on Message.conversationId = Conversation.conversationId
-        ORDER BY Message.conversationId, arrivalTime
+        ORDER BY Message.conversationId, arrivalTime, Message.rowid, Conversation.rowid
     ''')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], _ms_to_utc(r[4]), r[5], r[6]) for r in rows]
     data_headers = (('Timestamp', 'datetime'), 'User Display Name', 'Content', 'Topic Name', ('Delete Time', 'datetime'), 'Conversation ID', 'Message ID')

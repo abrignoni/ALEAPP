@@ -285,7 +285,7 @@ def life360DeviceLocationStore(context):
         for row in _query(db.cursor(), '''
             SELECT time, type, latitude, longitude, accuracy, speed, altitude, bearing, provider,
                    lmode, userActivity, batteryLevel, batteryCharging, wifiConnected, elapsedRealtimeNanos
-            FROM location ORDER BY time'''):
+            FROM location ORDER BY time, location.rowid'''):
             data_list.append((_ms(row[0]), row[1], row[2], row[3], row[4], row[5], row[6], row[7],
                               row[8], row[9] if row[9] is not None else '', row[10], row[11],
                               row[12], row[13], row[14], rel))

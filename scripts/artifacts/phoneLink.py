@@ -234,7 +234,7 @@ def phonelink_phone_apps(context):
     for db_path in _stores(context, 'PhoneAppsDatabase'):
         rows = list(get_sqlite_db_records(db_path, '''
             SELECT lastUpdatedTime, appName, appPackageName, appVersion, favoriteRank, id
-            FROM phoneAppsTable ORDER BY appName
+            FROM phoneAppsTable ORDER BY appName, phoneAppsTable.rowid
         '''))
         source_paths.append(context.get_relative_path(db_path))
         for updated, app_name, package, version, favorite, app_id in rows:

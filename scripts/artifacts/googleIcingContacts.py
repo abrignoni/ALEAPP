@@ -158,7 +158,7 @@ def gmsIcingContactMethods(context):
                 SELECT 'Postal' AS kind, postal AS value, label, type, contact_id FROM postals
             ) AS m
             LEFT JOIN contacts AS c ON c.contact_id = m.contact_id
-            ORDER BY c.display_name, m.kind
+            ORDER BY c.display_name, m.kind, m.contact_id, m.value, m.label, m.type
         ''')
 
         for row in db_records:

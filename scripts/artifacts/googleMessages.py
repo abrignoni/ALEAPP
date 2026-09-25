@@ -92,7 +92,7 @@ def get_googleMessages(context):
         JOIN messages ON messages._id=parts.message_id
         JOIN participants ON participants._id=messages.sender_id
         JOIN conversations ON conversations._id=parts.conversation_id
-        ORDER BY parts.timestamp ASC
+        ORDER BY parts.timestamp ASC, parts.rowid, messages.rowid, participants.rowid, conversations.rowid
         '''))
         all_rows = cursor.fetchall()
         db.close()

@@ -50,7 +50,7 @@ def get_firefoxPermissions(context):
             else datetime(expireTime/1000,'unixepoch')
         END AS ExpireDate
         FROM moz_perms
-        ORDER BY ModDate ASC
+        ORDER BY ModDate ASC, moz_perms.id
         ''')
 
         all_rows = cursor.fetchall()

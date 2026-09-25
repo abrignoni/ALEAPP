@@ -687,7 +687,7 @@ def instagramTimeInApp(context):
         user_id = match.group(1)
         rows = _rows(source_path, '''
             SELECT start_walltime, end_walltime, start_event, end_event, seq_num
-            FROM intervals ORDER BY start_walltime
+            FROM intervals ORDER BY start_walltime, intervals.rowid
         ''')
         if rows:
             sources.append(source_path)

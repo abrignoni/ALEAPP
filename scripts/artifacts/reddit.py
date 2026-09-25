@@ -507,7 +507,7 @@ def get_reddit_users(context):
              accepting, icon) in _rows(users_db, """
                 SELECT insertTimestamp, name, redditId, matrixId, totalKarma, cakeday,
                        isNsfw, isBlocked, isAcceptingChats, profileIconUrl
-                FROM RedditUserEntity ORDER BY insertTimestamp"""):
+                FROM RedditUserEntity ORDER BY insertTimestamp, RedditUserEntity.rowid"""):
             data_list.append((
                 _ms_to_utc(inserted), _s_to_utc(cakeday), name, reddit_id, matrix_id,
                 karma, _yes_no(is_nsfw), _yes_no(is_blocked), _yes_no(accepting), icon,

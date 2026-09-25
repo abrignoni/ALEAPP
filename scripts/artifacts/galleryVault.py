@@ -841,7 +841,7 @@ def galleryvault_folders(context):
     SELECT create_time_utc, name, folder_type, child_file_count, child_folder_count,
            parent_folder_id, password_hash, uuid, _id
     FROM folder_v1
-    ORDER BY create_time_utc
+    ORDER BY create_time_utc, folder_v1.rowid
     '''
     for record in _query_all(source_paths, 'folder_v1', query):
         data_list.append((
