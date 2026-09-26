@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "touched. The precache and video_cache folders are reported separately.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "Twitter",
         "notes": "Read from cache/precache and cache/video_cache, each an ExoPlayer SimpleCache: "
@@ -20,11 +20,14 @@ __artifacts_v2__ = {
                  "not resolved to a tweet here. Segments counts the index entries (playlists, video and audio "
                  "segments) under that media path, Span Files and Bytes Cached the span files and their sizes, "
                  "Declared Length the sum of the exo_len metadata values. First and Last Touched are the earliest "
-                 "and latest last-touch timestamps in the span file names, which ExoPlayer updates when a span is "
-                 "read; both were set on every row of the tested images. Whether a prefetched video in precache "
+                 "and latest last-touch timestamps in the span file names, which ExoPlayer rewrites when it reads "
+                 "a span again only if the app's cache evictor asks for that (SimpleCache.touchSpan); both were "
+                 "set on every row of the tested images. Whether a prefetched video in precache "
                  "was watched is not established by this cache. On the 5 tested images holding the app, 61 rows: "
                  "media folders amplify_video (32), ext_tw_video (24), tweet_video (3, whose id is an alphanumeric "
-                 "token) and dm_gif (2); one image held only precache, so Cache Folder was uniform there.",
+                 "token) and dm_gif (2); one image held only precache, so Cache Folder was uniform there. "
+                 "The pieces joined back into playable files, for this cache and every other ExoPlayer cache, are in "
+                 "ExoPlayer - Rejoined Cached Media.",
         "paths": ('*/com.twitter.android/cache/precache/*', '*/com.twitter.android/cache/video_cache/*'),
         "output_types": "standard",
         "artifact_icon": "film",
@@ -43,7 +46,7 @@ __artifacts_v2__ = {
                        "resolved URL, and the time the cached bytes were last touched.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "Snapchat",
         "notes": "Read from files/streaming/cached_content_index.exi (androidx media3 1.11.0 "
@@ -52,7 +55,8 @@ __artifacts_v2__ = {
                  "files beside it. Snapchat stores its own metadata on each entry under custom_snap_* names; "
                  "Content Type, Content ID and Content Object ID are those values as stored and are not documented "
                  "by Snap. Last Touched is the latest last-touch timestamp among the entry's span files, which "
-                 "ExoPlayer updates when a span is read; 661 of the 801 entries on the tested images have a single "
+                 "ExoPlayer rewrites when it reads a span again only if the app's cache evictor asks for that "
+                 "(SimpleCache.touchSpan); 661 of the 801 entries on the tested images have a single "
                  "span file and 138 have two or more (up to 14), and only the latest touch is reported. Bytes "
                  "Cached is the size of the span files; Declared Length the exo_len metadata value. Presence "
                  "records that the app fetched the media into its cache. On the 7 tested images holding entries, "
@@ -60,7 +64,9 @@ __artifacts_v2__ = {
                  "discover_story_streaming_snap.discover_story_streaming_snap (530), story_snap.story_snap (265), "
                  "discover_publisher_shows_story_large.discover_publisher_shows_story_large (4) and "
                  "ad_remote_asset.ad_remote_asset (2); 2 entries had no span file, so their Last Touched, Bytes "
-                 "Cached and Span Files are blank or zero.",
+                 "Cached and Span Files are blank or zero. "
+                 "The pieces joined back into playable files, for this cache and every other ExoPlayer cache, are in "
+                 "ExoPlayer - Rejoined Cached Media.",
         "paths": ('*/com.snapchat.android/files/streaming/*',),
         "output_types": "standard",
         "artifact_icon": "film",
@@ -82,7 +88,7 @@ __artifacts_v2__ = {
                        "earliest and latest time a cached span was touched.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "Instagram",
         "notes": "This cache keeps no index file: each span file is named <key>.<position>.<last touch ms>.v2.exo "
@@ -93,8 +99,11 @@ __artifacts_v2__ = {
                  "flash_media database and one Second ID a user_feed_items.id, which is the extent of the "
                  "cross-check. Rows are grouped on that pair (330 groups on the 7 tested images holding the "
                  "cache). First and Last Touched are the earliest and latest last-touch timestamps of the group's "
-                 "span files, which ExoPlayer updates when a span is read; Bytes Cached is the size of the span "
-                 "files. Source Folder is the videocache folder, one per image.",
+                 "span files, which ExoPlayer rewrites when it reads a span again only if the app's cache evictor "
+                 "asks for that (SimpleCache.touchSpan); Bytes Cached is the size of the span "
+                 "files. Source Folder is the videocache folder, one per image. "
+                 "The pieces joined back into playable files, for this cache and every other ExoPlayer cache, are in "
+                 "ExoPlayer - Rejoined Cached Media.",
         "paths": ('*/com.instagram.android/cache/ExoPlayerCacheDir/videocache/*',),
         "output_types": "standard",
         "artifact_icon": "film",
@@ -112,10 +121,11 @@ __artifacts_v2__ = {
         "name": "Reddit - Cached Videos (ExoPlayer)",
         "description": "Videos held in the Reddit app's ExoPlayer cache (cache/reddit-video), indexed in "
                        "databases/exoplayer_internal.db, one row per v.redd.it video id with the earliest "
-                       "and latest time a cached span was touched.",
+                       "and latest time a cached span was touched, and the rejoined video where one file carries "
+                       "that id.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "Reddit",
         "notes": "The index is the SQLite storage of ExoPlayer's cache (androidx media3 1.11.0 "
@@ -128,7 +138,12 @@ __artifacts_v2__ = {
                  "the URL, as stored. Segments counts the index entries under that video id, Span Files and Bytes "
                  "Cached the span files found. On the 3 tested images holding the cache, 77 rows, every one with "
                  "span files. The ExoPlayerDownloads table in the same database was empty on the one public image "
-                 "and is not read. Whether a cached video was watched is not established by the cache.",
+                 "and is not read. Whether a cached video was watched is not established by the cache. Media is "
+                 "the file ExoPlayer - Rejoined Cached Media joined for this video id, shown only when exactly one "
+                 "joined file carries the id in its key: 38 of 42 rows on russell_a14, 33 of 34 on "
+                 "russell_pixel6a_a13 and 1 of 1 on pixel7a_a14. Of the other five, three ids had two or three "
+                 "joined files (one of them the same video cached under a medium and a high address), which are all "
+                 "in that artifact, and two had none.",
         "paths": ('*/com.reddit.frontpage/databases/exoplayer_internal.db*',
                   '*/com.reddit.frontpage/cache/reddit-video/*'),
         "output_types": "standard",
@@ -150,6 +165,7 @@ from datetime import datetime, timezone
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
+from scripts.artifacts.exoplayerCachedMedia import media_ref, rejoined_records, shown
 
 _INDEX_NAME = 'cached_content_index.exi'
 _SPAN_V3 = re.compile(r'^(\d+)\.(\d+)\.(\d+)\.v3\.exo$')
@@ -422,6 +438,11 @@ def instagramCachedVideos(context):
     return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in sources)
 
 
+def _video_id(key):
+    match = _REDDIT_VIDEO.match(key or '')
+    return match.group(1) if match else (key or '').split('?')[0]
+
+
 def _reddit_index(db_path):
     """({id: key}, {span name: (length, last touch ms)}) from exoplayer_internal.db, or (None, None)."""
     db = open_sqlite_db_readonly(db_path)
@@ -449,6 +470,7 @@ def redditCachedVideos(context):
     data_headers = (
         ('First Touched', 'datetime'),
         ('Last Touched', 'datetime'),
+        ('Media', 'media'),
         'Video ID (from URL)',
         'Segments',
         'Span Files',
@@ -459,6 +481,11 @@ def redditCachedVideos(context):
     data_list = []
     sources = []
     groups = _collect(context, 'com.reddit.frontpage', r'cache/reddit-video')
+    # the rejoined media for each video id; a row shows it only when exactly one file
+    # carries that id, since picking among several would be a guess
+    media = defaultdict(list)
+    for rec in shown(rejoined_records(context)):
+        media[_video_id(rec.get('key'))].append(rec)
     by_container = defaultdict(lambda: {'dbs': [], 'spans': []})
     for (container, _folder), group in groups.items():
         by_container[container]['dbs'] += group['dbs']
@@ -477,16 +504,16 @@ def redditCachedVideos(context):
                     by_id[int(match.group(1))].append((int(match.group(2)), touched, length, path))
             videos = defaultdict(lambda: {'segments': 0, 'spans': [], 'sample': ''})
             for entry_id, key in keys.items():
-                match = _REDDIT_VIDEO.match(key)
-                video = match.group(1) if match else key.split('?')[0]
-                record = videos[video]
+                record = videos[_video_id(key)]
                 record['segments'] += 1
                 record['spans'] += by_id.get(entry_id, [])
                 record['sample'] = record['sample'] or key
             for video, record in sorted(videos.items(), key=lambda item: item[1]['spans'] and max(t for _p, t, _s, _f in item[1]['spans']) or 0):
                 first, last = _touch_range(record['spans'])
+                found = media.get(video, [])
                 data_list.append((
-                    first, last, video, record['segments'], len(record['spans']),
+                    first, last, media_ref(found[0]) if len(found) == 1 else '',
+                    video, record['segments'], len(record['spans']),
                     sum(s for _p, _t, s, _f in record['spans']), record['sample'],
                     context.get_relative_path(db_path),
                 ))

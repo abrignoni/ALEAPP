@@ -191,5 +191,9 @@
   "*/anr/trace*": "shared or system location: no app data container in the path; the platform dropbox, tombstone and ANR records, measured 2026-09-05 across the registered Android corpora",
   "*/cache/[Cc]ache/Cache_Data/*": "browser storage layout, not a package: cache/Cache/Cache_Data (cache/cache for Opera) held a Chromium browser's HTTP disk cache on every one of the 31 registered Android corpora it appeared in, measured 2026-09-05 (Chrome on 24, Samsung Internet 8, Brave 7, Cromite 5, Edge 2, Opera 1); apps that embed a WebView keep theirs under cache/WebView/.../HTTP Cache and are not matched",
   "*/cache/[Cc]ache/Cache_Data/index-dir/the-real-index": "browser storage layout, not a package: cache/Cache/Cache_Data (cache/cache for Opera) held a Chromium browser's HTTP disk cache on every one of the 31 registered Android corpora it appeared in, measured 2026-09-05 (Chrome on 24, Samsung Internet 8, Brave 7, Cromite 5, Edge 2, Opera 1); apps that embed a WebView keep theirs under cache/WebView/.../HTTP Cache and are not matched",
-  "*/system/package-dex-usage.list": "shared or system location: no app data container in the path; the platform's text format dex use store, measured 2026-09-06 across the registered Android corpora"
+  "*/system/package-dex-usage.list": "shared or system location: no app data container in the path; the platform's text format dex use store, measured 2026-09-06 across the registered Android corpora",
+  "*.exo": "cross-app by design: rows attribute the owning app; matched 12 package(s), measured 2026-09-26 on pixel7a_a14, samsunga53_a14, pixel3_a12",
+  "*/cached_content_index.exi*": "cross-app by design: rows attribute the owning app; matched 5 package(s), measured 2026-09-26 on pixel7a_a14, samsunga53_a14, pixel3_a12",
+  "*.uid": "cross-app by design: rows attribute the owning app; matched 16 package(s), measured 2026-09-26 on pixel7a_a14, samsunga53_a14, pixel3_a12",
+  "*/exoplayer_internal.db*": "cross-app by design: rows attribute the owning app; matched 9 package(s), measured 2026-09-26 on pixel7a_a14, samsunga53_a14, pixel3_a12"
 }
