@@ -285,11 +285,14 @@ default_responsive_table_script = \
 """
     <script>
         $(document).ready(function() {
+            var searchParams = new URLSearchParams(window.location.search);
+            var searchFilter = searchParams.has('search') ? searchParams.get('search') : '';
             $('#dtBasicExample').DataTable({
                 //"scrollY": "60vh",
                 //"scrollX": "10%",
                 //"scrollCollapse": true,
                 "aLengthMenu": [[ 15, 50, 100, -1 ], [ 15, 50, 100, "All" ]],
+                "search": {"search": searchFilter}
             });
             $('.dataTables_length').addClass('bs-select');
             $('#mySpinner').remove();
