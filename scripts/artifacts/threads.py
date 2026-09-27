@@ -34,8 +34,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Threads",
         "notes": "One row per recorded interval. The app keeps one of these stores per "
-                 "account and names the file after the account identifier, which is where "
-                 "the Account column comes from. Start and End are Unix seconds. Duration is "
+                 "account and names the file after the account identifier, which is where the "
+                 "Account column comes from. Account comes from the file name, so it does not "
+                 "separate two Android users' stores for one account, and Source File names the "
+                 "store each row came from. Start and End are Unix seconds. Duration is "
                  "the difference between them and is given in seconds. Start Event and End "
                  "Event are integer codes and are reported as stored, because the extraction "
                  "carries no app binary and nothing in it maps them to a meaning. The store "
