@@ -25,7 +25,10 @@ __artifacts_v2__ = {
                  "column is filled only when the Java String.hashCode of an address recorded in "
                  "the same app instance's Gmail.xml equals the store id, which held for every "
                  "store in the tested images; a store with no matching recorded address keeps a "
-                 "blank Account. A store that cannot be opened or queried is logged and skipped "
+                 "blank Account. Because the store id followed the address and not the Android "
+                 "user on every tested store, Account and Account ID would not separate two "
+                 "Android users' stores for one account, so Source File names the store each row "
+                 "came from. A store that cannot be opened or queried is logged and skipped "
                  "without dropping the other accounts' rows.",
         "paths": ('*/com.google.android.gm/databases/bigTopDataDB.*','*/com.google.android.gm/files/downloads/*/attachments/*/*.*','*/com.google.android.gm/shared_prefs/Gmail.xml'),
         "output_types": "standard",
@@ -58,7 +61,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-24",
         "requirements": "none",
         "category": "Email",
-        "notes": "One row per label per account store. Every matched bigTopDataDB.<id> store is read, across every Android user of the device, with duplicate storage spellings collapsed first and stores read in sorted path order. Account ID is the numeric store id as stored; the Account column is resolved from the same app instance's Gmail.xml as described in Gmail - App Emails. Label values are reported as stored.",
+        "notes": "One row per label per account store. Every matched bigTopDataDB.<id> store is read, across every Android user of the device, with duplicate storage spellings collapsed first and stores read in sorted path order. Account ID is the numeric store id as stored; the Account column is resolved from the same app instance's Gmail.xml as described in Gmail - App Emails. "
+                 "Label values are reported as stored. Because the store id followed the address "
+                 "and not the Android user on every tested store, Account and Account ID would not"
+                 " separate two Android users' stores for one account, so Source File names the "
+                 "store each row came from.",
         "paths": ('*/com.google.android.gm/databases/bigTopDataDB.*','*/com.google.android.gm/shared_prefs/Gmail.xml'),
         "output_types": ["html","tsv","lava"],
         "artifact_icon": "mail",

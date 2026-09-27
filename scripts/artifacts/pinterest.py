@@ -54,8 +54,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Pinterest",
-        "notes": "A selected set of preference keys is reported, one row per key, with the value as "
-                 "stored. A key is converted to a timestamp only when its own name states that it "
+        "notes": "A selected set of preference keys is reported, one row per key, with the value "
+                 "as stored. Preference File names the preference file a key was read from and "
+                 "does not separate two Android users' copies of it, so Source File names the file"
+                 " each row came from. A key is converted to a timestamp only when its own name "
+                 "states that it "
                  "holds a time and its value is a thirteen digit integer, which is the shape every "
                  "converted value had on the tested sample; every other value is left as text. The "
                  "install referrer and the requested runtime permissions are the values the app "

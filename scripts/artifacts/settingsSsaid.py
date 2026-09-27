@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "and uid each is stored against.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "Read from the per-user settings_ssaid.xml and its fallback copy under the "
@@ -31,7 +31,9 @@ __artifacts_v2__ = {
                  "as stored. There is no timestamp in either file, so a row does not date when "
                  "the value was issued.\n"
                  "Both settings_ssaid.xml and settings_ssaid.xml.fallback are read, and Present "
-                 "In says which of the two held the row. The fallback is a copy the platform "
+                 "In says which of the two held the row. One of each is read per user folder, "
+                 "so User ID and Present In name the file or files a row came from, and the "
+                 "report's located-at line gives their paths. The fallback is a copy the platform "
                  "makes of the same file on a periodic job, scheduled once a day and only while "
                  "the device is charging, so it lags the live file rather than mirroring it. "
                  "Reference: Android Open Source Project, SettingsProvider.java in "
@@ -128,7 +130,6 @@ def settings_ssaid(context):
         'Setting ID',
         'Default Set By System',
         'Present In',
-        'Source File',
     )
     data_list = []
     sources = []
@@ -164,11 +165,9 @@ def settings_ssaid(context):
                 # rewritten, so it is reported but deliberately not part of the identity.
                 key = (setting.get('package', ''), setting.get('name', ''),
                        setting.get('value', ''), setting.get('defaultSysSet', ''))
-                entry = found.setdefault(
-                    key, {'names': [], 'paths': [], 'id': setting.get('id', '')})
+                entry = found.setdefault(key, {'names': [], 'id': setting.get('id', '')})
                 if name not in entry['names']:
                     entry['names'].append(name)
-                    entry['paths'].append(path)
                 read_any = True
             if read_any and path not in sources:
                 sources.append(path)
@@ -182,7 +181,6 @@ def settings_ssaid(context):
                 present = 'Fallback copy only'
             data_list.append((
                 key[0], key[1], key[2], user_id, entry['id'], key[3], present,
-                '\n'.join(context.get_relative_path(x) for x in entry['paths']),
             ))
 
     return data_headers, data_list, '\n'.join(sources)
