@@ -70,10 +70,10 @@ __artifacts_v2__ = {
         "description": "WhatsApp 1:1 messages (modern msgstore.db schema)",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "",
+        "notes": "A chat keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Messages whose chat matches no contact are still reported. When no contact matches, or the contact has no WhatsApp name, the participant is shown by jid.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -104,10 +104,10 @@ __artifacts_v2__ = {
         "description": "WhatsApp group messages (modern msgstore.db schema)",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "",
+        "notes": "A sender keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. A sender that matches no contact, or has no WhatsApp name, is shown by jid.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -258,6 +258,29 @@ def _run(cursor, sql):
         return []
 
 
+def _has_table(cursor, name):
+    try:
+        cursor.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (name,))
+        return cursor.fetchone() is not None
+    except sqlite3.Error:
+        return False
+
+
+def _contact_jid(cursor, jid_alias):
+    """Return (joins, expression) giving the jid to match wa_contacts.jid against.
+
+    Newer msgstore.db files can key a 1:1 chat or a group sender by a LID jid
+    (``...@lid``), while wa_contacts.jid holds the ``...@s.whatsapp.net`` form.
+    msgstore.db's jid_map table links the two jid rows (lid_row_id -> jid_row_id).
+    When jid_map is absent (older databases) the jid's own raw_string is used.
+    """
+    if not _has_table(cursor, 'jid_map'):
+        return '', f'{jid_alias}.raw_string'
+    joins = f'''LEFT JOIN jid_map ON jid_map.lid_row_id={jid_alias}._id
+        LEFT JOIN jid AS mapped_jid ON mapped_jid._id=jid_map.jid_row_id'''
+    return joins, f'COALESCE(mapped_jid.raw_string, {jid_alias}.raw_string)'
+
+
 @artifact_processor
 def get_whatsapp_contacts(context):
     files_found = context.get_files_found()
@@ -361,15 +384,16 @@ def get_whatsapp_one_to_one_messages(context):
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
-        rows = _run(cursor, '''
+        lid_joins, contact_jid = _contact_jid(cursor, 'jid')
+        rows = _run(cursor, f'''
         SELECT
             CASE WHEN message.timestamp = 0 THEN '' ELSE datetime(message.timestamp/1000,'unixepoch') END,
             CASE WHEN message.received_timestamp = 0 THEN ''
                 ELSE datetime(message.received_timestamp/1000,'unixepoch') END,
-            wa_contacts.wa_name,
-            CASE WHEN message.from_me=0 THEN wa_contacts.jid ELSE "" END,
+            COALESCE(NULLIF(wa_contacts.wa_name, ''), {contact_jid}),
+            CASE WHEN message.from_me=0 THEN COALESCE(wa_contacts.jid, {contact_jid}) ELSE "" END,
             CASE WHEN message.from_me=0 THEN "Incoming" WHEN message.from_me=1 THEN "Outgoing" END,
-            ''' + _MESSAGE_TYPE_CASE + ''',
+            ''' + _MESSAGE_TYPE_CASE + f''',
             message.text_data,
             message_media.file_path,
             message_media.file_size,
@@ -382,9 +406,10 @@ def get_whatsapp_one_to_one_messages(context):
         FROM message
         JOIN chat ON chat._id=message.chat_row_id
         JOIN jid ON jid._id=chat.jid_row_id
+        {lid_joins}
         LEFT JOIN message_media ON message_media.message_row_id=message._id
         LEFT JOIN message_location ON message_location.message_row_id=message._id
-        JOIN wa_contacts ON wa_contacts.jid=jid.raw_string
+        LEFT JOIN wa_contacts ON wa_contacts.jid={contact_jid}
         WHERE message.recipient_count=0
         ORDER BY message.timestamp ASC
         ''')
@@ -409,16 +434,17 @@ def get_whatsapp_group_messages(context):
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
-        rows = _run(cursor, '''
+        lid_joins, contact_jid = _contact_jid(cursor, 'jid')
+        rows = _run(cursor, f'''
         SELECT
             CASE WHEN message.timestamp = 0 THEN '' ELSE datetime(message.timestamp/1000,'unixepoch') END,
             CASE WHEN message.received_timestamp = 0 THEN ''
                 ELSE datetime(message.received_timestamp/1000,'unixepoch') END,
             chat.subject,
-            CASE WHEN message.from_me=1 THEN "Self" ELSE wa_contacts.wa_name END,
-            CASE WHEN message.from_me=0 THEN wa_contacts.jid ELSE "" END,
+            CASE WHEN message.from_me=1 THEN "Self" ELSE COALESCE(NULLIF(wa_contacts.wa_name, ''), {contact_jid}) END,
+            CASE WHEN message.from_me=0 THEN COALESCE(wa_contacts.jid, {contact_jid}) ELSE "" END,
             CASE WHEN message.from_me=0 THEN "Incoming" WHEN message.from_me=1 THEN "Outgoing" END,
-            ''' + _MESSAGE_TYPE_CASE + ''',
+            ''' + _MESSAGE_TYPE_CASE + f''',
             message.text_data,
             message_media.file_path,
             message_media.file_size,
@@ -431,9 +457,10 @@ def get_whatsapp_group_messages(context):
         FROM message
         JOIN chat ON chat._id=message.chat_row_id
         LEFT JOIN jid ON jid._id=message.sender_jid_row_id
+        {lid_joins}
         LEFT JOIN message_media ON message_media.message_row_id=message._id
         LEFT JOIN message_location ON message_location.message_row_id=message._id
-        LEFT JOIN wa_contacts ON wa_contacts.jid=jid.raw_string
+        LEFT JOIN wa_contacts ON wa_contacts.jid={contact_jid}
         WHERE message.recipient_count>=1
         ORDER BY message.timestamp ASC, message.rowid, chat.rowid, jid.rowid, message_media.rowid,
             message_location.rowid, wa_contacts.rowid
