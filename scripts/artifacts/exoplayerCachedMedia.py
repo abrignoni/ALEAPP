@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "exoplayerCachedMedia": {
         "name": "ExoPlayer - Rejoined Cached Media",
         "description": "Video and audio that Android apps cached through ExoPlayer: each cached item's "
-                       "pieces joined in order up to the first missing one, a DASH stream's segments joined in "
-                       "the order its cached manifest lists them, and a DASH video put in one file with its "
-                       "cached audio.",
+                       "pieces joined in order up to the first missing one, a DASH or HLS stream's segments "
+                       "joined in the order its cached manifest or playlist lists them, and a video put in one "
+                       "file with its cached audio.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-26",
         "last_update_date": "2026-09-26",
@@ -22,39 +22,46 @@ __artifacts_v2__ = {
                  "gap. State is complete when the joined bytes reach the length the index recorded (exo_len), "
                  "partial when they fall short with no gap, stops at a gap when a piece is missing, and length not "
                  "recorded when the index gives no length, so whether such a file is whole is not established. An "
-                 "item with no piece at position 0 is not reported. A DASH stream is joined only from a cached "
-                 "manifest: its initialization segment, then its media segments in the manifest's order up to the "
-                 "first one missing or incomplete; its segments are not reported again one by one. A DASH video is "
-                 "also written as one file with every cached audio stream its manifest lists, one track each in the "
-                 "manifest's order, and only the first enabled when there are several; no sample is re-encoded, and "
-                 "that combined file takes the place of its silent video and its audio in this table. Audio Tracks "
-                 "gives each track's language as the manifest writes it; Audio Tracks is filled only for a combined "
-                 "file, so it is empty on the seven tested images with none. A complete whole-file video a manifest "
-                 "lists is combined the same way with each complete whole-file audio that manifest lists; an audio "
-                 "file that is not complete is left out. Only items whose bytes open as video, audio or an image are"
-                 " reported (an MP4 whose only track is sound is audio; no image was found on the tested images): "
-                 "manifests, playlists and content that none of exoprobe's signatures matches are not. Only 3 rows "
-                 "come from Snapchat, whose own artifact reports 800 cache entries on the same images; on "
-                 "russell_a14 all 105 of its joined items matched none of those signatures. An MP4 whose movie "
-                 "header declares fragments and has no fragment after it is an initialization segment cached on its "
-                 "own; What says so and no media is offered, since it holds no samples (61 rows). What also says "
-                 "when a file stops inside its last box (51 rows). Last Touched is the latest time in the names of "
-                 "the pieces joined, on the device clock: when ExoPlayer wrote a piece, or read it again where the "
-                 "app's evictor asks for that and the cache keeps no file index. A cache with an "
-                 "ExoPlayerCacheFileMetadata table records later reads there and leaves the name alone "
-                 "(SimpleCache.touchSpan), so Last Touched does not establish when the item was last viewed. "
+                 "item with no piece at position 0 is not reported. A DASH or HLS stream is joined only from a "
+                 "cached manifest or playlist: its initialization segment, then its segments in the listed order up "
+                 "to the first one missing or incomplete, every HLS URI resolved against the playlist's own address "
+                 "as ExoPlayer requests it (HlsMediaChunk); its segments are not reported again one by one. An HLS "
+                 "playlist with encrypted segments or byte ranges is not joined, and one with no initialization "
+                 "segment only when its segments are MPEG transport streams, so a subtitles playlist (WebVTT) is "
+                 "not. A DASH video is also written as one file with every cached audio stream its manifest lists, "
+                 "and an HLS video with the audio renditions of the AUDIO group its master playlist gives it, unless"
+                 " the video carries its own sound: one track each in the listed order, only the first enabled when "
+                 "there are several. No sample is re-encoded, and that combined file takes the place of its silent "
+                 "video and its audio in this table. Audio Tracks gives each track's language as the manifest writes"
+                 " it; Audio Tracks is filled only for a combined file, so it is empty on the six tested images with"
+                 " none. A complete whole-file video a manifest lists is combined the same way with each complete "
+                 "whole-file audio that manifest lists; an audio file that is not complete is left out. Only items "
+                 "whose bytes open as video, audio or an image are reported (an MP4 whose only track is sound is "
+                 "audio; no image was found on the tested images): manifests, playlists and content that none of "
+                 "exoprobe's signatures matches are not. Only 3 rows come from Snapchat, whose own artifact reports "
+                 "800 cache entries on the same images; on russell_a14 all 105 of its joined items matched none of "
+                 "those signatures. An MP4 whose movie header declares fragments and has no fragment after it is an "
+                 "initialization segment cached on its own; What says so and no media is offered, since it holds no "
+                 "samples (50 rows). What also says when a file stops inside its last box (51 rows). Last Touched is"
+                 " the latest time in the names of the pieces joined, on the device clock: when ExoPlayer wrote a "
+                 "piece, or read it again where the app's evictor asks for that and the cache keeps no file index. A"
+                 " cache with an ExoPlayerCacheFileMetadata table records later reads there and leaves the name "
+                 "alone (SimpleCache.touchSpan), so Last Touched does not establish when the item was last viewed. "
                  "/mnt/pass_through/<n>/emulated/<user>/ is read as the same folder as /data/media/<user>/: on the "
                  "two tested images carrying both, every ExoPlayer file had the same name, size and CRC in each; "
                  "where the two differ the larger copy is read. Different keys can hold identical bytes (a video "
                  "cached under two addresses, for example), and each is its own row showing the same media: 32 rows "
                  "repeat a media file an earlier row shows. The joined files shown here are also kept in the "
-                 "report's _ExoPlayer Rejoined folder. On the 10 tested images, 631 rows from 19 apps. ffmpeg 9.0.1 "
-                 "decoded all 41 combined files and every other MP4 video that is neither cut nor an initialization "
-                 "segment without error. It reported errors on 38 of the 47 cut MP4 videos, 32 of 40 WebM videos, 1 "
-                 "of 19 MPEG transport streams, and 26 of 96 audio files, 22 of them xHE-AAC and the other 4 cut. "
-                 "Every combined file on the tested images carried one audio track, so several audio tracks are "
-                 "exercised by exoprobe's own tests only. The Grok and Pinterest artifacts show their caches' pieces"
-                 " themselves; the Twitter, Snapchat, Instagram and Reddit artifacts report the cache entries.",
+                 "report's _ExoPlayer Rejoined folder. Kind and What can hold one value on an image whose caches "
+                 "hold one kind of item: What was cached item on every galaxys10_a10 row, and Kind was video on "
+                 "every pixel3_a11 row. On the 10 tested images, 625 rows from 19 apps. ffmpeg 9.0.1 decoded all 44 "
+                 "combined files (41 DASH, 3 HLS), all 24 other joined streams, and every other MP4 video that is "
+                 "neither cut nor an initialization segment without error. It reported errors on 38 of the 47 cut "
+                 "MP4 videos, 32 of 40 WebM videos, 1 of 16 MPEG transport streams, and 26 of 98 audio files, 22 of "
+                 "them xHE-AAC and the other 4 cut. Every combined file on the tested images carried one audio "
+                 "track, so several audio tracks are exercised by exoprobe's own tests only. The Grok and Pinterest "
+                 "artifacts show their caches' pieces themselves. The Twitter, Instagram and Reddit artifacts report"
+                 " the cache entries and show a file from this table on a row exactly one playable file matches.",
         "paths": ('*.exo', '*/cached_content_index.exi*', '*.uid', '*/exoplayer_internal.db*'),
         "output_types": "standard",
         "artifact_icon": "film",
@@ -62,12 +69,12 @@ __artifacts_v2__ = {
             "anne_a15": "Android 15 | 40 rows",
             "cookbook_a11": "Android 11 | 14 rows",
             "galaxys10_a10": "Android 10 | 100 rows",
-            "pixel3_a11": "Android 11 | 59 rows",
+            "pixel3_a11": "Android 11 | 56 rows",
             "pixel3_a12": "Android 12 | 29 rows",
-            "pixel7a_a14": "Android 14 | 56 rows",
+            "pixel7a_a14": "Android 14 | 55 rows",
             "russell_a14": "Android 14 | 136 rows",
             "russell_pixel6a_a13": "Android 13 | 97 rows",
-            "samsungs20_a13": "Android 13 | 92 rows",
+            "samsungs20_a13": "Android 13 | 90 rows",
             "sharon_a14": "Android 14 | 8 rows",
         },
     },
@@ -193,6 +200,12 @@ def _init_only(rec):
     return bool(layout and layout['moov'] and layout['mvex'] and not layout['moof'])
 
 
+def shows_media(rec):
+    """True when media_ref would offer this record inline: a joined file that is not an
+    initialization segment on its own."""
+    return bool(rec.get('path') and rec.get('anchor')) and not _init_only(rec)
+
+
 def media_ref(rec):
     """The joined file checked in as media, attributed to the piece it starts with. An
     initialization segment on its own holds no samples, so it is not offered as media."""
@@ -231,10 +244,11 @@ def _shape(rec):
     if _init_only(rec):
         return 'an initialization segment on its own: it describes the track and holds no samples'
     if rec.get('combined'):
-        return f"DASH video with {len(rec['combined']['audio_tracks'])} audio track(s)"
-    if rec.get('dash'):
-        d = rec['dash']
-        return f"DASH {rec['kind']} stream, {d['segments_joined']} of {d['segments_listed']} listed segments"
+        fmt = 'HLS' if rec.get('key_from', '').startswith('HLS') else 'DASH'
+        return f"{fmt} video with {len(rec['combined']['audio_tracks'])} audio track(s)"
+    if rec.get('stream'):
+        d = rec['stream']
+        return f"{d['format']} {rec['kind']} stream, {d['segments_joined']} of {d['segments_listed']} listed segments"
     if rec.get('manifest_key'):
         return 'cached item, a whole stream a DASH manifest lists'
     return 'cached item'

@@ -3,7 +3,8 @@ __artifacts_v2__ = {
         "name": "Twitter - Cached Videos (ExoPlayer)",
         "description": "Videos held in the X (Twitter) app's two ExoPlayer media caches, one row per video "
                        "media id per cache folder, with the earliest and latest time a cached segment was "
-                       "touched. The precache and video_cache folders are reported separately.",
+                       "touched, and the rejoined video where exactly one playable file matches. The precache and "
+                       "video_cache folders are reported separately.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-26",
@@ -26,8 +27,14 @@ __artifacts_v2__ = {
                  "was watched is not established by this cache. On the 5 tested images holding the app, 61 rows: "
                  "media folders amplify_video (32), ext_tw_video (24), tweet_video (3, whose id is an alphanumeric "
                  "token) and dm_gif (2); one image held only precache, so Cache Folder was uniform there. "
-                 "The pieces joined back into playable files, for this cache and every other ExoPlayer cache, are in "
-                 "ExoPlayer - Rejoined Cached Media.",
+                 "Media is the file ExoPlayer - Rejoined Cached Media joined for this media path (for an HLS video, "
+                 "the stream with its audio when the cache holds it), shown only when exactly one playable file in the "
+                 "same cache folder matches: 21 of the 61 rows. Of the other 40, 38 are precache rows whose cache "
+                 "holds the video's playlists and media segments but not the initialization segment they need, so "
+                 "nothing in it plays, and 2 are video_cache rows with two playable files each, both in that "
+                 "artifact. "
+                 "Android User names the user whose folder the cache is in when the table holds rows from more than "
+                 "one user, and is blank when every row comes from one user, as on every tested image.",
         "paths": ('*/com.twitter.android/cache/precache/*', '*/com.twitter.android/cache/video_cache/*'),
         "output_types": "standard",
         "artifact_icon": "film",
@@ -64,9 +71,12 @@ __artifacts_v2__ = {
                  "discover_story_streaming_snap.discover_story_streaming_snap (530), story_snap.story_snap (265), "
                  "discover_publisher_shows_story_large.discover_publisher_shows_story_large (4) and "
                  "ad_remote_asset.ad_remote_asset (2); 2 entries had no span file, so their Last Touched, Bytes "
-                 "Cached and Span Files are blank or zero. "
-                 "The pieces joined back into playable files, for this cache and every other ExoPlayer cache, are in "
-                 "ExoPlayer - Rejoined Cached Media.",
+                 "Cached and Span Files are blank or zero. There is no Media column: joined back together, "
+                 "Snapchat's cached items carry no file signature (all 105 on russell_a14 and all 34 on pixel7a_a14) "
+                 "and measured 8.0 bits per byte over their first 64 KiB on pixel7a_a14, so nothing in them plays as "
+                 "stored. "
+                 "Android User names the user whose folder the cache is in when the table holds rows from more than "
+                 "one user, and is blank when every row comes from one user, as on every tested image.",
         "paths": ('*/com.snapchat.android/files/streaming/*',),
         "output_types": "standard",
         "artifact_icon": "film",
@@ -85,7 +95,8 @@ __artifacts_v2__ = {
         "name": "Instagram - Cached Videos (ExoPlayer)",
         "description": "Videos held in the Instagram app's ExoPlayer cache (cache/ExoPlayerCacheDir/videocache), "
                        "one row per cache key prefix, with the two numeric ids the key starts with and the "
-                       "earliest and latest time a cached span was touched.",
+                       "earliest and latest time a cached span was touched, and the rejoined video where the "
+                       "row's key prefix names exactly one.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-26",
@@ -101,9 +112,12 @@ __artifacts_v2__ = {
                  "cache). First and Last Touched are the earliest and latest last-touch timestamps of the group's "
                  "span files, which ExoPlayer rewrites when it reads a span again only if the app's cache evictor "
                  "asks for that (SimpleCache.touchSpan); Bytes Cached is the size of the span "
-                 "files. Source Folder is the videocache folder, one per image. "
-                 "The pieces joined back into playable files, for this cache and every other ExoPlayer cache, are in "
-                 "ExoPlayer - Rejoined Cached Media.",
+                 "files. Media is the video file ExoPlayer - Rejoined Cached Media joined for this key prefix, shown "
+                 "only when exactly one video file in the same cache folder matches: 62 of the 70 rows. The row's "
+                 "sound, when the app cached it separately, is its own file in that artifact. ffmpeg 9.0.1 reported "
+                 "that 14 of those 62 files (WebM) end prematurely. "
+                 "Android User names the user whose folder the cache is in when the table holds rows from more than "
+                 "one user, and is blank when every row comes from one user, as on every tested image.",
         "paths": ('*/com.instagram.android/cache/ExoPlayerCacheDir/videocache/*',),
         "output_types": "standard",
         "artifact_icon": "film",
@@ -140,10 +154,11 @@ __artifacts_v2__ = {
                  "span files. The ExoPlayerDownloads table in the same database was empty on the one public image "
                  "and is not read. Whether a cached video was watched is not established by the cache. Media is "
                  "the file ExoPlayer - Rejoined Cached Media joined for this video id, shown only when exactly one "
-                 "joined file carries the id in its key: 38 of 42 rows on russell_a14, 33 of 34 on "
-                 "russell_pixel6a_a13 and 1 of 1 on pixel7a_a14. Of the other five, three ids had two or three "
-                 "joined files (one of them the same video cached under a medium and a high address), which are all "
-                 "in that artifact, and two had none.",
+                 "playable joined file for the same Android user carries the id in its key: 39 of 42 rows on "
+                 "russell_a14, 33 of 34 on russell_pixel6a_a13 and 1 of 1 on pixel7a_a14. Of the other four, two ids "
+                 "had two playable joined files each, both in that artifact, and two had none. "
+                 "Android User names the user whose folder the cache is in when the table holds rows from more than "
+                 "one user, and is blank when every row comes from one user, as on every tested image.",
         "paths": ('*/com.reddit.frontpage/databases/exoplayer_internal.db*',
                   '*/com.reddit.frontpage/cache/reddit-video/*'),
         "output_types": "standard",
@@ -165,7 +180,7 @@ from datetime import datetime, timezone
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
-from scripts.artifacts.exoplayerCachedMedia import media_ref, rejoined_records, shown
+from scripts.artifacts.exoplayerCachedMedia import media_ref, rejoined_records, shown, shows_media
 
 _INDEX_NAME = 'cached_content_index.exi'
 _SPAN_V3 = re.compile(r'^(\d+)\.(\d+)\.(\d+)\.v3\.exo$')
@@ -316,11 +331,47 @@ def _touch_range(spans):
     return (_utc_millis(min(times)), _utc_millis(max(times))) if times else ('', '')
 
 
+def _user_of(relative):
+    """The Android user a relative path belongs to ('0' for /data/data), or ''."""
+    relative = relative.replace('\\', '/')
+    for pattern in _USER_VIEWS:
+        match = pattern.search(relative)
+        if match:
+            return '0' if match.group(1) == 'data' else match.group(1)
+    return ''
+
+
+def _users_column(data_list):
+    """Blank the last column (Android User) unless the rows name more than one user: on a
+    one-user image it would repeat one value on every row."""
+    if len({row[-1] for row in data_list}) > 1:
+        return data_list
+    return [row[:-1] + ('',) for row in data_list]
+
+
+def _media_by_folder(context, package, key_of):
+    """{(user, cache folder below the package, key_of(key)): [records]} for the rejoined
+    files of ``package`` that can be shown inline."""
+    found = defaultdict(list)
+    for rec in shown(rejoined_records(context)):
+        if rec.get('app_folder') != package or not shows_media(rec):
+            continue
+        folder = rec['cache_folder'].split(f'/{package}/', 1)[-1]
+        found[(_user_of(rec['cache_folder']), folder, key_of(rec.get('key') or '', rec))].append(rec)
+    return found
+
+
+def _twitter_path(key):
+    match = _TWITTER_MEDIA.match(key)
+    return f'{match.group(1)}/{match.group(2)}/{match.group(3)}' if match else key.split('?')[0]
+
+
 @artifact_processor
 def twitterCachedVideos(context):
     data_headers = (
         ('First Touched', 'datetime'),
         ('Last Touched', 'datetime'),
+        ('Media', 'media'),
         'Media Path (from URL)',
         'Cache Folder',
         'Segments',
@@ -328,10 +379,11 @@ def twitterCachedVideos(context):
         'Bytes Cached',
         'Declared Length',
         'Sample URL',
-        'Source File',
+        'Android User',
     )
     data_list = []
     sources = []
+    joined = _media_by_folder(context, 'com.twitter.android', lambda key, _rec: _twitter_path(key))
     for (_container, folder), group in sorted(_collect(context, 'com.twitter.android', r'cache/(?:precache|video_cache)').items()):
         if not group['index']:
             continue
@@ -342,21 +394,21 @@ def twitterCachedVideos(context):
         by_id = _spans_by_id(group['spans'])
         media = defaultdict(lambda: {'segments': 0, 'spans': [], 'length': 0, 'sample': ''})
         for entry_id, key, metadata in entries:
-            match = _TWITTER_MEDIA.match(key)
-            path = f'{match.group(1)}/{match.group(2)}/{match.group(3)}' if match else key.split('?')[0]
-            record = media[path]
+            record = media[_twitter_path(key)]
             record['segments'] += 1
             record['spans'] += by_id.get(entry_id, [])
             record['length'] += metadata.get('exo_len') if isinstance(metadata.get('exo_len'), int) else 0
             record['sample'] = record['sample'] or key
         for path, record in sorted(media.items(), key=lambda item: item[1]['spans'] and max(t for _p, t, _s, _f in item[1]['spans']) or 0):
             first, last = _touch_range(record['spans'])
+            user = _user_of(folder)
+            found = joined.get((user, folder.split('/com.twitter.android/', 1)[-1], path), [])
             data_list.append((
-                first, last, path, folder.rsplit('/', 1)[-1], record['segments'], len(record['spans']),
-                sum(s for _p, _t, s, _f in record['spans']), record['length'], record['sample'],
-                context.get_relative_path(group['index']),
+                first, last, media_ref(found[0]) if len(found) == 1 else '',
+                path, folder.rsplit('/', 1)[-1], record['segments'], len(record['spans']),
+                sum(s for _p, _t, s, _f in record['spans']), record['length'], record['sample'], user,
             ))
-    return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in sources)
+    return data_headers, _users_column(data_list), '\n'.join(context.get_relative_path(p) for p in sources)
 
 
 @artifact_processor
@@ -371,11 +423,11 @@ def snapchatStreamedMedia(context):
         'Declared Length',
         'Bytes Cached',
         'Span Files',
-        'Source File',
+        'Android User',
     )
     data_list = []
     sources = []
-    for (_container, _folder), group in sorted(_collect(context, 'com.snapchat.android', r'files/streaming').items()):
+    for (_container, folder), group in sorted(_collect(context, 'com.snapchat.android', r'files/streaming').items()):
         if not group['index']:
             continue
         entries = _read_index(group['index'])
@@ -396,10 +448,10 @@ def snapchatStreamedMedia(context):
                 metadata.get('exo_len', ''),
                 sum(s for _p, _t, s, _f in spans),
                 len(spans),
-                context.get_relative_path(group['index']),
+                _user_of(folder),
             ))
     data_list.sort(key=lambda row: str(row[0]))
-    return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in sources)
+    return data_headers, _users_column(data_list), '\n'.join(context.get_relative_path(p) for p in sources)
 
 
 @artifact_processor
@@ -407,15 +459,17 @@ def instagramCachedVideos(context):
     data_headers = (
         ('First Touched', 'datetime'),
         ('Last Touched', 'datetime'),
+        ('Media', 'media'),
         'Media ID (from key)',
         'Second ID (from key)',
         'Span Files',
         'Bytes Cached',
         'Sample Key (as stored)',
-        'Source Folder',
+        'Android User',
     )
     data_list = []
     sources = []
+    joined = _media_by_folder(context, 'com.instagram.android', _instagram_video_pair)
     for (_container, folder), group in sorted(_collect(context, 'com.instagram.android', r'cache/ExoPlayerCacheDir/videocache').items()):
         media = defaultdict(lambda: {'spans': [], 'sample': ''})
         for base, path, size in group['spans']:
@@ -431,11 +485,21 @@ def instagramCachedVideos(context):
             sources.append(path)
         for (media_id, second_id), record in sorted(media.items(), key=lambda item: max(t for _p, t, _s, _f in item[1]['spans'])):
             first, last = _touch_range(record['spans'])
+            user = _user_of(folder)
+            found = joined.get((user, folder.split('/com.instagram.android/', 1)[-1], (media_id, second_id)), [])
             data_list.append((
-                first, last, media_id, second_id, len(record['spans']),
-                sum(s for _p, _t, s, _f in record['spans']), record['sample'], folder,
+                first, last, media_ref(found[0]) if len(found) == 1 else '',
+                media_id, second_id, len(record['spans']),
+                sum(s for _p, _t, s, _f in record['spans']), record['sample'], user,
             ))
-    return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in sources)
+    return data_headers, _users_column(data_list), '\n'.join(context.get_relative_path(p) for p in sources)
+
+
+def _instagram_video_pair(key, rec):
+    """The (media id, second id) pair of a joined Instagram video; an audio file gets no
+    pair, so a row's Media is its one video."""
+    ids = _INSTAGRAM_KEY.match(key)
+    return (ids.group(1), ids.group(2)) if ids and rec.get('kind') == 'video' else None
 
 
 def _video_id(key):
@@ -476,16 +540,17 @@ def redditCachedVideos(context):
         'Span Files',
         'Bytes Cached',
         'Sample URL',
-        'Source File',
+        'Android User',
     )
     data_list = []
     sources = []
     groups = _collect(context, 'com.reddit.frontpage', r'cache/reddit-video')
-    # the rejoined media for each video id; a row shows it only when exactly one file
-    # carries that id, since picking among several would be a guess
+    # the rejoined media for each video id, per Android user; a row shows it only when
+    # exactly one file carries that id, since picking among several would be a guess
     media = defaultdict(list)
-    for rec in shown(rejoined_records(context)):
-        media[_video_id(rec.get('key'))].append(rec)
+    for (user, _folder, video), recs in _media_by_folder(
+            context, 'com.reddit.frontpage', lambda key, _rec: _video_id(key)).items():
+        media[(user, video)] += recs
     by_container = defaultdict(lambda: {'dbs': [], 'spans': []})
     for (container, _folder), group in groups.items():
         by_container[container]['dbs'] += group['dbs']
@@ -510,11 +575,11 @@ def redditCachedVideos(context):
                 record['sample'] = record['sample'] or key
             for video, record in sorted(videos.items(), key=lambda item: item[1]['spans'] and max(t for _p, t, _s, _f in item[1]['spans']) or 0):
                 first, last = _touch_range(record['spans'])
-                found = media.get(video, [])
+                user = _user_of(context.get_relative_path(db_path))
+                found = media.get((user, video), [])
                 data_list.append((
                     first, last, media_ref(found[0]) if len(found) == 1 else '',
                     video, record['segments'], len(record['spans']),
-                    sum(s for _p, _t, s, _f in record['spans']), record['sample'],
-                    context.get_relative_path(db_path),
+                    sum(s for _p, _t, s, _f in record['spans']), record['sample'], user,
                 ))
-    return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in sources)
+    return data_headers, _users_column(data_list), '\n'.join(context.get_relative_path(p) for p in sources)
