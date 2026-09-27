@@ -8,9 +8,9 @@ now ``androidx.media3``), caches what an app streams in a ``SimpleCache`` folder
 One video is not one file there: it is split into pieces, each named for where it
 starts in the video, and the name of the video is kept in a separate index. This
 module reads that layout, joins each item's pieces back into the file the app
-downloaded, joins a DASH stream's segments in the order its cached manifest lists
-them, and can put a DASH video and its audio tracks into one MP4 without
-re-encoding anything.
+downloaded, joins a DASH or HLS stream's segments in the order its cached manifest
+or playlist lists them, and can put a video and its audio tracks into one MP4
+without re-encoding anything.
 
 The layout, from androidx/media 1.11.1
 (https://github.com/androidx/media/tree/8c6678b657ede1e7883fc164ef73ed483c7796c3,
@@ -69,7 +69,7 @@ from pathlib import Path, PurePosixPath
 from typing import Callable, Iterable, NamedTuple
 from urllib.parse import urljoin
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 # ---- names ------------------------------------------------------------------
 
@@ -642,6 +642,162 @@ def plan_dash(items: dict) -> tuple[list[dict], dict]:
     return list(best.values()), pairs
 
 
+# ---- HLS ------------------------------------------------------------------
+# An HLS media playlist lists a stream's segments, and ExoPlayer requests each one at its
+# URI resolved against the playlist's own address (HlsMediaChunk, androidx/media 1.11.1
+# lines 115 and 145) with no custom cache key, so the cache key is that address. A master
+# playlist lists the variants and, with #EXT-X-MEDIA TYPE=AUDIO, the audio renditions each
+# variant's AUDIO group offers. As with DASH, a stream is joined only from what a cached
+# playlist lists.
+
+_HLS_ATTR = re.compile(r'([A-Z0-9-]+)=("[^"]*"|[^,]*)')
+
+
+def _hls_attrs(line: str) -> dict:
+    body = line.split(":", 1)[1] if ":" in line else ""
+    return {k: v[1:-1] if v.startswith('"') else v for k, v in _HLS_ATTR.findall(body)}
+
+
+def hls_playlist(text: str, url: str) -> dict | None:
+    """The parts of an HLS playlist exoprobe uses, or None when ``text`` is not one.
+
+    A master playlist gives ``variants`` (``uri``, ``audio`` group, ``bandwidth``,
+    ``codecs``, ``resolution``) and ``audio`` renditions (``uri``, ``group``, ``lang``,
+    ``name``). A media playlist gives ``init`` (the #EXT-X-MAP URI or None), ``segments``
+    in order, and ``joinable``: False when a segment is encrypted (#EXT-X-KEY with a
+    METHOD other than NONE) or addressed by byte range, which this does not join. URIs are
+    resolved against ``url``; #EXT-X-DEFINE variables are not substituted.
+    """
+    text = text.lstrip("\ufeff")
+    if not text.startswith("#EXTM3U"):
+        return None
+    lines = [ln.strip() for ln in text.splitlines()]
+    if any(ln.startswith("#EXT-X-STREAM-INF") for ln in lines):
+        variants, audio = [], []
+        for i, ln in enumerate(lines):
+            if ln.startswith("#EXT-X-STREAM-INF"):
+                a = _hls_attrs(ln)
+                nxt = next((x for x in lines[i + 1:] if x and not x.startswith("#")), None)
+                if nxt:
+                    variants.append({"uri": urljoin(url, nxt), "audio": a.get("AUDIO"),
+                                     "bandwidth": a.get("BANDWIDTH"), "codecs": a.get("CODECS"),
+                                     "resolution": a.get("RESOLUTION")})
+            elif ln.startswith("#EXT-X-MEDIA:"):
+                a = _hls_attrs(ln)
+                if a.get("TYPE") == "AUDIO" and a.get("URI"):
+                    audio.append({"uri": urljoin(url, a["URI"]), "group": a.get("GROUP-ID"),
+                                  "lang": a.get("LANGUAGE"), "name": a.get("NAME")})
+        return {"kind": "master", "variants": variants, "audio": audio}
+    init, segments, joinable = None, [], True
+    for ln in lines:
+        if ln.startswith("#EXT-X-MAP"):
+            a = _hls_attrs(ln)
+            if "BYTERANGE" in a:
+                joinable = False
+            if a.get("URI"):
+                init = urljoin(url, a["URI"])
+        elif ln.startswith("#EXT-X-KEY"):
+            if _hls_attrs(ln).get("METHOD", "NONE") != "NONE":
+                joinable = False
+        elif ln.startswith("#EXT-X-BYTERANGE"):
+            joinable = False
+        elif ln and not ln.startswith("#"):
+            segments.append(urljoin(url, ln))
+    return {"kind": "media", "init": init, "segments": segments, "joinable": joinable}
+
+
+def _head(path, n: int) -> bytes:
+    try:
+        with open(path, "rb") as fh:
+            return fh.read(n)
+    except OSError:
+        return b""
+
+
+def _read_small(path) -> bytes | None:
+    try:
+        if os.path.getsize(path) > MAX_MANIFEST_BYTES:
+            return None
+        with open(path, "rb") as fh:
+            return fh.read(MAX_MANIFEST_BYTES)
+    except OSError:
+        return None
+
+
+def plan_streams(items: dict) -> tuple[list[dict], dict]:
+    """:func:`plan_dash`, plus the HLS streams cached media playlists list.
+
+    An HLS stream is its initialization segment (when the playlist names one) and then its
+    segments in the playlist's order, up to the first one missing or incomplete, and needs
+    at least one segment; a playlist with no initialization segment is joined only when its
+    segments are MPEG transport streams, so a subtitles playlist (WebVTT) is not. Where a
+    cached master playlist lists the media playlist, the
+    stream's ``manifest`` is the master, so a video and its audio renditions share it, and
+    ``rep`` carries the variant's bandwidth, codecs, resolution and AUDIO group, or the
+    rendition's language and group. Every stream carries ``format``, ``DASH`` or ``HLS``.
+    """
+    streams, pairs = plan_dash(items)
+    for st in streams:
+        st["format"] = "DASH"
+    by_key = {rec["key"]: ident for ident, rec in items.items() if rec.get("key")}
+    playlists = {}
+    for ident, rec in items.items():
+        key = rec.get("key") or ""
+        if not re.match(r"https?://", key):
+            continue
+        data = _read_small(rec["path"])
+        if data is None or not data.lstrip(b"\xef\xbb\xbf").startswith(b"#EXTM3U"):
+            continue
+        pl = hls_playlist(data.decode("utf-8", "replace"), key)
+        if pl:
+            playlists[ident] = pl
+    owner: dict = {}
+    for mid, pl in playlists.items():
+        if pl["kind"] != "master":
+            continue
+        for n, v in enumerate(pl["variants"]):
+            w, _x, h = (v.get("resolution") or "").partition("x")
+            owner.setdefault(v["uri"], (mid, n, {"bandwidth": v.get("bandwidth"), "codecs": v.get("codecs"),
+                                                 "width": w or None, "height": h or None,
+                                                 "audio_group": v.get("audio")}))
+        for n, a in enumerate(pl["audio"]):
+            owner.setdefault(a["uri"], (mid, len(pl["variants"]) + n,
+                                        {"lang": a.get("lang"), "group": a.get("group"), "name": a.get("name")}))
+    best: dict = {}
+    for pid, pl in playlists.items():
+        if pl["kind"] != "media" or not pl["joinable"]:
+            continue
+        init = None
+        if pl["init"]:
+            init = by_key.get(pl["init"])
+            if init is None or not items[init].get("complete"):
+                continue
+        segs = []
+        for u in pl["segments"]:
+            s = by_key.get(u)
+            if s is None or not items[s].get("complete"):
+                break
+            segs.append(s)
+        if not segs:
+            continue
+        if init is None and not is_mpeg_ts(_head(items[segs[0]]["path"], 3 * 188)):
+            continue                   # no init segment and not a transport stream: text, such as WebVTT
+        key = items[pid]["key"]
+        mid, order, about = owner.get(key, (pid, 0, {}))
+        handlers = []
+        if init is not None:
+            data = _read_small(items[init]["path"]) or b""
+            handlers = track_handlers(data)
+        rid = key.split("?", 1)[0].rsplit("/", 1)[-1]
+        first = init if init is not None else segs[0]
+        if first in best and len(best[first]["segs"]) >= len(segs):
+            continue
+        best[first] = {"format": "HLS", "manifest": mid, "manifest_key": items[mid]["key"], "playlist": pid,
+                       "rep": {"id": rid, "order": order, **about}, "init": init, "segs": segs,
+                       "listed": len(pl["segments"]), "handlers": handlers}
+    return streams + list(best.values()), pairs
+
+
 def write_stream(paths: Iterable, dest) -> int:
     """An initialization segment and its media segments, in order, into one file:
     DASH defines a representation that way, and fragmented MP4 is built to be read
@@ -1150,16 +1306,19 @@ def rejoin(cache: Cache, out_dir, *, combine: bool = True,
 
     * An item is joined from position 0 until the first gap (:func:`join`); one with
       no piece at position 0 has nothing that can open and is recorded, not written.
-    * The items a cached DASH manifest lists as one stream are joined into that
-      stream's file (:func:`plan_dash`) instead of being written one by one.
-    * With ``combine``, a DASH video is also written with every cached audio stream
-      its manifest lists, in one MP4 (:func:`mux`): one audio track, or several
-      marked as alternatives with the first one enabled. A whole-file video that is
+    * The items a cached DASH manifest or HLS playlist lists as one stream are
+      joined into that stream's file (:func:`plan_streams`) instead of being written
+      one by one.
+    * With ``combine``, a video stream is also written with every cached audio stream
+      its manifest lists (for HLS, the audio renditions of the video's AUDIO group, and
+      only when the video carries no sound of its own), in one MP4 (:func:`mux`): one
+      audio track, or several marked as alternatives with the first one enabled. A whole-file video that is
       cut short is not combined, and a whole-file audio cut short is left out.
 
     Each record carries ``status`` (``written`` or ``no start``), ``file`` (the name
     in ``out_dir``), ``kind``, ``item``, ``key``, ``key_from``, the join's numbers
-    and ``last_touched_ms``, plus ``dash`` or ``combined`` where they apply.
+    and ``last_touched_ms``, plus ``stream`` (with its ``format``) or ``combined``
+    where they apply.
     """
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -1183,48 +1342,58 @@ def rejoin(cache: Cache, out_dir, *, combine: bool = True,
         joined[item] = {"key": base["key"], "path": tmp, "stem": stem, "base": base,
                         "complete": is_complete(j["bytes"], length, j["gap"]),
                         "pieces": pieces, "j": j, "entry": entry}
-    streams, pairs = plan_dash(joined)
-    consumed = {i for st in streams for i in [st["init"], *st["segs"]]}
+    streams, pairs = plan_streams(joined)
+    consumed = {i for st in streams for i in _parts(st)}
     files: dict = {}
     for st in streams:
         audio = is_audio_stream(st)
-        parts = [st["init"], *st["segs"]]
-        name = f"{joined[st['init']]['stem']}_dash{'.m4a' if audio else '.mp4'}"
+        parts = _parts(st)
+        first = joined[parts[0]]
+        if st["init"] is not None:
+            ext = ".m4a" if audio else ".mp4"
+        else:
+            with open(first["path"], "rb") as fh:
+                ext = sniff_ext(fh.read(3 * 188)) or ".bin"
+        name = f"{first['stem']}_{st['format'].lower()}{ext}"
         total = write_stream([joined[i]["path"] for i in parts], out_dir / name)
         files[id(st)] = out_dir / name
         r = st["rep"]
         records.append({
-            **joined[st["init"]]["base"], "status": "written", "file": name,
+            **first["base"], "status": "written", "file": name,
             "kind": "audio" if audio else "video", "key": st["manifest_key"],
-            "key_from": f"DASH manifest, cache item {st['manifest']}",
-            "dash": {"representation": {k: r[k] for k in
-                                        ("id", "lang", "bandwidth", "mime", "codecs", "width", "height")
-                                        if r.get(k)},
-                     "items": parts, "segments_joined": len(st["segs"]),
-                     "segments_listed": st["listed"]},
+            "key_from": f"{_listing(st)}, cache item {st['manifest']}",
+            "stream": {"format": st["format"],
+                       "representation": {k: r[k] for k in
+                                          ("id", "lang", "bandwidth", "mime", "codecs", "width", "height")
+                                          if r.get(k)},
+                       "items": parts, "segments_joined": len(st["segs"]),
+                       "segments_listed": st["listed"]},
             "bytes": total,
             "state": "complete" if len(st["segs"]) == st["listed"] else "partial",
             "last_touched_ms": max(p.timestamp for i in parts for p in joined[i]["pieces"]),
         })
     if combine:
         for st in streams:
-            if is_audio_stream(st):
-                continue
-            sound = sorted((o for o in streams if o["manifest"] == st["manifest"]
-                            and is_audio_stream(o)), key=lambda o: o["rep"].get("order", 0))
+            if is_audio_stream(st) or (st["format"] == "HLS" and st["handlers"] != ["vide"]):
+                continue                   # an HLS video that is not video alone carries its own sound
+            sound = sorted((o for o in streams if o["manifest"] == st["manifest"] and is_audio_stream(o)
+                            and (st["format"] == "DASH" or not st["rep"].get("audio_group")
+                                 or o["rep"].get("group") == st["rep"]["audio_group"])),
+                           key=lambda o: o["rep"].get("order", 0))
             if not sound:
                 continue
-            name = f"{joined[st['init']]['stem']}_av.mp4"
+            first = joined[_parts(st)[0]]
+            name = f"{first['stem']}_av.mp4"
             _combine_into(records, out_dir / name, files[id(st)], [files[id(a)] for a in sound], {
-                **joined[st["init"]]["base"], "key": st["manifest_key"],
-                "key_from": f"DASH manifest, cache item {st['manifest']}",
+                **first["base"], "key": st["manifest_key"],
+                "key_from": f"{_listing(st)}, cache item {st['manifest']}",
                 "combined": {"video": files[id(st)].name,
                              "video_segments": f"{len(st['segs'])} of {st['listed']}",
                              "audio_tracks": [_track(a["rep"], files[id(a)].name,
                                                      f"{len(a['segs'])} of {a['listed']}")
                                               for a in sound]},
                 "last_touched_ms": max(p.timestamp for x in [st, *sound]
-                                       for i in [x["init"], *x["segs"]] for p in joined[i]["pieces"]),
+                                       for i in _parts(x) for p in joined[i]["pieces"]),
             })
     for item, rec in joined.items():
         if item in consumed:
@@ -1271,6 +1440,15 @@ def rejoin(cache: Cache, out_dir, *, combine: bool = True,
                                                      for p in joined[i]["pieces"]),
                           })
     return records
+
+
+def _parts(stream: dict) -> list:
+    """A planned stream's items in the order they are written."""
+    return [i for i in [stream["init"], *stream["segs"]] if i is not None]
+
+
+def _listing(stream: dict) -> str:
+    return "DASH manifest" if stream["format"] == "DASH" else "HLS playlist"
 
 
 def _combine_into(records: list, dest: Path, video: Path, audios: list, record: dict) -> None:
