@@ -70,21 +70,26 @@ __artifacts_v2__ = {
         "description": "WhatsApp 1:1 messages (modern msgstore.db schema)",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-09-26",
+        "last_update_date": "2026-09-27",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "A chat keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Messages whose chat matches no contact are still reported. When no contact matches, or the contact has no WhatsApp name, the participant is shown by jid.",
+        "notes": "A chat keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Messages whose chat matches no contact are still reported. When no contact matches, or the contact has no WhatsApp name, the participant is shown by jid. Messages in channel (newsletter) chats are not reported here; WhatsApp - Channel Messages reports them.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
-            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 29 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 7 rows",
-            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 3877 rows",
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 31 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 29 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.whatsapp vc 262907320 | 29 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 154 rows",
+            "pixel3_a11": "Android 11 | com.whatsapp vc 204815003 | 0 rows",
+            "pixel3_a12": "Android 12 | com.whatsapp vc 212020004 | 0 rows",
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 73 rows",
-            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 195 rows",
-            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 781 rows",
+            "russell_a14": "Android 14 | com.whatsapp vc 241676004 | 491 rows",
             "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 71 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 14 rows",
+            "sharon_a13": "Android 13 | com.whatsapp vc 231278007 | 435 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 788 rows",
         },
         "data_views": {
             "conversation": {
@@ -114,11 +119,16 @@ __artifacts_v2__ = {
         "sample_data": {
             "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 7 rows",
             "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 39 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.whatsapp vc 262907320 | 39 rows",
             "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 0 rows",
+            "pixel3_a11": "Android 11 | com.whatsapp vc 204815003 | 0 rows",
+            "pixel3_a12": "Android 12 | com.whatsapp vc 212020004 | 0 rows",
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 156 rows",
-            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
-            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 4730 rows",
+            "russell_a14": "Android 14 | com.whatsapp vc 241676004 | 76 rows",
             "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
+            "sharon_a13": "Android 13 | com.whatsapp vc 231278007 | 2383 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 4730 rows",
         },
         "data_views": {
             "conversation": {
@@ -137,10 +147,10 @@ __artifacts_v2__ = {
         "description": "WhatsApp group details (modern msgstore.db schema)",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-09-27",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "",
+        "notes": "Channel (newsletter) chats also carry a subject in msgstore.db and are not reported here; WhatsApp - Channels reports them.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*',
                   '*/com.whatsapp/files/Avatars/*'),
         "output_types": "standard",
@@ -148,11 +158,77 @@ __artifacts_v2__ = {
         "sample_data": {
             "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 1 row",
             "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 1 row",
-            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 10 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 0 rows",
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 0 rows",
-            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 3 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
+        },
+    },
+    "get_whatsapp_channels": {
+        "name": "WhatsApp - Channels",
+        "description": "WhatsApp channels with a row in msgstore.db's newsletter table",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-09-27",
+        "last_update_date": "2026-09-27",
+        "requirements": "none",
+        "category": "WhatsApp",
+        "notes": "Reads msgstore.db's newsletter table, one row per channel, joined to the channel's chat. Local Chat Created Timestamp is chat.created_timestamp. On the three tested images holding channels (kevin_pocox7_a15, russell_a14, samsungs20_a13; 18 channels), each channel's earliest stored message was one of two system messages with from_me=1 (message_system action_type 132 and 134) carrying that same millisecond value, and no message in the channel was older. What those two system messages record, and whether the timestamp marks when the channel was followed, was not established. Verified (as stored), Membership (as stored) and Muted (as stored) are the newsletter table's integers, reported without an interpretation. Membership (as stored) and Muted (as stored) each held the same value, 1, on all 18 channels. Verified (as stored) held 1 on 15 channels and 0 on 3, and held the same value, 1, on all 3 channels of samsungs20_a13. Subscriber Count is newsletter.subscribers_count as stored. Messages Stored counts the chat's rows in the message table. Newsletter chats with no newsletter row are not reported: pixel7a_a14 and sharon_a14 each hold 20, with no name, no timestamps and no messages. wa.db lists newsletter jids for channels absent from this table (275 newsletter jids on kevin_pocox7_a15 against its 10 channels), so a newsletter jid in wa.db does not show that the channel was followed. wa.db's wa_newsletter_props, whose property names are keyed by a numeric id or a two-letter code, is not reported. Only the first msgstore.db matched is read, as in the module's other artifacts.",
+        "paths": ('*/com.whatsapp/databases/msgstore.db*',),
+        "output_types": "standard",
+        "artifact_icon": "broadcast",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.whatsapp vc 262907320 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 10 rows",
+            "pixel3_a11": "Android 11 | com.whatsapp vc 204815003 | 0 rows",
+            "pixel3_a12": "Android 12 | com.whatsapp vc 212020004 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 0 rows",
+            "russell_a14": "Android 14 | com.whatsapp vc 241676004 | 5 rows",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 3 rows",
+            "sharon_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 0 rows",
+        },
+    },
+    "get_whatsapp_channel_messages": {
+        "name": "WhatsApp - Channel Messages",
+        "description": "Messages stored in WhatsApp channel (newsletter) chats",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-09-27",
+        "last_update_date": "2026-09-27",
+        "requirements": "none",
+        "category": "WhatsApp",
+        "notes": "Every message in a channel (newsletter) chat in msgstore.db. Channel Name comes from the newsletter table, falling back to the chat subject and then the jid. On the three tested images holding channel messages (kevin_pocox7_a15, russell_a14, samsungs20_a13; 5,217 rows), sender_jid_row_id was 0 on every message, so msgstore.db records no author and the channel is shown as the sender. Message Direction is from_me as stored: the 36 Outgoing rows on those images were all system messages (message_type 7, message_system action_type 132 or 134), two per channel, carrying the channel chat's created timestamp; what they record was not established. Message Type values the module does not name are reported as stored. Server Message ID is newsletter_message.server_message_id and is blank on the 106 rows with no newsletter_message row; newsletter_message rows with no message row (one on each of the three images) are not reported. Reaction From Me is newsletter_message.reaction_from_me and held no value on any tested image. Of the 2,276 channel messages with a message_media row, 29 recorded a local file path, all on kevin_pocox7_a15, and all 29 render in Media; the others record no local file. Media and Local Path To Media held no value on any row of russell_a14 or samsungs20_a13. Reaction totals from other followers (newsletter_message_reaction) and the channel message search index (the message_newsletter_fts tables) are not reported. Only the first msgstore.db matched is read, as in the module's other artifacts.",
+        "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
+        "output_types": "standard",
+        "artifact_icon": "message",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.whatsapp vc 262907320 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 3731 rows",
+            "pixel3_a11": "Android 11 | com.whatsapp vc 204815003 | 0 rows",
+            "pixel3_a12": "Android 12 | com.whatsapp vc 212020004 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 0 rows",
+            "russell_a14": "Android 14 | com.whatsapp vc 241676004 | 1291 rows",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 195 rows",
+            "sharon_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 0 rows",
+        },
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Channel Name",
+                "textColumn": "Message",
+                "directionColumn": "Message Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Message Timestamp",
+                "senderColumn": "Channel Name",
+                "sentMessageStaticLabel": "Local User",
+                "mediaColumn": "Media"
+            }
         },
     },
     "get_whatsapp_user_profile": {
@@ -411,6 +487,7 @@ def get_whatsapp_one_to_one_messages(context):
         LEFT JOIN message_location ON message_location.message_row_id=message._id
         LEFT JOIN wa_contacts ON wa_contacts.jid={contact_jid}
         WHERE message.recipient_count=0
+            AND COALESCE(jid.raw_string, '') NOT LIKE '%@newsletter'
         ORDER BY message.timestamp ASC
         ''')
         for row in rows:
@@ -503,6 +580,7 @@ def get_whatsapp_group_details(context):
         LEFT JOIN wa_group_admin_settings ON wa_group_admin_settings.jid=chat_view.jid_row_id
         LEFT JOIN wa_contacts ON wa_contacts.jid=jid.raw_string
         WHERE chat_view.subject NOT NULL
+            AND COALESCE(jid.raw_string, '') NOT LIKE '%@newsletter'
         ORDER BY chat_view.created_timestamp ASC
         ''')
         for row in rows:
@@ -517,6 +595,94 @@ def get_whatsapp_group_details(context):
     data_headers = (('Group Creation Timestamp', 'datetime'), 'Group Name', 'Creator JID',
                     'Creator WA User Name', 'Creator WA Number',
                     ('Creator WA Profile Picture', 'media'))
+    return data_headers, data_list, source
+
+
+def _newsletter_joins(cursor):
+    """Return (joins, channel name expression), tolerating an absent newsletter table."""
+    if not _has_table(cursor, 'newsletter'):
+        return '', 'NULL'
+    return ('\n        LEFT JOIN newsletter ON newsletter.chat_row_id=chat._id',
+            "NULLIF(newsletter.name, '')")
+
+
+@artifact_processor
+def get_whatsapp_channels(context):
+    files_found = context.get_files_found()
+    db, cursor, source, _wa = _open_msgstore(files_found)
+    data_list = []
+    if db:
+        if _has_table(cursor, 'newsletter'):
+            rows = _run(cursor, '''
+            SELECT
+                CASE WHEN COALESCE(chat.created_timestamp, 0) = 0 THEN ''
+                    ELSE datetime(chat.created_timestamp/1000,'unixepoch') END,
+                COALESCE(NULLIF(newsletter.name, ''), NULLIF(chat.subject, ''), jid.raw_string),
+                jid.raw_string,
+                newsletter.description,
+                newsletter.invite_code,
+                newsletter.verified,
+                newsletter.membership,
+                newsletter.muted,
+                newsletter.subscribers_count,
+                (SELECT COUNT(*) FROM message WHERE message.chat_row_id=chat._id)
+            FROM newsletter
+            JOIN chat ON chat._id=newsletter.chat_row_id
+            JOIN jid ON jid._id=chat.jid_row_id
+            ORDER BY chat.created_timestamp ASC
+            ''')
+            for row in rows:
+                data_list.append((_str_to_utc(row[0]),) + tuple(row[1:]))
+        db.close()
+
+    data_headers = (('Local Chat Created Timestamp', 'datetime'), 'Channel Name', 'Channel JID',
+                    'Description', 'Invite Code', 'Verified (as stored)', 'Membership (as stored)',
+                    'Muted (as stored)', 'Subscriber Count', 'Messages Stored')
+    return data_headers, data_list, source
+
+
+@artifact_processor
+def get_whatsapp_channel_messages(context):
+    files_found = context.get_files_found()
+    db, cursor, source, _wa = _open_msgstore(files_found)
+    data_list = []
+    if db:
+        joins, name = _newsletter_joins(cursor)
+        server_id, reaction = "''", "''"
+        if _has_table(cursor, 'newsletter_message'):
+            joins += '\n        LEFT JOIN newsletter_message ON newsletter_message.message_row_id=message._id'
+            server_id = 'newsletter_message.server_message_id'
+            reaction = 'newsletter_message.reaction_from_me'
+        rows = _run(cursor, f'''
+        SELECT
+            CASE WHEN message.timestamp = 0 THEN '' ELSE datetime(message.timestamp/1000,'unixepoch') END,
+            CASE WHEN message.received_timestamp = 0 THEN ''
+                ELSE datetime(message.received_timestamp/1000,'unixepoch') END,
+            CASE WHEN message.from_me=0 THEN "Incoming" WHEN message.from_me=1 THEN "Outgoing" END,
+            COALESCE({name}, NULLIF(chat.subject, ''), jid.raw_string),
+            message.text_data,
+            message_media.file_path,
+            ''' + _MESSAGE_TYPE_CASE + f''',
+            jid.raw_string,
+            {server_id},
+            {reaction},
+            message_media.file_size
+        FROM message
+        JOIN chat ON chat._id=message.chat_row_id
+        JOIN jid ON jid._id=chat.jid_row_id{joins}
+        LEFT JOIN message_media ON message_media.message_row_id=message._id
+        WHERE jid.raw_string LIKE '%@newsletter'
+        ORDER BY message.timestamp ASC, message._id ASC
+        ''')
+        for row in rows:
+            data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3], row[4],
+                              _media(row[5]), row[6], row[7], row[8], row[9], row[5], row[10]))
+        db.close()
+
+    data_headers = (('Message Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
+                    'Message Direction', 'Channel Name', 'Message', ('Media', 'media'),
+                    'Message Type', 'Channel JID', 'Server Message ID', 'Reaction From Me',
+                    'Local Path To Media', 'Media File Size')
     return data_headers, data_list, source
 
 
