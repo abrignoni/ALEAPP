@@ -17,7 +17,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk, filedialog as tk_filedialog, messagebox as tk_msgbox
 from scripts.version_info import leapp_version, check_runtime_dependencies
 from scripts.search_files import *
-from scripts.raw_image import RAW_IMAGE_LABEL, RAW_IMAGE_SUFFIXES
+from scripts.raw_image import RAW_IMAGE_LABEL, RAW_IMAGE_SUFFIXES, names_an_image_folder
 from scripts.modules_to_exclude import modules_to_exclude
 from scripts.lavafuncs import *
 from leapp_functions.lava_launcher import (
@@ -231,6 +231,10 @@ def ValidateInput():
     elif not os.path.exists(i_path):
         tk_msgbox.showerror(title='Error', message='INPUT file/folder does not exist!', parent=main_window)
         return False, ext_type
+    elif names_an_image_folder(i_path):
+        # an Apple sparse bundle or an AFD folder is one disk image, not a folder
+        # of extracted files
+        ext_type = 'raw'
     elif os.path.isdir(i_path):
         ext_type = 'fs'
     else:
@@ -681,11 +685,11 @@ def select_input(button_type):
         input_filename = tk_filedialog.askopenfilename(parent=main_window,
                                                        title='Select a file',
                                                        filetypes=(('All supported files',
-                                                                   '*.tar *.zip *.gz *.xz *.img *.bin *.dd *.raw *.001 *.E01 *.s01 *.Ex01 *.aff *.dmg *.sparseimage'),
+                                                                   '*.tar *.zip *.gz *.xz *.img *.bin *.dd *.raw *.001 *.E01 *.s01 *.Ex01 *.aff *.dmg *.sparseimage *.sparsebundle'),
                                                                   ('tar file', '*.tar'), ('zip file', '*.zip'),
                                                                   ('gz file', '*.gz'),
                                                                   ('tar.xz file', '*.xz'),
-                                                                  (RAW_IMAGE_LABEL, '*.img *.bin *.dd *.raw *.001 *.E01 *.s01 *.Ex01 *.aff *.dmg *.sparseimage')))
+                                                                  (RAW_IMAGE_LABEL, '*.img *.bin *.dd *.raw *.001 *.E01 *.s01 *.Ex01 *.aff *.dmg *.sparseimage *.sparsebundle')))
     else:
         input_filename = tk_filedialog.askdirectory(parent=main_window, title='Select a folder')
     input_entry.delete(0, 'end')
