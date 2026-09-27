@@ -11,7 +11,10 @@ __artifacts_v2__ = {
         "category": "Installed Apps",
         "notes": "Read from the per-user package-restrictions.xml under the system users folder, "
                  "ABX binary XML on modern releases and plain XML on older ones. One row per pkg "
-                 "element per user, and User ID is the folder the file sits in. The pattern is "
+                 "element per user, and User ID is the folder the file sits in. The path pattern "
+                 "is tolerant, so a second copy of a user's file in an extraction would also be "
+                 "read, and since User ID does not separate two copies of one user's file, Source "
+                 "File names the file each row came from. The pattern is "
                  "not anchored on a data/ prefix, because a raw userdata partition image carries "
                  "the same folder without one.\n"
                  "First Install Time is the first-install-time attribute, which the platform "

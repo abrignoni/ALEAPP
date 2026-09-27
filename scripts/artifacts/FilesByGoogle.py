@@ -4,10 +4,12 @@ __artifacts_v2__ = {
         "description": "Parses the master files list from the Files by Google application",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-18",
-        "last_update_date": "2025-09-09",
+        "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "Files By Google",
-        "notes": "",
+        "notes": "Root Path is read from each file entry rather than from where the database "
+                 "sits, so it does not name the database, and Source File names the database "
+                 "each row came from.",
         "paths": ('*/com.google.android.apps.nbu.files/databases/files_master_database*'),
         "output_types": "standard",
         "artifact_icon": "file",

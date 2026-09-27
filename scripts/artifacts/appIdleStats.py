@@ -70,8 +70,9 @@ __artifacts_v2__ = {
                  "retention after a removal differs between the two files and was measured rather than "
                  "assumed. Whether an entry is removed at uninstall or on a later write was not "
                  "established.\nThe path pattern is tolerant, so a second copy of a user file in an "
-                 "extraction would add its rows again. None of the 39 corpora carried more than one per "
-                 "user, and the Source File column names the file each row came from.",
+                 "extraction would add its rows again. None of the 39 corpora carried more than "
+                 "one per user, and since User ID does not separate two copies of one user's file,"
+                 " the Source File column names the file each row came from.",
         "paths": ('*/system/users/*/app_idle_stats.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
