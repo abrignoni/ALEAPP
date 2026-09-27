@@ -28,6 +28,18 @@ seekable image. qnxprobe reaches it by name, and `scripts/raw_image.py` imports
 this copy first so that the name resolves to it in a frozen build as well as from
 source. Standard library only, so this adds no dependency either.
 
+## exoprobe.py
+
+| | |
+| --- | --- |
+| upstream | https://github.com/abrignoni/exoprobe |
+| licence | MIT, kept beside it as LICENSE-exoprobe |
+
+Reads the media caches Android apps keep through ExoPlayer, joins each cached
+item's pieces and each DASH stream's segments, and puts a video and its audio into
+one MP4 without re-encoding. `scripts/artifacts/exoplayerCachedMedia.py` imports
+it. Standard library only.
+
 The vendored version, upstream commit and sha256 of each file are recorded in
 `vendored.json` in this directory, which `admin/scripts/check_vendored.py`
 enforces in CI: it checks the hashes and fetches each upstream file at its
@@ -41,12 +53,14 @@ re-vendor, or the next sync silently reverts the change.
 
     cp ../qnxprobe/qnxprobe.py scripts/vendor/qnxprobe.py
     cp ../qnxprobe/ewfprobe.py scripts/vendor/ewfprobe.py
+    cp ../exoprobe/exoprobe.py scripts/vendor/exoprobe.py
     python3 admin/scripts/check_vendored.py --update
 
 `--update` rewrites the hashes only. The upstream commit and date in
 `vendored.json` are what say which version this is, so set those by hand from
 `git -C ../qnxprobe log -1 --format='%H %cI' main` (ewfprobe's come from
-qnxprobe's own `vendored.json`, since the copy here is the one qnxprobe carries).
+qnxprobe's own `vendored.json`, since the copy here is the one qnxprobe carries;
+exoprobe's from `git -C ../exoprobe log -1 --format='%H %cI' main`).
 Then run the check without `--update`, which fetches the upstream file at the
 commit you recorded and fails if the copy is not that file.
 
