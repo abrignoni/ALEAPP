@@ -134,13 +134,39 @@ __artifacts_v2__ = {
     },
     "get_whatsapp_group_details": {
         "name": "WhatsApp - Group Details",
-        "description": "WhatsApp group details (modern msgstore.db schema)",
+        "description": "WhatsApp chats with a subject in msgstore.db (groups, and newsletter chats where stored), with the group creator where wa.db records one",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-09-27",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "",
+        "notes": (
+            "Reads msgstore.db's chat table joined to jid, one row per chat that carries a subject "
+            "and whose jid_row_id names a jid row; all 27 chats with a subject on the tested images "
+            "had one. The chat table is read directly rather than through chat_view, because "
+            "chat_view has no jid_row_id column on 7 of the 12 tested images (pixel3_a11, "
+            "pixel3_a12, pixel7a_a14, russell_a14, russell_pixel6a_a13, sharon_a13, sharon_a14); on "
+            "the other 5, reading chat gives the same rows as reading chat_view. Chats keyed by a "
+            "newsletter jid (...@newsletter) also carry a subject and are reported here: of the 27 "
+            "rows on the tested images, 18 are newsletter chats (10 on kevin_pocox7_a15, 5 on "
+            "russell_a14, 3 on samsungs20_a13) and 9 are groups (...@g.us). Group Creation "
+            "Timestamp is chat.created_timestamp. Creator JID is wa.db's "
+            "wa_group_admin_settings.creator_jid for the chat's jid. It held a value on 4 of the 9 "
+            "group rows and on none of the 18 newsletter rows, and it was blank for all 5 groups on "
+            "pixel7a_a14, russell_a14 and sharon_a14. It is also blank when wa.db lacks the "
+            "creator_jid column, as on pixel3_a11, or when no wa.db is found (exercised on a "
+            "constructed database only). Creator WA User Name and Creator WA Number come from the "
+            "wa.db wa_contacts row whose jid equals Creator JID, and held no value on any tested "
+            "image: on anne_a15, hc_pixel8pro_a16 and hc_pixel8pro_a17 the creator is recorded by a "
+            "LID jid (@lid) that matches no wa_contacts row, and on sharon_a13 the matching "
+            "wa_contacts row stores no name or number. Creator WA Profile Picture looks for a file "
+            "named after Creator WA Number and held no value on any tested image. The files in "
+            "com.whatsapp/files/Avatars are named by jid with a .j extension on the four tested "
+            "images whose folder was listed (anne_a15, pixel7a_a14, russell_a14, sharon_a14), and "
+            "none of the four images with a Creator JID (anne_a15, hc_pixel8pro_a16, "
+            "hc_pixel8pro_a17, sharon_a13) holds a file named after it. Only the first msgstore.db "
+            "matched is read, as in the module's other artifacts."
+        ),
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*',
                   '*/com.whatsapp/files/Avatars/*'),
         "output_types": "standard",
@@ -148,11 +174,16 @@ __artifacts_v2__ = {
         "sample_data": {
             "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 1 row",
             "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | com.whatsapp vc 262907320 | 1 row",
             "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 10 rows",
-            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 0 rows",
-            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 3 rows",
-            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 0 rows",
+            "pixel3_a11": "Android 11 | com.whatsapp vc 204815003 | 0 rows",
+            "pixel3_a12": "Android 12 | com.whatsapp vc 212020004 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 3 rows",
+            "russell_a14": "Android 14 | com.whatsapp vc 241676004 | 6 rows",
             "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 3 rows",
+            "sharon_a13": "Android 13 | com.whatsapp vc 231278007 | 1 row",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 1 row",
         },
     },
     "get_whatsapp_user_profile": {
@@ -186,7 +217,8 @@ import sqlite3
 
 import xmltodict
 
-from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, open_sqlite_db_readonly, check_in_media
+from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, open_sqlite_db_readonly, check_in_media, \
+    logfunc
 
 # Re-used location columns shared by the one-to-one and group message queries.
 _LOCATION_HEADERS = ('Shared Latitude/Starting Latitude (Live Location)',
@@ -254,8 +286,16 @@ def _run(cursor, sql):
     try:
         cursor.execute(sql)
         return cursor.fetchall()
-    except sqlite3.Error:
+    except sqlite3.Error as exc:
+        logfunc(f'WhatsApp: query not run against this database schema, no rows read: {exc}')
         return []
+
+
+def _has_column(cursor, schema, table, column):
+    try:
+        return column in [row[1] for row in cursor.execute(f'PRAGMA {schema}.table_info({table})')]
+    except sqlite3.Error:
+        return False
 
 
 @artifact_processor
@@ -459,24 +499,25 @@ def get_whatsapp_group_details(context):
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
-        rows = _run(cursor, '''
+        # The chat table, not chat_view: the view has no jid_row_id column on older schemas.
+        # The creator columns come from wa.db and are NULL when it lacks creator_jid or is absent.
+        creator = name = number = 'NULL'
+        if _has_column(cursor, 'wadb', 'wa_group_admin_settings', 'creator_jid'):
+            creator = ('''(SELECT creator_jid FROM wadb.wa_group_admin_settings
+                WHERE wadb.wa_group_admin_settings.jid = jid.raw_string)''')
+            name = f'(SELECT wa_name FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid = {creator})'
+            number = f'(SELECT number FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid = {creator})'
+        rows = _run(cursor, f'''
         SELECT
-            datetime(chat_view.created_timestamp/1000,'unixepoch'),
-            chat_view.subject,
-            (SELECT creator_jid FROM wadb.wa_group_admin_settings
-                WHERE wadb.wa_group_admin_settings.jid = jid.raw_string),
-            (SELECT wa_name FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid =
-                (SELECT creator_jid FROM wadb.wa_group_admin_settings
-                    WHERE wadb.wa_group_admin_settings.jid = jid.raw_string)),
-            (SELECT number FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid =
-                (SELECT creator_jid FROM wadb.wa_group_admin_settings
-                    WHERE wadb.wa_group_admin_settings.jid = jid.raw_string))
-        FROM chat_view
-        JOIN jid ON jid._id = chat_view.jid_row_id
-        LEFT JOIN wa_group_admin_settings ON wa_group_admin_settings.jid=chat_view.jid_row_id
-        LEFT JOIN wa_contacts ON wa_contacts.jid=jid.raw_string
-        WHERE chat_view.subject NOT NULL
-        ORDER BY chat_view.created_timestamp ASC
+            datetime(chat.created_timestamp/1000,'unixepoch'),
+            chat.subject,
+            {creator},
+            {name},
+            {number}
+        FROM chat
+        JOIN jid ON jid._id = chat.jid_row_id
+        WHERE chat.subject NOT NULL
+        ORDER BY chat.created_timestamp ASC, chat._id
         ''')
         for row in rows:
             media = ''
