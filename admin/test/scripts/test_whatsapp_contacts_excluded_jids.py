@@ -1,9 +1,12 @@
-"""WhatsApp - Contacts must leave out @newsletter and status@broadcast wa_contacts rows.
+"""WhatsApp - Contacts: which wa_contacts rows are reported, and what each column holds.
 
 wa.db's wa_contacts holds rows for @newsletter jids and for status@broadcast. On the tested
 images those rows carried no name and no number, so the artifact showed their jid in every
-column. This test builds a synthetic wa.db (no real evidence bytes) holding one of each kind
-of row and checks which are reported. It fails on the code before the exclusion.
+column; they are left out. wa_name is reported in its own column, never merged into Name,
+and Number is the number column as stored, without falling back to the jid. These tests
+build a synthetic wa.db (no real evidence bytes). The first fails on the code before the
+exclusion, the second on the code before the wa_name column, and the third checks that a
+wa.db without a wa_name column still reports its rows.
 """
 import os
 import sqlite3
@@ -20,19 +23,43 @@ from scripts.artifacts.WhatsApp import get_whatsapp_contacts  # noqa: E402  pyli
 
 _CONTACTS = get_whatsapp_contacts.__wrapped__
 
-# (jid, number, display_name)
+# (jid, number, display_name, wa_name)
 ROWS = [
-    ('000000000001@s.whatsapp.net', '+000000000001', 'Alice'),
-    ('000000000002@s.whatsapp.net', None, None),
-    ('120363000000000001@g.us', None, 'Club'),
-    ('100000000000001@lid', None, None),
-    ('120363000000000002@newsletter', None, None),
-    ('120363000000000003@newsletter', None, None),
-    ('status@broadcast', None, None),
+    ('000000000001@s.whatsapp.net', '+000000000001', 'Alice', 'Ally'),
+    ('000000000002@s.whatsapp.net', None, None, 'Bob'),
+    ('000000000003@s.whatsapp.net', '', None, None),
+    ('120363000000000001@g.us', None, 'Club', None),
+    ('100000000000001@lid', None, None, None),
+    ('120363000000000002@newsletter', None, None, None),
+    ('120363000000000003@newsletter', None, None, None),
+    ('status@broadcast', None, None, None),
+]
+
+EXPECTED = [
+    ('Alice', 'Ally', '000000000001@s.whatsapp.net', '+000000000001'),
+    ('000000000002@s.whatsapp.net', 'Bob', '000000000002@s.whatsapp.net', None),
+    ('000000000003@s.whatsapp.net', None, '000000000003@s.whatsapp.net', ''),
+    ('Club', None, '120363000000000001@g.us', None),
+    ('100000000000001@lid', None, '100000000000001@lid', None),
 ]
 
 
 class WhatsAppContactsExcludedJidsTest(unittest.TestCase):
+
+    def _build(self, with_wa_name=True):
+        wa_name_col = ', wa_name TEXT' if with_wa_name else ''
+        con = sqlite3.connect(self.wa)
+        con.execute('CREATE TABLE wa_contacts(_id INTEGER PRIMARY KEY AUTOINCREMENT, jid TEXT NOT NULL, '
+                    'is_whatsapp_user BOOLEAN NOT NULL, number TEXT, display_name TEXT, '
+                    f'given_name TEXT, family_name TEXT{wa_name_col})')
+        if with_wa_name:
+            con.executemany('INSERT INTO wa_contacts(jid, is_whatsapp_user, number, display_name, wa_name) '
+                            'VALUES (?, 1, ?, ?, ?)', ROWS)
+        else:
+            con.executemany('INSERT INTO wa_contacts(jid, is_whatsapp_user, number, display_name) '
+                            'VALUES (?, 1, ?, ?)', [r[:3] for r in ROWS])
+        con.commit()
+        con.close()
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -41,28 +68,32 @@ class WhatsAppContactsExcludedJidsTest(unittest.TestCase):
         folder = os.path.join(data_folder, 'Dump/data/data/com.whatsapp/databases')
         os.makedirs(folder)
         self.wa = os.path.join(folder, 'wa.db')
-        con = sqlite3.connect(self.wa)
-        con.execute('CREATE TABLE wa_contacts(_id INTEGER PRIMARY KEY AUTOINCREMENT, jid TEXT NOT NULL, '
-                    'is_whatsapp_user BOOLEAN NOT NULL, number TEXT, display_name TEXT, '
-                    'given_name TEXT, family_name TEXT, wa_name TEXT)')
-        con.executemany('INSERT INTO wa_contacts(jid, is_whatsapp_user, number, display_name) '
-                        'VALUES (?, 1, ?, ?)', ROWS)
-        con.commit()
-        con.close()
 
     def tearDown(self):
         Context.clear()
         self.tmp.cleanup()
 
     def test_newsletter_and_status_broadcast_rows_are_left_out(self):
+        self._build()
+        Context.set_files_found([self.wa])
+        headers, rows, _source = _CONTACTS(Context)
+        self.assertEqual(headers, ('Name', 'WhatsApp Name', 'JID', 'Number'))
+        self.assertEqual(rows, EXPECTED)
+
+    def test_wa_name_is_its_own_column_and_number_is_as_stored(self):
+        self._build()
         Context.set_files_found([self.wa])
         _headers, rows, _source = _CONTACTS(Context)
-        self.assertEqual(rows, [
-            ('Alice', '000000000001@s.whatsapp.net', '+000000000001'),
-            ('000000000002@s.whatsapp.net', '000000000002@s.whatsapp.net', '000000000002@s.whatsapp.net'),
-            ('Club', '120363000000000001@g.us', '120363000000000001@g.us'),
-            ('100000000000001@lid', '100000000000001@lid', '100000000000001@lid'),
-        ])
+        # wa_name is never merged into Name, and Number never takes the jid.
+        self.assertEqual([r[1] for r in rows], ['Ally', 'Bob', None, None, None])
+        self.assertEqual([r[0] for r in rows][1], '000000000002@s.whatsapp.net')
+        self.assertFalse(any(r[3] == r[2] for r in rows))
+
+    def test_a_wa_db_without_wa_name_still_reports_its_rows(self):
+        self._build(with_wa_name=False)
+        Context.set_files_found([self.wa])
+        _headers, rows, _source = _CONTACTS(Context)
+        self.assertEqual(rows, [(r[0], None, r[2], r[3]) for r in EXPECTED])
 
 
 if __name__ == '__main__':
