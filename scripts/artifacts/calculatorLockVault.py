@@ -72,15 +72,28 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "Calculator Lock",
-        "notes": "note_date is stored as text, not as an epoch value. The pattern dd-MM-yyyy is "
-                 "referenced by com.calculator.lock.hide.photo.video.activity.AddNewNoteActivity "
-                 "in base.apk from the same extraction, and dd-MM-yyyy and dd/MM/yyyy are the only "
-                 "two date patterns the app's own classes reference; both are day first, so the "
-                 "day and month reading does not depend on which is used. The Note Date column "
-                 "restates that date as 00:00:00 UTC so the row can sort and reach the timeline. "
-                 "The record carries no time and no zone, so that time component is supplied by "
-                 "this parser and is not from the data; Note Date (as stored) holds the original "
-                 "string.",
+        "notes": "note_date is stored as text, not as an epoch value. In base.apk from the same "
+                 "extraction (version 1.94), apart from the CREATE TABLE statement in class a5.a, "
+                 "the only methods whose bytecode names note_date are method x of class a5.a, "
+                 "which reads the Note table, and method z of "
+                 "com.calculator.lock.hide.photo.video.activity.AddNewNoteActivity. Decompiled "
+                 "with jadx 1.5.6, method z formats the current date with a SimpleDateFormat of "
+                 "dd-MM-yyyy and writes it to note_date both when it inserts a new Note row and "
+                 "when it updates an existing one, so the value is the date of that method's "
+                 "latest insert or update, not necessarily the date the note was created. The "
+                 "APK's dex files hold 16 strings containing yyyy. dd-MM-yyyy and dd/MM/yyyy are "
+                 "the only two with a numeric day and month and the year last, and both are day "
+                 "first; the other 14 name the month or start with the year. MM-dd-yyyy and "
+                 "MM/dd/yyyy occur in none of the APK's 900 files, read as ASCII or UTF-16. On the "
+                 "corpus below the one row stores 04-02-2024, and Joshua Hickman's creation "
+                 "document for that image records a note created in the app on 2024-02-04 and "
+                 "lists no later action on it, which agrees with the day-first reading. "
+                 "Reference: Joshua Hickman, 'Android 14 Image', "
+                 "https://thebinaryhick.blog/wp-content/uploads/2024/09/Android14-ImageCreation.pdf, "
+                 "page 5. The Note Date column restates that date as 00:00:00 UTC so the row can "
+                 "sort and reach the timeline. The record carries no time and no zone, so that "
+                 "time component is supplied by this parser and is not from the data; Note Date "
+                 "(as stored) holds the original string.",
         "paths": ('*/com.calculator.lock.hide.photo.video/databases/note_contact.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
@@ -111,15 +124,20 @@ __artifacts_v2__ = {
     "calculatorvault_files": {
         "name": "Calculator Lock - Files",
         "description": "Rows from the File table of note_contact.db, holding a title, two path "
-                       "strings, an extension and a date string",
+                       "strings, a MIME type and a date string",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-09-28",
         "requirements": "none",
         "category": "Calculator Lock",
         "notes": "file_date is stored as text. The pattern dd-MM-yyyy is referenced by "
                  "com.calculator.lock.hide.photo.video.activity.home_activities.FileActivity in "
-                 "base.apk from the same extraction. The File Date column restates that date as "
+                 "base.apk from the same extraction. file_extend holds a MIME type, not an "
+                 "extension. In that APK (version 1.94), apart from the CREATE TABLE statement, "
+                 "only methods s and b of class a5.a name file_extend: s reads the File table, and "
+                 "b, decompiled with jadx 1.5.6, writes the MIME type Android's MimeTypeMap "
+                 "returns for the extension of file_path, or no value when none is found. The "
+                 "MIME Type column reports it as stored. The File Date column restates that date as "
                  "00:00:00 UTC; the record carries no time and no zone, so that time component is "
                  "supplied by this parser. The table held no rows in the corpus below, so this "
                  "artifact is implemented but unexercised, and the meaning of file_path against "
@@ -158,22 +176,27 @@ __artifacts_v2__ = {
     },
     "calculatorvault_browser_history": {
         "name": "Calculator Lock - Browser History",
-        "description": "Rows from the History table of note_contact.db, holding a name, a URL, an "
-                       "image string and a date string",
+        "description": "Rows from the History table of note_contact.db, whose columns are named "
+                       "for a name, a URL, an image and a date",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "Calculator Lock",
-        "notes": "base.apk from the same extraction contains a BrowserActivity and a RoboWebView "
-                 "under the package's webview namespace; that the History table is written by "
-                 "those classes follows from the column names and was not otherwise established. "
-                 "history_date is stored as text and no date pattern literal was traced to the "
-                 "browser classes, so the History Date column is parsed with the two patterns the "
-                 "app's own classes do reference, dd-MM-yyyy and dd/MM/yyyy. Both are day first. "
-                 "A value in any other form is left unparsed and appears only in History Date (as "
-                 "stored). The table held no rows in the corpus below, so this artifact is "
-                 "implemented but unexercised.",
+        "notes": "base.apk from the same extraction (version 1.94) contains a BrowserActivity and "
+                 "a RoboWebView under the package's webview namespace, but its dex files name the "
+                 "History table and its columns only inside the CREATE TABLE and DROP TABLE "
+                 "statements of class a5.a, which opens note_contact.db, so no code that writes "
+                 "this table was found in that version, and the Browser History name rests on the "
+                 "column names alone. With no writer found, the format of history_date is not "
+                 "established. The History Date column is parsed with dd-MM-yyyy and dd/MM/yyyy, "
+                 "the only two of the 16 strings containing yyyy in those dex files that have a "
+                 "numeric day and month and the year last; both are day first. A value in any "
+                 "other form is left unparsed and appears only in History Date (as stored). The "
+                 "History table held no rows in the corpus below, so this artifact is implemented "
+                 "but unexercised. A separate HISTORY.DB, which class d5.e fills with "
+                 "calculator_name and expression rows, is a different file: none was in the "
+                 "corpus below, and this module does not read it.",
         "paths": ('*/com.calculator.lock.hide.photo.video/databases/note_contact.db*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -184,21 +207,25 @@ __artifacts_v2__ = {
     "calculatorvault_preferences": {
         "name": "Calculator Lock - Preferences",
         "description": "Preference names and values from the app's shared_prefs file, including "
-                       "the PASSWORD entry, which is stored in plain text",
+                       "the PASSWORD entry, which the tested version stores in plain text",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-09-28",
         "requirements": "none",
         "category": "Calculator Lock",
         "notes": "Every entry in com.calculator.lock.hide.photo.video_preferences.xml gets a row, "
                  "so entries added by later versions still appear. The Observed Use column is "
-                 "filled only for names whose reading class was located in base.apk from the same "
-                 "extraction, and is blank otherwise; it is not a guess at the remaining names. "
-                 "The PASSWORD entry held a plain text value in the corpus below, which is a "
-                 "finding about how the app stores that value on that version, not about any "
-                 "other version. Entries beginning IABTCF_ follow the IAB Transparency and "
-                 "Consent Framework key naming and are not part of the app's own "
-                 "storage feature.",
+                 "filled for PASSWORD and TAKE_PICTURE, naming every class of base.apk from the "
+                 "same extraction (version 1.94) whose bytecode names that preference and, from "
+                 "the jadx 1.5.6 decompilation, whether it reads or writes it; l4.b and m4.i are "
+                 "obfuscated names from that build. The column is blank for the other names, and "
+                 "a blank is not a finding that no class reads them. The PASSWORD entry held a "
+                 "plain text value in the corpus below, which is a finding about how the app "
+                 "stores that value on that version, not about any other version. Entries "
+                 "beginning IABTCF_ follow the IAB Transparency and Consent Framework key naming "
+                 "and are not part of the app's own storage feature: of the three in the corpus "
+                 "below, base.apk names only IABTCF_gdprApplies, and only in classes under "
+                 "com.google.android.gms.",
         "paths": ('*/com.calculator.lock.hide.photo.video/shared_prefs/'
                   'com.calculator.lock.hide.photo.video_preferences.xml',),
         "output_types": "standard",
@@ -226,7 +253,8 @@ from scripts.ilapfuncs import (
 # folder it sits in rather than to assert what the app does with each folder.
 STORAGE_FOLDERS = ('Photos', 'Videos', 'Files', 'Intruder', 'Recycle_bin')
 
-# The only two date patterns referenced by the application's own classes. Both are day
+# dd-MM-yyyy and dd/MM/yyyy: of the 16 strings containing yyyy in the dex files of base.apk
+# (version 1.94), the only two with a numeric day and month and the year last. Both are day
 # first, so a value parses the same way whichever one wrote it.
 DATE_FORMATS = ('%d-%m-%Y', '%d/%m/%Y')
 
@@ -237,12 +265,18 @@ PREFERENCE_HEADERS = (
     'Observed Use',
 )
 
-# Preference names whose reading or writing class was located in base.apk. Anything not
-# listed here is reported without a use, rather than guessed at.
+# For each name, every class of base.apk (version 1.94) whose bytecode names it, found by
+# scanning the dex bytecode for the string, with reads and writes told apart in the jadx
+# 1.5.6 decompilation; l4.b and m4.i are obfuscated app classes. Names not listed here are
+# reported without a use, rather than guessed at.
 PREFERENCE_USE = {
-    'PASSWORD': 'Read by CalculatorActivity and written by ChangePassword (from app code)',
-    'TAKE_PICTURE': 'Toggled by SettingActivity; the app also contains a TakePictureActivity '
-                    'and an Intruder storage subfolder (from app code)',
+    'PASSWORD': 'Read and written by CalculatorActivity, LockScreenCalculatorActivity, '
+                'ChangePassword and the obfuscated app class l4.b, and read by the obfuscated '
+                'app class m4.i (from app code)',
+    'TAKE_PICTURE': 'Written by SettingActivity and read by SettingActivity, CalculatorActivity, '
+                    'LockScreenCalculatorActivity and the obfuscated app class l4.b; the app '
+                    'also contains a TakePictureActivity and an Intruder storage subfolder '
+                    '(from app code)',
 }
 
 # Leading-byte signatures, checked because a file name in this storage folder is not
@@ -533,7 +567,7 @@ def calculatorvault_files(context):
         'Title',
         'Recorded Path',
         'Recorded Original Path',
-        'Extension',
+        'MIME Type',
         'File ID',
     )
     return data_headers, data_list, db_path or ''
