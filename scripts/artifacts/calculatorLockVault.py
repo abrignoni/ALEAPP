@@ -214,12 +214,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Calculator Lock",
         "notes": "Every entry in com.calculator.lock.hide.photo.video_preferences.xml gets a row, "
-                 "so entries added by later versions still appear. The Observed Use column is "
+                 "so entries added by later versions still appear. Each Android user's copy of "
+                 "the file is read, with the duplicate storage paths of one copy read once. "
+                 "Android User names the user whose app folder holds the copy when rows come "
+                 "from more than one user, and is blank otherwise, as on the corpus below. The "
+                 "Observed Use column is "
                  "filled for PASSWORD and TAKE_PICTURE, naming every class of base.apk from the "
                  "same extraction (version 1.94) whose bytecode names that preference and, from "
                  "the jadx 1.5.6 decompilation, whether it reads or writes it; l4.b and m4.i are "
-                 "obfuscated names from that build. The column is blank for the other names, and "
-                 "a blank is not a finding that no class reads them. The PASSWORD entry held a "
+                 "obfuscated names from that build. Observed Use is blank for the other names, "
+                 "and a blank is not a finding that no class reads them. The PASSWORD entry held a "
                  "plain text value in the corpus below, which is a finding about how the app "
                  "stores that value on that version, not about any other version. Entries "
                  "beginning IABTCF_ follow the IAB Transparency and Consent Framework key naming "
@@ -234,12 +238,57 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.calculator.lock.hide.photo.video | 10 rows",
         },
     },
+    "calculatorvault_calculator_history": {
+        "name": "Calculator Lock - Calculator History",
+        "description": "Rows from the history table of HISTORY.DB, each a calculator entry and the "
+                       "result the app computed for it",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-09-28",
+        "last_update_date": "2026-09-28",
+        "requirements": "none",
+        "category": "Calculator Lock",
+        "notes": "HISTORY.DB is a separate database the app keeps beside note_contact.db. Known "
+                 "data made on 2026-09-28 with this app, version 1.94, on an Android 15 emulator "
+                 "showed the following. The file did not exist until the first entry was saved. "
+                 "Two wrong passcodes, a sum and a multiplication, each finished with =, saved "
+                 "one row each. The correct passcode, 11223344 (the reset code the app's own "
+                 "intro screen names) and an entry ending in an operator, which the calculator "
+                 "showed as 0.0, saved nothing. Rows were saved from the calculator the app "
+                 "opens on (CalculatorActivity) and from the calculator overlay of the screens "
+                 "built on the obfuscated class l4.b, shown when the app was reopened from "
+                 "Recents. The decompiled code shows a third screen, "
+                 "LockScreenCalculatorActivity, saving the same way; no code in 1.94 starts it "
+                 "by class and it was not reached in the test. Each row holds the entry and the "
+                 "result the app computed, written as entry = result with the result as a "
+                 "decimal (19.0) and the multiplication key saved as *. Entry and Result split "
+                 "that text at the first ' = ', and Expression (as stored) keeps it whole. "
+                 "calculator_name held STANDARD on every row, the constant the app writes, and "
+                 "is not reported. Rows carry no time of their own. Row ID followed the order "
+                 "the entries were saved, and in the test the file's own modification time "
+                 "moved only when a row was saved, so there it marked the latest saved entry, "
+                 "not every row. A row does not establish who typed the entry or whether it was "
+                 "meant as a passcode; compare Entry with the PASSWORD value in Calculator Lock "
+                 "- Preferences. In 1.94 no code reads these rows back or deletes them "
+                 "(decompiled with jadx 1.5.6 and checked against the dex bytecode). Android "
+                 "User names the user whose app folder holds the file when the table holds rows "
+                 "from more than one user, and is blank otherwise, as in the test. Of the 42 "
+                 "registered Android corpora that could be searched, only pixel7a_a14 carries "
+                 "the app, and it holds no HISTORY.DB.",
+        "paths": ('*/com.calculator.lock.hide.photo.video/databases/HISTORY.DB*',),
+        "output_types": "standard",
+        "artifact_icon": "hash",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.calculator.lock.hide.photo.video | 0 rows",
+        },
+    },
 }
 
 import os
+import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
+from scripts.artifacts.storagePathViews import unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_media,
@@ -263,6 +312,7 @@ PREFERENCE_HEADERS = (
     'Value',
     'Stored Type',
     'Observed Use',
+    'Android User',
 )
 
 # For each name, every class of base.apk (version 1.94) whose bytecode names it, found by
@@ -278,6 +328,14 @@ PREFERENCE_USE = {
                     'also contains a TakePictureActivity and an Intruder storage subfolder '
                     '(from app code)',
 }
+
+# The Android user whose app folder holds a file: data/data is user 0, and data/user/N and
+# data_mirror/data_ce/<volume>/N are user N. Anchored on the package's own folder.
+APP_FOLDER_USER = (
+    re.compile(r'(?:^|/)data/data/com\.calculator\.lock\.hide\.photo\.video/'),
+    re.compile(r'(?:^|/)data/user/(\d+)/com\.calculator\.lock\.hide\.photo\.video/'),
+    re.compile(r'(?:^|/)data_mirror/data_ce/[^/]+/(\d+)/com\.calculator\.lock\.hide\.photo\.video/'),
+)
 
 # Leading-byte signatures, checked because a file name in this storage folder is not
 # evidence of the file's type.
@@ -619,27 +677,75 @@ def calculatorvault_browser_history(context):
 
 @artifact_processor
 def calculatorvault_preferences(context):
-    prefs_path = get_file_path(context.get_files_found(),
-                               'com.calculator.lock.hide.photo.video_preferences.xml')
     data_list = []
-    if not prefs_path:
-        return PREFERENCE_HEADERS, data_list, ''
+    source_paths = []
+    for file_found in unique_files(context):
+        prefs_path = str(file_found)
+        if (os.path.basename(prefs_path) != 'com.calculator.lock.hide.photo.video_preferences.xml'
+                or not os.path.isfile(prefs_path)):
+            continue
+        source_paths.append(prefs_path)
+        user = _android_user(context.get_relative_path(prefs_path))
+        try:
+            root = ET.parse(prefs_path).getroot()
+        except (OSError, ET.ParseError) as error:
+            logfunc(f'Calculator Lock: could not parse {prefs_path}: {error}')
+            continue
 
-    try:
-        root = ET.parse(prefs_path).getroot()
-    except (OSError, ET.ParseError) as error:
-        logfunc(f'Calculator Lock: could not parse {prefs_path}: {error}')
-        return PREFERENCE_HEADERS, data_list, prefs_path
+        for entry in root:
+            name = entry.get('name', '')
+            if entry.tag == 'set':
+                value = ', '.join((child.text or '') for child in entry)
+            elif entry.tag == 'string':
+                value = entry.text or ''
+            else:
+                value = entry.get('value', '')
+            data_list.append((name, value, entry.tag, PREFERENCE_USE.get(name, ''), user))
 
-    for entry in root:
-        name = entry.get('name', '')
-        if entry.tag == 'set':
-            value = ', '.join((child.text or '') for child in entry)
-        elif entry.tag == 'string':
-            value = entry.text or ''
-        else:
-            value = entry.get('value', '')
-        data_list.append((name, value, entry.tag, PREFERENCE_USE.get(name, '')))
+    # One user's rows would repeat one value on every row, so the column is kept blank then.
+    if len({row[-1] for row in data_list}) < 2:
+        data_list = [row[:-1] + ('',) for row in data_list]
+    data_list.sort(key=lambda row: (row[-1], row[0]))
+    return PREFERENCE_HEADERS, data_list, '\n'.join(source_paths)
 
-    data_list.sort(key=lambda row: row[0])
-    return PREFERENCE_HEADERS, data_list, prefs_path
+
+def _android_user(relative_path):
+    """The Android user whose app folder holds a file, or '' when the path shows none."""
+    path = str(relative_path).replace('\\', '/')
+    for pattern in APP_FOLDER_USER:
+        match = pattern.search(path)
+        if match:
+            return match.group(1) if pattern.groups else '0'
+    return ''
+
+
+@artifact_processor
+def calculatorvault_calculator_history(context):
+    data_list = []
+    source_paths = []
+    for file_found in unique_files(context):
+        path = str(file_found)
+        if os.path.basename(path) != 'HISTORY.DB' or not os.path.isfile(path):
+            continue
+        source_paths.append(path)
+        user = _android_user(context.get_relative_path(path))
+        query = 'SELECT rowid, expression FROM history ORDER BY rowid'
+        for row_id, expression in _query(path, 'history', query):
+            text = expression or ''
+            entry, separator, result = text.partition(' = ')
+            if not separator:
+                entry, result = text, ''
+            data_list.append((row_id, entry, result, text, user))
+
+    # One user's rows would repeat one value on every row, so the column is kept blank then.
+    if len({row[-1] for row in data_list}) < 2:
+        data_list = [row[:-1] + ('',) for row in data_list]
+
+    data_headers = (
+        'Row ID',
+        'Entry',
+        'Result',
+        'Expression (as stored)',
+        'Android User',
+    )
+    return data_headers, data_list, '\n'.join(source_paths)
