@@ -1,0 +1,112 @@
+{
+  "caseemu_a15_calc": {
+    "description": "KNOWN DATA, made 2026-09-28: Calculator (Sgallery) 1.94, the base.apk and split from pixel7a_a14, installed on an Android 15 emulator (AVD mads_test2, owner user). Passcode set to 2468 and the security answer to Testville, then 2469=, 12+7=, 5+=, the reset code 11223344=, 2468= on CalculatorActivity and 1357=, 6x7=, 2468= on the l4.b overlay, so HISTORY.DB holds four rows. Input is a tar of data/data/com.calculator.lock.hide.photo.video taken with su from the emulator. No photos were hidden and no notes saved, so the note_contact.db tables are empty.",
+    "maker": "@AlexisBrignoni, Claude",
+    "make_data": {
+      "input_data_path": "calculator_lock_app_data.tar",
+      "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-09-28T12:58:58.907889",
+      "last_commit": {
+        "hash": "434f554f711fdca7b73d57cefc87f9c1354f0563",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-09-28T12:58:00-04:00",
+        "message": "Add Calculator Lock - Calculator History (HISTORY.DB)"
+      }
+    },
+    "artifacts": {
+      "calculatorvault_hidden_files": {
+        "search_patterns": [
+          "*/com.calculator.lock.hide.photo.video/databases/note_contact.db*",
+          "*/.Calculator_Lock/*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "calculatorvault_storage_media": {
+        "search_patterns": [
+          "*/.Calculator_Lock/*",
+          "*/com.calculator.lock.hide.photo.video/databases/note_contact.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "calculatorvault_notes": {
+        "search_patterns": [
+          "*/com.calculator.lock.hide.photo.video/databases/note_contact.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "calculatorvault_contacts": {
+        "search_patterns": [
+          "*/com.calculator.lock.hide.photo.video/databases/note_contact.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "calculatorvault_files": {
+        "search_patterns": [
+          "*/com.calculator.lock.hide.photo.video/databases/note_contact.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "calculatorvault_deleted_data": {
+        "search_patterns": [
+          "*/com.calculator.lock.hide.photo.video/databases/note_contact.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "calculatorvault_browser_history": {
+        "search_patterns": [
+          "*/com.calculator.lock.hide.photo.video/databases/note_contact.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "calculatorvault_preferences": {
+        "search_patterns": [
+          "*/com.calculator.lock.hide.photo.video/shared_prefs/com.calculator.lock.hide.photo.video_preferences.xml"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "calculatorvault_calculator_history": {
+        "search_patterns": [
+          "*/com.calculator.lock.hide.photo.video/databases/HISTORY.DB*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

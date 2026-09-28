@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "module_name": "calculatorLockVault",
+    "artifact_name": "Calculator Lock - Preferences",
+    "function_name": "calculatorvault_preferences",
+    "case_number": "caseemu_a15_calc",
+    "number_of_columns": 5,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 363,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_preferences.caseemu_a15_calc.zip",
+    "start_time": "2026-09-28T17:01:14.374682+00:00",
+    "end_time": "2026-09-28T17:01:14.398232+00:00",
+    "run_time_seconds": 0.0001800060272216797,
+    "last_commit": {
+      "hash": "434f554f711fdca7b73d57cefc87f9c1354f0563",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-28T12:58:00-04:00",
+      "message": "Add Calculator Lock - Calculator History (HISTORY.DB)"
+    }
+  },
+  "headers": [
+    "Preference",
+    "Value",
+    "Stored Type",
+    "Observed Use",
+    "Android User"
+  ],
+  "data": [
+    [
+      "HOME_PRESS",
+      "true",
+      "boolean",
+      "",
+      ""
+    ],
+    [
+      "PASSWORD",
+      "2468",
+      "string",
+      "Read and written by CalculatorActivity, LockScreenCalculatorActivity, ChangePassword and the obfuscated app class l4.b, and read by the obfuscated app class m4.i (from app code)",
+      ""
+    ],
+    [
+      "SECURITY_QA",
+      "{\"a\":\"Where are you born?\",\"b\":0,\"c\":\"Testville\"}",
+      "string",
+      "",
+      ""
+    ],
+    [
+      "SET_PASSWORD",
+      "true",
+      "boolean",
+      "",
+      ""
+    ],
+    [
+      "key.KEY_FIRST_LAUNCH_3",
+      "false",
+      "boolean",
+      "",
+      ""
+    ],
+    [
+      "key.KEY_LANGUAGE",
+      "en",
+      "string",
+      "",
+      ""
+    ]
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "module_name": "calculatorLockVault",
+    "artifact_name": "Calculator Lock - Hidden Files",
+    "function_name": "calculatorvault_hidden_files",
+    "case_number": "caseemu_a15_calc",
+    "number_of_columns": 10,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_hidden_files.caseemu_a15_calc.zip",
+    "start_time": "2026-09-28T16:59:44.887791+00:00",
+    "end_time": "2026-09-28T16:59:44.907265+00:00",
+    "run_time_seconds": 0.0006568431854248047,
+    "last_commit": {
+      "hash": "434f554f711fdca7b73d57cefc87f9c1354f0563",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-28T12:58:00-04:00",
+      "message": "Add Calculator Lock - Calculator History (HISTORY.DB)"
+    }
+  },
+  "headers": [
+    "File Modified Time",
+    "Hidden File",
+    "Hidden File Name",
+    "Recorded Path",
+    "Recorded File Name",
+    "Storage Subfolder",
+    "Detected Format",
+    "File Size (bytes)",
+    "Storage Path",
+    "File Located In Extraction"
+  ],
+  "data": []
+}

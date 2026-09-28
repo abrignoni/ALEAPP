@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "module_name": "calculatorLockVault",
+    "artifact_name": "Calculator Lock - Calculator History",
+    "function_name": "calculatorvault_calculator_history",
+    "case_number": "caseemu_a15_calc",
+    "number_of_columns": 5,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 86,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_calculator_history.caseemu_a15_calc.zip",
+    "start_time": "2026-09-28T16:59:44.990538+00:00",
+    "end_time": "2026-09-28T16:59:45.010924+00:00",
+    "run_time_seconds": 0.0006399154663085938,
+    "last_commit": {
+      "hash": "434f554f711fdca7b73d57cefc87f9c1354f0563",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-28T12:58:00-04:00",
+      "message": "Add Calculator Lock - Calculator History (HISTORY.DB)"
+    }
+  },
+  "headers": [
+    "Row ID",
+    "Entry",
+    "Result",
+    "Expression (as stored)",
+    "Android User"
+  ],
+  "data": [
+    [
+      1,
+      "2469",
+      "2469.0",
+      "2469 = 2469.0",
+      ""
+    ],
+    [
+      2,
+      "12+7",
+      "19.0",
+      "12+7 = 19.0",
+      ""
+    ],
+    [
+      3,
+      "1357",
+      "1357.0",
+      "1357 = 1357.0",
+      ""
+    ],
+    [
+      4,
+      "6*7",
+      "42.0",
+      "6*7 = 42.0",
+      ""
+    ]
+  ]
+}
