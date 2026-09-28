@@ -2,8 +2,8 @@ __artifacts_v2__ = {
     "calculatorvault_hidden_files": {
         "name": "Calculator Lock - Hidden Files",
         "description": "Rows from the Hide table of note_contact.db, each pairing a file name "
-                       "held in the app's storage folder with a path string, matched where "
-                       "possible to the file of that name on the same user's external storage",
+                       "with a path string, matched where possible to a file of that name under "
+                       "the app's storage folder",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
