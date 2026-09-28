@@ -6,19 +6,19 @@
     "case_number": "pixel7a_a14",
     "number_of_columns": 11,
     "number_of_rows": 1,
-    "total_data_size_bytes": 75,
-    "media_checkins": 0,
+    "total_data_size_bytes": 194,
+    "media_checkins": 1,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_hidden_files.pixel7a_a14.zip",
-    "start_time": "2026-09-28T18:13:42.807286+00:00",
-    "end_time": "2026-09-28T18:13:42.828719+00:00",
-    "run_time_seconds": 0.0007338523864746094,
+    "start_time": "2026-09-28T20:04:33.030545+00:00",
+    "end_time": "2026-09-28T20:04:33.050618+00:00",
+    "run_time_seconds": 0.0006401538848876953,
     "last_commit": {
-      "hash": "6128a84baf6ee626d3a6ef7bb3a602a48e6741c3",
+      "hash": "dad00ace958158d36afed7e188dbcd6aeea7aa86",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-09-28T14:11:17-04:00",
-      "message": "Read every Android user's note_contact.db in calculatorLockVault"
+      "date": "2026-09-28T14:17:46-04:00",
+      "message": "Word the calculatorLockVault Hidden Files description to the matching rule"
     }
   },
   "headers": [
@@ -36,16 +36,16 @@
   ],
   "data": [
     [
-      "",
-      "",
+      1706477929,
+      "mock_hash_for_0_DiwGeKS.jpeg",
       "0_DiwGeKS.jpeg",
       "/storage/emulated/0/Download/Imgur/DiwGeKS.jpeg",
       "DiwGeKS.jpeg",
-      "",
-      "",
-      "",
-      "",
-      "No",
+      "Photos",
+      "JPEG",
+      58517,
+      "Dump/data/media/0/Pictures/.Calculator_Lock/Photos/0_DiwGeKS.jpeg",
+      "Yes",
       ""
     ]
   ]

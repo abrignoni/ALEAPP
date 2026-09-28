@@ -110,18 +110,18 @@
     }
   },
   "pixel7a_a14": {
-    "description": "Google Pixel 7a, Android 14, Joshua Hickman's public image, the only registered corpus found to carry the app (version 1.94). One hidden photo named in the Hide table and present under Pictures/.Calculator_Lock/Photos, one note, and ten preferences, all for one Android user. The other note_contact.db tables are empty and there is no HISTORY.DB. The photo is left out of these fixtures: a row for a located file carries the staged file's recorded times, which the test harness sets to the time of the run, so Hidden Files records it as not located and Storage Folder Media is not run on this case.",
+    "description": "Google Pixel 7a, Android 14, Joshua Hickman's public image, the only registered corpus found to carry the app (version 1.94). One hidden photo named in the Hide table and present under Pictures/.Calculator_Lock/Photos, one note, and ten preferences, all for one Android user. The other note_contact.db tables are empty and there is no HISTORY.DB. The case zips keep the times the image's zip recorded for each file.",
     "maker": "@AlexisBrignoni, Claude",
     "make_data": {
       "input_data_path": "EXTRACTION_FFS.zip",
       "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-      "timestamp": "2026-09-28T14:11:32.274523",
+      "timestamp": "2026-09-28T16:01:00.862840",
       "last_commit": {
-        "hash": "6128a84baf6ee626d3a6ef7bb3a602a48e6741c3",
+        "hash": "dad00ace958158d36afed7e188dbcd6aeea7aa86",
         "author_name": "Brigs",
         "author_email": "abrignoni@gmail.com",
-        "date": "2026-09-28T14:11:17-04:00",
-        "message": "Read every Android user's note_contact.db in calculatorLockVault"
+        "date": "2026-09-28T14:17:46-04:00",
+        "message": "Word the calculatorLockVault Hidden Files description to the matching rule"
       }
     },
     "artifacts": {
@@ -130,7 +130,7 @@
           "*/com.calculator.lock.hide.photo.video/databases/note_contact.db*",
           "*/.Calculator_Lock/*"
         ],
-        "file_count": 2,
+        "file_count": 5,
         "expected_output": {
           "headers": [],
           "data": []
@@ -141,8 +141,11 @@
           "*/.Calculator_Lock/*",
           "*/com.calculator.lock.hide.photo.video/databases/note_contact.db*"
         ],
-        "file_count": 0,
-        "note": "Left out on purpose: every row carries the staged file's recorded times, which the test harness sets to the time of the run."
+        "file_count": 5,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
       },
       "calculatorvault_notes": {
         "search_patterns": [

@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "module_name": "calculatorLockVault",
+    "artifact_name": "Calculator Lock - Storage Folder Media",
+    "function_name": "calculatorvault_storage_media",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 10,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 182,
+    "media_checkins": 1,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_storage_media.pixel7a_a14.zip",
+    "start_time": "2026-09-28T20:04:32.880378+00:00",
+    "end_time": "2026-09-28T20:04:32.909752+00:00",
+    "run_time_seconds": 0.0007507801055908203,
+    "last_commit": {
+      "hash": "dad00ace958158d36afed7e188dbcd6aeea7aa86",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-28T14:17:46-04:00",
+      "message": "Word the calculatorLockVault Hidden Files description to the matching rule"
+    }
+  },
+  "headers": [
+    "File Modified Time",
+    "File",
+    "File Name",
+    "Storage Subfolder",
+    "Detected Format",
+    "File Size (bytes)",
+    "Recorded Path From Hide Table",
+    "Named In Hide Table",
+    "Storage Path",
+    "Android User"
+  ],
+  "data": [
+    [
+      1706477929,
+      "mock_hash_for_0_DiwGeKS.jpeg",
+      "0_DiwGeKS.jpeg",
+      "Photos",
+      "JPEG",
+      58517,
+      "/storage/emulated/0/Download/Imgur/DiwGeKS.jpeg",
+      "Yes",
+      "Dump/data/media/0/Pictures/.Calculator_Lock/Photos/0_DiwGeKS.jpeg",
+      ""
+    ]
+  ]
+}
