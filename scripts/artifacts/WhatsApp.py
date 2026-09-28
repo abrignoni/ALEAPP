@@ -1,24 +1,29 @@
 __artifacts_v2__ = {
     "get_whatsapp_contacts": {
         "name": "WhatsApp - Contacts",
-        "description": "WhatsApp contacts (wa.db)",
+        "description": "Rows of WhatsApp's wa.db wa_contacts table, excluding channel (@newsletter) and status@broadcast jids",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-09-27",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "",
+        "notes": "Reads the first wa.db matched and reports its wa_contacts rows, except rows whose jid ends in @newsletter, the jid form of the chats msgstore.db's newsletter table describes, and the row whose jid is status@broadcast. When any rows are left out, their number is written to the run log. On the 12 tested images the rows left out numbered 791 (781 @newsletter, 10 status@broadcast); none held a given name, family name, display name or number, so each had shown its jid as Name, JID and Number. wa.db holds more @newsletter jids than msgstore.db's newsletter table holds channels: 275 against 10 channels on kevin_pocox7_a15, 191 against 5 on russell_a14, and 255 on anne_a15, whose newsletter table is empty. The @newsletter jids with no chat in msgstore.db appeared in no other TEXT column of wa.db or msgstore.db on any tested image (full-text index tables were not searched). What those rows record was not established, and an @newsletter jid in wa.db does not show that a channel was followed. Name is given_name and family_name when either is not null, otherwise display_name, otherwise the jid; wa_name is not read, and 1,722 of the 1,809 reported rows across the tested images showed the jid as Name. Number is the number column, falling back to the jid when it is empty. Rows whose jid ends in @g.us, @lid or @bot are reported as stored.",
         "paths": ('*/com.whatsapp/databases/wa.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
-            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 268 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 14 rows",
-            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 295 rows",
-            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 92 rows",
-            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 28 rows",
-            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 638 rows",
-            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 2 rows",
+            "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 12 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 13 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.whatsapp vc 262907320 | 13 rows",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 19 rows",
+            "pixel3_a11": "Android 11 | com.whatsapp vc 204815003 | 3 rows",
+            "pixel3_a12": "Android 12 | com.whatsapp vc 212020004 | 4 rows",
+            "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 72 rows",
+            "russell_a14": "Android 14 | com.whatsapp vc 241676004 | 714 rows",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 1 row",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 8 rows",
+            "sharon_a13": "Android 13 | com.whatsapp vc 231278007 | 333 rows",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 617 rows",
         },
     },
     "get_whatsapp_call_logs": {
@@ -318,9 +323,16 @@ def get_whatsapp_contacts(context):
             jid,
             CASE WHEN WC.number IS NULL THEN WC.jid WHEN WC.number == "" THEN WC.jid ELSE WC.number END
         FROM wa_contacts AS WC
+        WHERE WC.jid NOT LIKE '%@newsletter' AND WC.jid <> 'status@broadcast'
         ''')
         for row in rows:
             data_list.append((row[0], row[1], row[2]))
+        skipped = _run(cursor, '''
+        SELECT SUM(jid LIKE '%@newsletter'), SUM(jid = 'status@broadcast') FROM wa_contacts
+        ''')
+        if skipped and any(skipped[0]):
+            logfunc(f'WhatsApp - Contacts: not reported {skipped[0][0] or 0} channel (@newsletter) '
+                    f'and {skipped[0][1] or 0} status@broadcast wa_contacts rows')
         db.close()
 
     data_headers = ('Name', 'JID', 'Number')
