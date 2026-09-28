@@ -214,12 +214,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Calculator Lock",
         "notes": "Every entry in com.calculator.lock.hide.photo.video_preferences.xml gets a row, "
-                 "so entries added by later versions still appear. The Observed Use column is "
+                 "so entries added by later versions still appear. Each Android user's copy of "
+                 "the file is read, with the duplicate storage paths of one copy read once. "
+                 "Android User names the user whose app folder holds the copy when rows come "
+                 "from more than one user, and is blank otherwise, as on the corpus below. The "
+                 "Observed Use column is "
                  "filled for PASSWORD and TAKE_PICTURE, naming every class of base.apk from the "
                  "same extraction (version 1.94) whose bytecode names that preference and, from "
                  "the jadx 1.5.6 decompilation, whether it reads or writes it; l4.b and m4.i are "
-                 "obfuscated names from that build. The column is blank for the other names, and "
-                 "a blank is not a finding that no class reads them. The PASSWORD entry held a "
+                 "obfuscated names from that build. Observed Use is blank for the other names, "
+                 "and a blank is not a finding that no class reads them. The PASSWORD entry held a "
                  "plain text value in the corpus below, which is a finding about how the app "
                  "stores that value on that version, not about any other version. Entries "
                  "beginning IABTCF_ follow the IAB Transparency and Consent Framework key naming "
@@ -308,6 +312,7 @@ PREFERENCE_HEADERS = (
     'Value',
     'Stored Type',
     'Observed Use',
+    'Android User',
 )
 
 # For each name, every class of base.apk (version 1.94) whose bytecode names it, found by
@@ -672,30 +677,36 @@ def calculatorvault_browser_history(context):
 
 @artifact_processor
 def calculatorvault_preferences(context):
-    prefs_path = get_file_path(context.get_files_found(),
-                               'com.calculator.lock.hide.photo.video_preferences.xml')
     data_list = []
-    if not prefs_path:
-        return PREFERENCE_HEADERS, data_list, ''
+    source_paths = []
+    for file_found in unique_files(context):
+        prefs_path = str(file_found)
+        if (os.path.basename(prefs_path) != 'com.calculator.lock.hide.photo.video_preferences.xml'
+                or not os.path.isfile(prefs_path)):
+            continue
+        source_paths.append(prefs_path)
+        user = _android_user(context.get_relative_path(prefs_path))
+        try:
+            root = ET.parse(prefs_path).getroot()
+        except (OSError, ET.ParseError) as error:
+            logfunc(f'Calculator Lock: could not parse {prefs_path}: {error}')
+            continue
 
-    try:
-        root = ET.parse(prefs_path).getroot()
-    except (OSError, ET.ParseError) as error:
-        logfunc(f'Calculator Lock: could not parse {prefs_path}: {error}')
-        return PREFERENCE_HEADERS, data_list, prefs_path
+        for entry in root:
+            name = entry.get('name', '')
+            if entry.tag == 'set':
+                value = ', '.join((child.text or '') for child in entry)
+            elif entry.tag == 'string':
+                value = entry.text or ''
+            else:
+                value = entry.get('value', '')
+            data_list.append((name, value, entry.tag, PREFERENCE_USE.get(name, ''), user))
 
-    for entry in root:
-        name = entry.get('name', '')
-        if entry.tag == 'set':
-            value = ', '.join((child.text or '') for child in entry)
-        elif entry.tag == 'string':
-            value = entry.text or ''
-        else:
-            value = entry.get('value', '')
-        data_list.append((name, value, entry.tag, PREFERENCE_USE.get(name, '')))
-
-    data_list.sort(key=lambda row: row[0])
-    return PREFERENCE_HEADERS, data_list, prefs_path
+    # One user's rows would repeat one value on every row, so the column is kept blank then.
+    if len({row[-1] for row in data_list}) < 2:
+        data_list = [row[:-1] + ('',) for row in data_list]
+    data_list.sort(key=lambda row: (row[-1], row[0]))
+    return PREFERENCE_HEADERS, data_list, '\n'.join(source_paths)
 
 
 def _android_user(relative_path):
