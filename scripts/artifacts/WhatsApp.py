@@ -1,13 +1,13 @@
 __artifacts_v2__ = {
     "get_whatsapp_contacts": {
         "name": "WhatsApp - Contacts",
-        "description": "Rows of WhatsApp's wa.db wa_contacts table (name columns, wa_name, jid and number), excluding channel (@newsletter) and status@broadcast jids",
+        "description": "Rows of WhatsApp's wa.db wa_contacts table (name columns, wa_name, jid, number and status text), excluding channel (@newsletter) and status@broadcast jids",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-09-27",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "Reads the first wa.db matched and reports its wa_contacts rows, except rows whose jid ends in @newsletter, the jid form of the chats msgstore.db's newsletter table describes, and the row whose jid is status@broadcast. When any rows are left out, their number is written to the run log. On the 12 tested images the rows left out numbered 791 (781 @newsletter, 10 status@broadcast); none held a given name, family name, display name or number, so each had shown its jid as Name, JID and Number. wa.db holds more @newsletter jids than msgstore.db's newsletter table holds channels: 275 against 10 channels on kevin_pocox7_a15, 191 against 5 on russell_a14, and 255 on anne_a15, whose newsletter table is empty. The @newsletter jids with no chat in msgstore.db appeared in no other TEXT column of wa.db or msgstore.db on any tested image (full-text index tables were not searched). What those rows record was not established, and an @newsletter jid in wa.db does not show that a channel was followed. Name is given_name and family_name when either is not null, otherwise display_name, otherwise the jid; 1,722 of the 1,809 reported rows across the tested images showed the jid as Name. WhatsApp Name is the wa_name column as stored, and it is never used to fill Name. It was set on 230 of the 1,809 rows, 210 of them rows whose Name was the jid; on the 20 rows where both it and one of given_name, family_name or display_name were set, it differed from Name on 15. In 20 pairs of tested images, one device's own account appeared in the other device's wa_contacts; wa_name was set in 10 of them, and in all 10 it equalled the push_name value in the first device's own WhatsApp preferences (startup_prefs.xml, or com.whatsapp_preferences_light.xml on pixel3_a11 and pixel3_a12). A published description of wa_name is 'WhatsApp name of the contact (as set in their profile)'. Reference: Igor Mikhailov, 'WhatsApp in Plain Sight: Where and How You Can Collect Forensic Artifacts', https://www.group-ib.com/blog/whatsapp-forensic-artifacts/. When wa_name was written, and whether it follows later changes to the contact's profile name, was not established. Number is the number column as stored, with no fallback to the jid; it was empty on 1,731 of the 1,809 rows. Rows whose jid ends in @g.us, @lid or @bot are reported as stored.",
+        "notes": "Reads the first wa.db matched and reports its wa_contacts rows, except rows whose jid ends in @newsletter, the jid form of the chats msgstore.db's newsletter table describes, and the row whose jid is status@broadcast. When any rows are left out, their number is written to the run log. On the 12 tested images the rows left out numbered 791 (781 @newsletter, 10 status@broadcast); none held a given name, family name, display name or number, so each had shown its jid as Name, JID and Number. wa.db holds more @newsletter jids than msgstore.db's newsletter table holds channels: 275 against 10 channels on kevin_pocox7_a15, 191 against 5 on russell_a14, and 255 on anne_a15, whose newsletter table is empty. The @newsletter jids with no chat in msgstore.db appeared in no other TEXT column of wa.db or msgstore.db on any tested image (full-text index tables were not searched). What those rows record was not established, and an @newsletter jid in wa.db does not show that a channel was followed. Name is given_name and family_name when either is not null, otherwise display_name, otherwise the jid; 1,722 of the 1,809 reported rows across the tested images showed the jid as Name. WhatsApp Name is the wa_name column as stored, and it is never used to fill Name. It was set on 230 of the 1,809 rows, 210 of them rows whose Name was the jid; on the 20 rows where both it and one of given_name, family_name or display_name were set, it differed from Name on 15. In 20 pairs of tested images, one device's own account appeared in the other device's wa_contacts; wa_name was set in 10 of them, and in all 10 it equalled the push_name value in the first device's own WhatsApp preferences (startup_prefs.xml, or com.whatsapp_preferences_light.xml on pixel3_a11 and pixel3_a12). A published description of wa_name is 'WhatsApp name of the contact (as set in their profile)'. Reference: Igor Mikhailov, 'WhatsApp in Plain Sight: Where and How You Can Collect Forensic Artifacts', https://www.group-ib.com/blog/whatsapp-forensic-artifacts/. When wa_name was written, and whether it follows later changes to the contact's profile name, was not established. Number is the number column as stored, with no fallback to the jid; it was empty on 1,731 of the 1,809 rows. Status Text is the status column as stored, and Status Timestamp is status_timestamp read as milliseconds since 1970-01-01 UTC, shown blank where the stored value is 0. Status Text was set on 730 of the 1,809 rows and Status Timestamp on 531, all of them rows with a Status Text; the other 199 rows with a Status Text stored a timestamp of 0. Of the 20 pairs of tested images above, status was set in 15; in the 11 of those whose first device stores a my_current_status value in its own com.whatsapp_preferences_light.xml, status equalled that value in all 11. Where one contact carried the same Status Text on two different tested phones with a timestamp on both (4 contacts), Status Timestamp was identical on both. What event Status Timestamp marks was not established. A published description of status is 'Text in the status line of the contact'. Reference: Igor Mikhailov, 'WhatsApp in Plain Sight: Where and How You Can Collect Forensic Artifacts', https://www.group-ib.com/blog/whatsapp-forensic-artifacts/. Rows whose jid ends in @g.us, @lid or @bot are reported as stored.",
         "paths": ('*/com.whatsapp/databases/wa.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -427,6 +427,13 @@ def _contact_jid(cursor, jid_alias):
     return joins, f'COALESCE(mapped_jid.raw_string, {jid_alias}.raw_string)'
 
 
+def _ms_to_utc(value):
+    """A millisecond Unix time as a UTC datetime; 0, empty or non-integer values give None."""
+    if not isinstance(value, int) or value <= 0:
+        return None
+    return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(milliseconds=value)
+
+
 @artifact_processor
 def get_whatsapp_contacts(context):
     files_found = context.get_files_found()
@@ -437,6 +444,9 @@ def get_whatsapp_contacts(context):
         cursor = db.cursor()
         # wa_name is present on every tested wa.db; an older one without it still reports its rows.
         wa_name = 'WC.wa_name' if _has_column(cursor, 'main', 'wa_contacts', 'wa_name') else 'NULL'
+        status = 'WC.status' if _has_column(cursor, 'main', 'wa_contacts', 'status') else 'NULL'
+        status_ts = ('WC.status_timestamp' if _has_column(cursor, 'main', 'wa_contacts', 'status_timestamp')
+                     else 'NULL')
         rows = _run(cursor, f'''
         SELECT
             CASE
@@ -448,12 +458,14 @@ def get_whatsapp_contacts(context):
             END,
             {wa_name},
             jid,
-            WC.number
+            WC.number,
+            {status},
+            {status_ts}
         FROM wa_contacts AS WC
         WHERE WC.jid NOT LIKE '%@newsletter' AND WC.jid <> 'status@broadcast'
         ''')
         for row in rows:
-            data_list.append((row[0], row[1], row[2], row[3]))
+            data_list.append((row[0], row[1], row[2], row[3], row[4], _ms_to_utc(row[5])))
         skipped = _run(cursor, '''
         SELECT SUM(jid LIKE '%@newsletter'), SUM(jid = 'status@broadcast') FROM wa_contacts
         ''')
@@ -462,7 +474,7 @@ def get_whatsapp_contacts(context):
                     f'and {skipped[0][1] or 0} status@broadcast wa_contacts rows')
         db.close()
 
-    data_headers = ('Name', 'WhatsApp Name', 'JID', 'Number')
+    data_headers = ('Name', 'WhatsApp Name', 'JID', 'Number', 'Status Text', ('Status Timestamp', 'datetime'))
     return data_headers, data_list, source
 
 
