@@ -149,7 +149,7 @@ __artifacts_v2__ = {
     },
     "get_whatsapp_group_details": {
         "name": "WhatsApp - Group Details",
-        "description": "WhatsApp group chats (chats with a subject in msgstore.db other than channels), with the group creator where wa.db records one",
+        "description": "WhatsApp group chats (chats with a subject in msgstore.db other than channels), with the group creator where wa.db records one and the group picture where the app stored one",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-09-27",
@@ -167,20 +167,29 @@ __artifacts_v2__ = {
             "18 are newsletter chats (10 on kevin_pocox7_a15, 5 on russell_a14, 3 on "
             "samsungs20_a13) and the 9 reported are groups (...@g.us). Group Creation Timestamp is "
             "chat.created_timestamp. Creator JID is wa.db's wa_group_admin_settings.creator_jid for "
-            "the chat's jid. It held a value on 4 of the 9 group rows, and it was blank for all 5 "
-            "groups on pixel7a_a14, russell_a14 and sharon_a14. It is also blank when wa.db lacks the "
-            "creator_jid column, as on pixel3_a11, or when no wa.db is found (exercised on a "
-            "constructed database only). Creator WA User Name and Creator WA Number come from the "
-            "wa.db wa_contacts row whose jid equals Creator JID, and held no value on any tested "
-            "image: on anne_a15, hc_pixel8pro_a16 and hc_pixel8pro_a17 the creator is recorded by a "
-            "LID jid (@lid) that matches no wa_contacts row, and on sharon_a13 the matching "
-            "wa_contacts row stores no name or number. Creator WA Profile Picture looks for a file "
-            "named after Creator WA Number and held no value on any tested image. The files in "
-            "com.whatsapp/files/Avatars are named by jid with a .j extension on the four tested "
-            "images whose folder was listed (anne_a15, pixel7a_a14, russell_a14, sharon_a14), and "
-            "none of the four images with a Creator JID (anne_a15, hc_pixel8pro_a16, "
-            "hc_pixel8pro_a17, sharon_a13) holds a file named after it. Only the first msgstore.db "
-            "matched is read, as in the module's other artifacts."
+            "the chat's jid. Creator JID held a value on 4 of the 9 group rows and was blank for "
+            "all 5 groups on pixel7a_a14, russell_a14 and sharon_a14. It is also blank when wa.db "
+            "lacks the creator_jid column, as on pixel3_a11, or when no wa.db is found (exercised "
+            "on a constructed database only). Creator JID (via jid_map) is the jid that "
+            "msgstore.db's jid_map links to a Creator JID recorded as a LID jid (...@lid). Creator "
+            "JID (via jid_map) held a value on the 3 group rows whose Creator JID is a LID jid "
+            "(anne_a15, hc_pixel8pro_a16, hc_pixel8pro_a17), each a ...@s.whatsapp.net jid, and was "
+            "blank on the other 6. Creator JID (via jid_map) is also blank when msgstore.db has no "
+            "jid_map table (exercised on a constructed database only). Creator WA User Name and "
+            "Creator WA Number come from the wa.db wa_contacts row whose jid equals Creator JID "
+            "(via jid_map) when that holds a value, and Creator JID otherwise. Creator WA User Name "
+            "was blank on 8 of the 9 group rows, all but anne_a15, and Creator WA Number was blank "
+            "on all 9: the matching wa_contacts row stores a name and no number on anne_a15, and no "
+            "name or number on hc_pixel8pro_a16, hc_pixel8pro_a17 and sharon_a13. Group Picture is "
+            "the file in com.whatsapp/files/Avatars, in the same app container as the msgstore.db "
+            "read, whose name is the group's jid followed by .j. Group Picture was blank on 7 of "
+            "the 9 group rows and held a value on 2 (sharon_a13 and sharon_a14), both JPEG images. "
+            "The file name is the only link between the file and the group; when the file was "
+            "written is not established. Creator WA Profile Picture is the file in the same folder "
+            "named after Creator JID or Creator JID (via jid_map), followed by .j. Creator WA "
+            "Profile Picture was blank on every tested image, because none of the four images with "
+            "a Creator JID holds such a file; the lookup was exercised on constructed files only. "
+            "Only the first msgstore.db matched is read, as in the module's other artifacts."
         ),
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*',
                   '*/com.whatsapp/files/Avatars/*'),
@@ -378,6 +387,22 @@ def _has_table(cursor, name):
         return cursor.fetchone() is not None
     except sqlite3.Error:
         return False
+
+
+def _avatars(files_found, msgstore):
+    """Map file name to path for files/Avatars in the same app container as msgstore."""
+    marker = '/databases/msgstore.db'
+    msgstore = str(msgstore).replace('\\', '/')
+    if not msgstore.endswith(marker):
+        return {}
+    folder = msgstore[:-len(marker)] + '/files/Avatars/'
+    avatars = {}
+    for file_found in files_found:
+        path = str(file_found)
+        rest = path.replace('\\', '/')
+        if rest.startswith(folder) and '/' not in rest[len(folder):] and not os.path.isdir(path):
+            avatars[rest[len(folder):]] = path
+    return avatars
 
 
 def _has_column(cursor, schema, table, column):
@@ -617,37 +642,48 @@ def get_whatsapp_group_details(context):
     if db:
         # The chat table, not chat_view: the view has no jid_row_id column on older schemas.
         # The creator columns come from wa.db and are NULL when it lacks creator_jid or is absent.
-        creator = name = number = 'NULL'
+        creator = mapped = name = number = 'NULL'
         if _has_column(cursor, 'wadb', 'wa_group_admin_settings', 'creator_jid'):
             creator = ('''(SELECT creator_jid FROM wadb.wa_group_admin_settings
                 WHERE wadb.wa_group_admin_settings.jid = jid.raw_string)''')
-            name = f'(SELECT wa_name FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid = {creator})'
-            number = f'(SELECT number FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid = {creator})'
+            contact = creator
+            # A creator recorded by a LID jid (...@lid) is matched to wa.db contacts through
+            # msgstore.db jid_map (lid_row_id -> jid_row_id) when that table exists.
+            if _has_table(cursor, 'jid_map'):
+                mapped = f'''(SELECT mapped_jid.raw_string FROM jid AS lid_jid
+                JOIN jid_map ON jid_map.lid_row_id = lid_jid._id
+                JOIN jid AS mapped_jid ON mapped_jid._id = jid_map.jid_row_id
+                WHERE lid_jid.raw_string = {creator})'''
+                contact = f'COALESCE({mapped}, {creator})'
+            name = f'(SELECT wa_name FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid = {contact})'
+            number = f'(SELECT number FROM wadb.wa_contacts WHERE wadb.wa_contacts.jid = {contact})'
         rows = _run(cursor, f'''
         SELECT
             datetime(chat.created_timestamp/1000,'unixepoch'),
             chat.subject,
             {creator},
+            {mapped},
             {name},
-            {number}
+            {number},
+            jid.raw_string
         FROM chat
         JOIN jid ON jid._id = chat.jid_row_id
         WHERE chat.subject NOT NULL
             AND COALESCE(jid.raw_string, '') NOT LIKE '%@newsletter'
         ORDER BY chat.created_timestamp ASC, chat._id
         ''')
+        avatars = _avatars(files_found, source)
         for row in rows:
-            media = ''
-            number = row[4]
-            if number:
-                avatar = number[1:] if number.startswith('+') else number
-                media = _media(avatar + '.jpg')
-            data_list.append((_str_to_utc(row[0]), row[1], row[2], row[3], row[4], media))
+            group_picture = _media(avatars.get(f'{row[6]}.j', ''))
+            creator_picture = next((_media(avatars[f'{jid}.j']) for jid in (row[2], row[3])
+                                    if jid and f'{jid}.j' in avatars), '')
+            data_list.append((_str_to_utc(row[0]), row[1], group_picture, row[2], row[3], row[4],
+                              row[5], creator_picture))
         db.close()
 
-    data_headers = (('Group Creation Timestamp', 'datetime'), 'Group Name', 'Creator JID',
-                    'Creator WA User Name', 'Creator WA Number',
-                    ('Creator WA Profile Picture', 'media'))
+    data_headers = (('Group Creation Timestamp', 'datetime'), 'Group Name', ('Group Picture', 'media'),
+                    'Creator JID', 'Creator JID (via jid_map)', 'Creator WA User Name',
+                    'Creator WA Number', ('Creator WA Profile Picture', 'media'))
     return data_headers, data_list, source
 
 
