@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "calculatorLockVault",
+    "artifact_name": "Calculator Lock - Notes",
+    "function_name": "calculatorvault_notes",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 6,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 88,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_notes.pixel7a_a14.zip",
+    "start_time": "2026-09-28T18:13:42.849577+00:00",
+    "end_time": "2026-09-28T18:13:42.869869+00:00",
+    "run_time_seconds": 0.0006659030914306641,
+    "last_commit": {
+      "hash": "6128a84baf6ee626d3a6ef7bb3a602a48e6741c3",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-28T14:11:17-04:00",
+      "message": "Read every Android user's note_contact.db in calculatorLockVault"
+    }
+  },
+  "headers": [
+    "Note Date",
+    "Note Date (as stored)",
+    "Title",
+    "Note",
+    "Note ID",
+    "Android User"
+  ],
+  "data": [
+    [
+      1707004800,
+      "04-02-2024",
+      "My Secret Note",
+      "This is my super secret note.  Don't look at it. \ud83d\ude00",
+      1,
+      ""
+    ]
+  ]
+}

@@ -4,21 +4,21 @@
     "artifact_name": "Calculator Lock - Hidden Files",
     "function_name": "calculatorvault_hidden_files",
     "case_number": "caseemu_a15_calc",
-    "number_of_columns": 10,
+    "number_of_columns": 11,
     "number_of_rows": 0,
     "total_data_size_bytes": 0,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_hidden_files.caseemu_a15_calc.zip",
-    "start_time": "2026-09-28T16:59:44.887791+00:00",
-    "end_time": "2026-09-28T16:59:44.907265+00:00",
-    "run_time_seconds": 0.0006568431854248047,
+    "start_time": "2026-09-28T18:12:10.105975+00:00",
+    "end_time": "2026-09-28T18:12:10.131567+00:00",
+    "run_time_seconds": 0.0006761550903320312,
     "last_commit": {
-      "hash": "434f554f711fdca7b73d57cefc87f9c1354f0563",
+      "hash": "6128a84baf6ee626d3a6ef7bb3a602a48e6741c3",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-09-28T12:58:00-04:00",
-      "message": "Add Calculator Lock - Calculator History (HISTORY.DB)"
+      "date": "2026-09-28T14:11:17-04:00",
+      "message": "Read every Android user's note_contact.db in calculatorLockVault"
     }
   },
   "headers": [
@@ -31,7 +31,8 @@
     "Detected Format",
     "File Size (bytes)",
     "Storage Path",
-    "File Located In Extraction"
+    "File Located In Extraction",
+    "Android User"
   ],
   "data": []
 }

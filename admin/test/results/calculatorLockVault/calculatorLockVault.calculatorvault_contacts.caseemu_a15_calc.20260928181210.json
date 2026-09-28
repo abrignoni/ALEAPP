@@ -4,27 +4,28 @@
     "artifact_name": "Calculator Lock - Contacts",
     "function_name": "calculatorvault_contacts",
     "case_number": "caseemu_a15_calc",
-    "number_of_columns": 3,
+    "number_of_columns": 4,
     "number_of_rows": 0,
     "total_data_size_bytes": 0,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_contacts.caseemu_a15_calc.zip",
-    "start_time": "2026-09-28T16:59:44.907825+00:00",
-    "end_time": "2026-09-28T16:59:44.927411+00:00",
-    "run_time_seconds": 0.0004992485046386719,
+    "start_time": "2026-09-28T18:12:10.495278+00:00",
+    "end_time": "2026-09-28T18:12:10.523972+00:00",
+    "run_time_seconds": 0.0006792545318603516,
     "last_commit": {
-      "hash": "434f554f711fdca7b73d57cefc87f9c1354f0563",
+      "hash": "6128a84baf6ee626d3a6ef7bb3a602a48e6741c3",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-09-28T12:58:00-04:00",
-      "message": "Add Calculator Lock - Calculator History (HISTORY.DB)"
+      "date": "2026-09-28T14:11:17-04:00",
+      "message": "Read every Android user's note_contact.db in calculatorLockVault"
     }
   },
   "headers": [
     "Contact Name",
     "Contact Number",
-    "Contact ID"
+    "Contact ID",
+    "Android User"
   ],
   "data": []
 }

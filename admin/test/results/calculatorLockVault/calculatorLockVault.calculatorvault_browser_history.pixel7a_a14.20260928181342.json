@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "module_name": "calculatorLockVault",
+    "artifact_name": "Calculator Lock - Browser History",
+    "function_name": "calculatorvault_browser_history",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 7,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_browser_history.pixel7a_a14.zip",
+    "start_time": "2026-09-28T18:13:42.786830+00:00",
+    "end_time": "2026-09-28T18:13:42.806616+00:00",
+    "run_time_seconds": 0.0004949569702148438,
+    "last_commit": {
+      "hash": "6128a84baf6ee626d3a6ef7bb3a602a48e6741c3",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-09-28T14:11:17-04:00",
+      "message": "Read every Android user's note_contact.db in calculatorLockVault"
+    }
+  },
+  "headers": [
+    "History Date",
+    "History Date (as stored)",
+    "Name",
+    "URL",
+    "Image",
+    "History ID",
+    "Android User"
+  ],
+  "data": []
+}
