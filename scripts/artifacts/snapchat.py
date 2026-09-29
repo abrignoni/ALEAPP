@@ -104,7 +104,7 @@ __artifacts_v2__ = {
                        "rows where content_type is 1. WAL frames are not parsed, so absence of a "
                        "message here is not evidence it did not exist.",
         "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-07", "last_update_date": "2026-08-11",
+        "creation_date": "2026-08-07", "last_update_date": "2026-09-28",
         "requirements": "blackboxprotobuf", "category": "Snapchat",
         "notes": "Newer Snapchat builds keep conversations in arroyo.db; the older Snapchat - "
                  "Messages artifact reads main.db and tcspahn.db and returns nothing on them.\n"
@@ -133,6 +133,17 @@ __artifacts_v2__ = {
                  "in identity_persistent_store.xml resolved through Friend.userId, else the "
                  "single distinct sender of rows where created_on_device is set. The "
                  "sources agreed on the tested images. Blank when none resolves.\n"
+                 "Read Timestamp comes from read_timestamp, and the viewed flag from "
+                 "is_viewed_by_user. The app's own CREATE TABLE text for conversation_message "
+                 "comments the first as \"timestamp when the message is first marked read by "
+                 "any participants\" and the second as \"bool. set to true iff "
+                 "message.content.metadata().read_by() contains current user\". The same "
+                 "comments are in the schema on all seven tested images that returned rows. A "
+                 "Read Timestamp is therefore not evidence that the account holder read the "
+                 "message: on pixel7a_a14, 10 of the 14 incoming messages carried a Read "
+                 "Timestamp and is_viewed_by_user was 1 (reported YES) on 1 of those 10, and "
+                 "all 7 outgoing messages carried one. A stored read_timestamp of 0 is "
+                 "reported blank.\n"
                  "Older Snapchat builds carry a strict subset of the current columns (the "
                  "tested vc 147872 build lacks created_on_device and replies_count); absent "
                  "columns are substituted with NULL under the same name so the remaining "
