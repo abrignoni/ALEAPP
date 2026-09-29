@@ -203,6 +203,7 @@ def main():
                         help="Rows above which an artifact's table is left off its HTML page, which then points at "
                              "the LAVA database and the TSV export instead (default %(default)s). 0 writes every table.")
     parser.add_argument('--custom_artifacts_path', required=False, action="store", help="Additional path to load artifacts from (e.g., scripts/alternate_artifacts)")
+    parser.add_argument('--version', action='version', version=f'{leapp_name} {leapp_version}')
 
     profile_filename = None
     casedata = {}

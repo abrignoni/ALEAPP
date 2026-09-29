@@ -20,6 +20,10 @@ on:
       # The entry points and scripts/ilapfuncs.py import leapp_functions, so a
       # change there is equally able to break on an older Python
       - 'leapp_functions/**'
+      # test_packaging_build.py loads packaging/build.py, the entry point and the spec
+      - 'packaging/**'
+      # ...and checks requirements-msl-lock.txt against requirements.txt
+      - 'requirements-msl-lock.txt'
 
 permissions:
   contents: read
