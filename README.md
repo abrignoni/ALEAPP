@@ -6,6 +6,41 @@ If you want to contribute hit me up here: https://abrignoni.github.io
 
 Blog posts here: https://leapps.org/blog
 
+## Download
+
+Pre-built releases need no Python installation: [ALEAPP GitHub Releases](https://github.com/abrignoni/ALEAPP/releases),
+or [LEAPPs Releases](https://leapps.org/releases) for the whole LEAPP family.
+
+| Platform | Download |
+| -------- | -------- |
+| Windows (Intel/AMD) | `ALEAPP-*-windows-x64-setup.exe` (installer) or `ALEAPP-*-windows-x64-portable.zip` |
+| Windows (ARM) | `ALEAPP-*-windows-arm64-setup.exe` or `ALEAPP-*-windows-arm64-portable.zip` |
+| macOS (Apple Silicon) | `ALEAPP-*-macos-arm64.dmg` |
+| macOS (Intel) | `ALEAPP-*-macos-x64.dmg` |
+| Linux (Intel/AMD) | `ALEAPP-*-linux-x64.AppImage` |
+| Linux (ARM) | `ALEAPP-*-linux-arm64.AppImage` |
+
+Each download holds one program, `aleapp`. `SHA256SUMS.txt` in each release lets you check a download.
+
+**GUI**: open ALEAPP the usual way: from the Start menu after installing on Windows, by
+double-clicking `aleapp.exe` in the portable folder, ALEAPP in Applications on macOS, or
+the AppImage on Linux. Started without arguments, it opens the window.
+
+**CLI**: give `aleapp` arguments in a terminal and it runs as a command line instead. The
+output folder must already exist. On Windows, keep `aleapp.exe` in its folder with the
+files beside it.
+
+```
+aleapp.exe -t zip -i C:\path\to\extraction.zip -o C:\path\to\output\
+```
+
+On Linux, run the AppImage with the same arguments. On macOS it is inside the app; to
+type just `aleapp` in a terminal, link it onto your PATH once:
+
+```
+sudo ln -s /Applications/ALEAPP.app/Contents/MacOS/aleapp /usr/local/bin/aleapp
+```
+
 ## Requirements
 
 **Python 3.10 or above**
@@ -19,55 +54,31 @@ the `py` part is correct for your environment, eg `py`, `python`, or `python3`, 
 or
 `pip3 install -r requirements.txt`
 
+For the exact mister_skinnylegs dependency chain the releases are built with, install
+`requirements-msl-lock.txt` over that, without dependencies:
+
+`pip3 install --no-deps -r requirements-msl-lock.txt`
+
 To run on **Linux**, you will also need to install `tkinter` separately like so:
 
 `sudo apt-get install python3-tk`
 
-## Compile to executable
+## Building the binaries
 
-To compile to an executable so you can run this on a system without python installed.
-
-_Windows OS_
-
-To create aleapp.exe, run:
+`packaging/build.py` builds `aleapp` with PyInstaller for the machine it runs on, from the
+same virtual environment. It installs `requirements.txt`, the pinned build tools and
+`requirements-msl-lock.txt` first.
 
 ```
-pyinstaller scripts\pyinstaller\aleapp.spec
+python packaging/build.py exe          # dist/ALEAPP/, and dist/ALEAPP.app on macOS
+python packaging/build.py smoke        # run what it built, without opening a window
+python packaging/build.py installer    # Windows: Inno Setup installer; macOS: .dmg; Linux: AppImage
 ```
 
-To create aleappGUI.exe, run:
-
-```
-pyinstaller scripts\pyinstaller\aleappGUI.spec
-```
-
-_macOS_
-
-To create aleapp, run:
-
-```
-pyinstaller scripts/pyinstaller/aleapp_macOS.spec
-```
-
-To create aleappGUI.app, run:
-
-```
-pyinstaller scripts/pyinstaller/aleappGUI_macOS.spec
-```
-
-_Linux_
-
-To create aleapp, run:
-
-```
-pyinstaller scripts/pyinstaller/aleapp_Linux.spec
-```
-
-To create aleappGUI, run:
-
-```
-pyinstaller scripts/pyinstaller/aleappGUI_Linux.spec
-```
+`exe --onefile` makes `dist/aleapp` (`dist\aleapp.exe` on Windows) as a single file
+instead. The Windows installer needs [Inno Setup](https://jrsoftware.org/isdl.php); on
+Linux, `smoke` needs a display, which `xvfb-run` provides. `python packaging/build.py --help`
+has the rest.
 
 ## Usage
 

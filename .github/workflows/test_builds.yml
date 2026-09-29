@@ -1,168 +1,145 @@
 name: Test builds
 
-# Build the CLI and GUI binaries with PyInstaller on every platform PyInstaller
-# cannot cross-build for, smoke-test them on their own architecture, and upload
-# them as workflow artifacts.
+# Builds ALEAPP with packaging/build.py on every platform and architecture it ships for,
+# runs what came out, builds each platform's installer, and uploads the lot. Nothing here
+# is a release; release.yml runs the same steps when a version tag is pushed. It exists so
+# every platform's build is produced and actually executed, without anyone owning the
+# hardware.
 #
-# Manual only. This is not the release pipeline; it exists so testable binaries can
-# be produced and actually executed per platform without anyone owning the hardware.
+# The smoke test is the point, not decoration. iLEAPP's frozen builds shipped a startup
+# crash for a long time (missing google.protobuf, PIL, leapp_functions) precisely because
+# nothing ever ran a built binary. `build.py smoke` runs the executable the ways a user
+# does: --version, a run over an empty extraction, a run over the NTFS raw fixture, the
+# mister_skinnylegs plugins the browser artifacts need, and the window's --selfcheck,
+# which counts the artifacts the build loaded against the source.
 #
-# The smoke tests are the point, not decoration: iLEAPP's frozen builds shipped a
-# startup crash for a long time (missing hidden imports) precisely because nothing
-# ever ran a built binary. Every step here that runs a binary is a regression test
-# for that class of failure. Ported from iLEAPP's test_builds.yml minus its
-# unifiedlog parser steps, which have no ALEAPP counterpart.
+# Advisory rather than required, so a paths filter is fine here. A logic change inside an
+# existing module almost never breaks a build; packaging and dependency changes are where
+# the breaks come from, and the weekly build of main covers the rest.
 
 on:
   workflow_dispatch:
+  # Monday 06:00 UTC.
+  schedule:
+    - cron: '0 6 * * 1'
+  pull_request:
+    paths:
+      - 'packaging/**'
+      - 'requirements.txt'
+      - 'requirements-msl-lock.txt'
+      - '.github/workflows/test_builds.yml'
 
 permissions:
   contents: read
 
 jobs:
-  build-windows:
+  build:
     strategy:
       fail-fast: false
       matrix:
+        # `os` is the runner; `name` is what the job and its artifact are called, since
+        # a runner label such as macos-latest does not say which machine it is.
         include:
-          - runner: windows-latest
-            arch: x64
-          - runner: windows-11-arm
-            arch: arm64
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 45
+          - os: windows-latest
+            name: windows-x64
+          - os: windows-11-arm
+            name: windows-11-arm
+          - os: macos-latest
+            name: macos-apple_silicon
+          # Intel Macs. GitHub drops x86_64 macOS when macos-15-intel retires in 2027.
+          - os: macos-15-intel
+            name: macos-15-intel
+          # 22.04 rather than 24.04: a build runs only on the glibc it was made against or
+          # a newer one, and 22.04's 2.35 still covers the SIFT workstation and the LTS
+          # releases examiners keep.
+          - os: ubuntu-22.04
+            name: ubuntu-22.04-x64
+          - os: ubuntu-22.04-arm
+            name: ubuntu-22.04-arm
+    name: build (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
-          # Latest supported Python. On x64 every pinned dependency resolves to a
-          # wheel (bcrypt 3.2.0 ships a cp36-abi3 win_amd64 wheel). On arm64 pip
-          # must build bcrypt 3.2.0 from source with the runner's Rust toolchain;
-          # that leg is exploratory until a run proves it.
+          # Latest supported Python. On Windows ARM pip builds bcrypt 3.2.0 and lz4 from
+          # source; the runner's toolchain covers both.
           python-version: '3.14'
 
-      - name: Install dependencies and PyInstaller
-        # Requirements install alone in this step: a pwsh multi-line run does not
-        # stop on a failed command, so bundling more commands after it lets a
-        # failed install pass silently and surface later as a missing-module
-        # crash in the frozen exe (seen on RLEAPP's arm64 leg, run 31444496033).
-        run: |
-          pip install -r requirements.txt
-          pip install "pyinstaller>=6.22"
-
-      - name: Build CLI and GUI with PyInstaller
-        working-directory: scripts/pyinstaller
-        run: |
-          pyinstaller aleapp.spec --distpath ..\..\dist_build --workpath ..\..\build_tmp --noconfirm
-          pyinstaller aleappGUI.spec --distpath ..\..\dist_build --workpath ..\..\build_tmp --noconfirm
-
-      - name: Smoke test the frozen CLI
-        # --help proves the exe survives its imports (the historical crash class).
-        # The empty-input run proves module loading, report generation, and clean
-        # exit end to end; it must succeed with "no data found" everywhere.
-        run: |
-          dist_build\aleapp.exe --help
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-          New-Item -ItemType Directory -Path smoke_in, smoke_out | Out-Null
-          "placeholder" | Out-File smoke_in\placeholder.txt
-          dist_build\aleapp.exe -t fs -i smoke_in -o smoke_out
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-
-      # A raw image is read through the vendored reader imported as a module, which
-      # is the path a frozen build is most likely to break: an earlier design ran the
-      # reader as a subprocess through sys.executable, and in a bundle that is the
-      # tool itself, so -t raw could never work frozen and nothing smoke-tested it.
-      - name: Smoke test the frozen CLI on a raw image
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Path smoke_raw_out | Out-Null
-          python -c "import gzip, shutil; shutil.copyfileobj(gzip.open('admin/test/data/raw_images/ntfs-fixture.img.gz'), open('smoke_in/ntfs-fixture.img', 'wb'))"
-          dist_build\aleapp.exe -t raw -i smoke_in\ntfs-fixture.img -o smoke_raw_out
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-          $log = Get-ChildItem -Path smoke_raw_out -Recurse -Filter "Screen_Output.html" | Select-Object -First 1
-          if (-not $log) { Write-Error "no run log was written"; exit 1 }
-          if (-not (Select-String -Path $log.FullName -Pattern "walked lba0: 4" -Quiet)) {
-            Write-Error "the frozen build did not walk the NTFS fixture"; exit 1
-          }
-
-      - name: Package artifact
-        run: |
-          New-Item -ItemType Directory -Path artifact | Out-Null
-          Copy-Item dist_build\aleapp.exe artifact\
-          Copy-Item dist_build\aleappGUI.exe artifact\
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: aleapp-windows-${{ matrix.arch }}-test
-          path: artifact/
-          retention-days: 14
-
-  build-linux:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: ubuntu-latest
-            arch: x64
-          - runner: ubuntu-24.04-arm
-            arch: arm64
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.14'
-
-      - name: Install tk libraries for the GUI build
-        # The GUI imports tkinter; PyInstaller needs the import to succeed at
-        # analysis time. The hard check turns a missing-toolkit problem into a
-        # readable failure instead of a cryptic PyInstaller one.
+      - name: Linux, the window's toolkit and a display for its self-check
+        # The window imports tkinter, and PyInstaller needs that import to succeed at
+        # analysis time; the hard check turns a missing toolkit into a readable failure.
+        # xvfb gives the --selfcheck a display.
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y -q libtcl8.6 libtk8.6
+          sudo apt-get install -y -q libtcl8.6 libtk8.6 xvfb
           python -c "import tkinter" || { echo "tkinter unavailable in this Python"; exit 1; }
 
-      - name: Install dependencies and PyInstaller
-        # Requirements install alone in this step: a pwsh multi-line run does not
-        # stop on a failed command, so bundling more commands after it lets a
-        # failed install pass silently and surface later as a missing-module
-        # crash in the frozen exe (seen on RLEAPP's arm64 leg, run 31444496033).
+      # build.py installs requirements.txt and packaging/requirements-build.txt, then
+      # requirements-msl-lock.txt over them with --no-deps.
+      - name: Phase 1, the aleapp executable
+        shell: bash
         run: |
-          pip install -r requirements.txt
-          pip install "pyinstaller>=6.22"
+          python -m pip install --upgrade pip
+          python packaging/build.py exe
 
-      - name: Build CLI and GUI with PyInstaller
-        working-directory: scripts/pyinstaller
+      - name: Smoke test the build
+        shell: bash
         run: |
-          pyinstaller aleapp_Linux.spec --distpath ../../dist_build --workpath ../../build_tmp --noconfirm
-          pyinstaller aleappGUI_Linux.spec --distpath ../../dist_build --workpath ../../build_tmp --noconfirm
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            xvfb-run -a python packaging/build.py smoke
+          else
+            python packaging/build.py smoke
+          fi
 
-      - name: Smoke test the frozen CLI
+      - name: Phase 2, the installer (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
         run: |
-          dist_build/aleapp --help
-          mkdir smoke_in smoke_out
-          echo placeholder > smoke_in/placeholder.txt
-          dist_build/aleapp -t fs -i smoke_in -o smoke_out
+          choco install innosetup --no-progress -y
+          python packaging/build.py installer
+          ls -l dist/ALEAPP-Setup-*.exe
 
-      # Same on Linux: the frozen build has to read a raw image through the vendored
-      # reader imported as a module, and the run log has to show the walk.
-      - name: Smoke test the frozen CLI on a raw image
+      - name: Phase 2, the disk image (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
         run: |
-          mkdir smoke_raw_out
-          python -c "import gzip, shutil; shutil.copyfileobj(gzip.open('admin/test/data/raw_images/ntfs-fixture.img.gz'), open('smoke_in/ntfs-fixture.img', 'wb'))"
-          dist_build/aleapp -t raw -i smoke_in/ntfs-fixture.img -o smoke_raw_out
-          grep -rq "walked lba0: 4" smoke_raw_out --include="Screen_Output.html" || { echo "the frozen build did not walk the NTFS fixture"; exit 1; }
+          python packaging/build.py installer
+          ls -l dist/ALEAPP-*.dmg
 
-      - name: Package artifact
+      # build.py runs the finished AppImage once and requires it to report the version.
+      - name: Phase 2, the AppImage (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
         run: |
-          mkdir artifact
-          cp dist_build/aleapp dist_build/aleappGUI artifact/
+          python packaging/build.py installer
+          ls -l dist/ALEAPP-*.AppImage
 
-      - uses: actions/upload-artifact@v4
+      # Windows and Linux ship the one-folder build as well as their installer.
+      - name: Upload the build (Windows, Linux)
+        if: runner.os != 'macOS'
+        uses: actions/upload-artifact@v7
         with:
-          name: aleapp-linux-${{ matrix.arch }}-test
-          path: artifact/
+          name: aleapp-${{ matrix.name }}-test
+          path: |
+            dist/ALEAPP/
+            dist/ALEAPP-Setup-*.exe
+            dist/ALEAPP-*.AppImage
           retention-days: 14
+          if-no-files-found: error
+
+      # macOS ships only the disk image. dist/ALEAPP/ is there too, the one-folder build
+      # PyInstaller copies into the .app, but nothing ships or tests it. The .app goes up
+      # inside its .dmg: an artifact zip keeps neither the bundle's symlinks nor its
+      # signature.
+      - name: Upload the build (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v7
+        with:
+          name: aleapp-${{ matrix.name }}-test
+          path: dist/ALEAPP-*.dmg
+          retention-days: 14
+          if-no-files-found: error

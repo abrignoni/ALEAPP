@@ -20,6 +20,13 @@ the same code.
   `.claude/rules/leapp-claims.md`.
 - **blackboxprotobuf is vendored** under `scripts/`. Import from there, not from PyPI.
 - **Lint has repo-specific traps.** See `.claude/rules/aleapp-lint.md`.
+- **Builds are made by `packaging/build.py`**, one PyInstaller spec for every platform and
+  one executable, `aleapp`, that opens the window without arguments. Every artifact module
+  is a hidden import, so what the artifacts import is followed without a list. What it
+  cannot follow is a name built at run time or a data file kept outside `scripts/`,
+  `leapp_functions/` or `assets/`: expect a working dev run and a broken build, and run
+  `python packaging/build.py smoke` or `test_builds.yml`. See
+  `.claude/rules/aleapp-build-and-release.md`.
 - **`coordinates.db`** ships in the repo and backs geolocation lookups. It is data, not
   evidence, and is the one SQLite file here that is legitimately opened read-write.
 
