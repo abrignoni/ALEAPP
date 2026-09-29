@@ -104,7 +104,7 @@ __artifacts_v2__ = {
                        "rows where content_type is 1. WAL frames are not parsed, so absence of a "
                        "message here is not evidence it did not exist.",
         "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-07", "last_update_date": "2026-08-11",
+        "creation_date": "2026-08-07", "last_update_date": "2026-09-28",
         "requirements": "blackboxprotobuf", "category": "Snapchat",
         "notes": "Newer Snapchat builds keep conversations in arroyo.db; the older Snapchat - "
                  "Messages artifact reads main.db and tcspahn.db and returns nothing on them.\n"
@@ -113,33 +113,53 @@ __artifacts_v2__ = {
                  "write-ahead log is applied. Recovery Method and Recovery Location are filled in "
                  "only on Recovered rows. The two sets cannot overlap.\n"
                  "Why a Recovered row is absent is not established here. Removal by the app, a "
-                 "server re-sync, and deletion all produce the same result. Most Recovered rows on "
-                 "the tested image held Team Snapchat broadcast content, which is one image rather "
-                 "than a general property.\n"
+                 "server re-sync, and deletion all produce the same result. Recovered rows sent by "
+                 "the teamsnapchat account were 6 of 8 on hc_pixel8pro_a17 and 15 of 18 on "
+                 "hc_pixel8pro_a16, but 2 of 13 on russell_pixel6a_a13.\n"
                  "Method. The file is read twice through SQLite, immutable=1 to ignore the log and "
                  "mode=ro to apply it, then compared on primary key rather than row count. SQLite "
                  "does the decoding, so column names, type affinity and overflow pages are handled "
-                 "for us. The glob keeps the -wal and -shm sidecars: this database reads 11 "
-                 "conversation_message rows alone and 8 with its log applied.\n"
+                 "for us. The glob keeps the -wal and -shm sidecars: on hc_pixel8pro_a17 the "
+                 "database reads 11 conversation_message rows alone and 8 with its log applied, "
+                 "and on sharon_a14 the file holds no conversation_message table until its log "
+                 "is applied.\n"
                  "Message text comes from the message_content protobuf at 4 > 4 > 2 > 1, derived "
-                 "from observed structure rather than a published schema. It is cross-checked "
-                 "against the same row's SQL columns: 2 > 1 matches sender_id, 3 > 1 > 1 > 1 "
-                 "client_conversation_id, 4 > 2 content_type, 6 > 1 and 6 > 2 the timestamps. Only "
-                 "content_type 1 carried text (6 of 16 rows); other values carried media metadata "
-                 "and encryption keys but no plaintext body. Media is not decrypted, and "
+                 "from observed structure rather than a published schema. It was cross-checked "
+                 "against the same row's SQL columns on the 117 live rows of the seven tested "
+                 "images: 2 > 1 matched sender_id, 3 > 1 > 1 > 1 client_conversation_id and 6 > 1 "
+                 "creation_timestamp on every row; 4 > 2 matched content_type wherever present and "
+                 "was absent where content_type was 0; 6 > 2 matched read_timestamp wherever "
+                 "present and was absent where read_timestamp was 0 and on one pixel3_a12 row that "
+                 "had a read time. Only content_type 1 carried text, on every tested image (85 of "
+                 "156 rows). Media is not decrypted, and "
                  "content_type is reported as stored because no source for the enum was verified.\n"
                  "Message Direction compares sender_id against the local account id, from "
                  "key_user_id in user_session_shared_pref.xml, else LAST_LOGGED_IN_USERNAME "
                  "in identity_persistent_store.xml resolved through Friend.userId, else the "
-                 "single distinct sender of rows where created_on_device is set. The "
-                 "sources agreed on the tested images. Blank when none resolves.\n"
-                 "Older Snapchat builds carry a strict subset of the current columns (the "
-                 "tested vc 147872 build lacks created_on_device and replies_count); absent "
-                 "columns are substituted with NULL under the same name so the remaining "
-                 "columns still report, and the affected fields are blank on those rows. On "
-                 "such builds the direction fallback uses local_message_content_id, which "
-                 "that generation's schema comments describe as nullable if the message was "
-                 "not created on this device.\n"
+                 "single distinct sender of rows where created_on_device is set. key_user_id and "
+                 "the LAST_LOGGED_IN_USERNAME route named the same account on all seven tested "
+                 "images. The last fallback agreed with them on the two images whose builds carry "
+                 "created_on_device; on the other five no row had local_message_content_id set, so "
+                 "it gave no answer there. Blank when none resolves.\n"
+                 "Read Timestamp comes from read_timestamp, and the viewed flag from "
+                 "is_viewed_by_user. The app's own CREATE TABLE text for conversation_message "
+                 "comments the first as \"timestamp when the message is first marked read by "
+                 "any participants\" and the second as \"bool. set to true iff "
+                 "message.content.metadata().read_by() contains current user\". The same "
+                 "comments are in the schema on all seven tested images that returned rows. A "
+                 "Read Timestamp is therefore not evidence that the account holder read the "
+                 "message: on pixel7a_a14, 10 of the 14 incoming messages carried a Read "
+                 "Timestamp and is_viewed_by_user was 1 (reported YES) on 1 of those 10, and "
+                 "all 7 outgoing messages carried one. A stored read_timestamp of 0 is "
+                 "reported blank.\n"
+                 "Older Snapchat builds carry a strict subset of the current columns. On five of "
+                 "the seven tested images (pixel7a_a14, sharon_a14, russell_a14, "
+                 "russell_pixel6a_a13 and pixel3_a12) conversation_message lacks "
+                 "created_on_device and replies_count; absent columns are substituted with NULL "
+                 "under the same name so the remaining columns still report, and Created On "
+                 "Device and Replies Count are blank on those rows. On such builds the direction "
+                 "fallback uses local_message_content_id, which that generation's schema "
+                 "comments describe as \"nullable if message wasn't created on this device\".\n"
                  "Media. When a message references cached media, the Media column renders it. "
                  "The link is by the media key the message_content protobuf carries, matched "
                  "to the trailing token of an EXTERNAL_KEY in "
@@ -147,18 +167,19 @@ __artifacts_v2__ = {
                  "chat_media_thumbnail claims), whose CACHE_KEY is the file name under "
                  "files/native_content_manager/com.snap.file_manager_*_SCContent_*/. A message "
                  "may render both a full snap and its thumbnail. The bytes are read from disk "
-                 "as stored: on the tested image they were unencrypted MP4 and JPEG. A media "
+                 "as stored: on the tested images the linked files were MP4, JPEG, PNG and WebP "
+                 "by their leading bytes (18 files on five images). A media "
                  "message whose local copy is absent reports a blank Media cell rather than "
                  "being dropped; why the copy is absent is not established. See the Snapchat - "
                  "Chat Media "
                  "artifact for the file-centric view including orphans.\n"
                  "Limits. WAL frames are not parsed, so a message absent here is not evidence it "
-                 "did not exist: a development-only frame parser read a further 29 rows across 10 "
-                 "conversations on this image, 9 of them absent from the conversation table. This "
-                 "is not carving, and a row whose key survived while its content changed is not "
+                 "did not exist. The Recovered comparison is not carving, and a row whose key "
+                 "survived while its content changed is not "
                  "detected. Reactions, message_state history and Kraken epoch content are not "
                  "parsed. The run log reports the image's WAL frame count.\n"
-                 "Verify a Recovered row independently: sqlite3 \"file:arroyo.db?immutable=1\" "
+                 "Verify a Recovered row independently, for example on hc_pixel8pro_a17: sqlite3 "
+                 "\"file:arroyo.db?immutable=1\" "
                  "\"SELECT * FROM conversation_message WHERE client_message_id = 962\", then "
                  "confirm it is absent from a normal read.",
         "paths": ('*/com.snapchat.android/databases/arroyo.db*',
@@ -778,6 +799,15 @@ def _yes_no(value):
     return 'YES' if value else 'NO'
 
 
+def _stored_yes_no(value):
+    '''YES or NO for a stored flag, blank when this build's table lacks the column.
+
+    _tolerant_select substitutes NULL for an absent column, and reporting that as NO would
+    state a value the app never recorded.
+    '''
+    return '' if value is None else _yes_no(value)
+
+
 # Conversation media external keys in cache_controller.db carry one of these prefixes; the
 # rest of the store is lens, bitmoji and UI assets. Each external key is
 # '<prefix>.<prefix>-<media key>', and the trailing media key is what the conversation_message
@@ -995,7 +1025,8 @@ def _message_rows(rows, friends, participants, local_user_id, provenance, media_
             _friend_name(friends, sender_id, 1), sender_id,
             participants.get(conversation_id, ('', ''))[1],
             content_type, state,
-            _yes_no(saved), _yes_no(viewed), _yes_no(on_device), media_count, replies, quoted_id,
+            _stored_yes_no(saved), _stored_yes_no(viewed), _stored_yes_no(on_device),
+            media_count, replies, quoted_id,
             conversation_id, client_message_id, server_message_id, method, location))
     return data_list
 
