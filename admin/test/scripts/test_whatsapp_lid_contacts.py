@@ -25,10 +25,11 @@ sys.path.insert(0, REPO_ROOT)
 
 from scripts.context import Context  # noqa: E402  pylint: disable=wrong-import-position
 from scripts.artifacts.WhatsApp import (  # noqa: E402  pylint: disable=wrong-import-position
-    get_whatsapp_group_messages, get_whatsapp_one_to_one_messages)
+    get_whatsapp_call_logs, get_whatsapp_group_messages, get_whatsapp_one_to_one_messages)
 
 _ONE_TO_ONE = get_whatsapp_one_to_one_messages.__wrapped__
 _GROUP = get_whatsapp_group_messages.__wrapped__
+_CALLS = get_whatsapp_call_logs.__wrapped__
 
 ALICE_PN = '000000000001@s.whatsapp.net'
 ALICE_LID = '100000000000001@lid'
@@ -49,6 +50,12 @@ MESSAGES = [
     (5, 4, 0, None, 1767225840000, 7, None, 2),
     (6, 4, 0, 2, 1767225900000, 0, 'group, lid sender', 2),
     (7, 4, 1, None, 1767225960000, 0, 'group, outgoing', 2),
+]
+# (_id, jid_row_id, from_me, timestamp, video_call, duration)
+CALLS = [
+    (1, 2, 0, 1767226000000, 0, 30),
+    (2, 3, 1, 1767226100000, 1, 45),
+    (3, 4, 0, 1767226200000, 0, 5),
 ]
 # (jid, wa_name)
 CONTACTS = [(ALICE_PN, 'Alice'), (BOB_PN, 'Bob')]
@@ -93,6 +100,11 @@ class WhatsAppLidContactsTest(unittest.TestCase):
             con.execute('INSERT INTO message(_id, chat_row_id, from_me, sender_jid_row_id, timestamp, '
                         'message_type, text_data, recipient_count, key_id, received_timestamp) '
                         'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)', row + (f'key{row[0]}',))
+        con.execute('CREATE TABLE call_log(_id INTEGER PRIMARY KEY AUTOINCREMENT, jid_row_id INTEGER, '
+                    'from_me INTEGER, timestamp INTEGER, video_call INTEGER, duration INTEGER, '
+                    'group_jid_row_id INTEGER NOT NULL DEFAULT 0)')
+        con.executemany('INSERT INTO call_log(_id, jid_row_id, from_me, timestamp, video_call, duration) '
+                        'VALUES (?, ?, ?, ?, ?, ?)', CALLS)
         if with_jid_map:
             con.execute('CREATE TABLE jid_map(lid_row_id INTEGER PRIMARY KEY NOT NULL, '
                         'jid_row_id INTEGER NOT NULL, sort_id INTEGER)')
@@ -131,6 +143,16 @@ class WhatsAppLidContactsTest(unittest.TestCase):
             ('Incoming', None, None, 'Club', None),
             ('Incoming', 'Alice', 'group, lid sender', 'Club', ALICE_PN),
             ('Outgoing', 'Self', 'group, outgoing', 'Club', ''),
+        ])
+
+    def test_call_logs_keep_lid_and_contactless_calls(self):
+        self._build()
+        rows = self._run(_CALLS)
+        # (Call Direction, Caller, Caller JID, Call Type)
+        self.assertEqual([(r[4], r[5], r[6], r[7]) for r in rows], [
+            ('Incoming', 'Alice', ALICE_PN, 'Audio'),
+            ('Outgoing', 'Self', '', 'Video'),
+            ('Incoming', UNKNOWN_PN, UNKNOWN_PN, 'Audio'),
         ])
 
     def test_without_jid_map_phone_keyed_chats_still_resolve(self):
