@@ -800,10 +800,11 @@ def _yes_no(value):
 
 
 def _stored_yes_no(value):
-    '''YES or NO for a stored flag, blank when this build's table lacks the column.
+    '''YES or NO for a stored flag, blank when nothing was stored for it.
 
-    _tolerant_select substitutes NULL for an absent column, and reporting that as NO would
-    state a value the app never recorded.
+    That covers a column this build's table lacks (_tolerant_select substitutes NULL) and a
+    row that does not exist, such as a conversation with no feed_entry row. Reporting either
+    as NO would state a value the app never recorded.
     '''
     return '' if value is None else _yes_no(value)
 
@@ -1065,7 +1066,7 @@ def _conversation_rows(source_path, friends, reader, provenance, only_ids=None):
             participants.get(conversation_id, ('', ''))[0],
             counts.get(conversation_id, 0), streak, conversation_type, send_state,
             _friend_name(friends, creator), creator, _friend_name(friends, last_sender), last_sender,
-            _yes_no(tombstoned), conversation_id, method, location))
+            _stored_yes_no(tombstoned), conversation_id, method, location))
     return data_list
 
 
