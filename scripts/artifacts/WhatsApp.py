@@ -31,21 +31,26 @@ __artifacts_v2__ = {
         "description": "WhatsApp call logs (msgstore.db)",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-09-28",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "",
+        "notes": "A call whose jid is a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Calls that match no contact are still reported. For an incoming call that matches no contact, or whose contact has no WhatsApp name, Caller is shown by jid. None of the images listed in sample_data holds a LID-keyed call or a call that matches no contact, so both cases are exercised only by a constructed test (admin/test/scripts/test_whatsapp_lid_contacts.py).",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
         "sample_data": {
             "anne_a15": "Android 15 | com.whatsapp vc 252573000 | 1 row",
             "hc_pixel8pro_a16": "Android 16 | com.whatsapp vc 262307413 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.whatsapp vc 262907320 | 0 rows",
             "kevin_pocox7_a15": "Android 15 | com.whatsapp vc 252674000 | 0 rows",
+            "pixel3_a11": "Android 11 | com.whatsapp vc 204815003 | 4 rows",
+            "pixel3_a12": "Android 12 | com.whatsapp vc 212020004 | 4 rows",
             "pixel7a_a14": "Android 14 | com.whatsapp vc 241481004 | 4 rows",
-            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
-            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 3 rows",
+            "russell_a14": "Android 14 | com.whatsapp vc 241676004 | 3 rows",
             "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
+            "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
+            "sharon_a13": "Android 13 | com.whatsapp vc 231278007 | 1 row",
+            "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 3 rows",
         },
     },
     "get_whatsapp_messages": {
@@ -75,10 +80,10 @@ __artifacts_v2__ = {
         "description": "WhatsApp 1:1 messages (modern msgstore.db schema)",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-09-27",
+        "last_update_date": "2026-09-28",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "A chat keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Messages whose chat matches no contact are still reported. When no contact matches, or the contact has no WhatsApp name, the participant is shown by jid. Messages in channel (newsletter) chats are not reported here; WhatsApp - Channel Messages reports them.",
+        "notes": "A chat keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Messages whose chat matches no contact are still reported. When no contact matches, or the contact has no WhatsApp name, the participant is shown by jid. The conversation view groups rows by Other Participant WA User Name, so a LID-keyed chat and the phone-number chat that jid_map links it to are shown as one conversation; on sharon_a14, 48 LID-keyed chats each had such a phone-number chat. Messages in channel (newsletter) chats are not reported here; WhatsApp - Channel Messages reports them.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -484,19 +489,21 @@ def get_whatsapp_call_logs(context):
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
     if db:
-        rows = _run(cursor, '''
+        lid_joins, contact_jid = _contact_jid(cursor, 'jid')
+        rows = _run(cursor, f'''
         SELECT
             datetime(call_log.timestamp/1000,'unixepoch'),
             datetime((call_log.timestamp/1000 + call_log.duration),'unixepoch'),
             strftime('%H:%M:%S', call_log.duration ,'unixepoch'),
             chat.subject,
             CASE WHEN call_log.from_me=0 THEN "Incoming" WHEN call_log.from_me=1 THEN "Outgoing" END,
-            CASE WHEN call_log.from_me=1 THEN "Self" ELSE wa_contacts.wa_name END,
-            CASE WHEN call_log.from_me=1 THEN "" ELSE wa_contacts.jid END,
+            CASE WHEN call_log.from_me=1 THEN "Self" ELSE COALESCE(NULLIF(wa_contacts.wa_name, ''), {contact_jid}) END,
+            CASE WHEN call_log.from_me=1 THEN "" ELSE COALESCE(wa_contacts.jid, {contact_jid}) END,
             CASE WHEN call_log.video_call=0 THEN "Audio" WHEN call_log.video_call=1 THEN "Video" END
         FROM call_log
         LEFT JOIN jid ON jid._id=call_log.jid_row_id
-        JOIN wa_contacts ON wa_contacts.jid=jid.raw_string
+        {lid_joins}
+        LEFT JOIN wa_contacts ON wa_contacts.jid={contact_jid}
         LEFT JOIN chat ON chat.jid_row_id=call_log.group_jid_row_id
         ORDER BY call_log.timestamp ASC
         ''')
