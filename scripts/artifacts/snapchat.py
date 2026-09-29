@@ -789,6 +789,15 @@ def _yes_no(value):
     return 'YES' if value else 'NO'
 
 
+def _stored_yes_no(value):
+    '''YES or NO for a stored flag, blank when this build's table lacks the column.
+
+    _tolerant_select substitutes NULL for an absent column, and reporting that as NO would
+    state a value the app never recorded.
+    '''
+    return '' if value is None else _yes_no(value)
+
+
 # Conversation media external keys in cache_controller.db carry one of these prefixes; the
 # rest of the store is lens, bitmoji and UI assets. Each external key is
 # '<prefix>.<prefix>-<media key>', and the trailing media key is what the conversation_message
@@ -1006,7 +1015,8 @@ def _message_rows(rows, friends, participants, local_user_id, provenance, media_
             _friend_name(friends, sender_id, 1), sender_id,
             participants.get(conversation_id, ('', ''))[1],
             content_type, state,
-            _yes_no(saved), _yes_no(viewed), _yes_no(on_device), media_count, replies, quoted_id,
+            _stored_yes_no(saved), _stored_yes_no(viewed), _stored_yes_no(on_device),
+            media_count, replies, quoted_id,
             conversation_id, client_message_id, server_message_id, method, location))
     return data_list
 
