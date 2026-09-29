@@ -237,15 +237,15 @@ __artifacts_v2__ = {
                        "not parsed, so absence of a conversation here is not evidence it did not "
                        "exist.",
         "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-08-07", "last_update_date": "2026-08-10",
+        "creation_date": "2026-08-07", "last_update_date": "2026-09-29",
         "requirements": "blackboxprotobuf", "category": "Snapchat",
         "notes": "Record Origin. Live rows come back from a normal read. Recovered rows are "
                  "conversations whose client_conversation_id is present in conversation or "
                  "feed_entry as of the last checkpoint and in neither once the write-ahead log is "
                  "applied. Method and limits match Snapchat - Messages (arroyo.db); see its notes, "
                  "including that why a Recovered row is absent is not established. Row counts "
-                 "would miss these: all three tables held 4 rows in both reads here, and only the "
-                 "keys showed one identifier had been replaced.\n"
+                 "would miss these: on hc_pixel8pro_a17 conversation and feed_entry each held 4 "
+                 "rows in both reads, and only the keys showed one identifier had been replaced.\n"
                  "Rows are the union of client_conversation_id across conversation and feed_entry, "
                  "so a conversation in only one of them is still reported. For Recovered rows the "
                  "participants, message count and title come from the pre-checkpoint view and "
@@ -254,15 +254,19 @@ __artifacts_v2__ = {
                  "Participant IDs come from the conversation_metadata protobuf at repeated field "
                  "3, sub-path 1 > 1, as 16 raw bytes formatted as a UUID. This agreed with "
                  "feed_entry.participants, which stores the same UUIDs as plain concatenated "
-                 "16-byte values, for all 4 conversations on the tested image.\n"
+                 "16-byte values, for every conversation holding both on the eight tested images "
+                 "(27 of 27).\n"
                  "Conversation Type is reported as stored, since no source for the enum was "
-                 "verified. Tombstoned At Timestamp is conversation.tombstoned_at_timestamp, which "
-                 "the arroyo.db schema comments describe as when the conversation was locally left "
-                 "by the user. Message Count counts conversation_message rows in the matching "
+                 "verified. Tombstoned At Timestamp is conversation.tombstoned_at_timestamp, whose "
+                 "arroyo.db schema comment reads \"when this conversation was locally left by "
+                 "user\". Tombstoned is feed_entry.tombstoned, reported as YES or NO as stored; the "
+                 "schema carries no comment for it, and what it records is not established. It "
+                 "is blank for a conversation with no feed_entry row (1 of 6 rows on sharon_a14) "
+                 "and held NO on every other row of the eight tested images. Message Count counts "
+                 "conversation_message rows in the matching "
                  "view, not messages exchanged.\n"
                  "Limits. WAL frames are not parsed, so a conversation absent here is not evidence "
-                 "it did not exist. A development-only frame parser found message rows for 9 "
-                 "conversations appearing in neither view.",
+                 "it did not exist.",
         "paths": ('*/com.snapchat.android/databases/arroyo.db*',
                   '*/com.snapchat.android/databases/main.db*'),
         "output_types": "standard", "artifact_icon": "messages",
@@ -800,10 +804,11 @@ def _yes_no(value):
 
 
 def _stored_yes_no(value):
-    '''YES or NO for a stored flag, blank when this build's table lacks the column.
+    '''YES or NO for a stored flag, blank when nothing was stored for it.
 
-    _tolerant_select substitutes NULL for an absent column, and reporting that as NO would
-    state a value the app never recorded.
+    That covers a column this build's table lacks (_tolerant_select substitutes NULL) and a
+    row that does not exist, such as a conversation with no feed_entry row. Reporting either
+    as NO would state a value the app never recorded.
     '''
     return '' if value is None else _yes_no(value)
 
@@ -1065,7 +1070,7 @@ def _conversation_rows(source_path, friends, reader, provenance, only_ids=None):
             participants.get(conversation_id, ('', ''))[0],
             counts.get(conversation_id, 0), streak, conversation_type, send_state,
             _friend_name(friends, creator), creator, _friend_name(friends, last_sender), last_sender,
-            _yes_no(tombstoned), conversation_id, method, location))
+            _stored_yes_no(tombstoned), conversation_id, method, location))
     return data_list
 
 
