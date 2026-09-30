@@ -463,7 +463,7 @@ def open_settings_window():
         command=toggle_history,
         background=theme_bgcolor,
         fg=theme_fgcolor,
-        selectcolor=theme_inputcolor,
+        selectcolor=theme_bgcolor,
         activebackground=theme_bgcolor,
         activeforeground=theme_fgcolor,
         highlightthickness=0,
