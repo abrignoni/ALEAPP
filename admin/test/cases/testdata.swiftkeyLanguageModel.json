@@ -1,0 +1,142 @@
+{
+    "case1": {
+        "description": "Samsung A53 SM-S536DL, Android 14, public image (corpus key samsunga53_a14). Samsung Keyboard app_SwiftKey/user/dynamic.lm and its backup copy, each present under three storage views of one Android user (data/data, data/user/0, data_mirror/data_ce). The backup holds the same bytes as the live file. The model holds 245 terms, 670 sequences of two to four terms and 14 app term lists with 227 terms between them",
+        "maker": "@AlexisBrignoni & Claude",
+        "make_data": {
+            "input_data_path": "R5CW32F0PQH_files_full.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-10-01T11:14:41.859556",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-10-01T11:14:41.850171",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "swiftkey_lm_models": {
+                "search_patterns": [
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*",
+                    "*/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+                ],
+                "file_count": 6,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "swiftkey_lm_terms": {
+                "search_patterns": [
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*",
+                    "*/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+                ],
+                "file_count": 6,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "swiftkey_lm_sequences": {
+                "search_patterns": [
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*",
+                    "*/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+                ],
+                "file_count": 6,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "swiftkey_lm_app_terms": {
+                "search_patterns": [
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*",
+                    "*/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+                ],
+                "file_count": 6,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "case2": {
+        "description": "Synthetic model, no device data: built by the SwiftKey 9.10.49.20 engine from a known word list and supplied by @crox4n6 in ALEAPP pull request 1484, staged at the SwiftKey app path. The engine's own export of this model holds 17 terms and 20 sequences of two and three terms, and no app term list",
+        "maker": "@crox4n6",
+        "make_data": {
+            "input_data_path": "fixture.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-10-01T11:14:44.534837",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-10-01T11:14:44.525331",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "swiftkey_lm_models": {
+                "search_patterns": [
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*",
+                    "*/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "swiftkey_lm_terms": {
+                "search_patterns": [
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*",
+                    "*/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "swiftkey_lm_sequences": {
+                "search_patterns": [
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*",
+                    "*/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "swiftkey_lm_app_terms": {
+                "search_patterns": [
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm",
+                    "*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*",
+                    "*/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}

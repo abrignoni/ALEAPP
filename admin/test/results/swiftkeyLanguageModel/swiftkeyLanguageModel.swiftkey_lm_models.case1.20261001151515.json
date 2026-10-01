@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "module_name": "swiftkeyLanguageModel",
+    "artifact_name": "SwiftKey Language Model - Models",
+    "function_name": "swiftkey_lm_models",
+    "case_number": "case1",
+    "number_of_columns": 9,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 226,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/swiftkeyLanguageModel/testdata.swiftkeyLanguageModel.swiftkey_lm_models.case1.zip",
+    "start_time": "2026-10-01T15:15:15.555857+00:00",
+    "end_time": "2026-10-01T15:15:15.603273+00:00",
+    "run_time_seconds": 0.002009153366088867,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-01T15:15:15.595727",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "File Written",
+    "First Trained",
+    "Last Trained",
+    "Terms",
+    "Term Sequences",
+    "Longest Sequence",
+    "App Term Lists",
+    "Backup Same As Live File",
+    "Source File"
+  ],
+  "data": [
+    [
+      1766422432,
+      1762798110,
+      1765487661,
+      245,
+      670,
+      4,
+      14,
+      "Yes",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm"
+    ],
+    [
+      1766422432,
+      1762798110,
+      1765487661,
+      245,
+      670,
+      4,
+      14,
+      "",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ]
+  ]
+}

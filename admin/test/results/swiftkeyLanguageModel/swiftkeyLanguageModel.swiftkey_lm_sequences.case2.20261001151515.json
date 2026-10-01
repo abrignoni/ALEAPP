@@ -1,0 +1,173 @@
+{
+  "metadata": {
+    "module_name": "swiftkeyLanguageModel",
+    "artifact_name": "SwiftKey Language Model - Term Sequences",
+    "function_name": "swiftkey_lm_sequences",
+    "case_number": "case2",
+    "number_of_columns": 5,
+    "number_of_rows": 20,
+    "total_data_size_bytes": 2465,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/swiftkeyLanguageModel/testdata.swiftkeyLanguageModel.swiftkey_lm_sequences.case2.zip",
+    "start_time": "2026-10-01T15:15:15.603675+00:00",
+    "end_time": "2026-10-01T15:15:15.646943+00:00",
+    "run_time_seconds": 0.0002608299255371094,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-01T15:15:15.644151",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Sequence",
+    "Count",
+    "Terms In Sequence",
+    "Terms",
+    "Source File"
+  ],
+  "data": [
+    [
+      "synthetikwolke pruefwortalpha",
+      3,
+      2,
+      "[\"synthetikwolke\", \"pruefwortalpha\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "synthetikwolke pruefwortalpha synthetikwolke",
+      3,
+      3,
+      "[\"synthetikwolke\", \"pruefwortalpha\", \"synthetikwolke\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "pruefwortalpha synthetikwolke",
+      3,
+      2,
+      "[\"pruefwortalpha\", \"synthetikwolke\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "\u00fcberpr\u00fcfung Stra\u00dfe",
+      2,
+      2,
+      "[\"\u00fcberpr\u00fcfung\", \"Stra\u00dfe\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "\u00fcberpr\u00fcfung Stra\u00dfe \ud83d\udd2ctestwort",
+      2,
+      3,
+      "[\"\u00fcberpr\u00fcfung\", \"Stra\u00dfe\", \"\ud83d\udd2ctestwort\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "Stra\u00dfe \ud83d\udd2ctestwort",
+      2,
+      2,
+      "[\"Stra\u00dfe\", \"\ud83d\udd2ctestwort\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "praefixalpha praefixbeta",
+      1,
+      2,
+      "[\"praefixalpha\", \"praefixbeta\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "praefixalpha praefixbeta praefixalpha",
+      1,
+      3,
+      "[\"praefixalpha\", \"praefixbeta\", \"praefixalpha\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "praefixbeta praefixalpha",
+      1,
+      2,
+      "[\"praefixbeta\", \"praefixalpha\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "\u65e5\u672c\u8a9e caf\u00e9",
+      1,
+      2,
+      "[\"\u65e5\u672c\u8a9e\", \"caf\u00e9\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "\u65e5\u672c\u8a9e caf\u00e9 test123!",
+      1,
+      3,
+      "[\"\u65e5\u672c\u8a9e\", \"caf\u00e9\", \"test123!\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "caf\u00e9 test123!",
+      1,
+      2,
+      "[\"caf\u00e9\", \"test123!\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "<probe> =SUM(A1)",
+      1,
+      2,
+      "[\"<probe>\", \"=SUM(A1)\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "<probe> =SUM(A1) @kunstwort",
+      1,
+      3,
+      "[\"<probe>\", \"=SUM(A1)\", \"@kunstwort\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "=SUM(A1) @kunstwort",
+      1,
+      2,
+      "[\"=SUM(A1)\", \"@kunstwort\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "eins zwei",
+      1,
+      2,
+      "[\"eins\", \"zwei\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "eins zwei drei",
+      1,
+      3,
+      "[\"eins\", \"zwei\", \"drei\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "zwei drei",
+      1,
+      2,
+      "[\"zwei\", \"drei\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "zwei drei vier",
+      1,
+      3,
+      "[\"zwei\", \"drei\", \"vier\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ],
+    [
+      "drei vier",
+      1,
+      2,
+      "[\"drei\", \"vier\"]",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ]
+  ]
+}
