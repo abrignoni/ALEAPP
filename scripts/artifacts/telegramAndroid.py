@@ -10,9 +10,9 @@ __artifacts_v2__ = {
             "constructor this parser does not cover are still reported, with that "
             "constructor named in the message column."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, John Hyla",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-01",
         "requirements": "none",
         "category": "Telegram",
         "notes": "The data column holds a TL-serialised TLRPC message object. The message "
