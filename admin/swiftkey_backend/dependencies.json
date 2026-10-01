@@ -1,0 +1,114 @@
+[
+  {
+    "filename": "apk-parser-2.6.10.jar",
+    "maven_coordinate": "net.dongliu:apk-parser:2.6.10",
+    "sha256": "4e07ef65005c0d7e7149f6e903828fdaa031f542ad3956f0d827197a5ccac640",
+    "binary_url": "https://repo.maven.apache.org/maven2/net/dongliu/apk-parser/2.6.10/apk-parser-2.6.10.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/net/dongliu/apk-parser/2.6.10/apk-parser-2.6.10-sources.jar"
+  },
+  {
+    "filename": "capstone-3.1.8.jar",
+    "maven_coordinate": "com.github.zhkl0228:capstone:3.1.8",
+    "sha256": "920e5fd1d514f146891a82cfbbfb33ef20cfca746ddcd1a6e2b54fff2a2e53dc",
+    "binary_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/capstone/3.1.8/capstone-3.1.8.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/capstone/3.1.8/capstone-3.1.8-sources.jar"
+  },
+  {
+    "filename": "commons-codec-1.21.0.jar",
+    "maven_coordinate": "commons-codec:commons-codec:1.21.0",
+    "sha256": "4da851cb6abfb98bfe9eb77c5e5fc47f5414fa28b94e21b7fd9a646705dc167f",
+    "binary_url": "https://repo.maven.apache.org/maven2/commons-codec/commons-codec/1.21.0/commons-codec-1.21.0.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/commons-codec/commons-codec/1.21.0/commons-codec-1.21.0-sources.jar"
+  },
+  {
+    "filename": "commons-collections4-4.5.0.jar",
+    "maven_coordinate": "org.apache.commons:commons-collections4:4.5.0",
+    "sha256": "00f93263c267be201b8ae521b44a7137271b16688435340bf629db1bac0a5845",
+    "binary_url": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-collections4/4.5.0/commons-collections4-4.5.0.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-collections4/4.5.0/commons-collections4-4.5.0-sources.jar"
+  },
+  {
+    "filename": "commons-io-2.21.0.jar",
+    "maven_coordinate": "commons-io:commons-io:2.21.0",
+    "sha256": "7d643a2afea8b058b762aa6fb90e5b256f6c729739f8b3784c3370ddc609e88d",
+    "binary_url": "https://repo.maven.apache.org/maven2/commons-io/commons-io/2.21.0/commons-io-2.21.0.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/commons-io/commons-io/2.21.0/commons-io-2.21.0-sources.jar"
+  },
+  {
+    "filename": "demumble-1.0.4.jar",
+    "maven_coordinate": "com.github.zhkl0228:demumble:1.0.4",
+    "sha256": "2351bff06a0a494734924f4fa2e7084c0699d7e959a0be6e85e7d9ee17ae6eb6",
+    "binary_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/demumble/1.0.4/demumble-1.0.4.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/demumble/1.0.4/demumble-1.0.4-sources.jar"
+  },
+  {
+    "filename": "fastjson-1.2.83.jar",
+    "maven_coordinate": "com.alibaba:fastjson:1.2.83",
+    "sha256": "641a4d65ab32fbfdccd9c718e3f83ebc4caabdb5e4fe5b3d51527c5fe692631d",
+    "binary_url": "https://repo.maven.apache.org/maven2/com/alibaba/fastjson/1.2.83/fastjson-1.2.83.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/com/alibaba/fastjson/1.2.83/fastjson-1.2.83-sources.jar"
+  },
+  {
+    "filename": "jna-5.13.0.jar",
+    "maven_coordinate": "net.java.dev.jna:jna:5.13.0",
+    "sha256": "66d4f819a062a51a1d5627bffc23fac55d1677f0e0a1feba144aabdd670a64bb",
+    "binary_url": "https://repo.maven.apache.org/maven2/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/net/java/dev/jna/jna/5.13.0/jna-5.13.0-sources.jar"
+  },
+  {
+    "filename": "keystone-0.9.7.jar",
+    "maven_coordinate": "com.github.zhkl0228:keystone:0.9.7",
+    "sha256": "3db2ee22fa5b3a70800bc5dfb515acf6bcb62888be0da43c311ff8304411558b",
+    "binary_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/keystone/0.9.7/keystone-0.9.7.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/keystone/0.9.7/keystone-0.9.7-sources.jar"
+  },
+  {
+    "filename": "native-lib-loader-2.3.5.jar",
+    "maven_coordinate": "org.scijava:native-lib-loader:2.3.5",
+    "sha256": "7db19cf3e9cfe993e725e82cd9593a8f3e2d340ed3047c98d5c54370571c759d",
+    "binary_url": "https://repo.maven.apache.org/maven2/org/scijava/native-lib-loader/2.3.5/native-lib-loader-2.3.5.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/org/scijava/native-lib-loader/2.3.5/native-lib-loader-2.3.5-sources.jar"
+  },
+  {
+    "filename": "slf4j-api-2.0.16.jar",
+    "maven_coordinate": "org.slf4j:slf4j-api:2.0.16",
+    "sha256": "a12578dde1ba00bd9b816d388a0b879928d00bab3c83c240f7013bf4196c579a",
+    "binary_url": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16-sources.jar"
+  },
+  {
+    "filename": "slf4j-simple-2.0.16.jar",
+    "maven_coordinate": "org.slf4j:slf4j-simple:2.0.16",
+    "sha256": "effc32018658bea09d1e08c7d1060ccad46c086960f583d07dd7ffe9c1172a47",
+    "binary_url": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-simple/2.0.16/slf4j-simple-2.0.16.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-simple/2.0.16/slf4j-simple-2.0.16-sources.jar"
+  },
+  {
+    "filename": "unicorn-1.0.15.jar",
+    "maven_coordinate": "com.github.zhkl0228:unicorn:1.0.15",
+    "sha256": "7fbce2a0decf475b75b355cf33301349bf7c88f31cd93c7922e9dbbed3debf23",
+    "binary_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/unicorn/1.0.15/unicorn-1.0.15.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/unicorn/1.0.15/unicorn-1.0.15-sources.jar"
+  },
+  {
+    "filename": "unidbg-android-0.9.9.jar",
+    "maven_coordinate": "com.github.zhkl0228:unidbg-android:0.9.9",
+    "sha256": "ce52ddda7772ac79adb4606dbaf0a65c53c41af96e73299a98eadec608f270fc",
+    "binary_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/unidbg-android/0.9.9/unidbg-android-0.9.9.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/unidbg-android/0.9.9/unidbg-android-0.9.9-sources.jar"
+  },
+  {
+    "filename": "unidbg-api-0.9.9.jar",
+    "maven_coordinate": "com.github.zhkl0228:unidbg-api:0.9.9",
+    "sha256": "422a2d93c4f22de8436867415fc34bdacbdc62de351b828a0672651344c46efe",
+    "binary_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/unidbg-api/0.9.9/unidbg-api-0.9.9.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/unidbg-api/0.9.9/unidbg-api-0.9.9-sources.jar"
+  },
+  {
+    "filename": "unidbg-unicorn2-0.9.9.jar",
+    "maven_coordinate": "com.github.zhkl0228:unidbg-unicorn2:0.9.9",
+    "sha256": "6c258e54e99da8a4e3ba4a705c5f78bcb658638ef16682ad1d3bc25953908ffb",
+    "binary_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/unidbg-unicorn2/0.9.9/unidbg-unicorn2-0.9.9.jar",
+    "source_url": "https://repo.maven.apache.org/maven2/com/github/zhkl0228/unidbg-unicorn2/0.9.9/unidbg-unicorn2-0.9.9-sources.jar"
+  }
+]
