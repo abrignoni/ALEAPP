@@ -62,6 +62,30 @@ __artifacts_v2__ = {
                  "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
                  "org/telegram/tgnet/TLRPC.java#L57589-L57591"
                  ". "
+                 "Seventeen further message classes are read from their readers in the client's "
+                 "TLRPC.java: the four before layer 118 (0x452c0e65, 0x44f9b43d, 0x90dddc11, "
+                 "0xc09be45f), which read the same fields ahead of the text as 0xf52e6b7f; ten "
+                 "older ones (0xc992e15c, 0x5ba66c13, 0x2bebfa86, 0xf07814c8, 0xc3060325, "
+                 "0xa7ab1991, 0x567699b3, 0x22eb6aba, 0xa367e716, 0x05f46804); and the three "
+                 "secret chat classes (0x555555fa, 0x555555f9, 0x555555f8), which read a ttl "
+                 "integer after the message id. The two TL_messageEmpty constructors "
+                 "(0x90a6ca84, 0x83e5de54) are reported as '[Empty message record]'. No image "
+                 "listed in sample_data holds a record under any of those nineteen "
+                 "constructors, so they are verified against the client source and by "
+                 "round-trip tests, not against an image. Where a record's media object carries "
+                 "its own caption the client uses that caption as the message text; this parser "
+                 "does not read media objects, so for such a record the Message column holds "
+                 "the record's text field only. Reference: Telegram-Android, 'TLRPC.java "
+                 "(Message.fromConstructor, the classes it names)', "
+                 "https://github.com/DrKLO/Telegram/blob/"
+                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
+                 "org/telegram/tgnet/TLRPC.java#L57517-L57616"
+                 ". Reference: Telegram-Android, 'TLRPC.java (caption taken from the media, "
+                 "TL_message_layer117)', "
+                 "https://github.com/DrKLO/Telegram/blob/"
+                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
+                 "org/telegram/tgnet/TLRPC.java#L58530-L58537"
+                 ". "
                  "Forward and "
                  "reply headers are stepped over field by field using the same source, so "
                  "forwarded messages and replies are decoded structurally. A reply that "
@@ -71,8 +95,10 @@ __artifacts_v2__ = {
                  "the blob for the row's own date value, which sits immediately before the "
                  "text, and is accepted only when it is a well-formed TL string that decodes "
                  "as strict UTF-8. The same fallback is used when a structural walk ends on a "
-                 "date that disagrees with the date column. Text that neither route recovers "
-                 "is reported as not recovered rather than guessed at. "
+                 "date that disagrees with the date column. Text that neither route recovers is "
+                 "reported as not recovered rather than guessed at. A reply or forward that was "
+                 "walked to its text and whose text is empty has an empty Message; the not "
+                 "recovered labels are used only where the walk stopped before the text. "
                  "A record whose walk cannot be completed, because a field is not what the "
                  "layout expects or the record ends early, is still reported: the timestamp, "
                  "dialog, direction, read state and message id are the table's own columns, the "
@@ -81,11 +107,16 @@ __artifacts_v2__ = {
                  "named in the run log. No record on the nine images listed in sample_data "
                  "ended its walk that way, so this handling is exercised by tests on "
                  "constructed records, not on an image. Sender ID is the from_id read from the "
-                 "record. On an incoming row whose record holds no from_id, and on an incoming "
-                 "service message, whose sender this parser does not read, Sender ID is the "
-                 "dialog id; in a group or channel dialog that is the id of the chat. On an "
-                 "incoming row whose record was not walked (a missing record or one under 8 "
-                 "bytes, an unrecognised constructor, or a walk that could not be completed) "
+                 "record, for a service message as for a message. Every from_id on the nine "
+                 "images listed in sample_data is a user peer (1,846 records); a from_id that "
+                 "is a chat or channel peer is reported by its bare id, without the sign a "
+                 "dialog id carries, and no image exercises that. On an incoming row whose "
+                 "record holds no from_id, Sender ID is the dialog id; in a group or channel "
+                 "dialog that is the id of the chat. On those images each of the 248 incoming "
+                 "rows in a user dialog whose record holds a from_id holds the dialog id there. "
+                 "On an incoming row where from_id was not reached (a missing record or one "
+                 "under 8 bytes, an unrecognised constructor, an empty message record, a walk "
+                 "that could not be completed, or a service header that ends before from_id) "
                  "Sender ID is the dialog id when the dialog id is a user id by the client's "
                  "own test, a positive value with neither the secret chat bit nor the folder "
                  "bit set, and is blank otherwise. An outgoing row with no from_id read has a "
@@ -95,9 +126,9 @@ __artifacts_v2__ = {
                  "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
                  "org/telegram/messenger/DialogObject.java#L105-L111"
                  ". "
-                 "All eight "
-                 "TL_messageService constructors are recognised; their header is walked the "
-                 "same way and the action that follows is named from the client's own action "
+                 "All eight TL_messageService constructors are recognised; their header is "
+                 "walked the same way, its from_id is read, and the action that follows is "
+                 "named from the client's own action "
                  "constructors, so system events such as a phone call, a screenshot "
                  "notification, a cleared history or an auto-delete timer change are "
                  "identified rather than reported as an unlabelled service message. Detail "
@@ -107,7 +138,11 @@ __artifacts_v2__ = {
                  "stored the message's media at a known location it appends that path to the "
                  "record as a trailing string, which is reported as the recorded media path; "
                  "it is the path the app wrote, and the file is linked only when it is still "
-                 "present in the extraction. Reference: "
+                 "present in the extraction. On the nine images listed in sample_data Recorded "
+                 "Media Path held a value on 3 of 2,026 rows, one on each of three images; no "
+                 "file of the recorded name is in those images' archives; and Media File had no "
+                 "value on any row. "
+                 "Reference: "
                  "Telegram-Android, "
                  "'TL_legacy_message.java (TL_message layer constructors)', "
                  "https://github.com/DrKLO/Telegram/blob/"
@@ -538,6 +573,7 @@ _MSG_WITH_GUESTCHAT = {0x95EF6F2B, 0x7600B9D3}
 _MSG_NO_FLAGS2 = {
     0xA66C7EFC, 0x1E4C8A69, 0x76BEC211, 0x38116EE0, 0x85D6CBE2,
     0xBCE383D2, 0x58AE39C9, 0xF52E6B7F,
+    0x452C0E65, 0x44F9B43D, 0x90DDDC11, 0xC09BE45F,
 }
 _MSG_ALL = _MSG_WITH_FLAGS2 | _MSG_NO_FLAGS2
 # Constructors that read from_boosts_applied (flags bit 29) after from_id:
@@ -547,21 +583,51 @@ _MSG_WITH_FROM_BOOSTS = _MSG_WITH_FLAGS2 | {0xA66C7EFC, 0x1E4C8A69}
 # Constructors that read saved_peer_id (flags bit 28) after peer_id:
 # TL_message_layer173 and newer. The older readers have no such field.
 _MSG_WITH_SAVED_PEER = _MSG_WITH_FLAGS2 | {0xA66C7EFC, 0x1E4C8A69, 0x76BEC211}
-# TL_message_layer131, TL_message_layer123 and TL_message_layer118 read
-# via_bot_id as an Int32; every newer constructor reads an Int64.
-_MSG_VIA_BOT_INT32 = {0xBCE383D2, 0x58AE39C9, 0xF52E6B7F}
-# TL_message_layer118 reads from_id as a bare Int32 user id, with no peer
-# constructor in front of it, and reply_to as a bare Int32 reply_to_msg_id
-# in place of a MessageReplyHeader object.
-_MSG_BARE_FROM_AND_REPLY = {0xF52E6B7F}
+# TL_message_layer118 and the four classes before it in TLRPC.java
+# (TL_message_layer117, TL_message_layer104, TL_message_layer72 and
+# TL_message_layer68) read the same fields ahead of the text.
+_MSG_LAYER118_AND_OLDER = {0xF52E6B7F, 0x452C0E65, 0x44F9B43D, 0x90DDDC11, 0xC09BE45F}
+# TL_message_layer131, TL_message_layer123 and those read via_bot_id as an
+# Int32; every newer constructor reads an Int64.
+_MSG_VIA_BOT_INT32 = {0xBCE383D2, 0x58AE39C9} | _MSG_LAYER118_AND_OLDER
+# TL_message_layer118 and older read from_id as a bare Int32 user id, with no
+# peer constructor in front of it, and reply_to as a bare Int32
+# reply_to_msg_id in place of a MessageReplyHeader object.
+_MSG_BARE_FROM_AND_REPLY = _MSG_LAYER118_AND_OLDER
+
+# Older message classes and the secret chat classes, as the fields their
+# readers in TLRPC.java take before the date and the text. 'from' is a bare
+# Int32 user id; a trailing '?' marks a field read only under its flag bit
+# (from: 8, fwd: 2, via: 11, reply: 3). 'fwd_peer' is a Peer and an Int32
+# date, 'fwd_user' an Int32 user id and an Int32 date, 'bool' a 4-byte Bool.
+_OLD6 = ('flags', 'int32', 'from', 'peer', 'fwd_user?', 'reply?')
+_SECRET = ('flags', 'int32', 'int32', 'from', 'peer')          # id, then ttl
+_MSG_OLD_LAYOUTS = {
+    0xC992E15C: ('flags', 'int32', 'from?', 'peer', 'fwd_peer?', 'via?', 'reply?'),  # TL_message_layer47
+    0x5BA66C13: ('flags', 'int32', 'from?', 'peer', 'fwd_peer?', 'reply?'),   # TL_message_old7
+    0x2BEBFA86: _OLD6,                                           # TL_message_old6
+    0xF07814C8: _OLD6,                                           # TL_message_old5
+    0xC3060325: _OLD6,                                           # TL_message_old4
+    0xA7AB1991: _OLD6,                                           # TL_message_old3
+    0x567699B3: ('flags', 'int32', 'from', 'peer'),              # TL_message_old2
+    0x22EB6ABA: ('int32', 'from', 'peer', 'bool', 'bool'),       # TL_message_old
+    0xA367E716: ('flags', 'int32', 'fwd_user', 'from', 'peer'),  # TL_messageForwarded_old2
+    0x05F46804: ('int32', 'fwd_user', 'from', 'peer', 'bool', 'bool'),  # TL_messageForwarded_old
+    0x555555FA: _SECRET,                                         # TL_message_secret
+    0x555555F9: _SECRET,                                         # TL_message_secret_layer72
+    0x555555F8: _SECRET,                                         # TL_message_secret_old
+}
+_OLD_FLAG_BITS = {'from?': 1 << 8, 'fwd_peer?': 1 << 2, 'fwd_user?': 1 << 2,
+                  'via?': 1 << 11, 'reply?': 1 << 3}
+# TL_messageEmpty and TL_messageEmpty_layer122: an id and at most a peer.
+_MSG_EMPTY = {0x90A6CA84, 0x83E5DE54}
 
 # What a walk over a record that does not match the layout it was read with
 # raises: a short read, an index past the end, or a peer constructor that is
 # not one.
 _WALK_ERRORS = (struct.error, IndexError, UnicodeDecodeError, ValueError)
 
-# Every TL_messageService constructor defined by the client. Their action
-# payload is not decoded, so they are reported without an action label.
+# Every TL_messageService constructor defined by the client.
 _MSG_SERVICE = {
     0x7A800E0A,   # TL_messageService
     0xD3D28540,   # TL_messageService_layer204
@@ -569,8 +635,8 @@ _MSG_SERVICE = {
     0x286FA604,   # TL_messageService_layer123
     0x9E19A1F6,   # TL_messageService_layer118
     0xC06B9607,   # TL_messageService_layer48
-    0x1D86F70E,   # TL_messageService_layer37
-    0x9F8D60BB,   # TL_messageService_layer16
+    0x1D86F70E,   # TL_messageService_old2
+    0x9F8D60BB,   # TL_messageService_old
 }
 
 # Forward headers, as (constructor: (flag, kind) steps). A flag of 0 marks an
@@ -886,32 +952,42 @@ def _read_action_payload(reader, constructor):
     return ', '.join(parts)
 
 
-def _decode_service(reader, constructor):
-    """Walk a service message header and name its action."""
+def _decode_service(reader, constructor, result):
+    """Walk a service message header into result: its from_id and its action.
+
+    result is filled as the walk goes, so a header that cannot be walked to
+    its end still gives the fields read before that point. In every header
+    the second field is from_id; result['sender'] is set once that slot has
+    been passed, to None when the record's flags say it holds no from_id.
+    """
     entry = _SERVICE_HEADERS.get(constructor)
     if entry is None:
-        return None
+        return
     reads_flags, steps = entry
     flags = reader.read_uint32() if reads_flags else 0
-    for flag, kind in steps:
+    for position, (flag, kind) in enumerate(steps):
+        value = None
         if flag and not flags & flag:
-            continue
-        if kind == 'int32':
-            reader.read_int32()
+            pass
+        elif kind == 'int32':
+            value = reader.read_int32()
         elif kind == 'peer':
-            reader.read_peer()
+            value = reader.read_peer()
         elif kind == 'reply':
             if not _skip_reply_header(reader):
-                return None
+                return
+        if position == 1:
+            result['sender'] = value
     action = reader.read_uint32()
     name = _ACTION_NAMES.get(action)
     if name is None:
-        return f'Unrecognised action {action:#010x}'
+        result['action'] = f'Unrecognised action {action:#010x}'
+        return
     try:
         detail = _read_action_payload(reader, action)
     except (struct.error, IndexError, UnicodeDecodeError, ValueError):
         detail = ''
-    return f'{name} ({detail})' if detail else name
+    result['action'] = f'{name} ({detail})' if detail else name
 
 
 def _attach_path(blob):
@@ -1028,6 +1104,43 @@ def _text_after_date(blob, start, date):
     return None
 
 
+def _decode_old_message(reader, blob, constructor, date):
+    """Walk one of the _MSG_OLD_LAYOUTS records, positioned after its constructor."""
+    flags = 0
+    sender = None
+    forwarded = False
+    reply = False
+    for kind in _MSG_OLD_LAYOUTS[constructor]:
+        if kind == 'flags':
+            flags = reader.read_uint32()
+            continue
+        bit = _OLD_FLAG_BITS.get(kind)
+        if bit is not None and not flags & bit:
+            continue
+        kind = kind.rstrip('?')
+        if kind == 'from':
+            sender = reader.read_int32()
+        elif kind == 'peer':
+            reader.read_peer()
+        elif kind == 'fwd_peer':
+            reader.read_peer()
+            reader.read_int32()
+            forwarded = True
+        elif kind == 'fwd_user':
+            reader.read_int32()
+            reader.read_int32()
+            forwarded = True
+        else:                       # int32, bool, via, reply: four bytes each
+            reader.read_int32()
+            reply = reply or kind == 'reply'
+    stored_date = reader.read_int32()
+    if date and stored_date != date:
+        return {'sender': sender, 'forwarded': forwarded, 'reply': reply,
+                'text': _text_after_date(blob, 0, date)}
+    return {'sender': sender, 'date': stored_date, 'text': reader.read_string(),
+            'forwarded': forwarded, 'reply': reply, 'structural': True}
+
+
 def _decode_message_blob(blob, date=None):
     """Decode a messages_v2 data blob.
 
@@ -1040,10 +1153,16 @@ def _decode_message_blob(blob, date=None):
     reader = _TLReader(blob)
     constructor = reader.read_uint32()
     if constructor in _MSG_SERVICE:
+        service = {'service': True}
         try:
-            return {'service': True, 'action': _decode_service(reader, constructor)}
-        except (struct.error, IndexError, UnicodeDecodeError, ValueError):
-            return {'service': True}
+            _decode_service(reader, constructor, service)
+        except _WALK_ERRORS:
+            pass
+        return service
+    if constructor in _MSG_EMPTY:
+        return {'empty': True}
+    if constructor in _MSG_OLD_LAYOUTS:
+        return _decode_old_message(reader, blob, constructor, date)
     if constructor not in _MSG_ALL:
         return {'unknown': constructor}
 
@@ -1194,12 +1313,17 @@ def get_telegramMessages(context):
             text = f'[{action}]' if action else '[Service message]'
         elif decoded.get('unknown') is not None:
             text = f"[Unrecognised message constructor {decoded['unknown']:#010x}]"
-        elif decoded.get('forwarded') and not text:
-            text = '[Forwarded message, text not recovered]'
-        elif decoded.get('reply') and not text:
-            text = '[Reply, text not recovered]'
+        elif decoded.get('empty'):
+            text = '[Empty message record]'
         elif 'sender' in decoded and not decoded.get('structural') and not text:
-            text = '[Message text not recovered]'    # the walk ended on another date
+            # The walk stopped before the text and the search after the date
+            # found none. A walked record whose text is empty stays empty.
+            if decoded.get('forwarded'):
+                text = '[Forwarded message, text not recovered]'
+            elif decoded.get('reply'):
+                text = '[Reply, text not recovered]'
+            else:
+                text = '[Message text not recovered]'
         elif decoded.get('undecoded'):
             logfunc(f'Telegram - Messages: message {mid} in dialog {uid} could not be '
                     f"walked ({decoded['undecoded']}); the row is reported from the "
@@ -1210,10 +1334,10 @@ def get_telegramMessages(context):
         sender_id = decoded.get('sender')
         if sender_id is None and not out:
             # The record gave no from_id. Where the walk read past the from_id
-            # slot, or the record is a service message, the dialog id is used.
-            # Where the record was not walked at all the dialog id is used only
-            # when it names a user: in a group or channel it names the chat.
-            if 'sender' in decoded or decoded.get('service') or _is_user_dialog(uid):
+            # slot the dialog id is used. Where it did not, the dialog id is
+            # used only when it names a user: in a group or channel it names
+            # the chat.
+            if 'sender' in decoded or _is_user_dialog(uid):
                 sender_id = uid
         attach = _attach_path(blob)
         media_ref = ''
