@@ -10,9 +10,9 @@ __artifacts_v2__ = {
             "constructor this parser does not cover are still reported, with that "
             "constructor named in the message column."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, John Hyla",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-01",
         "requirements": "none",
         "category": "Telegram",
         "notes": "The data column holds a TL-serialised TLRPC message object. The message "
@@ -447,12 +447,17 @@ _PEER_USER_LEGACY = 0x9DB1BC6D
 _PEER_CHAT_LEGACY = 0xBAD0E5BB
 _PEER_CHANNEL_LEGACY = 0xBDDDE532
 
+# message#7600b9d3 (layer 227+): adds from_rank (flags2.12) and
+# guestchat_via_from (flags2.19) to the layer 179+ layout.
+_MSG_LAYER227_PLUS = {0x7600B9D3}
+
 # TL_message constructors that read a second flags integer before the id.
 # TL_legacy_message.java, classes TL_message_layer179 and newer.
 _MSG_WITH_FLAGS2 = {
     0x95EF6F2B, 0x3AE56482, 0x9CB490E9, 0xB92F76CF, 0x9815CEC8,
     0xEABCDD4D, 0x96FDBBE9, 0x94345242, 0xBDE09C2E, 0x2357BF25,
-}
+} | _MSG_LAYER227_PLUS
+
 # TL_message constructors without the second flags integer.
 _MSG_NO_FLAGS2 = {
     0xA66C7EFC, 0x1E4C8A69, 0x76BEC211, 0x38116EE0, 0x85D6CBE2,
@@ -955,6 +960,8 @@ def _decode_message_blob(blob, date=None):
         sender = reader.read_peer()
     if constructor in _MSG_WITH_FLAGS2 and flags & (1 << 29):
         reader.read_int32()                              # from_boosts_applied
+    if constructor in _MSG_LAYER227_PLUS and flags2 & (1 << 12):
+        reader.read_string()                             # from_rank
     reader.read_peer()                                   # peer_id
     if flags & (1 << 28):
         reader.read_peer()                               # saved_peer_id
@@ -968,6 +975,8 @@ def _decode_message_blob(blob, date=None):
         reader.read_int64()                              # via_bot_id
     if constructor in _MSG_WITH_FLAGS2 and flags2 & 1:
         reader.read_int64()                              # via_business_bot_id
+    if constructor in _MSG_LAYER227_PLUS and flags2 & (1 << 19):
+        reader.read_peer()                               # guestchat_via_from
     reply = bool(flags & (1 << 3))
     if reply:
         position = reader.stream.tell()
