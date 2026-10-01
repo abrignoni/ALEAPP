@@ -222,6 +222,144 @@ class TelegramOlderLayoutTest(unittest.TestCase):
         self._assert_structural(blob, 'no boosts', sender=111)
 
 
+BOOL_TRUE = u32(0x997275B5)
+BOOL_FALSE = u32(0xBC799737)
+
+
+class TelegramOldestLayoutTest(unittest.TestCase):
+    """Message classes older than layer 118, and the secret chat classes.
+
+    Field order from the readParams of each class in TLRPC.java. No extraction
+    available here holds a message stored under any of them, so they are
+    encoded here rather than read from an image.
+    """
+
+    def _assert_structural(self, blob, text, sender, forwarded=False, reply=False):
+        decoded = _decode_message_blob(blob, DATE)
+        self.assertTrue(decoded.get('structural'), decoded)
+        self.assertEqual((decoded['text'], decoded['sender']), (text, sender))
+        self.assertEqual((decoded['forwarded'], decoded['reply']), (forwarded, reply))
+
+    def test_layers_117_104_72_and_68_read_as_layer_118(self):
+        flags = (1 << 8) | (1 << 11) | (1 << 3)
+        for constructor in (0x452C0E65, 0x44F9B43D, 0x90DDDC11, 0xC09BE45F):
+            with self.subTest(constructor=hex(constructor)):
+                blob = (u32(constructor) + u32(flags) + i32(7) + i32(31337)
+                        + peer_user_legacy(555) + i32(424242) + i32(6) + i32(DATE)
+                        + tl_string('older still'))
+                self._assert_structural(blob, 'older still', 31337, reply=True)
+
+    def test_layer_47_inline_forward_bot_and_reply(self):
+        flags = (1 << 8) | (1 << 2) | (1 << 11) | (1 << 3)
+        blob = (u32(0xC992E15C) + u32(flags) + i32(7) + i32(31337) + peer_user_legacy(555)
+                + peer_user_legacy(777) + i32(DATE - 50) + i32(424242) + i32(6)
+                + i32(DATE) + tl_string('layer 47'))
+        self._assert_structural(blob, 'layer 47', 31337, forwarded=True, reply=True)
+
+    def test_layer_47_without_optional_fields(self):
+        blob = (u32(0xC992E15C) + u32(0) + i32(7) + peer_user_legacy(555)
+                + i32(DATE) + tl_string('bare'))
+        self._assert_structural(blob, 'bare', None)
+
+    def test_old7_has_no_via_bot_id(self):
+        # Bit 11 set must not be read as a field: TL_message_old7 has none.
+        flags = (1 << 8) | (1 << 2) | (1 << 11) | (1 << 3)
+        blob = (u32(0x5BA66C13) + u32(flags) + i32(7) + i32(31337) + peer_user_legacy(555)
+                + peer_user_legacy(777) + i32(DATE - 50) + i32(6)
+                + i32(DATE) + tl_string('old7'))
+        self._assert_structural(blob, 'old7', 31337, forwarded=True, reply=True)
+
+    def test_old6_to_old3_always_read_from_id(self):
+        for constructor in (0x2BEBFA86, 0xF07814C8, 0xC3060325, 0xA7AB1991):
+            with self.subTest(constructor=hex(constructor), fields='none'):
+                blob = (u32(constructor) + u32(0) + i32(7) + i32(31337)
+                        + peer_user_legacy(555) + i32(DATE) + tl_string('plain'))
+                self._assert_structural(blob, 'plain', 31337)
+            with self.subTest(constructor=hex(constructor), fields='forward and reply'):
+                blob = (u32(constructor) + u32((1 << 2) | (1 << 3)) + i32(7) + i32(31337)
+                        + peer_user_legacy(555) + i32(777) + i32(DATE - 50) + i32(6)
+                        + i32(DATE) + tl_string('both'))
+                self._assert_structural(blob, 'both', 31337, forwarded=True, reply=True)
+
+    def test_old2(self):
+        blob = (u32(0x567699B3) + u32(0) + i32(7) + i32(31337) + peer_user_legacy(555)
+                + i32(DATE) + tl_string('old2'))
+        self._assert_structural(blob, 'old2', 31337)
+
+    def test_old_has_no_flags_and_two_bools(self):
+        blob = (u32(0x22EB6ABA) + i32(7) + i32(31337) + peer_user_legacy(555)
+                + BOOL_FALSE + BOOL_TRUE + i32(DATE) + tl_string('oldest'))
+        self._assert_structural(blob, 'oldest', 31337)
+
+    def test_forwarded_old2(self):
+        blob = (u32(0xA367E716) + u32(0) + i32(7) + i32(777) + i32(DATE - 50)
+                + i32(31337) + peer_user_legacy(555) + i32(DATE) + tl_string('fwd old2'))
+        self._assert_structural(blob, 'fwd old2', 31337, forwarded=True)
+
+    def test_forwarded_old(self):
+        blob = (u32(0x05F46804) + i32(7) + i32(777) + i32(DATE - 50) + i32(31337)
+                + peer_user_legacy(555) + BOOL_TRUE + BOOL_FALSE + i32(DATE)
+                + tl_string('fwd old'))
+        self._assert_structural(blob, 'fwd old', 31337, forwarded=True)
+
+    def test_secret_chat_messages_read_a_ttl_after_the_id(self):
+        for constructor in (0x555555FA, 0x555555F9, 0x555555F8):
+            with self.subTest(constructor=hex(constructor)):
+                blob = (u32(constructor) + u32(0) + i32(-7) + i32(30) + i32(31337)
+                        + peer_user_legacy(555) + i32(DATE) + tl_string('secret'))
+                self._assert_structural(blob, 'secret', 31337)
+
+    def test_empty_message_records_are_recognised(self):
+        self.assertEqual(_decode_message_blob(u32(0x90A6CA84) + u32(0) + i32(7), DATE),
+                         {'empty': True})
+        self.assertEqual(_decode_message_blob(u32(0x83E5DE54) + i32(7), DATE),
+                         {'empty': True})
+
+
+def service_from(constructor, head, action=u32(0x4792929B)):
+    """A service record: constructor, the given header bytes, date, action."""
+    return u32(constructor) + head + i32(DATE) + action
+
+
+class TelegramServiceSenderTest(unittest.TestCase):
+    """The from_id of a service message, per the readParams of each class in TLRPC.java."""
+
+    def _sender(self, blob):
+        decoded = _decode_message_blob(blob, DATE)
+        self.assertTrue(decoded.get('service'))
+        self.assertEqual(decoded.get('action'), 'Screenshot taken')
+        return decoded['sender']
+
+    def test_peer_from_id_on_the_current_and_recent_classes(self):
+        for constructor in (0x7A800E0A, 0xD3D28540, 0x2B085862, 0x286FA604):
+            with self.subTest(constructor=hex(constructor)):
+                head = u32(1 << 8) + i32(42) + peer_user(31337) + peer_user(555)
+                self.assertEqual(self._sender(service_from(constructor, head)), 31337)
+
+    def test_no_from_id_is_none_and_the_slot_counts_as_read(self):
+        decoded = _decode_message_blob(service_message(u32(0x4792929B)), DATE)
+        self.assertIn('sender', decoded)
+        self.assertIsNone(decoded['sender'])
+
+    def test_bare_from_id_on_layer_118_and_layer_48(self):
+        for constructor in (0x9E19A1F6, 0xC06B9607):
+            with self.subTest(constructor=hex(constructor)):
+                head = u32(1 << 8) + i32(42) + i32(31337) + peer_user_legacy(555)
+                self.assertEqual(self._sender(service_from(constructor, head)), 31337)
+
+    def test_old2_always_reads_a_bare_from_id(self):
+        head = u32(0) + i32(42) + i32(31337) + peer_user_legacy(555)
+        self.assertEqual(self._sender(service_from(0x1D86F70E, head)), 31337)
+
+    def test_old_has_no_flags_and_two_bools(self):
+        head = i32(42) + i32(31337) + peer_user_legacy(555) + BOOL_FALSE + BOOL_TRUE
+        self.assertEqual(self._sender(service_from(0x9F8D60BB, head)), 31337)
+
+    def test_a_header_cut_before_from_id_reports_no_sender_slot(self):
+        decoded = _decode_message_blob(u32(0x2B085862) + u32(1 << 8) + i32(42), DATE)
+        self.assertEqual(decoded, {'service': True})
+
+
 SECRET_DIALOG = 0x4000000000000000 | 5
 FOLDER_DIALOG = 0x2000000000000000 | 1
 GROUP_DIALOG = -1001234
@@ -330,8 +468,8 @@ class TelegramMessageRowsTest(unittest.TestCase):
         self.assertEqual(table[5][4], '')
 
     def test_walked_rows_keep_the_dialog_as_sender(self):
-        # Unchanged behaviour: a walked record with no from_id, and a service
-        # record, report the dialog id on an incoming row whatever the dialog.
+        # A walked record with no from_id, message or service, reports the
+        # dialog id on an incoming row whatever the dialog.
         table, logged = self._run([
             (1, GROUP_DIALOG, 0, text_message('no from_id')),
             (2, GROUP_DIALOG, 0, service_message(u32(0x4792929B))),
@@ -341,6 +479,51 @@ class TelegramMessageRowsTest(unittest.TestCase):
         self.assertEqual(table[1][4], GROUP_DIALOG)
         self.assertEqual(table[2][4], GROUP_DIALOG)
         self.assertEqual(table[3][4], 111)
+
+    def test_service_rows_report_the_from_id_of_the_record(self):
+        head = u32(1 << 8) + i32(42) + peer_user(31337) + peer_user(555)
+        with_from = service_from(0x2B085862, head)
+        cut = u32(0x2B085862) + u32(1 << 8) + i32(42)        # ends before from_id
+        table, logged = self._run([
+            (1, GROUP_DIALOG, 0, with_from),
+            (2, USER_DIALOG, 1, with_from),
+            (3, GROUP_DIALOG, 0, cut),
+            (4, USER_DIALOG, 0, cut),
+        ])
+        self.assertEqual(logged, [])
+        self.assertEqual(table[1][4], 31337)          # not the group
+        self.assertEqual(table[2][4], 31337)          # outgoing rows too
+        self.assertEqual(table[1][6], '[Screenshot taken]')
+        self.assertEqual(table[3][4], '')             # slot not read, group dialog
+        self.assertEqual(table[4][4], USER_DIALOG)    # slot not read, user dialog
+        self.assertEqual(table[3][6], '[Service message]')
+
+    def test_a_walked_reply_or_forward_with_empty_text_stays_empty(self):
+        reply = (u32(0x85D6CBE2) + u32(1 << 3) + i32(7) + peer_user(USER_DIALOG)
+                 + u32(0xA6D57763) + u32(0) + i32(5) + i32(DATE) + tl_string(''))
+        forward = (u32(0x85D6CBE2) + u32(1 << 2) + i32(7) + peer_user(USER_DIALOG)
+                   + u32(0x4E4DF4BB) + u32(0) + i32(DATE - 50) + i32(DATE) + tl_string(''))
+        # A reply header this parser cannot step over, with no text after the date.
+        unwalked_reply = (u32(0x85D6CBE2) + u32(1 << 3) + i32(7) + peer_user(USER_DIALOG)
+                          + u32(0xDEADBEEF) + b'\xff' * 12)
+        unwalked_forward = (u32(0x85D6CBE2) + u32(1 << 2) + i32(7) + peer_user(USER_DIALOG)
+                            + u32(0xDEADBEEF) + b'\xff' * 12)
+        table, logged = self._run([(1, USER_DIALOG, 0, reply), (2, USER_DIALOG, 0, forward),
+                                   (3, USER_DIALOG, 0, unwalked_reply),
+                                   (4, USER_DIALOG, 0, unwalked_forward)])
+        self.assertEqual(logged, [])
+        self.assertEqual(table[1][6], '')
+        self.assertEqual(table[2][6], '')
+        self.assertEqual(table[3][6], '[Reply, text not recovered]')
+        self.assertEqual(table[4][6], '[Forwarded message, text not recovered]')
+
+    def test_an_empty_message_record_is_named(self):
+        table, logged = self._run([(1, USER_DIALOG, 0, u32(0x90A6CA84) + u32(0) + i32(7)),
+                                   (2, GROUP_DIALOG, 0, u32(0x83E5DE54) + i32(7) + i32(0))])
+        self.assertEqual(logged, [])
+        self.assertEqual(table[1][6], '[Empty message record]')
+        self.assertEqual(table[2][6], '[Empty message record]')
+        self.assertEqual(table[2][4], '')
 
 
 class TelegramTextMessageTest(unittest.TestCase):
