@@ -1,0 +1,4723 @@
+{
+  "metadata": {
+    "module_name": "swiftkeyLanguageModel",
+    "artifact_name": "SwiftKey Language Model - Term Sequences",
+    "function_name": "swiftkey_lm_sequences",
+    "case_number": "case1",
+    "number_of_columns": 5,
+    "number_of_rows": 670,
+    "total_data_size_bytes": 72585,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/swiftkeyLanguageModel/testdata.swiftkeyLanguageModel.swiftkey_lm_sequences.case1.zip",
+    "start_time": "2026-10-01T15:15:15.402250+00:00",
+    "end_time": "2026-10-01T15:15:15.454168+00:00",
+    "run_time_seconds": 0.003002166748046875,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-01T15:15:15.444408",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Sequence",
+    "Count",
+    "Terms In Sequence",
+    "Terms",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Donald Trump",
+      5,
+      2,
+      "[\"Donald\", \"Trump\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Donald Sterling",
+      5,
+      2,
+      "[\"Donald\", \"Sterling\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ mint",
+      1,
+      2,
+      "[\"^\", \"mint\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ m",
+      2,
+      2,
+      "[\"^\", \"m\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ 2421E66E6AE",
+      1,
+      2,
+      "[\"^\", \"2421E66E6AE\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ Daniel",
+      4,
+      2,
+      "[\"^\", \"Daniel\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ Daniel Jones",
+      2,
+      3,
+      "[\"^\", \"Daniel\", \"Jones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ Jones",
+      3,
+      2,
+      "[\"^\", \"Jones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ danieljonesonline55@gmail.com",
+      4,
+      2,
+      "[\"^\", \"danieljonesonline55@gmail.com\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ l",
+      2,
+      2,
+      "[\"^\", \"l\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ t",
+      1,
+      2,
+      "[\"^\", \"t\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ x",
+      1,
+      2,
+      "[\"^\", \"x\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ I",
+      4,
+      2,
+      "[\"^\", \"I\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ I took",
+      1,
+      3,
+      "[\"^\", \"I\", \"took\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ I took a",
+      1,
+      4,
+      "[\"^\", \"I\", \"took\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ I am",
+      2,
+      3,
+      "[\"^\", \"I\", \"am\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ I am all",
+      1,
+      4,
+      "[\"^\", \"I\", \"am\", \"all\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ n",
+      2,
+      2,
+      "[\"^\", \"n\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ a",
+      2,
+      2,
+      "[\"^\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ s",
+      4,
+      2,
+      "[\"^\", \"s\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ y",
+      1,
+      2,
+      "[\"^\", \"y\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ f",
+      3,
+      2,
+      "[\"^\", \"f\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ w",
+      2,
+      2,
+      "[\"^\", \"w\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ g",
+      3,
+      2,
+      "[\"^\", \"g\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ d",
+      2,
+      2,
+      "[\"^\", \"d\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ rain",
+      1,
+      2,
+      "[\"^\", \"rain\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ nike",
+      1,
+      2,
+      "[\"^\", \"nike\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ nike fit",
+      1,
+      3,
+      "[\"^\", \"nike\", \"fit\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ football",
+      2,
+      2,
+      "[\"^\", \"football\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ football highlight",
+      1,
+      3,
+      "[\"^\", \"football\", \"highlight\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ football highlight this",
+      1,
+      4,
+      "[\"^\", \"football\", \"highlight\", \"this\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ hockey",
+      1,
+      2,
+      "[\"^\", \"hockey\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ qr",
+      5,
+      2,
+      "[\"^\", \"qr\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ 45A27L",
+      1,
+      2,
+      "[\"^\", \"45A27L\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ djones.iss.secure@gmail.com",
+      3,
+      2,
+      "[\"^\", \"djones.iss.secure@gmail.com\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ djones.iss.secure",
+      1,
+      2,
+      "[\"^\", \"djones.iss.secure\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ smash-monopoly-career32",
+      1,
+      2,
+      "[\"^\", \"smash-monopoly-career32\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ smash-monopoly-career32 !",
+      1,
+      3,
+      "[\"^\", \"smash-monopoly-career32\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ DANIEL",
+      1,
+      2,
+      "[\"^\", \"DANIEL\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ restirants",
+      1,
+      2,
+      "[\"^\", \"restirants\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ restirants openne",
+      1,
+      3,
+      "[\"^\", \"restirants\", \"openne\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ resturants",
+      2,
+      2,
+      "[\"^\", \"resturants\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ resturants open",
+      2,
+      3,
+      "[\"^\", \"resturants\", \"open\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ resturants open near",
+      2,
+      4,
+      "[\"^\", \"resturants\", \"open\", \"near\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ c",
+      1,
+      2,
+      "[\"^\", \"c\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ dman",
+      1,
+      2,
+      "[\"^\", \"dman\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ CLIENT_PhysicalSecurityRecommendations",
+      1,
+      2,
+      "[\"^\", \"CLIENT_PhysicalSecurityRecommendations\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ CLIENT",
+      2,
+      2,
+      "[\"^\", \"CLIENT\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ CLIENT Secut",
+      1,
+      3,
+      "[\"^\", \"CLIENT\", \"Secut\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ CLIENT Security",
+      1,
+      3,
+      "[\"^\", \"CLIENT\", \"Security\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ CLIENT Security Recommendations",
+      1,
+      4,
+      "[\"^\", \"CLIENT\", \"Security\", \"Recommendations\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ <",
+      1,
+      2,
+      "[\"^\", \"<\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ < amaurie.iss.secure@gmail.com",
+      1,
+      3,
+      "[\"^\", \"<\", \"amaurie.iss.secure@gmail.com\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ < amaurie.iss.secure@gmail.com >",
+      1,
+      4,
+      "[\"^\", \"<\", \"amaurie.iss.secure@gmail.com\", \">\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ hi",
+      4,
+      2,
+      "[\"^\", \"hi\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ hi Alex",
+      3,
+      3,
+      "[\"^\", \"hi\", \"Alex\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ hi Alex ,",
+      3,
+      4,
+      "[\"^\", \"hi\", \"Alex\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ physical",
+      1,
+      2,
+      "[\"^\", \"physical\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ physical Security",
+      1,
+      3,
+      "[\"^\", \"physical\", \"Security\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ physical Security Writeup",
+      1,
+      4,
+      "[\"^\", \"physical\", \"Security\", \"Writeup\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ they",
+      2,
+      2,
+      "[\"^\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ they are",
+      2,
+      3,
+      "[\"^\", \"they\", \"are\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ they are looking",
+      1,
+      4,
+      "[\"^\", \"they\", \"are\", \"looking\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ the",
+      1,
+      2,
+      "[\"^\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ the doc",
+      1,
+      3,
+      "[\"^\", \"the\", \"doc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ the doc looks",
+      1,
+      4,
+      "[\"^\", \"the\", \"doc\", \"looks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ CCTV",
+      2,
+      2,
+      "[\"^\", \"CCTV\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ CCTV ID",
+      2,
+      3,
+      "[\"^\", \"CCTV\", \"ID\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ CCTV ID SCANNER",
+      2,
+      4,
+      "[\"^\", \"CCTV\", \"ID\", \"SCANNER\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ happy",
+      1,
+      2,
+      "[\"^\", \"happy\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ happy to",
+      1,
+      3,
+      "[\"^\", \"happy\", \"to\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ happy to have",
+      1,
+      4,
+      "[\"^\", \"happy\", \"to\", \"have\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ thanks",
+      1,
+      2,
+      "[\"^\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ thanks for",
+      1,
+      3,
+      "[\"^\", \"thanks\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ thanks for adding",
+      1,
+      4,
+      "[\"^\", \"thanks\", \"for\", \"adding\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ OK",
+      1,
+      2,
+      "[\"^\", \"OK\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ OK how",
+      1,
+      3,
+      "[\"^\", \"OK\", \"how\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ OK how about",
+      1,
+      4,
+      "[\"^\", \"OK\", \"how\", \"about\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ thanksfor",
+      1,
+      2,
+      "[\"^\", \"thanksfor\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ sounds",
+      1,
+      2,
+      "[\"^\", \"sounds\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ sounds good",
+      1,
+      3,
+      "[\"^\", \"sounds\", \"good\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ sounds good thanks",
+      1,
+      4,
+      "[\"^\", \"sounds\", \"good\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ Great",
+      1,
+      2,
+      "[\"^\", \"Great\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ Great I'll",
+      1,
+      3,
+      "[\"^\", \"Great\", \"I'll\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ Great I'll take",
+      1,
+      4,
+      "[\"^\", \"Great\", \"I'll\", \"take\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ adm.iss.secure@gmail.com",
+      1,
+      2,
+      "[\"^\", \"adm.iss.secure@gmail.com\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ hey",
+      1,
+      2,
+      "[\"^\", \"hey\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ hey Calum",
+      1,
+      3,
+      "[\"^\", \"hey\", \"Calum\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^ hey Calum ,",
+      1,
+      4,
+      "[\"^\", \"hey\", \"Calum\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Daniel Jones",
+      2,
+      2,
+      "[\"Daniel\", \"Jones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^EMAIL ^",
+      7,
+      2,
+      "[\"^EMAIL\", \"^\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^EMAIL ^ danieljonesonline55@gmail.com",
+      4,
+      3,
+      "[\"^EMAIL\", \"^\", \"danieljonesonline55@gmail.com\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "^EMAIL ^ djones.iss.secure@gmail.com",
+      3,
+      3,
+      "[\"^EMAIL\", \"^\", \"djones.iss.secure@gmail.com\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I just",
+      3,
+      2,
+      "[\"I\", \"just\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I just shared",
+      3,
+      3,
+      "[\"I\", \"just\", \"shared\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I just shared a",
+      3,
+      4,
+      "[\"I\", \"just\", \"shared\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I will",
+      1,
+      2,
+      "[\"I\", \"will\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I will take",
+      1,
+      3,
+      "[\"I\", \"will\", \"take\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I will take a",
+      1,
+      4,
+      "[\"I\", \"will\", \"take\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I took",
+      1,
+      2,
+      "[\"I\", \"took\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I took a",
+      1,
+      3,
+      "[\"I\", \"took\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I took a look",
+      1,
+      4,
+      "[\"I\", \"took\", \"a\", \"look\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I am",
+      2,
+      2,
+      "[\"I\", \"am\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I am all",
+      1,
+      3,
+      "[\"I\", \"am\", \"all\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I am all set",
+      1,
+      4,
+      "[\"I\", \"am\", \"all\", \"set\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a Google",
+      3,
+      2,
+      "[\"a\", \"Google\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a Google Doc",
+      3,
+      3,
+      "[\"a\", \"Google\", \"Doc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a Google Doc with",
+      3,
+      4,
+      "[\"a\", \"Google\", \"Doc\", \"with\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a possible",
+      3,
+      2,
+      "[\"a\", \"possible\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a possible new",
+      3,
+      3,
+      "[\"a\", \"possible\", \"new\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a possible new client",
+      3,
+      4,
+      "[\"a\", \"possible\", \"new\", \"client\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a physical",
+      3,
+      2,
+      "[\"a\", \"physical\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a physical security",
+      3,
+      3,
+      "[\"a\", \"physical\", \"security\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a physical security system",
+      3,
+      4,
+      "[\"a\", \"physical\", \"security\", \"system\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a microphone",
+      1,
+      2,
+      "[\"a\", \"microphone\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a microphone ,",
+      1,
+      3,
+      "[\"a\", \"microphone\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a microphone , they",
+      1,
+      4,
+      "[\"a\", \"microphone\", \",\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a look",
+      3,
+      2,
+      "[\"a\", \"look\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a look and",
+      1,
+      3,
+      "[\"a\", \"look\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a look and that's",
+      1,
+      4,
+      "[\"a\", \"look\", \"and\", \"that's\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a look tomorrow",
+      1,
+      3,
+      "[\"a\", \"look\", \"tomorrow\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a look tomorrow and",
+      1,
+      4,
+      "[\"a\", \"look\", \"tomorrow\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "a look now",
+      1,
+      3,
+      "[\"a\", \"look\", \"now\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "nike fit",
+      1,
+      2,
+      "[\"nike\", \"fit\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "football highlight",
+      1,
+      2,
+      "[\"football\", \"highlight\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "football highlight this",
+      1,
+      3,
+      "[\"football\", \"highlight\", \"this\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "football highlight this week",
+      1,
+      4,
+      "[\"football\", \"highlight\", \"this\", \"week\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "smash-monopoly-career32 !",
+      1,
+      2,
+      "[\"smash-monopoly-career32\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "! thanks",
+      1,
+      2,
+      "[\"!\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "! thanks so",
+      1,
+      3,
+      "[\"!\", \"thanks\", \"so\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "! thanks so much",
+      1,
+      4,
+      "[\"!\", \"thanks\", \"so\", \"much\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "! can't",
+      1,
+      2,
+      "[\"!\", \"can't\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "! can't wait",
+      1,
+      3,
+      "[\"!\", \"can't\", \"wait\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "! can't wait to",
+      1,
+      4,
+      "[\"!\", \"can't\", \"wait\", \"to\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "highlight this",
+      1,
+      2,
+      "[\"highlight\", \"this\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "highlight this week",
+      1,
+      3,
+      "[\"highlight\", \"this\", \"week\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "this week",
+      1,
+      2,
+      "[\"this\", \"week\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "restirants openne",
+      1,
+      2,
+      "[\"restirants\", \"openne\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "resturants open",
+      2,
+      2,
+      "[\"resturants\", \"open\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "resturants open near",
+      2,
+      3,
+      "[\"resturants\", \"open\", \"near\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "resturants open near me",
+      2,
+      4,
+      "[\"resturants\", \"open\", \"near\", \"me\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "open near",
+      2,
+      2,
+      "[\"open\", \"near\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "open near me",
+      2,
+      3,
+      "[\"open\", \"near\", \"me\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "open near me burlington",
+      1,
+      4,
+      "[\"open\", \"near\", \"me\", \"burlington\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "near me",
+      2,
+      2,
+      "[\"near\", \"me\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "near me burlington",
+      1,
+      3,
+      "[\"near\", \"me\", \"burlington\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "near me burlington vermont",
+      1,
+      4,
+      "[\"near\", \"me\", \"burlington\", \"vermont\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "me burlington",
+      1,
+      2,
+      "[\"me\", \"burlington\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "me burlington vermont",
+      1,
+      3,
+      "[\"me\", \"burlington\", \"vermont\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "me know",
+      1,
+      2,
+      "[\"me\", \"know\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "burlington vermont",
+      1,
+      2,
+      "[\"burlington\", \"vermont\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "CLIENT Secut",
+      1,
+      2,
+      "[\"CLIENT\", \"Secut\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "CLIENT Security",
+      1,
+      2,
+      "[\"CLIENT\", \"Security\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "CLIENT Security Recommendations",
+      1,
+      3,
+      "[\"CLIENT\", \"Security\", \"Recommendations\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Security Recommendations",
+      1,
+      2,
+      "[\"Security\", \"Recommendations\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Security Writeup",
+      1,
+      2,
+      "[\"Security\", \"Writeup\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "< amaurie.iss.secure@gmail.com",
+      1,
+      2,
+      "[\"<\", \"amaurie.iss.secure@gmail.com\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "< amaurie.iss.secure@gmail.com >",
+      1,
+      3,
+      "[\"<\", \"amaurie.iss.secure@gmail.com\", \">\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "< amaurie.iss.secure@gmail.com > ,",
+      1,
+      4,
+      "[\"<\", \"amaurie.iss.secure@gmail.com\", \">\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "amaurie.iss.secure@gmail.com >",
+      1,
+      2,
+      "[\"amaurie.iss.secure@gmail.com\", \">\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "amaurie.iss.secure@gmail.com > ,",
+      1,
+      3,
+      "[\"amaurie.iss.secure@gmail.com\", \">\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "amaurie.iss.secure@gmail.com > , a",
+      1,
+      4,
+      "[\"amaurie.iss.secure@gmail.com\", \">\", \",\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "> ,",
+      1,
+      2,
+      "[\">\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "> , a",
+      1,
+      3,
+      "[\">\", \",\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", I",
+      3,
+      2,
+      "[\",\", \"I\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", I just",
+      3,
+      3,
+      "[\",\", \"I\", \"just\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", I just shared",
+      3,
+      4,
+      "[\",\", \"I\", \"just\", \"shared\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", a",
+      1,
+      2,
+      "[\",\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", with",
+      1,
+      2,
+      "[\",\", \"with\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", with a",
+      1,
+      3,
+      "[\",\", \"with\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", with a microphone",
+      1,
+      4,
+      "[\",\", \"with\", \"a\", \"microphone\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", they",
+      4,
+      2,
+      "[\",\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", they were",
+      3,
+      3,
+      "[\",\", \"they\", \"were\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", they were thinking",
+      3,
+      4,
+      "[\",\", \"they\", \"were\", \"thinking\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", they didn't",
+      1,
+      3,
+      "[\",\", \"they\", \"didn't\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", they didn't specify",
+      1,
+      4,
+      "[\",\", \"they\", \"didn't\", \"specify\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", ID",
+      3,
+      2,
+      "[\",\", \"ID\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", ID scanners",
+      3,
+      3,
+      "[\",\", \"ID\", \"scanners\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", ID scanners ,",
+      3,
+      4,
+      "[\",\", \"ID\", \"scanners\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", etc",
+      3,
+      2,
+      "[\",\", \"etc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", etc .",
+      3,
+      3,
+      "[\",\", \"etc\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", etc . for",
+      2,
+      4,
+      "[\",\", \"etc\", \".\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", thanks",
+      1,
+      2,
+      "[\",\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", thanks for",
+      1,
+      3,
+      "[\",\", \"thanks\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", thanks for your",
+      1,
+      4,
+      "[\",\", \"thanks\", \"for\", \"your\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", I'll",
+      1,
+      2,
+      "[\",\", \"I'll\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", I'll do",
+      1,
+      3,
+      "[\",\", \"I'll\", \"do\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", I'll do that",
+      1,
+      4,
+      "[\",\", \"I'll\", \"do\", \"that\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", enjoy",
+      1,
+      2,
+      "[\",\", \"enjoy\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", enjoy the",
+      1,
+      3,
+      "[\",\", \"enjoy\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ", enjoy the trip",
+      1,
+      4,
+      "[\",\", \"enjoy\", \"the\", \"trip\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "hi Alex",
+      3,
+      2,
+      "[\"hi\", \"Alex\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "hi Alex ,",
+      3,
+      3,
+      "[\"hi\", \"Alex\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "hi Alex , I",
+      3,
+      4,
+      "[\"hi\", \"Alex\", \",\", \"I\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Alex ,",
+      3,
+      2,
+      "[\"Alex\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Alex , I",
+      3,
+      3,
+      "[\"Alex\", \",\", \"I\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Alex , I just",
+      3,
+      4,
+      "[\"Alex\", \",\", \"I\", \"just\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just shared",
+      3,
+      2,
+      "[\"just\", \"shared\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just shared a",
+      3,
+      3,
+      "[\"just\", \"shared\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just shared a Google",
+      3,
+      4,
+      "[\"just\", \"shared\", \"a\", \"Google\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just include",
+      2,
+      2,
+      "[\"just\", \"include\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just include some",
+      1,
+      3,
+      "[\"just\", \"include\", \"some\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just include some different",
+      1,
+      4,
+      "[\"just\", \"include\", \"some\", \"different\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just include somed",
+      1,
+      3,
+      "[\"just\", \"include\", \"somed\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just black",
+      1,
+      2,
+      "[\"just\", \"black\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just black and",
+      1,
+      3,
+      "[\"just\", \"black\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "just black and white",
+      1,
+      4,
+      "[\"just\", \"black\", \"and\", \"white\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "shared a",
+      3,
+      2,
+      "[\"shared\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "shared a Google",
+      3,
+      3,
+      "[\"shared\", \"a\", \"Google\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "shared a Google Doc",
+      3,
+      4,
+      "[\"shared\", \"a\", \"Google\", \"Doc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Google Doc",
+      3,
+      2,
+      "[\"Google\", \"Doc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Google Doc with",
+      3,
+      3,
+      "[\"Google\", \"Doc\", \"with\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Google Doc with you",
+      3,
+      4,
+      "[\"Google\", \"Doc\", \"with\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Doc with",
+      3,
+      2,
+      "[\"Doc\", \"with\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Doc with you",
+      3,
+      3,
+      "[\"Doc\", \"with\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Doc with you .",
+      3,
+      4,
+      "[\"Doc\", \"with\", \"you\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "with a",
+      1,
+      2,
+      "[\"with\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "with a microphone",
+      1,
+      3,
+      "[\"with\", \"a\", \"microphone\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "with a microphone ,",
+      1,
+      4,
+      "[\"with\", \"a\", \"microphone\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "with you",
+      3,
+      2,
+      "[\"with\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "with you .",
+      3,
+      3,
+      "[\"with\", \"you\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "with you . it",
+      3,
+      4,
+      "[\"with\", \"you\", \".\", \"it\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "with color",
+      1,
+      2,
+      "[\"with\", \"color\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "with color compared",
+      1,
+      3,
+      "[\"with\", \"color\", \"compared\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "with color compared to",
+      1,
+      4,
+      "[\"with\", \"color\", \"compared\", \"to\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you !",
+      1,
+      2,
+      "[\"you\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you ! thanks",
+      1,
+      3,
+      "[\"you\", \"!\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you ! thanks so",
+      1,
+      4,
+      "[\"you\", \"!\", \"thanks\", \"so\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you .",
+      3,
+      2,
+      "[\"you\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you . it",
+      3,
+      3,
+      "[\"you\", \".\", \"it\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you . it is",
+      3,
+      4,
+      "[\"you\", \".\", \"it\", \"is\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you please",
+      3,
+      2,
+      "[\"you\", \"please\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you please do",
+      3,
+      3,
+      "[\"you\", \"please\", \"do\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you please do some",
+      3,
+      4,
+      "[\"you\", \"please\", \"do\", \"some\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you include",
+      1,
+      2,
+      "[\"you\", \"include\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you include the",
+      1,
+      3,
+      "[\"you\", \"include\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you include the cheaper",
+      1,
+      4,
+      "[\"you\", \"include\", \"the\", \"cheaper\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you have",
+      1,
+      2,
+      "[\"you\", \"have\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you have any",
+      1,
+      3,
+      "[\"you\", \"have\", \"any\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you have any questions",
+      1,
+      4,
+      "[\"you\", \"have\", \"any\", \"questions\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "you know",
+      1,
+      2,
+      "[\"you\", \"know\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". it",
+      3,
+      2,
+      "[\".\", \"it\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". it is",
+      3,
+      3,
+      "[\".\", \"it\", \"is\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". it is for",
+      3,
+      4,
+      "[\".\", \"it\", \"is\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". for",
+      2,
+      2,
+      "[\".\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". for the",
+      2,
+      3,
+      "[\".\", \"for\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". for the doc",
+      2,
+      4,
+      "[\".\", \"for\", \"the\", \"doc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". can",
+      3,
+      2,
+      "[\".\", \"can\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". can you",
+      3,
+      3,
+      "[\".\", \"can\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". can you please",
+      3,
+      4,
+      "[\".\", \"can\", \"you\", \"please\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". they",
+      1,
+      2,
+      "[\".\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". they aren't",
+      1,
+      3,
+      "[\".\", \"they\", \"aren't\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". they aren't looking",
+      1,
+      4,
+      "[\".\", \"they\", \"aren't\", \"looking\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". how",
+      1,
+      2,
+      "[\".\", \"how\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". how much",
+      1,
+      3,
+      "[\".\", \"how\", \"much\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      ". how much more",
+      1,
+      4,
+      "[\".\", \"how\", \"much\", \"more\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "it .",
+      1,
+      2,
+      "[\"it\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "it is",
+      3,
+      2,
+      "[\"it\", \"is\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "it is for",
+      3,
+      3,
+      "[\"it\", \"is\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "it is for a",
+      3,
+      4,
+      "[\"it\", \"is\", \"for\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "is for",
+      3,
+      2,
+      "[\"is\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "is for a",
+      3,
+      3,
+      "[\"is\", \"for\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "is for a possible",
+      3,
+      4,
+      "[\"is\", \"for\", \"a\", \"possible\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "is requesting",
+      3,
+      2,
+      "[\"is\", \"requesting\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "is requesting a",
+      3,
+      3,
+      "[\"is\", \"requesting\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "is requesting a physical",
+      3,
+      4,
+      "[\"is\", \"requesting\", \"a\", \"physical\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for a",
+      3,
+      2,
+      "[\"for\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for a possible",
+      3,
+      3,
+      "[\"for\", \"a\", \"possible\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for a possible new",
+      3,
+      4,
+      "[\"for\", \"a\", \"possible\", \"new\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for the",
+      2,
+      2,
+      "[\"for\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for the doc",
+      2,
+      3,
+      "[\"for\", \"the\", \"doc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for the doc just",
+      2,
+      4,
+      "[\"for\", \"the\", \"doc\", \"just\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for indoor",
+      1,
+      2,
+      "[\"for\", \"indoor\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for indoor ones",
+      1,
+      3,
+      "[\"for\", \"indoor\", \"ones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for indoor ones ,",
+      1,
+      4,
+      "[\"for\", \"indoor\", \"ones\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for anything",
+      1,
+      2,
+      "[\"for\", \"anything\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for anything too",
+      1,
+      3,
+      "[\"for\", \"anything\", \"too\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for anything too fancy",
+      1,
+      4,
+      "[\"for\", \"anything\", \"too\", \"fancy\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for adding",
+      1,
+      2,
+      "[\"for\", \"adding\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for adding those",
+      1,
+      3,
+      "[\"for\", \"adding\", \"those\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for adding those I",
+      1,
+      4,
+      "[\"for\", \"adding\", \"those\", \"I\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for your",
+      1,
+      2,
+      "[\"for\", \"your\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "for your help",
+      1,
+      3,
+      "[\"for\", \"your\", \"help\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "possible new",
+      3,
+      2,
+      "[\"possible\", \"new\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "possible new client",
+      3,
+      3,
+      "[\"possible\", \"new\", \"client\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "possible new client who",
+      3,
+      4,
+      "[\"possible\", \"new\", \"client\", \"who\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "possible options",
+      3,
+      2,
+      "[\"possible\", \"options\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "possible options ,",
+      3,
+      3,
+      "[\"possible\", \"options\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "possible options , they",
+      3,
+      4,
+      "[\"possible\", \"options\", \",\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "new client",
+      3,
+      2,
+      "[\"new\", \"client\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "new client who",
+      3,
+      3,
+      "[\"new\", \"client\", \"who\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "new client who is",
+      3,
+      4,
+      "[\"new\", \"client\", \"who\", \"is\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "client who",
+      3,
+      2,
+      "[\"client\", \"who\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "client who is",
+      3,
+      3,
+      "[\"client\", \"who\", \"is\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "client who is requesting",
+      3,
+      4,
+      "[\"client\", \"who\", \"is\", \"requesting\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "who is",
+      3,
+      2,
+      "[\"who\", \"is\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "who is requesting",
+      3,
+      3,
+      "[\"who\", \"is\", \"requesting\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "who is requesting a",
+      3,
+      4,
+      "[\"who\", \"is\", \"requesting\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "requesting a",
+      3,
+      2,
+      "[\"requesting\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "requesting a physical",
+      3,
+      3,
+      "[\"requesting\", \"a\", \"physical\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "requesting a physical security",
+      3,
+      4,
+      "[\"requesting\", \"a\", \"physical\", \"security\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "physical Security",
+      1,
+      2,
+      "[\"physical\", \"Security\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "physical Security Writeup",
+      1,
+      3,
+      "[\"physical\", \"Security\", \"Writeup\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "physical security",
+      3,
+      2,
+      "[\"physical\", \"security\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "physical security system",
+      3,
+      3,
+      "[\"physical\", \"security\", \"system\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "physical security system .",
+      3,
+      4,
+      "[\"physical\", \"security\", \"system\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "security system",
+      3,
+      2,
+      "[\"security\", \"system\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "security system .",
+      3,
+      3,
+      "[\"security\", \"system\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "security system . can",
+      3,
+      4,
+      "[\"security\", \"system\", \".\", \"can\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "system .",
+      3,
+      2,
+      "[\"system\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "system . can",
+      3,
+      3,
+      "[\"system\", \".\", \"can\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "system . can you",
+      3,
+      4,
+      "[\"system\", \".\", \"can\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "can you",
+      3,
+      2,
+      "[\"can\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "can you please",
+      3,
+      3,
+      "[\"can\", \"you\", \"please\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "can you please do",
+      3,
+      4,
+      "[\"can\", \"you\", \"please\", \"do\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "please do",
+      3,
+      2,
+      "[\"please\", \"do\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "please do some",
+      3,
+      3,
+      "[\"please\", \"do\", \"some\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "please do some research",
+      3,
+      4,
+      "[\"please\", \"do\", \"some\", \"research\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "please let",
+      1,
+      2,
+      "[\"please\", \"let\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "please let me",
+      1,
+      3,
+      "[\"please\", \"let\", \"me\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "please let me know",
+      1,
+      4,
+      "[\"please\", \"let\", \"me\", \"know\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "do some",
+      3,
+      2,
+      "[\"do\", \"some\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "do some research",
+      3,
+      3,
+      "[\"do\", \"some\", \"research\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "do some research into",
+      3,
+      4,
+      "[\"do\", \"some\", \"research\", \"into\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "do that",
+      1,
+      2,
+      "[\"do\", \"that\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "do that now",
+      1,
+      3,
+      "[\"do\", \"that\", \"now\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "do that now !",
+      1,
+      4,
+      "[\"do\", \"that\", \"now\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "some possible",
+      3,
+      2,
+      "[\"some\", \"possible\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "some possible options",
+      3,
+      3,
+      "[\"some\", \"possible\", \"options\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "some possible options ,",
+      3,
+      4,
+      "[\"some\", \"possible\", \"options\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "some research",
+      3,
+      2,
+      "[\"some\", \"research\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "some research into",
+      3,
+      3,
+      "[\"some\", \"research\", \"into\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "some research into some",
+      3,
+      4,
+      "[\"some\", \"research\", \"into\", \"some\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "some different",
+      1,
+      2,
+      "[\"some\", \"different\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "some different products",
+      1,
+      3,
+      "[\"some\", \"different\", \"products\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "some different products and",
+      1,
+      4,
+      "[\"some\", \"different\", \"products\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "research into",
+      3,
+      2,
+      "[\"research\", \"into\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "research into some",
+      3,
+      3,
+      "[\"research\", \"into\", \"some\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "research into some possible",
+      3,
+      4,
+      "[\"research\", \"into\", \"some\", \"possible\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "into some",
+      3,
+      2,
+      "[\"into\", \"some\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "into some possible",
+      3,
+      3,
+      "[\"into\", \"some\", \"possible\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "into some possible options",
+      3,
+      4,
+      "[\"into\", \"some\", \"possible\", \"options\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "options ,",
+      3,
+      2,
+      "[\"options\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "options , they",
+      3,
+      3,
+      "[\"options\", \",\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "options , they were",
+      3,
+      4,
+      "[\"options\", \",\", \"they\", \"were\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they were",
+      3,
+      2,
+      "[\"they\", \"were\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they were thinking",
+      3,
+      3,
+      "[\"they\", \"were\", \"thinking\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they were thinking CCTV's",
+      3,
+      4,
+      "[\"they\", \"were\", \"thinking\", \"CCTV's\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they are",
+      2,
+      2,
+      "[\"they\", \"are\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they are looking",
+      1,
+      3,
+      "[\"they\", \"are\", \"looking\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they are looking for",
+      1,
+      4,
+      "[\"they\", \"are\", \"looking\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they didn't",
+      1,
+      2,
+      "[\"they\", \"didn't\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they didn't specify",
+      1,
+      3,
+      "[\"they\", \"didn't\", \"specify\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they didn't specify if",
+      1,
+      4,
+      "[\"they\", \"didn't\", \"specify\", \"if\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they needed",
+      1,
+      2,
+      "[\"they\", \"needed\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they needed color",
+      1,
+      3,
+      "[\"they\", \"needed\", \"color\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they needed color .",
+      1,
+      4,
+      "[\"they\", \"needed\", \"color\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they aren't",
+      1,
+      2,
+      "[\"they\", \"aren't\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they aren't looking",
+      1,
+      3,
+      "[\"they\", \"aren't\", \"looking\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "they aren't looking for",
+      1,
+      4,
+      "[\"they\", \"aren't\", \"looking\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "were thinking",
+      3,
+      2,
+      "[\"were\", \"thinking\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "were thinking CCTV's",
+      3,
+      3,
+      "[\"were\", \"thinking\", \"CCTV's\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "were thinking CCTV's ,",
+      3,
+      4,
+      "[\"were\", \"thinking\", \"CCTV's\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thinking CCTV's",
+      3,
+      2,
+      "[\"thinking\", \"CCTV's\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thinking CCTV's ,",
+      3,
+      3,
+      "[\"thinking\", \"CCTV's\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thinking CCTV's , ID",
+      3,
+      4,
+      "[\"thinking\", \"CCTV's\", \",\", \"ID\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "CCTV's ,",
+      3,
+      2,
+      "[\"CCTV's\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "CCTV's , ID",
+      3,
+      3,
+      "[\"CCTV's\", \",\", \"ID\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "CCTV's , ID scanners",
+      3,
+      4,
+      "[\"CCTV's\", \",\", \"ID\", \"scanners\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ID scanners",
+      3,
+      2,
+      "[\"ID\", \"scanners\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ID scanners ,",
+      3,
+      3,
+      "[\"ID\", \"scanners\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ID scanners , etc",
+      3,
+      4,
+      "[\"ID\", \"scanners\", \",\", \"etc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ID SCANNER",
+      2,
+      2,
+      "[\"ID\", \"SCANNER\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ID SCANNER ALARM",
+      2,
+      3,
+      "[\"ID\", \"SCANNER\", \"ALARM\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ID SCANNER ALARM SYSTEM",
+      1,
+      4,
+      "[\"ID\", \"SCANNER\", \"ALARM\", \"SYSTEM\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "scanners ,",
+      3,
+      2,
+      "[\"scanners\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "scanners , etc",
+      3,
+      3,
+      "[\"scanners\", \",\", \"etc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "scanners , etc .",
+      3,
+      4,
+      "[\"scanners\", \",\", \"etc\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "etc .",
+      3,
+      2,
+      "[\"etc\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "etc . for",
+      2,
+      3,
+      "[\"etc\", \".\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "etc . for the",
+      2,
+      4,
+      "[\"etc\", \".\", \"for\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the doc",
+      3,
+      2,
+      "[\"the\", \"doc\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the doc just",
+      2,
+      3,
+      "[\"the\", \"doc\", \"just\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the doc just include",
+      2,
+      4,
+      "[\"the\", \"doc\", \"just\", \"include\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the doc looks",
+      1,
+      3,
+      "[\"the\", \"doc\", \"looks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the doc looks great",
+      1,
+      4,
+      "[\"the\", \"doc\", \"looks\", \"great\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the ones",
+      1,
+      2,
+      "[\"the\", \"ones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the ones with",
+      1,
+      3,
+      "[\"the\", \"ones\", \"with\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the ones with color",
+      1,
+      4,
+      "[\"the\", \"ones\", \"with\", \"color\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the cheaper",
+      2,
+      2,
+      "[\"the\", \"cheaper\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the cheaper color",
+      1,
+      3,
+      "[\"the\", \"cheaper\", \"color\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the cheaper color ones",
+      1,
+      4,
+      "[\"the\", \"cheaper\", \"color\", \"ones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the cheaper night",
+      1,
+      3,
+      "[\"the\", \"cheaper\", \"night\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the cheaper night vision",
+      1,
+      4,
+      "[\"the\", \"cheaper\", \"night\", \"vision\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the trip",
+      1,
+      2,
+      "[\"the\", \"trip\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the trip !",
+      1,
+      3,
+      "[\"the\", \"trip\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "the trip ! can't",
+      1,
+      4,
+      "[\"the\", \"trip\", \"!\", \"can't\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "doc just",
+      2,
+      2,
+      "[\"doc\", \"just\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "doc just include",
+      2,
+      3,
+      "[\"doc\", \"just\", \"include\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "doc just include some",
+      1,
+      4,
+      "[\"doc\", \"just\", \"include\", \"some\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "doc just include somed",
+      1,
+      4,
+      "[\"doc\", \"just\", \"include\", \"somed\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "doc looks",
+      1,
+      2,
+      "[\"doc\", \"looks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "doc looks great",
+      1,
+      3,
+      "[\"doc\", \"looks\", \"great\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "doc looks great ,",
+      1,
+      4,
+      "[\"doc\", \"looks\", \"great\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "include some",
+      1,
+      2,
+      "[\"include\", \"some\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "include some different",
+      1,
+      3,
+      "[\"include\", \"some\", \"different\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "include some different products",
+      1,
+      4,
+      "[\"include\", \"some\", \"different\", \"products\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "include the",
+      1,
+      2,
+      "[\"include\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "include the cheaper",
+      1,
+      3,
+      "[\"include\", \"the\", \"cheaper\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "include the cheaper night",
+      1,
+      4,
+      "[\"include\", \"the\", \"cheaper\", \"night\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "include somed",
+      1,
+      2,
+      "[\"include\", \"somed\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "different products",
+      1,
+      2,
+      "[\"different\", \"products\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "different products and",
+      1,
+      3,
+      "[\"different\", \"products\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "different products and their",
+      1,
+      4,
+      "[\"different\", \"products\", \"and\", \"their\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "products and",
+      1,
+      2,
+      "[\"products\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "products and their",
+      1,
+      3,
+      "[\"products\", \"and\", \"their\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and their",
+      1,
+      2,
+      "[\"and\", \"their\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and if",
+      1,
+      2,
+      "[\"and\", \"if\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and if you",
+      1,
+      3,
+      "[\"and\", \"if\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and if you have",
+      1,
+      4,
+      "[\"and\", \"if\", \"you\", \"have\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and let",
+      1,
+      2,
+      "[\"and\", \"let\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and let you",
+      1,
+      3,
+      "[\"and\", \"let\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and let you know",
+      1,
+      4,
+      "[\"and\", \"let\", \"you\", \"know\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and white",
+      1,
+      2,
+      "[\"and\", \"white\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and white ?",
+      1,
+      3,
+      "[\"and\", \"white\", \"?\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and that's",
+      1,
+      2,
+      "[\"and\", \"that's\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and that's perfect",
+      1,
+      3,
+      "[\"and\", \"that's\", \"perfect\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "and that's perfect !",
+      1,
+      4,
+      "[\"and\", \"that's\", \"perfect\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "CCTV ID",
+      2,
+      2,
+      "[\"CCTV\", \"ID\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "CCTV ID SCANNER",
+      2,
+      3,
+      "[\"CCTV\", \"ID\", \"SCANNER\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "CCTV ID SCANNER ALARM",
+      2,
+      4,
+      "[\"CCTV\", \"ID\", \"SCANNER\", \"ALARM\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "SCANNER ALARM",
+      2,
+      2,
+      "[\"SCANNER\", \"ALARM\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "SCANNER ALARM SYSTEM",
+      1,
+      3,
+      "[\"SCANNER\", \"ALARM\", \"SYSTEM\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ALARM SYSTEM",
+      1,
+      2,
+      "[\"ALARM\", \"SYSTEM\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "happy to",
+      1,
+      2,
+      "[\"happy\", \"to\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "happy to have",
+      1,
+      3,
+      "[\"happy\", \"to\", \"have\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "happy to have you",
+      1,
+      4,
+      "[\"happy\", \"to\", \"have\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "to just",
+      1,
+      2,
+      "[\"to\", \"just\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "to just black",
+      1,
+      3,
+      "[\"to\", \"just\", \"black\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "to just black and",
+      1,
+      4,
+      "[\"to\", \"just\", \"black\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "to have",
+      1,
+      2,
+      "[\"to\", \"have\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "to have you",
+      1,
+      3,
+      "[\"to\", \"have\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "to have you !",
+      1,
+      4,
+      "[\"to\", \"have\", \"you\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "to hear",
+      1,
+      2,
+      "[\"to\", \"hear\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "to hear about",
+      1,
+      3,
+      "[\"to\", \"hear\", \"about\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "to hear about it",
+      1,
+      4,
+      "[\"to\", \"hear\", \"about\", \"it\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "have you",
+      1,
+      2,
+      "[\"have\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "have you !",
+      1,
+      3,
+      "[\"have\", \"you\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "have you ! thanks",
+      1,
+      4,
+      "[\"have\", \"you\", \"!\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "have any",
+      1,
+      2,
+      "[\"have\", \"any\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "have any questions",
+      1,
+      3,
+      "[\"have\", \"any\", \"questions\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "have any questions please",
+      1,
+      4,
+      "[\"have\", \"any\", \"questions\", \"please\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thanks for",
+      2,
+      2,
+      "[\"thanks\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thanks for adding",
+      1,
+      3,
+      "[\"thanks\", \"for\", \"adding\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thanks for adding those",
+      1,
+      4,
+      "[\"thanks\", \"for\", \"adding\", \"those\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thanks for your",
+      1,
+      3,
+      "[\"thanks\", \"for\", \"your\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thanks for your help",
+      1,
+      4,
+      "[\"thanks\", \"for\", \"your\", \"help\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thanks so",
+      1,
+      2,
+      "[\"thanks\", \"so\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thanks so much",
+      1,
+      3,
+      "[\"thanks\", \"so\", \"much\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "thanks so much and",
+      1,
+      4,
+      "[\"thanks\", \"so\", \"much\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "so much",
+      1,
+      2,
+      "[\"so\", \"much\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "so much and",
+      1,
+      3,
+      "[\"so\", \"much\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "so much and if",
+      1,
+      4,
+      "[\"so\", \"much\", \"and\", \"if\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "much and",
+      1,
+      2,
+      "[\"much\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "much and if",
+      1,
+      3,
+      "[\"much\", \"and\", \"if\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "much and if you",
+      1,
+      4,
+      "[\"much\", \"and\", \"if\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "much more",
+      1,
+      2,
+      "[\"much\", \"more\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "much more are",
+      1,
+      3,
+      "[\"much\", \"more\", \"are\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "much more are the",
+      1,
+      4,
+      "[\"much\", \"more\", \"are\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "if you",
+      1,
+      2,
+      "[\"if\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "if you have",
+      1,
+      3,
+      "[\"if\", \"you\", \"have\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "if you have any",
+      1,
+      4,
+      "[\"if\", \"you\", \"have\", \"any\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "if they",
+      1,
+      2,
+      "[\"if\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "if they needed",
+      1,
+      3,
+      "[\"if\", \"they\", \"needed\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "if they needed color",
+      1,
+      4,
+      "[\"if\", \"they\", \"needed\", \"color\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "any questions",
+      1,
+      2,
+      "[\"any\", \"questions\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "any questions please",
+      1,
+      3,
+      "[\"any\", \"questions\", \"please\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "any questions please let",
+      1,
+      4,
+      "[\"any\", \"questions\", \"please\", \"let\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "questions please",
+      1,
+      2,
+      "[\"questions\", \"please\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "questions please let",
+      1,
+      3,
+      "[\"questions\", \"please\", \"let\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "questions please let me",
+      1,
+      4,
+      "[\"questions\", \"please\", \"let\", \"me\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "let me",
+      1,
+      2,
+      "[\"let\", \"me\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "let me know",
+      1,
+      3,
+      "[\"let\", \"me\", \"know\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "let you",
+      1,
+      2,
+      "[\"let\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "let you know",
+      1,
+      3,
+      "[\"let\", \"you\", \"know\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "are the",
+      1,
+      2,
+      "[\"are\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "are the ones",
+      1,
+      3,
+      "[\"are\", \"the\", \"ones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "are the ones with",
+      1,
+      4,
+      "[\"are\", \"the\", \"ones\", \"with\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "are looking",
+      1,
+      2,
+      "[\"are\", \"looking\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "are looking for",
+      1,
+      3,
+      "[\"are\", \"looking\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "are looking for indoor",
+      1,
+      4,
+      "[\"are\", \"looking\", \"for\", \"indoor\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "looking for",
+      2,
+      2,
+      "[\"looking\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "looking for indoor",
+      1,
+      3,
+      "[\"looking\", \"for\", \"indoor\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "looking for indoor ones",
+      1,
+      4,
+      "[\"looking\", \"for\", \"indoor\", \"ones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "looking for anything",
+      1,
+      3,
+      "[\"looking\", \"for\", \"anything\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "looking for anything too",
+      1,
+      4,
+      "[\"looking\", \"for\", \"anything\", \"too\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "indoor ones",
+      1,
+      2,
+      "[\"indoor\", \"ones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "indoor ones ,",
+      1,
+      3,
+      "[\"indoor\", \"ones\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "indoor ones , with",
+      1,
+      4,
+      "[\"indoor\", \"ones\", \",\", \"with\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ones ,",
+      1,
+      2,
+      "[\"ones\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ones , with",
+      1,
+      3,
+      "[\"ones\", \",\", \"with\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ones , with a",
+      1,
+      4,
+      "[\"ones\", \",\", \"with\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ones with",
+      1,
+      2,
+      "[\"ones\", \"with\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ones with color",
+      1,
+      3,
+      "[\"ones\", \"with\", \"color\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ones with color compared",
+      1,
+      4,
+      "[\"ones\", \"with\", \"color\", \"compared\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ones .",
+      1,
+      2,
+      "[\"ones\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ones . they",
+      1,
+      3,
+      "[\"ones\", \".\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "ones . they aren't",
+      1,
+      4,
+      "[\"ones\", \".\", \"they\", \"aren't\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "microphone ,",
+      1,
+      2,
+      "[\"microphone\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "microphone , they",
+      1,
+      3,
+      "[\"microphone\", \",\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "microphone , they didn't",
+      1,
+      4,
+      "[\"microphone\", \",\", \"they\", \"didn't\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "didn't specify",
+      1,
+      2,
+      "[\"didn't\", \"specify\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "didn't specify if",
+      1,
+      3,
+      "[\"didn't\", \"specify\", \"if\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "didn't specify if they",
+      1,
+      4,
+      "[\"didn't\", \"specify\", \"if\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "specify if",
+      1,
+      2,
+      "[\"specify\", \"if\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "specify if they",
+      1,
+      3,
+      "[\"specify\", \"if\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "specify if they needed",
+      1,
+      4,
+      "[\"specify\", \"if\", \"they\", \"needed\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "needed color",
+      1,
+      2,
+      "[\"needed\", \"color\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "needed color .",
+      1,
+      3,
+      "[\"needed\", \"color\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "needed color . how",
+      1,
+      4,
+      "[\"needed\", \"color\", \".\", \"how\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "color .",
+      1,
+      2,
+      "[\"color\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "color . how",
+      1,
+      3,
+      "[\"color\", \".\", \"how\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "color . how much",
+      1,
+      4,
+      "[\"color\", \".\", \"how\", \"much\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "color ones",
+      1,
+      2,
+      "[\"color\", \"ones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "color ones .",
+      1,
+      3,
+      "[\"color\", \"ones\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "color ones . they",
+      1,
+      4,
+      "[\"color\", \"ones\", \".\", \"they\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "color compared",
+      1,
+      2,
+      "[\"color\", \"compared\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "color compared to",
+      1,
+      3,
+      "[\"color\", \"compared\", \"to\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "color compared to just",
+      1,
+      4,
+      "[\"color\", \"compared\", \"to\", \"just\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "how much",
+      1,
+      2,
+      "[\"how\", \"much\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "how much more",
+      1,
+      3,
+      "[\"how\", \"much\", \"more\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "how much more are",
+      1,
+      4,
+      "[\"how\", \"much\", \"more\", \"are\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "how about",
+      1,
+      2,
+      "[\"how\", \"about\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "how about you",
+      1,
+      3,
+      "[\"how\", \"about\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "how about you include",
+      1,
+      4,
+      "[\"how\", \"about\", \"you\", \"include\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "more are",
+      1,
+      2,
+      "[\"more\", \"are\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "more are the",
+      1,
+      3,
+      "[\"more\", \"are\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "more are the ones",
+      1,
+      4,
+      "[\"more\", \"are\", \"the\", \"ones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "compared to",
+      1,
+      2,
+      "[\"compared\", \"to\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "compared to just",
+      1,
+      3,
+      "[\"compared\", \"to\", \"just\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "compared to just black",
+      1,
+      4,
+      "[\"compared\", \"to\", \"just\", \"black\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "black and",
+      1,
+      2,
+      "[\"black\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "black and white",
+      1,
+      3,
+      "[\"black\", \"and\", \"white\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "black and white ?",
+      1,
+      4,
+      "[\"black\", \"and\", \"white\", \"?\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "white ?",
+      1,
+      2,
+      "[\"white\", \"?\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "OK how",
+      1,
+      2,
+      "[\"OK\", \"how\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "OK how about",
+      1,
+      3,
+      "[\"OK\", \"how\", \"about\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "OK how about you",
+      1,
+      4,
+      "[\"OK\", \"how\", \"about\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "about you",
+      1,
+      2,
+      "[\"about\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "about you include",
+      1,
+      3,
+      "[\"about\", \"you\", \"include\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "about you include the",
+      1,
+      4,
+      "[\"about\", \"you\", \"include\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "about it",
+      1,
+      2,
+      "[\"about\", \"it\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "about it .",
+      1,
+      3,
+      "[\"about\", \"it\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "cheaper color",
+      1,
+      2,
+      "[\"cheaper\", \"color\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "cheaper color ones",
+      1,
+      3,
+      "[\"cheaper\", \"color\", \"ones\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "cheaper color ones .",
+      1,
+      4,
+      "[\"cheaper\", \"color\", \"ones\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "cheaper night",
+      1,
+      2,
+      "[\"cheaper\", \"night\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "cheaper night vision",
+      1,
+      3,
+      "[\"cheaper\", \"night\", \"vision\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "cheaper night vision one",
+      1,
+      4,
+      "[\"cheaper\", \"night\", \"vision\", \"one\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "night vision",
+      1,
+      2,
+      "[\"night\", \"vision\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "night vision one",
+      1,
+      3,
+      "[\"night\", \"vision\", \"one\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "night vision one as",
+      1,
+      4,
+      "[\"night\", \"vision\", \"one\", \"as\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "vision one",
+      1,
+      2,
+      "[\"vision\", \"one\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "vision one as",
+      1,
+      3,
+      "[\"vision\", \"one\", \"as\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "vision one as well",
+      1,
+      4,
+      "[\"vision\", \"one\", \"as\", \"well\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "one as",
+      1,
+      2,
+      "[\"one\", \"as\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "one as well",
+      1,
+      3,
+      "[\"one\", \"as\", \"well\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "one as well as",
+      1,
+      4,
+      "[\"one\", \"as\", \"well\", \"as\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "one of",
+      1,
+      2,
+      "[\"one\", \"of\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "one of the",
+      1,
+      3,
+      "[\"one\", \"of\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "one of the cheaper",
+      1,
+      4,
+      "[\"one\", \"of\", \"the\", \"cheaper\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "as one",
+      1,
+      2,
+      "[\"as\", \"one\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "as one of",
+      1,
+      3,
+      "[\"as\", \"one\", \"of\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "as one of the",
+      1,
+      4,
+      "[\"as\", \"one\", \"of\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "as well",
+      1,
+      2,
+      "[\"as\", \"well\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "as well as",
+      1,
+      3,
+      "[\"as\", \"well\", \"as\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "as well as one",
+      1,
+      4,
+      "[\"as\", \"well\", \"as\", \"one\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "well as",
+      1,
+      2,
+      "[\"well\", \"as\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "well as one",
+      1,
+      3,
+      "[\"well\", \"as\", \"one\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "well as one of",
+      1,
+      4,
+      "[\"well\", \"as\", \"one\", \"of\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "of the",
+      1,
+      2,
+      "[\"of\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "of the cheaper",
+      1,
+      3,
+      "[\"of\", \"the\", \"cheaper\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "of the cheaper color",
+      1,
+      4,
+      "[\"of\", \"the\", \"cheaper\", \"color\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "aren't looking",
+      1,
+      2,
+      "[\"aren't\", \"looking\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "aren't looking for",
+      1,
+      3,
+      "[\"aren't\", \"looking\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "aren't looking for anything",
+      1,
+      4,
+      "[\"aren't\", \"looking\", \"for\", \"anything\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "anything too",
+      1,
+      2,
+      "[\"anything\", \"too\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "anything too fancy",
+      1,
+      3,
+      "[\"anything\", \"too\", \"fancy\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "too fancy",
+      1,
+      2,
+      "[\"too\", \"fancy\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "adding those",
+      1,
+      2,
+      "[\"adding\", \"those\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "adding those I",
+      1,
+      3,
+      "[\"adding\", \"those\", \"I\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "adding those I will",
+      1,
+      4,
+      "[\"adding\", \"those\", \"I\", \"will\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "those I",
+      1,
+      2,
+      "[\"those\", \"I\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "those I will",
+      1,
+      3,
+      "[\"those\", \"I\", \"will\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "those I will take",
+      1,
+      4,
+      "[\"those\", \"I\", \"will\", \"take\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "will take",
+      1,
+      2,
+      "[\"will\", \"take\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "will take a",
+      1,
+      3,
+      "[\"will\", \"take\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "will take a look",
+      1,
+      4,
+      "[\"will\", \"take\", \"a\", \"look\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "take a",
+      2,
+      2,
+      "[\"take\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "take a look",
+      2,
+      3,
+      "[\"take\", \"a\", \"look\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "take a look tomorrow",
+      1,
+      4,
+      "[\"take\", \"a\", \"look\", \"tomorrow\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "take a look now",
+      1,
+      4,
+      "[\"take\", \"a\", \"look\", \"now\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "look and",
+      1,
+      2,
+      "[\"look\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "look and that's",
+      1,
+      3,
+      "[\"look\", \"and\", \"that's\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "look and that's perfect",
+      1,
+      4,
+      "[\"look\", \"and\", \"that's\", \"perfect\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "look tomorrow",
+      1,
+      2,
+      "[\"look\", \"tomorrow\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "look tomorrow and",
+      1,
+      3,
+      "[\"look\", \"tomorrow\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "look tomorrow and let",
+      1,
+      4,
+      "[\"look\", \"tomorrow\", \"and\", \"let\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "look now",
+      1,
+      2,
+      "[\"look\", \"now\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "tomorrow and",
+      1,
+      2,
+      "[\"tomorrow\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "tomorrow and let",
+      1,
+      3,
+      "[\"tomorrow\", \"and\", \"let\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "tomorrow and let you",
+      1,
+      4,
+      "[\"tomorrow\", \"and\", \"let\", \"you\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "took a",
+      1,
+      2,
+      "[\"took\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "took a look",
+      1,
+      3,
+      "[\"took\", \"a\", \"look\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "took a look and",
+      1,
+      4,
+      "[\"took\", \"a\", \"look\", \"and\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "that's perfect",
+      1,
+      2,
+      "[\"that's\", \"perfect\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "that's perfect !",
+      1,
+      3,
+      "[\"that's\", \"perfect\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "perfect !",
+      1,
+      2,
+      "[\"perfect\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "sounds good",
+      1,
+      2,
+      "[\"sounds\", \"good\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "sounds good thanks",
+      1,
+      3,
+      "[\"sounds\", \"good\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "good thanks",
+      1,
+      2,
+      "[\"good\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Great I'll",
+      1,
+      2,
+      "[\"Great\", \"I'll\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Great I'll take",
+      1,
+      3,
+      "[\"Great\", \"I'll\", \"take\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Great I'll take a",
+      1,
+      4,
+      "[\"Great\", \"I'll\", \"take\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I'll do",
+      1,
+      2,
+      "[\"I'll\", \"do\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I'll do that",
+      1,
+      3,
+      "[\"I'll\", \"do\", \"that\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I'll do that now",
+      1,
+      4,
+      "[\"I'll\", \"do\", \"that\", \"now\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I'll take",
+      1,
+      2,
+      "[\"I'll\", \"take\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I'll take a",
+      1,
+      3,
+      "[\"I'll\", \"take\", \"a\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "I'll take a look",
+      1,
+      4,
+      "[\"I'll\", \"take\", \"a\", \"look\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "now !",
+      1,
+      2,
+      "[\"now\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "looks great",
+      1,
+      2,
+      "[\"looks\", \"great\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "looks great ,",
+      1,
+      3,
+      "[\"looks\", \"great\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "looks great , thanks",
+      1,
+      4,
+      "[\"looks\", \"great\", \",\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "great ,",
+      1,
+      2,
+      "[\"great\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "great , thanks",
+      1,
+      3,
+      "[\"great\", \",\", \"thanks\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "great , thanks for",
+      1,
+      4,
+      "[\"great\", \",\", \"thanks\", \"for\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "your help",
+      1,
+      2,
+      "[\"your\", \"help\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "hey Calum",
+      1,
+      2,
+      "[\"hey\", \"Calum\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "hey Calum ,",
+      1,
+      3,
+      "[\"hey\", \"Calum\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "hey Calum , I'll",
+      1,
+      4,
+      "[\"hey\", \"Calum\", \",\", \"I'll\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Calum ,",
+      1,
+      2,
+      "[\"Calum\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Calum , I'll",
+      1,
+      3,
+      "[\"Calum\", \",\", \"I'll\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "Calum , I'll do",
+      1,
+      4,
+      "[\"Calum\", \",\", \"I'll\", \"do\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "that now",
+      1,
+      2,
+      "[\"that\", \"now\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "that now !",
+      1,
+      3,
+      "[\"that\", \"now\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "am all",
+      1,
+      2,
+      "[\"am\", \"all\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "am all set",
+      1,
+      3,
+      "[\"am\", \"all\", \"set\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "am all set ,",
+      1,
+      4,
+      "[\"am\", \"all\", \"set\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "all set",
+      1,
+      2,
+      "[\"all\", \"set\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "all set ,",
+      1,
+      3,
+      "[\"all\", \"set\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "all set , enjoy",
+      1,
+      4,
+      "[\"all\", \"set\", \",\", \"enjoy\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "set ,",
+      1,
+      2,
+      "[\"set\", \",\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "set , enjoy",
+      1,
+      3,
+      "[\"set\", \",\", \"enjoy\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "set , enjoy the",
+      1,
+      4,
+      "[\"set\", \",\", \"enjoy\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "enjoy the",
+      1,
+      2,
+      "[\"enjoy\", \"the\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "enjoy the trip",
+      1,
+      3,
+      "[\"enjoy\", \"the\", \"trip\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "enjoy the trip !",
+      1,
+      4,
+      "[\"enjoy\", \"the\", \"trip\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "trip !",
+      1,
+      2,
+      "[\"trip\", \"!\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "trip ! can't",
+      1,
+      3,
+      "[\"trip\", \"!\", \"can't\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "trip ! can't wait",
+      1,
+      4,
+      "[\"trip\", \"!\", \"can't\", \"wait\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "can't wait",
+      1,
+      2,
+      "[\"can't\", \"wait\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "can't wait to",
+      1,
+      3,
+      "[\"can't\", \"wait\", \"to\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "can't wait to hear",
+      1,
+      4,
+      "[\"can't\", \"wait\", \"to\", \"hear\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "wait to",
+      1,
+      2,
+      "[\"wait\", \"to\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "wait to hear",
+      1,
+      3,
+      "[\"wait\", \"to\", \"hear\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "wait to hear about",
+      1,
+      4,
+      "[\"wait\", \"to\", \"hear\", \"about\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "hear about",
+      1,
+      2,
+      "[\"hear\", \"about\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "hear about it",
+      1,
+      3,
+      "[\"hear\", \"about\", \"it\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ],
+    [
+      "hear about it .",
+      1,
+      4,
+      "[\"hear\", \"about\", \"it\", \".\"]",
+      "data/data/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm"
+    ]
+  ]
+}

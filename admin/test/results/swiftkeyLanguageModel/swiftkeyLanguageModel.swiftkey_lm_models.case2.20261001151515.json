@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "module_name": "swiftkeyLanguageModel",
+    "artifact_name": "SwiftKey Language Model - Models",
+    "function_name": "swiftkey_lm_models",
+    "case_number": "case2",
+    "number_of_columns": 9,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 106,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/swiftkeyLanguageModel/testdata.swiftkeyLanguageModel.swiftkey_lm_models.case2.zip",
+    "start_time": "2026-10-01T15:15:15.734228+00:00",
+    "end_time": "2026-10-01T15:15:15.776537+00:00",
+    "run_time_seconds": 0.0002548694610595703,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-01T15:15:15.773814",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "File Written",
+    "First Trained",
+    "Last Trained",
+    "Terms",
+    "Term Sequences",
+    "Longest Sequence",
+    "App Term Lists",
+    "Backup Same As Live File",
+    "Source File"
+  ],
+  "data": [
+    [
+      1790832183,
+      1790832183,
+      1790832183,
+      17,
+      20,
+      3,
+      0,
+      "",
+      "data/data/com.touchtype.swiftkey/files/language_models/user/dynamic.lm"
+    ]
+  ]
+}
