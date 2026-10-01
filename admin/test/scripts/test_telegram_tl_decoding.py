@@ -75,6 +75,61 @@ def text_message(text, date=1700000000, peer=555, mid=7, with_flags2=False):
     return head + i32(mid) + peer_user(peer) + i32(date) + tl_string(text)
 
 
+def ranked_message(constructor, text, rank=None, guest=None,
+                   date=1700000000, sender=111, peer=555, mid=9):
+    """A TL_message with from_id, and optionally from_rank and guestchat_via_from.
+
+    Field order from TLRPC.java (TL_message) and TL_legacy_message.java
+    (TL_message_layer224, TL_message_layer226): from_rank follows from_id under
+    flags2 bit 12, guestchat_via_from follows peer_id under flags2 bit 19.
+    """
+    flags2 = (1 << 12 if rank is not None else 0) | (1 << 19 if guest is not None else 0)
+    blob = u32(constructor) + u32(1 << 8) + u32(flags2) + i32(mid) + peer_user(sender)
+    if rank is not None:
+        blob += tl_string(rank)
+    blob += peer_user(peer)
+    if guest is not None:
+        blob += peer_user(guest)
+    return blob + i32(date) + tl_string(text)
+
+
+class TelegramSenderRankTest(unittest.TestCase):
+    """from_rank and guestchat_via_from sit ahead of the text on three constructors."""
+
+    def _assert_structural(self, blob, text):
+        decoded = _decode_message_blob(blob, 1700000000)
+        self.assertTrue(decoded.get('structural'), decoded)
+        self.assertEqual(decoded['text'], text)
+        self.assertEqual(decoded['sender'], 111)
+
+    def test_current_constructor_is_recognised(self):
+        self._assert_structural(ranked_message(0x7600B9D3, 'plain'), 'plain')
+
+    def test_from_rank_is_stepped_over(self):
+        for constructor in (0x3AE56482, 0x95EF6F2B, 0x7600B9D3):
+            with self.subTest(constructor=hex(constructor)):
+                self._assert_structural(
+                    ranked_message(constructor, 'ranked', rank='Moderator'), 'ranked')
+
+    def test_guestchat_via_from_is_stepped_over(self):
+        for constructor in (0x95EF6F2B, 0x7600B9D3):
+            with self.subTest(constructor=hex(constructor)):
+                self._assert_structural(
+                    ranked_message(constructor, 'guest', guest=777), 'guest')
+
+    def test_both_fields_together(self):
+        for constructor in (0x95EF6F2B, 0x7600B9D3):
+            with self.subTest(constructor=hex(constructor)):
+                self._assert_structural(
+                    ranked_message(constructor, 'both', rank='Moderator', guest=777), 'both')
+
+    def test_older_constructor_does_not_read_a_rank(self):
+        # TL_message_layer222 has no from_rank; bit 12 set there must not eat a string.
+        blob = (u32(0x9CB490E9) + u32(1 << 8) + u32(1 << 12) + i32(9) + peer_user(111)
+                + peer_user(555) + i32(1700000000) + tl_string('older'))
+        self._assert_structural(blob, 'older')
+
+
 class TelegramTextMessageTest(unittest.TestCase):
 
     def test_plain_message(self):
