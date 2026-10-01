@@ -15,13 +15,18 @@ structures that real images do contain, which is done separately.
 """
 
 import os
+import sqlite3
 import struct
 import sys
+import tempfile
 import unittest
+from unittest import mock
 
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', '..', '..')))
 
+from scripts.context import Context  # noqa: E402
+from scripts.artifacts import telegramAndroid  # noqa: E402
 from scripts.artifacts.telegramAndroid import _decode_message_blob  # noqa: E402
 
 PEER_USER = 0x59511722
@@ -128,6 +133,214 @@ class TelegramSenderRankTest(unittest.TestCase):
         blob = (u32(0x9CB490E9) + u32(1 << 8) + u32(1 << 12) + i32(9) + peer_user(111)
                 + peer_user(555) + i32(1700000000) + tl_string('older'))
         self._assert_structural(blob, 'older')
+
+
+DATE = 1700000000
+
+
+class TelegramOlderLayoutTest(unittest.TestCase):
+    """Field widths and shapes that differ on the older message constructors.
+
+    Field order and types from TL_legacy_message.java (TL_message_layer118,
+    TL_message_layer123, TL_message_layer131, TL_message_layer175 and
+    TL_message_layer176) and from Message.TLdeserialize in TLRPC.java. No
+    extraction available here holds a message stored under any of them, so
+    these layouts are encoded here rather than read from an image.
+    """
+
+    def _assert_structural(self, blob, text, sender=None):
+        decoded = _decode_message_blob(blob, DATE)
+        self.assertTrue(decoded.get('structural'), decoded)
+        self.assertEqual(decoded['text'], text)
+        self.assertEqual(decoded['sender'], sender)
+        return decoded
+
+    def test_via_bot_id_is_an_int32_on_layers_131_123_and_118(self):
+        for constructor in (0xBCE383D2, 0x58AE39C9, 0xF52E6B7F):
+            with self.subTest(constructor=hex(constructor)):
+                blob = (u32(constructor) + u32(1 << 11) + i32(7) + peer_user_legacy(555)
+                        + i32(424242) + i32(DATE) + tl_string('via a bot'))
+                self._assert_structural(blob, 'via a bot')
+
+    def test_via_bot_id_stays_an_int64_from_layer_135(self):
+        blob = (u32(0x85D6CBE2) + u32(1 << 11) + i32(7) + peer_user(555)
+                + i64(424242) + i32(DATE) + tl_string('newer bot'))
+        self._assert_structural(blob, 'newer bot')
+
+    def test_layer_118_from_id_is_a_bare_user_id(self):
+        blob = (u32(0xF52E6B7F) + u32(1 << 8) + i32(7) + i32(31337)
+                + peer_user_legacy(555) + i32(DATE) + tl_string('bare sender'))
+        self._assert_structural(blob, 'bare sender', sender=31337)
+
+    def test_layer_118_reply_to_is_a_bare_message_id(self):
+        blob = (u32(0xF52E6B7F) + u32(1 << 3) + i32(7) + peer_user_legacy(555)
+                + i32(6) + i32(DATE) + tl_string('bare reply'))
+        decoded = self._assert_structural(blob, 'bare reply')
+        self.assertTrue(decoded['reply'])
+
+    def test_layer_118_with_sender_bot_and_reply_together(self):
+        flags = (1 << 8) | (1 << 11) | (1 << 3)
+        blob = (u32(0xF52E6B7F) + u32(flags) + i32(7) + i32(31337)
+                + peer_user_legacy(555) + i32(424242) + i32(6) + i32(DATE)
+                + tl_string('all three'))
+        self._assert_structural(blob, 'all three', sender=31337)
+
+    def test_layer_123_from_id_is_still_a_peer(self):
+        blob = (u32(0x58AE39C9) + u32(1 << 8) + i32(7) + peer_user_legacy(31337)
+                + peer_user_legacy(555) + i32(DATE) + tl_string('peer sender'))
+        self._assert_structural(blob, 'peer sender', sender=31337)
+
+    def test_second_layer_179_constructor_is_recognised(self):
+        # 0xa4e97f37 is read as TL_message_layer179: flags, flags2, id.
+        blob = (u32(0xA4E97F37) + u32(1 << 8) + u32(0) + i32(7) + peer_user(111)
+                + peer_user(555) + i32(DATE) + tl_string('layer 179'))
+        self._assert_structural(blob, 'layer 179', sender=111)
+
+    def test_from_boosts_applied_is_read_on_layers_175_and_176(self):
+        for constructor in (0x1E4C8A69, 0xA66C7EFC):
+            with self.subTest(constructor=hex(constructor)):
+                blob = (u32(constructor) + u32((1 << 8) | (1 << 29)) + i32(7)
+                        + peer_user(111) + i32(3) + peer_user(555) + i32(DATE)
+                        + tl_string('boosted'))
+                self._assert_structural(blob, 'boosted', sender=111)
+
+    def test_saved_peer_id_is_read_from_layer_173_and_not_before(self):
+        # TL_message_layer173 reads saved_peer_id under flags bit 28;
+        # TL_message_layer169 and TL_message_layer135 have no such field.
+        with_field = (u32(0x76BEC211) + u32(1 << 28) + i32(7) + peer_user(555)
+                      + peer_user(999) + i32(DATE) + tl_string('saved'))
+        self._assert_structural(with_field, 'saved')
+        for constructor in (0x38116EE0, 0x85D6CBE2):
+            with self.subTest(constructor=hex(constructor)):
+                blob = (u32(constructor) + u32(1 << 28) + i32(7) + peer_user(555)
+                        + i32(DATE) + tl_string('no saved peer'))
+                self._assert_structural(blob, 'no saved peer')
+
+    def test_layer_173_does_not_read_from_boosts_applied(self):
+        blob = (u32(0x76BEC211) + u32((1 << 8) | (1 << 29)) + i32(7) + peer_user(111)
+                + peer_user(555) + i32(DATE) + tl_string('no boosts'))
+        self._assert_structural(blob, 'no boosts', sender=111)
+
+
+SECRET_DIALOG = 0x4000000000000000 | 5
+FOLDER_DIALOG = 0x2000000000000000 | 1
+GROUP_DIALOG = -1001234
+USER_DIALOG = 555
+
+# A known constructor whose from_id slot holds something that is not a peer.
+BAD_PEER = u32(0x9815CEC8) + u32(1 << 8) + u32(0) + i32(7) + u32(0xDEADBEEF)
+UNWALKABLE_WITH_TEXT = BAD_PEER + i64(1) + i32(DATE) + tl_string('still readable')
+UNWALKABLE_SHORT = u32(0x9815CEC8) + u32(0) + u32(0)        # ends before the id
+UNKNOWN = u32(0xDEADBEEF) + b'\x00' * 16
+
+
+class TelegramMessageRowsTest(unittest.TestCase):
+    """get_telegramMessages over a synthetic cache4.db (no evidence bytes).
+
+    One record that cannot be walked must not cost the table, and a row whose
+    record was not walked must not name a group or channel as its sender.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.data_folder = os.path.join(self.tmp.name, 'report', 'data')
+        Context.set_data_folder(self.data_folder)
+        self.db_path = os.path.join(
+            self.data_folder, 'data/data/org.telegram.messenger/files/cache4.db')
+        os.makedirs(os.path.dirname(self.db_path))
+
+    def tearDown(self):
+        Context.clear()
+        self.tmp.cleanup()
+
+    def _run(self, rows):
+        """rows: (mid, uid, out, blob). Returns ({mid: report row}, log lines)."""
+        con = sqlite3.connect(self.db_path)
+        con.execute('CREATE TABLE messages_v2(mid INTEGER, uid INTEGER, read_state INTEGER, '
+                    'send_state INTEGER, date INTEGER, data BLOB, out INTEGER)')
+        con.execute('CREATE TABLE users(uid INTEGER PRIMARY KEY, name TEXT)')
+        con.execute('CREATE TABLE chats(uid INTEGER PRIMARY KEY, name TEXT)')
+        con.executemany('INSERT INTO messages_v2 VALUES (?, ?, 3, 0, ?, ?, ?)',
+                        [(mid, uid, DATE, blob, out) for mid, uid, out, blob in rows])
+        con.commit()
+        con.close()
+        Context.set_files_found([self.db_path])
+        logged = []
+        with mock.patch.object(telegramAndroid, 'logfunc', logged.append):
+            _headers, data, source = telegramAndroid.get_telegramMessages.__wrapped__(Context)
+        self.assertEqual(source, self.db_path)
+        self.assertEqual(len(data), len(rows))
+        # Columns: 1 dialog id, 4 sender id, 6 message, 9 read state, 10 message id.
+        return {row[10]: row for row in data}, logged
+
+    def test_a_record_that_cannot_be_walked_is_still_reported(self):
+        table, logged = self._run([
+            (1, USER_DIALOG, 0, text_message('before')),
+            (2, USER_DIALOG, 0, UNWALKABLE_WITH_TEXT),
+            (3, GROUP_DIALOG, 0, UNWALKABLE_SHORT),
+            (4, USER_DIALOG, 1, UNWALKABLE_SHORT),
+            (5, USER_DIALOG, 0, text_message('after')),
+        ])
+        self.assertEqual(table[1][6], 'before')
+        self.assertEqual(table[5][6], 'after')
+        # The text is found after the row's own date value.
+        self.assertEqual(table[2][6], 'still readable')
+        self.assertEqual(table[2][4], USER_DIALOG)
+        self.assertEqual(table[3][6], '[Message not decoded]')
+        self.assertEqual(table[3][4], '')
+        self.assertEqual(table[4][6], '[Message not decoded]')
+        self.assertEqual(table[4][4], '')
+        for mid in (2, 3, 4):
+            self.assertEqual((table[mid][1], table[mid][3], table[mid][9]),
+                             (USER_DIALOG if mid != 3 else GROUP_DIALOG,
+                              'Outgoing' if mid == 4 else 'Incoming', 3))
+        # One log line per record that was not walked, and none for the others.
+        self.assertEqual(len(logged), 3, logged)
+        for mid, line in zip((2, 3, 4), logged):
+            self.assertIn(f'message {mid} ', line)
+
+    def test_a_walk_that_ends_on_another_date_says_the_text_was_not_recovered(self):
+        # The record's own date differs from the date column and the column's
+        # value is nowhere in the record, so neither route finds the text.
+        drifted = (u32(0x9815CEC8) + u32(0) + u32(0) + i32(7) + peer_user(USER_DIALOG)
+                   + i32(DATE - 86400) + tl_string('written under another date'))
+        table, logged = self._run([(1, USER_DIALOG, 0, drifted),
+                                   (2, USER_DIALOG, 0, text_message(''))])
+        self.assertEqual(logged, [])
+        self.assertEqual(table[1][6], '[Message text not recovered]')
+        self.assertEqual(table[1][4], USER_DIALOG)
+        # A walked record whose text is empty stays empty.
+        self.assertEqual(table[2][6], '')
+
+    def test_unwalked_row_names_the_dialog_as_sender_only_when_it_is_a_user(self):
+        table, logged = self._run([
+            (1, USER_DIALOG, 0, UNKNOWN),
+            (2, GROUP_DIALOG, 0, UNKNOWN),
+            (3, SECRET_DIALOG, 0, UNKNOWN),
+            (4, FOLDER_DIALOG, 0, UNKNOWN),
+            (5, USER_DIALOG, 1, UNKNOWN),
+        ])
+        self.assertEqual(logged, [])
+        for mid in table:
+            self.assertEqual(table[mid][6], '[Unrecognised message constructor 0xdeadbeef]')
+        self.assertEqual(table[1][4], USER_DIALOG)
+        self.assertEqual(table[2][4], '')
+        self.assertEqual(table[3][4], '')
+        self.assertEqual(table[4][4], '')
+        self.assertEqual(table[5][4], '')
+
+    def test_walked_rows_keep_the_dialog_as_sender(self):
+        # Unchanged behaviour: a walked record with no from_id, and a service
+        # record, report the dialog id on an incoming row whatever the dialog.
+        table, logged = self._run([
+            (1, GROUP_DIALOG, 0, text_message('no from_id')),
+            (2, GROUP_DIALOG, 0, service_message(u32(0x4792929B))),
+            (3, GROUP_DIALOG, 0, ranked_message(0x7600B9D3, 'has from_id')),
+        ])
+        self.assertEqual(logged, [])
+        self.assertEqual(table[1][4], GROUP_DIALOG)
+        self.assertEqual(table[2][4], GROUP_DIALOG)
+        self.assertEqual(table[3][4], 111)
 
 
 class TelegramTextMessageTest(unittest.TestCase):
