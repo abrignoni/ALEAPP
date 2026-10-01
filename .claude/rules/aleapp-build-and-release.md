@@ -113,7 +113,10 @@ executable.
 Windows (x64 and ARM64): the folder build and an Inno Setup installer, which on ARM64
 installs only on ARM64. macOS (Apple silicon and Intel): `.app` and `.dmg`, laid out by
 dmgbuild from `packaging/dmg_settings.py` on `packaging/dmg_background.png` (960x540; the
-settings place the icons either side of its arrow). `dmg_background@2x.png` beside it, at
+settings place the icons either side of its arrow). The background of 2026-10-01 moved the
+arrow 44 points right, to a centre at x=479, and the icons with it, from (260, 290) and
+(610, 290) to (304, 290) and (654, 290); a test finds the arrow and requires the icons to
+straddle it. `dmg_background@2x.png` beside it, at
 exactly 1920x1080, is what a Retina screen shows; dmgbuild joins the two with `tiffutil
 -cathidpicheck`, which refuses a pair that is not exactly 1x and 2x. Export both from the
 source artwork; upscaling the 1x brings the blur back. Linux (x64 and ARM64): the folder
