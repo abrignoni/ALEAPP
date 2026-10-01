@@ -18,7 +18,12 @@ __artifacts_v2__ = {
         "notes": "The data column holds a TL-serialised TLRPC message object. The message "
                  "constructors and their field order are taken from the open-source Telegram "
                  "Android client; constructors from layer 179 onward read a second flags "
-                 "integer before the message id, which this parser accounts for. Forward and "
+                 "integer before the message id, which this parser accounts for. The "
+                 "constructors 0x3ae56482, 0x95ef6f2b and 0x7600b9d3 can carry a sender rank "
+                 "string ahead of the dialog peer, and the last two a further peer ahead of "
+                 "the reply header; both are stepped over. No image listed in sample_data "
+                 "holds a message stored under any of those three constructors, so that "
+                 "handling is exercised by round-trip tests only. Forward and "
                  "reply headers are stepped over field by field using the same source, so "
                  "forwarded messages and replies are decoded structurally. A reply that "
                  "carries inline reply media, quoted entities or a poll option holds a "
@@ -62,7 +67,9 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "6 rows",
             "hc_pixel8pro_a17": "17 | 6 rows",
             "kevin_pocox7_a15": "1609 rows",
+            "pixel3_a12": "76 rows",
             "pixel7a_a14": "34 rows",
+            "russell_a14": "51 rows",
             "russell_pixel6a_a13": "3 rows",
             "sharon_a14": "1 row",
         },
@@ -447,16 +454,20 @@ _PEER_USER_LEGACY = 0x9DB1BC6D
 _PEER_CHAT_LEGACY = 0xBAD0E5BB
 _PEER_CHANNEL_LEGACY = 0xBDDDE532
 
-# message#7600b9d3 (layer 227+): adds from_rank (flags2.12) and
-# guestchat_via_from (flags2.19) to the layer 179+ layout.
-_MSG_LAYER227_PLUS = {0x7600B9D3}
-
-# TL_message constructors that read a second flags integer before the id.
+# TL_message constructors that read a second flags integer before the id:
+# the current TL_message in TLRPC.java (0x7600B9D3, layer 227 on) and
 # TL_legacy_message.java, classes TL_message_layer179 and newer.
 _MSG_WITH_FLAGS2 = {
+    0x7600B9D3,
     0x95EF6F2B, 0x3AE56482, 0x9CB490E9, 0xB92F76CF, 0x9815CEC8,
     0xEABCDD4D, 0x96FDBBE9, 0x94345242, 0xBDE09C2E, 0x2357BF25,
-} | _MSG_LAYER227_PLUS
+}
+# Constructors that write from_rank (flags2 bit 12) after from_boosts_applied:
+# TL_message_layer224, TL_message_layer226 and the current TL_message.
+_MSG_WITH_FROM_RANK = {0x3AE56482, 0x95EF6F2B, 0x7600B9D3}
+# Constructors that write guestchat_via_from (flags2 bit 19) after
+# via_business_bot_id: TL_message_layer226 and the current TL_message.
+_MSG_WITH_GUESTCHAT = {0x95EF6F2B, 0x7600B9D3}
 
 # TL_message constructors without the second flags integer.
 _MSG_NO_FLAGS2 = {
@@ -960,7 +971,7 @@ def _decode_message_blob(blob, date=None):
         sender = reader.read_peer()
     if constructor in _MSG_WITH_FLAGS2 and flags & (1 << 29):
         reader.read_int32()                              # from_boosts_applied
-    if constructor in _MSG_LAYER227_PLUS and flags2 & (1 << 12):
+    if constructor in _MSG_WITH_FROM_RANK and flags2 & (1 << 12):
         reader.read_string()                             # from_rank
     reader.read_peer()                                   # peer_id
     if flags & (1 << 28):
@@ -975,7 +986,7 @@ def _decode_message_blob(blob, date=None):
         reader.read_int64()                              # via_bot_id
     if constructor in _MSG_WITH_FLAGS2 and flags2 & 1:
         reader.read_int64()                              # via_business_bot_id
-    if constructor in _MSG_LAYER227_PLUS and flags2 & (1 << 19):
+    if constructor in _MSG_WITH_GUESTCHAT and flags2 & (1 << 19):
         reader.read_peer()                               # guestchat_via_from
     reply = bool(flags & (1 << 3))
     if reply:
