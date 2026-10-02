@@ -1,0 +1,59 @@
+{
+    "pixel3_a12": {
+        "description": "Google Pixel 3, Android 12, public image (corpus key pixel3_a12). The Google app's SqliteKeyValueCache databases with their write-ahead logs and files/AccountData.pb, for one Android user under three storage views. EpisodeDataCache holds 6 rows and GetHomeFeedServiceCache 1; the search caches are not present",
+        "maker": "@AlexisBrignoni & Claude",
+        "make_data": {
+            "input_data_path": "Google_G013A Pixel 3.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-10-02T15:40:39.657779",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-10-02T15:40:39.648414",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "quicksearch_cached_search_requests": {
+                "search_patterns": [
+                    "*/com.google.android.googlequicksearchbox/cache/accounts/*/SqliteKeyValueCache*.db*",
+                    "*/com.google.android.googlequicksearchbox/files/AccountData.pb"
+                ],
+                "file_count": 27,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "quicksearch_cached_episodes": {
+                "search_patterns": [
+                    "*/com.google.android.googlequicksearchbox/cache/accounts/*/SqliteKeyValueCache*.db*",
+                    "*/com.google.android.googlequicksearchbox/files/AccountData.pb"
+                ],
+                "file_count": 27,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "quicksearch_cached_requests": {
+                "search_patterns": [
+                    "*/com.google.android.googlequicksearchbox/cache/accounts/*/SqliteKeyValueCache*.db*",
+                    "*/com.google.android.googlequicksearchbox/files/AccountData.pb"
+                ],
+                "file_count": 27,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        },
+        "image_name": "pixel3_a12",
+        "image_info": {
+            "os_name": "Android",
+            "os_version": "12",
+            "device_model": "Google Pixel 3"
+        }
+    }
+}
