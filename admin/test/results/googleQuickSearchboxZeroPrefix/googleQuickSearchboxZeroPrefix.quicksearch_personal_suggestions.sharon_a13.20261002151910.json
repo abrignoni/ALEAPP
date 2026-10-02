@@ -1,0 +1,114 @@
+{
+  "metadata": {
+    "module_name": "googleQuickSearchboxZeroPrefix",
+    "artifact_name": "Google Quick Search Box - Personal Suggestions",
+    "function_name": "quicksearch_personal_suggestions",
+    "case_number": "sharon_a13",
+    "number_of_columns": 9,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 631,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/googleQuickSearchboxZeroPrefix/testdata.googleQuickSearchboxZeroPrefix.quicksearch_personal_suggestions.sharon_a13.zip",
+    "start_time": "2026-10-02T15:19:10.363868+00:00",
+    "end_time": "2026-10-02T15:19:10.403468+00:00",
+    "run_time_seconds": 0.00035190582275390625,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-02T15:19:10.399652",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Cache Time",
+    "Later Write Time",
+    "Suggestion",
+    "Type",
+    "Subtypes",
+    "Position",
+    "Account",
+    "Account Folder",
+    "Android User"
+  ],
+  "data": [
+    [
+      1688041453,
+      "",
+      "restaurants near me",
+      "35 (TYPE_PERSONALIZED_QUERY)",
+      "362, 39",
+      1,
+      "sharononeil368@gmail.com",
+      "3",
+      "0"
+    ],
+    [
+      1688041453,
+      "",
+      "memes 2023",
+      "35 (TYPE_PERSONALIZED_QUERY)",
+      "362, 39",
+      2,
+      "sharononeil368@gmail.com",
+      "3",
+      "0"
+    ],
+    [
+      1688041453,
+      "",
+      "cholestyramine powder",
+      "35 (TYPE_PERSONALIZED_QUERY)",
+      "362, 39",
+      3,
+      "sharononeil368@gmail.com",
+      "3",
+      "0"
+    ],
+    [
+      1688041453,
+      "",
+      "crabs near me",
+      "35 (TYPE_PERSONALIZED_QUERY)",
+      "362, 39",
+      4,
+      "sharononeil368@gmail.com",
+      "3",
+      "0"
+    ],
+    [
+      1688041453,
+      "",
+      "smarterforensics",
+      "35 (TYPE_PERSONALIZED_QUERY)",
+      "362, 39",
+      5,
+      "sharononeil368@gmail.com",
+      "3",
+      "0"
+    ],
+    [
+      1688041453,
+      "",
+      "forensic 4 cast awards 2023",
+      "35 (TYPE_PERSONALIZED_QUERY)",
+      "362, 39",
+      6,
+      "sharononeil368@gmail.com",
+      "3",
+      "0"
+    ],
+    [
+      1688041453,
+      "",
+      "forensic 4cast awards",
+      "35 (TYPE_PERSONALIZED_QUERY)",
+      "362, 39",
+      7,
+      "sharononeil368@gmail.com",
+      "3",
+      "0"
+    ]
+  ]
+}
