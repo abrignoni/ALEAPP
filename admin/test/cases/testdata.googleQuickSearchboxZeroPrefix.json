@@ -1,0 +1,48 @@
+{
+    "sharon_a13": {
+        "description": "Samsung Galaxy S21 5G SM-G991B, Android 13, public image (corpus key sharon_a13). The Google app's cache/accounts/3/CompleteServerZeroPrefixCache.pb and files/AccountData.pb for one Android user. The cache file holds 22 entries, 7 of them carrying subtype 39",
+        "maker": "@AlexisBrignoni & Claude",
+        "make_data": {
+            "input_data_path": "samsung_SM-G991B.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-10-02T15:19:09.370237",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-10-02T15:19:09.361008",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "quicksearch_personal_suggestions": {
+                "search_patterns": [
+                    "*/com.google.android.googlequicksearchbox/cache/accounts/*/CompleteServerZeroPrefixCache.pb",
+                    "*/com.google.android.googlequicksearchbox/files/AccountData.pb"
+                ],
+                "file_count": 2,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "quicksearch_suggestion_caches": {
+                "search_patterns": [
+                    "*/com.google.android.googlequicksearchbox/cache/accounts/*/CompleteServerZeroPrefixCache.pb",
+                    "*/com.google.android.googlequicksearchbox/files/AccountData.pb"
+                ],
+                "file_count": 2,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        },
+        "image_name": "sharon_a13",
+        "image_info": {
+            "os_name": "Android",
+            "os_version": "13",
+            "device_model": "Samsung Galaxy S21 5G SM-G991B"
+        }
+    }
+}
