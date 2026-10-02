@@ -280,6 +280,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleMessages |
 | googleNowPlaying |
 | googlePhotos |
+| googleQuickSearchboxKeyValueCache |
 | googleQuickSearchboxRecent |
 | googleTasks |
 | googleVoice |
