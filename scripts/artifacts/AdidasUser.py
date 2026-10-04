@@ -2,17 +2,20 @@ __artifacts_v2__ = {
     "get_adidas_user": {
         "name": "AdidasUser",
         "description": "Parses the userProperty key and value rows of the Adidas Running app's user.db into one row.",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-03-24",
-        "last_update_date": "2023-03-24",
+        "last_update_date": "2026-10-04",
         "requirements": "Python 3.7 or higher",
         "category": "Adidas-Running",
-        "notes": "LastSync is the lastV3SessionSyncAtLocalTime value read as Unix milliseconds and "
-                 "labelled UTC. The key name says local time, and whether the value is UTC is not "
-                 "established. The My Fitness Pal, Garmin Connect and Polar columns read Connected "
-                 "only when the stored value is the string true and Not Connected for any other "
-                 "stored value; they are blank when the key is absent. One row is emitted even "
-                 "when no key is present.",
+        "notes": "The lastV3SessionSyncAtLocalTime column holds that key's value as stored, as text. "
+                 "The key name says local time; the unit and the zone of the value are not "
+                 "established, so it is not converted. The My Fitness Pal, Garmin Connect and Polar "
+                 "columns hold the stored values of the MY_FITNESS_PAL_CONNECTED, isGarminConnected "
+                 "and isPolarConnected keys, as stored; they are blank when the key is absent. "
+                 "Created At is the createdAt value read as Unix milliseconds; that unit comes from "
+                 "the module's original code and no source for it was found. One row is emitted "
+                 "even when no key is present. No registered corpus holds this app's user.db "
+                 "(44 Android corpora checked on 2026-10-04), so none of this was measured on data.",
         "paths": ('*com.runtastic.android/databases/user.db*',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -73,13 +76,13 @@ def get_adidas_user(context):
         elif key == 'AvatarUrl':
             image = val
         elif key == 'MY_FITNESS_PAL_CONNECTED':
-            my_fitness_pal = 'Connected' if val == 'true' else 'Not Connected'
+            my_fitness_pal = val
         elif key == 'isGarminConnected':
-            garmin_connect = 'Connected' if val == 'true' else 'Not Connected'
+            garmin_connect = val
         elif key == 'isPolarConnected':
-            polar = 'Connected' if val == 'true' else 'Not Connected'
+            polar = val
         elif key == 'lastV3SessionSyncAtLocalTime':
-            last_sync = _ms_to_utc(val)
+            last_sync = '' if val is None else str(val)
 
     # The avatar URL is remote, so an <img> here would make opening the report
     # fetch it and disclose the examination to the service. Report the URL as
@@ -87,5 +90,5 @@ def get_adidas_user(context):
     image_html = esc(image) if image else ''
     data_list = [(user_id, name, height, weight, country, gender, email, created_at, image_html, my_fitness_pal, garmin_connect, polar, last_sync)]
 
-    data_headers = ('ID', 'Name', 'Height', 'Weight', 'Country', 'Gender', 'Email', ('Created At', 'datetime'), 'Image', 'My Fitness Pal', 'Garmin Connect', 'Polar', ('LastSync', 'datetime'))
+    data_headers = ('ID', 'Name', 'Height', 'Weight', 'Country', 'Gender', 'Email', ('Created At', 'datetime'), 'Image', 'My Fitness Pal', 'Garmin Connect', 'Polar', 'lastV3SessionSyncAtLocalTime')
     return data_headers, data_list, source_path

@@ -1,17 +1,25 @@
 __artifacts_v2__ = {
     "get_atrackerdetect": {
         "name": "atrackerdetect",
-        "description": "Parses preferences from the Apple Tracker Detect Android app's shared_prefs XML. For an "
-                       "entry whose name starts with device, the name is split on underscores into Value (second "
-                       "part) and Key (remainder) and the element text is reported in the third column, headed "
-                       "Milliseconds from Last Boot Time. What that number counts was not sourced here and no "
-                       "sample data is recorded for the artifact.",
-        "author": "@abrignoni",
+        "description": "Preferences from the Apple Tracker Detect Android app's shared_prefs XML, one row per "
+                       "preference, reported as stored.",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2022-01-08",
-        "last_update_date": "2022-01-08",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "AirTags",
-        "notes": "",
+        "notes": "Preference Name is the name attribute, Value is the value attribute and Element Text is the text "
+                 "inside the element, each as stored; a column is blank where the element has no such part. On "
+                 "pixel3_a12 the file holds one boolean named terms_and_conditions_read and two string preferences "
+                 "named device_, then six colon-separated pairs of hexadecimal characters, then "
+                 "_first_seen_timestamp_string_real_time, each with a 9-digit number as its element text. What the "
+                 "six pairs identify, and the unit and starting point of the number, are not established: no source "
+                 "for the app's preference format was found, so the number is reported as text and no date is "
+                 "derived from it. That image carries the file under three storage paths of one app directory, "
+                 "which are read once.",
+        "sample_data": {
+            "pixel3_a12": "Android 12 | com.apple.trackerdetect | 3 rows",
+        },
         "paths": ('*/com.apple.trackerdetect/shared_prefs/com.apple.trackerdetect_preferences.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "alert-triangle",
@@ -57,13 +65,7 @@ def get_atrackerdetect(context):
         for elem in root.iter():
             attribute = elem.attrib
             if attribute:
-                data = attribute.get('name')
-                if data.startswith('device'):
-                    mac = data.split('_', 2)[1]
-                    desc = data.split('_', 2)[2]
-                    data_list.append((desc, mac, elem.text))
-                else:
-                    data_list.append((data, attribute.get('value'), ''))
+                data_list.append((attribute.get('name', ''), attribute.get('value', ''), elem.text or ''))
 
-    data_headers = ('Key', 'Value', 'Milliseconds from Last Boot Time')
+    data_headers = ('Preference Name', 'Value', 'Element Text')
     return data_headers, data_list, source_path

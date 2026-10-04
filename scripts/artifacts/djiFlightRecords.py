@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "track: one row per positional record that passes its CRC and holds a "
                        "non-zero position, with its timestamp, latitude "
                        "and longitude.",
-        "author": "@riasramadan, @AlexisBrignoni, Claude",
+        "author": "@riasramadan, @AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
         "requirements": "none",
@@ -22,8 +22,12 @@ __artifacts_v2__ = {
                  "bytes are the GPS date, GPS time, longitude and latitude as 1e7-scaled "
                  "integers. The remaining payload bytes hold further telemetry that this "
                  "artifact does not decode.\nTimestamp is the GPS date and time from the record, "
-                 "reported as UTC; it is not adjusted to any local zone. Latitude and Longitude "
-                 "are the stored integers divided by 1e7.\nThe DAT record framing, CRC and "
+                 "reported as UTC; it is not adjusted to any local zone. The record stores no "
+                 "zone. Latitude and Longitude "
+                 "are the stored integers divided by 1e7. A record whose latitude and longitude "
+                 "are both zero is not reported, and neither is a record that fails its CRC; "
+                 "none of the 4159 positional records on df020_mavic_pro_android held a zero "
+                 "position, so that skip is not exercised by the tested data.\nThe DAT record framing, CRC and "
                  "positional layout follow the DJI DAT format as described by the CsvView / "
                  "DatCon tooling, carried here from the closed contribution in ALEAPP pull "
                  "request 660 (https://github.com/abrignoni/ALEAPP/pull/660). The URL and "
@@ -31,8 +35,13 @@ __artifacts_v2__ = {
                  "VTO Labs / NIST CFReDS drone dataset DF020 (DJI Mavic Pro). Every decoded "
                  "position for the 2018-06-19 flights falls inside the data sheet's stated GPS "
                  "boundary in Colorado and on the stated flight date, so the decoded date and "
-                 "coordinates agree with the data sheet's known values; a comparison of the time "
-                 "of day with a known time is not recorded here.\nThe paired DJIFlightRecord "
+                 "coordinates agree with the data sheet's known values. Time of day: the last "
+                 "decoded time in each of the two DAT files is 6 hours ahead, to within 2 "
+                 "seconds, of the modification time the acquisition zip stores for that file "
+                 "(a clock reading with no zone), and the dataset's data sheet gives the "
+                 "location's zone as MDT (UTC-6); the minutes and seconds of each file's first "
+                 "decoded time are within 1 second of those in the file's name. That agrees "
+                 "with a UTC reading and was measured on this one dataset only.\nThe paired DJIFlightRecord "
                  "*.txt files in the same FlightRecord folder are a separate container; they are "
                  "not read by this artifact, which "
                  "reads the DAT logs only.",

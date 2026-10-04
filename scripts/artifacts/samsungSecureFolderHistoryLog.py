@@ -14,22 +14,27 @@ __artifacts_v2__ = {
             "Total value when the result gives no moved count. The Status, Source Path Note and "
             "Warnings columns say when a record was not paired or a source path was derived."
         ),
-        "author": "4n6Wizard",
+        "author": "4n6Wizard, @AlexisBrignoni, Codex",
         "creation_date": "2026-06-30",
-        "last_update_date": "2026-08-09",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Knox Secure Folder",
         "notes": (
             "Ported from the Samsung Secure Folder History Log Parser by 4n6Wizard: "
             "https://github.com/4n6Wizard/Samsung-HistoryLog-Parser (its README was read at commit "
-            "8d60793652bb8708173ffd4ae4fbbb605676b900). The five registered images in sample_data "
-            "returned 0 rows, so the record patterns and pairing are not exercised on a registered "
-            "image. The statements below about carving and file names come from the upstream tool's "
+            "8d60793652bb8708173ffd4ae4fbbb605676b900). None of the five registered images in "
+            "sample_data holds a HistoryLog table: galaxys10_a10 and samsungs20_a13 carry other "
+            "databases in the package's databases folder, and anne_a15, samsunga53_a14 and "
+            "sharon_a14 carry no file in it. The record patterns, the pairing and the timestamp "
+            "handling are therefore not exercised on a registered image. The statements below about carving and file names come from the upstream tool's "
             "README. Triage tool: it reports live HistoryLog records only and performs no carving "
             "or deleted-record recovery. The HistoryLog stores the folders and the number of files "
             "moved, NOT the individual file names. The timestamp column is text with no zone "
             "recorded. It is reported as stored and no conversion is applied. Which zone the app "
-            "writes it in is not established."
+            "writes it in is not established. Request Time and Result Time are that stored text. "
+            "Duration and the pairing compare the two stored readings as they are, with no zone "
+            "applied. The Samsung Knox History Log artifact (shistorylog.py) reads the same column "
+            "and presents it as UTC, which is also not established."
         ),
         "paths": (
             "*/com.samsung.knox.securefolder/databases/*",
@@ -37,11 +42,11 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "lock",
         "sample_data": {
-            "anne_a15": "Android 15 | com.samsung.knox.securefolder vc 192100000 | 0 rows",
-            "galaxys10_a10": "Android 10 | com.samsung.knox.securefolder | 0 rows",
-            "samsunga53_a14": "Android 14 | com.samsung.knox.securefolder | 0 rows",
-            "samsungs20_a13": "Android 13 | com.samsung.knox.securefolder | 0 rows",
-            "sharon_a14": "Android 14 | com.samsung.knox.securefolder vc 191200000 | 0 rows",
+            "anne_a15": "Android 15 | com.samsung.knox.securefolder vc 192100000 | no file in the databases folder | 0 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.knox.securefolder | no HistoryLog table | 0 rows",
+            "samsunga53_a14": "Android 14 | com.samsung.knox.securefolder | no file in the databases folder | 0 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.knox.securefolder | no HistoryLog table | 0 rows",
+            "sharon_a14": "Android 14 | com.samsung.knox.securefolder vc 191200000 | no file in the databases folder | 0 rows",
         },
     }
 }
@@ -469,9 +474,9 @@ def samsungSecureFolderHistoryLog(context):
         "Event",
         "Status",
         "Status Note",
-        # Local device time, reported verbatim. Plain text (not 'datetime') so
-        # LAVA stores it as-is and does not offer a time-zone offset that would
-        # wrongly shift these local timestamps.
+        # Stored text with no zone recorded, reported verbatim. Plain text (not
+        # 'datetime') so no instant is asserted for a reading whose zone is not
+        # established.
         "Request Time",
         "Result Time",
         "Duration",

@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Recovers files hidden by GalleryVault from the encrypted objects stored "
                        "under the vault folder on external storage, together with the original "
                        "file name and creation time held in each object's own trailer",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "name": "GalleryVault - Hidden Files (database)",
         "description": "Files hidden in GalleryVault as recorded in the file_v1 table, including "
                        "the path each file was taken from",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -55,7 +55,7 @@ __artifacts_v2__ = {
     "galleryvault_folders": {
         "name": "GalleryVault - Folders",
         "description": "GalleryVault folders, their child counts and creation times",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
                        "wrongly_attempt_code value, locking type, and the image the row's "
                        "photo_path names where it is present. Values are reported as stored. No "
                        "tested image held a row, so the output is not verified on real data.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -94,16 +94,18 @@ __artifacts_v2__ = {
     "galleryvault_break_in_images": {
         "name": "GalleryVault - Break-in Report Images",
         "description": "Images written to the BreakInReports folder on external storage, with the "
-                       "capture time taken from the file name",
-        "author": "@AlexisBrignoni, Claude",
+                       "time written in each file name",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "File names follow PS_YYYYMMDD_HHMMSS. The time in the file name carries no "
-                 "zone and is reported as written in the name. The column is headed Capture Time "
-                 "(device local), but the zone the app uses for the name was not sourced, so the "
-                 "header's 'device local' is an assumption. The images sit on external storage "
+                 "zone and is reported as text in the File Name Time column, as written in the "
+                 "name. The zone the app uses for the name was not sourced, and that the time "
+                 "is when the image was captured is a reading of the name that was not sourced "
+                 "either. A file whose name does not follow the pattern gets a blank File Name "
+                 "Time. The images sit on external storage "
                  "and are "
                  "reported whether or not a matching database row exists.",
         "paths": ('*/.galleryvault_*/BreakInReports/*',),
@@ -117,7 +119,7 @@ __artifacts_v2__ = {
     "galleryvault_locked_apps": {
         "name": "GalleryVault - Locked Apps",
         "description": "Rows of the locked_app table in GalleryVault's AppLock.db: package name and whether disguise_lock is set. No tested image held a row.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -134,7 +136,7 @@ __artifacts_v2__ = {
     "galleryvault_applock_break_ins": {
         "name": "GalleryVault - AppLock Break-in Reports",
         "description": "Rows of the break_in_report_in_applock table in GalleryVault's AppLock.db: timestamp, package name, the wrongly_attempt_code value and the photo path, as stored. No tested image held a row.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -153,7 +155,7 @@ __artifacts_v2__ = {
         "description": "Entries in the browser_history table of the browser built into "
                        "GalleryVault, with the URL, host, title and last visit time the app "
                        "recorded",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -170,7 +172,7 @@ __artifacts_v2__ = {
     "galleryvault_browser_urls": {
         "name": "GalleryVault - Browser Start Pages",
         "description": "Entries in the web_url table used by the built-in browser start page",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -189,7 +191,7 @@ __artifacts_v2__ = {
     "galleryvault_downloads": {
         "name": "GalleryVault - Downloads",
         "description": "Rows of the download_task table in galleryvault.db: begin and end time, name, URLs, local path, sizes, state and error code as stored. No tested image held a row.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -208,7 +210,7 @@ __artifacts_v2__ = {
         "description": "Rows of the export_unhidden_history table in galleryvault.db: action time, "
                        "file name, action type value, target path and original path as stored. No "
                        "tested image held a row.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -228,7 +230,7 @@ __artifacts_v2__ = {
         "description": "Rows of the recycle_bin_v1 table in galleryvault.db joined to file_v1: "
                        "the delete_time value and the file's name, original path, MIME type "
                        "and size. No tested image held a row.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -246,7 +248,7 @@ __artifacts_v2__ = {
         "name": "GalleryVault - File Action Log",
         "description": "Action log kept next to the vault on external storage, recording vault "
                        "file paths and the time each action was carried out",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
@@ -266,15 +268,20 @@ __artifacts_v2__ = {
             "Parses GalleryVault account, vault storage and lock-related "
             "preferences from Kidd.xml."
         ),
-        "author": "@segumarc",
+        "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-13",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
             "Each row gives a label chosen for this report together with the original "
             "shared_prefs key. The labels are readings of the key names and are not sourced; "
-            "rely on the Original Key column and the value as stored. A LockPin of 72 "
+            "rely on the Original Key column and the value as stored. The signature, "
+            "is_unlocked, ActiveTimeMS, app_fresh_installer and "
+            "unlock_successfully_profile_id keys are labelled with the words of the key "
+            "alone, and what each one records was not sourced. The keys treated as times, "
+            "ActiveTimeMS among them, are converted as Unix milliseconds; that unit was not "
+            "sourced for each key. A LockPin of 72 "
             "hexadecimal characters is split into its first 40 characters and the remaining "
             "32, which S-RM describes as a SHA1 followed by an MD5 of the PIN. "
             "Icon Disguise Enabled and Calculator Disguise Shortcut ID are reported from the "
@@ -298,7 +305,7 @@ __artifacts_v2__ = {
             "Decrypts each GalleryVault AccountProfile.xml with the DES key derived "
             "from the last_android_id in the Kidd.xml of the same app container."
         ),
-        "author": "@segumarc, @AlexisBrignoni, Claude",
+        "author": "@segumarc, @AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-13",
         "last_update_date": "2026-09-12",
         "requirements": "none",
@@ -349,7 +356,7 @@ __artifacts_v2__ = {
             "Cloud backup account bound to the vault, including provider, account "
             "identifier, drive status and monthly usage/quota."
         ),
-        "author": "@segumarc",
+        "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -368,7 +375,7 @@ __artifacts_v2__ = {
     "galleryvault_cloud_folders": {
         "name": "GalleryVault - Cloud Folders",
         "description": "Rows of the cloud_folders table in the app's local cloud_cache.db, with parent paths resolved from the same table",
-        "author": "@segumarc",
+        "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -386,7 +393,7 @@ __artifacts_v2__ = {
             "resolved folder "
             "path, size, mime type and the per-file encryption key held in the cache"
         ),
-        "author": "@segumarc",
+        "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -405,7 +412,7 @@ __artifacts_v2__ = {
             "Change history of cloud entries, resolved back to file or folder names "
             "where the entry still exists"
         ),
-        "author": "@segumarc",
+        "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -427,7 +434,7 @@ __artifacts_v2__ = {
             "Sync tasks queued to upload vault files to the cloud, with the state and "
             "error codes as stored, joined to their raw-file/thumbnail parts"
         ),
-        "author": "@segumarc",
+        "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -937,7 +944,7 @@ def galleryvault_break_in_images(context):
                           context.get_relative_path(file_found)))
 
     data_headers = (
-        'Capture Time (device local)',
+        'File Name Time',
         ('Image', 'media'),
         'File Name',
         'File Size',
@@ -1154,15 +1161,15 @@ def galleryvault_preferences(context):
         ('Icon Disguise Enabled', 'icon_disguise_enabled', False),
         ('Calculator Disguise Shortcut ID', 'calculator_short_cut_id', False),
         ('Icon Disguise Enabled Time', 'last_enable_icon_disguise_time', True),
-        ('Install Referrer Package', 'app_fresh_installer', False),
-        ('Install Signature (App Instance UUID)', 'signature', False),
-        ('Currently Unlocked', 'is_unlocked', False),
-        ('Last Active Time', 'ActiveTimeMS', True),
+        ('App Fresh Installer', 'app_fresh_installer', False),
+        ('Signature', 'signature', False),
+        ('Is Unlocked', 'is_unlocked', False),
+        ('Active Time', 'ActiveTimeMS', True),
         ('App Version Code', 'VersionCode', False),
         ('Fresh Install Version Code', 'FreshInstallVersionCode', False),
         ('Launch Count', 'launch_times', False),
         ('Add File Count', 'add_file_times', False),
-        ('Last Unlocked Profile ID', 'unlock_successfully_profile_id', False),
+        ('Unlock Successfully Profile ID', 'unlock_successfully_profile_id', False),
         ('Last Android ID (DES key source)', 'last_android_id', False),
     )
 

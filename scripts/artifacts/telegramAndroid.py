@@ -11,7 +11,7 @@ __artifacts_v2__ = {
             "constructor named in the message column. A message whose blob cannot be "
             "walked is still reported from the table's columns."
         ),
-        "author": "Alexis Brignoni, John Hyla",
+        "author": "Alexis Brignoni, John Hyla, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
         "last_update_date": "2026-10-01",
         "requirements": "none",
@@ -185,7 +185,7 @@ __artifacts_v2__ = {
         "description": (
             "Parses the device contact records Telegram stored, from the user_contacts_v7 and user_phones_v7 tables of cache4.db, including the first and last name as stored on the device and the phone numbers recorded for that contact key."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
         "last_update_date": "2026-08-03",
         "requirements": "none",
@@ -222,7 +222,7 @@ __artifacts_v2__ = {
             "exchanged "
             "messages."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
         "last_update_date": "2026-08-03",
         "requirements": "none",
@@ -258,7 +258,7 @@ __artifacts_v2__ = {
         "description": (
             "Parses the Telegram chat list from the dialogs table of cache4.db, including a chat name where the dialog id as stored equals an id in the users or chats table, the time of the last activity, unread counts and whether the chat is pinned or filed in the archive folder."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
         "last_update_date": "2026-08-03",
         "requirements": "none",
@@ -292,7 +292,7 @@ __artifacts_v2__ = {
         "description": (
             "Parses the Telegram account slots from the userconfing.xml and userconfig1-3.xml shared preferences files. Reports the signed-in user of each slot, decoded from the stored user record, together with the app passcode configuration, the auto-lock delay, the stored lastContactsSyncTime value and the last_call_phone_number value, which the client sets to the number of an incoming phone call it saw ringing."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
         "last_update_date": "2026-08-15",
         "requirements": "none",
@@ -356,7 +356,7 @@ __artifacts_v2__ = {
             "The record can exist for a user "
             "with no exchanged messages."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
         "last_update_date": "2026-08-15",
         "requirements": "none",
@@ -401,7 +401,7 @@ __artifacts_v2__ = {
             "record carries them, the participant, administrator, removed, banned and online "
             "member counts."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
         "last_update_date": "2026-08-15",
         "requirements": "none",
@@ -435,7 +435,7 @@ __artifacts_v2__ = {
         "description": (
             "Parses the Telegram save-to-gallery configuration from the mainconfig.xml shared preferences file, reporting for each category of chat whether incoming photos and videos are saved to the device gallery and the video size limit. The client writes these keys when a setting is saved or when it migrates the older save_gallery setting. A category reported as not set had no key, and the client then applies its defaults: photos and videos off, video limit 100 MB."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
         "last_update_date": "2026-08-15",
         "requirements": "none",
@@ -473,7 +473,7 @@ __artifacts_v2__ = {
         "description": (
             "Parses the channel and group membership Telegram cached, from the channel_users_v2 table of cache4.db, reporting the chat, the member and the date value stored with each row, which the client sets from the time it cached the list, with names resolved from the users and chats tables."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-08-05",
         "requirements": "none",
@@ -505,7 +505,7 @@ __artifacts_v2__ = {
             "Parses the chat_hints table of cache4.db. Each row carries a chat and a rating "
             "value, reported as stored; what the client uses the rating for is not sourced here."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-08-05",
         "requirements": "none",
@@ -534,9 +534,9 @@ __artifacts_v2__ = {
             "its logged timestamps, independently of the message "
             "history."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-05",
-        "last_update_date": "2026-08-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Telegram",
         "notes": "The client names each log <call id>.log and each statistics log <call "
@@ -547,11 +547,13 @@ __artifacts_v2__ = {
                  "where a phone call service message in the chat "
                  "carries the same id, the two can be tied together. The timestamps inside the "
                  "log are local-time strings with no timezone, so they are reported as recorded "
-                 "and only their difference is used for the logged span; the modification time of "
-                 "the log file is reported beside them. It is read from the copy the tool staged. "
-                 "For a zip extraction the tool sets that time from the member's zone-less stored "
-                 "time read in the examiner machine's local zone, so the column headed Log Last "
-                 "Modified (UTC) is not established to be UTC. The logged span is the difference "
+                 "and only their difference is used for the logged span. Log Last Modified (UTC) "
+                 "is the modification time the extraction records for the log file as seconds "
+                 "since 1970 UTC: a zip member's extended timestamp field, a tar member's time, or "
+                 "the file's own time for a folder input. It is blank when a zip member carries "
+                 "no extended timestamp, because the member's other stored time has no zone. "
+                 "On pixel7a_a14 the log's zip member carries an extended timestamp. "
+                 "The logged span is the difference "
                  "between the first and last timestamp in the log and is not a call duration. "
                  "Approach adapted from a Telegram parser contributed by WriteBlocked in "
                  "ALEAPP pull request 716.",
@@ -567,7 +569,7 @@ __artifacts_v2__ = {
         "description": (
             "Parses the Telegram media auto-download configuration from the mainconfig.xml shared preferences file. Reports the stored mobilePreset, wifiPreset and roamingPreset strings: the enabled flag, the media types set for each category of chat and the size limits. The client applies these strings only while currentMobilePreset, currentWifiPreset or currentRoamingPreset is not 0, 1 or 2 (the default is 3); for 0, 1 or 2 it applies preset0, preset1 or preset2, which are not reported here."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
         "last_update_date": "2026-08-15",
         "requirements": "none",
@@ -1992,6 +1994,7 @@ def get_telegramVoipLogs(context):
     )
     data_list = []
     sources = []
+    seeker = context.get_seeker()
 
     logs, stats = {}, set()
     for found in context.get_files_found():
@@ -2007,11 +2010,17 @@ def get_telegramVoipLogs(context):
     for call_id, path in sorted(logs.items()):
         first, last = _voip_log_span(path)
         span = int((last - first).total_seconds()) if first and last else ''
+        # The time the extraction records for the file, not the staged copy's own
+        # time: for a zip member the seeker sets the copy's time from the member's
+        # zone-less date and time read in the examiner machine's zone.
+        info = seeker.file_infos.get(path) if seeker else None
+        modified = ''
+        if info and info.modification_date:
+            modified = convert_unix_ts_to_utc(int(info.modification_date))
         try:
-            modified = convert_unix_ts_to_utc(int(os.path.getmtime(path)))
             size = os.path.getsize(path)
         except OSError:
-            modified, size = '', ''
+            size = ''
         data_list.append((
             modified,
             call_id,

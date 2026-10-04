@@ -4,12 +4,14 @@ __artifacts_v2__ = {
         "description": "Parses the app sessions the CapCut Android app recorded, with the "
                        "timestamp each session row stores, its duration and the app "
                        "version that ran.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "CapCut",
-        "notes": "One row per recorded session. Start is Unix milliseconds and Duration is "
+        "notes": "One row per row of the session table. Session Timestamp is the table's "
+                 "timestamp column, read as Unix milliseconds; what moment of a session it "
+                 "marks was not established. Duration is "
                  "the value the row carries, as stored, because nothing in the extraction "
                  "states its unit. Events counts the entries in the same store that name "
                  "this session, and First Event and Last Event bound them in time; the "
@@ -32,12 +34,13 @@ __artifacts_v2__ = {
         "description": "Parses the device, install and Android ID identifiers the "
                        "CapCut Android app records, with the monitor_install_time3 "
                        "value it stores.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "CapCut",
-        "notes": "One row per app data directory. Install Recorded is the monitor_install_time3 "
+        "notes": "One row per app data directory. Monitor Install Time 3 is the "
+                 "monitor_install_time3 "
                  "value of applog_monitor.xml, read as Unix milliseconds; what the app marks "
                  "with it was not established. The device identifier appears in three of the "
                  "app's preference files and all three held the same value on the tested "
@@ -212,7 +215,7 @@ def capcut_app_sessions(context):
     data_list.sort(key=lambda row: (str(row[0]), str(row[8])), reverse=True)
 
     data_headers = (
-        ('Start', 'datetime'),
+        ('Session Timestamp', 'datetime'),
         ('First Event', 'datetime'),
         ('Last Event', 'datetime'),
         'Duration (as stored)',
@@ -283,7 +286,7 @@ def capcut_device(context):
         ))
 
     data_headers = (
-        ('Install Recorded', 'datetime'),
+        ('Monitor Install Time 3', 'datetime'),
         'Device ID',
         'Install ID',
         'Candidate Device Identifiers',

@@ -1,55 +1,66 @@
-# pylint: disable=W0718
 __artifacts_v2__ = {
     "get_podcasts": {
         "name": "Podcast Addict",
         "description": "Parses the episodes table of the Podcast Addict database.",
-        "author": "John Hyla",
+        "author": "John Hyla, @AlexisBrignoni, Codex",
         "creation_date": "2023-07-07",
-        "last_update_date": "2023-07-07",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Podcast Addict",
         "notes": "publication_date, playbackDate and downloaded_date are read "
-                 "as Unix milliseconds. What the app stores for an episode "
-                 "that was not played or not downloaded was not measured; a "
-                 "stored 0 is not blanked and would show as a 1970 date. If "
-                 "the query fails, no rows are reported and nothing is "
-                 "logged.",
+                 "as Unix milliseconds; no source for that unit was found and "
+                 "no registered corpus holds this database, so it is not "
+                 "established on real data. A date column is left blank when "
+                 "the stored value is NULL, 0 or negative. What the app stores "
+                 "for an episode that was not played or not downloaded was not "
+                 "measured. Only the file named podcastAddict.db is opened; "
+                 "its -wal, -shm and -journal files are matched so that they "
+                 "are staged beside it. If the query fails for a file, the "
+                 "error is written to the run log and that file adds no rows.",
         "paths": ('*/com.bambuna.podcastaddict/databases/podcastAddict.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "headphones",
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
+import os
+import sqlite3
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc, logfunc
 
 
 @artifact_processor
 def get_podcasts(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
 
     for file_found in files_found:
         file_name = str(file_found)
-        source_path = file_name
+        if os.path.isdir(file_name) or os.path.basename(file_name) != 'podcastAddict.db':
+            continue
 
         db = open_sqlite_db_readonly(file_name)
+        if db is None:
+            continue
         cursor = db.cursor()
         try:
             cursor.execute('''
-                SELECT datetime(publication_date/1000, "UNIXEPOCH") as publication_date,
-                datetime(playbackDate/1000, "UNIXEPOCH") as playbackDate,
+                SELECT CASE WHEN publication_date > 0 THEN datetime(publication_date/1000, "UNIXEPOCH") END as publication_date,
+                CASE WHEN playbackDate > 0 THEN datetime(playbackDate/1000, "UNIXEPOCH") END as playbackDate,
                 name,
                 duration,
                 size,
-                datetime(downloaded_date/1000, "UNIXEPOCH") as downloaded_date,
+                CASE WHEN downloaded_date > 0 THEN datetime(downloaded_date/1000, "UNIXEPOCH") END as downloaded_date,
                 playing_status,
                 position_to_resume,
                 download_url
                   FROM episodes
                   ''')
             all_rows = cursor.fetchall()
-        except Exception:
+            source_paths.append(file_name)
+        except sqlite3.Error as ex:
+            logfunc(f'Podcast Addict: could not read the episodes table in {file_name}: {ex}')
             all_rows = []
 
         for row in all_rows:
@@ -68,4 +79,4 @@ def get_podcasts(context):
         'position_to_resume',
         'download_url',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "app's members/<member id>/history API calls that its OkHttp response cache holds. "
                        "One row per distinct record; a record returned by several cached responses is "
                        "reported once with the number of copies.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -55,15 +55,19 @@ __artifacts_v2__ = {
         "name": "Life360 - Emergency Contacts (API cache)",
         "description": "Emergency contacts of a circle, read from the JSON responses to the app's "
                        "circles/<circle id>/emergencyContacts API calls held in its OkHttp response cache.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Life360",
         "notes": "Read from the same OkHttp response caches as the Member Location History artifact. One row per "
-                 "distinct contact id per circle; the Cached time is the OkHttp-Received-Millis header of the "
-                 "first response holding it in cache folder and entry key order, which is not "
-                 "necessarily the earliest or the latest. Phone Numbers joins each phone with its "
+                 "distinct contact id per circle. When several cached responses hold the same contact, the row's "
+                 "values and its Cached time (the OkHttp-Received-Millis header, Unix milliseconds rendered "
+                 "in UTC) come from the response received last, and Cached Copies counts the responses that "
+                 "held it. On hc_pixel8pro_a16 and hc_pixel8pro_a17 one response held the contact, so Cached "
+                 "Copies is 1 on both and the choice between responses was exercised only on a constructed "
+                 "cache of three responses. Each of those two images also held an earlier contacts response "
+                 "whose list was empty. Phone Numbers joins each phone with its "
                  "type in parentheses where the "
                  "type is stored. Accepted is reported as stored. Two of the four tested images with the app held "
                  "a contact, one contact on each (the same one, with a name and a phone number and with Emails and "
@@ -87,7 +91,7 @@ __artifacts_v2__ = {
         "description": "Index of the exchanges held in the Life360 app's OkHttp response caches: the URL "
                        "requested, when it was sent and received, the status, the content type and size, "
                        "and the cached image where the body is one.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -446,11 +450,11 @@ def life360CacheEmergencyContacts(context):
         'Circle ID',
         'Avatar URL',
         'URL (as stored)',
+        'Cached Copies',
         'Source File',
     )
-    data_list = []
+    rows = {}
     sources = []
-    seen = set()
     for exchange in _exchanges(context):
         match = _CONTACTS.search(exchange['url'].split('?')[0])
         if not match:
@@ -463,9 +467,21 @@ def life360CacheEmergencyContacts(context):
             if not isinstance(contact, dict):
                 continue
             ident = (match.group(1), _text(contact.get('id')))
-            if ident in seen:
-                continue
-            seen.add(ident)
+            received = exchange['received_raw']
+            kept = rows.get(ident)
+            copies = 1
+            if kept is not None:
+                # A contact held by several cached responses is reported from the one
+                # received last; the others are counted.
+                kept['copies'] += 1
+                try:
+                    newer = bool(received) and (not kept['received']
+                                                or int(received) > int(kept['received']))
+                except ValueError:
+                    newer = False
+                if not newer:
+                    continue
+                copies = kept['copies']
             phones = []
             for phone in contact.get('phoneNumbers') or []:
                 if isinstance(phone, dict):
@@ -480,7 +496,7 @@ def life360CacheEmergencyContacts(context):
                     emails.append(_text(email.get('email') or json.dumps(email)))
                 else:
                     emails.append(_text(email))
-            data_list.append((
+            rows[ident] = {'received': received, 'copies': copies, 'row': (
                 exchange['received'],
                 _text(contact.get('firstName')),
                 _text(contact.get('lastName')),
@@ -492,8 +508,8 @@ def life360CacheEmergencyContacts(context):
                 match.group(1),
                 _text(contact.get('avatar')),
                 _text(contact.get('url')),
-                context.get_relative_path(exchange['files']['0']),
-            ))
+            ), 'source': context.get_relative_path(exchange['files']['0'])}
+    data_list = [kept['row'] + (kept['copies'], kept['source']) for kept in rows.values()]
     return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in sources)
 
 

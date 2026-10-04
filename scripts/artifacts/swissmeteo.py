@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Swissmeteo - Place interaction records",
         "description": "Parse the plz_interaction table: postal code entries with the timestamp read as Unix "
                        "milliseconds in UTC and a map link built from the lat and lon the row stores",
-        "author": "jerome.arn@vd.ch",
+        "author": "jerome.arn@vd.ch, @AlexisBrignoni, Codex",
         "creation_date": "2025-09-25",
         "last_update_date": "2026-08-15",
         "requirements": "none",
@@ -26,17 +26,21 @@ __artifacts_v2__ = {
         "artifact_icon": "flag"
     },
     "swissmeteo_plz": {
-        "name": "Swissmeteo - App opening with geolocation",
+        "name": "Swissmeteo - app_open table rows",
         "description": "Rows of the app_open table of favorites_prediction_db.sqlite: the "
                        "timestamp column read as Unix milliseconds in UTC, and the lat and lon "
                        "columns as stored.",
-        "author": "jerome.arn@vd.ch",
+        "author": "jerome.arn@vd.ch, @AlexisBrignoni, Codex",
         "creation_date": "2025-09-25",
-        "last_update_date": "2026-08-04",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Meteo",
-        "notes": "What writes a row and what position the coordinates describe are not established "
-                 "here. Map link is an OpenStreetMap address built from the row's lat and lon.",
+        "notes": "What writes a row, what the timestamp marks and what position the coordinates "
+                 "describe are not established here; the artifact is named for the table it reads. "
+                 "Timestamp is the table's timestamp column converted as Unix milliseconds. That "
+                 "unit comes from the module as contributed and was not checked against data here: "
+                 "no registered test image holds this database. Map link is an OpenStreetMap "
+                 "address built from the row's lat and lon.",
         "paths": ('*/data/ch.admin.meteoswiss/databases/favorites_prediction_db.sqlite*', '*/data/ch.admin.meteoswiss/files/db/localdata.sqlite*'),
         "output_types": "standard",
         "html_columns": ['Map link'],
@@ -103,7 +107,7 @@ def plz_interaction(context):
 def swissmeteo_plz(context):
     files_found = context.get_files_found()
     source_path = get_file_path(files_found, "favorites_prediction_db.sqlite")
-    data_headers = (('Opened Timestamp', 'datetime'), 'Latitude', 'Longitude', "Map link")
+    data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', "Map link")
     data_list = []
     prediction_db = ""
 

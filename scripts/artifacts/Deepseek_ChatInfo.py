@@ -8,13 +8,20 @@ from scripts.ilapfuncs import (
 __artifacts_v2__ = {
     "deepseek_chat_info": {
         "name": "Deepseek Chat Info",
-        "description": "List of Deepseek chat sessions and their updated_at values (read as Unix seconds)",
-        "author": "RicardoBentoSantos",
+        "description": "Deepseek chat sessions from the chat_session_list table, with each session's updated_at value",
+        "author": "RicardoBentoSantos, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-24",
-        "last_update_date": "2026-05-24",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "DeepSeek",
-        "notes": "",
+        "notes": (
+            "Timestamp is updated_at read as Unix seconds and shown in UTC. The unit and what "
+            "updated_at marks are this parser's reading and have not been checked against a source or data: no "
+            "registered corpus holds this database (20 zip listings and 24 tar indexes checked "
+            "on 2026-10-04). The updated_at (as stored) column shows the value the database "
+            "holds, unchanged. Timestamp is blank when updated_at is empty, zero, or cannot be "
+            "read as Unix seconds."
+        ),
         "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db*'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "message-circle"
@@ -42,7 +49,7 @@ def deepseek_chat_info(context):
         ('Timestamp', 'datetime'),
         'Chat ID',
         'Title',
-        'Last Updated (UTC)'
+        'updated_at (as stored)'
     )
 
     for source_path in files_found:
@@ -64,7 +71,7 @@ def deepseek_chat_info(context):
                 chat_id, title, updated_at = row
 
                 lava_timestamp = None
-                updated_at_utc = ""
+                updated_at_stored = '' if updated_at is None else str(updated_at)
 
                 if updated_at:
 
@@ -72,22 +79,19 @@ def deepseek_chat_info(context):
 
                         ts = float(updated_at)
 
-                        lava_timestamp = ts
+                        datetime.fromtimestamp(ts, tz=timezone.utc)
 
-                        updated_at_utc = datetime.fromtimestamp(
-                            ts,
-                            tz=timezone.utc
-                        ).strftime('%Y-%m-%d %H:%M:%S')
+                        lava_timestamp = ts
 
                     except Exception:  # pylint: disable=broad-exception-caught
 
-                        updated_at_utc = str(updated_at)
+                        lava_timestamp = None
 
                 data_list.append((
                     lava_timestamp,
                     chat_id,
                     title,
-                    updated_at_utc
+                    updated_at_stored
                 ))
 
         except Exception as e:  # pylint: disable=broad-exception-caught

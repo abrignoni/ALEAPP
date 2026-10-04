@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "file_commander_recycle_bin": {
         "name": "File Commander Recycle Bin",
         "description": "Entries in File Commander's recycle bin store (TrashBin.db), with the original name and location recorded for each",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
@@ -32,19 +32,21 @@ __artifacts_v2__ = {
     "file_commander_favorites": {
         "name": "File Commander Favorites",
         "description": "Locations recorded in the app's bookmarks store",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "File Commander",
         "sample_data": {
             "emu_a15_oss_v17": "File Commander 10.7.54240 | 0 rows",
         },
         "notes": "One row per row of the bookmarks table in "
-                 "com.mobisystems.fileman/databases/bookmarks.db. The time column is read as Unix "
-                 "milliseconds and shown as UTC under the header Added; neither the unit nor what "
-                 "the time marks was checked, because no row was available. This produced no rows "
-                 "on the tested device, and "
+                 "com.mobisystems.fileman/databases/bookmarks.db. The table declares a column "
+                 "named time as INTEGER. Time (as stored) is that integer as the store holds it, "
+                 "not converted: neither its unit nor what it marks is established, because no "
+                 "row was available on the tested device and no source for the column was found. "
+                 "Rows are listed from the largest stored time value to the smallest. This "
+                 "produced no rows on the tested device, and "
                  "the reason was measured rather than assumed: the Add to favorites action exists "
                  "in the app's selection menu, and using it opens an upgrade screen reading "
                  "Favorites, part of File Commander Premium, and the table was empty on the "
@@ -61,7 +63,7 @@ __artifacts_v2__ = {
 
 import os
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 from scripts.artifacts.storagePathViews import unique_files
 
 TRASH_DB = 'databases/TrashBin.db'
@@ -76,21 +78,6 @@ def _files(context, suffix):
         if path.endswith(suffix) and not os.path.isdir(found):
             out.append(found)
     return out
-
-
-def _ms(value):
-    if value in (None, '', 0):
-        return ''
-    try:
-        value = int(value)
-    except (TypeError, ValueError):
-        return ''
-    if value <= 0:
-        return ''
-    try:
-        return convert_unix_ts_to_utc(value / 1000)
-    except (OverflowError, OSError, ValueError):
-        return ''
 
 
 def _join(root, relative, name):
@@ -139,12 +126,12 @@ def file_commander_favorites(context):
     for db_path in _files(context, BOOKMARKS_DB):
         records = get_sqlite_db_records(db_path, query)
         for r in records:
-            data_list.append((_ms(r[0]), r[1] or '', r[2] or '', r[3] or '', r[4], r[5],
+            data_list.append(('' if r[0] is None else r[0], r[1] or '', r[2] or '', r[3] or '', r[4], r[5],
                               r[6], r[7], r[8], r[9], context.get_relative_path(db_path)))
         if records and db_path not in sources:
             sources.append(db_path)
 
     data_headers = (
-        ('Added', 'datetime'), 'Name', 'URI', 'Extension', 'Is Directory', 'Size',
+        'Time (as stored)', 'Name', 'URI', 'Extension', 'Is Directory', 'Size',
         'Is Shared', 'Is Synced', 'Available Offline', 'User Deleted', 'Source File')
     return data_headers, data_list, '\n'.join(sources)

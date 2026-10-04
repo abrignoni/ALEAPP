@@ -1,15 +1,15 @@
 """Samsung IMS service logs (com.sec.imsservice).
 
 Samsung's IMS stack writes plain-text logs under com.sec.imsservice/files and a small
-shared_prefs snapshot. Every log line is 'MM/DD/YYYY HH:MM:SS.mmm   <message>' in the
-device's local wall clock, with no time zone recorded.
+shared_prefs snapshot. Every log line is 'MM/DD/YYYY HH:MM:SS.mmm   <message>', with no
+time zone recorded, so the times are reported as text and not as datetimes.
 """
 
 __artifacts_v2__ = {
     "samsungImsSubscriber": {
         "name": "Samsung IMS Subscriber Identity",
         "description": "Parses the IMS public user identity Samsung stores in com.sec.imsservice, one row per saved entry, with the key (an IMSI on the tested images) and the SIP or TEL URI stored against it.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -43,16 +43,17 @@ __artifacts_v2__ = {
     "samsungImsRegistration": {
         "name": "Samsung IMS Registration Events",
         "description": "Parses the IMS registration log Samsung writes in com.sec.imsservice, one row per RegiMgr line, with the SIM slot, carrier profile and registration state where a line carries them, as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/RegiMgr.log, Samsung's IMS registration log. Each line is "
                  "'MM/DD/YYYY HH:MM:SS.mmm   message' with no time zone recorded. That the clock is device local time is not "
-                 "measured or sourced in this field. The module stamps the reading as UTC so the Timestamp column "
-                 "is typed as a datetime; it is the stored reading and not a UTC instant, and Time (as "
-                 "stored) keeps the original text. One row per line that begins with a date and time; a line "
+                 "measured or sourced in this field. Log Time (no zone recorded) is the stored reading rewritten "
+                 "as YYYY-MM-DD HH:MM:SS.mmm, the same digits in an order that sorts by time; it is text, is "
+                 "not typed as a datetime and no time zone is attached to it. Time (as stored) keeps the "
+                 "original text. One row per line that begins with a date and time; a line "
                  "with no leading timestamp is not reported. SIM Slot, Profile (as stored) and State (as "
                  "stored) come from the slot[N] and [Profile|State] tokens where a line carries them and are blank "
                  "otherwise; on one image whose log held only 22 early lines all three were blank. On the 13 "
@@ -83,13 +84,13 @@ __artifacts_v2__ = {
     "samsungImsPdn": {
         "name": "Samsung IMS PDN Network Events",
         "description": "Parses the IMS packet data network log Samsung writes in com.sec.imsservice, with the interface, link addresses and P-CSCF addresses where a line carries them, as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/PdnController.log, Samsung's IMS packet data network log, "
-                 "with the same no-time-zone timestamps as the registration log. Interface (as stored) is "
+                 "with the same no-time-zone timestamps as the registration log, reported as text. Interface (as stored) is "
                  "the rmnet name from an onPdnConnected or onLinkPropertiesChanged line; Link Addresses (as "
                  "stored) and P-CSCF Addresses (as stored) are the addresses from a full onLinkPropertiesChanged "
                  "block, which some images do not log, leaving those columns blank; SIM Slot comes from slot[N] "
@@ -118,13 +119,13 @@ __artifacts_v2__ = {
     "samsungImsSimCarrier": {
         "name": "Samsung IMS SIM and Carrier State",
         "description": "Parses the IMS SIM manager log Samsung writes in com.sec.imsservice, with the SIM slot and the carrier MNO and MVNO names as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/SimManager_slot*.log, Samsung's IMS SIM manager log, with the "
-                 "same no-time-zone timestamps as the registration log. MNO Name (as stored) and MVNO Name (as stored) are the "
+                 "same no-time-zone timestamps as the registration log, reported as text. MNO Name (as stored) and MVNO Name (as stored) are the "
                  "operator and virtual-operator names Samsung logged. MVNO Name is the text after mvnoname= "
                  "where a line carries one; it was present on 37 of 3,248 rows. SIM Slot comes from slot[N]. The IMSI "
                  "in this log is masked with asterisks, so it is not surfaced here; the SIM's real IMSI is in the "
@@ -152,17 +153,17 @@ __artifacts_v2__ = {
     "samsungImsServiceStarts": {
         "name": "Samsung IMS Service Starts",
         "description": "Collects the process-start lines the Samsung IMS service writes at the head of its logs in com.sec.imsservice, with the process id and firmware build as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Collects the '> Created (pid: N, binary: <firmware>)' line Samsung writes at the head of each "
-                 "com.sec.imsservice log, with the same no-time-zone timestamp as the registration log, "
+                 "com.sec.imsservice log, with the same no-time-zone timestamp as the registration log, reported as text, "
                  "deduplicated to one row per process id (the earliest time that pid was "
                  "seen), so two starts that were given the same process id at different times appear as one row "
-                 "and the later one is not reported. Service Start "
-                 "Time is the time on the earliest '> Created' line carrying that process id and Firmware Build "
+                 "and the later one is not reported. Created Line "
+                 "Time (no zone recorded) is the time on the earliest '> Created' line carrying that process id and Firmware Build "
                  "(as stored) is the text after binary: on that line. The rows of one device can carry one build "
                  "string or several, so a change of build string between rows is consistent with a firmware "
                  "change in that window; this was not checked against an update record. One tested image "
@@ -189,7 +190,6 @@ __artifacts_v2__ = {
 }
 
 import re
-from datetime import datetime, timezone
 
 from scripts.ilapfuncs import artifact_processor
 
@@ -207,10 +207,13 @@ _PCSCF = re.compile(r'PcscfAddresses:\s*\[([^\]]*)\]')
 
 
 def _when(mo):
-    """Local wall-clock datetime for a matched line, stored verbatim (no zone conversion)."""
-    y, mon, d = int(mo.group(3)), int(mo.group(1)), int(mo.group(2))
-    h, mi, s, ms = int(mo.group(4)), int(mo.group(5)), int(mo.group(6)), int(mo.group(7))
-    return datetime(y, mon, d, h, mi, s, ms * 1000, tzinfo=timezone.utc)
+    """The line's stored time as sortable text (YYYY-MM-DD HH:MM:SS.mmm).
+
+    The log records no time zone, so the reading is not turned into a datetime and no
+    zone is attached to it. Text in this form sorts in the same order as the readings.
+    """
+    return (f"{mo.group(3)}-{mo.group(1)}-{mo.group(2)} "
+            f"{mo.group(4)}:{mo.group(5)}:{mo.group(6)}.{mo.group(7)}")
 
 
 def _stored(mo):
@@ -298,7 +301,7 @@ def samsungImsRegistration(context):
                 msg,
                 context.get_relative_path(source_path)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Time (as stored)', 'SIM Slot',
+    data_headers = ('Log Time (no zone recorded)', 'Time (as stored)', 'SIM Slot',
                     'Profile (as stored)', 'State (as stored)', 'Message (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sorted(source_paths))
 
@@ -332,7 +335,7 @@ def samsungImsPdn(context):
                 msg,
                 context.get_relative_path(source_path)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Time (as stored)', 'SIM Slot',
+    data_headers = ('Log Time (no zone recorded)', 'Time (as stored)', 'SIM Slot',
                     'Interface (as stored)', 'Link Addresses (as stored)',
                     'P-CSCF Addresses (as stored)', 'Message (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sorted(source_paths))
@@ -365,7 +368,7 @@ def samsungImsSimCarrier(context):
                 msg,
                 context.get_relative_path(source_path)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Time (as stored)', 'SIM Slot',
+    data_headers = ('Log Time (no zone recorded)', 'Time (as stored)', 'SIM Slot',
                     'MNO Name (as stored)', 'MVNO Name (as stored)', 'Message (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sorted(source_paths))
 
@@ -395,6 +398,6 @@ def samsungImsServiceStarts(context):
                 instances[pid] = [when, _stored(mo), firmware]
 
     data_list = [(rec[0], rec[1], pid, rec[2]) for pid, rec in instances.items()]
-    data_headers = (('Service Start Time', 'datetime'), 'Time (as stored)',
+    data_headers = ('Created Line Time (no zone recorded)', 'Time (as stored)',
                     'Process PID (as stored)', 'Firmware Build (as stored)')
     return data_headers, data_list, '\n'.join(sorted(source_paths))

@@ -3,7 +3,7 @@ __artifacts_v2__ = {
     "get_k9mail_accounts": {
         "name": "K-9 Mail - Accounts",
         "description": "Account information from the K-9 Mail App",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2024-05-04",
         "last_update_date": "2024-05-04",
         "requirements": "none",
@@ -15,17 +15,34 @@ __artifacts_v2__ = {
     },
     "get_k9mail_messages": {
         "name": "K-9 Mail - Messages",
-        "description": "E-Mails from the K-9 Mail App. Content is the first body part stored under each message (message_parts seq = 1); further parts are not reported.",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "description": "E-Mails from the K-9 Mail App. Content is one stored text part of each message, not the whole message.",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2024-05-04",
-        "last_update_date": "2024-05-04",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "K-9 Mail",
         "notes": "Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html"
-                 ". Date Sent is the messages.date column and Date Received is the "
-                 "messages.internal_date column, both read as Unix milliseconds. The cited post "
-                 "does not describe those two columns and no other source for their meaning is "
-                 "recorded here.",
+                 ". Date is the messages.date column and Internal Date is the "
+                 "messages.internal_date column, both read as Unix milliseconds and shown in UTC. "
+                 "The cited post does not describe those two columns. In the app's source at commit "
+                 "9aee4a9, date is the time parsed from the message's Date header and internal_date "
+                 "is the internal date the mail server reported for the message (the IMAP "
+                 "INTERNALDATE item), and each one is the time the app saved the message when that "
+                 "value was missing. The columns are reported under their stored names for that "
+                 "reason. Source versions before that commit were not read. References: "
+                 "https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/legacy/core/src/main/java/com/fsck/k9/mailstore/SaveMessageDataCreator.kt#L22-L24 , "
+                 "https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/mail/common/src/main/java/com/fsck/k9/mail/internet/MimeMessage.java#L144-L158 , "
+                 "https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/mail/protocols/imap/src/main/java/com/fsck/k9/mail/store/imap/RealImapFolder.kt#L797-L798 . "
+                 "Content is the data of the first part under the message, in the stored seq "
+                 "order starting at the root part (seq 0), whose mime_type begins with text/ and "
+                 "whose data column is filled. No other part is reported. In the same source the app keeps a "
+                 "part's body in the data column when it is 16 KiB or smaller and writes a larger "
+                 "body to a file, which this artifact does not read "
+                 "(https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/legacy/storage/src/main/java/com/fsck/k9/storage/messages/SaveMessageOperations.kt#L266-L276 ). "
+                 "Content is decoded when the part's encoding is base64 and is otherwise reported "
+                 "as stored. No registered corpus holds a K-9 Mail database (44 Android corpora "
+                 "listed on 2026-10-04), so the query was exercised only on a database built from "
+                 "the app's schema.",
         "paths": ('*/com.fsck.k9/databases/*',),
         "output_types": "standard",
         "artifact_icon": "mail",
@@ -129,8 +146,10 @@ def get_k9mail_messages(context):
             cursor.execute('''
                 SELECT deleted, subject, date, sender_list, to_list, cc_list, bcc_list, reply_to_list,
                 attachment_count, internal_date, preview, read, flagged, answered, forwarded, name, root, header,
-                (SELECT encoding FROM message_parts M_INNER WHERE M_INNER.root = M_OUTER.ROOT AND seq = 1) AS encoding,
-                (SELECT data FROM message_parts M_INNER WHERE M_INNER.root = M_OUTER.ROOT AND seq = 1) AS data,
+                (SELECT encoding FROM message_parts M_INNER WHERE M_INNER.root = M_OUTER.ROOT
+                    AND M_INNER.data IS NOT NULL AND M_INNER.mime_type LIKE 'text/%' ORDER BY M_INNER.seq LIMIT 1) AS encoding,
+                (SELECT data FROM message_parts M_INNER WHERE M_INNER.root = M_OUTER.ROOT
+                    AND M_INNER.data IS NOT NULL AND M_INNER.mime_type LIKE 'text/%' ORDER BY M_INNER.seq LIMIT 1) AS data,
                 data_location
                 FROM message_parts M_OUTER
                 JOIN messages ON messages.message_part_id = M_OUTER.root
@@ -161,5 +180,5 @@ def get_k9mail_messages(context):
                 'Yes' if row[0] == 1 else 'No', 'Yes' if row[11] == 1 else 'No', 'Yes' if row[12] == 1 else 'No',
                 'Yes' if row[13] == 1 else 'No', 'Yes' if row[14] == 1 else 'No', header))
 
-    data_headers = ('Account', ('Date Sent', 'datetime'), 'Folder', 'Subject', 'Message Preview', 'From Address', 'To Address', 'CC', 'BCC', 'Reply To', '# of Attachments', 'Content', ('Date Received', 'datetime'), 'Deleted', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Header')
+    data_headers = ('Account', ('Date', 'datetime'), 'Folder', 'Subject', 'Message Preview', 'From Address', 'To Address', 'CC', 'BCC', 'Reply To', '# of Attachments', 'Content', ('Internal Date', 'datetime'), 'Deleted', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Header')
     return data_headers, data_list, source_path

@@ -4,33 +4,37 @@ __artifacts_v2__ = {
         "description": "Log lines from the WhatsApp application logs that contain one of "
                        "eight tokens, each shown with the label this parser assigns to that "
                        "token",
-        "author": "Mateus Polastro",
+        "author": "Mateus Polastro, @AlexisBrignoni, Codex",
         "creation_date": "2025-05-13",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Each row is a log line containing one of eight tokens; a line containing two "
                  "tokens gives two rows. The Description shown for a token is this parser's "
                  "label: the token-to-event mapping is not vendor-documented, and the Full Line "
                  "column is reported beside it so the reading can be checked. For the "
-                 "conversation/window-focus-changed token the Description is set to Exit "
-                 "conversation when the line contains the text false and Enter conversation when "
-                 "it contains true, wherever in the line that text appears; a line with neither "
-                 "text keeps the Description given to the previous such line, or is blank when "
-                 "there was none. Lines mentioning status@broadcast are skipped by design.\nThe "
+                 "conversation/window-focus-changed token the Description is set from the last "
+                 "word of the line: Exit conversation when it is false, Enter conversation when "
+                 "it is true, and blank for any other word. On anne_a15, kevin_pocox7_a15, "
+                 "pixel7a_a14 and russell_pixel6a_a13 all 80 such lines ended in true (40) or "
+                 "false (40). Lines mentioning status@broadcast are skipped by design.\nThe "
                  "Possible Full Numbers column lists every JID read from wa.db (user and group "
                  "JIDs found in the wa_contacts, wa_vnames, contacts and vnames tables, or in "
                  "any table with a jid column when those yield none) whose part before the @ "
                  "ends in the same four characters as the digits before @s.whatsapp.net in the "
-                 "line; when more than one wa.db is matched, only the last one read is used; "
-                 "that is a candidate list, not an identification, and more than one candidate "
-                 "is shown joined with 'or'. An empty value means the line held no JID of the "
-                 "form digits@s.whatsapp.net, or no JID read from wa.db shares the suffix, or "
-                 "wa.db was not available.\nThe log declares its own timezone: each logfile "
-                 "header line carries a tz=+/-HHMM offset, and timestamps are converted to UTC "
-                 "using the most recent declared offset. A line seen before any header is not "
-                 "converted: its timestamp is the log's local reading, and the LAVA output "
-                 "stores it as though it were UTC.",
+                 "line. A log is matched only with the wa.db under the same com.whatsapp "
+                 "directory; each tested image held one wa.db, so the case of more than one was "
+                 "checked on a constructed input only. That is a candidate list, not an "
+                 "identification, and more than one candidate is shown joined with 'or'. An "
+                 "empty value means the line held no JID of the form digits@s.whatsapp.net, or "
+                 "no JID read from that wa.db shares the suffix, or no wa.db was readable in "
+                 "that directory.\nThe log declares its own timezone: each logfile header line "
+                 "carries a tz=+/-HHMM offset, and timestamps are converted to UTC using the "
+                 "most recent offset declared in the same file. A line seen before any header "
+                 "in its file has no declared offset: its Timestamp is left blank and the "
+                 "reading as written stays at the start of Full Line. On the five tested images "
+                 "with rows (anne_a15, kevin_pocox7_a15, pixel7a_a14, russell_pixel6a_a13, "
+                 "samsungs20_a13) every log file began with a header and no row was blank.",
         "paths": (
             "*/com.whatsapp/files/Logs/*",
             "*/com.whatsapp/databases/wa.db",
@@ -245,20 +249,26 @@ class WALogLine:
 
             cellphone_result = ",".join(cellphones) if cellphones else ""
 
-        # Update token description for enter/exit conversation events
+        # The focus line ends with the word true or false. The label is decided per
+        # line from that last word, so one line's label cannot carry over to another.
+        description = self.wa_token.description
         if self.wa_token.token == enter_exit_conversation_token.token:
-            if "false" in line:
-                self.wa_token.description = "Exit conversation"
-            elif "true" in line:
-                self.wa_token.description = "Enter conversation"
+            words = line.split()
+            last_word = words[-1] if words else ''
+            if last_word == "false":
+                description = "Exit conversation"
+            elif last_word == "true":
+                description = "Enter conversation"
+            else:
+                description = ""
 
         #logfunc(f"Cellphone: {cellphone_result}")
 
         # Return the processed data as a list for reporting
         return [
-            self.timestamp,
+            '',  # filled by the caller once the file's declared offset is known
             self.wa_token.token,
-            self.wa_token.description,
+            description,
             line,
             file_name,
             cellphone_result
@@ -270,15 +280,15 @@ class WALogLine:
         Args:
             line (str): The log line to parse.
         Returns:
-            str: The extracted timestamp or "N/A" if not found.
+            datetime: The reading as written, with no zone, or None if none parses.
         """
         date_match = re.search(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', line)
         if not date_match:
-            return ''
+            return None
         try:
             return datetime.strptime(date_match.group(), '%Y-%m-%d %H:%M:%S')
         except ValueError:
-            return date_match.group()
+            return None
 
 
 # Each logfile header declares the timezone its timestamps are written in,
@@ -296,6 +306,16 @@ def _tz_from_header(line):
 
 # Define a specific token for entering/exiting conversations
 enter_exit_conversation_token = WAToken("conversation/window-focus-changed", "")
+
+
+def _container_of(path):
+    """The part of a path up to its com.whatsapp folder, so a log is only matched
+    with the wa.db of the same app data directory."""
+    path = str(path).replace('\\', '/')
+    marker = '/com.whatsapp/'
+    pos = path.rfind(marker)
+    return path[:pos + len(marker)] if pos >= 0 else ''
+
 
 @artifact_processor
 def get_WhatsAppLogFiles(context):
@@ -317,28 +337,32 @@ def get_WhatsAppLogFiles(context):
     token_ignore_line = "status@broadcast"  # Ignore lines containing this token
     data_list = []  # List to store processed log data for reporting
 
-    # Locate the WhatsApp wa.db file and load contacts
-    index = None
+    # Locate each WhatsApp wa.db file and load its contacts, one index per
+    # com.whatsapp directory
+    indexes = {}
     for file_found in files_found:
         file_name = str(file_found)
         if file_name.endswith('wa.db'):
             try:
                 with open_sqlite_db_readonly(file_name) as db:
                     cursor = db.cursor()
-                    index = load_contacts(cursor)  # Load contacts into the index
-                    if not index.index:
+                    wa_index = load_contacts(cursor)  # Load contacts into the index
+                    if not wa_index.index:
                         logfunc('No WhatsApp contacts found in wa.db; the candidate column stays empty')
+                    indexes[_container_of(file_name)] = wa_index
             except sqlite3.Error as e:
                 logfunc(f"Error accessing database {file_name}: {str(e)}")
                 continue
 
-    if index is None:
+    if not indexes:
         logfunc("No WhatsApp database (wa.db) found. Proceeding without contact index.")
-        index = WAIndex()  # Create an empty index to avoid errors
+    empty_index = WAIndex()  # Used for a log whose directory has no readable wa.db
+    no_offset_rows = 0
 
     for file_found in files_found:
         file_path_complete = str(file_found)
         file_name = os.path.basename(file_path_complete)
+        index = indexes.get(_container_of(file_path_complete), empty_index)
 
         try:
             # Process both .gz (compressed) and .log (uncompressed) files line by line
@@ -360,8 +384,13 @@ def get_WhatsAppLogFiles(context):
                         if token_key in line and token_ignore_line not in line:
                             wa_log_line = WALogLine(token_dict[token_key], line, file_name)
                             row = wa_log_line.process_line(line, file_name, index)
-                            if isinstance(row[0], datetime) and current_tz is not None:
-                                row[0] = row[0].replace(tzinfo=current_tz).astimezone(timezone.utc)
+                            stamp = wa_log_line.timestamp
+                            if stamp is not None and current_tz is not None:
+                                row[0] = stamp.replace(tzinfo=current_tz).astimezone(timezone.utc)
+                            elif stamp is not None:
+                                # No offset declared yet: the reading has no zone, so
+                                # no instant is reported. It stays in Full Line.
+                                no_offset_rows += 1
                             data_list.append(row)
         except UnicodeDecodeError as e:
             logfunc(f"Encoding error in file {file_path_complete}: {str(e)}")
@@ -372,6 +401,10 @@ def get_WhatsAppLogFiles(context):
         except OSError as e:
             logfunc(f"Error processing file {file_path_complete}: {str(e)}")
             continue
+
+    if no_offset_rows:
+        logfunc(f'{no_offset_rows} WhatsApp log line(s) came before any tz header; '
+                'their Timestamp is left blank')
 
     source_path = next((p for p in files_found if p.lower().endswith(('.log', '.gz'))),
                        files_found[0] if files_found else '')

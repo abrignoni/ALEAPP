@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "ccleaner_app_storage": {
         "name": "CCleaner App Storage and Data Usage",
         "description": "Per-app storage size and data usage stored by CCleaner",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
     "ccleaner_photo_analysis": {
         "name": "CCleaner Photo Analysis",
         "description": "Images on the device that CCleaner's photo analyzer indexed and scored",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
@@ -61,9 +61,9 @@ __artifacts_v2__ = {
     "ccleaner_duplicate_photos": {
         "name": "CCleaner Duplicate Photo Sets",
         "description": "Images CCleaner grouped together as duplicates of one another",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "CCleaner",
         "sample_data": {
@@ -74,9 +74,11 @@ __artifacts_v2__ = {
                  "mapping a media id to a path, and those ids are MediaDbItem ids: every id in "
                  "both sets of the tested image resolved to a row in MediaDbItem, so the link "
                  "between this artifact and the photo analysis artifact is one the store recorded "
-                 "rather than a match on name or size. Set Detected is the time column of "
+                 "rather than a match on name or size. Time is the time column of "
                  "DuplicatesSet, read as Unix milliseconds and rendered as UTC; what the app marks "
-                 "with it was not sourced. The tested image held 2 sets of 3 and 6 images. "
+                 "with it was not sourced, so the header carries the column's own name. On the "
+                 "tested image the 2 values were 57 milliseconds apart. The tested image held 2 "
+                 "sets of 3 and 6 images. "
                  "Grouping is the app's "
                  "own judgement and the basis for it was not sourced, so a row records that "
                  "CCleaner considered the images duplicates, not that they are byte-identical.",
@@ -87,9 +89,9 @@ __artifacts_v2__ = {
     "ccleaner_video_analysis": {
         "name": "CCleaner Video Analysis",
         "description": "Videos on the device that CCleaner's optimizer inspected, with codec detail",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "CCleaner",
         "sample_data": {
@@ -97,9 +99,12 @@ __artifacts_v2__ = {
         },
         "notes": "One row per row of VideoOptimizerMediaItem in "
                  "com.piriform.ccleaner/databases/VideoOptimizerDb.db. Path is the app's recorded "
-                 "absolute path. Last Modified and Analyzed are Unix milliseconds rendered as UTC. "
-                 "Last Modified is the lastModifiedTime column and Analyzed is the analyzedAt "
-                 "column; what the app marks with each was not sourced. Duration, dimensions, "
+                 "absolute path. Analyzed At and Last Modified Time are the analyzedAt and "
+                 "lastModifiedTime columns, read as Unix milliseconds and rendered as UTC; the "
+                 "headers carry the columns' own names. On the tested image Last Modified Time "
+                 "equalled, on 3 of 3 rows, the modification time the extraction recorded for the "
+                 "file of the same name, to the second. What the app marks with Analyzed At was "
+                 "not sourced. Duration, dimensions, "
                  "rotation, frame rate, codecs and "
                  "bitrates are reported as stored. Has DRM and Is HDR are the app's own flags. The "
                  "tested image held 3 rows, all of them files placed on the device deliberately, "
@@ -112,7 +117,7 @@ __artifacts_v2__ = {
     "ccleaner_cleaning_history": {
         "name": "CCleaner Cleaning History",
         "description": "Rows of CCleaner's CleanedItem table, with the cleaning type and the byte count each row stores",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
@@ -254,7 +259,7 @@ def ccleaner_duplicate_photos(context):
             sources.append(db_path)
 
     data_headers = (
-        ('Set Detected', 'datetime'), 'Set', 'Media Id', 'Path', 'Source File')
+        ('Time', 'datetime'), 'Set', 'Media Id', 'Path', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -276,7 +281,7 @@ def ccleaner_video_analysis(context):
             sources.append(db_path)
 
     data_headers = (
-        ('Analyzed', 'datetime'), ('Last Modified', 'datetime'), 'Path', 'Size (bytes)',
+        ('Analyzed At', 'datetime'), ('Last Modified Time', 'datetime'), 'Path', 'Size (bytes)',
         'Duration (ms)', 'Width', 'Height', 'Rotation', 'Frame Rate', 'Video Codec',
         'Video Bitrate (kbps)', 'Audio Codec', 'Audio Bitrate (kbps)', 'Is HDR',
         'Has DRM', 'Source File')

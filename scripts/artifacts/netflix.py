@@ -3,9 +3,9 @@ __artifacts_v2__ = {
         "name": "Netflix Playback Events",
         "description": "Rows of the playEvent table in the Netflix appHistory database, with the "
                        "event time, the playable identifier and the playback session identifier",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Netflix",
         "notes": "eventType, network and offline are stored as integers. The enum constant names "
@@ -15,9 +15,10 @@ __artifacts_v2__ = {
                  "the data tested, so the column is unexercised beyond that value. On the "
                  "populated extraction the row producing path was exercised against, the duration "
                  "value did not differ between repeated events of one playable id. What it "
-                 "describes and its unit are not established; the hh:mm:ss column reads the value "
-                 "as milliseconds, which is an assumption, and the header Duration (ms) carries "
-                 "the same assumption. Titles are filled in from the "
+                 "describes and its unit are not established: the table definition declares the "
+                 "column as an integer and names no unit (read on anne_a15, sharon_a13 and "
+                 "sharon_a14), so the number is reported under the header duration (as stored) "
+                 "and is not converted. Titles are filled in from the "
                  "offlineFalkorPlayable table and the Apollo cache when the same video id appears "
                  "there, and are left blank otherwise; those two stores hold whatever the app had "
                  "cached, so a row has no title when neither store carries its playable id. "
@@ -47,7 +48,7 @@ __artifacts_v2__ = {
         "description": "Rows of the sessionNetworkStatistics table in the Netflix appHistory "
                        "database, with the timestamp, byte count, IP address as stored and "
                        "network type recorded in each row",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -82,7 +83,7 @@ __artifacts_v2__ = {
         "description": "Rows of the bookmarkStore table in the Netflix OfflineDb database, holding "
                        "a stored playback position per playable per profile with the time the "
                        "position was last updated",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -112,11 +113,11 @@ __artifacts_v2__ = {
     "netflix_offline_titles": {
         "name": "Netflix Offline Title Metadata",
         "description": "Rows of the offlineFalkorPlayable table in the Netflix OfflineDb database, "
-                       "carrying the title, season and episode numbering, runtime and artwork URLs "
+                       "carrying the title, season and episode numbering, duration value and artwork URLs "
                        "the app stored for a playable",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Netflix",
         "notes": "The table carries many columns; the ones reported here are the descriptive "
@@ -126,8 +127,11 @@ __artifacts_v2__ = {
                  "after the video id exists under "
                  "files/img/of/videos. What places a row in the offlineFalkorPlayable table was "
                  "not established here. A row is not by itself a record that the title was "
-                 "played. The seconds unit of the duration column and the epoch reading of "
-                 "expTime are assumed. The database uses "
+                 "played. The duration and expTime columns are declared as integers in the table "
+                 "definition, which names no unit or epoch for either (read on anne_a15, "
+                 "sharon_a13 and sharon_a14), and no source for them was found; both numbers are "
+                 "reported as stored under the column names and expTime is not converted to a "
+                 "date. The database uses "
                  "WAL and the sidecars are matched with it."
                  " In the corpora listed below the app was installed and the "
                  "database was present with this table empty, checked directly "
@@ -150,7 +154,7 @@ __artifacts_v2__ = {
         "description": "Rows of the offlineFalkorProfile table in the Netflix OfflineDb database, "
                        "with the profile identifier, the profile name and the avatar URL, plus the "
                        "cached avatar image where one is on disk",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -180,7 +184,7 @@ __artifacts_v2__ = {
         "name": "Netflix Browse Cache",
         "description": "Video entries held in the Netflix Apollo GraphQL cache, listing the title, "
                        "the entry kind and the runtime and category tags stored alongside it",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -211,7 +215,7 @@ __artifacts_v2__ = {
         "description": "Images cached by Netflix under files/img/of, with the video or profile "
                        "identifier taken from the file name and the title resolved where the "
                        "databases carry it",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -246,7 +250,7 @@ __artifacts_v2__ = {
                        "identifier values (nf_drm_system_id, nf_drm_crypto_provider and the "
                        "deviceId in nf_drm_migration_identity), the stored country and language "
                        "and the playAppInstallTime value",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-04",
         "requirements": "none",
@@ -293,7 +297,7 @@ __artifacts_v2__ = {
         "name": "Netflix Preferences",
         "description": "Key and value pairs from the Netflix nfxpref preferences file, excluding "
                        "the keys that start with persistent_ and the credential bearing keys",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -319,9 +323,9 @@ __artifacts_v2__ = {
         "description": "Entries from the JSON files Netflix keeps under files/logblobs, with "
                        "the client timestamp and the device and session values carried in each "
                        "entry",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Netflix",
         "notes": "Each file is parsed as JSON. A top level array is read as a list of entries and "
@@ -329,8 +333,10 @@ __artifacts_v2__ = {
                  "skipped. What the app does with these files is not established here. Entries "
                  "carry differing fields depending on the blob type, so the columns here are the "
                  "ones observed across the files tested and are left blank when an entry does not "
-                 "carry them. The rooted value is the app's own recorded value and is reported as "
-                 "stored rather than treated as a finding about the device.",
+                 "carry them. The system_id column is headed with the entry's own key name because no "
+                 "source for what the app records in it was found. The rooted value is the app's "
+                 "own recorded value and is reported as stored rather than treated as a finding "
+                 "about the device.",
         "paths": ('*/com.netflix.mediaclient/files/logblobs/*',),
         "output_types": "standard",
         "artifact_icon": "file-analytics",
@@ -583,7 +589,6 @@ def netflix_playback(context):
                 network,
                 offline,
                 duration,
-                _ms_to_hms(duration),
                 row_id,
             ))
 
@@ -596,8 +601,7 @@ def netflix_playback(context):
         'Event Type (as stored)',
         'Network (as stored)',
         'Offline (as stored)',
-        'Duration (ms)',
-        'Duration (hh:mm:ss)',
+        'duration (as stored)',
         'Row ID',
     )
     return data_headers, data_list, '\n'.join(source_paths)
@@ -720,7 +724,7 @@ def netflix_offline_titles(context):
                 genres,
                 actors,
                 synopsis,
-                convert_unix_ts_to_utc(expiry) if expiry else '',
+                expiry,
                 profile_id,
                 boxshot_url,
                 horizontal_url,
@@ -736,7 +740,7 @@ def netflix_offline_titles(context):
         'Season Label',
         'Season Number',
         'Episode Number',
-        'Duration (seconds)',
+        'duration (as stored)',
         'Year',
         'Maturity Level (as stored)',
         'Certification',
@@ -744,7 +748,7 @@ def netflix_offline_titles(context):
         'Genres',
         'Actors',
         'Synopsis',
-        ('Expiry Time', 'datetime'),
+        'expTime (as stored)',
         'Profile ID',
         'Boxshot URL',
         'Horizontal Artwork URL',
@@ -1071,7 +1075,7 @@ def netflix_logblobs(context):
         'Installer Name',
         'Installation Source',
         'Device Category',
-        'Widevine System ID',
+        'system_id (as stored)',
         'App ID',
         'Session ID',
         'Unique Log ID',

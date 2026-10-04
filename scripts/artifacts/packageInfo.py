@@ -2,15 +2,34 @@ __artifacts_v2__ = {
     "get_package_info": {
         "name": "package_info",
         "description": "Parses installed package records from the system packages.xml: "
-                       "name, the ft, it and ut time attributes (shown as ft, Install Time "
-                       "and Update Time), install originator, installer, code path and "
-                       "flags as stored.",
-        "author": "@ydkhatri",
+                       "name, the ft, it and ut time attributes (shown as Code Path Modified "
+                       "Time (ft), Install Time and Update Time), install originator, "
+                       "installer, code path and flags as stored.",
+        "author": "@ydkhatri, @AlexisBrignoni, Codex",
         "creation_date": "2020-11-03",
-        "last_update_date": "2026-07-10",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Installed Apps",
-        "notes": "",
+        "notes": "Code Path Modified Time (ft) is the package record's ft attribute, read as "
+                 "milliseconds since 1970 UTC. AOSP writes ft from the package setting's last "
+                 "modified time, which it sets from the last modified time of the package's "
+                 "code path, and it prints the same value as timeStamp in its package dump. It "
+                 "is a file time of the installed code, not the time of an install. "
+                 "Reference: AOSP, Settings.java at android-13.0.0_r1, "
+                 "https://github.com/aosp-mirror/platform_frameworks_base/blob/0d3ff311e6e80dee7fe88a2a2cfa272ce231c3c6/services/core/java/com/android/server/pm/Settings.java#L984-L999 and "
+                 "https://github.com/aosp-mirror/platform_frameworks_base/blob/0d3ff311e6e80dee7fe88a2a2cfa272ce231c3c6/services/core/java/com/android/server/pm/Settings.java#L2784-L2785 . "
+                 "The same source for ft was read at android-10.0.0_r1 "
+                 "(https://github.com/aosp-mirror/platform_frameworks_base/blob/57bb140be9e48cf08acba131f7463e461777bb8e/services/core/java/com/android/server/pm/Settings.java#L624-L631) and at android-16.0.0_r1 "
+                 "(https://github.com/aosp-mirror/platform_frameworks_base/blob/99b01a65cc4c104933788b3143285ab6bae65827/services/core/java/com/android/server/pm/Settings.java#L1089-L1113). "
+                 "Install Time is the it attribute and Update Time is the ut attribute. "
+                 "At android-13.0.0_r1 and android-16.0.0_r1 the package record is written "
+                 "with ft and ut and without it, and the first install time is written per "
+                 "user to package-restrictions.xml, which this artifact does not read. "
+                 "Measured on three registered images: on galaxys10_a10 (Android 10) all 448 "
+                 "rows carry ft, it and ut; on pixel7a_a14 (369 rows) and hc_pixel8pro_a16 "
+                 "(385 rows) every row carries ft and ut and no row carries it, so Install "
+                 "Time is blank on those images. On those two images the earliest ft value "
+                 "falls in 1970.",
         "paths": ('*/system/packages.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -116,5 +135,5 @@ def get_package_info(context):
     for p in packages:
         data_list.append((p.ft, p.name, p.install_time, p.update_time, p.install_originator, p.installer, p.code_path, p.public_flags, p.private_flags))
 
-    data_headers = (('ft', 'datetime'), 'Name', ('Install Time', 'datetime'), ('Update Time', 'datetime'), 'Install Originator', 'Installer', 'Code Path', 'Public Flags', 'Private Flags')
+    data_headers = (('Code Path Modified Time (ft)', 'datetime'), 'Name', ('Install Time', 'datetime'), ('Update Time', 'datetime'), 'Install Originator', 'Installer', 'Code Path', 'Public Flags', 'Private Flags')
     return data_headers, data_list, source_path

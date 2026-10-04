@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_fb_user_id": {
         "name": "Facebook Messenger - User ID",
         "description": "User id stored in the threads_db2-uid file",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
     "get_fb_msys_chats": {
         "name": "Facebook Messenger - Chats (msys_database)",
         "description": "Facebook/Messenger chat messages (msys_database)",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-10-04",
         "requirements": "none",
@@ -76,7 +76,7 @@ __artifacts_v2__ = {
     "get_fb_msys_calls": {
         "name": "Facebook Messenger - Calls (msys_database)",
         "description": "Facebook/Messenger call log (msys_database)",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -113,9 +113,9 @@ __artifacts_v2__ = {
     "get_fb_msys_contacts": {
         "name": "Facebook Messenger - Contacts (msys_database)",
         "description": "Facebook/Messenger contacts (msys_database)",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
-        "last_update_date": "2021-03-03",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "Rows that are the same record found in more than one place are merged, and the "
@@ -127,12 +127,18 @@ __artifacts_v2__ = {
                  "staged path contains /user/0/ or the word mirror is not read. Signed CDN links "
                  "(the Profile Pic URL column) are excluded from the key, which means two "
                  "genuinely different items would merge if they matched on every other reported "
-                 "column. Friendship Status shows this module's labels for the stored "
-                 "friendship_status: 0 N/A (Self), 1 Friends, 2 Friend Request Received, 3 Friend "
-                 "Request Sent, 4 Not Friends. The labels are not sourced, and any other stored "
-                 "value is shown blank. Birthdate (MM-DD) is the month and day of "
-                 "birthday_timestamp read as Unix seconds in UTC, so a birthday stored as local "
-                 "midnight east of UTC shows as the previous day.",
+                 "column. Friendship Status (as stored) is the friendship_status integer as the "
+                 "database holds it. No source for the meaning of its values was found, so no "
+                 "label is applied. The stored values on the five images listed in sample_data "
+                 "were 0, 1, 3, 4 and 5; 0 was held by 12 contact rows across the copies read, 9 "
+                 "of them the row of the account the database is named for and 3 of them not. "
+                 "Birthday Timestamp (as stored) is birthday_timestamp as the database holds it, "
+                 "and Birthdate (MM-DD) is the month and day of that value read as Unix seconds "
+                 "in UTC. The database records no time zone for the value. On the five images "
+                 "listed in sample_data all 78 stored values (35 contact rows held none) fell in "
+                 "1970 at midnight in the America/Los_Angeles zone, and the UTC month and day "
+                 "equalled the month and day of that midnight on all 78. A value stored as "
+                 "midnight in a zone east of UTC would show as the previous day; none was seen.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -147,7 +153,7 @@ __artifacts_v2__ = {
     "get_fb_threads_chats": {
         "name": "Facebook Messenger - Chats (threads_db2)",
         "description": "Facebook/Messenger chat messages (threads_db2)",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-08-10",
         "requirements": "none",
@@ -171,7 +177,7 @@ __artifacts_v2__ = {
     "get_fb_threads_calls": {
         "name": "Facebook Messenger - Calls (threads_db2)",
         "description": "Facebook/Messenger call log (threads_db2)",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
         "requirements": "none",
@@ -197,7 +203,7 @@ __artifacts_v2__ = {
     "get_fb_threads_contacts": {
         "name": "Facebook Messenger - Contacts (threads_db2)",
         "description": "Facebook/Messenger contacts (threads_db2)",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-08-10",
         "requirements": "none",
@@ -473,22 +479,20 @@ def get_fb_msys_contacts(context):
             id, name, normalized_name_for_search, username, profile_picture_large_url,
             email_address, phone_number,
             CASE is_messenger_user WHEN 0 THEN "" WHEN 1 THEN "Yes" END,
-            CASE friendship_status
-                WHEN 0 THEN "N/A (Self)" WHEN 1 THEN "Friends"
-                WHEN 2 THEN "Friend Request Received" WHEN 3 THEN "Friend Request Sent"
-                WHEN 4 THEN "Not Friends"
-            END,
-            substr(datetime(birthday_timestamp,'unixepoch'),6,5)
+            friendship_status,
+            substr(datetime(birthday_timestamp,'unixepoch'),6,5),
+            birthday_timestamp
         FROM contacts
         ''')
         for row in rows:
             data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8],
-                              row[9], rel))
+                              row[9], row[10], rel))
         db.close()
 
     data_headers = ('Facebook ID', 'Name', 'Normalized Name', 'User Name', 'Profile Pic URL',
-                    'Email Address', 'Phone Number', 'Is Messenger User', 'Friendship Status',
-                    'Birthdate (MM-DD)', 'Source File')
+                    'Email Address', 'Phone Number', 'Is Messenger User',
+                    'Friendship Status (as stored)', 'Birthdate (MM-DD)',
+                    'Birthday Timestamp (as stored)', 'Source File')
     # index 4 is Profile Pic URL, a per-app signed CDN link
     return data_headers, _merge_by_source(data_list, volatile=(4,)), source
 

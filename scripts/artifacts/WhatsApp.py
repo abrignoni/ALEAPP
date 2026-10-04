@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_whatsapp_contacts": {
         "name": "WhatsApp - Contacts",
         "description": "Rows of WhatsApp's wa.db wa_contacts table (name columns, wa_name, jid, number and status text), excluding channel (@newsletter) and status@broadcast jids",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-09-27",
         "requirements": "none",
@@ -29,12 +29,12 @@ __artifacts_v2__ = {
     "get_whatsapp_call_logs": {
         "name": "WhatsApp - Call Logs",
         "description": "WhatsApp call logs (msgstore.db)",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-09-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "A call whose jid is a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Calls that match no contact are still reported when a wa.db is present. With no wa.db the query cannot run and no calls are reported; the run log says so. Call End Timestamp is not stored: it is the call's timestamp plus its duration read as seconds. On an outgoing call Caller reads Self and Caller JID is blank. For an incoming call that matches no contact, or whose contact has no WhatsApp name, Caller is shown by jid. The LID-keyed case and the no-contact case are exercised by a constructed test (admin/test/scripts/test_whatsapp_lid_contacts.py); whether any image listed in sample_data holds such a call is not stated here.",
+        "notes": "A call whose jid is a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Calls that match no contact are still reported. With no wa.db every call is still reported and an incoming call's Caller is shown by jid; run on copies of the 12 listed images' msgstore.db with wa.db left out, the artifact reported the same number of calls as with it. Call End Timestamp is not stored: it is the call's timestamp plus its duration read as seconds. On an outgoing call Caller reads Self and Caller JID is blank. For an incoming call that matches no contact, or whose contact has no WhatsApp name, Caller is shown by jid. The LID-keyed case and the no-contact case are exercised by a constructed test (admin/test/scripts/test_whatsapp_lid_contacts.py); whether any image listed in sample_data holds such a call is not stated here.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -56,17 +56,20 @@ __artifacts_v2__ = {
     "get_whatsapp_messages": {
         "name": "WhatsApp - Messages",
         "description": "WhatsApp messages (legacy msgstore.db schema with messages.data)",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Legacy schema only (a messages table with a data column); modern databases are "
                  "covered by the One To One / Group Messages artifacts. Key Remote JID is "
-                 "messages.key_remote_jid as stored; it is not a message identifier. Only "
-                 "messages whose key_remote_jid has a row in wa.db's wa_contacts are reported, and "
-                 "none are reported when wa.db is absent. Every image listed in sample_data "
-                 "reports 0 rows, so this artifact is not exercised by the listed data.",
+                 "messages.key_remote_jid as stored; it is not a message identifier. Rows are read "
+                 "from the messages table and wa.db is not used. Recipients lists the "
+                 "group_participants jids recorded for a key_remote_jid, and shows the "
+                 "key_remote_jid itself when there are none. The row whose key_remote_jid is -1 is "
+                 "not reported; pixel3_a11 and pixel3_a12 each hold one such row, with no data "
+                 "value. Rows are in timestamp order. On the listed images other than pixel3_a11 "
+                 "and pixel3_a12, msgstore.db has no messages table and 0 rows are reported.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -78,17 +81,19 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.whatsapp vc 253776000 | 0 rows",
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 0 rows",
+            "pixel3_a11": "Android 11 | com.whatsapp vc 204815003 | 10 rows",
+            "pixel3_a12": "Android 12 | com.whatsapp vc 212020004 | 23 rows",
         },
     },
     "get_whatsapp_one_to_one_messages": {
         "name": "WhatsApp - One To One Messages",
-        "description": "WhatsApp messages whose recipient_count is 0, outside channel chats (modern msgstore.db schema)",
-        "author": "@abrignoni",
+        "description": "WhatsApp messages in chats whose jid is not a group (@g.us) or channel (@newsletter) jid (modern msgstore.db schema)",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-09-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "Rows are selected by message.recipient_count = 0, not by the type of the chat's jid. Message Type shows this module's label for message_type 0, 1, 2, 3, 5, 7, 9 and 16; other values are shown as stored and no source for the labels is cited here. A chat keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Messages whose chat matches no contact are still reported when a wa.db is present. With no wa.db the query cannot run and no messages are reported; the run log says so. When no contact matches, or the contact has no WhatsApp name, the participant is shown by jid. The conversation view groups rows by Other Participant WA User Name, so a LID-keyed chat and the phone-number chat that jid_map links it to are shown as one conversation. Two different contacts that share a WhatsApp name are grouped the same way; the Sending Party JID column tells them apart on incoming rows. On sharon_a14, 48 LID-keyed chats each had such a phone-number chat. Messages in channel (newsletter) chats are not reported here; WhatsApp - Channel Messages reports them.",
+        "notes": "Rows are selected by the chat's jid: every message in a chat whose jid does not end in @g.us or @newsletter. g.us is the server name the third-party open-source client whatsmeow gives for group jids (GroupServer, https://github.com/tulir/whatsmeow/blob/8b41cfe6d9c487e17858cf00be40e951f575dbe8/types/jid.go#L24); no WhatsApp source for it is cited here. On the 12 listed images this selects the same rows as message.recipient_count = 0, which this artifact used before: every message in an @g.us chat stored a recipient_count of 1 or more, and every message in another chat stored 0. A chat keyed by any other jid form is reported here as stored; on the listed images the chats holding these rows were keyed by @s.whatsapp.net and @lid jids only. Message Type shows this module's label for message_type 0, 1, 2, 3, 5, 7, 9 and 16; other values are shown as stored and no source for the labels is cited here. A chat keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Messages whose chat matches no contact are still reported. With no wa.db every message is still reported and the participant is shown by jid; run on copies of the 12 listed images' msgstore.db with wa.db left out, the artifact reported the same number of rows as with it. When no contact matches, or the contact has no WhatsApp name, the participant is shown by jid. Other Participant JID is the jid of the matched wa_contacts row, otherwise the jid that jid_map links the chat's LID jid to, otherwise the chat's jid; it is filled on incoming and outgoing rows. The conversation view groups rows by Other Participant JID and labels each conversation with Other Participant WA User Name, so a LID-keyed chat and the phone-number chat that jid_map links it to are shown as one conversation, and two chats whose contacts share a WhatsApp name are shown as two conversations. On the listed images 9 WhatsApp names were each shared by the chats of two @s.whatsapp.net jids (1 on hc_pixel8pro_a16, 1 on hc_pixel8pro_a17, 1 on kevin_pocox7_a15, 1 on russell_a14, 2 on sharon_a13, 3 on sharon_a14). On sharon_a14, 48 LID-keyed chats each had such a phone-number chat. Messages in channel (newsletter) chats are not reported here; WhatsApp - Channel Messages reports them.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -108,7 +113,8 @@ __artifacts_v2__ = {
         },
         "data_views": {
             "conversation": {
-                "conversationDiscriminatorColumn": "Other Participant WA User Name",
+                "conversationDiscriminatorColumn": "Other Participant JID",
+                "conversationLabelColumn": "Other Participant WA User Name",
                 "textColumn": "Message",
                 "directionColumn": "Message Direction",
                 "directionSentValue": "Outgoing",
@@ -121,13 +127,13 @@ __artifacts_v2__ = {
     },
     "get_whatsapp_group_messages": {
         "name": "WhatsApp - Group Messages",
-        "description": "WhatsApp messages whose recipient_count is 1 or more (modern msgstore.db schema)",
-        "author": "@abrignoni",
+        "description": "WhatsApp messages in chats whose jid is a group (@g.us) jid (modern msgstore.db schema)",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-09-26",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "Rows are selected by message.recipient_count >= 1, not by the type of the chat's jid. Message Type shows this module's label for message_type 0, 1, 2, 3, 5, 7, 9 and 16; other values are shown as stored and no source for the labels is cited here. A sender keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. A sender that matches no contact, or has no WhatsApp name, is shown by jid. On outgoing rows Sending Party reads Self and Sending Party JID is blank. With no wa.db the query cannot run and no messages are reported; the run log says so.",
+        "notes": "Rows are selected by the chat's jid: every message in a chat whose jid ends in @g.us. g.us is the server name the third-party open-source client whatsmeow gives for group jids (GroupServer, https://github.com/tulir/whatsmeow/blob/8b41cfe6d9c487e17858cf00be40e951f575dbe8/types/jid.go#L24); no WhatsApp source for it is cited here. On the 12 listed images this selects the same rows as message.recipient_count >= 1, which this artifact used before. Message Type shows this module's label for message_type 0, 1, 2, 3, 5, 7, 9 and 16; other values are shown as stored and no source for the labels is cited here. A sender keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. A sender that matches no contact, or has no WhatsApp name, is shown by jid. On outgoing rows Sending Party reads Self and Sending Party JID is blank. With no wa.db every message is still reported and incoming senders are shown by jid; run on copies of the 12 listed images' msgstore.db with wa.db left out, the artifact reported the same number of rows as with it. The conversation view groups rows by Conversation Name, the chat's subject, so two groups with the same subject would be shown as one conversation; no listed image holds two groups with one subject.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -160,9 +166,9 @@ __artifacts_v2__ = {
     "get_whatsapp_group_details": {
         "name": "WhatsApp - Group Details",
         "description": "WhatsApp group chats (chats with a subject in msgstore.db other than channels), with the group creator where wa.db records one and the group picture where the app stored one",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-09-27",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": (
@@ -175,9 +181,12 @@ __artifacts_v2__ = {
             "a newsletter jid (...@newsletter) also carry a subject and are not reported here; "
             "WhatsApp - Channels reports them. Of the 27 chats with a subject on the tested "
             "images, 18 are newsletter chats (10 on kevin_pocox7_a15, 5 on russell_a14, 3 on "
-            "samsungs20_a13) and the 9 reported are groups (...@g.us). Group Creation Timestamp is "
-            "chat.created_timestamp as stored. Whether it marks when the group was created or when "
-            "the chat was created on this device is not established here. Creator JID is wa.db's "
+            "samsungs20_a13) and the 9 reported are groups (...@g.us). Chat Created Timestamp is "
+            "chat.created_timestamp read as milliseconds since 1970-01-01 UTC. On all 9 group rows "
+            "it equalled the timestamp of the chat's earliest stored message, a system message "
+            "(message_type 7, message_system action_type 11) with from_me=1. What that message "
+            "records, and whether the value marks when the group was created or when the chat "
+            "was created on this device, was not established. Creator JID is wa.db's "
             "wa_group_admin_settings.creator_jid for the chat's jid. Creator JID held a value on 4 "
             "of the 9 group rows and was blank for all 5 groups on pixel7a_a14, russell_a14 and "
             "sharon_a14. It is also blank when wa.db lacks the creator_jid column, as on "
@@ -225,12 +234,12 @@ __artifacts_v2__ = {
     "get_whatsapp_channels": {
         "name": "WhatsApp - Channels",
         "description": "WhatsApp channels with a row in msgstore.db's newsletter table",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-27",
-        "last_update_date": "2026-09-27",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "Reads msgstore.db's newsletter table, one row per channel, joined to the channel's chat. Local Chat Created Timestamp is chat.created_timestamp. On the three tested images holding channels (kevin_pocox7_a15, russell_a14, samsungs20_a13; 18 channels), each channel's earliest stored message was one of two system messages with from_me=1 (message_system action_type 132 and 134) carrying that same millisecond value, and no message in the channel was older. What those two system messages record, and whether the timestamp marks when the channel was followed, was not established. Verified (as stored), Membership (as stored) and Muted (as stored) are the newsletter table's integers, reported without an interpretation. Membership (as stored) and Muted (as stored) each held the same value, 1, on all 18 channels. Verified (as stored) held 1 on 15 channels and 0 on 3, and held the same value, 1, on all 3 channels of samsungs20_a13. Subscriber Count is newsletter.subscribers_count as stored. Messages Stored counts the chat's rows in the message table. Newsletter chats with no newsletter row are not reported: pixel7a_a14 and sharon_a14 each hold 20, with no name, no timestamps and no messages. wa.db lists newsletter jids for channels absent from this table (275 newsletter jids on kevin_pocox7_a15 against its 10 channels), so a newsletter jid in wa.db does not show that the channel was followed. wa.db's wa_newsletter_props, whose property names are keyed by a numeric id or a two-letter code, is not reported. Only the first msgstore.db matched is read, as in the module's other artifacts.",
+        "notes": "Reads msgstore.db's newsletter table, one row per channel, joined to the channel's chat. Chat Created Timestamp is chat.created_timestamp read as milliseconds since 1970-01-01 UTC. On the three tested images holding channels (kevin_pocox7_a15, russell_a14, samsungs20_a13; 18 channels), each channel's earliest stored message was one of two system messages with from_me=1 (message_system action_type 132 and 134) carrying that same millisecond value, and no message in the channel was older. What those two system messages record, and whether the timestamp marks when the channel was followed, was not established. Verified (as stored), Membership (as stored) and Muted (as stored) are the newsletter table's integers, reported without an interpretation. Membership (as stored) and Muted (as stored) each held the same value, 1, on all 18 channels. Verified (as stored) held 1 on 15 channels and 0 on 3, and held the same value, 1, on all 3 channels of samsungs20_a13. Subscriber Count is newsletter.subscribers_count as stored. Messages Stored counts the chat's rows in the message table. Newsletter chats with no newsletter row are not reported: pixel7a_a14 and sharon_a14 each hold 20, with no name, no timestamps and no messages. wa.db lists newsletter jids for channels absent from this table (275 newsletter jids on kevin_pocox7_a15 against its 10 channels), so a newsletter jid in wa.db does not show that the channel was followed. wa.db's wa_newsletter_props, whose property names are keyed by a numeric id or a two-letter code, is not reported. Only the first msgstore.db matched is read, as in the module's other artifacts.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*',),
         "output_types": "standard",
         "artifact_icon": "broadcast",
@@ -252,7 +261,7 @@ __artifacts_v2__ = {
     "get_whatsapp_channel_messages": {
         "name": "WhatsApp - Channel Messages",
         "description": "Messages stored in WhatsApp channel (newsletter) chats",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-27",
         "last_update_date": "2026-09-27",
         "requirements": "none",
@@ -290,17 +299,22 @@ __artifacts_v2__ = {
     },
     "get_whatsapp_user_profile": {
         "name": "WhatsApp - User Profile",
-        "description": "Values of five keys in WhatsApp's shared_prefs XML files",
-        "author": "@abrignoni",
+        "description": "Values of five keys in WhatsApp's shared_prefs XML files, one row per shared_prefs folder",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "One row. Name is the push_name key, User Status my_current_status, Country Code "
-                 "cc, Mobile Number ph and Version version, each as stored in "
-                 "com.whatsapp_preferences_light.xml or startup_prefs.xml. The first non-empty "
-                 "value found for each key across the matched files is used, so where more than "
-                 "one copy of the app is present the row can combine values from different copies.",
+        "notes": "One row per com.whatsapp shared_prefs folder; the data/data, data/user/0 and "
+                 "data_mirror views of one folder are read once. Name is the push_name key, User "
+                 "Status my_current_status, Country Code cc, Mobile Number ph and Version version, "
+                 "each as stored in com.whatsapp_preferences_light.xml or startup_prefs.xml of that "
+                 "folder. Where both files of a folder hold a value for a key, the one in "
+                 "com.whatsapp_preferences_light.xml is shown; on the 12 images listed for WhatsApp "
+                 "- Contacts no key was held by both files, and pixel3_a11 and pixel3_a12 hold only "
+                 "com.whatsapp_preferences_light.xml. Source Files names the files read for the "
+                 "row. Values from two folders are not combined; none of those 12 images holds two "
+                 "folders, so that case was exercised on constructed files only.",
         "paths": ('*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml',
                   '*/com.whatsapp/shared_prefs/startup_prefs.xml'),
         "output_types": "standard",
@@ -325,6 +339,7 @@ import xmltodict
 
 from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, open_sqlite_db_readonly, check_in_media, \
     logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 # Re-used location columns shared by the one-to-one and group message queries.
 _LOCATION_HEADERS = ('Shared Latitude/Starting Latitude (Live Location)',
@@ -443,6 +458,20 @@ def _contact_jid(cursor, jid_alias):
     return joins, f'COALESCE(mapped_jid.raw_string, {jid_alias}.raw_string)'
 
 
+def _wa_contacts(cursor):
+    """The wa_contacts table expression for a join, usable when wa.db is absent.
+
+    wa_contacts lives in wa.db, attached as wadb. With no wa.db attached, a join on the bare
+    table name made the whole query fail, so no row was read. An empty stand-in with the same
+    columns lets the LEFT JOIN run and leaves the contact columns NULL.
+    """
+    if not _has_column(cursor, 'wadb', 'wa_contacts', 'jid'):
+        return '(SELECT NULL AS jid, NULL AS wa_name, NULL AS rowid WHERE 0) AS wa_contacts'
+    if not _has_column(cursor, 'wadb', 'wa_contacts', 'wa_name'):
+        return '(SELECT jid, NULL AS wa_name, rowid FROM wadb.wa_contacts) AS wa_contacts'
+    return 'wadb.wa_contacts AS wa_contacts'
+
+
 def _ms_to_utc(value):
     """A millisecond Unix time as a UTC datetime; 0, empty or non-integer values give None."""
     if not isinstance(value, int) or value <= 0:
@@ -501,6 +530,7 @@ def get_whatsapp_call_logs(context):
     data_list = []
     if db:
         lid_joins, contact_jid = _contact_jid(cursor, 'jid')
+        contacts = _wa_contacts(cursor)
         rows = _run(cursor, f'''
         SELECT
             datetime(call_log.timestamp/1000,'unixepoch'),
@@ -514,7 +544,7 @@ def get_whatsapp_call_logs(context):
         FROM call_log
         LEFT JOIN jid ON jid._id=call_log.jid_row_id
         {lid_joins}
-        LEFT JOIN wa_contacts ON wa_contacts.jid={contact_jid}
+        LEFT JOIN {contacts} ON wa_contacts.jid={contact_jid}
         LEFT JOIN chat ON chat.jid_row_id=call_log.group_jid_row_id
         ORDER BY call_log.timestamp ASC
         ''')
@@ -534,33 +564,44 @@ def get_whatsapp_messages(context):
     files_found = context.get_files_found()
     db, cursor, source, _wa = _open_msgstore(files_found)
     data_list = []
+    data_headers = (('Message Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
+                    'Key Remote JID', 'Recipients', 'Direction', 'Message', 'Group Sender', 'Attachment')
     if db:
-        rows = _run(cursor, '''
+        if not _has_column(cursor, 'main', 'messages', 'data'):
+            logfunc('WhatsApp - Messages: skipped modern or unsupported msgstore schema; '
+                    'this artifact requires the legacy messages.data column')
+            db.close()
+            return data_headers, data_list, source
+        # Read from the messages table itself. The query used to start from wa.db's wa_contacts
+        # with an inner join, so no row was read without a wa.db and a message whose
+        # key_remote_jid had no wa_contacts row was left out. wa_contacts supplied no column.
+        groups = '(SELECT NULL AS gjid, NULL AS recipients WHERE 0)'
+        if _has_table(cursor, 'group_participants'):
+            groups = '''(SELECT gjid, group_concat(CASE WHEN jid == "" THEN NULL ELSE jid END) AS recipients
+                FROM group_participants GROUP BY gjid)'''
+        rows = _run(cursor, f'''
         SELECT
             datetime(messages.timestamp/1000,'unixepoch'),
             CASE messages.received_timestamp WHEN 0 THEN ''
                 ELSE datetime(messages.received_timestamp/1000,'unixepoch') END,
             messages.key_remote_jid,
-            CASE WHEN contact_book_w_groups.recipients IS NULL THEN messages.key_remote_jid
-                ELSE contact_book_w_groups.recipients END,
+            CASE WHEN groups.recipients IS NULL THEN messages.key_remote_jid
+                ELSE groups.recipients END,
             CASE key_from_me WHEN 0 THEN "Incoming" WHEN 1 THEN "Outgoing" END,
             messages.data,
             CASE WHEN messages.remote_resource IS NULL THEN messages.key_remote_jid
                 ELSE messages.remote_resource END,
             messages.media_url
-        FROM (SELECT jid, recipients FROM wadb.wa_contacts AS contacts
-            LEFT JOIN (SELECT gjid, group_concat(CASE WHEN jid == "" THEN NULL ELSE jid END) AS recipients
-                FROM group_participants GROUP BY gjid) AS groups ON contacts.jid = groups.gjid
-            GROUP BY jid) AS contact_book_w_groups
-        JOIN messages ON messages.key_remote_jid = contact_book_w_groups.jid
+        FROM messages
+        LEFT JOIN {groups} AS groups ON groups.gjid = messages.key_remote_jid
+        WHERE messages.key_remote_jid <> '-1'
+        ORDER BY messages.timestamp ASC, messages._id ASC
         ''')
         for row in rows:
             data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3], row[4],
                               row[5], row[6], row[7]))
         db.close()
 
-    data_headers = (('Message Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
-                    'Key Remote JID', 'Recipients', 'Direction', 'Message', 'Group Sender', 'Attachment')
     return data_headers, data_list, source
 
 
@@ -571,6 +612,7 @@ def get_whatsapp_one_to_one_messages(context):
     data_list = []
     if db:
         lid_joins, contact_jid = _contact_jid(cursor, 'jid')
+        contacts = _wa_contacts(cursor)
         rows = _run(cursor, f'''
         SELECT
             CASE WHEN message.timestamp = 0 THEN '' ELSE datetime(message.timestamp/1000,'unixepoch') END,
@@ -588,15 +630,16 @@ def get_whatsapp_one_to_one_messages(context):
             message_location.live_location_share_duration,
             message_location.live_location_final_latitude,
             message_location.live_location_final_longitude,
-            datetime(message_location.live_location_final_timestamp/1000,'unixepoch')
+            datetime(message_location.live_location_final_timestamp/1000,'unixepoch'),
+            COALESCE(wa_contacts.jid, {contact_jid})
         FROM message
         JOIN chat ON chat._id=message.chat_row_id
         JOIN jid ON jid._id=chat.jid_row_id
         {lid_joins}
         LEFT JOIN message_media ON message_media.message_row_id=message._id
         LEFT JOIN message_location ON message_location.message_row_id=message._id
-        LEFT JOIN wa_contacts ON wa_contacts.jid={contact_jid}
-        WHERE message.recipient_count=0
+        LEFT JOIN {contacts} ON wa_contacts.jid={contact_jid}
+        WHERE COALESCE(jid.raw_string, '') NOT LIKE '%@g.us'
             AND COALESCE(jid.raw_string, '') NOT LIKE '%@newsletter'
         ORDER BY message.timestamp ASC
         ''')
@@ -604,14 +647,14 @@ def get_whatsapp_one_to_one_messages(context):
             data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), _str_to_utc(row[14]),
                               row[4], row[2], row[6], _media(row[7]), row[3],
                               row[5], row[7], row[8], row[9], row[10], row[11],
-                              row[12], row[13]))
+                              row[12], row[13], row[15]))
         db.close()
 
     data_headers = (('Message Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
                     ('Final Location Timestamp', 'datetime'), 'Message Direction',
                     'Other Participant WA User Name', 'Message', ('Media', 'media'),
                     'Sending Party JID', 'Message Type', 'Local Path To Media',
-                    'Media File Size') + _LOCATION_HEADERS
+                    'Media File Size') + _LOCATION_HEADERS + ('Other Participant JID',)
     return data_headers, data_list, source
 
 
@@ -622,6 +665,7 @@ def get_whatsapp_group_messages(context):
     data_list = []
     if db:
         lid_joins, contact_jid = _contact_jid(cursor, 'jid')
+        contacts = _wa_contacts(cursor)
         rows = _run(cursor, f'''
         SELECT
             CASE WHEN message.timestamp = 0 THEN '' ELSE datetime(message.timestamp/1000,'unixepoch') END,
@@ -643,12 +687,13 @@ def get_whatsapp_group_messages(context):
             datetime(message_location.live_location_final_timestamp/1000,'unixepoch')
         FROM message
         JOIN chat ON chat._id=message.chat_row_id
+        JOIN jid AS chat_jid ON chat_jid._id=chat.jid_row_id
         LEFT JOIN jid ON jid._id=message.sender_jid_row_id
         {lid_joins}
         LEFT JOIN message_media ON message_media.message_row_id=message._id
         LEFT JOIN message_location ON message_location.message_row_id=message._id
-        LEFT JOIN wa_contacts ON wa_contacts.jid={contact_jid}
-        WHERE message.recipient_count>=1
+        LEFT JOIN {contacts} ON wa_contacts.jid={contact_jid}
+        WHERE chat_jid.raw_string LIKE '%@g.us'
         ORDER BY message.timestamp ASC, message.rowid, chat.rowid, jid.rowid, message_media.rowid,
             message_location.rowid, wa_contacts.rowid
         ''')
@@ -714,7 +759,7 @@ def get_whatsapp_group_details(context):
                               row[5], creator_picture))
         db.close()
 
-    data_headers = (('Group Creation Timestamp', 'datetime'), 'Group Name', ('Group Picture', 'media'),
+    data_headers = (('Chat Created Timestamp', 'datetime'), 'Group Name', ('Group Picture', 'media'),
                     'Creator JID', 'Creator JID (via jid_map)', 'Creator WA User Name',
                     'Creator WA Number', ('Creator WA Profile Picture', 'media'))
     return data_headers, data_list, source
@@ -757,7 +802,7 @@ def get_whatsapp_channels(context):
                 data_list.append((_str_to_utc(row[0]),) + tuple(row[1:]))
         db.close()
 
-    data_headers = (('Local Chat Created Timestamp', 'datetime'), 'Channel Name', 'Channel JID',
+    data_headers = (('Chat Created Timestamp', 'datetime'), 'Channel Name', 'Channel JID',
                     'Description', 'Invite Code', 'Verified (as stored)', 'Membership (as stored)',
                     'Muted (as stored)', 'Subscriber Count', 'Messages Stored')
     return data_headers, data_list, source
@@ -810,34 +855,41 @@ def get_whatsapp_channel_messages(context):
 
 @artifact_processor
 def get_whatsapp_user_profile(context):
-    files_found = context.get_files_found()
     keys = ('push_name', 'my_current_status', 'version', 'ph', 'cc')
-    data = {k: '' for k in keys}
-    source = ''
-    for file_found in files_found:
-        file_found = str(file_found)
-        if 'com.whatsapp_preferences_light.xml' not in file_found and 'startup_prefs.xml' not in file_found:
-            continue
-        source = source or file_found
-        try:
-            with open(file_found, encoding='utf-8') as fd:
-                xml_dict = xmltodict.parse(fd.read())
-        except (OSError, ValueError):
-            continue
-        strings = (xml_dict.get('map') or {}).get('string') or []
-        if isinstance(strings, dict):
-            strings = [strings]
-        for entry in strings:
-            if not isinstance(entry, dict):
-                continue
-            name = entry.get('@name')
-            if name in data and not data[name]:
-                data[name] = entry.get('#text', '')
+    names = ('com.whatsapp_preferences_light.xml', 'startup_prefs.xml')
+    # One row per shared_prefs folder, so values from two copies of the app (a second Android
+    # user, for one) are never combined. unique_files collapses the data/data, data/user/0 and
+    # data_mirror views of one folder.
+    folders = {}
+    for file_found in unique_files(context):
+        if os.path.basename(file_found) in names:
+            folders.setdefault(os.path.dirname(file_found), []).append(file_found)
 
     data_list = []
-    if any(data.values()):
-        data_list.append((data['version'], data['push_name'], data['my_current_status'], data['cc'],
-                          data['ph']))
+    sources = []
+    for paths in folders.values():
+        data = {k: '' for k in keys}
+        read = []
+        for file_found in sorted(paths, key=os.path.basename):
+            try:
+                with open(file_found, encoding='utf-8') as fd:
+                    xml_dict = xmltodict.parse(fd.read())
+            except (OSError, ValueError):
+                continue
+            read.append(file_found)
+            strings = (xml_dict.get('map') or {}).get('string') or []
+            if isinstance(strings, dict):
+                strings = [strings]
+            for entry in strings:
+                if not isinstance(entry, dict):
+                    continue
+                name = entry.get('@name')
+                if name in data and not data[name]:
+                    data[name] = entry.get('#text', '')
+        sources.extend(read)
+        if any(data.values()):
+            data_list.append((data['version'], data['push_name'], data['my_current_status'], data['cc'],
+                              data['ph'], ', '.join(context.get_relative_path(p) for p in read)))
 
-    data_headers = ('Version', 'Name', 'User Status', 'Country Code', 'Mobile Number')
-    return data_headers, data_list, source
+    data_headers = ('Version', 'Name', 'User Status', 'Country Code', 'Mobile Number', 'Source Files')
+    return data_headers, data_list, '\n'.join(sources)

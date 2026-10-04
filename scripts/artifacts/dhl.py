@@ -1,22 +1,23 @@
 __artifacts_v2__ = {
     "dhl_tracked_shipments": {
         "name": "DHL - Tracked Shipments",
-        "description": "Parses the shipments recorded in the DHL Android app, with the airway bill number and the "
-                       "time it was searched.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Parses the DHL Android app's tracked shipment table, with the airway bill number and the "
+                       "search date text each row stores.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-20",
-        "last_update_date": "2026-08-29",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "DHL",
         "notes": "One row per row of the TBL_TRACK_SHIPMENT table. Airway Bill is the "
                  "airWayBill column and Search Date is the search_date column, as stored; what "
                  "action writes a row was not established beyond the table and column names. "
-                 "The row carries an account identifier; one of the two rows on the tested "
-                 "device carried a zero value, whose meaning is not established. Search Date "
+                 "User ID (user_id) is the user_id column, as stored; one of the two rows on "
+                 "the tested device carried a zero value, whose meaning is not established, "
+                 "and whether the column refers to the _id of a TBL_USERSETTING row was not "
+                 "established. Search Date "
                  "is stored as text with no zone; which clock wrote it is not established. The "
-                 "module passes the text on as stored. The column is declared as a date and "
-                 "time, so where the stored text parses as an ISO date and time the LAVA "
-                 "output reads it as UTC, which the store does not establish. A row does not "
+                 "module passes the text on as stored and does not declare the column as a "
+                 "date and time, so the text is not converted. A row does not "
                  "show that the account holder is the sender or recipient "
                  "of that shipment. Field mapping was done against a private sample provided "
                  "by Mattia; no sample data is recorded for it.",
@@ -26,16 +27,17 @@ __artifacts_v2__ = {
     },
     "dhl_account": {
         "name": "DHL - Account and Settings",
-        "description": "Parses the DHL Android app account identifier and the notification "
-                       "and language settings it stores.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Parses the rows of the DHL Android app's user settings table, with the "
+                       "notification and language settings each row stores.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-20",
-        "last_update_date": "2026-08-20",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "DHL",
-        "notes": "One row per stored user record. Account ID is the _id column of the "
-                 "TBL_USERSETTING row, as stored; whether it equals the user_id on the tracked "
-                 "shipment rows was not established. Language and the notification flags are "
+        "notes": "One row per row of the TBL_USERSETTING table. Setting Row ID (_id) is the "
+                 "_id column of that row, as stored; whether it identifies an account, and "
+                 "whether it equals the user_id on the tracked "
+                 "shipment rows, was not established. Language and the notification flags are "
                  "the "
                  "settings the record carries, reported as stored. The same database also holds "
                  "a large catalogue of countries, currencies and shipping package types; those "
@@ -94,9 +96,9 @@ def dhl_tracked_shipments(context):
     data_list.sort(key=lambda r: (str(r[0]), str(r[1])), reverse=True)
 
     data_headers = (
-        ('Search Date', 'datetime'),
+        'Search Date',
         'Airway Bill',
-        'Account ID',
+        'User ID (user_id)',
         'Source File',
     )
     return data_headers, data_list, '; '.join(sorted(set(source_files)))
@@ -125,7 +127,7 @@ def dhl_account(context):
             ))
 
     data_headers = (
-        'Account ID',
+        'Setting Row ID (_id)',
         'Language',
         'Notify Shipment (as stored)',
         'Notify Promotion (as stored)',

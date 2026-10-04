@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "The signed-in Threema account's own Threema ID, display "
                        "nickname, and any mobile number linked to it, read from the "
                        "app's main preferences file.",
-        "author": "@Gear-I & Claude",
+        "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-08-17",
         "requirements": "none",
@@ -22,9 +22,9 @@ __artifacts_v2__ = {
     "threema_contacts": {
         "name": "Threema - Contacts",
         "description": "Contacts recorded in Threema's local, SQLCipher-encrypted database, with each one's stored verification level and the date the contact record was created locally.",
-        "author": "@Gear-I & Claude",
+        "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-08-17",
+        "last_update_date": "2026-10-04",
         "requirements": "sqlcipher3", 
         "category": "Threema",
         "notes": "Threema encrypts its main database (threema4.db) at rest with "
@@ -41,11 +41,14 @@ __artifacts_v2__ = {
                  "sample_data. This covers only a version 1 key.dat with no passphrase protection. "
                  "The client's current source also defines version 2 master key files, "
                  "master_key.dat and enc_master_key_v2.dat, which this module does not read; an "
-                 "install that has no key.dat produces no rows and its database is not cited. "
+                 "install that has no key.dat produces no rows, and its threema4.db is listed "
+                 "as a source file and left undecrypted. "
                  "Reference: Threema for Android, 'MasterKeyFileProvider.kt', "
                  "https://github.com/threema-ch/threema-android/blob/"
                  "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/app/src/main/java/ch/threema/"
                  "localcrypto/MasterKeyFileProvider.kt#L8-L20. "
+                 "The no-key.dat case was exercised on a copy of the pixel7a_a14 files with "
+                 "key.dat removed, not on an install that carries a version 2 file. "
                  "A passphrase-protected key.dat is also left undecrypted (key.dat's own "
                  "first byte, read directly rather than assumed, records this; on a "
                  "device where it indicates passphrase protection this module leaves "
@@ -63,9 +66,8 @@ __artifacts_v2__ = {
                  "https://github.com/threema-ch/threema-android/blob/"
                  "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/domain/src/main/java/ch/threema/domain/"
                  "models/VerificationLevel.java#L10-L12). "
-                 "The value this module shows for 2 is 'Fully verified (e.g. QR/NFC scan)'; the "
-                 "example in brackets is the module's own wording and is not part of the stored "
-                 "value or of the client's list. On the device this was validated against, the "
+                 "How a contact reached a level is not stored in this column and is not "
+                 "reported. On the device this was validated against, the "
                  "one contact recorded at level 2 corresponds exactly to a 'via QR "
                  "scan' verification event documented for that same contact. "
                  "'Group-Only / Removed' reflects Threema's own AcquaintanceLevel "
@@ -83,7 +85,13 @@ __artifacts_v2__ = {
                  "models/Contact.kt#L213-L231) "
                  "- the three cases cannot be told apart from this "
                  "field alone, so they are reported together rather than guessing "
-                 "which applies.",
+                 "which applies. 'Date Created' is the stored dateCreated value, read as Unix "
+                 "milliseconds; the client's source describes that column as the date when "
+                 "the contact was created locally (Reference: Threema for Android, "
+                 "'ContactModel.java', "
+                 "https://github.com/threema-ch/threema-android/blob/"
+                 "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/app/src/main/java/ch/threema/storage/"
+                 "models/ContactModel.java#L57).",
         "paths": (
             '*/ch.threema.app/files/key.dat',
             '*/ch.threema.app/databases/threema4.db*',
@@ -97,9 +105,9 @@ __artifacts_v2__ = {
     "threema_messages": {
         "name": "Threema - Messages",
         "description": "One-to-one messages recorded in Threema's local, SQLCipher-encrypted database: text, file (type 8, labelled Image by this module), static location, and call events, with direction, delivery/read status, and any quote-reply relationship between messages.",
-        "author": "@Gear-I & Claude",
+        "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-08-17",
+        "last_update_date": "2026-10-04",
         "requirements": "sqlcipher3",
         "category": "Threema",
         "notes": "Decrypted the same way as Threema - Contacts, including reading "
@@ -321,8 +329,9 @@ def _decrypted_connections(files_found):
     An extraction can carry a container per Android user, each with its own
     key.dat and threema4.db. The pairing stays inside one container: a
     database only opens with the key file next to it, never another user's.
-    A container whose key does not derive still reports its db path, so the
-    report cites the store that could not be opened.
+    A container whose key does not derive, or that has no key.dat at all,
+    still reports its db path, so the report cites the store that could not
+    be opened.
     """
     if not _SQLCIPHER_AVAILABLE:
         return []
@@ -334,6 +343,10 @@ def _decrypted_connections(files_found):
                           if f.endswith('databases/threema4.db')):
         key_dat_path = keys_by_root.get(db_path[:-len('databases/threema4.db')])
         if not key_dat_path:
+            logfunc("Threema: no key.dat beside threema4.db; version 2 master "
+                    "key files are not read, so the database is cited and "
+                    "left undecrypted.")
+            pairs.append((None, db_path))
             continue
         key = _derive_sqlcipher_key(key_dat_path)
         con = _open_decrypted_db(db_path, key) if key is not None else None
@@ -344,7 +357,7 @@ def _decrypted_connections(files_found):
 _VERIFICATION_LEVELS = {
     0: "Unverified",
     1: "Server-verified",
-    2: "Fully verified (e.g. QR/NFC scan)",
+    2: "Fully verified",
 }
 
 
@@ -377,7 +390,7 @@ def threema_account(context):
 def threema_contacts(context):
     data_headers = (
         "Threema ID", "Display Name", "Verification Level",
-        ("Date Added", "datetime"), "Group-Only / Removed", "Archived",
+        ("Date Created", "datetime"), "Group-Only / Removed", "Archived",
     )
 
     files_found = unique_files(context)

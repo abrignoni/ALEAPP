@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "snapseed_images": {
         "name": "Snapseed Images",
         "description": "Images opened in Snapseed, with the edit state the app recorded for each",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Snapseed",
         "sample_data": {
@@ -60,12 +60,13 @@ __artifacts_v2__ = {
                  "Camera Capture, Trashed, Favorite and Raw are the app's own flags, named here "
                  "after the columns they come from; what sets each was not exercised. Each read "
                  "the same value on every row of the tested device; they are reported because each "
-                 "one separates images on a device where they vary. Unreachable Since is read as "
-                 "Unix milliseconds and shown as UTC. That unit is assumed from the other time "
-                 "columns of the table and was not exercised, because no row of the tested device "
-                 "held a value. The row whose source file was deleted in the test above held none "
-                 "either, so whatever does set it, a source becoming unreachable through deletion "
-                 "did not on that device. The store holds six tables and the other "
+                 "one separates images on a device where they vary. Unreachable Since (as stored) is "
+                 "the unreachableSince column as the database holds it, with no conversion. The "
+                 "table declares it INTEGER and allows it to be empty. Its unit and what sets it "
+                 "are not established: it was empty on all 6 rows of emu_a15_oss_v13, so no value "
+                 "was available to read. The row whose source file was deleted in the test above "
+                 "was empty too, so a source becoming unreachable through deletion did not fill "
+                 "it on that device. The store holds six tables and the other "
                  "four are not reported. collages and collage_images are named for a collage "
                  "feature; what they hold is not established. Both were empty here and could not "
                  "be filled, because the tested build surfaces no way to reach the feature. Its "
@@ -89,7 +90,7 @@ __artifacts_v2__ = {
     "snapseed_cached_images": {
         "name": "Snapseed Cached Images",
         "description": "Image files Snapseed keeps in its own storage, shown inline",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -133,9 +134,9 @@ __artifacts_v2__ = {
     "snapseed_settings": {
         "name": "Snapseed Settings",
         "description": "Snapseed preferences, including the first_app_open_date value the app stores",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Snapseed",
         "sample_data": {
@@ -163,8 +164,11 @@ __artifacts_v2__ = {
                  "crop_last_aspect_ratio is the aspect ratio last chosen in the Crop tool and is "
                  "reported as stored, no mapping for it being published; on the tested device, "
                  "where the square preset was the one chosen, it read 2. last_save_intent is "
-                 "reported as stored. Keys beginning primes. are not reported. A key spelled "
-                 "exactly lastExitProcessName or lastExitTimestamp, with no prefix, is reported. "
+                 "reported as stored. Keys beginning primes. are not reported. On emu_a15_oss_v13 "
+                 "the file primes.xml held four keys: two spelled with the prefix, which are not "
+                 "reported, and lastExitProcessName and lastExitTimestamp, spelled with no "
+                 "prefix, which are reported like any other key, with Time (UTC) filled for "
+                 "lastExitTimestamp. "
                  "The primes. prefix is attributed to Google's Primes performance library by its "
                  "name; that attribution is not sourced here. The keys excluded on the tested "
                  "device were primes.battery.snapshot, a base64 telemetry payload, and "
@@ -187,11 +191,10 @@ DB_SUFFIX = 'databases/image_edit_local_db'
 IMPORTED = '/files/imported_images/'
 EDIT_CACHE = '/cache/edits_cache/'
 
-# Keys whose value is Unix milliseconds. lastExitTimestamp is written by Google's Primes
-# library and times this app's own process exit, so it is kept while the rest of that
-# library's keys are not.
+# Keys whose value is Unix milliseconds. Both are spelled as the preference files store
+# them: lastExitTimestamp sits in primes.xml with no primes. prefix, so the prefix test
+# in snapseed_settings does not exclude it.
 MS_KEYS = ('first_app_open_date', 'lastExitTimestamp')
-PRIMES_KEPT = ('lastExitTimestamp', 'lastExitProcessName')
 
 
 def _paths(context):
@@ -341,7 +344,8 @@ def snapseed_images(context):
                 r[4] or '', r[5], r[6], r[7] or '', r[8],
                 r[9] or '', r[10] or '', _edit_steps(r[11]),
                 _yes_no(r[12]), _yes_no(r[13]), _yes_no(r[14]),
-                _yes_no(r[15]), _yes_no(r[16]), _ms(r[17]), r[18],
+                _yes_no(r[15]), _yes_no(r[16]),
+                '' if r[17] is None else r[17], r[18],
                 context.get_relative_path(db_path)))
         if records and db_path not in sources:
             sources.append(db_path)
@@ -352,7 +356,7 @@ def snapseed_images(context):
         'Display Name', 'Width', 'Height', 'Original URI', 'MediaStore ID',
         'Latest Edited URI', 'SHA-1 Hash', 'Edit Steps',
         'Camera Capture', 'Edited Promoted To Original', 'Trashed', 'Favorite', 'Raw',
-        ('Unreachable Since', 'datetime'), 'Image ID', 'Source File')
+        'Unreachable Since (as stored)', 'Image ID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -404,7 +408,7 @@ def snapseed_settings(context):
             key = entry.get('name')
             if not key:
                 continue
-            if key.startswith('primes.') and key not in PRIMES_KEPT:
+            if key.startswith('primes.'):
                 continue
             value = entry.get('value')
             if value is None:

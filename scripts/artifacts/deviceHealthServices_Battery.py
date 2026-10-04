@@ -2,13 +2,19 @@
 __artifacts_v2__ = {
     "Turbo_Battery": {
         "name": "Turbo - Phone Battery",
-        "description": "Parses the battery_event table of Device Health Services' turbo.db: battery level, charge type and battery saver. The charge type and battery saver labels are the parser's and their source is not recorded; the timestamp is shown in the time zone stored on the row.",
-        "author": "Kevin Pagano (@stark4n6)",
+        "description": "Battery level records from the battery_event table of Device Health Services' turbo.db, with the charge type and battery saver values as stored.",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-06-29",
-        "last_update_date": "2025-03-08",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Device Health Services",
-        "notes": "",
+        "notes": "One row per battery_event record. Timestamp is timestamp_millis read as Unix "
+                 "milliseconds and reported in UTC, in whole seconds. Timezone is the timezone text "
+                 "stored on the row; it is not applied to Timestamp. Charge Type (as stored) and "
+                 "Battery Saver (as stored) are the charge_type and battery_saver integers; no "
+                 "source for their meaning was found, so they are not labelled. On the copies of "
+                 "turbo.db in hc_pixel8pro_a16, pixel7a_a14 and russell_pixel6a_a13 (7,417 records "
+                 "in four files) charge_type held 0, 1 or 2 and battery_saver held 2 on every record.",
         "paths": ('*/com.google.android.apps.turbo/databases/turbo.db*',),
         "output_types": "all",
         "artifact_icon": "battery-charging",
@@ -27,12 +33,15 @@ __artifacts_v2__ = {
     "Turbo_Bluetooth": {
         "name": "Turbo - Bluetooth Device Info",
         "description": "Parses the battery and volume level events recorded for Bluetooth devices in Device Health Services' bluetooth.db",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-06-29",
-        "last_update_date": "2025-03-08",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Device Health Services",
-        "notes": "",
+        "notes": "Timestamp is timestamp_millis read as Unix milliseconds and reported in UTC, in "
+                 "whole seconds. Timezone is the time_zone text stored on the row; it is not applied "
+                 "to Timestamp. No registered image listed in sample_data holds a record, so the "
+                 "output is unexercised on real data.",
         "paths": ('*/com.google.android.apps.turbo/databases/bluetooth.db*',),
         "output_types": "all",
         "artifact_icon": "bluetooth",
@@ -48,7 +57,7 @@ __artifacts_v2__ = {
 
 import os
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc
 from scripts.artifacts.storagePathViews import unique_files
 
 @artifact_processor
@@ -73,16 +82,8 @@ def Turbo_Battery(context):
                 else datetime(timestamp_millis/1000,'unixepoch')
             End as D_T,
             battery_level,
-            case charge_type
-                when 0 then ''
-                when 1 then 'Charging Rapidly'
-                when 2 then 'Charging Slowly'
-                when 3 then 'Charging Wirelessly'
-            End as C_Type,
-            case battery_saver
-                when 2 then ''
-                when 1 then 'Enabled'
-            End as B_Saver,
+            charge_type,
+            battery_saver,
             timezone
             from battery_event
             ''')
@@ -92,16 +93,16 @@ def Turbo_Battery(context):
             if usageentries > 0:
                 for row in all_rows:
                     timestamp = row[0]
-                    if timestamp is not None and row[4]:
+                    if timestamp:
                         try:
-                            timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), row[4])
+                            timestamp = convert_ts_human_to_utc(timestamp)
                         except Exception:
                             pass
                     data_list.append((timestamp,row[1],row[2],row[3],row[4],context.get_relative_path(file_found)))
             
             db.close()
             
-    data_headers = (('Timestamp', 'datetime'),'Battery Level','Charge Type','Battery Saver','Timezone','Source')
+    data_headers = (('Timestamp', 'datetime'),'Battery Level','Charge Type (as stored)','Battery Saver (as stored)','Timezone','Source')
         
     return data_headers, data_list, source_file_turbo
             
@@ -136,9 +137,9 @@ def Turbo_Bluetooth(context):
             if usageentries > 0:
                 for row in all_rows:
                     timestamp = row[0]
-                    if timestamp is not None and row[5]:
+                    if timestamp:
                         try:
-                            timestamp = convert_utc_human_to_timezone(convert_ts_human_to_utc(timestamp), row[5])
+                            timestamp = convert_ts_human_to_utc(timestamp)
                         except Exception:
                             pass
                     data_list.append((timestamp,row[1],row[2],row[3],row[4],row[5],context.get_relative_path(file_found)))

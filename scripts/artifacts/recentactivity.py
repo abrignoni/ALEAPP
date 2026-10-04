@@ -3,19 +3,39 @@ __artifacts_v2__ = {
     "get_recentactivity": {
         "name": "Recent Activity",
         "description": "Recent task records correlated with task snapshots, low-resolution previews and Android's TaskSnapshot protobuf metadata.",
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-02-25",
-        "last_update_date": "2026-07-31",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Recent Activity",
         "notes": (
             "Recent Tasks is a mutable system list, not a complete "
             "application-use history. A task snapshot may be a real screen "
             "capture or a theme-generated substitute; consult Is Real "
-            "Snapshot before interpreting the image. Snapshot Capture Time is "
-            "the snapshot record's id field read as Unix milliseconds; AOSP "
-            "at the commit cited below sets that id from the system clock "
-            "when the snapshot is built, and other releases were not checked. "
+            "Snapshot before interpreting the image. Snapshot ID Time is the "
+            "snapshot record's id field read as Unix milliseconds. AOSP sets "
+            "that id from the system clock when a snapshot is built, real or "
+            "theme-generated, at the android-11.0.0_r1, android-12.0.0_r1 and "
+            "android-13.0.0_r1 tags "
+            "(https://android.googlesource.com/platform/frameworks/base/+/"
+            "34a1b9c951c38537ab96b69bc308f6e0884823f5/services/core/java/com/"
+            "android/server/wm/TaskSnapshotController.java#314 and line 512 "
+            "of the same file at that tag), at the android-14.0.0_r1, "
+            "android-15.0.0_r1 and android-16.0.0_r1 tags and at the commit "
+            "cited below (AbsAppSnapshotController.java). The record has no "
+            "id field at the android-9.0.0_r1 and android-10.0.0_r1 tags "
+            "(https://android.googlesource.com/platform/frameworks/base/+/"
+            "57bb140be9e48cf08acba131f7463e461777bb8e/proto/src/"
+            "task_snapshot.proto); a record that stores no id, or an id of "
+            "0, is reported with Snapshot ID and Snapshot ID Time blank. "
+            "Measured on pixel7a_a14, russell_pixel6a_a13, hc_pixel8pro_a16, "
+            "sharon_a14, samsungs20_a13, anne_a15 and samsunga53_a14: all 137 "
+            "snapshot records held a 13 digit id, 11 of them on "
+            "theme-generated snapshots, and each id was within 2 seconds of "
+            "the record file's modified time in the extraction archive once "
+            "a whole number of quarter hours was set aside (the archive "
+            "time carries no zone). On galaxys10_a10 none of the 39 records "
+            "held an id. Vendor builds were not read. "
             "Snapshot files are kept under credential-encrypted storage; a "
             "task record can be present without a snapshot file, and when the "
             "platform removes snapshots is not established here. Android "
@@ -37,8 +57,8 @@ __artifacts_v2__ = {
             "https://android.googlesource.com/platform/frameworks/base/+/"
             "1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/core/java/com/"
             "android/server/wm/TaskSnapshotController.java "
-            "(the snapshots directory under system_ce). The sources were read "
-            "at that commit only."
+            "(the snapshots directory under system_ce). Apart from the id "
+            "field, the sources were read at that commit only."
         ),
         "paths": ('*/system_ce/*',),
         "output_types": "standard",
@@ -139,7 +159,7 @@ def _snapshot_metadata(folder, task_id):
     return (
         high_image,
         low_image,
-        snapshot.id,
+        snapshot.id or '',
         _ms_to_utc(snapshot.id),
         snapshot.top_activity_component,
         'Yes' if snapshot.is_real_snapshot else 'No',
@@ -210,7 +230,7 @@ def get_recentactivity(context):
                     ('Last Time Moved', 'datetime'), 'Calling Package', 'User ID', 'Action',
                     'Component', ('Snapshot Image', 'media'),
                     ('Low Resolution Snapshot', 'media'), 'Snapshot ID',
-                    ('Snapshot Capture Time', 'datetime'), 'Snapshot Top Activity',
+                    ('Snapshot ID Time', 'datetime'), 'Snapshot Top Activity',
                     'Is Real Snapshot', 'Snapshot Orientation', 'Snapshot Rotation',
                     'Original Task Size', 'Windowing Mode', 'Is Translucent',
                     'Content Insets (L, T, R, B)', 'Letterbox Insets (L, T, R, B)',

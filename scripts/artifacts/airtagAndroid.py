@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "airtagAlerts": {
         "name": "Android Airtag Alerts",
         "description": "Parses unknown-tracker (AirTag) alerts (creation and update timestamps, MAC address, device type and alert status) from the Google Play services personalsafety database.",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-08-18",
         "last_update_date": "2025-03-16",
         "requirements": "none",
@@ -24,18 +24,22 @@ __artifacts_v2__ = {
     },
     "airtagScans": {
         "name": "Android Airtag Scans",
-        "description": "Parses unknown-tracker (AirTag) scan records (timestamps, MAC address, state, and three values decoded without a schema from the blescan and locationScan blobs) from the Google Play services personalsafety database.",
-        "author": "@AlexisBrignoni",
+        "description": "Parses unknown-tracker (AirTag) scan records (timestamps, MAC address, state, and three values decoded without a schema from the bleScan and locationScan blobs) from the Google Play services personalsafety database.",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-08-18",
-        "last_update_date": "2025-03-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Airtag Detection",
-        "notes": "Possible RSSI is field 2 of the blescan blob. Latitude and Longitude are fields "
-                 "4 and 5 of the locationScan blob divided by 10,000,000. Both blobs are decoded "
-                 "without a schema, and the meaning of those fields and the scale are not "
-                 "established by a published schema.",
+        "notes": "Possible RSSI is field 2 of the bleScan blob. Possible Latitude and Possible "
+                 "Longitude are fields 4 and 5 of the locationScan blob divided by 10,000,000. "
+                 "Both blobs are decoded without a schema, and the meaning of those fields and "
+                 "the scale are not established by a published schema. On the 86 rows of "
+                 "kevin_pocox7_a15, pixel7a_a14 and sharon_a14, field 2 was a whole number from "
+                 "-98 to -27, and fields 4 and 5 divided by 10,000,000 fell within -90 to 90 and "
+                 "-180 to 180 on every row. The values were not compared with another location "
+                 "record of those devices, so no map output is produced from them.",
         "paths": '*/com.google.android.gms/databases/personalsafety_db*',
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "radar",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gms | 0 rows",
@@ -50,14 +54,18 @@ __artifacts_v2__ = {
     },
     "airtagLastScan": {
         "name": "Android Airtag Last Scan",
-        "description": "Reports field 1 of the personalsafety_info protobuf file as a timestamp.",
-        "author": "@AlexisBrignoni",
+        "description": "Reports field 1 of the personalsafety_info protobuf file, read as Unix milliseconds.",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-08-18",
-        "last_update_date": "2025-03-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Airtag Detection",
         "notes": "The file is decoded without a schema. That field 1 is the time of the last scan "
-                 "is not established by a published schema.",
+                 "is not established by a published schema. On kevin_pocox7_a15, pixel7a_a14 and "
+                 "sharon_a14, field 1 read as Unix milliseconds was 200 seconds after, 23 seconds "
+                 "before and 72 seconds before the newest creationTimestampMillis in the Scan "
+                 "table of personalsafety_db, so it did not equal the time of the newest stored "
+                 "scan record on any of the three.",
         "paths": '*/files/personalsafety/shared/personalsafety_info.pb',
         "output_types": "standard",
         "artifact_icon": "clock-search",
@@ -72,17 +80,23 @@ __artifacts_v2__ = {
     },
     "airtagPassiveScan": {
         "name": "Android Airtag Passive Scan",
-        "description": "Reports field 1 of the personalsafety_optin protobuf file, printed as On for a stored 1 and Off for a stored 2.",
-        "author": "@AlexisBrignoni",
+        "description": "Reports field 1 of the personalsafety_optin protobuf file as stored.",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-08-18",
-        "last_update_date": "2025-03-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Airtag Detection",
-        "notes": "The file is decoded without a schema. The On and Off mapping has no cited source "
-                 "and no recorded test image. Any other stored value is reported as stored.",
+        "notes": "The file is decoded without a schema, and what each value of field 1 means is not "
+                 "established by a published schema, so the number is reported as stored with no "
+                 "label. The file was present on one of the 20 registered Android zip extractions "
+                 "(russell_a14), where it held field 1 only; the state of the unknown tracker "
+                 "alerts setting on that device is not recorded with the image.",
         "paths": '*/files/personalsafety/shared/personalsafety_optin.pb',
         "output_types": "standard",
-        "artifact_icon": "radar-2"
+        "artifact_icon": "radar-2",
+        "sample_data": {
+            "russell_a14": "Android 14 | com.google.android.gms | 1 row",
+        }
     }
 }
 
@@ -163,8 +177,8 @@ def airtagScans(context):
         'MAC Address', 
         'State', 
         'Possible RSSI', 
-        'Latitude', 
-        'Longitude')
+        'Possible Latitude', 
+        'Possible Longitude')
 
     db_records = get_sqlite_db_records(source_path, query)
 
@@ -210,7 +224,7 @@ def airtagLastScan(context):
     lastscan = convert_unix_ts_to_utc(lastscan)
     data_list.append((lastscan, ))
 
-    data_headers = (('Timestamp', 'datetime'),)
+    data_headers = (('Field 1 Timestamp', 'datetime'),)
 
     return data_headers, data_list, source_path
 
@@ -225,14 +239,9 @@ def airtagPassiveScan(context):
 
     pass_scan, _ = decode_protobuf(proto_data)
     pass_scan = (pass_scan['1'])
-    
-    if pass_scan == 1:
-        pass_scan = 'On'
-    elif pass_scan == 2:
-        pass_scan = 'Off'
 
     data_list.append((pass_scan, ))
 
-    data_headers = ('Passive Scan', )
+    data_headers = ('Field 1 (as stored)', )
 
     return data_headers, data_list, source_path

@@ -116,7 +116,7 @@ class WhatsAppGroupDetailsTest(unittest.TestCase):
         with mock.patch.object(WhatsApp, '_media', side_effect=lambda p: f'media:{p}' if p else ''):
             headers, rows, _source = _GROUP_DETAILS(Context)
         self.assertEqual([h[0] if isinstance(h, tuple) else h for h in headers], [
-            'Group Creation Timestamp', 'Group Name', 'Group Picture', 'Creator JID',
+            'Chat Created Timestamp', 'Group Name', 'Group Picture', 'Creator JID',
             'Creator JID (via jid_map)', 'Creator WA User Name', 'Creator WA Number',
             'Creator WA Profile Picture'])
         return [(r[0].strftime('%Y-%m-%d %H:%M:%S'),) + tuple(r[1:]) for r in rows]

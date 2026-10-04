@@ -3,16 +3,19 @@ __artifacts_v2__ = {
     "get_kleinanzeigenaccount": {
         "name": "kleinanzeigen.de App - Account Details",
         "description": "Extracts Account Details",
-        "author": "@BrunoFischerGermany",
+        "author": "@BrunoFischerGermany, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-02",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "kleinanzeigen.de App",
-        "notes": ("Account Registered since is converted from the stored ISO 8601 string. A "
-                  "string that carries no zone offset is read as UTC, which is an assumption. A "
-                  "value "
-                  "that cannot be parsed as a date is left blank rather than shown in the date "
-                  "column as stored."),
+        "notes": ("Account Registered since (as stored) is the USERPROFILE_USER_SINCE_DATE_KEY "
+                  "string exactly as the preferences file holds it. Account Registered since is "
+                  "that string converted to UTC, and is filled only when the string parses as "
+                  "ISO 8601 and carries its own zone offset or a Z. A string with no offset "
+                  "records no zone, so it is not converted and that column is left blank; a "
+                  "string that does not parse is also left blank there. No registered corpus "
+                  "holds this app, so which form the app writes was not measured; the handling "
+                  "was checked on constructed values only."),
         "paths": ('*/com.ebay.kleinanzeigen/shared_prefs/com.ebay.kleinanzeigen_preferences.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "shopping-bag",
@@ -20,7 +23,7 @@ __artifacts_v2__ = {
     "get_kleinanzeigenrecentsearchescache": {
         "name": "kleinanzeigen.de - Recent Searches Cache",
         "description": "Extracts Recent Searches Cache",
-        "author": "@BrunoFischerGermany",
+        "author": "@BrunoFischerGermany, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-02",
         "last_update_date": "2024-04-02",
         "requirements": "none",
@@ -33,7 +36,7 @@ __artifacts_v2__ = {
     "get_kleinanzeigennonresettablerecentsearchescache": {
         "name": "kleinanzeigen.de - Non resettable Recent Searches Cache",
         "description": "Recent search terms from kleinanzeigen.de's NON_RESETTABLE_RECENT_SEARCHES_CACHE file, with category and time",
-        "author": "@BrunoFischerGermany",
+        "author": "@BrunoFischerGermany, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-08",
         "last_update_date": "2024-04-08",
         "requirements": "none",
@@ -46,7 +49,7 @@ __artifacts_v2__ = {
     "get_kleinanzeigenmessagebox": {
         "name": "kleinanzeigen.de - Messagebox",
         "description": "Extracts conversation summaries from the message database",
-        "author": "@BrunoFischerGermany",
+        "author": "@BrunoFischerGermany, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-13",
         "last_update_date": "2024-04-13",
         "requirements": "none",
@@ -59,9 +62,9 @@ __artifacts_v2__ = {
     "get_kleinanzeigenmessages": {
         "name": "kleinanzeigen.de - Messages",
         "description": "Extracts individual messages from the message database",
-        "author": "@BrunoFischerGermany",
+        "author": "@BrunoFischerGermany, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-13",
-        "last_update_date": "2026-08-29",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "kleinanzeigen.de App",
         "notes": ("Direction is decoded from each message's 'sender' value: 'ME' is read as a "
@@ -71,10 +74,14 @@ __artifacts_v2__ = {
                   "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
-                  "Timestamp is converted from the stored ISO 8601 string, and a string with no "
-                  "zone offset is read as UTC, which is an assumption; a value that cannot be "
-                  "parsed as a date is left blank. The message's state value is lowercased before "
-                  "it is reported."),
+                  "Timestamp (as stored) is the message's sortByDate string exactly as the "
+                  "database holds it. Timestamp is that string converted to UTC, and is filled "
+                  "only when the string parses as ISO 8601 and carries its own zone offset or a "
+                  "Z. A string with no offset records no zone, so it is not converted and "
+                  "Timestamp is left blank; a string that does not parse is also left blank "
+                  "there. No registered corpus holds this app, so which form the app writes was "
+                  "not measured; the handling was checked on constructed values only. The "
+                  "message's state value is lowercased before it is reported."),
         "paths": ('*com.ebay.kleinanzeigen/databases/messageBoxDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -113,7 +120,9 @@ def _iso_to_utc(value):
     try:
         dt = datetime.datetime.fromisoformat(str(value).replace('Z', '+00:00'))
         if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=datetime.timezone.utc)
+            # The string records no zone, so no instant can be stated for it. The
+            # caller reports the stored string in its own text column.
+            return ''
         return dt.astimezone(datetime.timezone.utc)
     except (ValueError, TypeError):
         # The column is typed as a date; a value that will not parse is reported as
@@ -176,12 +185,15 @@ def get_kleinanzeigenaccount(context):
         string_dict = xml_dict.get('map', {}).get('string', [])
         values = {item.get('@name'): item.get('#text', '') for item in string_dict}
         row = [values.get(k, '') for k in keys]
-        row[7] = _iso_to_utc(row[7])  # USERPROFILE_USER_SINCE_DATE_KEY (ISO 8601)
+        since_stored = row[7]  # USERPROFILE_USER_SINCE_DATE_KEY (ISO 8601)
+        row[7] = _iso_to_utc(since_stored)
+        row.insert(8, since_stored)
         data_list.append(tuple(row))
 
     data_headers = ('Account Profile Name', 'Account Profile Initials', 'Account Last Used Email Address',
                     'Account Authenticated Email Address', 'Account User Id', ('Account Phone Number', 'phonenumber'),
-                    'Account Type', ('Account Registered since', 'datetime'), 'Saved Location Longitude', 'Saved Location Latitude')
+                    'Account Type', ('Account Registered since', 'datetime'),
+                    'Account Registered since (as stored)', 'Saved Location Longitude', 'Saved Location Latitude')
     return data_headers, data_list, source_path
 
 
@@ -254,8 +266,10 @@ def get_kleinanzeigenmessages(context):
                 # stored and a missing sender key leaves the column blank.
                 sender = message.get('sender')
                 direction = 'Outgoing' if sender == 'ME' else (sender if sender else '')
+                stored_date = message.get('sortByDate')
                 data_list.append((
-                    _iso_to_utc(message.get('sortByDate')),
+                    _iso_to_utc(stored_date),
+                    stored_date if stored_date is not None else '',
                     direction,
                     r[0],
                     message.get('text', ''),
@@ -264,5 +278,5 @@ def get_kleinanzeigenmessages(context):
                     str(message.get('state', '')).lower(),
                 ))
 
-    data_headers = (('Timestamp', 'datetime'), 'Direction', 'Counterparty', 'Message Text', 'Ad Title', 'Ad Number', 'Message State')
+    data_headers = (('Timestamp', 'datetime'), 'Timestamp (as stored)', 'Direction', 'Counterparty', 'Message Text', 'Ad Title', 'Ad Number', 'Message State')
     return data_headers, data_list, source_path

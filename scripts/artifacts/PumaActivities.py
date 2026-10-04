@@ -3,17 +3,22 @@ __artifacts_v2__ = {
     "get_puma_activities": {
         "name": "Puma - Activities",
         "description": "Pumatrac activities with GPS routes (pumatrac-db)",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-02-24",
-        "last_update_date": "2023-02-24",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Puma",
         "notes": "The route is drawn from the positions rows for each activity and shown as an "
                  "offline image and a route KML; the interactive folium map and online reverse "
-                 "geocoding were removed. Latitude and Longitude are the first position row "
-                 "returned for the activity and End Latitude and End Longitude the last; the "
-                 "rows are not sorted by time. Start and End Time are read as Unix "
-                 "milliseconds. Only the first pumatrac-db file found is read.",
+                 "geocoding were removed. The positions rows of an activity are sorted by the "
+                 "table's timestamp column, as stored, when the table has one; Latitude and "
+                 "Longitude are the first row in that order and End Latitude and End Longitude the "
+                 "last, and the route is drawn in the same order. When the table has no timestamp "
+                 "column the rows are used in the order the database returns them, which is not "
+                 "established to be time order. The position timestamps themselves are not "
+                 "reported. Start and End Time are read as Unix milliseconds. Only the first "
+                 "pumatrac-db file found is read. The sorting was checked on a constructed "
+                 "database; no registered corpus holds this app.",
         "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
         "output_types": "all",
         "artifact_icon": "activity",
@@ -78,9 +83,14 @@ def get_puma_activities(context):
         acts = _q(cursor, '''SELECT id, startTime, endTime, duration, score, calories, city, country,
             distance, maxAltitude, meanAltitude, maxSpeed, meanSpeed, averageTimePerKm,
             runLocationType, currentPace FROM completed_exercises''')
+        # A double-quoted name that matches no column is a string literal in SQLite, so the
+        # column is confirmed before the rows are sorted by it.
+        position_columns = [c[1] for c in _q(cursor, 'PRAGMA table_info(positions)')]
+        order_by = ' ORDER BY "timestamp", rowid' if 'timestamp' in position_columns else ''
         for a in acts:
             aid = a[0]
-            pts = _q(cursor, 'SELECT lat, lng FROM positions WHERE completedExerciseId = ?', (aid,))
+            pts = _q(cursor, 'SELECT lat, lng FROM positions WHERE completedExerciseId = ?'
+                     + order_by, (aid,))
             coords = [(p[0], p[1]) for p in pts if p[0] is not None and p[1] is not None]
             start_lat, start_lon = coords[0] if coords else ('', '')
             end_lat, end_lon = coords[-1] if coords else ('', '')

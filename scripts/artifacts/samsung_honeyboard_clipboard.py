@@ -1,12 +1,12 @@
 """
-Samsung Honeyboard — Clipboard History & Screenshot Clips
+Samsung Honeyboard — Clipboard History & Image Clips
 ALEAPP module
 
 Parses:
   1. ClipItem.db      — clipboard text history (live entries)
   2. ClipItem.db-wal  — deleted entries recovered from the SQLite WAL
-  3. clip files       — clipboard screenshot images with Samsung SEFT trailer
-                        source-app extraction
+  3. clip files       — clipboard image clips (JPEG), with the package named in
+                        the Samsung trailer's Captured_App_Info field
 
 Supersedes the original SamsungHoneyboard.py (@segumarc), adding WAL deleted-entry
 recovery, Samsung SEFT source-app decoding, dual-schema support, and packages.xml
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
             "4 HTML/Rich Text; the source for these labels is not recorded) and "
             "the html and uri columns are reported where the table has them."
         ),
-        "author": "@segumarc, Al3x101",
+        "author": "@segumarc, Al3x101, @AlexisBrignoni, Codex",
         "creation_date": "2024-05-30",
         "last_update_date": "2026-07-13",
         "requirements": "",
@@ -60,7 +60,7 @@ __artifacts_v2__ = {
             "record here was in the log and is not in the live table; why it is not "
             "there is not established."
         ),
-        "author": "Al3x101",
+        "author": "Al3x101, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-13",
         "last_update_date": "2026-07-13",
         "requirements": "",
@@ -92,27 +92,35 @@ __artifacts_v2__ = {
         },
     },
     "get_honeyboard_screenshot": {
-        "name": "Samsung Honeyboard - Clipboard Screenshot Clips",
+        "name": "Samsung Honeyboard - Clipboard Image Clips",
         "description": (
             "Parses the image clips in the Honeyboard clipboard folder "
             "(extensionless JPEG 'clip' files). Reports the parent directory name as "
-            "a time, the EXIF capture time, the package named in the Samsung SEFT "
+            "a time, EXIF DateTimeOriginal, the package named in the Samsung SEFT "
             "trailer, the image dimensions and the image itself. Files that are not "
             "JPEG and files under remote_send are skipped."
         ),
-        "author": "@segumarc, Al3x101",
+        "author": "@segumarc, Al3x101, @AlexisBrignoni, Codex",
         "creation_date": "2024-05-30",
-        "last_update_date": "2026-07-13",
-        "requirements": "Pillow (PIL) for EXIF and thumbnail; SEFT decoding is pure Python.",
+        "last_update_date": "2026-10-04",
+        "requirements": "Pillow (PIL) for EXIF and the image; SEFT decoding is pure Python.",
         "category": "Clipboard",
         "notes": (
-            "Source App is the package part of the comp value in the "
+            "Captured App Info Package is the package part of the comp value in the "
             "Captured_App_Info field of the trailer Samsung appends after the JPEG "
             "end marker (FF D9), as stored; what Samsung records in that field was "
-            "not sourced. A file with no such field is shown as Unknown. Clipboard "
-            "Copy Time is the parent directory name read as Unix milliseconds; that "
-            "the app names the directory for the moment of the copy was not sourced. "
-            "Capture time is EXIF DateTimeOriginal as stored."
+            "not sourced. A file with no such field is shown as Unknown: 18 of the "
+            "22 clips on samsungs20_a13, samsunga53_a14, sharon_a14 and anne_a15. "
+            "Clip Folder Name Time is the parent directory name read as Unix "
+            "milliseconds; what moment the app names the directory for was not "
+            "sourced. On those 22 clips every directory name was 13 digits, and the "
+            "clip file's modification time recorded in the archive was within one "
+            "second before it. EXIF DateTimeOriginal is the stored text with the "
+            "EXIF sub-second and offset values appended where present, and no time "
+            "zone is applied. Image is the whole picture re-saved as PNG, not a "
+            "reduced copy, and is blank when Pillow is not installed. Any JPEG clip "
+            "is reported: the trailer named a screenshot (Samsung_Capture_Info) on 7 "
+            "of the 22 clips, and the other 15 carried no trailer."
         ),
         "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip',),
         "output_types": "standard",
@@ -438,11 +446,12 @@ class _WalRecovery:
 # ---------------------------------------------------------------------------
 
 def _parse_seft_trailer(jpeg_data):
-    """Decode the Samsung SEFT trailer from a clipboard screenshot JPEG.
+    """Decode the Samsung SEFT trailer from a clipboard image clip (JPEG).
 
     Samsung appends a proprietary trailer after the JPEG EOI marker (FF D9).
-    The 'Captured_App_Info' field contains a Base64-encoded JSON object whose
-    'comp' key identifies the Android component on screen at capture time.
+    The 'Captured_App_Info' field contains a Base64-encoded JSON object with a
+    'comp' key in component form (package/class); what Samsung records there
+    is not sourced.
 
     Returns a dict with keys: source_app_package, trailer_present, decode_error.
     """
@@ -710,16 +719,16 @@ def get_honeyboard_clipboard_deleted(context):
 
 @artifact_processor
 def get_honeyboard_screenshot(context):
-    """Parse clipboard screenshot image clips.
+    """Parse clipboard image clips.
 
-    Each 'clip' file is an extensionless JPEG in a sub-directory whose name is a
-    millisecond Unix epoch timestamp — the moment the image was copied to the
-    clipboard. Three data sources are combined per image:
-      1. Parent directory name  -> clipboard copy timestamp (UTC)
-      2. EXIF DateTimeOriginal  -> capture timestamp (device local)
-      3. Samsung SEFT trailer   -> source app package name
+    Each 'clip' file is an extensionless JPEG in a sub-directory whose name is
+    read as a millisecond Unix epoch value; what moment the app names the
+    directory for is not sourced. Three data sources are combined per image:
+      1. Parent directory name  -> read as Unix milliseconds
+      2. EXIF DateTimeOriginal  -> stored text, sub-second and offset appended
+      3. Samsung SEFT trailer   -> package part of Captured_App_Info comp
 
-    Pillow is used for EXIF and the thumbnail; SEFT decoding is always available.
+    Pillow is used for EXIF and the image; SEFT decoding is always available.
     """
     files_found = context.get_files_found()
     data_list = []
@@ -742,7 +751,7 @@ def get_honeyboard_screenshot(context):
         if jpeg_data[:2] != b"\xff\xd8":
             continue
 
-        # Copy timestamp from parent directory name (ms epoch)
+        # Parent directory name read as a ms epoch value
         copy_ts = ""
         if parent_dir.isdigit():
             try:
@@ -753,7 +762,7 @@ def get_honeyboard_screenshot(context):
 
         exif_capture_ts = ""
         width = height = None
-        thumbnail = ""  # empty (not None) is the safe "no media" value for the media column
+        thumbnail = ""  # whole image as PNG; empty (not None) is the safe "no media" value
 
         if _PIL_AVAILABLE:
             try:
@@ -776,7 +785,7 @@ def get_honeyboard_screenshot(context):
             except (OSError, ValueError, struct.error) as exc:
                 logfunc(f"honeyboard_screenshot: image/EXIF error on {file_found}: {exc}")
         else:
-            logfunc("honeyboard_screenshot: Pillow not available — EXIF and thumbnails skipped.")
+            logfunc("honeyboard_screenshot: Pillow not available — EXIF and images skipped.")
 
         seft = _parse_seft_trailer(jpeg_data)
         source_app = seft["source_app_package"] or "Unknown"
@@ -800,11 +809,11 @@ def get_honeyboard_screenshot(context):
     data_list.sort(key=lambda r: r[0] if isinstance(r[0], datetime.datetime) else _AWARE_MIN)
 
     data_headers = (
-        ("Clipboard Copy Time (UTC)", "datetime"),
-        "Capture Time (EXIF / device local)",
-        "Source App (from SEFT trailer)",
+        ("Clip Folder Name Time", "datetime"),
+        "EXIF DateTimeOriginal",
+        "Captured App Info Package",
         "Dimensions",
-        ("Thumbnail", "media"),
+        ("Image", "media"),
         "Source Path",
     )
     return data_headers, data_list, source_path

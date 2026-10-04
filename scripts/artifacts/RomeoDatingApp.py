@@ -41,12 +41,16 @@ __artifacts_v2__ = {
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-02-25',
-        'last_update_date': '2026-02-25',
+        'last_update_date': '2026-10-04',
         'requirements': '',
         'category': 'Contacts',
         'notes': 'Last Fetched and Deleted are fetchDate and deletionDate read as Unix milliseconds, an '
-                 'assumed unit. A NULL stored value is replaced with 0 by the query before conversion. '
-                 'A contact with no ChatPartnerEntity row is not reported.',
+                 'assumed unit: no source for the unit was found and no registered test image holds '
+                 'this database. A stored value that is NULL or 0 is reported blank, so a blank '
+                 'Deleted cell means no deletion date is stored on that row. A stored value that is '
+                 'not a number is reported as stored. '
+                 'A contact with no ChatPartnerEntity row is not reported. The blank handling was '
+                 'exercised on a constructed database only.',
         'paths': (
             '*/com.planetromeo.android.app/databases/planetromeo-room.db.*'
             ),
@@ -59,10 +63,13 @@ __artifacts_v2__ = {
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-02-25',
-        'last_update_date': '2026-02-25',
+        'last_update_date': '2026-10-04',
         'requirements': '',
         'category': 'Accounts',
-        'notes': '',
+        'notes': 'Creation Date and Last Login Date are the creation_date and last_login values of '
+                 'the profile JSON as stored, with no conversion. Their stored format and time zone '
+                 'are not established, so both columns are reported as text and not as a date and '
+                 'time. No registered test image holds this database.',
         'paths': (
             '*/com.planetromeo.android.app/databases/accounts.db*'
             ),
@@ -73,6 +80,19 @@ __artifacts_v2__ = {
 
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+
+
+def _ms_to_utc(value):
+    # A NULL or zero stored value is no date: report it blank rather than as the epoch.
+    if value is None:
+        return ''
+    try:
+        millis = int(value)
+    except (TypeError, ValueError):
+        return value
+    if millis == 0:
+        return ''
+    return convert_unix_ts_to_utc(millis / 1000)
 
 @artifact_processor
 def romeo_dating_messages(context):
@@ -170,18 +190,8 @@ def romeo_dating_contacts(context):
 
     query = '''
             SELECT 
-            CASE WHEN cpe.fetchDate IS NOT NULL
-                THEN
-                cpe.fetchDate
-                ELSE
-                0
-            END [Last Fetched Date],
-            CASE WHEN cpe.deletionDate IS NOT NULL
-                THEN
-                cpe.deletionDate
-                ELSE
-                0
-            END [Deletion Date],
+            cpe.fetchDate [Last Fetched Date],
+            cpe.deletionDate [Deletion Date],
             ce.userId [UserID],
             cpe.name [Name],
             cpe.headline [Headline],
@@ -207,8 +217,8 @@ def romeo_dating_contacts(context):
         db_records = get_sqlite_db_records(main_db, query)
 
         for row in db_records:
-            fetch_timestamp = convert_unix_ts_to_utc(int(row[0]) / 1000)
-            delete_timestamp = convert_unix_ts_to_utc(int(row[1]) / 1000)
+            fetch_timestamp = _ms_to_utc(row[0])
+            delete_timestamp = _ms_to_utc(row[1])
             contact_id = row[2]
             contact_name = row[3]
             headline = row[4]
@@ -332,8 +342,8 @@ def romeo_dating_accounts(context):
                         'Longitude',
                         'Headline',
                         'Profile Text',
-                        ('Creation Date', 'datetime'),
-                        ('Last Login Date', 'datetime'),
+                        'Creation Date',
+                        'Last Login Date',
                         'Age',
                         'Birthdate'
                     )

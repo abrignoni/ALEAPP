@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "alex_live_appops": {
         "name": "App Ops",
         "description": "Reads App Ops Data from a PRFS backup created by ALEX.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-30",
         "last_update_date": "2026-01-30",
         "requirements": "none",
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
     "alex_live_wifi_conf_net": {
         "name": "Dumpsys - Configured Networks",
         "description": "Outputs the configured (known) networks from the Dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-02-02",
         "last_update_date": "2026-02-02",
         "requirements": "none",
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
     "alex_live_usagestats_events": {
         "name": "Dumpsys - Usagestats Events",
         "description": "Outputs the Usagestats Event entries from the Dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-02-03",
         "last_update_date": "2026-02-03",
         "requirements": "none",
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
     "alex_live_usagestats_yearly": {
         "name": "Dumpsys - Usagestats (yearly)",
         "description": "Outputs the Usagestats (yearly) entries from the Dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-02-04",
         "last_update_date": "2026-02-04",
         "requirements": "none",
@@ -76,7 +76,7 @@ __artifacts_v2__ = {
     "alex_live_bt_bonded": {
         "name": "Dumpsys - BTM Bonded Devices",
         "description": "Outputs the bonded Bluetooth devices from the dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-02-05",
         "last_update_date": "2026-02-05",
         "requirements": "none",
@@ -92,7 +92,7 @@ __artifacts_v2__ = {
     "alex_live_companiondevice": {
         "name": "Dumpsys - Companiondevice",
         "description": "Outputs the associated Companion devices from the Dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-02-06",
         "last_update_date": "2026-02-06",
         "requirements": "none",
@@ -109,7 +109,7 @@ __artifacts_v2__ = {
     "alex_live_role": {
         "name": "Dumpsys - Role (Default Apps)",
         "description": "Outputs the Default Apps from the Dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-02-06",
         "last_update_date": "2026-02-06",
         "requirements": "none",
@@ -124,7 +124,7 @@ __artifacts_v2__ = {
     "alex_live_account": {
         "name": "Dumpsys - Accounts",
         "description": "Outputs the Accounts from the Dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-02-06",
         "last_update_date": "2026-02-06",
         "requirements": "none",
@@ -139,28 +139,44 @@ __artifacts_v2__ = {
     "alex_live_batterystats": {
         "name": "Dumpsys - Batterystats",
         "description": "Outputs the Batterystats from the Dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-03-19",
-        "last_update_date": "2026-03-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "ALEX Live Data",
         "notes": "Rows are the history lines of the batterystats section of the dumpsys. "
-                 "A line that begins with a month-day time is read as that date and "
+                 "Time is text, not an instant: AOSP BatteryStats prints these times in "
+                 "the device's default time zone and the dump records no zone, so the "
+                 "wall clock is reported with no zone attached and no conversion "
+                 "(https://github.com/aosp-mirror/platform_frameworks_base/blob/"
+                 "android-14.0.0_r1/core/java/android/os/BatteryStats.java#L6928 and "
+                 "https://github.com/aosp-mirror/platform_frameworks_base/blob/"
+                 "android-16.0.0_r1/core/java/android/os/BatteryStats.java#L6983). "
+                 "A line that begins with a month-day time is reported as that date and "
                  "time, with the year taken from the Unix timestamp in the dumpsys file "
                  "name (1970 when the name carries none), and a month and day later than "
-                 "that timestamp's are given the previous year; a line that begins with "
-                 "a + offset or a bare 0 is read as that offset from the most recent "
-                 "line carrying TIME:, and when no such line has been read the offset is "
-                 "reported as written. Both are reported as UTC without adjustment. "
-                 "Battery Level and Mask are as dumped. States (from Mask) decodes the "
-                 "mask against a table of the STATE_ flag bits of AOSP "
+                 "that timestamp's are given the previous year; the year is therefore "
+                 "derived, not dumped. A line that begins with a + offset or a bare 0 "
+                 "has that offset in Offset as written, and Time is the wall clock of "
+                 "the most recent line carrying TIME: plus the offset, counted from "
+                 "that line's own offset; this is plain arithmetic on the wall clock, "
+                 "so it does not follow a clock or zone change inside the span. When no "
+                 "line carrying TIME: has been read, Time is blank and only Offset is "
+                 "reported. Battery Level and Mask are as dumped. States (from Mask) "
+                 "decodes the mask against a table of the STATE_ flag bits of AOSP "
                  "BatteryStats.HistoryItem chosen by the Android major version in "
                  "device_info_alex.json, using the highest of the tables keyed 4, 5, 6 "
-                 "and 9 that does not exceed the version; without that file the column "
-                 "is blank. The table keyed 9 was checked against BatteryStats.java at "
-                 "android-14.0.0_r1 and is used for every later version; the tables "
-                 "keyed 4, 5 and 6 carry no recorded check. Continuation lines are "
-                 "skipped.",
+                 "and 9 that does not exceed the version; without that file, or for a "
+                 "major version above 16, the column is blank. The tables were compared "
+                 "with BatteryStats.java at these tags: keyed 4 equals "
+                 "android-4.0.1_r1 (android-4.4_r1 names bit 24 WIFI_SCAN where the "
+                 "table says WIFI_SCAN_LOCK); keyed 5 equals android-5.0.0_r1 and "
+                 "android-5.1.0_r1; keyed 6 equals android-6.0.0_r1, android-7.0.0_r1 "
+                 "and android-8.0.0_r1; keyed 9 equals the first release tag of each "
+                 "major version from android-9.0.0_r1 to android-16.0.0_r1. Other "
+                 "releases were not compared. This artifact has not been run on a "
+                 "registered corpus; the time handling was exercised on a constructed "
+                 "dump. Continuation lines are skipped.",
         "paths": ('*/extra/dumpsys_*.txt',
             '*/device_info_alex.json'),
         "output_types": ["html", "lava", "tsv"],
@@ -169,7 +185,7 @@ __artifacts_v2__ = {
     "alex_live_shortcut": {
         "name": "Dumpsys - Shortcuts",
         "description": "Outputs the shortcuts from the dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -189,7 +205,7 @@ __artifacts_v2__ = {
     "alex_live_discord_shortcut": {
         "name": "Dumpsys - Shortcuts (Discord)",
         "description": "Parses the com.discord entries in the shortcut section of the dumpsys log of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -213,7 +229,7 @@ __artifacts_v2__ = {
     "alex_live_logcat": {
         "name": "Logcat",
         "description": "Parses the Logcat logs of an ALEX PRFS backup.",
-        "author": "@C_Peter",
+        "author": "@C_Peter, @AlexisBrignoni, Codex",
         "creation_date": "2026-03-03",
         "last_update_date": "2026-03-03",
         "requirements": "none",
@@ -941,14 +957,19 @@ def alex_live_batterystats(context):
                     }
 
         if software:
-            major = int(str(software).split('.', maxsplit=1)[0])
+            try:
+                major = int(str(software).split('.', maxsplit=1)[0])
+            except ValueError:
+                major = None
             mask_versions = sorted(bs_dict.keys())
             selected_v = None
-            for v in mask_versions:
-                if major >= v:
-                    selected_v = v
-                else:
-                    break
+            # The table keyed 9 was compared with AOSP up to Android 16.
+            if major is not None and major <= 16:
+                for v in mask_versions:
+                    if major >= v:
+                        selected_v = v
+                    else:
+                        break
         else:
             selected_v = None
         BATTERY_RE = re.compile(r'\s(\d{3})\s')
@@ -974,7 +995,6 @@ def alex_live_batterystats(context):
                 parts = line.split()
                 ts_str = parts[0] + " " + parts[1]
                 current_ts = parse_timestamp(ts_str, _DEVICE_TIME)
-                out_time = datetime.datetime.fromtimestamp(current_ts / 1000, tz=datetime.timezone.utc)
                 battery = parts[2] if len(parts) > 2 else None
                 if not (battery and battery.strip().isdigit() and len(battery.strip()) == 3):
                     continue
@@ -1008,10 +1028,12 @@ def alex_live_batterystats(context):
             else:
                 # ignoring multiline - mostly Stats messages
                 continue
+            # The dump prints these times in the device's default time zone and
+            # records no zone, so the wall clock is reported as text. The UTC
+            # object below only carries the arithmetic; no zone is asserted.
             if current_ts:
-                out_time = datetime.datetime.fromtimestamp(current_ts, tz=datetime.timezone.utc)
-            elif time_part:
-                out_time = time_part
+                wall = datetime.datetime.fromtimestamp(current_ts, tz=datetime.timezone.utc)
+                out_time = wall.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
             else:
                 out_time = None
             if isinstance(hex_mask, str):
@@ -1030,8 +1052,8 @@ def alex_live_batterystats(context):
             else:
                 stat1 = None
 
-            data_list.append((out_time, battery, hex_mask, stat1, message))
-    data_headers = (('Time', 'datetime'), 'Battery Level', 'Mask', 'States (from Mask)', 'Message')
+            data_list.append((out_time, time_part, battery, hex_mask, stat1, message))
+    data_headers = ('Time', 'Offset', 'Battery Level', 'Mask', 'States (from Mask)', 'Message')
     return data_headers, data_list, source_path
 
 # Dumpsys - Shortcut (Discord)

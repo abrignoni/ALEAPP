@@ -1,13 +1,23 @@
 __artifacts_v2__ = {
     "get_browserCachechrome": {
         "name": "Chrome Browser Cache",
-        "description": "Cached web resources extracted from the _0 files of the Chrome browser disk cache. Timestamp Modified is the file system modification time of the cache file as extracted, not a time stored inside the entry",
-        "author": "@abrignoni",
+        "description": "Cached web resources extracted from the _0 files of the Chrome browser disk cache. The time columns are the cache file's modification time as the extraction recorded it, not a time stored inside the entry",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-01-28",
-        "last_update_date": "2023-01-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Browser Cache",
-        "notes": "",
+        "notes": "Timestamp Modified is the modification time the extraction recorded for the cache file as "
+                 "an epoch value: the extended timestamp field (0x5455) of a zip member, the mtime of a tar "
+                 "member, or the file's own modification time when the input is a folder. It is blank when "
+                 "the extraction recorded no such value. Archive Time Modified (No Zone) is filled only in "
+                 "that case, for a zip member, with the date and time in the member's zip directory entry, "
+                 "shown as stored. A zip directory entry records no time zone, so that reading is not "
+                 "converted and which zone it is in is not established. Neither column is read from inside "
+                 "the cache entry. On the registered zip images checked on 2026-10-04, every matched "
+                 "member carried the extended timestamp on anne_a15 (21956), galaxys10_a10 (847), "
+                 "hc_pixel8pro_a16 (1289), pixel7a_a14 (3035) and samsunga53_a14 (1701), and no matched "
+                 "member carried it on samsungs20_a13 (44) and sharon_a14 (13958).",
         "paths": ('*/data/com.android.chrome/cache/Cache/*_0',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -47,9 +57,29 @@ def _sec_to_utc(value):
         return ''
 
 
+def _recorded_times(seeker, file_found):
+    """Return (epoch modification time as UTC, zone-less zip directory time as stored)."""
+    info = seeker.file_infos.get(file_found) if seeker else None
+    if not info:
+        return '', ''
+    if info.modification_date:
+        return _sec_to_utc(info.modification_date), ''
+    zip_file = getattr(seeker, 'zip_file', None)
+    # A name stored more than once with different content is staged from a
+    # chosen entry, which getinfo() does not necessarily return.
+    if zip_file is None or info.source_path in getattr(seeker, '_chosen', {}):
+        return '', ''
+    try:
+        stored = zip_file.getinfo(info.source_path).date_time
+    except KeyError:
+        return '', ''
+    return '', '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'.format(*stored)
+
+
 @artifact_processor
 def get_browserCachechrome(context):
     files_found = context.get_files_found()
+    seeker = context.get_seeker()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -89,9 +119,10 @@ def get_browserCachechrome(context):
         name = f'{filename}.{ext}' if ext else filename
         media = check_in_embedded_media(file_found, filedata, name, force_type=mime, force_extension=ext)
 
-        data_list.append((_sec_to_utc(os.path.getmtime(file_found)), filename, mime, media, url, context.get_relative_path(file_found)))
+        modified, modified_as_stored = _recorded_times(seeker, file_found)
+        data_list.append((modified, modified_as_stored, filename, mime, media, url, context.get_relative_path(file_found)))
 
     data_headers = (
-        ('Timestamp Modified', 'datetime'), 'Filename', 'Mime Type', ('Cached File', 'media'),
+        ('Timestamp Modified', 'datetime'), 'Archive Time Modified (No Zone)', 'Filename', 'Mime Type', ('Cached File', 'media'),
         'Source URL', 'Source')
     return data_headers, data_list, context.get_relative_path(source_path)

@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "poweramp_library": {
         "name": "Poweramp Library and Play History",
-        "description": "Audio files Poweramp has indexed, with play counts, last played times and resume positions",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Audio files listed in Poweramp's folder_files table, with play counts, last played times and the stored last_pos value",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Poweramp",
         "sample_data": {
@@ -18,10 +18,12 @@ __artifacts_v2__ = {
                  "the tested image. "
                  "The table carries two different time units and they were separated by "
                  "measurement, not assumption: Last Played and Played Fully At are Unix "
-                 "milliseconds, while Date Indexed (the created_at column) and File Created "
+                 "milliseconds, while Created At (the created_at column) and File Created "
                  "(file_created_at) are Unix seconds, and on the tested image a millisecond value "
                  "and a second value written moments apart both resolved to the same minute. All "
-                 "four are reported as UTC. What event created_at marks was not measured. Title "
+                 "four are reported as UTC. What event created_at marks was not measured, so the "
+                 "column carries the stored column's name; all four rows of the tested image "
+                 "held the same created_at value. Title "
                  "shows the title tag, or the file name when the tag is empty. "
                  "Last Played, Play Count and Played Fully At mean different things, which was "
                  "established by driving the app rather than inferred. On the tested device Last Played "
@@ -30,10 +32,11 @@ __artifacts_v2__ = {
                  "Count from 0 to 1 and gained a Played Fully At stamp. On that device a row with "
                  "Last Played set and Play Count 0 was a track that was started and not finished; "
                  "whether anything else changes these columns was not tested. "
-                 "Resume Position (ms) is the last_pos column, reported as stored. What it marks "
-                 "and its unit were not measured; that a complete play resets it to 0 is not "
-                 "among the measurements "
-                 "described above, so a non-zero value is reported without asserting what it "
+                 "Last Pos (as stored) is the last_pos column, reported as stored. What it marks "
+                 "and its unit were not measured, and the table definition gives neither (last_pos "
+                 "INTEGER NOT NULL DEFAULT 0). On the tested image it held 0 on the one row with "
+                 "a Played Fully At value and a non-zero value on the other three rows; one image "
+                 "does not establish a rule, so a value is reported without asserting what it "
                  "marks. Artist, Album and Rating were empty or 0 on every row of the tested "
                  "image; the audio it was built from carries no such tags and nothing was rated "
                  "there. Year read 10000 on every row of the tested image, which is not a date; "
@@ -130,8 +133,8 @@ def poweramp_library(context):
 
     data_headers = (
         ('Last Played', 'datetime'), ('Played Fully At', 'datetime'),
-        ('Date Indexed', 'datetime'), ('File Created', 'datetime'),
+        ('Created At', 'datetime'), ('File Created', 'datetime'),
         'Title', 'Artist', 'Album', 'Duration (ms)', 'Play Count',
-        'Total Play Count', 'Resume Position (ms)', 'Rating', 'Year (as stored)',
+        'Total Play Count', 'Last Pos (as stored)', 'Rating', 'Year (as stored)',
         'Bit Rate', 'Storage Path', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
