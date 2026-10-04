@@ -4,10 +4,10 @@ __artifacts_v2__ = {
         "description": "Parses Firefox site permissions (origin, permission type, status, modification and expiration timestamps) from permissions.sqlite.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Firefox",
-        "notes": "Reference: Mozilla, 'nsIPermissionManager (ALLOW_ACTION=1, DENY_ACTION=2); any other stored value, including PROMPT_ACTION=3, is shown blank', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/netwerk/base/nsIPermissionManager.idl",
+        "notes": "Reference: Mozilla, 'nsIPermissionManager (ALLOW_ACTION=1, DENY_ACTION=2); any other stored value, including PROMPT_ACTION=3, is shown as stored', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/netwerk/base/nsIPermissionManager.idl",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -44,6 +44,7 @@ def get_firefoxPermissions(context):
         CASE permission
             WHEN 1 THEN 'Allow'
             WHEN 2 THEN 'Block'
+            ELSE permission
         END AS PermState,
         CASE expireTime
             WHEN 0 THEN ''

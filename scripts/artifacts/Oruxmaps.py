@@ -22,10 +22,10 @@ __artifacts_v2__ = {
                        "trackciudad value, segment name, latitude, longitude, altitude and time).",
         "author": "@markmckinnon",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "The column headed track description holds the "
+        "notes": "The trackciudad column holds the "
                  "tracks.trackciudad value as stored; what the app stores "
                  "there is not established. trkpttime is read as Unix "
                  "milliseconds and shown in UTC, which is assumed. A track "
@@ -85,5 +85,5 @@ def get_Oruxmaps_tracks(context):
     for row in all_rows:
         data_list.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], _ms_to_utc(row[7])))
 
-    data_headers = ('track id', 'track name', 'track description', 'segment name', 'latitude', 'longitude', 'altimeter', ('datetime', 'datetime'))
+    data_headers = ('track id', 'track name', 'trackciudad', 'segment name', 'latitude', 'longitude', 'altimeter', ('datetime', 'datetime'))
     return data_headers, data_list, source_path

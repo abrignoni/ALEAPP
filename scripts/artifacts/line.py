@@ -5,12 +5,18 @@ __artifacts_v2__ = {
         "description": "Parses LINE contacts (user ID and name) from the LINE databases.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2021-03-15",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Line",
-        "notes": ("One row per row of the contacts table in one naver_line database. Where "
-                  "the extraction holds more than one (a second Android user), only the last "
-                  "one found is read. "
+        "notes": ("One row per row of the contacts table in each naver_line database. The "
+                  "duplicate storage views of one database are collapsed first, and where "
+                  "the extraction holds more than one database (a second Android user) every "
+                  "one is read, with Android User carrying the user number taken from the "
+                  "database's path. Every tested image held one Android user, so the two user case was "
+                  "checked on a tree built by hand from the pixel3_a12 database, carrying a "
+                  "second user whose copy had one contact removed: it returned five rows "
+                  "under user 0 and four under user 10, where the code before this change "
+                  "returned five rows from one database. "
                   "The table records contacts the app held, which is not the same set as the "
                   "people the account exchanged messages with.\n"
                   "It can be empty on a device that has messages: on the tested Android 14 "
@@ -34,7 +40,7 @@ __artifacts_v2__ = {
                        "store records them.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-08-29",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Line",
         "notes": ("Direction is decoded from the chat_history 'status' column, 1 read as "
@@ -44,12 +50,20 @@ __artifacts_v2__ = {
                   "Outgoing, are counted as sent and every other row is counted as "
                   "received, which is how LAVA classifies a conversation "
                   "(src/renderer/api/platform.electron.js).\n"
-                  "To ID is filled only for rows recognized as Outgoing. It holds the "
-                  "membership table's member list when that list has more than one member, "
-                  "and otherwise the row's chat id. No tested row was Outgoing, so this is "
-                  "code present and unexercised. Thread ID holds the chat id only on rows "
-                  "whose chat id has no rows in the membership table; on rows that matched "
-                  "membership it is blank.\n"
+                  "Thread ID is the row's own chat_history.chat_id on every row. To ID is "
+                  "filled only for rows recognized as Outgoing whose chat id has rows in the "
+                  "membership table, and it holds that table's m_id values for the chat id "
+                  "(membership is keyed on id and m_id). On every other row it is blank; a "
+                  "chat id is not reported as a recipient. Whether the member list includes "
+                  "the account itself was not established. No tested row was Outgoing and "
+                  "the membership table was empty on all three tested images, so both were "
+                  "checked on a database built by hand from the pixel3_a12 one, with "
+                  "membership rows and Outgoing rows added: the three rows whose chat id "
+                  "matched membership carried their chat id in Thread ID where the code "
+                  "before this change left it blank, the two Outgoing rows in chats with "
+                  "membership rows carried the member list in To ID, and an Outgoing row in "
+                  "a chat with no membership rows had a blank To ID where the code before "
+                  "this change put the chat id.\n"
                   "Nothing in the tested images exercises the Direction mapping. On all three, "
                   "chat_history.status held 3 on every one of the 64 "
                   "reported rows, so no row was labelled Incoming or Outgoing, To ID was "
@@ -135,7 +149,7 @@ __artifacts_v2__ = {
         "description": "Parses LINE call logs (start and end time, participant IDs, direction and call type) from the LINE databases.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Line",
         "notes": ("Direction is decoded from the last character of the call_history 'call_type' "
@@ -154,10 +168,18 @@ __artifacts_v2__ = {
                   "resolve, two Incoming and two Outgoing on each, and To ID was empty on "
                   "all twelve rows because every tested call was one to one and the "
                   "membership table was empty.\n"
-                  "Calls are read from one call_history database, and only when a naver_line "
-                  "database is also present, because the query reads the contacts table from "
-                  "it. Where the extraction holds more than one of either, the last "
-                  "one found is used. "
+                  "Calls are read from each call_history database that has a naver_line "
+                  "database in the same folder, because the query reads the contacts and "
+                  "membership tables from it; a call_history with none beside it is not "
+                  "read and a line is logged. The duplicate storage views of one database "
+                  "are collapsed first, and where the extraction holds more than one (a "
+                  "second Android user) every one is read, with Android User carrying the "
+                  "user number taken from the database's path. Every tested image held one "
+                  "Android user, so the two user case was checked on a tree built by hand from the "
+                  "pixel3_a12 databases, carrying a second user whose copy had one call "
+                  "removed: it returned four rows under user 0 and three under user 10, "
+                  "where the code before this change returned four rows from one "
+                  "database. "
                   "Calls are reported even when the contacts and membership tables are empty; "
                   "on a tested Android 14 image both were empty while call_history held rows, "
                   "and the previous inner join dropped every call."),
@@ -278,34 +300,47 @@ def _message_dbs(files_found):
     return found
 
 
-def _line_dbs(files_found):
-    msg_db = call_db = ''
+def _call_dbs(files_found):
+    """(call_history, the naver_line beside it or '') for every call_history found.
+
+    The two databases of one Android user sit in the same databases folder, so the pair is
+    made on the folder and one user's calls are never read against another user's tables.
+    """
+    beside = {os.path.dirname(path.replace('\\', '/')): path
+              for path in _message_dbs(files_found)}
+    found = []
     for file_found in files_found:
-        file_name = str(file_found).lower()
-        if file_name.endswith('naver_line'):
-            msg_db = str(file_found)
-        elif file_name.endswith('call_history'):
-            call_db = str(file_found)
-    return msg_db, call_db
+        path = str(file_found)
+        if path.lower().endswith('call_history') and path not in [pair[0] for pair in found]:
+            found.append((path, beside.get(os.path.dirname(path.replace('\\', '/')), '')))
+    return found
 
 
 @artifact_processor
 def get_line(context):
-    files_found = context.get_files_found()
-    msg_db, _ = _line_dbs(files_found)
+    # One naver_line per Android user survives the collapse of the storage views, and every
+    # one is read.
+    files_found = unique_files(context)
     data_list = []
-    if msg_db:
+    read = []
+    for msg_db in _message_dbs(files_found):
+        user = _android_user(msg_db)
         db = open_sqlite_db_readonly(msg_db)
         cursor = db.cursor()
         try:
             cursor.execute('SELECT m_id, server_name FROM contacts')
-            data_list = cursor.fetchall()
+            all_rows = cursor.fetchall()
         except Exception as e:
             logfunc(str(e))
+            all_rows = []
         db.close()
+        if all_rows:
+            read.append(msg_db)
+        for row in all_rows:
+            data_list.append((row[0], row[1], user))
 
-    data_headers = ('user_id', 'user_name')
-    return data_headers, data_list, msg_db
+    data_headers = ('user_id', 'user_name', 'Android User')
+    return data_headers, data_list, '\n'.join(read)
 
 
 @artifact_processor
@@ -353,13 +388,11 @@ def get_line_messages(context):
             read.append(msg_db)
 
         for row in all_rows:
-            thread_id = row[0] if row[1] is None else None
-            to_id = None
-            if row[7] == "Outgoing":
-                if row[1] and ',' in row[1]:
-                    to_id = row[1]
-                else:
-                    to_id = row[0]
+            # Thread ID is the row's own chat_id on every row. To ID is the membership
+            # table's member list for that chat id and nothing else: a chat id is not
+            # reported as a recipient.
+            thread_id = row[9]
+            to_id = row[1] if row[7] == "Outgoing" else None
             # The pairing is on the row's own chat_id and id, which is where the app wrote the
             # file, not on the chat the join resolved, so an unmatched contact cannot move it.
             media, media_name, media_format = _attachment(
@@ -377,10 +410,17 @@ def get_line_messages(context):
 
 @artifact_processor
 def get_line_calls(context):
-    files_found = context.get_files_found()
-    msg_db, call_db = _line_dbs(files_found)
+    # One call_history per Android user survives the collapse of the storage views, and
+    # every one is read, against the naver_line in the same folder.
+    files_found = unique_files(context)
     data_list = []
-    if call_db and msg_db:
+    read = []
+    for call_db, msg_db in _call_dbs(files_found):
+        if not msg_db:
+            logfunc('Line: no naver_line database beside a call_history database, '
+                    'so its calls are not read')
+            continue
+        user = _android_user(call_db)
         db = open_sqlite_db_readonly(call_db)
         cursor = db.cursor()
         cursor.execute(attach_sqlite_db_readonly(msg_db, 'naver_line'))
@@ -403,9 +443,12 @@ def get_line_calls(context):
             logfunc(str(e))
             all_rows = []
         db.close()
+        if all_rows:
+            read.append(call_db)
 
         for row in all_rows:
-            data_list.append((_sec_to_utc(row[1]), _sec_to_utc(row[2]), row[3], row[4], row[0], row[5]))
+            data_list.append((_sec_to_utc(row[1]), _sec_to_utc(row[2]), row[3], row[4], row[0], row[5], user))
 
-    data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'), 'To ID', 'From ID', 'Direction', 'Call Type')
-    return data_headers, data_list, call_db
+    data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'), 'To ID', 'From ID', 'Direction', 'Call Type',
+                    'Android User')
+    return data_headers, data_list, '\n'.join(read)

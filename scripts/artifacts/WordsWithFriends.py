@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "get_WordsWithFriends": {
         "name": "WordsWithFriends",
-        "description": "Parses in-game chat messages (creation time, conversation id under the header Message ID, message, and the name and email of the users row matched on user_zynga_id; messages with no matching users row are not reported) from the Words With Friends wf_database.sqlite.",
+        "description": "Parses in-game chat messages (creation time, conversation id as stored in messages.conv_id, message, and the name and email of the users row matched on user_zynga_id; messages with no matching users row are not reported) from the Words With Friends wf_database.sqlite.",
         "author": "@mastenp",
         "creation_date": "2020-03-21",
-        "last_update_date": "2020-03-21",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Chats",
         "notes": "",
@@ -40,5 +40,5 @@ def get_WordsWithFriends(context):
         creation = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
         data_list.append((creation, row[1], row[2], row[3], row[4]))
 
-    data_headers = (('Chat Message Creation', 'datetime'), 'Message ID', 'User Name', 'User Email', 'Chat Message')
+    data_headers = (('Chat Message Creation', 'datetime'), 'Conversation ID', 'User Name', 'User Email', 'Chat Message')
     return data_headers, data_list, source_path
